@@ -1,0 +1,35 @@
+body {
+	margin: 20px 0;
+}
+body.has-fixed-nav {
+	margin-top: 80px;
+}
+@media only screen and (max-width: 767px) {
+	body:not(.login) {
+		margin-top: 80px;
+	}
+	.navbar-fixed-top > .navbar-btn {
+		float: right;
+		margin-right: 8px;
+	}
+}
+
+legend, label {
+	font-weight: 300;
+}
+
+.text-center {
+	text-align: center;
+}
+
+a.nolink {
+	color: inherit;
+	text-decoration: inherit;
+}
+a.nolink:hover {
+	text-decoration: underline;
+}
+
+ul.features {
+	padding-left: 1.5em;
+}

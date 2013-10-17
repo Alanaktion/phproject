@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body>
+<div class="container">
+	<include href="blocks/navbar.html" />
+	<div class="jumbotron">
+		<h1><strong>{{ @ERROR.code }}</strong> {{ @ERROR.text }}</h1>
+		<p>An unknown error occurred.</p>
+	</div>
+	<include href="blocks/footer.html" />
+</div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+ErrorDocument 404 /index.php
+ErrorDocument 403 /index.php
+
+RewriteEngine On
+
+# Block access to backend files
+RewriteCond %{REQUEST_URI} \.ini$
+RewriteRule \.ini$ - [R=404]
+
+RewriteCond %{REQUEST_URI} \.html?$
+RewriteRule \.html?$ - [R=404]
+
+RewriteCond %{REQUEST_URI} ^app/.*
+RewriteRule ^app/(.*)$ - [R=404]
+
+# Route requests to framework
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php [L,QSA,E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
