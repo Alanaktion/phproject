@@ -8,23 +8,29 @@
 	<include href="blocks/navbar.html" />
 	<div class="row">
 		<div class="col-sm-4">
-			<h3>My Projects&ensp;<small>{{ @projects.total }}</small>&emsp;<a class="btn btn-sm btn-default" href="/projects/new"><span class="glyphicon glyphicon-plus"></span></a></h3>
+			<h3>My Projects&ensp;<small>{{ @projects.total }}</small>&emsp;<a class="btn btn-sm btn-default has-tooltip" href="/issues/new/2" title="New Project"><span class="glyphicon glyphicon-plus"></span></a></h3>
 			<div class="list-group">
-				<repeat group="{{ @projects.subset }}" value="{{ @project }}">
-					<a class="list-group-item" href="/projects/{{ @project.id }}">
-						<span class="badge">#{{ @project.id }}</span>
-						<h4 class="list-group-item-heading">{{ @project.name }}</h4>
+				<repeat group="{{ @projects.subset }}" value="{{ @item }}">
+					<a class="list-group-item" href="/issues/{{ @item.id }}">
+						<span class="badge">#{{ @item.id }}</span>
+						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
+						<check if="{{ strtotime(@item.due_date) }}">
+							<p class="list-group-item-text">{{ date("D, M j", strtotime(@item.due_date)) }}</p>
+						</check>
 					</a>
 				</repeat>
 			</div>
 		</div>
 		<div class="col-sm-8">
-			<h3>My Tasks&ensp;<small>{{ @tasks.total }}</small>&emsp;<a class="btn btn-sm btn-default" href="/tasks/new"><span class="glyphicon glyphicon-plus"></span></a></h3>
+			<h3>My Tasks&ensp;<small>{{ @tasks.total }}</small>&emsp;<a class="btn btn-sm btn-default has-tooltip" href="/issues/new/1" title="New Task"><span class="glyphicon glyphicon-plus"></span></a></h3>
 			<div class="list-group">
-				<repeat group="{{ @tasks.subset }}" value="{{ @task }}">
-					<a class="list-group-item" href="/tasks/{{ @task.id }}">
-						<span class="badge">#{{ @task.id }}</span>
-						<h4 class="list-group-item-heading">{{ @task.name }}</h4>
+				<repeat group="{{ @tasks.subset }}" value="{{ @item }}">
+					<a class="list-group-item" href="/issues/{{ @item.id }}">
+						<span class="badge">#{{ @item.id }}</span>
+						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
+						<check if="{{ strtotime(@item.due_date) }}">
+							<p class="list-group-item-text">{{ date("D, M j", strtotime(@item.due_date)) }}</p>
+						</check>
 					</a>
 				</repeat>
 			</div>

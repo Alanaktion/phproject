@@ -10,8 +10,7 @@ RewriteRule \.ini$ - [R=404]
 RewriteCond %{REQUEST_URI} \.html?$
 RewriteRule \.html?$ - [R=404]
 
-RewriteCond %{REQUEST_URI} ^app/.*
-RewriteRule ^app/(.*)$ - [R=404]
+RewriteRule ^app/ - [R=404]
 
 # Route requests to framework
 RewriteCond %{REQUEST_FILENAME} !-l

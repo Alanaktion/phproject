@@ -1,5 +1,14 @@
 <div class="row muted" id="footer">
-	<div class="col-lg-12 text-right">
-		&copy; {{ @site.name }} {{ date("Y") }}
+	<div class="col-lg-12">
+		<p class="text-right">&copy; {{ @site.name }} {{ date("Y") }}</p>
 	</div>
 </div>
+<check if="{{ @DEBUG == 3 }}">
+	<pre style="font-size: smaller;">{{ @db.instance->log() }}</pre>
+</check>
+<script src="/minify/js?files=jquery-1.7.2.min.js,bootstrap.min.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	jQuery(".has-tooltip").tooltip();
+});
+</script>

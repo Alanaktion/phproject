@@ -26,7 +26,8 @@ class Security {
 
 	// rot13 for hexadecimal
 	public static function rot8($hex) {
-		return strtr($hex,
+		return strtr(
+			strtolower($hex),
 			array(
 				'0'=>'8',
 				'1'=>'9',

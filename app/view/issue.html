@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body class="dashboard">
+<div class="container">
+	<include href="blocks/navbar.html" />
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">{{ @issue.name }} <small>#{{ @issue.id }}</small></h3>
+				</div>
+				<div class="panel-body">
+					<p>Added by <a href="/users/{{ @issue.creator_id }}">{{ @creator.name }}</a> on {{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}</p>
+					<check if="{{ strtotime(@issue.due_date) }}">
+						<p><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
+					</check>
+				</div>
+			</div>
+		</div>
+	</div>
+	<include href="blocks/footer.html" />
+</div>
+</body>
+</html>

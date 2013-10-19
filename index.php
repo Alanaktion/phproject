@@ -5,7 +5,6 @@ $f3=require("lib/base.php");
 $f3->mset(array(
 	"UI" => "app/view/",
 	"LOGS" => "log/",
-	"LOCALES" => "app/dict/",
 	"AUTOLOAD" => "app/"
 ));
 
@@ -36,6 +35,12 @@ $f3->set("db.instance", new DB\SQL(
 
 // Define routes
 require_once "app/routes.php";
+
+// Minify static resources
+$f3->route('GET /minify/@type', function($f3, $args) {
+	$f3->set('UI',$args['type'].'/');
+	echo Web::instance()->minify($_GET['files']);
+}, 3600);
 
 // Load user if session exists
 $user = new Model\User();

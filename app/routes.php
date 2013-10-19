@@ -4,23 +4,29 @@
 
 $f3->route("GET /", function($f3) {
 	if($f3->get("user.id")) {
-		$projects = new Model\Project();
-		$projects->find(array(
-			"user_id=?", $f3->get("user.id")
-		),array(
-			"order" => "due_date ASC"
+		$projects = new Model\Issue();
+		$f3->set("projects", $projects->paginate(
+			0, 50,
+			array(
+				"owner_id=:owner and type_id=:type",
+				":owner" => $f3->get("user.id"),
+				":type" => "2",
+			),array(
+				"order" => "(due_date IS NULL), due_date ASC"
+			)
 		));
 
-		$f3->set("projects", $projects->paginate(0,50));
-
-		$tasks = new Model\Task();
-		$tasks->find(array(
-			"user_id=?", $f3->get("user.id")
-		),array(
-			"order" => "due_date ASC"
+		$tasks = new Model\Issue();
+		$f3->set("tasks", $tasks->paginate(
+			0, 50,
+			array(
+				"owner_id=:owner and type_id=:type",
+				":owner" => $f3->get("user.id"),
+				":type" => "1",
+			),array(
+				"order" => "(due_date IS NULL), due_date ASC"
+			)
 		));
-
-		$f3->set("tasks", $tasks->paginate(0,50));
 
 		echo Template::instance()->render("dashboard.html");
 	} else {
@@ -62,12 +68,56 @@ $f3->route("GET /login", function($f3) {
 	}
 });
 
-/*$f3->route("GET /tasks/@task_id", function($f3) {
+$f3->route("GET /issues", function($f3, $args) {
 	if($f3->get("user.id") || $f3->get("site.public")) {
-		echo Template::instance()->render("task.html");
+		echo Template::instance()->render("issues.html");
 	} else {
 		$f3->error(403, "Authentication Required");
 	}
-});*/
+});
+
+$f3->route("GET /issues/new", function($f3) {
+	$f3->reroute("/issues/new/1");
+});
+
+$f3->route("GET /issues/new/@type", function($f3) {
+	if($f3->get("user.id") || $f3->get("site.public")) {
+		$type = new Model\Issue\Type();
+		$type->load(array("id=?", $f3->get("PARAMS.type")));
+
+		if(!$type->id) {
+			$f3->error(500, "Issue type does not exist");
+			return;
+		}
+
+		$f3->set("type", $type->cast());
+
+		echo Template::instance()->render("issues/new.html");
+	} else {
+		$f3->error(403, "Authentication Required");
+	}
+});
+
+$f3->route("GET /issues/@id", function($f3) {
+	if($f3->get("user.id") || $f3->get("site.public")) {
+		$issue = new Model\Issue();
+		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+
+		if(!$issue->id) {
+			$f3->error(500, "Issue does not exist");
+			return;
+		}
+
+		$creator = new Model\User();
+		$creator->load(array("id=?", $issue->creator_id));
+
+		$f3->set("issue", $issue->cast());
+		$f3->set("creator", $creator->cast());
+
+		echo Template::instance()->render("issue.html");
+	} else {
+		$f3->error(403, "Authentication Required");
+	}
+});
 
 
