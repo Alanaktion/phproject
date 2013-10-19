@@ -1,6 +1,6 @@
 /*
 SQLyog Community v11.23 (64 bit)
-MySQL - 5.5.32-0ubuntu0.13.04.1 : Database - freeproject
+MySQL - 5.5.32 : Database - freeproject
 *********************************************************************
 */
 
@@ -40,6 +40,18 @@ CREATE TABLE `projects` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Table structure for table `task_comments` */
+
+DROP TABLE IF EXISTS `task_comments`;
+
+CREATE TABLE `task_comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `text` text NOT NULL,
+  `created_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*Table structure for table `tasks` */
 
 DROP TABLE IF EXISTS `tasks`;
@@ -50,6 +62,7 @@ CREATE TABLE `tasks` (
   `description` varchar(64) NOT NULL,
   `project_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
+  `repeat_cycle` enum('none','daily','weekly','monthly') NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -61,8 +74,20 @@ CREATE TABLE `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
   `email` varchar(64) NOT NULL,
+  `name` varchar(32) NOT NULL,
   `password` char(60) NOT NULL,
-  `role` enum('user','admin') DEFAULT 'user',
+  `role` enum('user','admin') NOT NULL DEFAULT 'user',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+/*Table structure for table `watchers` */
+
+DROP TABLE IF EXISTS `watchers`;
+
+CREATE TABLE `watchers` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `task_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

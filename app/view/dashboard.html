@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body>
+<div class="container">
+	<include href="blocks/navbar.html" />
+	<div class="row">
+		<div class="col-sm-3">
+			<img src="http://www.gravatar.com/avatar/{{ md5(@user.email) }}?d=mm&amp;s=60" class="img-rounded pull-left" style="margin-right: 15px;" alt>
+			<h3>{{ @user.name }}</h3>
+		</div>
+		<div class="col-sm-9">
+			<h3>My Projects</h3>
+			
+		</div>
+	</div>
+	<include href="blocks/footer.html" />
+</div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body class="login">
+<div class="hidden-xs" style="padding-top: 160px;"></div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-4 col-md-offset-4">
+			<form action="/login" method="post" class="form-horizontal">
+				<fieldset>
+					<legend class="text-center"><strong>Log In</strong>&ensp;<a href="/" class="nolink">{{ @site.name }}</a></legend>
+					<check if="{{ !empty(@login.error) }}">
+						<p class="alert alert-danger">{{ @login.error }}</p>
+					</check>
+					<div class="form-group">
+						<label for="inputEmail" class="col-lg-4 control-label">Username</label>
+						<div class="col-lg-8">
+							<check if="{{ !empty(@POST.username) }}">
+								<true>
+									<input class="form-control" placeholder="Username" name="username" type="text" value="{{ @POST.username }}">
+								</true>
+								<false>
+									<input class="form-control" placeholder="Username" name="username" type="text" autofocus>
+								</false>
+							</check>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputPassword" class="col-lg-4 control-label">Password</label>
+						<div class="col-lg-8">
+							<check if="{{ !empty(@POST.username) }}">
+								<true>
+									<input class="form-control" placeholder="Password" name="password" type="password" autofocus>
+								</true>
+								<false>
+									<input class="form-control" placeholder="Password" name="password" type="password">
+								</false>
+							</check>
+							<!-- <div class="checkbox">
+								<label>
+									<input type="checkbox"> Remember Me
+								</label>
+							</div> -->
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-8 col-lg-offset-4">
+							<button type="submit" class="btn btn-primary">Log In</button> 
+							<a href="/reset" class="btn btn-link">Reset Password</a>
+						</div>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>

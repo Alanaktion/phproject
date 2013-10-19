@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<include href="blocks/head.html" />
-</head>
-<body>
-<div class="container">
-	<include href="blocks/navbar.html" />
-	<div class="jumbotron">
-		<h1><strong>{{ @ERROR.code }}</strong> Internal Server Error</h1>
-		<p>An error occurred processing your request. Please try again.</p>
-	</div>
-	<include href="blocks/footer.html" />
-</body>
-</html>
+<h1><?php echo $f3->get('ERROR.title'); ?></h1>
+<p>An error occurred processing your request. Please try again.</p>
+<?php if($f3->get('DEBUG') == 3) { ?>
+	<p><?php echo $f3->get('ERROR.text'); ?></p>
+	<pre><?php print_r($f3->get('ERROR.trace')); ?></pre>
+<?php } ?>
