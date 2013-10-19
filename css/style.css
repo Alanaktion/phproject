@@ -18,14 +18,14 @@ legend, label {
 	font-weight: 300;
 }
 
-.text-center {
-	text-align: center;
-}
-
 a.nolink {
 	color: inherit;
 	text-decoration: inherit;
 }
 a.nolink:hover {
 	text-decoration: underline;
+}
+
+.dashboard .list-group-item .badge {
+	margin-top: 3px;
 }

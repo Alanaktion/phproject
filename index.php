@@ -22,12 +22,8 @@ $f3->set("ONERROR", function($f3) {
 		case 403:
 			echo "You do not have access to this page.";
 			break;
-		case 500:
-			include "app/view/error/500.html";
-			break;
 		default:
-			$f3->set("title", "Error");
-			echo View::instance()->render("error/general.html");
+			return false;
 	}
 });
 
@@ -44,11 +40,6 @@ require_once "app/routes.php";
 // Load user if session exists
 $user = new Model\User();
 $user->loadCurrent();
-
-// Include Fat Free manual at /ref
-$f3->route("GET /ref", function() {
-	echo View::instance()->render("userref.html");
-});
 
 // Run the application
 $f3->run();

@@ -2,5 +2,5 @@
 <p>An error occurred processing your request. Please try again.</p>
 <?php if($f3->get('DEBUG') == 3) { ?>
 	<p><?php echo $f3->get('ERROR.text'); ?></p>
-	<pre><?php print_r($f3->get('ERROR.trace')); ?></pre>
+	<pre class="pre-scrollable" style="font-size: smaller;"><?php print_r($f3->get('ERROR.trace')); ?></pre>
 <?php } ?>

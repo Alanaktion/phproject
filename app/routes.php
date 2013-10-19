@@ -4,6 +4,24 @@
 
 $f3->route("GET /", function($f3) {
 	if($f3->get("user.id")) {
+		$projects = new Model\Project();
+		$projects->find(array(
+			"user_id=?", $f3->get("user.id")
+		),array(
+			"order" => "due_date ASC"
+		));
+
+		$f3->set("projects", $projects->paginate(0,50));
+
+		$tasks = new Model\Task();
+		$tasks->find(array(
+			"user_id=?", $f3->get("user.id")
+		),array(
+			"order" => "due_date ASC"
+		));
+
+		$f3->set("tasks", $tasks->paginate(0,50));
+
 		echo Template::instance()->render("dashboard.html");
 	} else {
 		echo Template::instance()->render("index.html");
@@ -44,7 +62,7 @@ $f3->route("GET /login", function($f3) {
 	}
 });
 
-/*$f3->route("GET /task/@task_id", function($f3) {
+/*$f3->route("GET /tasks/@task_id", function($f3) {
 	if($f3->get("user.id") || $f3->get("site.public")) {
 		echo Template::instance()->render("task.html");
 	} else {
