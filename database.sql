@@ -29,36 +29,57 @@ CREATE TABLE `categories` (
 
 /*Data for the table `categories` */
 
-/*Table structure for table `projects` */
+/*Table structure for table `issue_statuses` */
 
-DROP TABLE IF EXISTS `projects`;
+DROP TABLE IF EXISTS `issue_statuses`;
 
-CREATE TABLE `projects` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) NOT NULL,
-  `description` text NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `due_date` date DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Data for the table `projects` */
-
-/*Table structure for table `statuses` */
-
-DROP TABLE IF EXISTS `statuses`;
-
-CREATE TABLE `statuses` (
+CREATE TABLE `issue_statuses` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   `closed` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
-/*Data for the table `statuses` */
+/*Data for the table `issue_statuses` */
 
-insert  into `statuses`(`id`,`name`,`closed`) values (1,'New',0),(2,'Active',0),(3,'Completed',1),(4,'On Hold',0);
+insert  into `issue_statuses`(`id`,`name`,`closed`) values (1,'New',0),(2,'Active',0),(3,'Completed',1),(4,'On Hold',0);
+
+/*Table structure for table `issue_types` */
+
+DROP TABLE IF EXISTS `issue_types`;
+
+CREATE TABLE `issue_types` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+/*Data for the table `issue_types` */
+
+insert  into `issue_types`(`id`,`name`) values (1,'Task'),(2,'Project'),(3,'Bug');
+
+/*Table structure for table `issues` */
+
+DROP TABLE IF EXISTS `issues`;
+
+CREATE TABLE `issues` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL DEFAULT '1',
+  `type_id` int(11) NOT NULL DEFAULT '1',
+  `name` varchar(64) NOT NULL,
+  `description` varchar(64) NOT NULL,
+  `parent_id` int(11) DEFAULT NULL,
+  `creator_id` int(11) NOT NULL,
+  `owner_id` int(11) DEFAULT NULL,
+  `created_date` datetime NOT NULL,
+  `due_date` date DEFAULT NULL,
+  `repeat_cycle` enum('none','daily','weekly','monthly') NOT NULL DEFAULT 'none',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+/*Data for the table `issues` */
+
+insert  into `issues`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`creator_id`,`owner_id`,`created_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00','2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer descript',NULL,1,1,'2013-10-19 05:09:36','2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,1,1,'2013-10-19 05:09:38',NULL,'none'),(4,1,1,'Due date task','This task does have a due date, and it\'s in the past!',NULL,1,1,'2013-10-19 05:09:40','2013-10-15','none');
 
 /*Table structure for table `task_comments` */
 
@@ -73,26 +94,6 @@ CREATE TABLE `task_comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `task_comments` */
-
-/*Table structure for table `tasks` */
-
-DROP TABLE IF EXISTS `tasks`;
-
-CREATE TABLE `tasks` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `status` int(11) NOT NULL DEFAULT '1',
-  `name` varchar(64) NOT NULL,
-  `description` varchar(64) NOT NULL,
-  `project_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `due_date` date DEFAULT NULL,
-  `repeat_cycle` enum('none','daily','weekly','monthly') NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
-/*Data for the table `tasks` */
-
-insert  into `tasks`(`id`,`status`,`name`,`description`,`project_id`,`user_id`,`due_date`,`repeat_cycle`) values (1,1,'Test','This is a task.',NULL,1,'2013-10-21','none');
 
 /*Table structure for table `users` */
 
