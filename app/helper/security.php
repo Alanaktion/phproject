@@ -6,7 +6,7 @@ class Security {
 	
 	// bcrypt require PHP 5.4 or later
 	public static function bcrypt($string, $work = 13) {
-		$salt = strtr(base64_salt(22), "+", ".");
+		$salt = strtr(self::base64_salt(22), "+", ".");
 		$salt = sprintf("$2y$%s$%s", $work, $salt);
 		$hash = crypt($string, $salt);
 		if(strlen($hash) > 13) {
@@ -71,11 +71,11 @@ class Security {
 		return (binary)$rnd;
 	}
 
-	private function base64_salt($length = 22) {
+	private static function base64_salt($length = 22) {
 		$character_list = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/";
 		$salt = "";
 		for($i = 0; $i < $length; $i++) {
-			$salt.= $characterList{mt_rand(0, (strlen($character_list) -1))};
+			$salt.= $character_list{mt_rand(0, (strlen($character_list) -1))};
 		}
 		return $salt;
 	}
