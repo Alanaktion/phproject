@@ -104,15 +104,15 @@ $f3->route("GET /issues/@id", function($f3) {
 		$issue->load(array("id=?", $f3->get("PARAMS.id")));
 
 		if(!$issue->id) {
-			$f3->error(500, "Issue does not exist");
+			$f3->error(404);
 			return;
 		}
 
-		$creator = new Model\User();
-		$creator->load(array("id=?", $issue->creator_id));
+		$author = new Model\User();
+		$author->load(array("id=?", $issue->author_id));
 
 		$f3->set("issue", $issue->cast());
-		$f3->set("creator", $creator->cast());
+		$f3->set("author", $author->cast());
 
 		echo Template::instance()->render("issue.html");
 	} else {
