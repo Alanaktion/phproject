@@ -4,7 +4,7 @@
 
 $f3->route("GET /", function($f3) {
 	if($f3->get("user.id")) {
-		$projects = new Model\Issue();
+		$projects = new DB\SQL\Mapper($f3->get("db.instance"), "issues_user_data");
 		$f3->set("projects", $projects->paginate(
 			0, 50,
 			array(
@@ -16,7 +16,7 @@ $f3->route("GET /", function($f3) {
 			)
 		));
 
-		$tasks = new Model\Issue();
+		$tasks = new DB\SQL\Mapper($f3->get("db.instance"), "issues_user_data");
 		$f3->set("tasks", $tasks->paginate(
 			0, 50,
 			array(

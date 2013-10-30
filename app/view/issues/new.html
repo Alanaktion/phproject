@@ -8,7 +8,47 @@
 	<include href="blocks/navbar.html" />
 	<div class="row">
 		<div class="col-lg-12">
-			<h3>New {{ ucwords(@type.name) }}</h3>
+			<form class="form-horizontal well" role="form" action="/issues/new" method="post">
+				<legend>New {{ @type.name }}</legend>
+				<input type="hidden" name="type" value="{{ @type.id }}">
+				<div class="form-group">
+					<label for="inputEmail1" class="col-lg-2 control-label">Title</label>
+					<div class="col-lg-10">
+						<input type="text" class="form-control input-lg" name="title">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="inputEmail1" class="col-lg-2 control-label">Description</label>
+					<div class="col-lg-10">
+						<textarea class="form-control" name="description"></textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="inputEmail1" class="col-lg-2 control-label">Assigned To</label>
+					<div class="col-lg-10">
+						<select class="form-control" name="owner">
+							<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="inputEmail1" class="col-lg-2 control-label">Due Date</label>
+					<div class="col-lg-10">
+						<input class="form-control has-popover" type="text" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="inputEmail1" class="col-lg-2 control-label">Parent ID</label>
+					<div class="col-lg-10">
+						<input class="form-control" type="text" name="parent_id">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-lg-offset-2 col-lg-10">
+						<button type="submit" class="btn btn-primary">Save {{ @type.name }}</button>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />

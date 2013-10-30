@@ -29,3 +29,11 @@ a.nolink:hover {
 .dashboard .list-group-item .badge {
 	margin-top: 3px;
 }
+.dashboard .list-group-item .badge-sibling {
+	margin: 2px 8px 0 0;
+}
+
+textarea {
+	resize: vertical;
+	min-height: 3em;
+}

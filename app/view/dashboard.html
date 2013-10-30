@@ -15,7 +15,9 @@
 						<span class="badge">#{{ @item.id }}</span>
 						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
 						<check if="{{ strtotime(@item.due_date) }}">
-							<p class="list-group-item-text">{{ date("D, M j", strtotime(@item.due_date)) }}</p>
+							<p class="list-group-item-text">
+								<span class="has-tooltip" data-placement="left" title="Due Date">{{ date("D, M j", strtotime(@item.due_date)) }}</span>
+							</p>
 						</check>
 					</a>
 				</repeat>
@@ -27,9 +29,14 @@
 				<repeat group="{{ @tasks.subset }}" value="{{ @item }}">
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
 						<span class="badge">#{{ @item.id }}</span>
+						<check if="{{ @item.author_id != @item.owner_id }}">
+							<p class="pull-right badge-sibling hidden-xs has-tooltip" title="Author">{{ @item.author_name }}</p>
+						</check>
 						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
 						<check if="{{ strtotime(@item.due_date) }}">
-							<p class="list-group-item-text">{{ date("D, M j", strtotime(@item.due_date)) }}</p>
+							<p class="list-group-item-text">
+								<span class="has-tooltip" data-placement="left" title="Due Date">{{ date("D, M j", strtotime(@item.due_date)) }}</span>
+							</p>
 						</check>
 					</a>
 				</repeat>
