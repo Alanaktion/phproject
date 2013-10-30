@@ -101,8 +101,10 @@ $f3->route("GET /issues/new/@type", function($f3) {
 $f3->route("POST /issues/save", function($f3) {
 	if($f3->get("user.id") && $f3->get("POST.name")) {
 		$issue = new Model\Issue();
-		$issue->name = $f3->get("POST.name");
+		$issue->author_id = $f3->get("user.id");
 		$issue->type_id = $f3->get("POST.type_id");
+		$issue->created_date = date("Y-m-d H:i:s");
+		$issue->name = $f3->get("POST.name");
 		$issue->description = $f3->get("POST.description");
 		$issue->owner_id = $f3->get("POST.owner_id");
 		$issue->due_date = date("Y-m-d", strtotime($f3->get("POST.due_date")));
