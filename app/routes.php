@@ -92,9 +92,26 @@ $f3->route("GET /issues/new/@type", function($f3) {
 
 		$f3->set("type", $type->cast());
 
-		echo Template::instance()->render("issues/new.html");
+		echo Template::instance()->render("issues/edit.html");
 	} else {
 		$f3->error(403, "Authentication Required");
+	}
+});
+
+$f3->route("POST /issues/new", function($f3) {
+	if($f3->get("user.id") && $f3->get("POST.title")) {
+		$issue = new Model\Issue();
+		$issue->title = $f3->get("POST.title");
+		$issue->description = $f3->get("POST.description");
+		$issue->owner_id = $f3->get("POST.owner_id");
+		$issue->due_date = date("Y-m-d", strtotime($f3->get("POST.due_date")));
+		$issue->parent_id = $f3->get("POST.parent_id");
+		$issue->save();
+		if($issue->id) {
+			$f3->reroute("/issues/" . $issue->id);
+		} else {
+			$f3->error(500, "An error occurred saving the issue.");
+		}
 	}
 });
 
