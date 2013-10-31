@@ -30,7 +30,7 @@
 							<optgroup label="Me">
 								<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
 							</optgroup>
-							<optgroup label="Others">
+							<optgroup label="Everyone">
 								<repeat group="{{ @users.subset }}" value="{{ @item }}">
 									<option value="{{ @item.id }}">{{ @item.name }}</option>
 								</repeat>
