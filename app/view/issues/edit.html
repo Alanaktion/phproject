@@ -27,10 +27,14 @@
 					<label for="inputEmail1" class="col-lg-2 control-label">Assigned To</label>
 					<div class="col-lg-10">
 						<select class="form-control" name="owner_id">
-							<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
-							<repeat group="{{ @users.subset }}" value="{{ @item }}">
-								<option value="{{ @item.id }}">{{ @item.name }}</option>
-							</repeat>
+							<optgroup label="Me">
+								<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
+							</optgroup>
+							<optgroup label="Others">
+								<repeat group="{{ @users.subset }}" value="{{ @item }}">
+									<option value="{{ @item.id }}">{{ @item.name }}</option>
+								</repeat>
+							</optgroup>
 						</select>
 					</div>
 				</div>
