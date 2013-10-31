@@ -92,6 +92,9 @@ $f3->route("GET /issues/new/@type", function($f3) {
 			return;
 		}
 
+		$users = new Model\User();
+		$f3->set("users", $users->paginate(0, 1000, null, array("order" => "name ASC")));
+
 		$f3->set("title", "New " . $type->name);
 		$f3->set("type", $type->cast());
 
