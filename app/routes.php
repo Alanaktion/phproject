@@ -92,6 +92,7 @@ $f3->route("GET /issues/new/@type", function($f3) {
 			return;
 		}
 
+		$f3->set("title", "New " . $type->name);
 		$f3->set("type", $type->cast());
 
 		echo Template::instance()->render("issues/edit.html");
@@ -129,6 +130,8 @@ $f3->route("GET /issues/@id", function($f3) {
 			$f3->error(404);
 			return;
 		}
+
+		$f3->set("title", $issue->name);
 
 		$author = new Model\User();
 		$author->load(array("id=?", $issue->author_id));
