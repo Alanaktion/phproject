@@ -70,6 +70,8 @@ $f3->route("GET /login", function($f3) {
 
 $f3->route("GET /issues", function($f3, $args) {
 	if($f3->get("user.id") || $f3->get("site.public")) {
+		$issues = new DB\SQL\Mapper($f3->get("db.instance"), "issues_user_data");
+		$f3->set("issues", $issues->paginate(0, 50));
 		echo Template::instance()->render("issues.html");
 	} else {
 		$f3->error(403, "Authentication Required");

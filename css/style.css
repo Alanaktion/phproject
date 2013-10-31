@@ -37,3 +37,14 @@ textarea {
 	resize: vertical;
 	min-height: 3em;
 }
+
+.jumbotron.failwhale {
+	background: #ecf0f1 url(/img/failwave-flatly.png) center bottom repeat-x;
+	padding-bottom: 80px;
+}
+
+.jumbotron.failwhale img {
+	float: right;
+	height: 140px;
+	width: auto;
+}
