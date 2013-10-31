@@ -5,7 +5,14 @@
 </head>
 <body>
 <div class="container">
-	<include href="blocks/navbar.html" />
+	<check if="{{ empty(@user) }}">
+		<true>
+			<include href="blocks/navbar-public.html" />
+		</true>
+		<false>
+			<include href="blocks/navbar.html" />
+		</false>
+	</check>
 	<div class="jumbotron failwhale">
 		<img src="/img/failwhale-flatly.png" alt>
 		<h1><strong>{{ @ERROR.code }}</strong> Not Found</h1>
