@@ -11,6 +11,9 @@ $f3->mset(array(
 // Load local configuration
 $f3->config("config.ini");
 
+// Set session lifetime
+session_set_cookie_params($f3->get("session.timeout"));
+
 // Set up error handling
 $f3->set("ONERROR", function($f3) {
 	switch($f3->get("ERROR.code")) {

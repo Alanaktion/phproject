@@ -17,6 +17,7 @@
 					<check if="{{ strtotime(@issue.due_date) }}">
 						<p><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
 					</check>
+					<p>{{ @issue.description }}</p>
 				</div>
 			</div>
 		</div>
