@@ -2,11 +2,11 @@
 
 namespace Helper;
 
-class Security {
+class Security extends \Prefab {
 	
 	// bcrypt require PHP 5.4 or later
-	public static function bcrypt($string, $work = 13) {
-		$salt = strtr(self::base64_salt(22), "+", ".");
+	public function bcrypt($string, $work = 13) {
+		$salt = strtr($this->base64_salt(22), "+", ".");
 		$salt = sprintf("$2y$%s$%s", $work, $salt);
 		$hash = crypt($string, $salt);
 		if(strlen($hash) > 13) {
@@ -16,16 +16,16 @@ class Security {
 		}
 	}
 
-	public static function bcrypt_verify($hash, $string) {
+	public function bcrypt_verify($hash, $string) {
 		return (crypt($string,$hash) === $hash);
 	}
 
-	public static function rot13($string) {
+	public function rot13($string) {
 		return str_rot13($string);
 	}
 
 	// rot13 for hexadecimal
-	public static function rot8($hex) {
+	public function rot8($hex) {
 		return strtr(
 			strtolower($hex),
 			array(
@@ -49,7 +49,7 @@ class Security {
 		);
 	}
 
-	public static function rand_bytes($length = 16) {
+	public function rand_bytes($length = 16) {
 
 		// Use OpenSSL cryptography extension if available
 		if(function_exists('openssl_random_pseudo_bytes')) {
@@ -71,7 +71,7 @@ class Security {
 		return (binary)$rnd;
 	}
 
-	private static function base64_salt($length = 22) {
+	private function base64_salt($length = 22) {
 		$character_list = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/";
 		$salt = "";
 		for($i = 0; $i < $length; $i++) {

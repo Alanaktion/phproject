@@ -22,7 +22,8 @@ class User extends Base {
 		if($this->dry() || empty($this->password)) {
 			return false;
 		}
-		return \Helper\Security::bcrypt_verify($this->password, $password);
+		$security = \Helper\Security::instance();
+		return $security->bcrypt_verify($this->password, $password);
 	}
 
 }
