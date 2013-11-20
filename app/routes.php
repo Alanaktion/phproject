@@ -132,6 +132,32 @@ $f3->route("GET /issues/new/@type", function($f3) {
 	}
 });
 
+$f3->route("GET /issues/edit/@id", function($f3) {
+	if($f3->get("user.id")) {
+		$issue = new Model\Issue();
+		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+
+		if(!$issue->id) {
+			$f3->error(404, "Issue does not exist");
+			return;
+		}
+
+		$type = new Model\Issue\Type();
+		$type->load(array("id=?", $issue->type_id));
+
+		$users = new Model\User();
+		$f3->set("users", $users->paginate(0, 1000, null, array("order" => "name ASC")));
+
+		$f3->set("title", "Edit #" . $issue->id);
+		$f3->set("issue", $issue->cast());
+		$f3->set("type", $type->cast());
+
+		echo Template::instance()->render("issues/edit.html");
+	} else {
+		$f3->error(403, "Authentication Required");
+	}
+});
+
 $f3->route("POST /issues/save", function($f3) {
 	if($f3->get("user.id") && $f3->get("POST.name")) {
 		$issue = new Model\Issue();
