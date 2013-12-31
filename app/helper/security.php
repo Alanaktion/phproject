@@ -3,7 +3,7 @@
 namespace Helper;
 
 class Security extends \Prefab {
-	
+
 	// bcrypt require PHP 5.4 or later
 	public function bcrypt($string, $work = 13) {
 		$salt = strtr($this->base64_salt(22), "+", ".");
@@ -75,7 +75,7 @@ class Security extends \Prefab {
 		$character_list = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/";
 		$salt = "";
 		for($i = 0; $i < $length; $i++) {
-			$salt.= $character_list{mt_rand(0, (strlen($character_list) -1))};
+			$salt .= $character_list{mt_rand(0, (strlen($character_list) -1))};
 		}
 		return $salt;
 	}
