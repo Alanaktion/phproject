@@ -30,9 +30,9 @@ class Index extends Base {
 				)
 			));
 
-			echo \Template::instance()->render("dashboard.html");
+			echo \Template::instance()->render("user/dashboard.html");
 		} else {
-			echo \Template::instance()->render("index.html");
+			echo \Template::instance()->render("index/index.html");
 		}
 	}
 
@@ -40,7 +40,7 @@ class Index extends Base {
 		if($f3->get("user.id")) {
 			$f3->reroute("/");
 		} else {
-			echo \Template::instance()->render("login.html");
+			echo \Template::instance()->render("index/login.html");
 		}
 	}
 
@@ -53,7 +53,7 @@ class Index extends Base {
 			$f3->reroute("/");
 		} else {
 			$f3->set("login.error", "Invalid login information, try again.");
-			echo \Template::instance()->render("login.html");
+			echo \Template::instance()->render("index/login.html");
 		}
 	}
 

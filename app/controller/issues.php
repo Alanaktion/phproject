@@ -36,7 +36,7 @@ class Issues extends Base {
 			}
 
 			$f3->set("issues", $issues->paginate(0, 50, $filter_str));
-			echo \Template::instance()->render("issues.html");
+			echo \Template::instance()->render("issues/index.html");
 		} else {
 			$f3->error(403, "Authentication Required");
 		}
@@ -134,7 +134,7 @@ class Issues extends Base {
 			$f3->set("issue", $issue->cast());
 			$f3->set("author", $author->cast());
 
-			echo \Template::instance()->render("issue.html");
+			echo \Template::instance()->render("issues/single.html");
 		} else {
 			$f3->error(403, "Authentication Required");
 		}
