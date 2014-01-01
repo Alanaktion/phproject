@@ -14,6 +14,9 @@ body.has-fixed-nav {
 	}
 }
 
+.js{display: block;}
+.nojs{display: none;}
+
 legend, label {
 	font-weight: 300;
 }
@@ -51,4 +54,12 @@ textarea {
 
 .nav-tabs {
 	margin-bottom: 15px;
+}
+
+.img-border {
+	box-shadow: 0 0 1px rgba(0, 0, 0, 0.4) inset;
+}
+
+.profile-picture {
+	background-color: #ecf0f1;
 }
