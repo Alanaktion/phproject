@@ -4,7 +4,7 @@ namespace Helper;
 
 class Security extends \Prefab {
 
-	// bcrypt require PHP 5.4 or later
+	// bcrypt is bundled with PHP 5.4 or later by default
 	public function bcrypt($string, $work = 13) {
 		$salt = strtr($this->base64_salt(22), "+", ".");
 		$salt = sprintf("$2y$%s$%s", $work, $salt);
@@ -29,22 +29,22 @@ class Security extends \Prefab {
 		return strtr(
 			strtolower($hex),
 			array(
-				'0'=>'8',
-				'1'=>'9',
-				'2'=>'a',
-				'3'=>'b',
-				'4'=>'c',
-				'5'=>'d',
-				'6'=>'e',
-				'7'=>'f',
-				'8'=>'0',
-				'9'=>'1',
-				'a'=>'2',
-				'b'=>'3',
-				'c'=>'4',
-				'd'=>'5',
-				'e'=>'6',
-				'f'=>'7'
+				"0"=>"8",
+				"1"=>"9",
+				"2"=>"a",
+				"3"=>"b",
+				"4"=>"c",
+				"5"=>"d",
+				"6"=>"e",
+				"7"=>"f",
+				"8"=>"0",
+				"9"=>"1",
+				"a"=>"2",
+				"b"=>"3",
+				"c"=>"4",
+				"d"=>"5",
+				"e"=>"6",
+				"f"=>"7"
 			)
 		);
 	}
@@ -52,7 +52,7 @@ class Security extends \Prefab {
 	public function rand_bytes($length = 16) {
 
 		// Use OpenSSL cryptography extension if available
-		if(function_exists('openssl_random_pseudo_bytes')) {
+		if(function_exists("openssl_random_pseudo_bytes")) {
 			$strong = false;
 			$rnd = openssl_random_pseudo_bytes($length, $strong);
 			if($strong === true) {
@@ -63,7 +63,7 @@ class Security extends \Prefab {
 		// Use SHA256 of mt_rand if OpenSSL is not available
 		$rnd = "";
 		for($i = 0; $i < $length; $i++) {
-			$sha = hash('sha256', mt_rand());
+			$sha = hash("sha256", mt_rand());
 			$char = mt_rand(0, 30);
 			$rnd .= chr(hexdec($sha[$char] . $sha[$char + 1]));
 		}
@@ -75,7 +75,7 @@ class Security extends \Prefab {
 		$character_list = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/";
 		$salt = "";
 		for($i = 0; $i < $length; $i++) {
-			$salt .= $character_list{mt_rand(0, (strlen($character_list) -1))};
+			$salt .= $character_list{mt_rand(0, (strlen($character_list) - 1))};
 		}
 		return $salt;
 	}
