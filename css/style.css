@@ -57,7 +57,13 @@ textarea {
 }
 
 .img-border {
-	box-shadow: 0 0 1px rgba(0, 0, 0, 0.4) inset;
+	box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.12) inset;
+	transition: box-shadow 0.15s ease-in-out 0s;
+}
+a:hover .img-border,
+a:focus .img-border,
+a:active .img-border {
+	box-shadow: 0px 0px 0px 2px #1ABC9C inset;
 }
 
 .profile-picture {

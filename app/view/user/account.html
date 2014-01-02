@@ -8,15 +8,13 @@
 	<include href="blocks/navbar.html" />
 	<div class="row">
 		<div class="col-md-12">
-			<p class="alert alert-error hide">Please verify your current password and make sure the new password is at least 6 characters.</p>
-			<p class="alert alert-success hide">Your password has been changed!</p>
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
 				<li><a href="#password" data-toggle="tab">Password</a></li>
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane active" id="profile">
-					<form class="form-horizontal" role="form" action="/user/account/#profile" method="post">
+					<form class="form-horizontal" role="form" action="/user/account/" method="post">
 						<div class="form-group">
 							<label for="opass" class="col-sm-2 control-label">Name</label>
 							<div class="col-sm-10">
@@ -32,7 +30,7 @@
 						<div class="form-group">
 							<label for="npass" class="col-sm-2 control-label">Task Color</label>
 							<div class="col-sm-4">
-								<input class="form-control" id="color" name="email" type="color" value="" maxlength="7">
+								<input class="form-control" id="color" name="color" type="color" value="" maxlength="7">
 							</div>
 						</div>
 						<div class="form-group">
@@ -46,14 +44,14 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Avatar</label>
 							<div class="col-sm-10">
-								<p><a href="http://www.gravatar.com/" target="_blank"><img src="http://www.gravatar.com/avatar/{{ md5(strtolower(@user.email)) }}?s=96" class="img-rounded img-border profile-picture" alt="Gravatar"></a></p>
-								<p class="help-block"><a href="http://www.gravatar.com/" target="_blank">Edit on Gravatar</a></p>
+								<p><a href="https://www.gravatar.com/emails/" target="_blank"><img src="http://www.gravatar.com/avatar/{{ md5(strtolower(@user.email)) }}?s=96" class="img-rounded img-border profile-picture" alt="Gravatar"></a></p>
+								<p class="help-block"><a href="https://www.gravatar.com/emails/" target="_blank">Edit on Gravatar</a></p>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="tab-pane" id="password">
-					<form class="form-horizontal" role="form" action="/user/account/#password" method="post">
+					<form class="form-horizontal" role="form" action="/user/account/" method="post">
 						<div class="form-group">
 							<label for="opass" class="col-sm-2 control-label">Current Password</label>
 							<div class="col-sm-10">

@@ -58,3 +58,17 @@
 	<a class="navbar-brand" href="/">{{ @site.name }}</a>
 	<button type="button" class="btn btn-default navbar-btn navbar-right"><span class="glyphicon glyphicon-user"></span></button>
 </div>
+
+<!-- Alerts -->
+<check if="{{ !empty(@error) }}">
+	<p class="alert alert-danger alert-dismissable">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		{{ @error }}
+	</p>
+</check>
+<check if="{{ !empty(@success) }}">
+	<p class="alert alert-success alert-dismissable">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		{{ @success }}
+	</p>
+</check>
