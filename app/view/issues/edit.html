@@ -41,7 +41,7 @@
 				<div class="form-group">
 					<label for="inputEmail1" class="col-lg-2 control-label">Due Date</label>
 					<div class="col-lg-10">
-						<input class="form-control has-popover" type="text" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus" value="{{ empty(@issue) ? "" : @issue.due_date }}">
+						<input class="form-control" id="due_date" type="date" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus" value="{{ empty(@issue) ? "" : @issue.due_date }}">
 					</div>
 				</div>
 				<div class="form-group">
@@ -63,5 +63,12 @@
 	</div>
 	<include href="blocks/footer.html" />
 </div>
+<script type="text/javascript">
+$(function() {
+	if(!Modernizr.inputtypes.date) {
+		$('#due_date').popover();
+	}
+});
+</script>
 </body>
 </html>
