@@ -9,9 +9,9 @@
 			<ul class="dropdown-menu">
 				<li><a href="/issues/new/2">New Project</a></li>
 				<li class="divider"></li>
-				<li><a href="/issues/?type=2">All Projects</a></li>
-				<li><a href="/issues/?type=2&amp;owner={{ @user.id }}">My Projects</a></li>
-				<li><a href="/issues/?type=2&amp;owner=">Unassigned Projects</a></li>
+				<li><a href="/issues?type=2">All Projects</a></li>
+				<li><a href="/issues?type=2&amp;owner={{ @user.id }}">My Projects</a></li>
+				<li><a href="/issues?type=2&amp;owner=">Unassigned Projects</a></li>
 			</ul>
 		</li>
 		<li class="dropdown">
@@ -21,9 +21,9 @@
 			<ul class="dropdown-menu">
 				<li><a href="/issues/new/1">New Task</a></li>
 				<li class="divider"></li>
-				<li><a href="/issues/?type=1">All Tasks</a></li>
-				<li><a href="/issues/?type=1&amp;owner={{ @user.id }}">My Tasks</a></li>
-				<li><a href="/issues/?type=1&amp;owner=">Unassigned Tasks</a></li>
+				<li><a href="/issues?type=1">All Tasks</a></li>
+				<li><a href="/issues?type=1&amp;owner={{ @user.id }}">My Tasks</a></li>
+				<li><a href="/issues?type=1&amp;owner=">Unassigned Tasks</a></li>
 			</ul>
 		</li>
 	</ul>
@@ -34,7 +34,7 @@
 					Administration <b class="caret"></b>
 				</a>
 				<ul class="dropdown-menu">
-					<li><a href="/admin/">Overview</a></li>
+					<li><a href="/admin">Overview</a></li>
 					<li><a href="/admin/users">Users</a></li>
 				</ul>
 			</li>
