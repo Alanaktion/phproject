@@ -72,21 +72,34 @@ class Basket {
 	}
 
 	/**
-	*	Return item that matches key/value pair
-	*	@return object|FALSE
+	*	Return items that match key/value pair
+	*	@return array|FALSE
 	*	@param $key string
 	*	@param $val mixed
 	**/
 	function find($key,$val) {
-		if (isset($_SESSION[$this->key]))
+		if (isset($_SESSION[$this->key])) {
+			$out=array();
 			foreach ($_SESSION[$this->key] as $id=>$item)
 				if (array_key_exists($key,$item) && $item[$key]==$val) {
 					$obj=clone($this);
 					$obj->id=$id;
 					$obj->item=$item;
-					return $obj;
+					$out[]=$obj;
 				}
+			return $out;
+		}
 		return FALSE;
+	}
+
+	/**
+	*	Return first item that matches key/value pair
+	*	@return object|FALSE
+	*	@param $key string
+	*	@param $val mixed
+	**/
+	function findone($key,$val) {
+		return ($data=$this->find($key,$val))?$data[0]:FALSE;
 	}
 
 	/**
@@ -97,8 +110,8 @@ class Basket {
 	**/
 	function load($key,$val) {
 		if ($found=$this->find($key,$val)) {
-			$this->id=$found->id;
-			return $this->item=$found->item;
+			$this->id=$found[0]->id;
+			return $this->item=$found[0]->item;
 		}
 		$this->reset();
 		return array();
@@ -126,9 +139,8 @@ class Basket {
 	**/
 	function save() {
 		if (!$this->id)
-			$this->id=uniqid();
+			$this->id=uniqid(NULL,TRUE);
 		$_SESSION[$this->key][$this->id]=$this->item;
-		session_commit();
 		return $this->item;
 	}
 
@@ -140,9 +152,8 @@ class Basket {
 	**/
 	function erase($key,$val) {
 		$found=$this->find($key,$val);
-		if ($found && $id=$found->id) {
+		if ($found && $id=$found[0]->id) {
 			unset($_SESSION[$this->key][$id]);
-			session_commit();
 			if ($id==$this->id)
 				$this->reset();
 			return TRUE;
@@ -165,7 +176,6 @@ class Basket {
 	**/
 	function drop() {
 		unset($_SESSION[$this->key]);
-		session_commit();
 	}
 
 	/**

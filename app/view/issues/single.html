@@ -61,21 +61,18 @@ $(function() {
 			$('#comment_form')
 					.prop('disabled', false)
 					.before(
-'<div class="comment clearfix">
-<img src="//gravatar.com/avatar/' + data.user_email_md5 + '" class="pull-left profile-picture" alt>
-<div class="pull-left">
-<p><strong><a href="/user/' + data.user_username + '">' + data.user_name + '</a></strong></p>
-<p>' + data.text + '</p>
-<p class="muted"><small>' + data.date_formatted + '</small></p>
-</div>
-</div>');
+'<div class="comment clearfix">' +
+'<img src="//gravatar.com/avatar/' + data.user_email_md5 + '" class="pull-left profile-picture" alt>' +
+'<div class="pull-left">' +
+'<p><strong><a href="/user/' + data.user_username + '">' + data.user_name + '</a></strong></p>' +
+'<p>' + data.text + '</p>' +
+'<p class="muted"><small>' + data.date_formatted + '</small></p>' +
+'</div>' +
+'</div>');
 			$('#comment_textarea').val('');
-		}, 'json')
-		.fail(function() {
-			alert("Failed to post comment.");
-		});
-		$this.prop('disabled', true);
+		}, 'json').prop('disabled', true);
 		e.preventDefault();
+		return false;
 	});
 
 	// Post comment if Ctrl+Enter or Shift+Enter are pressed
@@ -83,6 +80,7 @@ $(function() {
 		if(e.keyCode == 13 && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.shiftKey)))) {
 			$(this).parents('form').submit();
 			e.preventDefault();
+			return false;
 		}
 	});
 
