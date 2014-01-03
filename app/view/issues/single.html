@@ -20,7 +20,7 @@
 					<check if="{{ strtotime(@issue.due_date) }}">
 						<p><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
 					</check>
-					<p>{{ @issue.description }}</p>
+					<p>{{ nl2br(@issue.description) }}</p>
 					<hr>
 					<div class="well comments">
 						<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
@@ -28,7 +28,7 @@
 								<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="pull-left profile-picture img-rounded" alt>
 								<div class="pull-left">
 									<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
-									<p>{{ @comment.text }}</p>
+									<p>{{ nl2br(@comment.text) }}</p>
 									<p class="muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
 								</div>
 							</div>

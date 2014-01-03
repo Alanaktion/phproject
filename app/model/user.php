@@ -4,7 +4,7 @@ namespace Model;
 
 class User extends Base {
 
-	protected $_table_name = "users";
+	protected $_table_name = "user";
 
 	// Load currently logged in user, if any
 	public function loadCurrent() {

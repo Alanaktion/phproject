@@ -4,7 +4,7 @@ namespace Model;
 
 class Category extends Base {
 
-	protected $_table_name = "categories";
+	protected $_table_name = "category";
 
 }
 

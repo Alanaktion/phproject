@@ -7,7 +7,7 @@ class Issues extends Base {
 	public function index($f3, $params) {
 		$this->_requireLogin();
 
-		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issues_user_data", null, 3600);
+		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user", null, 3600);
 
 		// Filter issue listing by URL parameters
 		$filter = array();
@@ -138,7 +138,7 @@ class Issues extends Base {
 			$issue->name = $post["type_id"];
 			$issue->description = $post["type_id"];
 			$issue->owner_id = $post["owner_id"];
-			$issue->due_date = date("Y-m-d", strtotime($f3->get("POST.due_date")));
+			$issue->due_date = date("Y-m-d", strtotime($post["POST.due_date"]));
 			$issue->parent_id = $f3->get("POST.parent_id");
 			$issue->save();
 
@@ -199,7 +199,7 @@ class Issues extends Base {
 		$f3->set("issue", $issue->cast());
 		$f3->set("author", $author->cast());
 
-		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comments_user_data", null, 3600);
+		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
 		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
 
 		echo \Template::instance()->render("issues/single.html");

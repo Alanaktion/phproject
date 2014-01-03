@@ -4,7 +4,7 @@ namespace Model\Issue;
 
 class Update extends \Model\Base {
 
-	protected $_table_name = "issue_updates";
+	protected $_table_name = "issue_update";
 
 }
 
