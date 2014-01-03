@@ -8,11 +8,11 @@ $f3->mset(array(
 	"AUTOLOAD" => "app/"
 ));
 
-// Load local configuration
-$f3->config("config.ini");
-
 // Load routes
 $f3->config("app/routes.ini");
+
+// Load local configuration
+$f3->config("config.ini");
 
 // Set session lifetime
 session_set_cookie_params($f3->get("session.timeout"));
@@ -38,6 +38,9 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.user"),
 	$f3->get("db.pass")
 ));
+
+// Define global core functions
+require_once "app/functions.php";
 
 // Define routes (removing soon)
 require_once "app/routes.php";

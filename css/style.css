@@ -71,13 +71,23 @@ a:active .img-border {
 }
 
 .comment {
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 }
 .comment .profile-picture {
 	margin-right: 15px;
+	background-color: #fff;
+}
+.comments .comment p {
+	line-height: 20px;
+}
+.comments .comment p:last-child {
+	line-height: 16px;
 }
 .comments,
 .comments .comment p,
 .comments .form-group:last-child {
 	margin-bottom: 0;
+}
+.comments .comment p small {
+	font-size: 12px;
 }

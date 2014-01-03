@@ -8,9 +8,14 @@
 	<include href="blocks/navbar.html" />
 	<div class="row">
 		<div class="col-md-12">
-			<h3>{{ @this_user.name }}</h3>
-			<p>Username: {{ @this_user.username }}</p>
-			<p>Email: {{ @this_user.email }}</p>
+			<div class="pull-left" style="margin-right: 15px;">
+				<img src="{{ h(gravatar(@this_user.email, 128)) }}" class="img-rounded profile-picture" alt>
+			</div>
+			<div class="pull-left">
+				<h3>{{ @this_user.name }}</h3>
+				<p>Username: {{ @this_user.username }}</p>
+				<p>Email: {{ @this_user.email }}</p>
+			</div>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />

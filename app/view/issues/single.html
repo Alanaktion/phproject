@@ -22,7 +22,7 @@
 					<div class="well comments">
 						<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
 							<div class="comment clearfix">
-								<img src="//gravatar.com/avatar/{{ md5(strtolower(@comment.user_email)) }}?s=48" class="pull-left profile-picture" alt>
+								<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="pull-left profile-picture img-rounded" alt>
 								<div class="pull-left">
 									<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
 									<p>{{ @comment.text }}</p>
@@ -62,7 +62,7 @@ $(function() {
 					.prop('disabled', false)
 					.before(
 '<div class="comment clearfix">' +
-'<img src="//gravatar.com/avatar/' + data.user_email_md5 + '?s=48" class="pull-left profile-picture" alt>' +
+'<img src="//gravatar.com/avatar/' + data.user_email_md5 + '?s=48" class="pull-left profile-picture img-rounded" alt>' +
 '<div class="pull-left">' +
 '<p><strong><a href="/user/' + data.user_username + '">' + data.user_name + '</a></strong></p>' +
 '<p>' + data.text + '</p>' +
@@ -70,7 +70,7 @@ $(function() {
 '</div>' +
 '</div>');
 			$('#comment_textarea').val('');
-		}, 'json')
+		}, 'json');
 		$this.prop('disabled', true);
 		e.preventDefault();
 		return false;
