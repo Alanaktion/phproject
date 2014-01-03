@@ -39,7 +39,7 @@
 							</div>
 							<div class="form-group">
 								<div class="col-md-12 text-right">
-									<button type="submit" class="btn btn-primary btn-sm">Save Comment</button>
+									<button type="submit" onclick="$('#comment_form').submit();return false;" class="btn btn-primary btn-sm">Save Comment</button>
 								</div>
 							</div>
 						</form>
@@ -56,13 +56,13 @@ $(function() {
 	// AJAX comment submission
 	$('#comment_form').submit(function() {
 		var $this = $(this);
-		$.post($this.attr('action'), $this.serialize, function(data) {
+		$.post($this.attr('action'), $this.serialize(), function(data) {
 			// Append the new comment to the list
 			$('#comment_form')
 					.prop('disabled', false)
 					.before(
 '<div class="comment clearfix">' +
-'<img src="//gravatar.com/avatar/' + data.user_email_md5 + '" class="pull-left profile-picture" alt>' +
+'<img src="//gravatar.com/avatar/' + data.user_email_md5 + '?s=48" class="pull-left profile-picture" alt>' +
 '<div class="pull-left">' +
 '<p><strong><a href="/user/' + data.user_username + '">' + data.user_name + '</a></strong></p>' +
 '<p>' + data.text + '</p>' +
@@ -70,7 +70,8 @@ $(function() {
 '</div>' +
 '</div>');
 			$('#comment_textarea').val('');
-		}, 'json').prop('disabled', true);
+		}, 'json')
+		$this.prop('disabled', true);
 		e.preventDefault();
 		return false;
 	});
