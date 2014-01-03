@@ -1,6 +1,6 @@
 /*
-SQLyog Community v11.23 (64 bit)
-MySQL - 5.5.32 : Database - openproject
+SQLyog Community v11.3 (64 bit)
+MySQL - 5.5.16-log : Database - openproject
 *********************************************************************
 */
 
@@ -12,10 +12,6 @@ MySQL - 5.5.32 : Database - openproject
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`openproject` /*!40100 DEFAULT CHARACTER SET latin1 */;
-
-USE `openproject`;
-
 /*Table structure for table `categories` */
 
 DROP TABLE IF EXISTS `categories`;
@@ -28,6 +24,24 @@ CREATE TABLE `categories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `categories` */
+
+/*Table structure for table `issue_comments` */
+
+DROP TABLE IF EXISTS `issue_comments`;
+
+CREATE TABLE `issue_comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `issue_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `text` text NOT NULL,
+  `created_date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `issue_id` (`issue_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+/*Data for the table `issue_comments` */
+
+insert  into `issue_comments`(`id`,`issue_id`,`user_id`,`text`,`created_date`) values (1,4,1,'Holy crap a comment.','2014-01-02 15:24:55'),(2,4,1,'Testy','2014-01-03 00:42:54'),(3,4,1,'Sweet :D','2014-01-03 00:43:00');
 
 /*Table structure for table `issue_statuses` */
 
@@ -75,11 +89,11 @@ CREATE TABLE `issues` (
   `due_date` date DEFAULT NULL,
   `repeat_cycle` enum('none','daily','weekly','monthly') NOT NULL DEFAULT 'none',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 /*Data for the table `issues` */
 
-insert  into `issues`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`author_id`,`owner_id`,`created_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00','2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer description.',NULL,1,1,'2013-10-19 05:09:36','2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,2,1,'2013-10-19 05:09:38',NULL,'none'),(4,1,1,'Due date task','This task does have a due date, and it\'s in the past!',NULL,2,1,'2013-10-19 05:09:40','2013-10-15','none'),(5,1,1,'Test','Testing',0,0,1,'0000-00-00 00:00:00','1970-01-01','none');
+insert  into `issues`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`author_id`,`owner_id`,`created_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00','2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer description.',NULL,1,1,'2013-10-19 05:09:36','2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,2,1,'2013-10-19 05:09:38',NULL,'none'),(4,1,1,'Due date task','This task does have a due date, and it\'s in the past!',NULL,2,1,'2013-10-19 05:09:40','2013-10-15','none'),(5,1,1,'Test','Testing',0,0,1,'0000-00-00 00:00:00','1970-01-01','none'),(6,1,1,'Testing Other Assignee','Testy testy testy.',2,1,2,'2013-12-20 21:47:18','2013-12-23','none');
 
 /*Table structure for table `task_comments` */
 
@@ -106,12 +120,13 @@ CREATE TABLE `users` (
   `name` varchar(32) NOT NULL,
   `password` char(60) NOT NULL,
   `role` enum('user','admin') NOT NULL DEFAULT 'user',
+  `task_color` char(6) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 /*Data for the table `users` */
 
-insert  into `users`(`id`,`username`,`email`,`name`,`password`,`role`) values (1,'alan','alan@iconical.co','Alan Hardman','$2y$13$H4JVZ7VP.Rguh9n8ROF5ueGSs6iSpAm9SRSr5nVCyCs260fTFUA5e','admin'),(2,'shelf','shelf@localhost','Shelf Testy','$2y$13$TDAyoRKvtNyRo08/Ova4YOfCFlXgm7/qKLuw2mW7EHHefcrlRze92','user');
+insert  into `users`(`id`,`username`,`email`,`name`,`password`,`role`,`task_color`) values (1,'alan','ahardman@thrivelife.com','Alan Hardman','$2y$13$rTDxcLCsS/pZRIbLb6vW4.SP/qAn7y/QhWO8WfewsIyhrn9KMLJK2','admin','b5ed3f'),(2,'shelf','shelf@localhost','Shelf Testy','$2y$13$TDAyoRKvtNyRo08/Ova4YOfCFlXgm7/qKLuw2mW7EHHefcrlRze92','user','336699');
 
 /*Table structure for table `watchers` */
 
@@ -125,6 +140,26 @@ CREATE TABLE `watchers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `watchers` */
+
+/*Table structure for table `issue_comments_user_data` */
+
+DROP TABLE IF EXISTS `issue_comments_user_data`;
+
+/*!50001 DROP VIEW IF EXISTS `issue_comments_user_data` */;
+/*!50001 DROP TABLE IF EXISTS `issue_comments_user_data` */;
+
+/*!50001 CREATE TABLE  `issue_comments_user_data`(
+ `id` int(10) unsigned ,
+ `issue_id` int(10) unsigned ,
+ `user_id` int(10) unsigned ,
+ `text` text ,
+ `created_date` datetime ,
+ `user_username` varchar(32) ,
+ `user_email` varchar(64) ,
+ `user_name` varchar(32) ,
+ `user_role` enum('user','admin') ,
+ `user_task_color` char(6) 
+)*/;
 
 /*Table structure for table `issues_user_data` */
 
@@ -152,6 +187,13 @@ DROP TABLE IF EXISTS `issues_user_data`;
  `owner_name` varchar(32) ,
  `owner_email` varchar(64) 
 )*/;
+
+/*View structure for view issue_comments_user_data */
+
+/*!50001 DROP TABLE IF EXISTS `issue_comments_user_data` */;
+/*!50001 DROP VIEW IF EXISTS `issue_comments_user_data` */;
+
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `issue_comments_user_data` AS (select `c`.`id` AS `id`,`c`.`issue_id` AS `issue_id`,`c`.`user_id` AS `user_id`,`c`.`text` AS `text`,`c`.`created_date` AS `created_date`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`issue_comments` `c` join `users` `u` on((`c`.`user_id` = `u`.`id`)))) */;
 
 /*View structure for view issues_user_data */
 
