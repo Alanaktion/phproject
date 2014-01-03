@@ -91,3 +91,7 @@ a:active .img-border {
 .comments .comment p small {
 	font-size: 12px;
 }
+
+.panel-heading.has-buttons .panel-title {
+	line-height: 24px;
+}

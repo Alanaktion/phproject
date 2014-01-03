@@ -91,24 +91,63 @@ class Issues extends Base {
 	}
 
 	public function save($f3, $params) {
-		$this->_requireLogin();
+		$user_id = $this->_requireLogin();
 
-		if($f3->get("POST.name")) {
-			$issue = new \Model\Issue();
+		$post = array_map("trim", $f3->get("POST"));
+
+		$issue = new \Model\Issue();
+		if(!empty($post["id"])) {
+
+			// Updating existing issue.
+			$issue->load(array("id = ?", $post["id"]));
+			if($issue->id) {
+
+				$old = array();
+				$new = array();
+
+				// Diff contents and save what's changed.
+				foreach($post as $i=>$val) {
+					if($issue->$i != $val) {
+						$old[$i] = $issue->$i;
+						$new[$i] = $val;
+						$issue->$i = $val;
+					}
+				}
+				$issue->save();
+
+				// Log changes
+				$update = new \Model\Issue\Update();
+				$update->issue_id = $issue->id;
+				$update->user_id = $user_id;
+				$update->created_date = now();
+				$update->old_data = json_encode($old);
+				$update->new_data = json_encode($new);
+				$update->save();
+
+				$f3->reroute("/issues/" . $issue->id);
+			} else {
+				$f3->error(500, "An error occurred saving the issue.");
+			}
+
+		} elseif($f3->get("POST.name")) {
+
+			// Creating new issue.
 			$issue->author_id = $f3->get("user.id");
-			$issue->type_id = $f3->get("POST.type_id");
-			$issue->created_date = date("Y-m-d H:i:s");
-			$issue->name = $f3->get("POST.name");
-			$issue->description = $f3->get("POST.description");
-			$issue->owner_id = $f3->get("POST.owner_id");
+			$issue->type_id = $post["type_id"];
+			$issue->created_date = now();
+			$issue->name = $post["type_id"];
+			$issue->description = $post["type_id"];
+			$issue->owner_id = $post["owner_id"];
 			$issue->due_date = date("Y-m-d", strtotime($f3->get("POST.due_date")));
 			$issue->parent_id = $f3->get("POST.parent_id");
 			$issue->save();
+
 			if($issue->id) {
 				$f3->reroute("/issues/" . $issue->id);
 			} else {
 				$f3->error(500, "An error occurred saving the issue.");
 			}
+
 		}
 	}
 
