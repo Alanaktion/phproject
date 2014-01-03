@@ -1,9 +1,3 @@
-/*
-SQLyog Community v11.3 (64 bit)
-MySQL - 5.5.16-log : Database - openproject
-*********************************************************************
-*/
-
 /*!40101 SET NAMES utf8 */;
 
 /*!40101 SET SQL_MODE=''*/;
@@ -36,12 +30,15 @@ CREATE TABLE `issue_comments` (
   `text` text NOT NULL,
   `created_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `issue_id` (`issue_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+  KEY `issue_id` (`issue_id`),
+  KEY `user` (`user_id`),
+  CONSTRAINT `issue` FOREIGN KEY (`issue_id`) REFERENCES `issues` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `issues` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 /*Data for the table `issue_comments` */
 
-insert  into `issue_comments`(`id`,`issue_id`,`user_id`,`text`,`created_date`) values (1,4,1,'Holy crap a comment.','2014-01-02 15:24:55'),(2,4,1,'Testy','2014-01-03 00:42:54'),(3,4,1,'Sweet :D','2014-01-03 00:43:00');
+insert  into `issue_comments`(`id`,`issue_id`,`user_id`,`text`,`created_date`) values (1,4,1,'Holy crap a comment.','2014-01-02 15:24:55');
 
 /*Table structure for table `issue_statuses` */
 
@@ -72,6 +69,27 @@ CREATE TABLE `issue_types` (
 
 insert  into `issue_types`(`id`,`name`) values (1,'Task'),(2,'Project'),(3,'Bug');
 
+/*Table structure for table `issue_updates` */
+
+DROP TABLE IF EXISTS `issue_updates`;
+
+CREATE TABLE `issue_updates` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `issue_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `created_date` datetime NOT NULL,
+  `old_data` text NOT NULL,
+  `new_data` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `issue` (`issue_id`),
+  KEY `user` (`user_id`),
+  CONSTRAINT `update_issue` FOREIGN KEY (`issue_id`) REFERENCES `issues` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+/*Data for the table `issue_updates` */
+
+insert  into `issue_updates`(`id`,`issue_id`,`user_id`,`created_date`,`old_data`,`new_data`) values (1,4,1,'2014-01-03 23:12:40','{\"name\":\"Due date task\"}','{\"name\":\"Due date task edited\"}');
+
 /*Table structure for table `issues` */
 
 DROP TABLE IF EXISTS `issues`;
@@ -93,7 +111,7 @@ CREATE TABLE `issues` (
 
 /*Data for the table `issues` */
 
-insert  into `issues`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`author_id`,`owner_id`,`created_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00','2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer description.',NULL,1,1,'2013-10-19 05:09:36','2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,2,1,'2013-10-19 05:09:38',NULL,'none'),(4,1,1,'Due date task','This task does have a due date, and it\'s in the past!',NULL,2,1,'2013-10-19 05:09:40','2013-10-15','none'),(5,1,1,'Test','Testing',0,0,1,'0000-00-00 00:00:00','1970-01-01','none'),(6,1,1,'Testing Other Assignee','Testy testy testy.',2,1,2,'2013-12-20 21:47:18','2013-12-23','none');
+insert  into `issues`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`author_id`,`owner_id`,`created_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00','2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer description.',NULL,1,1,'2013-10-19 05:09:36','2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,2,1,'2013-10-19 05:09:38',NULL,'none'),(4,1,1,'Due date task edited','This task does have a due date, and it\'s in the past!',NULL,2,1,'2013-10-19 05:09:40','2013-10-15','none'),(5,1,1,'Test','Testing',0,0,1,'2013-10-23 14:43:55',NULL,'none'),(6,1,1,'Testing Other Assignee','Testy testy testy.',2,1,2,'2013-12-20 21:47:18','2013-12-23','none');
 
 /*Table structure for table `task_comments` */
 
@@ -158,7 +176,7 @@ DROP TABLE IF EXISTS `issue_comments_user_data`;
  `user_email` varchar(64) ,
  `user_name` varchar(32) ,
  `user_role` enum('user','admin') ,
- `user_task_color` char(6) 
+ `user_task_color` char(6)
 )*/;
 
 /*Table structure for table `issues_user_data` */
@@ -185,7 +203,7 @@ DROP TABLE IF EXISTS `issues_user_data`;
  `author_email` varchar(64) ,
  `owner_username` varchar(32) ,
  `owner_name` varchar(32) ,
- `owner_email` varchar(64) 
+ `owner_email` varchar(64)
 )*/;
 
 /*View structure for view issue_comments_user_data */
