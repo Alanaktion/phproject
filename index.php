@@ -5,6 +5,8 @@ $f3=require("lib/base.php");
 $f3->mset(array(
 	"UI" => "app/view/",
 	"LOGS" => "log/",
+	"TEMP" => "tmp/",
+	"CACHE" => "tmp/cache/",
 	"AUTOLOAD" => "app/"
 ));
 
@@ -41,9 +43,6 @@ $f3->set("db.instance", new DB\SQL(
 
 // Define global core functions
 require_once "app/functions.php";
-
-// Define routes (removing soon)
-require_once "app/routes.php";
 
 // Minify static resources
 // Cache for 3600s (1h)
