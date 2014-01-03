@@ -134,6 +134,20 @@ class Issues extends Base {
 					$comment->text = $post["text"];
 					$comment->created_date = date("Y-m-d H:i:s");
 					$comment->save();
+					if($f3->get("AJAX")) {
+						echo json_encode(
+							array(
+								"id" => $comment->id,
+								"text" => $comment->text,
+								"date_formatted" => date("D, M j, Y \\a\\t g:ia"),
+								"user_name" => $f3->get('user.name'),
+								"user_username" => $f3->get('user.username'),
+								"user_email" => $f3->get('user.email'),
+								"user_email_md5" => md5(strtolower($f3->get('user.email'))),
+							)
+						);
+						return;
+					}
 					break;
 			}
 		}
