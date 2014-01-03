@@ -18,11 +18,65 @@
 						<p><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
 					</check>
 					<p>{{ @issue.description }}</p>
+					<hr>
+					<div class="well comments">
+						<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
+							<div class="comment clearfix">
+								<img src="//gravatar.com/avatar/{{ md5(strtolower(@comment.user_email)) }}?s=48" class="pull-left profile-picture" alt>
+								<div class="pull-left">
+									<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
+									<p>{{ @comment.text }}</p>
+									<p class="muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
+								</div>
+							</div>
+						</repeat>
+						<form action="/issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
+							<input type="hidden" name="action" value="comment">
+							<div class="form-group">
+								<div class="col-md-12">
+									<textarea class="form-control" id="comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-12 text-right">
+									<button type="submit" class="btn btn-primary btn-sm">Save Comment</button>
+								</div>
+							</div>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />
 </div>
+<script type="text/javascript">
+$(function() {
+
+	// AJAX comment submission
+	$('#comment_form').submit(function() {
+		var $this = $(this);
+		$.post($this.attr('action'), $this.serialize,function(){
+			// TODO: finish this crap.
+			$('<div />').addClass('comment clearfix').append('');
+			$('#comment_form').prop('disabled', false).before(el);
+			$('#comment_textarea').val('');
+		}).fail(function() {
+			alert("Failed to post comment.");
+		});
+		$this.prop('disabled', true);
+		e.preventDefault();
+	});
+
+	// Post comment if Ctrl+Enter or Shift+Enter are pressed
+	$('body').on('keypress', 'textarea', (function(e) {
+		if(e.keyCode == 13 && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.shiftKey)))) {
+			$(this).parents('form').submit();
+			e.preventDefault();
+		}
+	}));
+
+});
+</script>
 </body>
 </html>

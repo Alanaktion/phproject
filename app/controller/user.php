@@ -57,6 +57,11 @@ class User extends Base {
 			} else {
 				$error = "Please enter a valid email address.";
 			}
+			if(empty($error) && ctype_xdigit(ltrim($post["task_color"], "#"))) {
+				$user->task_color = ltrim($post["task_color"], "#");
+			} else {
+				$error = "Please enter a valid 6-hexit color code.";
+			}
 
 			if(empty($error)) {
 				$f3->set("success", "Profile updated successfully.");

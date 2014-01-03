@@ -69,3 +69,15 @@ a:active .img-border {
 .profile-picture {
 	background-color: #ecf0f1;
 }
+
+.comment {
+	margin-bottom: 10px;
+}
+.comment .profile-picture {
+	margin-right: 15px;
+}
+.comments,
+.comments .comment p,
+.comments .form-group:last-child {
+	margin-bottom: 0;
+}

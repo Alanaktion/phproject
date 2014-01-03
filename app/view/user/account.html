@@ -14,7 +14,7 @@
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane active" id="profile">
-					<form class="form-horizontal" role="form" action="/user/account/" method="post">
+					<form class="form-horizontal" role="form" action="/user/account" method="post">
 						<div class="form-group">
 							<label for="opass" class="col-sm-2 control-label">Name</label>
 							<div class="col-sm-10">
@@ -29,8 +29,8 @@
 						</div>
 						<div class="form-group">
 							<label for="npass" class="col-sm-2 control-label">Task Color</label>
-							<div class="col-sm-4">
-								<input class="form-control" id="color" name="color" type="color" value="" maxlength="7">
+							<div class="col-sm-4 col-md-2 col-lg-2">
+								<input class="form-control" id="color" name="task_color" type="color" value="#{{ @user.task_color }}" maxlength="7">
 							</div>
 						</div>
 						<div class="form-group">
@@ -51,7 +51,7 @@
 					</div>
 				</div>
 				<div class="tab-pane" id="password">
-					<form class="form-horizontal" role="form" action="/user/account/" method="post">
+					<form class="form-horizontal" role="form" action="/user/account" method="post">
 						<div class="form-group">
 							<label for="opass" class="col-sm-2 control-label">Current Password</label>
 							<div class="col-sm-10">

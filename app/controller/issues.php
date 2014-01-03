@@ -7,7 +7,7 @@ class Issues extends Base {
 	public function index($f3, $params) {
 		$this->_requireLogin();
 
-		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issues_user_data");
+		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issues_user_data", null, 3600);
 
 		// Filter issue listing by URL parameters
 		$filter = array();
@@ -113,7 +113,7 @@ class Issues extends Base {
 	}
 
 	public function single($f3, $params) {
-		$this->_requireLogin();
+		$user_id = $this->_requireLogin();
 
 		$issue = new \Model\Issue();
 		$issue->load(array("id=?", $f3->get("PARAMS.id")));
@@ -123,6 +123,21 @@ class Issues extends Base {
 			return;
 		}
 
+		// Run actions if passed
+		$post = $f3->get("POST");
+		if(!empty($post)) {
+			switch($post["action"]) {
+				case "comment":
+					$comment = new \Model\Issue\Comment();
+					$comment->user_id = $user_id;
+					$comment->issue_id = $issue->id;
+					$comment->text = $post["text"];
+					$comment->created_date = date("Y-m-d H:i:s");
+					$comment->save();
+					break;
+			}
+		}
+
 		$f3->set("title", $issue->name);
 
 		$author = new \Model\User();
@@ -130,6 +145,9 @@ class Issues extends Base {
 
 		$f3->set("issue", $issue->cast());
 		$f3->set("author", $author->cast());
+
+		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comments_user_data", null, 3600);
+		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
 
 		echo \Template::instance()->render("issues/single.html");
 	}
