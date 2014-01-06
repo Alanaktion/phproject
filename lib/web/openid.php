@@ -135,10 +135,8 @@ class OpenID extends \Magic {
 	*	or redirect to OpenID provider URL
 	*	@return bool
 	*	@param $proxy string
-	*	@param $attr array
-	*	@param $reqd string|array
 	**/
-	function auth($proxy=NULL,$attr=array(),array $reqd=NULL) {
+	function auth($proxy=NULL) {
 		$fw=\Base::instance();
 		$root=$fw->get('SCHEME').'://'.$fw->get('HOST');
 		if (empty($this->args['trust_root']))
@@ -147,14 +145,6 @@ class OpenID extends \Magic {
 			$this->args['return_to']=$root.$_SERVER['REQUEST_URI'];
 		$this->args['mode']='checkid_setup';
 		if ($this->url=$this->discover($proxy)) {
-			if ($attr) {
-				$this->args['ns.ax']='http://openid.net/srv/ax/1.0';
-				$this->args['ax.mode']='fetch_request';
-				foreach ($attr as $key=>$val)
-					$this->args['ax.type.'.$key]=$val;
-				$this->args['ax.required']=is_string($reqd)?
-					$reqd:implode(',',$reqd);
-			}
 			$var=array();
 			foreach ($this->args as $key=>$val)
 				$var['openid.'.$key]=$val;
@@ -187,17 +177,9 @@ class OpenID extends \Magic {
 					'proxy'=>$proxy
 				)
 			);
-			return (bool)preg_match('/is_valid:true/i',$req['body']);
+			return preg_match('/is_valid:true/i',$req['body']);
 		}
 		return FALSE;
-	}
-
-	/**
-	*	Return OpenID response fields
-	*	@return array
-	**/
-	function response() {
-		return $this->args;
 	}
 
 	/**
@@ -238,4 +220,3 @@ class OpenID extends \Magic {
 	}
 
 }
-

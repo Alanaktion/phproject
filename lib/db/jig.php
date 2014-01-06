@@ -25,8 +25,6 @@ class Jig {
 	//@}
 
 	protected
-		//! UUID
-		$uuid,
 		//! Storage location
 		$dir,
 		//! Current storage format
@@ -71,23 +69,8 @@ class Jig {
 				$out=$fw->serialize($data);
 				break;
 		}
-		return $fw->write($this->dir.$file,$out);
-	}
-
-	/**
-	*	Return directory
-	*	@return string
-	**/
-	function dir() {
-		return $this->dir;
-	}
-
-	/**
-	*	Return UUID
-	*	@return string
-	**/
-	function uuid() {
-		return $this->uuid;
+		$out=$fw->write($this->dir.$file,$out);
+		return $out;
 	}
 
 	/**
@@ -126,7 +109,7 @@ class Jig {
 	function __construct($dir,$format=self::FORMAT_JSON) {
 		if (!is_dir($dir))
 			mkdir($dir,\Base::MODE,TRUE);
-		$this->uuid=\Base::instance()->hash($this->dir=$dir);
+		$this->dir=$dir;
 		$this->format=$format;
 	}
 

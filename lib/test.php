@@ -37,7 +37,7 @@ class Test {
 
 	/**
 	*	Evaluate condition and save test result
-	*	@return object
+	*	@return NULL
 	*	@param $cond bool
 	*	@param $text string
 	**/
@@ -55,7 +55,6 @@ class Test {
 				}
 			$this->data[]=$data;
 		}
-		return $this;
 	}
 
 	/**

@@ -192,7 +192,7 @@ class SMTP extends Magic {
 		$this->dialog('DATA',TRUE);
 		if ($this->attachments) {
 			// Replace Content-Type
-			$hash=uniqid(NULL,TRUE);
+			$hash=uniqid();
 			$type=$headers['Content-Type'];
 			$headers['Content-Type']='multipart/mixed; '.
 				'boundary="'.$hash.'"';
