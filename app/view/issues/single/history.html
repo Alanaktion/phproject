@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body class="dashboard">
+<div class="container">
+	<include href="blocks/navbar.html" />
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="panel panel-default">
+				<div class="panel-heading has-buttons clearfix">
+					<h3 class="panel-title pull-left"><a href="/issues/{{ @issue.id }}">{{ @issue.name }} <small>#{{ @issue.id }}</small></a></h3>
+					<div class="pull-right">
+						<a href="/issues/{{ @issue.id }}" class="btn btn-default btn-xs">&larr;&ensp;Back</a>
+					</div>
+				</div>
+				<div class="panel-body">
+					<repeat group="{{ @updates }}" value="{{ @update }}">
+						<div class="update clearfix">
+							<img src="{{ h(gravatar(@update.user_email, 48)) }}" class="pull-left profile-picture img-rounded" alt>
+							<div class="pull-left">
+								<p><strong><a href="/user/{{ @update.user_username }}">{{ @update.user_name }}</a></strong></p>
+								<p>{{ @update.text }}</p>
+								<p class="muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</small></p>
+							</div>
+						</div>
+					</repeat>
+				</div>
+			</div>
+		</div>
+	</div>
+	<include href="blocks/footer.html" />
+</div>
+</body>
+</html>

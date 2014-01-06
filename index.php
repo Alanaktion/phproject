@@ -13,6 +13,9 @@ $f3->mset(array(
 // Load routes
 $f3->config("app/routes.ini");
 
+// Load base configuration
+$f3->config("config-base.ini");
+
 // Load local configuration
 $f3->config("config.ini");
 

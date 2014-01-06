@@ -12,6 +12,7 @@
 				<div class="panel-heading has-buttons clearfix">
 					<h3 class="panel-title pull-left">{{ @issue.name }} <small>#{{ @issue.id }}</small></h3>
 					<div class="pull-right">
+						<a href="/issues/{{ @issue.id }}/history/" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-time"></span>&ensp;History</a>
 						<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span>&ensp;Edit</a>
 					</div>
 				</div>
@@ -20,7 +21,7 @@
 					<check if="{{ strtotime(@issue.due_date) }}">
 						<p><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
 					</check>
-					<p>{{ nl2br(@issue.description) }}</p>
+					<p>{{ @issue.description }}</p>
 					<hr>
 					<div class="well comments">
 						<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
@@ -28,7 +29,7 @@
 								<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="pull-left profile-picture img-rounded" alt>
 								<div class="pull-left">
 									<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
-									<p>{{ nl2br(@comment.text) }}</p>
+									<p>{{ @comment.text }}</p>
 									<p class="muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
 								</div>
 							</div>

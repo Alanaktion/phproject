@@ -204,4 +204,34 @@ class Issues extends Base {
 		echo \Template::instance()->render("issues/single.html");
 	}
 
+	public function single_history($f3, $params) {
+		$user_id = $this->_requireLogin();
+
+		$issue = new \Model\Issue();
+		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+
+		// Build updates array
+		$updates_array = array();
+		$update_model = new \Model\Issue\Update();
+		$updates = $update_model->paginate(0, 100, array("issue_id = ?", $issue->id), array("order" => "created_date ASC"));
+		foreach($updates["subset"] as $update) {
+			$update_field_model = new \Model\Issue\Update\Field();
+			$update_field_result = $update_field_model->paginate(0, 100, array("issue_update_id = ?", $update["id"]));
+			$update_array = $update->cast();
+			$update_array["text"] = "lol";
+			$updates_array[] = $update_array;
+		}
+
+		$f3->set("title", "Issue History #" . $issue->id);
+		$f3->set("issue", $issue->cast());
+		$f3->set("updates", $updates_array);
+
+		echo \Template::instance()->render("issues/single/history.html");
+	}
+
 }
