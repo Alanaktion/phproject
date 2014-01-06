@@ -134,8 +134,8 @@ class Issues extends Base {
 			$issue->author_id = $f3->get("user.id");
 			$issue->type_id = $post["type_id"];
 			$issue->created_date = now();
-			$issue->name = $post["type_id"];
-			$issue->description = $post["type_id"];
+			$issue->name = $post["name"];
+			$issue->description = $post["description"];
 			$issue->owner_id = $post["owner_id"];
 			$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
 			$issue->parent_id = $post["parent_id"];
