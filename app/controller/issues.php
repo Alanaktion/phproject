@@ -102,31 +102,30 @@ class Issues extends Base {
 			$issue->load(array("id = ?", $post["id"]));
 			if($issue->id) {
 
-				$old = array();
-				$new = array();
-
-				// Diff contents and save what's changed.
-				foreach($post as $i=>$val) {
-					if($issue->$i != $val) {
-						$old[$i] = $issue->$i;
-						$new[$i] = $val;
-						$issue->$i = $val;
-					}
-				}
-				$issue->save();
-
 				// Log changes
 				$update = new \Model\Issue\Update();
 				$update->issue_id = $issue->id;
 				$update->user_id = $user_id;
 				$update->created_date = now();
-				$update->old_data = json_encode($old);
-				$update->new_data = json_encode($new);
 				$update->save();
 
+				// Diff contents and save what's changed.
+				foreach($post as $i=>$val) {
+					if($issue->$i != $val) {
+						$update_field = new \Model\Issue\Update\Field();
+						$update_field->issue_update_id = $update->id;
+						$update_field->field = $i;
+						$update_field->old_value = $issue->$i;
+						$update_field->new_value = $val;
+						$update_field->save();
+						$issue->$i = $val;
+					}
+				}
+
+				$issue->save();
 				$f3->reroute("/issues/" . $issue->id);
 			} else {
-				$f3->error(500, "An error occurred saving the issue.");
+				$f3->error(404, "This issue does not exist.");
 			}
 
 		} elseif($f3->get("POST.name")) {
@@ -138,8 +137,8 @@ class Issues extends Base {
 			$issue->name = $post["type_id"];
 			$issue->description = $post["type_id"];
 			$issue->owner_id = $post["owner_id"];
-			$issue->due_date = date("Y-m-d", strtotime($post["POST.due_date"]));
-			$issue->parent_id = $f3->get("POST.parent_id");
+			$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
+			$issue->parent_id = $post["parent_id"];
 			$issue->save();
 
 			if($issue->id) {

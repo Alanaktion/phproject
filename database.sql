@@ -1,9 +1,3 @@
-/*
-SQLyog Community v11.3 (64 bit)
-MySQL - 5.5.16-log : Database - openproject
-*********************************************************************
-*/
-
 /*!40101 SET NAMES utf8 */;
 
 /*!40101 SET SQL_MODE=''*/;
@@ -44,11 +38,11 @@ CREATE TABLE `issue` (
   `due_date` date DEFAULT NULL,
   `repeat_cycle` enum('none','daily','weekly','monthly') NOT NULL DEFAULT 'none',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 /*Data for the table `issue` */
 
-insert  into `issue`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`author_id`,`owner_id`,`created_date`,`closed_date`,`deleted_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00',NULL,NULL,'2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer description.',NULL,1,1,'2013-10-19 05:09:36',NULL,NULL,'2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,2,1,'2013-10-19 05:09:38',NULL,NULL,NULL,'none'),(4,1,1,'Due date task edited','This task does have a due date, and it\'s in the past!',NULL,2,1,'2013-10-19 05:09:40',NULL,NULL,'2013-10-15','none'),(5,1,1,'Test','Testing',0,0,1,'2013-10-23 14:43:55',NULL,NULL,NULL,'none'),(6,1,1,'Testing Other Assignee','Testy testy testy.',2,1,2,'2013-12-20 21:47:18',NULL,NULL,'2013-12-23','none');
+insert  into `issue`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`author_id`,`owner_id`,`created_date`,`closed_date`,`deleted_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00',NULL,NULL,'2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer description.',NULL,1,1,'2013-10-19 05:09:36',NULL,NULL,'2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,2,1,'2013-10-19 05:09:38',NULL,NULL,NULL,'none'),(4,1,1,'Due date task edited','This task does have a due date, and it\'s in the past!',NULL,2,1,'2013-10-19 05:09:40',NULL,NULL,'2013-10-15','none'),(5,1,1,'Test','Testing',0,0,1,'2013-10-23 14:43:55',NULL,NULL,NULL,'none'),(6,1,1,'Testing Other Assignee','Testy testy testy.',2,1,2,'2013-12-20 21:47:18',NULL,NULL,'2013-12-23','none'),(7,1,2,'Yay a project.','Woooooooo project!!!',0,1,1,'2014-01-06 17:25:55',NULL,NULL,'2014-01-07','none');
 
 /*Table structure for table `issue_comment` */
 
@@ -109,17 +103,33 @@ CREATE TABLE `issue_update` (
   `issue_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
   `created_date` datetime NOT NULL,
-  `old_data` text NOT NULL,
-  `new_data` text NOT NULL,
   PRIMARY KEY (`id`),
   KEY `issue` (`issue_id`),
   KEY `user` (`user_id`),
   CONSTRAINT `update_issue` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 /*Data for the table `issue_update` */
 
-insert  into `issue_update`(`id`,`issue_id`,`user_id`,`created_date`,`old_data`,`new_data`) values (1,4,1,'2014-01-03 23:12:40','{\"name\":\"Due date task\"}','{\"name\":\"Due date task edited\"}');
+insert  into `issue_update`(`id`,`issue_id`,`user_id`,`created_date`) values (1,4,1,'2014-01-03 23:12:40'),(2,7,1,'2014-01-06 17:58:19');
+
+/*Table structure for table `issue_update_field` */
+
+DROP TABLE IF EXISTS `issue_update_field`;
+
+CREATE TABLE `issue_update_field` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `issue_update_id` int(10) unsigned NOT NULL,
+  `field` varchar(64) NOT NULL,
+  `old_value` text NOT NULL,
+  `new_value` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `issue_update_field_update_id` (`issue_update_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+/*Data for the table `issue_update_field` */
+
+insert  into `issue_update_field`(`id`,`issue_update_id`,`field`,`old_value`,`new_value`) values (1,1,'name','Due date task','Due date task edited'),(2,2,'name','2','Yay a project.'),(3,2,'description','2','Woooooooo project!!!');
 
 /*Table structure for table `task_comment` */
 
@@ -186,7 +196,7 @@ DROP TABLE IF EXISTS `issue_comment_user`;
  `user_email` varchar(64) ,
  `user_name` varchar(32) ,
  `user_role` enum('user','admin') ,
- `user_task_color` char(6) 
+ `user_task_color` char(6)
 )*/;
 
 /*Table structure for table `issue_user` */
@@ -213,7 +223,7 @@ DROP TABLE IF EXISTS `issue_user`;
  `author_email` varchar(64) ,
  `owner_username` varchar(32) ,
  `owner_name` varchar(32) ,
- `owner_email` varchar(64) 
+ `owner_email` varchar(64)
 )*/;
 
 /*View structure for view issue_comment_user */

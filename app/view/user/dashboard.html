@@ -15,9 +15,7 @@
 						<span class="badge">#{{ @item.id }}</span>
 						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
 						<check if="{{ strtotime(@item.due_date) }}">
-							<p class="list-group-item-text">
-								<span class="has-tooltip" data-placement="left" title="Due Date">{{ date("D, M j", strtotime(@item.due_date)) }}</span>
-							</p>
+							<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 						</check>
 					</a>
 				</repeat>
@@ -34,9 +32,7 @@
 						</check>
 						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
 						<check if="{{ strtotime(@item.due_date) }}">
-							<p class="list-group-item-text">
-								<span class="has-tooltip" data-placement="left" title="Due Date">{{ date("D, M j", strtotime(@item.due_date)) }}</span>
-							</p>
+							<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 						</check>
 					</a>
 				</repeat>
