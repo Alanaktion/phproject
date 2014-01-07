@@ -29,7 +29,9 @@ class Admin extends Base {
 			$f3->set("title", "Edit User");
 			if($f3->get("POST")) {
 				foreach($f3->get("POST") as $i=>$val) {
-					if($user->$i != $val) {
+					if($i == "password" && !empty($val)) {
+						$user->password = \Helper\Security::instance()->bcrypt($val);
+					} elseif($user->$i != $val) {
 						$user->$i = $val;
 					}
 					$user->save();
