@@ -10,7 +10,7 @@ class User extends Base {
 	public function loadCurrent() {
 		$f3 = \Base::instance();
 		if($user_id = $f3->get("SESSION.user_id")) {
-			$this->load(array("id=?", $user_id));
+			$this->load(array("id = ? AND deleted_date IS NULL", $user_id));
 			if($this->id) {
 				$f3->set("user", $this->cast());
 			}

@@ -80,7 +80,7 @@ class User extends Base {
 		$this->_requireLogin();
 
 		$user = new \Model\User;
-		$user->load(array("username = ?", $params["username"]));
+		$user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
 
 		if($user->id) {
 			$f3->set("title", $user->name);

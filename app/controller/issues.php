@@ -58,7 +58,7 @@ class Issues extends Base {
 		}
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, null, array("order" => "name ASC")));
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
 
 		$f3->set("title", "New " . $type->name);
 		$f3->set("type", $type->cast());
@@ -81,7 +81,7 @@ class Issues extends Base {
 		$type->load(array("id=?", $issue->type_id));
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, null, array("order" => "name ASC")));
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
 
 		$f3->set("title", "Edit #" . $issue->id);
 		$f3->set("issue", $issue->cast());
@@ -160,7 +160,7 @@ class Issues extends Base {
 		$user_id = $this->_requireLogin();
 
 		$issue = new \Model\Issue();
-		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
 		if(!$issue->id) {
 			$f3->error(404);
@@ -205,7 +205,7 @@ class Issues extends Base {
 		$f3->set("author", $author->cast());
 
 		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
-		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
+		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ? AND deleted_date IS NULL", $issue->id), array("order" => "created_date ASC")));
 
 		echo \Template::instance()->render("issues/single.html");
 	}
@@ -214,7 +214,7 @@ class Issues extends Base {
 		$user_id = $this->_requireLogin();
 
 		$issue = new \Model\Issue();
-		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
 		if(!$issue->id) {
 			$f3->error(404);

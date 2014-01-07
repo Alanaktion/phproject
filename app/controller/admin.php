@@ -7,6 +7,26 @@ class Admin extends Base {
 	public function index($f3, $params) {
 		$this->_requireAdmin();
 		$f3->set("title", "Administration");
+
+		// Gather some stats
+		$db = $f3->get("db.instance");
+
+		$db->exec("SELECT id FROM user");
+		$f3->set("count_user", $db->count());
+		$db->exec("SELECT id FROM issue");
+		$f3->set("count_issue", $db->count());
+		$db->exec("SELECT id FROM issue_update");
+		$f3->set("count_issue_update", $db->count());
+		$db->exec("SELECT id FROM issue_comment");
+		$f3->set("count_issue_comment", $db->count());
+
+		$f3->set("db_stats", $db->exec("SHOW STATUS WHERE
+Variable_name LIKE 'Delayed_%' OR
+Variable_name LIKE 'Table_lock%' OR
+Variable_name = 'Connections' OR
+Variable_name = 'Queries' OR
+Variable_name = 'Uptime'"));
+
 		echo \Template::instance()->render("admin/index.html");
 	}
 
@@ -14,7 +34,7 @@ class Admin extends Base {
 		$this->_requireAdmin();
 		$f3->set("title", "Manage Users");
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000));
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL"));
 		echo \Template::instance()->render("admin/users.html");
 	}
 
@@ -47,6 +67,7 @@ class Admin extends Base {
 	}
 
 	public function user_new($f3, $params) {
+		$this->_requireAdmin();
 		if($f3->get("POST")) {
 			$user = new \Model\User();
 			$user->username = $f3->get("POST.username");
@@ -66,6 +87,85 @@ class Admin extends Base {
 			$f3->set("title", "Add User");
 			$f3->set("rand_color", sprintf("#%06X", mt_rand(0, 0xFFFFFF)));
 			echo \Template::instance()->render("admin/users/new.html");
+		}
+	}
+
+	public function groups($f3, $params) {
+		$this->_requireAdmin();
+		$group = new \Model\Group();
+		$groups = $group->paginate(0, 100, "deleted_date IS NULL");
+		$group_array =  array();
+		foreach($groups["subset"] as $g) {
+			$db = $f3->get("db.instance");
+			$db->exec("SELECT id FROM group_user WHERE group_id = ?", $g["id"]);
+			$count = $db->count();
+			$group_array[] = array(
+				"id" => $g["id"],
+				"name" => $g["name"],
+				"count" => $count
+			);
+		}
+		$f3->set("groups", $group_array);
+		echo \Template::instance()->render("admin/groups.html");
+	}
+
+	public function group_new($f3, $params) {
+		$this->_requireAdmin();
+		if($f3->get("POST")) {
+			$group = new \Model\Group();
+			$group->name = $f3->get("POST.name");
+			$group->save();
+			$f3->reroute("/admin/groups");
+		} else {
+			$f3->error(405);
+		}
+	}
+
+	public function group_edit($f3, $params) {
+		$this->_requireAdmin();
+
+		$group = new \Model\Group();
+		$group->load(array("id = ? AND deleted_date IS NULL", $params["id"]));
+		$f3->set("group", $group->cast());
+
+		$members = new \DB\SQL\Mapper($f3->get("db.instance"), "group_user_user", null, 3600);
+		$f3->set("members", $members->paginate(array("group_id = ? AND deleted_date IS NULL", $group->id)));
+
+		$users = new \Model\User();
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
+
+		echo \Template::instance()->render("admin/groups/edit.html");
+	}
+
+	public function group_ajax($f3, $params) {
+		$this->_requireAdmin();
+
+		if(!$f3->get("AJAX")) {
+			$f3->error(400);
+		}
+
+		$group = new \Model\Group();
+		$group->load(array("id = ? AND deleted_date IS NULL", $f3->get("POST.group_id")));
+
+		switch($f3->get('POST.action')) {
+			case "add_member":
+				foreach($f3->get("POST.user") as $user_id) {
+					$user = new \Model\Group\User();
+					$user->load(array("user_id = ? AND group_id = ?", $user_id, $f3->get("POST.group_id")));
+					if(!$user->id) {
+						$user->group_id = $f3->get("POST.user_id");
+						$user->user_id = $f3->get("POST.group_id");
+						$user->save();
+					} else {
+						// user already in group
+					}
+				}
+				break;
+			case "remove_member":
+				$user = new \Model\Group\User();
+				$user->load(array("user_id = ? AND group_id = ?", $f3->get("POST.user_id"), $f3->get("POST.group_id")));
+				$user->delete();
+				break;
 		}
 	}
 
