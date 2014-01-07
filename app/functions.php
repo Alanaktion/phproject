@@ -15,6 +15,6 @@ function h($str) {
 	return htmlspecialchars($str);
 }
 
-function now() {
-	return date("Y-m-d H:i:s");
+function now($time = true) {
+	return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
 }

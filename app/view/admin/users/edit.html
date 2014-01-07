@@ -15,9 +15,24 @@
 				<li><a href="/admin/issue_types">Issue Types</a></li>
 				<li><a href="/admin/issue_attributes">Issue Attributes</a></li>
 			</ul>
-			<div>
-				<p>User lol.</p>
-			</div>
+			<form action="/admin/users/{{ @this_user.id }}" method="post" role="form" class="form-horizontal">
+				<repeat group="{{ @this_user }}" key="{{ @field }}" value="{{ @val }}">
+					<check if="{{ @field != 'id' }}">
+						<div class="form-group">
+							<label for="{{ @field }}" class="col-lg-2 control-label">{{ @field }}</label>
+							<div class="col-lg-10">
+								<input class="form-control" id="{{ @field }}" type="text" name="{{ @field }}" value="{{ @val }}">
+							</div>
+						</div>
+					</check>
+				</repeat>
+				<div class="form-group">
+					<div class="col-lg-10 col-lg-offset-2">
+						<button type="submit" class="btn btn-primary">Save User</button>
+						<a href="/admin/users" class="btn btn-default">Cancel Edit</a>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />

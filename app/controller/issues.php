@@ -118,7 +118,11 @@ class Issues extends Base {
 						$update_field->old_value = $issue->$i;
 						$update_field->new_value = $val;
 						$update_field->save();
-						$issue->$i = $val;
+						if(empty($val)) {
+							$issue->$i = null;
+						} else {
+							$issue->$i = $val;
+						}
 					}
 				}
 
@@ -138,7 +142,9 @@ class Issues extends Base {
 			$issue->description = $post["description"];
 			$issue->owner_id = $post["owner_id"];
 			$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
-			$issue->parent_id = $post["parent_id"];
+			if(!empty($post["parent_id"])) {
+				$issue->parent_id = $post["parent_id"];
+			}
 			$issue->save();
 
 			if($issue->id) {
