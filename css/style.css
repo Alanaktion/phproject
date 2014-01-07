@@ -95,3 +95,13 @@ a:active .img-border {
 .panel-heading.has-buttons .panel-title {
 	line-height: 24px;
 }
+
+select[multiple] {
+	padding: 2px;
+}
+
+ul.no-list-style,
+li.no-list-style {
+	padding: 0;
+	list-style: none;
+}

@@ -153,8 +153,8 @@ Variable_name = 'Uptime'"));
 					$user = new \Model\Group\User();
 					$user->load(array("user_id = ? AND group_id = ?", $user_id, $f3->get("POST.group_id")));
 					if(!$user->id) {
-						$user->group_id = $f3->get("POST.user_id");
-						$user->user_id = $f3->get("POST.group_id");
+						$user->group_id = $f3->get("POST.group_id");
+						$user->user_id = $user_id;
 						$user->save();
 					} else {
 						// user already in group
