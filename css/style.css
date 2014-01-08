@@ -115,3 +115,15 @@ li.no-list-style {
 	padding: 0;
 	list-style: none;
 }
+
+.file-list  {
+	list-style-type: none;
+	display: inline;
+	
+}
+
+.file-list li {
+	margin-right:10px;
+	float: left;
+	text-align:center
+}

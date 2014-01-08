@@ -38,6 +38,30 @@
 					</check>
 					<p>{{ @issue.description }}</p>
 					<hr>
+					<p><strong>Files</strong></p>
+					<ul class="file-list">
+						<li>
+							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
+							Filename</a>
+						</li>
+						<li>
+							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
+							LONG_Filename</a>
+						</li>
+						<li>
+							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
+							Really Long Filename</a>
+						</li>
+						<li>
+							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
+							Filename</a>
+						</li>
+					</ul>
+					<div class="clearfix"></div>
+					<form method="post" enctype="multipart/form-data" action="">
+						<input type="file" name="somename" size="chars"> <button>Upload</button>
+					</form>
+					<hr>
 					<div class="comments">
 						<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
 							<div class="comment clearfix">
