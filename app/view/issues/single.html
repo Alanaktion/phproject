@@ -38,7 +38,7 @@
 					</check>
 					<p>{{ @issue.description }}</p>
 					<hr>
-					<div class="well comments">
+					<div class="comments">
 						<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
 							<div class="comment clearfix">
 								<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="profile-picture img-rounded" alt>
