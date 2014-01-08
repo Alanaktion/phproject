@@ -167,6 +167,11 @@ Variable_name = 'Uptime'"));
 				$user->delete();
 				echo json_encode(array("deleted" => 1));
 				break;
+			case "change_title":
+				$group->name = $f3->get("POST.name");
+				$group->save();
+				echo json_encode(array("changed" => 1));
+				break;
 		}
 	}
 
