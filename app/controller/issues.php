@@ -22,9 +22,9 @@ class Issues extends Base {
 		// Build SQL string to use for filtering
 		$filter_str = "";
 		foreach($filter as $i => $val) {
-			$filter_str .= "$i = '$val' and ";
+			$filter_str .= "$i = '$val' AND ";
 		}
-		$filter_str = substr($filter_str, 0, strlen($filter_str) - 5); // Remove trailing "and "
+		$filter_str .= "deleted_date IS NULL";
 
 		// Load type if a type_id was passed
 		if(!empty($args["type"])) {
@@ -241,8 +241,12 @@ class Issues extends Base {
 	}
 
 	public function search($f3, $params) {
-		$query = $f3->get("GET.q");
-		// Soon.
+		$query = "%" . $f3->get("GET.q") . "%";
+		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user", null, 3600);
+		$results = $issues->paginate(0, 50, array("name LIKE ? OR description LIKE ? AND deleted_date IS NULL", $query, $query), array("order" => "created_date ASC"));
+		$f3->set("issues", $results);
+		echo \Template::instance()->render("issues/search.html");
+
 	}
 
 }

@@ -12,8 +12,17 @@
 				<div class="panel-heading has-buttons clearfix">
 					<h3 class="panel-title pull-left">{{ @issue.name }} <small>#{{ @issue.id }}</small></h3>
 					<div class="pull-right">
-						<a href="/issues/{{ @issue.id }}/history/" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-time"></span>&ensp;History</a>
-						<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span>&ensp;Edit</a>
+						<a href="/issues/{{ @issue.id }}/history/" class="btn btn-default btn-xs">
+							<span class="glyphicon glyphicon-time"></span>&ensp;History
+						</a>
+						<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
+							<span class="glyphicon glyphicon-pencil"></span>&ensp;Edit
+						</a>
+						<check if="{{ @user.role == 'admin' }}">
+							<a href="/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
+								<span class="glyphicon glyphicon-remove"></span>&ensp;Delete
+							</a>
+						</check>
 					</div>
 				</div>
 				<div class="panel-body">
