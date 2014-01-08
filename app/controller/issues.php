@@ -240,4 +240,9 @@ class Issues extends Base {
 		echo \Template::instance()->render("issues/single/history.html");
 	}
 
+	public function search($f3, $params) {
+		$query = $f3->get("GET.q");
+		// Soon.
+	}
+
 }
