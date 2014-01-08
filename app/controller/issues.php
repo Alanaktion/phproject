@@ -205,7 +205,7 @@ class Issues extends Base {
 		$f3->set("author", $author->cast());
 
 		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
-		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ? AND deleted_date IS NULL", $issue->id), array("order" => "created_date ASC")));
+		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
 
 		echo \Template::instance()->render("issues/single.html");
 	}
