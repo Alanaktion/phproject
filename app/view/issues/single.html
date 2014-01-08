@@ -26,7 +26,13 @@
 					</div>
 				</div>
 				<div class="panel-body">
-					<p>Added by <a href="/users/{{ @issue.author_id }}">{{ @author.name }}</a> on {{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}</p>
+					<div class="issue-head clearfix">
+						<img src="{{ h(gravatar(@user.email, 48)) }}" class="profile-picture img-rounded" alt>
+						<p class="pull-left">
+							<a href="/user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a><br>
+							{{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}
+						</p>
+					</div>
 					<check if="{{ strtotime(@issue.due_date) }}">
 						<p><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
 					</check>
@@ -35,7 +41,7 @@
 					<div class="well comments">
 						<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
 							<div class="comment clearfix">
-								<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="pull-left profile-picture img-rounded" alt>
+								<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="profile-picture img-rounded" alt>
 								<div class="pull-left">
 									<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
 									<p>{{ @comment.text }}</p>

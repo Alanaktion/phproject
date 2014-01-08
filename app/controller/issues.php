@@ -246,7 +246,6 @@ class Issues extends Base {
 		$results = $issues->paginate(0, 50, array("name LIKE ? OR description LIKE ? AND deleted_date IS NULL", $query, $query), array("order" => "created_date ASC"));
 		$f3->set("issues", $results);
 		echo \Template::instance()->render("issues/search.html");
-
 	}
 
 }

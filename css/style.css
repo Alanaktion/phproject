@@ -70,6 +70,16 @@ a:active .img-border {
 	background-color: #ecf0f1;
 }
 
+.issue-head .profile-picture {
+	margin-right: 10px;
+	float: left;
+}
+.issue-head p {
+	float: left;
+	line-height: 20px;
+	padding: 4px 0;
+}
+
 .comment {
 	margin-bottom: 15px;
 }
