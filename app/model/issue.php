@@ -4,7 +4,7 @@ namespace Model;
 
 class Issue extends Base {
 
-	protected $_table_name = "issues";
+	protected $_table_name = "issue";
 
 }
 

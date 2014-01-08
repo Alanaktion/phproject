@@ -11,20 +11,23 @@
 			<form class="form-horizontal well" role="form" action="/issues/save" method="post">
 				<legend>{{ empty(@issue) ? "New" : "Edit" }} {{ @type.name }}</legend>
 				<input type="hidden" name="type_id" value="{{ @type.id }}">
+				<check if="{{ !empty(@issue) }}">
+					<input type="hidden" name="id" value="{{ @issue.id }}">
+				</check>
 				<div class="form-group">
-					<label for="inputEmail1" class="col-lg-2 control-label">Title</label>
+					<label class="col-lg-2 control-label">Title</label>
 					<div class="col-lg-10">
 						<input type="text" class="form-control input-lg" name="name" value="{{ empty(@issue) ? "" : @issue.name }}" required>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="inputEmail1" class="col-lg-2 control-label">Description</label>
+					<label class="col-lg-2 control-label">Description</label>
 					<div class="col-lg-10">
 						<textarea class="form-control" name="description">{{ empty(@issue) ? "" : @issue.description }}</textarea>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="inputEmail1" class="col-lg-2 control-label">Assigned To</label>
+					<label class="col-lg-2 control-label">Assigned To</label>
 					<div class="col-lg-10">
 						<select class="form-control" name="owner_id">
 							<optgroup label="Me">
@@ -39,20 +42,20 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="inputEmail1" class="col-lg-2 control-label">Due Date</label>
+					<label class="col-lg-2 control-label">Due Date</label>
 					<div class="col-lg-10">
-						<input class="form-control has-popover" type="text" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus" value="{{ empty(@issue) ? "" : @issue.due_date }}">
+						<input class="form-control" id="due_date" type="date" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus" value="{{ empty(@issue) ? "" : @issue.due_date }}">
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="inputEmail1" class="col-lg-2 control-label">Parent ID</label>
+					<label class="col-lg-2 control-label">Parent ID</label>
 					<div class="col-lg-10">
 						<input class="form-control" type="text" name="parent_id" value="{{ empty(@issue) ? "" : @issue.parent_id }}">
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-lg-offset-2 col-lg-10">
-						<button type="submit" class="btn btn-primary">Save {{ @type.name }}</button>
+						<button type="submit" class="btn btn-primary">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
 						<check if="{{ !empty(@issue) }}">
 							<button type="reset" class="btn btn-default">Reset</button>
 						</check>
@@ -63,5 +66,12 @@
 	</div>
 	<include href="blocks/footer.html" />
 </div>
+<script type="text/javascript">
+$(function() {
+	if(!Modernizr.inputtypes.date) {
+		$('#due_date').popover();
+	}
+});
+</script>
 </body>
 </html>

@@ -15,9 +15,33 @@
 				<li><a href="/admin/issue_types">Issue Types</a></li>
 				<li><a href="/admin/issue_attributes">Issue Attributes</a></li>
 			</ul>
-			<div>
-				<p>User lol.</p>
-			</div>
+			<form action="/admin/users/{{ @this_user.id }}" method="post" role="form" class="form-horizontal">
+				<legend>Edit User #{{ @this_user.id }}</legend>
+				<repeat group="{{ @this_user }}" key="{{ @field }}" value="{{ @val }}">
+					<check if="{{ @field != 'id' }}">
+						<div class="form-group">
+							<label for="{{ @field }}" class="col-lg-2 control-label">{{ @field }}</label>
+							<div class="col-lg-10">
+								<check if="{{ @field == 'password' }}">
+									<true>
+										<input class="form-control" id="{{ @field }}" type="password" name="{{ @field }}" value="" placeholder="Enter a new password here to change it">
+									</true>
+									<false>
+										<input class="form-control" id="{{ @field }}" type="text" name="{{ @field }}" value="{{ @val }}">
+									</false>
+								</check>
+							</div>
+						</div>
+					</check>
+				</repeat>
+				<div class="form-group">
+					<div class="col-lg-10 col-lg-offset-2">
+						<button type="submit" class="btn btn-primary">Save User</button>
+						<button type="reset" class="btn btn-warning">Reset</button>
+						<a href="/admin/users" class="btn btn-default">Cancel</a>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />

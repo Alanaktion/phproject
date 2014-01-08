@@ -1,18 +1,26 @@
 <?php
 
+if ((float)PCRE_VERSION<7.9)
+	trigger_error('PCRE version is out of date');
+
 // Initialize core
 $f3=require("lib/base.php");
 $f3->mset(array(
 	"UI" => "app/view/",
 	"LOGS" => "log/",
+	"TEMP" => "tmp/",
+	"CACHE" => "tmp/cache/",
 	"AUTOLOAD" => "app/"
 ));
 
-// Load local configuration
-$f3->config("config.ini");
-
 // Load routes
 $f3->config("app/routes.ini");
+
+// Load base configuration
+$f3->config("config-base.ini");
+
+// Load local configuration
+$f3->config("config.ini");
 
 // Set session lifetime
 session_set_cookie_params($f3->get("session.timeout"));
@@ -39,8 +47,8 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.pass")
 ));
 
-// Define routes (removing soon)
-require_once "app/routes.php";
+// Define global core functions
+require_once "app/functions.php";
 
 // Minify static resources
 // Cache for 3600s (1h)

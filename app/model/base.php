@@ -17,4 +17,14 @@ abstract class Base extends \DB\SQL\Mapper {
 		return $this;
 	}
 
+	// Savely delete object if possible, if not, erase the record.
+	public function delete() {
+		if(array_key_exists("deleted_date", $this->fields)) {
+			$this->deleted_date = now();
+			return $this->save();
+		} else {
+			return $this->erase();
+		}
+	}
+
 }

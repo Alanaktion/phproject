@@ -9,8 +9,12 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">{{ @issue.name }} <small>#{{ @issue.id }}</small></h3>
+				<div class="panel-heading has-buttons clearfix">
+					<h3 class="panel-title pull-left">{{ @issue.name }} <small>#{{ @issue.id }}</small></h3>
+					<div class="pull-right">
+						<a href="/issues/{{ @issue.id }}/history/" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-time"></span>&ensp;History</a>
+						<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span>&ensp;Edit</a>
+					</div>
 				</div>
 				<div class="panel-body">
 					<p>Added by <a href="/users/{{ @issue.author_id }}">{{ @author.name }}</a> on {{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}</p>
@@ -22,7 +26,7 @@
 					<div class="well comments">
 						<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
 							<div class="comment clearfix">
-								<img src="//gravatar.com/avatar/{{ md5(strtolower(@comment.user_email)) }}?s=48" class="pull-left profile-picture" alt>
+								<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="pull-left profile-picture img-rounded" alt>
 								<div class="pull-left">
 									<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
 									<p>{{ @comment.text }}</p>
@@ -54,27 +58,37 @@
 $(function() {
 
 	// AJAX comment submission
-	$('#comment_form').submit(function() {
+	$('#comment_form').submit(function(e) {
 		var $this = $(this);
-		$.post($this.attr('action'), $this.serialize,function(){
-			// TODO: finish this crap.
-			$('<div />').addClass('comment clearfix').append('');
-			$('#comment_form').prop('disabled', false).before(el);
+
+		$.post($this.attr('action'), $this.serialize(), function(data) {
+			// Append the new comment to the list
+			$('#comment_form')
+					.prop('disabled', false)
+					.before(
+'<div class="comment clearfix">' +
+'<img src="//gravatar.com/avatar/' + data.user_email_md5 + '?s=48" class="pull-left profile-picture img-rounded" alt>' +
+'<div class="pull-left">' +
+'<p><strong><a href="/user/' + data.user_username + '">' + data.user_name + '</a></strong></p>' +
+'<p>' + data.text + '</p>' +
+'<p class="muted"><small>' + data.date_formatted + '</small></p>' +
+'</div>' +
+'</div>');
 			$('#comment_textarea').val('');
-		}).fail(function() {
-			alert("Failed to post comment.");
-		});
+		}, 'json');
+
 		$this.prop('disabled', true);
+
 		e.preventDefault();
 	});
 
-	// Post comment if Ctrl+Enter or Shift+Enter are pressed
-	$('body').on('keypress', 'textarea', (function(e) {
+	// Submit from textarea if Ctrl+Enter or Shift+Enter are pressed
+	$('body').on('keypress', 'textarea', function(e) {
 		if(e.keyCode == 13 && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.shiftKey)))) {
-			$(this).parents('form').submit();
+			$(this).parents('form')[0].submit();
 			e.preventDefault();
 		}
-	}));
+	});
 
 });
 </script>

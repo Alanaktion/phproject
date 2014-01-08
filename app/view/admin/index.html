@@ -15,8 +15,43 @@
 				<li><a href="/admin/issue_types">Issue Types</a></li>
 				<li><a href="/admin/issue_attributes">Issue Attributes</a></li>
 			</ul>
-			<div>
-				<p>This page will show some basic information about issues, users, and the system.</p>
+			<div class="row">
+				<div class="col-md-3 col-sm-6">
+					<div class="well text-center">
+						<h3>Users</h3>
+						<h2>{{ @count_user }}</h2>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-6">
+					<div class="well text-center">
+						<h3>Issues</h3>
+						<h2>{{ @count_issue }}</h2>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-6">
+					<div class="well text-center">
+						<h3>Comments</h3>
+						<h2>{{ @count_issue_comment }}</h2>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-6">
+					<div class="well text-center">
+						<h3>Updates</h3>
+						<h2>{{ @count_issue_update }}</h2>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="well">
+						<h3>MySQL Stats</h3>
+						<div class="row">
+							<repeat group="{{ @db_stats }}" value="{{ @val }}">
+								<p class="col-md-4 col-sm-6"><strong>{{ @val.Variable_name }}:</strong> {{ @val.Value }}</p>
+							</repeat>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -16,6 +16,7 @@ class User extends Base {
 
 	public function account($f3, $params) {
 		$this->_requireLogin();
+		$f3->set("title", "My Account");
 		echo \Template::instance()->render("user/account.html");
 	}
 
@@ -79,9 +80,10 @@ class User extends Base {
 		$this->_requireLogin();
 
 		$user = new \Model\User;
-		$user->load(array("username = ?", $params["username"]));
+		$user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
 
 		if($user->id) {
+			$f3->set("title", $user->name);
 			$f3->set("this_user", $user->cast());
 			echo \Template::instance()->render("user/single.html");
 		} else {

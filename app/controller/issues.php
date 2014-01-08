@@ -7,7 +7,7 @@ class Issues extends Base {
 	public function index($f3, $params) {
 		$this->_requireLogin();
 
-		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issues_user_data", null, 3600);
+		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user", null, 3600);
 
 		// Filter issue listing by URL parameters
 		$filter = array();
@@ -58,7 +58,7 @@ class Issues extends Base {
 		}
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, null, array("order" => "name ASC")));
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
 
 		$f3->set("title", "New " . $type->name);
 		$f3->set("type", $type->cast());
@@ -81,7 +81,7 @@ class Issues extends Base {
 		$type->load(array("id=?", $issue->type_id));
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, null, array("order" => "name ASC")));
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
 
 		$f3->set("title", "Edit #" . $issue->id);
 		$f3->set("issue", $issue->cast());
@@ -91,24 +91,68 @@ class Issues extends Base {
 	}
 
 	public function save($f3, $params) {
-		$this->_requireLogin();
+		$user_id = $this->_requireLogin();
 
-		if($f3->get("POST.name")) {
-			$issue = new \Model\Issue();
+		$post = array_map("trim", $f3->get("POST"));
+
+		$issue = new \Model\Issue();
+		if(!empty($post["id"])) {
+
+			// Updating existing issue.
+			$issue->load(array("id = ?", $post["id"]));
+			if($issue->id) {
+
+				// Log changes
+				$update = new \Model\Issue\Update();
+				$update->issue_id = $issue->id;
+				$update->user_id = $user_id;
+				$update->created_date = now();
+				$update->save();
+
+				// Diff contents and save what's changed.
+				foreach($post as $i=>$val) {
+					if($issue->$i != $val) {
+						$update_field = new \Model\Issue\Update\Field();
+						$update_field->issue_update_id = $update->id;
+						$update_field->field = $i;
+						$update_field->old_value = $issue->$i;
+						$update_field->new_value = $val;
+						$update_field->save();
+						if(empty($val)) {
+							$issue->$i = null;
+						} else {
+							$issue->$i = $val;
+						}
+					}
+				}
+
+				$issue->save();
+				$f3->reroute("/issues/" . $issue->id);
+			} else {
+				$f3->error(404, "This issue does not exist.");
+			}
+
+		} elseif($f3->get("POST.name")) {
+
+			// Creating new issue.
 			$issue->author_id = $f3->get("user.id");
-			$issue->type_id = $f3->get("POST.type_id");
-			$issue->created_date = date("Y-m-d H:i:s");
-			$issue->name = $f3->get("POST.name");
-			$issue->description = $f3->get("POST.description");
-			$issue->owner_id = $f3->get("POST.owner_id");
-			$issue->due_date = date("Y-m-d", strtotime($f3->get("POST.due_date")));
-			$issue->parent_id = $f3->get("POST.parent_id");
+			$issue->type_id = $post["type_id"];
+			$issue->created_date = now();
+			$issue->name = $post["name"];
+			$issue->description = $post["description"];
+			$issue->owner_id = $post["owner_id"];
+			$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
+			if(!empty($post["parent_id"])) {
+				$issue->parent_id = $post["parent_id"];
+			}
 			$issue->save();
+
 			if($issue->id) {
 				$f3->reroute("/issues/" . $issue->id);
 			} else {
 				$f3->error(500, "An error occurred saving the issue.");
 			}
+
 		}
 	}
 
@@ -116,7 +160,7 @@ class Issues extends Base {
 		$user_id = $this->_requireLogin();
 
 		$issue = new \Model\Issue();
-		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
 		if(!$issue->id) {
 			$f3->error(404);
@@ -134,6 +178,20 @@ class Issues extends Base {
 					$comment->text = $post["text"];
 					$comment->created_date = date("Y-m-d H:i:s");
 					$comment->save();
+					if($f3->get("AJAX")) {
+						echo json_encode(
+							array(
+								"id" => $comment->id,
+								"text" => $comment->text,
+								"date_formatted" => date("D, M j, Y \\a\\t g:ia"),
+								"user_name" => $f3->get('user.name'),
+								"user_username" => $f3->get('user.username'),
+								"user_email" => $f3->get('user.email'),
+								"user_email_md5" => md5(strtolower($f3->get('user.email'))),
+							)
+						);
+						return;
+					}
 					break;
 			}
 		}
@@ -146,10 +204,40 @@ class Issues extends Base {
 		$f3->set("issue", $issue->cast());
 		$f3->set("author", $author->cast());
 
-		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comments_user_data", null, 3600);
-		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
+		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
+		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ? AND deleted_date IS NULL", $issue->id), array("order" => "created_date ASC")));
 
 		echo \Template::instance()->render("issues/single.html");
+	}
+
+	public function single_history($f3, $params) {
+		$user_id = $this->_requireLogin();
+
+		$issue = new \Model\Issue();
+		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
+
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+
+		// Build updates array
+		$updates_array = array();
+		$update_model = new \Model\Issue\Update();
+		$updates = $update_model->paginate(0, 100, array("issue_id = ?", $issue->id), array("order" => "created_date ASC"));
+		foreach($updates["subset"] as $update) {
+			$update_field_model = new \Model\Issue\Update\Field();
+			$update_field_result = $update_field_model->paginate(0, 100, array("issue_update_id = ?", $update["id"]));
+			$update_array = $update->cast();
+			$update_array["text"] = "lol";
+			$updates_array[] = $update_array;
+		}
+
+		$f3->set("title", "Issue History #" . $issue->id);
+		$f3->set("issue", $issue->cast());
+		$f3->set("updates", $updates_array);
+
+		echo \Template::instance()->render("issues/single/history.html");
 	}
 
 }

@@ -7,10 +7,12 @@ RewriteEngine On
 RewriteCond %{REQUEST_URI} \.ini$
 RewriteRule \.ini$ - [R=404]
 
-RewriteCond %{REQUEST_URI} \.html?$
-RewriteRule \.html?$ - [R=404]
-
 RewriteRule ^app/ - [R=404]
+
+# Remove trailing slash
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} (.*)$
+RewriteRule ^(.+)/$ http://%{HTTP_HOST}/$1 [R,L]
 
 # Route requests to framework
 RewriteCond %{REQUEST_FILENAME} !-l

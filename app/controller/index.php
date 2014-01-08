@@ -6,7 +6,7 @@ class Index extends Base {
 
 	public function index($f3, $params) {
 		if($f3->get("user.id")) {
-			$projects = new \DB\SQL\Mapper($f3->get("db.instance"), "issues_user_data");
+			$projects = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user");
 			$f3->set("projects", $projects->paginate(
 				0, 50,
 				array(
@@ -18,7 +18,7 @@ class Index extends Base {
 				)
 			));
 
-			$tasks = new \DB\SQL\Mapper($f3->get("db.instance"), "issues_user_data");
+			$tasks = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user");
 			$f3->set("tasks", $tasks->paginate(
 				0, 50,
 				array(
@@ -46,7 +46,7 @@ class Index extends Base {
 
 	public function loginpost($f3, $params) {
 		$user = new \Model\User();
-		$user->load(array("username=?",$f3->get("POST.username")));
+		$user->load(array("username=?", $f3->get("POST.username")));
 
 		if($user->verify_password($f3->get("POST.password"))) {
 			$f3->set("SESSION.user_id", $user->id);
