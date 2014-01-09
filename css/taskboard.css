@@ -1,0 +1,26 @@
+body{font-family:arial;font-size:12px;}
+#taskboard{width:100%;margin:0 auto;}
+#taskboard table{ border-collapse: collapse;}
+#taskboard td, #taskboard th{width:20%;padding:4px;border:1px dotted #cecece;border-top:solid 1px #e7e7e7;vertical-align:top;}
+#taskboard td:first-child, #taskboard th:first-child{width:15%;}
+#taskboard th{border-bottom:0px;}
+#taskboard ul{width:100%;display:block;z-index:25;min-height:120px;}
+#taskboard ul, #taskboard li{padding:0;margin:0;list-style:none;display:block;}
+#taskboard .cloneable{display:none;}
+#taskboard .card{position:relative;font-size:10px;padding:6px;margin:8px 2px;background-color:#ffffff;box-shadow: 2px 2px 10px #E2E2E2;border-left:6px solid;height:85px;}
+#taskboard .card.task{cursor:move;width:111px;height:75px;float:left;}
+#taskboard .card.task.placeholder{background-color:green;opacity:.1;border:0px;}
+#taskboard .card .add-task{font-size:14px;cursor:pointer;}
+#taskboard .column-4 .card{text-decoration: line-through;}
+#taskboard .card .due-date, #taskboard .card .description{display:none;}
+#taskboard .spinner{position:absolute;left:0;right:0;top:0;bottom:0;z-index:50;background-image: url(http://mentalized.net/activity-indicators/indicators/netlife/spinner3-black.gif); background-position: center center;background-repeat: no-repeat}
+#taskboard .column-4 .spinner{background-image: url(https://tron.thrivelife.com/images/indicator.gif) ; }
+#taskboard .error{position:absolute;left:0;right:0;top:0;bottom:0;z-index:50;background-image: url(https://u.ebank.cmbchina.com/CmbBank_EHome/UI/doc/Images/warning.png); background-position: right bottom;background-repeat: no-repeat}
+
+/* Jquery UI issues */
+.ui-widget-overlay, .ui-dialog{z-index:1000;}
+.ui-dialog-titlebar-close{display:none;}
+.ui-dialog-titlebar.ui-widget-header {border: 1px solid #333;background: #999;color:#fff;}
+
+/* Bootstrap Issues */
+table.table{margin:0;}

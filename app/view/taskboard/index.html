@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <include href="blocks/head.html" />
+    <include href="blocks/task-head.html" />
+</head>
+<body class="dashboard">
+    <div class="container">
+        <include href="blocks/navbar.html" />
+        <div class="row">
+            <div class="col-lg-12">
+                <section id="taskboard">
+                    <table class="table">
+                        <tr class="taskboard-head tb-row">
+                            <th class="column column-1 droppable">
+                                Story
+                            </th>
+                            <th class="column column-2 droppable">
+                                New
+                            </th>
+                            <th class="column column-3 droppable">
+                                Active
+                            </th>
+                            <th class="column column-4 droppable">
+                                Completed
+                            </th>
+                            <th class="column column-5 droppable">
+                                On Hold
+                            </th>
+                        </tr>
+                    </table><!-- SEPARATED SINCE IT WILL FLOAT DOWN -->
+                    <table class="table table-striped">
+                        <tr data-story-id="1" class="tb-row">
+                            <td class="column column-1">
+                                <div data-departement="I.T." class="card story" style="border-color:#FFA700;">
+                                    <div class="top opaque-rounded">
+                                        <i class="glyphicon glyphicon-plus-sign add-task pull-right"></i>
+                                        <span class="tb-user">Shane Loveland</span>
+                                        <span class="tb-id pull-right">1</span>
+                                    </div>
+                                    <div class="title">
+                                        Friend Zone New Years Updates
+                                    </div>
+                                    <div class="category opaque-rounded">
+                                        Department Work
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="column column-2 droppable"  data-status="new">
+
+                                <div data-departement="I.T." class="card task" id="task_2" style="border-color:#FFA700;">
+                                    <div class="hours">14</div><div class="top">
+                                        <span class="tb-id pull-right">2</span>
+                                    </div>
+                                    <div class="title">
+                                        prepperfeed spammers issue
+                                    </div>
+                                    <div class="description">Description</div><div class="due-date">12/24/2014</div><div class="owner">
+                                        Shane Loveland
+                                    </div>
+                                </div>
+                                <div data-departement="I.T." class="card task" id="task_3" style="border-color:#FFA700;">
+                                    <div class="hours">14</div><div class="top">
+                                        <span class="tb-id pull-right">3</span>
+                                    </div>
+                                    <div class="title">
+                                        Add secure fluff in checkout process & in...
+                                    </div>
+                                    <div class="description">Description</div><div class="due-date">12/24/2014</div><div class="owner">
+                                        Shane Loveland
+                                    </div>
+                                </div>
+                                <div data-departement="I.T." class="card task" id="task_4" style="border-color:#FFA700;">
+                                    <div class="hours">14</div><div class="top">
+                                        <span class="tb-id pull-right">4</span>
+                                    </div>
+                                    <div class="title">
+                                        Look into Mail Subscription Issues
+                                    </div>
+                                    <div class="description">Description</div><div class="due-date">12/24/2014</div><div class="owner">
+                                        Shane Loveland
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td class="column column-3 droppable" data-status="active">
+
+                                <div data-departement="I.T." class="card task" id="task_5" style="border-color:#FFA700;">
+                                    <div class="hours">14</div><div class="top">
+                                        <span class="tb-id pull-right">5</span>
+                                    </div>
+                                    <div class="title">
+                                        make instructional video on editing mail templates
+                                    </div>
+                                    <div class="description">Description</div><div class="due-date">12/24/2014</div><div class="owner">
+                                        Shane Loveland
+                                    </div>
+                                </div>
+                                <div data-departement="I.T." class="card task" id="task_6" style="border-color:#FFA700;">
+                                    <div class="hours">14</div><div class="top">
+                                        <span class="tb-id pull-right">6</span>
+                                    </div>
+                                    <div class="title">
+                                        make instructional video on updating header
+                                    </div>
+                                    <div class="description">Description</div><div class="due-date">12/24/2014</div><div class="owner">
+                                        Shane Loveland
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td class="column column-4 droppable"  data-status="completed">
+
+
+                                <div data-departement="I.T." class="card task" id="task_7" style="border-color:#FFA700;">
+                                    <div class="hours">14</div><div class="top">
+                                        <span class="tb-id pull-right">7</span>
+                                    </div>
+                                    <div class="title">
+                                        make instructional video on using table rates
+                                    </div>
+                                    <div class="description">Description</div><div class="due-date">12/24/2014</div><div class="owner">
+                                        Shane Loveland
+                                    </div>
+                                </div>
+                                <div data-departement="I.T." class="card task" id="task_8" style="border-color:#FFA700;">
+                                    <div class="hours">14</div><div class="top">
+                                        <span class="tb-id pull-right">8</span>
+                                    </div>
+                                    <div class="title">
+                                        Add in PayPal as payment option
+                                    </div>
+                                    <div class="description">Description</div><div class="due-date">12/24/2014</div><div class="owner">
+                                        Shane Loveland
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td class="column column-5 droppable"  data-status="hold">
+
+                                <div data-departement="I.T." class="card task" id="task_9" style="border-color:#FFA700;">
+                                    <div class="hours">14</div><div class="top">
+                                        <span class="tb-id pull-right">9</span>
+                                    </div>
+                                    <div class="title">
+                                        Draw a picture of a shark
+                                    </div>
+                                    <div class="description">
+                                            Description
+                                    </div>
+                                    <div class="due-date">
+                                            12/24/2014
+                                    </div>
+                                    <div class="owner">
+                                        Shane Loveland
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+
+                        <tr data-story-id="10" class="tb-row">
+                            <td class="column column-1">
+                                <div data-departement="I.T." class="card story" style="border-color:#A5F045;">
+                                    <div class="top opaque-rounded">
+                                        <i class="glyphicon glyphicon-plus-sign add-task pull-right"></i>
+                                        <span class="tb-user">Alan Hardman</span>
+                                        <span class="tb-id pull-right">10</span>
+                                    </div>
+                                    <div class="title">
+                                        Consultant Agreement Form Popup
+                                    </div>
+                                    <div class="category opaque-rounded">
+                                        Department Work
+                                    </div>
+                                </div>					
+                            </td>
+                            <td class="column column-2 droppable" data-status="new">
+
+                            </td>
+                            <td class="column column-3 droppable" data-status="active">
+
+                                <div data-departement="I.T." class="card task" id="task_11" style="border-color:#A5F045;">
+                                    <div class="hours">14</div><div class="top">
+                                        <span class="tb-id pull-right">11</span>
+                                    </div>
+                                    <div class="title">
+                                        Save agreement status when agreeing in
+                                    </div>
+                                    <div class="description">Description</div><div class="due-date">12/24/2014</div><div class="owner">
+                                        Alan Hardman
+                                    </div>
+                                </div>				
+
+
+                            </td>
+                            <td class="column column-4 droppable" data-status="completed">
+
+                            </td>
+                            <td class="column column-5 droppable" data-status="hold">
+
+                            </td>
+                        </tr>
+
+                    </table>
+                    <div id="task-dialog" class="dialog" title="Edit Task" style="display:none;">
+                        <form id="task-dialog">
+                            <fieldset>
+                                <input type="hidden" name="taskId" id="taskId" value="">
+                                <label for="title">Title</label>
+                                <textarea name="title" id="title" class="form-control"></textarea>
+                                <label for="Description">Description</label>
+                                <textarea name="description" id="description" class="form-control"></textarea>
+                                <label for="assigned">Assigned To</label>
+                                <select id="assigned" name="assigned" class="form-control" onchange="TaskUpdate.changeUser(this)">
+                                    <option value="" data-color="#AAAAAA"></option>
+                                    <option value="20" data-color="#FFA700">&lt;&lt; me &gt;&gt;</option>
+                                    <option value="35" data-color="#E3C3DE">+ Help Desk</option>
+                                    <option value="99" data-color="#E28CCB">- FRS/Emergency -</option>
+                                    <option value="98" data-color="#AEEA70">- International - </option>
+                                    <option value="56" data-color="#ABC6C7">Aaron Ellis</option>
+                                    <option value="65" data-color="#AEFF1D">Aaron Hawkins</option>
+                                    <option value="38" data-color="#B31B60">Adam Womble</option><option value="18" data-color="#FD1CE5">Adrianne Severson</option><option value="21" data-color="#A5F045">Alan Hardman</option><option value="82" data-color="#BDE802">Andrea Robertson</option><option value="14" data-color="#E5932E">Andrew Haws</option><option value="103" data-color="#1136EE">Andrew McKay</option><option value="130" data-color="#B6B341">API User</option><option value="28" data-color="#0C8706">Bartimus Prime</option><option value="81" data-color="#FF3333">Blake Severson</option><option value="97" data-color="#ED9392">Bo Brannin</option><option value="31" data-color="#6D8391">Brad Jeppson</option><option value="122" data-color="#ED3B04">Bradley  Christensen</option><option value="117" data-color="#FF7FBD">Brian Pratt</option><option value="75" data-color="#A15160">Brian Wilson</option><option value="79" data-color="#20D4AA">Briana Butcher</option><option value="40" data-color="#D766B6">brittany hughes</option><option value="37" data-color="#A09DF7">Chef Boyardee</option><option value="109" data-color="#B84394">Chris  Pope</option><option value="92" data-color="#FCBB54">Cole Statham</option><option value="91" data-color="#B41130">Curt Willis</option><option value="60" data-color="#AC057A">Dane Clark</option><option value="54" data-color="#F59F3B">Daniela Goodwin</option><option value="71" data-color="#ACC314">Danny Ferrufino</option><option value="36" data-color="#C8EC36">Developer Queue</option><option value="112" data-color="#D1A2EE">Emmalee  Barber</option><option value="114" data-color="#C689F4">Eric Moosman</option><option value="95" data-color="#F0BFD7">Eric Morgan</option><option value="125" data-color="#C59CE9">Garrett Bybee</option><option value="62" data-color="#EF6449">Georganne Simeoli</option><option value="73" data-color="#9EE0FC">Jacob Partida</option><option value="105" data-color="#171EF6">James  Simmons</option><option value="53" data-color="#AD23B0">Jason Bell</option><option value="26" data-color="#E77174">Jason Budge</option><option value="27" data-color="#FDBED7">Jason Norton</option><option value="78" data-color="#EC9A1E">Jeff Thomas</option><option value="51" data-color="#B497E6">Jenny Swingle</option><option value="101" data-color="#DDFE03">Jeremy  Jeffs</option><option value="33" data-color="#CD4244">Jeremy  Taeoalii</option><option value="124" data-color="#A1BC18">Jessica  Knapton</option><option value="123" data-color="#F8FD15">Jessie  Carlson</option><option value="64" data-color="#AFE4E8">Jim Braun</option><option value="67" data-color="#A6533D">Jim Gibson</option><option value="100" data-color="#EE72F7">Johnny Lingmann</option><option value="93" data-color="#C0AFED">Joshua Knapton</option><option value="149" data-color="#DDAAEB">Kaory Castro</option><option value="63" data-color="#A76B87">Kathy  Clement</option><option value="77" data-color="#E01446">Keaton Clark</option><option value="19" data-color="#B3A566">Kim Frost</option><option value="32" data-color="#B1E771">Kimberly Stowe</option><option value="106" data-color="#A488C3">Kristina  Pew</option><option value="66" data-color="#FD5962">Mark Stoutsenberger</option><option value="42" data-color="#B51CC5">Marshall Roach</option><option value="145" data-color="#C4DC0D">Matt Dietz</option><option value="58" data-color="#F2182D">Mauricio Velez</option><option value="104" data-color="#F6CB4B">Melissa  Womack</option><option value="94" data-color="#F49680">Melissa Weaver</option><option value="118" data-color="#BBF28F">Nate Sorensen</option><option value="34" data-color="#CCFFCC">Neal Sorensen</option><option value="120" data-color="#D9EDFD">Nick Gardner</option><option value="43" data-color="#C99034">Nick Walker</option><option value="115" data-color="#6A7E25">Noel Fallstrom</option><option value="110" data-color="#AF9DF4">Phonesavanh Soumphonephakdy</option><option value="119" data-color="#F0BD73">Preston Wilcken</option><option value="68" data-color="#53C1C0">Rachel Stauffer</option><option value="116" data-color="#D28E9D">Rebecca Stone</option><option value="1" data-color="#0C87E8">Redmine Admin</option><option value="88" data-color="#EEF09B">Ricardo Aranda</option><option value="72" data-color="#C6245F">Rich Fankhauser</option><option value="55" data-color="#E778AE">Ron Mabey</option><option value="23" data-color="#FFFFFF">Ryan Bouche</option><option value="59" data-color="#ED5BFE">Scott Dalton</option><option value="44" data-color="#D34BF8">Scott Hadlock</option><option value="22" data-color="#9F2B81">Sebastian Nilsson</option><option value="29" data-color="#A7E43D">Seth  Adams</option><option value="69" data-color="#AA41F0">Shadowfax Server</option><option value="20" data-color="#FFA700">Shane Loveland</option><option value="24" data-color="#EC80B8">Shannon Peterson</option><option value="52" data-color="#000000">Shay P</option><option value="48" data-color="#A9BECD">Someday Maybe</option><option value="90" data-color="#A9A8A3">Stephanie Negrete</option><option value="25" data-color="#9DA8BE">Steve Palmer</option><option value="121" data-color="#CD501E">Steven  Doran</option><option value="127" data-color="#D422BF">test test</option><option value="61" data-color="#AD4456">Tiffany Velez</option><option value="80" data-color="#DBBEBA">Tim Duke</option><option value="89" data-color="#F90E01">Tim Halls</option><option value="139" data-color="#F3545A">Todd Leonard</option><option value="107" data-color="#C2DE78">Trent  Timmons</option><option value="85" data-color="#A080D7">Vanessa Wright</option><optgroup label="Groups"><option value="17" data-color="#AAAAAA">Accounting</option><option value="132" data-color="#AAAAAA">Black Friday</option><option value="8" data-color="#AAAAAA">Customer Service</option><option value="11" data-color="#AAAAAA">Executive</option><option value="12" data-color="#AAAAAA">Home Party</option><option value="5" data-color="#AAAAAA">I.T.</option><option value="129" data-color="#AAAAAA">International</option><option value="6" data-color="#AAAAAA">Marketing</option><option value="148" data-color="#AAAAAA">Marketing Bug</option><option value="96" data-color="#AAAAAA">Operations Management</option><option value="150" data-color="#AAAAAA">QA</option><option value="131" data-color="#AAAAAA">Recall Group </option><option value="134" data-color="#AAAAAA">Recall Group - Blue Chip</option><option value="136" data-color="#AAAAAA">Recall Group - Communication</option><option value="137" data-color="#AAAAAA">Recall Group - FDA</option><option value="138" data-color="#AAAAAA">Recall Group - Health Canada</option><option value="133" data-color="#AAAAAA">Recall Group - Insurance</option><option value="135" data-color="#AAAAAA">Recall Group - Operations</option><option value="7" data-color="#AAAAAA">Strategic Initiatives</option><option value="13" data-color="#AAAAAA">Supply Chain</option><option value="9" data-color="#AAAAAA">Thrive Food</option><option value="16" data-color="#AAAAAA">Thrive Production</option>
+                                </select>
+                                <label for="hours">Remaining (Hours)</label>
+                                <input type="text" name="hours" id="hours" class="form-control">
+                                <label for="password">Due Date</label>
+                                <input type="text" name="due-date" id="due-date" value="" class="due-date form-control">
+                            </fieldset>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div data-departement="" class="card task cloneable" id="new_task">
+            <div class="hours"></div><div class="top">
+                <span class="tb-id pull-right"></span>
+            </div>
+            <div class="title"></div>
+            <div class="description"></div>
+            <div class="due-date"></div>
+            <div class="owner"></div>
+        </div>
+        <include href="blocks/footer.html" />
+        <script src="/js/taskboard.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    </div>
+</body>
+</html>
