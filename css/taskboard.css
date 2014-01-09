@@ -1,5 +1,4 @@
-body{font-family:arial;font-size:12px;}
-#taskboard{width:100%;margin:0 auto;}
+#taskboard{font-size:12px;width:100%;margin:0 auto;}
 #taskboard table{ border-collapse: collapse;}
 #taskboard td, #taskboard th{width:20%;padding:4px;border:1px dotted #cecece;border-top:solid 1px #e7e7e7;vertical-align:top;}
 #taskboard td:first-child, #taskboard th:first-child{width:15%;}

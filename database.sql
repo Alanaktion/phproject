@@ -69,7 +69,7 @@ CREATE TABLE `issue` (
 
 /*Data for the table `issue` */
 
-insert  into `issue`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`author_id`,`owner_id`,`created_date`,`closed_date`,`deleted_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00',NULL,NULL,'2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer description.',NULL,1,1,'2013-10-19 05:09:36',NULL,NULL,'2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,2,1,'2013-10-19 05:09:38',NULL,NULL,NULL,'none'),(4,1,1,'Due date task edited','This task does have a due date, and it\'s in the past!',NULL,2,1,'2013-10-19 05:09:40',NULL,NULL,'2013-10-15','none'),(5,1,1,'Test','Testing',1,1,1,'2013-10-23 14:43:55',NULL,NULL,NULL,'none'),(6,1,1,'Testing Other Assignee','Testy testy testy.',2,1,2,'2013-12-20 21:47:18',NULL,NULL,'2013-12-23','none'),(7,1,2,'Yay a project.','Woooooooo project!!!',0,1,1,'2014-01-06 17:25:55',NULL,NULL,'2014-01-07','none'),(8,1,2,'Testy','Testyyyyy\n',0,1,1,'2014-01-06 22:11:59',NULL,NULL,'2014-01-07','none');
+insert  into `issue`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`author_id`,`owner_id`,`created_date`,`closed_date`,`deleted_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00',NULL,NULL,'2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer description.',NULL,1,1,'2013-10-19 05:09:36',NULL,NULL,'2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,2,1,'2013-10-19 05:09:38',NULL,NULL,NULL,'none'),(4,1,1,'Due date task edited','This task does have a due date, and it\'s in the past!',NULL,2,1,'2013-10-19 05:09:40',NULL,NULL,'2013-10-15','none'),(5,1,1,'Test','Testing',1,1,1,'2013-10-23 14:43:55',NULL,NULL,NULL,'none'),(6,1,1,'Testing Other Assignee','Testy testy testy.',2,1,2,'2013-12-20 21:47:18',NULL,NULL,'2013-12-23','none'),(7,1,2,'Yay a project.','Woooooooo project!!!',NULL,1,1,'2014-01-06 17:25:55',NULL,NULL,'2014-01-07','none'),(8,1,2,'Testy','Testyyyyy\n',NULL,1,1,'2014-01-06 22:11:59',NULL,NULL,'2014-01-07','none');
 
 /*Table structure for table `issue_comment` */
 
@@ -90,7 +90,7 @@ CREATE TABLE `issue_comment` (
 
 /*Data for the table `issue_comment` */
 
-insert  into `issue_comment`(`id`,`issue_id`,`user_id`,`text`,`created_date`) values (1,4,1,'Holy crap a comment.','2014-01-02 15:24:55');
+insert  into `issue_comment`(`id`,`issue_id`,`user_id`,`text`,`created_date`) values (1,4,1,'Wow a comment.','2014-01-02 15:24:55');
 
 /*Table structure for table `issue_status` */
 
@@ -157,21 +157,6 @@ CREATE TABLE `issue_update_field` (
 /*Data for the table `issue_update_field` */
 
 insert  into `issue_update_field`(`id`,`issue_update_id`,`field`,`old_value`,`new_value`) values (1,1,'name','Due date task','Due date task edited'),(2,2,'name','2','Yay a project.'),(3,2,'description','2','Woooooooo project!!!');
-
-/*Table structure for table `task_comment` */
-
-DROP TABLE IF EXISTS `task_comment`;
-
-CREATE TABLE `task_comment` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) unsigned NOT NULL,
-  `text` text NOT NULL,
-  `created_date` datetime NOT NULL,
-  `deleted_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Data for the table `task_comment` */
 
 /*Table structure for table `user` */
 
@@ -245,6 +230,23 @@ DROP TABLE IF EXISTS `issue_comment_user`;
  `user_task_color` char(6) 
 )*/;
 
+/*Table structure for table `issue_update_user` */
+
+DROP TABLE IF EXISTS `issue_update_user`;
+
+/*!50001 DROP VIEW IF EXISTS `issue_update_user` */;
+/*!50001 DROP TABLE IF EXISTS `issue_update_user` */;
+
+/*!50001 CREATE TABLE  `issue_update_user`(
+ `id` int(10) unsigned ,
+ `issue_id` int(10) unsigned ,
+ `user_id` int(10) unsigned ,
+ `created_date` datetime ,
+ `user_username` varchar(32) ,
+ `user_name` varchar(32) ,
+ `user_email` varchar(64) 
+)*/;
+
 /*Table structure for table `issue_user` */
 
 DROP TABLE IF EXISTS `issue_user`;
@@ -286,6 +288,13 @@ DROP TABLE IF EXISTS `issue_user`;
 /*!50001 DROP VIEW IF EXISTS `issue_comment_user` */;
 
 /*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `issue_comment_user` AS (select `c`.`id` AS `id`,`c`.`issue_id` AS `issue_id`,`c`.`user_id` AS `user_id`,`c`.`text` AS `text`,`c`.`created_date` AS `created_date`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`issue_comment` `c` join `user` `u` on((`c`.`user_id` = `u`.`id`)))) */;
+
+/*View structure for view issue_update_user */
+
+/*!50001 DROP TABLE IF EXISTS `issue_update_user` */;
+/*!50001 DROP VIEW IF EXISTS `issue_update_user` */;
+
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `issue_update_user` AS (select `i`.`id` AS `id`,`i`.`issue_id` AS `issue_id`,`i`.`user_id` AS `user_id`,`i`.`created_date` AS `created_date`,`u`.`username` AS `user_username`,`u`.`name` AS `user_name`,`u`.`email` AS `user_email` from (`issue_update` `i` join `user` `u` on((`i`.`user_id` = `u`.`id`)))) */;
 
 /*View structure for view issue_user */
 
