@@ -22,9 +22,9 @@ class Issues extends Base {
 		// Build SQL string to use for filtering
 		$filter_str = "";
 		foreach($filter as $i => $val) {
-			$filter_str .= "$i = '$val' and ";
+			$filter_str .= "$i = '$val' AND ";
 		}
-		$filter_str = substr($filter_str, 0, strlen($filter_str) - 5); // Remove trailing "and "
+		$filter_str .= "deleted_date IS NULL";
 
 		// Load type if a type_id was passed
 		if(!empty($args["type"])) {
@@ -205,7 +205,7 @@ class Issues extends Base {
 		$f3->set("author", $author->cast());
 
 		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
-		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ? AND deleted_date IS NULL", $issue->id), array("order" => "created_date ASC")));
+		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
 
 		echo \Template::instance()->render("issues/single.html");
 	}
@@ -238,6 +238,14 @@ class Issues extends Base {
 		$f3->set("updates", $updates_array);
 
 		echo \Template::instance()->render("issues/single/history.html");
+	}
+
+	public function search($f3, $params) {
+		$query = "%" . $f3->get("GET.q") . "%";
+		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user", null, 3600);
+		$results = $issues->paginate(0, 50, array("name LIKE ? OR description LIKE ? AND deleted_date IS NULL", $query, $query), array("order" => "created_date ASC"));
+		$f3->set("issues", $results);
+		echo \Template::instance()->render("issues/search.html");
 	}
 
 }

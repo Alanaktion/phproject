@@ -12,21 +12,60 @@
 				<div class="panel-heading has-buttons clearfix">
 					<h3 class="panel-title pull-left">{{ @issue.name }} <small>#{{ @issue.id }}</small></h3>
 					<div class="pull-right">
-						<a href="/issues/{{ @issue.id }}/history/" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-time"></span>&ensp;History</a>
-						<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span>&ensp;Edit</a>
+						<a href="/issues/{{ @issue.id }}/history/" class="btn btn-default btn-xs">
+							<span class="glyphicon glyphicon-time"></span>&ensp;History
+						</a>
+						<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
+							<span class="glyphicon glyphicon-pencil"></span>&ensp;Edit
+						</a>
+						<check if="{{ @user.role == 'admin' }}">
+							<a href="/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
+								<span class="glyphicon glyphicon-remove"></span>&ensp;Delete
+							</a>
+						</check>
 					</div>
 				</div>
 				<div class="panel-body">
-					<p>Added by <a href="/users/{{ @issue.author_id }}">{{ @author.name }}</a> on {{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}</p>
+					<div class="issue-head clearfix">
+						<img src="{{ h(gravatar(@user.email, 48)) }}" class="profile-picture img-rounded" alt>
+						<p class="pull-left">
+							<a href="/user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a><br>
+							{{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}
+						</p>
+					</div>
 					<check if="{{ strtotime(@issue.due_date) }}">
 						<p><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
 					</check>
 					<p>{{ @issue.description }}</p>
 					<hr>
-					<div class="well comments">
+					<p><strong>Files</strong></p>
+					<ul class="file-list">
+						<li>
+							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
+							Filename</a>
+						</li>
+						<li>
+							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
+							LONG_Filename</a>
+						</li>
+						<li>
+							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
+							Really Long Filename</a>
+						</li>
+						<li>
+							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
+							Filename</a>
+						</li>
+					</ul>
+					<div class="clearfix"></div>
+					<form method="post" enctype="multipart/form-data" action="">
+						<input type="file" name="somename" size="chars"> <button>Upload</button>
+					</form>
+					<hr>
+					<div class="comments">
 						<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
 							<div class="comment clearfix">
-								<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="pull-left profile-picture img-rounded" alt>
+								<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="profile-picture img-rounded" alt>
 								<div class="pull-left">
 									<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
 									<p>{{ @comment.text }}</p>

@@ -70,6 +70,16 @@ a:active .img-border {
 	background-color: #ecf0f1;
 }
 
+.issue-head .profile-picture {
+	margin-right: 10px;
+	float: left;
+}
+.issue-head p {
+	float: left;
+	line-height: 20px;
+	padding: 4px 0;
+}
+
 .comment {
 	margin-bottom: 15px;
 }
@@ -104,4 +114,16 @@ ul.no-list-style,
 li.no-list-style {
 	padding: 0;
 	list-style: none;
+}
+
+.file-list  {
+	list-style-type: none;
+	display: inline;
+	
+}
+
+.file-list li {
+	margin-right:10px;
+	float: left;
+	text-align:center
 }

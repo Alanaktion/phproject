@@ -1,3 +1,9 @@
+/*
+SQLyog Community v11.3 (64 bit)
+MySQL - 5.5.16-log : Database - openproject
+*********************************************************************
+*/
+
 /*!40101 SET NAMES utf8 */;
 
 /*!40101 SET SQL_MODE=''*/;
@@ -6,18 +12,39 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-/*Table structure for table `category` */
+/*Table structure for table `group` */
 
-DROP TABLE IF EXISTS `category`;
+DROP TABLE IF EXISTS `group`;
 
-CREATE TABLE `category` (
+CREATE TABLE `group` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL,
-  `slug` varchar(64) NOT NULL,
+  `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
-/*Data for the table `category` */
+/*Data for the table `group` */
+
+insert  into `group`(`id`,`name`,`deleted_date`) values (1,'I.T.',NULL);
+
+/*Table structure for table `group_user` */
+
+DROP TABLE IF EXISTS `group_user`;
+
+CREATE TABLE `group_user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `group_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `group_id` (`group_id`),
+  KEY `group_user_id` (`user_id`),
+  CONSTRAINT `group_id` FOREIGN KEY (`group_id`) REFERENCES `group` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `group_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+
+/*Data for the table `group_user` */
+
+insert  into `group_user`(`id`,`group_id`,`user_id`) values (5,1,1),(8,1,2);
 
 /*Table structure for table `issue` */
 
@@ -38,11 +65,11 @@ CREATE TABLE `issue` (
   `due_date` date DEFAULT NULL,
   `repeat_cycle` enum('none','daily','weekly','monthly') NOT NULL DEFAULT 'none',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 /*Data for the table `issue` */
 
-insert  into `issue`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`author_id`,`owner_id`,`created_date`,`closed_date`,`deleted_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00',NULL,NULL,'2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer description.',NULL,1,1,'2013-10-19 05:09:36',NULL,NULL,'2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,2,1,'2013-10-19 05:09:38',NULL,NULL,NULL,'none'),(4,1,1,'Due date task edited','This task does have a due date, and it\'s in the past!',NULL,2,1,'2013-10-19 05:09:40',NULL,NULL,'2013-10-15','none'),(5,1,1,'Test','Testing',0,0,1,'2013-10-23 14:43:55',NULL,NULL,NULL,'none'),(6,1,1,'Testing Other Assignee','Testy testy testy.',2,1,2,'2013-12-20 21:47:18',NULL,NULL,'2013-12-23','none'),(7,1,2,'Yay a project.','Woooooooo project!!!',0,1,1,'2014-01-06 17:25:55',NULL,NULL,'2014-01-07','none');
+insert  into `issue`(`id`,`status`,`type_id`,`name`,`description`,`parent_id`,`author_id`,`owner_id`,`created_date`,`closed_date`,`deleted_date`,`due_date`,`repeat_cycle`) values (1,1,1,'This is a test task','This is a task.',NULL,1,1,'2013-10-18 22:00:00',NULL,NULL,'2013-10-21','none'),(2,1,1,'Finish the task and project pages','This is another test task, this time with a much longer description.',NULL,1,1,'2013-10-19 05:09:36',NULL,NULL,'2013-10-30','none'),(3,1,1,'No due date task','This task doesn\'t have a due date.',NULL,2,1,'2013-10-19 05:09:38',NULL,NULL,NULL,'none'),(4,1,1,'Due date task edited','This task does have a due date, and it\'s in the past!',NULL,2,1,'2013-10-19 05:09:40',NULL,NULL,'2013-10-15','none'),(5,1,1,'Test','Testing',1,1,1,'2013-10-23 14:43:55',NULL,NULL,NULL,'none'),(6,1,1,'Testing Other Assignee','Testy testy testy.',2,1,2,'2013-12-20 21:47:18',NULL,NULL,'2013-12-23','none'),(7,1,2,'Yay a project.','Woooooooo project!!!',0,1,1,'2014-01-06 17:25:55',NULL,NULL,'2014-01-07','none'),(8,1,2,'Testy','Testyyyyy\n',0,1,1,'2014-01-06 22:11:59',NULL,NULL,'2014-01-07','none');
 
 /*Table structure for table `issue_comment` */
 
@@ -139,7 +166,8 @@ CREATE TABLE `task_comment` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
   `text` text NOT NULL,
-  `created_at` datetime NOT NULL,
+  `created_date` datetime NOT NULL,
+  `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -160,11 +188,11 @@ CREATE TABLE `user` (
   `created_date` datetime NOT NULL,
   `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 /*Data for the table `user` */
 
-insert  into `user`(`id`,`username`,`email`,`name`,`password`,`role`,`task_color`,`created_date`,`deleted_date`) values (1,'alan','ahardman@thrivelife.com','Alan Hardman','$2y$13$rTDxcLCsS/pZRIbLb6vW4.SP/qAn7y/QhWO8WfewsIyhrn9KMLJK2','admin','b5ed3f','2014-01-03 16:23:40',NULL),(2,'shelf','shelf@localhost','Shelf Testy','$2y$13$TDAyoRKvtNyRo08/Ova4YOfCFlXgm7/qKLuw2mW7EHHefcrlRze92','user','336699','2014-01-03 16:23:42',NULL);
+insert  into `user`(`id`,`username`,`email`,`name`,`password`,`role`,`task_color`,`created_date`,`deleted_date`) values (1,'alan','ahardman@thrivelife.com','Alan Hardman','$2y$13$rTDxcLCsS/pZRIbLb6vW4.SP/qAn7y/QhWO8WfewsIyhrn9KMLJK2','admin','b5ed3f','2014-01-03 16:23:40',NULL),(2,'shelf','shelf@localhost','Shelf Testy','$2y$13$TDAyoRKvtNyRo08/Ova4YOfCFlXgm7/qKLuw2mW7EHHefcrlRze92','user','336699','2014-01-03 16:23:42',NULL),(3,'test','ahardman+test@thrivelife.com','Test User','$2y$13$SsSLHOoDd9XjV2ao8zvQKuW3.LOsGGTE5HXhF4ftWOvZ5T3FPz8oO','user','057117','2014-01-07 16:52:02',NULL);
 
 /*Table structure for table `watcher` */
 
@@ -178,6 +206,24 @@ CREATE TABLE `watcher` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `watcher` */
+
+/*Table structure for table `group_user_user` */
+
+DROP TABLE IF EXISTS `group_user_user`;
+
+/*!50001 DROP VIEW IF EXISTS `group_user_user` */;
+/*!50001 DROP TABLE IF EXISTS `group_user_user` */;
+
+/*!50001 CREATE TABLE  `group_user_user`(
+ `id` int(10) unsigned ,
+ `group_id` int(10) unsigned ,
+ `user_id` int(10) unsigned ,
+ `user_username` varchar(32) ,
+ `user_email` varchar(64) ,
+ `user_name` varchar(32) ,
+ `user_role` enum('user','admin') ,
+ `user_task_color` char(6) 
+)*/;
 
 /*Table structure for table `issue_comment_user` */
 
@@ -196,7 +242,7 @@ DROP TABLE IF EXISTS `issue_comment_user`;
  `user_email` varchar(64) ,
  `user_name` varchar(32) ,
  `user_role` enum('user','admin') ,
- `user_task_color` char(6)
+ `user_task_color` char(6) 
 )*/;
 
 /*Table structure for table `issue_user` */
@@ -216,6 +262,7 @@ DROP TABLE IF EXISTS `issue_user`;
  `author_id` int(11) ,
  `owner_id` int(11) ,
  `created_date` datetime ,
+ `deleted_date` datetime ,
  `due_date` date ,
  `repeat_cycle` enum('none','daily','weekly','monthly') ,
  `author_username` varchar(32) ,
@@ -223,8 +270,15 @@ DROP TABLE IF EXISTS `issue_user`;
  `author_email` varchar(64) ,
  `owner_username` varchar(32) ,
  `owner_name` varchar(32) ,
- `owner_email` varchar(64)
+ `owner_email` varchar(64) 
 )*/;
+
+/*View structure for view group_user_user */
+
+/*!50001 DROP TABLE IF EXISTS `group_user_user` */;
+/*!50001 DROP VIEW IF EXISTS `group_user_user` */;
+
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `group_user_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`group_user` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`)))) */;
 
 /*View structure for view issue_comment_user */
 
@@ -238,7 +292,7 @@ DROP TABLE IF EXISTS `issue_user`;
 /*!50001 DROP TABLE IF EXISTS `issue_user` */;
 /*!50001 DROP VIEW IF EXISTS `issue_user` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `issue_user` AS (select `issue`.`id` AS `id`,`issue`.`status` AS `status`,`issue`.`type_id` AS `type_id`,`issue`.`name` AS `name`,`issue`.`description` AS `description`,`issue`.`parent_id` AS `parent_id`,`issue`.`author_id` AS `author_id`,`issue`.`owner_id` AS `owner_id`,`issue`.`created_date` AS `created_date`,`issue`.`due_date` AS `due_date`,`issue`.`repeat_cycle` AS `repeat_cycle`,`author`.`username` AS `author_username`,`author`.`name` AS `author_name`,`author`.`email` AS `author_email`,`owner`.`username` AS `owner_username`,`owner`.`name` AS `owner_name`,`owner`.`email` AS `owner_email` from ((`issue` left join `user` `author` on((`issue`.`author_id` = `author`.`id`))) left join `user` `owner` on((`issue`.`owner_id` = `owner`.`id`)))) */;
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `issue_user` AS (select `issue`.`id` AS `id`,`issue`.`status` AS `status`,`issue`.`type_id` AS `type_id`,`issue`.`name` AS `name`,`issue`.`description` AS `description`,`issue`.`parent_id` AS `parent_id`,`issue`.`author_id` AS `author_id`,`issue`.`owner_id` AS `owner_id`,`issue`.`created_date` AS `created_date`,`issue`.`deleted_date` AS `deleted_date`,`issue`.`due_date` AS `due_date`,`issue`.`repeat_cycle` AS `repeat_cycle`,`author`.`username` AS `author_username`,`author`.`name` AS `author_name`,`author`.`email` AS `author_email`,`owner`.`username` AS `owner_username`,`owner`.`name` AS `owner_name`,`owner`.`email` AS `owner_email` from ((`issue` left join `user` `author` on((`issue`.`author_id` = `author`.`id`))) left join `user` `owner` on((`issue`.`owner_id` = `owner`.`id`)))) */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

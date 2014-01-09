@@ -165,6 +165,12 @@ Variable_name = 'Uptime'"));
 				$user = new \Model\Group\User();
 				$user->load(array("user_id = ? AND group_id = ?", $f3->get("POST.user_id"), $f3->get("POST.group_id")));
 				$user->delete();
+				echo json_encode(array("deleted" => 1));
+				break;
+			case "change_title":
+				$group->name = $f3->get("POST.name");
+				$group->save();
+				echo json_encode(array("changed" => 1));
 				break;
 		}
 	}
