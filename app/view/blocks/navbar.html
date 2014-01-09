@@ -1,6 +1,9 @@
 <!-- Desktop -->
 <div class="navbar navbar-default navbar-fixed-top hidden-xs" role="navigation">
-	<a class="navbar-brand" href="/">{{ @site.name }}</a>
+	<a class="navbar-brand" href="/">
+		<span class="hidden-sm">{{ @site.name }}</span>
+		<span class="glyphicon glyphicon-home visible-sm"></span>
+	</a>
 	<ul class="nav navbar-nav">
 		<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -29,11 +32,15 @@
 	</ul>
 	<ul class="nav navbar-nav navbar-right">
 		<check if="{{ @user.role=='admin' }}">
-			<li><a href="/admin">Administration</a></li>
+			<li><a href="/admin">
+				<span class="hidden-sm">Administration</span>
+				<span class="glyphicon glyphicon-wrench visible-sm"></span>
+			</a></li>
 		</check>
 		<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				{{ @user.name }} <b class="caret"></b>
+				<span class="hidden-sm">{{ @user.name }} <b class="caret"></b></span>
+				<span class="glyphicon glyphicon-user visible-sm"></span>
 			</a>
 			<ul class="dropdown-menu">
 				<li><a href="/">Dashboard</a></li>
@@ -55,8 +62,22 @@
 
 <!-- Mobile -->
 <div class="navbar navbar-default navbar-fixed-top visible-xs" role="navigation">
-	<a class="navbar-brand" href="/">{{ @site.name }}</a>
-	<button type="button" class="btn btn-default navbar-btn navbar-right"><span class="glyphicon glyphicon-user"></span></button>
+	<a class="navbar-brand" href="/">
+		<span class="glyphicon glyphicon-home"></span>
+	</a>
+	<div class="pull-right">
+		<a href="/issues/new" class="btn btn-default navbar-btn">
+			<span class="glyphicon glyphicon-plus"></span>
+		</a>
+		<check if="{{ @user.role=='admin' }}">
+			<a href="/admin" class="btn btn-default navbar-btn">
+				<span class="glyphicon glyphicon-wrench"></span>
+			</a>
+		</check>
+		<a href="/user/account" class="btn btn-default navbar-btn">
+			<span class="glyphicon glyphicon-user"></span>
+		</a>
+	</div>
 </div>
 
 <!-- Alerts -->

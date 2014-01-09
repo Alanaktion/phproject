@@ -1,8 +1,8 @@
 body {
-	margin: 80px 0 20px 0;
+	padding: 80px 0 0;
 }
 body.login {
-	margin-top: 20px;
+	padding-top: 20px;
 }
 @media only screen and (max-width: 767px) {
 	.navbar-fixed-top > .navbar-btn {
@@ -10,9 +10,19 @@ body.login {
 		margin-right: 8px;
 	}
 }
+.navbar {
+	padding: 0 10px;
+}
+.navbar-nav > li > a > .glyphicon {
+	line-height: inherit;
+}
 
 .container {
 	max-width: none;
+}
+
+footer p {
+	line-height: 20px;
 }
 
 .js{display: block;}
