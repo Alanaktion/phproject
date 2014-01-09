@@ -20,10 +20,10 @@ function now($time = true) {
 }
 
 class TemplateAddons {
-	public static function placeholder($args) {
+	public static function placehold($args) {
 		$attr = $args['@attrib'];
 		return sprintf('<img src="data:image/gif;base64,R0lGODlhAQABAID/ AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="background-color: #ccc;" width="%u" height="%u">', $attr["width"], $attr["height"]);
 	}
 }
 
-\Template::instance()->extend("placehold", "TemplateAddons::placeholder");
+\Template::instance()->extend("placehold", "TemplateAddons::placehold");

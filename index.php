@@ -13,13 +13,14 @@ $f3->mset(array(
 	"AUTOLOAD" => "app/"
 ));
 
+// Get current Git revision
+$f3->set("revision", @file_get_contents(".git/refs/heads/master"));
+
 // Load routes
 $f3->config("app/routes.ini");
 
-// Load base configuration
+// Load configuration
 $f3->config("config-base.ini");
-
-// Load local configuration
 $f3->config("config.ini");
 
 // Set session lifetime
