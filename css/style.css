@@ -1,17 +1,18 @@
 body {
-	margin: 20px 0;
+	margin: 80px 0 20px 0;
 }
-body.has-fixed-nav {
-	margin-top: 80px;
+body.login {
+	margin-top: 20px;
 }
 @media only screen and (max-width: 767px) {
-	body:not(.login) {
-		margin-top: 80px;
-	}
 	.navbar-fixed-top > .navbar-btn {
 		float: right;
 		margin-right: 8px;
 	}
+}
+
+.container {
+	max-width: none;
 }
 
 .js{display: block;}

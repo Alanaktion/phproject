@@ -8,6 +8,11 @@ class Admin extends Base {
 		$this->_requireAdmin();
 		$f3->set("title", "Administration");
 
+		if($f3->get("POST.action") == "clearcache") {
+			\Cache::instance()->reset();
+			$f3->set("success", "Cache cleared successfully.");
+		}
+
 		// Gather some stats
 		$db = $f3->get("db.instance");
 
