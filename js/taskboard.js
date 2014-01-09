@@ -56,8 +56,6 @@ TaskUpdate = {
                     TaskUpdate.modalAdd($(this));
                 });
                 
-                //add in date picker on task update
-                $( ".due-date" ).datepicker();
 	},
 	modalEdit: function(data){
             user = $(data).find('.owner').text().trim();
@@ -74,6 +72,7 @@ TaskUpdate = {
             $( "#task-dialog textarea#description" ).val(description);
             $( "#task-dialog input#hours" ).val(hours);
             $( "#task-dialog input#due-date" ).val(date);
+            $( "#task-dialog" ).find( "#due-date" ).datepicker();
             TaskUpdate.setOptionByText("#task-dialog", user);                
             
             $( "#task-dialog" ).dialog({ title: "Edit Task" });
@@ -90,6 +89,7 @@ TaskUpdate = {
             TaskUpdate.changeModalColor(userColor);
         },
         modalAdd: function(data){
+            storyId = data.parent().parent().parent().parent().attr("data-story-id");
             $( "#task-dialog input#taskId" ).val("");
             $( "#task-dialog textarea#title" ).val("");
             $( "#task-dialog textarea#description" ).val("");
@@ -99,9 +99,10 @@ TaskUpdate = {
             TaskUpdate.changeModalColor("#E7E7E7");
             $( "#task-dialog" ).dialog({ title: "Add Task" });
             $( "#task-dialog" ).dialog( "open" );
+            $( "#task-dialog" ).find( "#due-date" ).datepicker();
             $( "#task-dialog" ).dialog({buttons:{
                    "Update": function() {
-                        TaskUpdate.addCard(data, $( "form#task-dialog" ).serializeObject());
+                        TaskUpdate.addCard(data, $( "form#task-dialog" ).serializeObject(), storyId);
                         $( "#task-dialog" ).dialog( "close" );
                      },
                     Cancel: function() {
@@ -131,12 +132,12 @@ TaskUpdate = {
             $(card).find( ".description" ).text(data.description);
             $(card).find( ".due-date" ).text(data.due-date);
             $(card).find( ".owner" ).text($("#task-dialog option[value='"+data.assigned+"']").text());
-            $(card).css("border-color", $("#task-dialog option[value='"+data.assigned+"']").attr("data-color"));
+            $(card).css("border-color", $("#task-dialog option[value='"+data.assigned+"']").attr("data-color"));            
             TaskUpdate.ajaxUpdateTask(data);
         },
-        addCard: function(story, data){
-            var row = story.parent().parent().parent().parent();
-            var cell = row.find("td.column-2");
+        addCard: function(story, data, storyId){
+            var row = $(story).parent().parent().parent().parent();
+            var cell = row.find("td.column-2");// put new tasks in the new column
             console.log(cell);
             cell.append($(".cloneable:last").clone());
             card = cell.find(".cloneable:last");
@@ -147,8 +148,15 @@ TaskUpdate = {
             //$(card).find( ".due-date" ).text(data.due-date);
             $(card).find( ".owner" ).text($("#task-dialog option[value='"+data.assigned+"']").text());
             $(card).css("border-color", $("#task-dialog option[value='"+data.assigned+"']").attr("data-color"));
-            card.show();            
-            TaskUpdate.ajaxAddTask(data);
+            $(card).removeClass("cloneable");
+            $(card).attr("id", "new_task_"+TaskUpdate.newTaskId);
+            
+            data.storyId = storyId;
+            data.newTaskId = TaskUpdate.newTaskId;
+            TaskUpdate.ajaxAddTask(data, card);
+            TaskUpdate.newTaskId++;
+            
+            card.show();
         },
 	TaskUpdateReceive: function (task, sender, receiverSerialized){//if the task changes statuses/stories
 		taskId = $(task).attr("id");
@@ -187,6 +195,8 @@ TaskUpdate = {
 	ajaxSendTaskPosition:function(data){
             taskId = data.taskId;
             TaskUpdate.block(taskId);
+            console.log("ajaxSendTaskPosition:")
+            console.log(data);
             $.ajax({
               type: "POST",
               url: TaskUpdate.updateURL+"/"+taskId,
@@ -203,6 +213,8 @@ TaskUpdate = {
         ajaxUpdateTask: function(data){
             taskId = data.taskId;
             TaskUpdate.block(taskId);
+            console.log("AjaxUpdateTask:");
+            console.log(data);
             $.ajax({
               type: "POST",
               url: TaskUpdate.updateURL+"/"+taskId,
@@ -216,20 +228,24 @@ TaskUpdate = {
               }		  
             });
         },
-        ajaxAddTask: function(data){
-            taskId = data.taskId;
-            TaskUpdate.block(taskId);
+        ajaxAddTask: function(data, card){
+            taskId = data.newTaskId;
+            TaskUpdate.newBlock(taskId);
+            console.log("AjaxAddTask (this will need to pass bask taskId with new task id) :");
+            console.log(data);
             $.ajax({
               type: "POST",
               url: TaskUpdate.addURL,
               data: data,
               success: function(data, textStatus, jqXHR){
-                    TaskUpdate.unBlock(taskId);
-                    $( "task_"+taskId ).find(".task-id").text(data.taskId);// ****** THIS NEEDS
+                    TaskUpdate.newUnBlock(taskId);
+                    $( card ).find(".task-id").text(data.taskId);
+                    $( card ).attr("id", "task_"+data.taskId);
+                    $(card).dblclick(function(){TaskUpdate.modalEdit($(this));});//add binding for double click on new card only if the id is set
               },
               error: function(jqXHR, textStatus, errorThrown){
-                    TaskUpdate.unBlock(taskId);
-                    TaskUpdate.showError(taskId);
+                    TaskUpdate.newUnBlock(taskId);
+                    TaskUpdate.newShowError(taskId);
               }		  
             });
         },
@@ -241,8 +257,21 @@ TaskUpdate = {
 		task = $('#task_'+taskId);
 		task.find('.spinner').remove();
 	},
+        newBlock:function(taskId){
+		task = $('#new_task_'+taskId);
+		task.append('<div class="spinner"></div>');
+	},
+	newUnBlock:function(taskId){
+		task = $('#new_task_'+taskId);
+		task.find('.spinner').remove();
+	},
         showError:function(taskId){
             task = $('#task_'+taskId);
+            task.css({"opacity":".8"});
+            task.append('<div class="error"></div>');
+        },
+        newShowError:function(taskId){
+            task = $('#new_task_'+taskId);
             task.css({"opacity":".8"});
             task.append('<div class="error"></div>');
         }
