@@ -31,8 +31,11 @@
 						</p>
 					</div>
 
-					<check if="{{ strtotime(@issue.due_date) }}">
+					<check if="{{ strtotime(@issue.due_date) > time() }}">
 						<p><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
+					</check>
+					<check if="{{ strtotime(@issue.due_date) && strtotime(@issue.due_date) <= time() }}">
+						<p class="text-danger"><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
 					</check>
 					<p>{{ @issue.description }}</p>
 
@@ -92,7 +95,7 @@
 										<div class="pull-left">
 											<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
 											<p>{{ @comment.text }}</p>
-											<p class="muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
+											<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
 										</div>
 									</div>
 								</repeat>
@@ -112,10 +115,18 @@
 							</div>
 						</div>
 						<div class="tab-pane" id="history">
-							<p>History will go here</p>
+							<div class="col-md-4 col-md-offset-4">
+								<div class="progress progress-striped active">
+									<div class="progress-bar" style="width: 100%"></div>
+								</div>
+							</div>
 						</div>
 						<div class="tab-pane" id="related">
-							<p>Related issues will go here</p>
+							<div class="col-md-4 col-md-offset-4">
+								<div class="progress progress-striped active">
+									<div class="progress-bar" style="width: 100%"></div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -141,7 +152,7 @@ $(function() {
 '<div class="pull-left">' +
 '<p><strong><a href="/user/' + data.user_username + '">' + data.user_name + '</a></strong></p>' +
 '<p>' + data.text + '</p>' +
-'<p class="muted"><small>' + data.date_formatted + '</small></p>' +
+'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
 '</div>' +
 '</div>');
 			$('#comment_textarea').val('');
@@ -158,6 +169,18 @@ $(function() {
 			$(this).parents('form')[0].submit();
 			e.preventDefault();
 		}
+	});
+
+	// Load history and related issues
+	$.get('/issues/{{ @issue.id }}/history', {}, function(data) {
+		$('#history').empty().append(data);
+	}, 'html').error(function() {
+		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('Error loading issue history.'));
+	});
+	$.get('/issues/{{ @issue.id }}/related', {}, function(data) {
+		$('#related').empty().append(data);
+	}, 'html').error(function() {
+		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('Error loading related issues.'));
 	});
 
 });

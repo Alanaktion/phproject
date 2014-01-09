@@ -213,31 +213,42 @@ class Issues extends Base {
 	public function single_history($f3, $params) {
 		$user_id = $this->_requireLogin();
 
-		$issue = new \Model\Issue();
-		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
-
-		if(!$issue->id) {
-			$f3->error(404);
-			return;
-		}
-
 		// Build updates array
 		$updates_array = array();
-		$update_model = new \Model\Issue\Update();
-		$updates = $update_model->paginate(0, 100, array("issue_id = ?", $issue->id), array("order" => "created_date ASC"));
+		$update_model = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_update_user", null, 3600);
+		$updates = $update_model->paginate(0, 100, array("issue_id = ?", $params["id"]), array("order" => "created_date ASC"));
 		foreach($updates["subset"] as $update) {
 			$update_field_model = new \Model\Issue\Update\Field();
 			$update_field_result = $update_field_model->paginate(0, 100, array("issue_update_id = ?", $update["id"]));
 			$update_array = $update->cast();
-			$update_array["text"] = "lol";
+			$update_array["text"] = "Soon.";
 			$updates_array[] = $update_array;
 		}
 
-		$f3->set("title", "Issue History #" . $issue->id);
-		$f3->set("issue", $issue->cast());
 		$f3->set("updates", $updates_array);
 
 		echo \Template::instance()->render("issues/single/history.html");
+	}
+
+	public function single_related($f3, $params) {
+		$user_id = $this->_requireLogin();
+		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user", null, 3600);
+		$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $params["id"])));
+		echo \Template::instance()->render("issues/single/related.html");
+	}
+
+	public function single_delete($f3, $params) {
+		$this->_requireLogin();
+
+		$issue = new \Model\Issue();
+		$issue->load(array("id = ?", $params["id"]));
+		if($f3->get("POST.id")) {
+			$issue->delete();
+			$f3->reroute("/issues");
+		} else {
+			$f3->set("issue", $issue->cast());
+			echo \Template::instance()->render("issues/delete.html");
+		}
 	}
 
 	public function search($f3, $params) {
