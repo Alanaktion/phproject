@@ -70,7 +70,8 @@ a:active .img-border {
 	background-color: #ecf0f1;
 }
 
-.issue-head .profile-picture {
+.issue-head .profile-picture,
+.comment .profile-picture {
 	margin-right: 10px;
 	float: left;
 }
@@ -82,10 +83,6 @@ a:active .img-border {
 
 .comment {
 	margin-bottom: 15px;
-}
-.comment .profile-picture {
-	margin-right: 15px;
-	background-color: #fff;
 }
 .comments .comment p {
 	line-height: 20px;
@@ -110,20 +107,10 @@ select[multiple] {
 	padding: 2px;
 }
 
-ul.no-list-style,
-li.no-list-style {
-	padding: 0;
-	list-style: none;
-}
-
-.file-list  {
-	list-style-type: none;
-	display: inline;
-	
-}
-
 .file-list li {
-	margin-right:10px;
-	float: left;
-	text-align:center
+	text-align: center;
+	width: 96px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }

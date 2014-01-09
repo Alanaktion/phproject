@@ -10,7 +10,7 @@ abstract class Base {
 		if($id = $f3->get('user.id')) {
 			return $id;
 		} else {
-			$f3->reroute("/login?redirect=" + urlencode("testy"));
+			$f3->reroute("/login");
 			$f3->unload();
 			return false;
 		}

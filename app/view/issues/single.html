@@ -12,9 +12,6 @@
 				<div class="panel-heading has-buttons clearfix">
 					<h3 class="panel-title pull-left">{{ @issue.name }} <small>#{{ @issue.id }}</small></h3>
 					<div class="pull-right">
-						<a href="/issues/{{ @issue.id }}/history/" class="btn btn-default btn-xs">
-							<span class="glyphicon glyphicon-time"></span>&ensp;History
-						</a>
 						<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
 							<span class="glyphicon glyphicon-pencil"></span>&ensp;Edit
 						</a>
@@ -33,59 +30,93 @@
 							{{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}
 						</p>
 					</div>
+
 					<check if="{{ strtotime(@issue.due_date) }}">
 						<p><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
 					</check>
 					<p>{{ @issue.description }}</p>
+
 					<hr>
-					<p><strong>Files</strong></p>
-					<ul class="file-list">
+
+					<h3>Files</h3>
+					<ul class="list-inline file-list">
 						<li>
-							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
-							Filename</a>
+							<a href="Filename.jpg" title="Filename">
+								<img src="//placehold.it/72x72"><br />
+								Filename
+							</a>
 						</li>
 						<li>
-							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
-							LONG_Filename</a>
+							<a href="Filename.jpg" title="Long Filename">
+								<img src="//placehold.it/72x72"><br />
+								Long Filename
+							</a>
 						</li>
 						<li>
-							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
-							Really Long Filename</a>
+							<a href="Filename.jpg" title="Really Long Filename">
+								<img src="//placehold.it/72x72"><br />
+								Really Long Filename
+							</a>
 						</li>
 						<li>
-							<a href="Filename.jpg"><img src="http://placehold.it/75x75"><br />
-							Filename</a>
+							<a href="Filename.jpg" title="Filename">
+								<img src="//placehold.it/72x72"><br />
+								Filename
+							</a>
 						</li>
 					</ul>
-					<div class="clearfix"></div>
-					<form method="post" enctype="multipart/form-data" action="">
-						<input type="file" name="somename" size="chars"> <button>Upload</button>
+					<p class="clear"></p>
+					<form class="form-inline" method="post" enctype="multipart/form-data" action="">
+						<div class="form-group">
+							<input type="file" name="somename" size="chars">
+						</div>
+						<div class="form-group">
+							<button type="button" class="btn btn-default btn-sm">Upload</button>
+						</div>
 					</form>
-					<hr>
-					<div class="comments">
-						<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
-							<div class="comment clearfix">
-								<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="profile-picture img-rounded" alt>
-								<div class="pull-left">
-									<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
-									<p>{{ @comment.text }}</p>
-									<p class="muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
-								</div>
+
+					<br>
+
+
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#comments" data-toggle="tab">Comments</a></li>
+						<li><a href="#history" data-toggle="tab">History</a></li>
+						<li><a href="#related" data-toggle="tab">Related</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="comments">
+							<div class="comments" id="comments">
+								<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
+									<div class="comment clearfix">
+										<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="profile-picture img-rounded" alt>
+										<div class="pull-left">
+											<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
+											<p>{{ @comment.text }}</p>
+											<p class="muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
+										</div>
+									</div>
+								</repeat>
+								<form action="/issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
+									<input type="hidden" name="action" value="comment">
+									<div class="form-group">
+										<div class="col-md-12">
+											<textarea class="form-control" id="comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-md-12 text-right">
+											<button type="submit" class="btn btn-primary btn-sm">Save Comment</button>
+										</div>
+									</div>
+								</form>
 							</div>
-						</repeat>
-						<form action="/issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
-							<input type="hidden" name="action" value="comment">
-							<div class="form-group">
-								<div class="col-md-12">
-									<textarea class="form-control" id="comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-md-12 text-right">
-									<button type="submit" class="btn btn-primary btn-sm">Save Comment</button>
-								</div>
-							</div>
-						</form>
+						</div>
+						<div class="tab-pane" id="history">
+							<p>History will go here</p>
+						</div>
+						<div class="tab-pane" id="related">
+							<p>Related issues will go here</p>
+						</div>
 					</div>
 				</div>
 			</div>
