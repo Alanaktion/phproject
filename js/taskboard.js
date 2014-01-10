@@ -35,7 +35,7 @@ TaskUpdate = {
                 //initialize modal window
 		$( "#task-dialog" ).dialog({
 		  autoOpen: false,
-		  height: 520,
+		  height: 600,
 		  width: 350,
 		  modal: true,
 		  buttons: {
@@ -47,7 +47,7 @@ TaskUpdate = {
 			}
 		  },
 		  close: function() {
-			//allFields.val( "" ).removeClass( "ui-state-error" );
+			
 		  }
 		});
                 
@@ -65,22 +65,35 @@ TaskUpdate = {
             title = $(data).find('.title').text().trim();
             description = $(data).find('.description').text().trim();
             hours = $(data).find('.hours').text().trim();
-            date = $(data).find('.due-date').text().trim();
+            date = $(data).find('.dueDate').text().trim();
 
             $( "#task-dialog input#taskId" ).val(taskId);
             $( "#task-dialog textarea#title" ).val(title);
             $( "#task-dialog textarea#description" ).val(description);
             $( "#task-dialog input#hours" ).val(hours);
-            $( "#task-dialog input#due-date" ).val(date);
-            $( "#task-dialog" ).find( "#due-date" ).datepicker();
+            $( "#task-dialog input#dueDate" ).val(date);
+            $( "#task-dialog" ).find( "#dueDate" ).datepicker();
             TaskUpdate.setOptionByText("#task-dialog", user);                
             
             $( "#task-dialog" ).dialog({ title: "Edit Task" });
             $( "#task-dialog" ).dialog( "open" );
             $( "#task-dialog" ).dialog({buttons:{
                    "Update": function() {
-                        TaskUpdate.updateCard(data, $( "form#task-dialog" ).serializeObject());
-                        $( "#task-dialog" ).dialog( "close" );
+                        
+                        $('.ui-error').remove();
+                        $(".input-error").removeClass(".input-error");
+                        var bValid = true;
+                        bValid = bValid && isNumber( $( '#hours' ).val() );
+                        if(bValid) {
+                            TaskUpdate.updateCard(data, $( "form#task-dialog" ).serializeObject());
+                            $( "#task-dialog" ).dialog( "close" );
+                        }
+                        else{
+                            $( "#hours" ).before("<label style='color:red;display:block;' class='ui-error'>Value must be a number!</label>");
+                            $( "#hours" ).addClass("input-error");
+                        }
+                       
+                        
                      },
                     Cancel: function() {
                       $( this ).dialog( "close" );
@@ -94,14 +107,19 @@ TaskUpdate = {
             $( "#task-dialog textarea#title" ).val("");
             $( "#task-dialog textarea#description" ).val("");
             $( "#task-dialog input#hours" ).val("");
-            $( "#task-dialog input#due-date" ).val("");
+            $( "#task-dialog input#dueDate" ).val("");
             TaskUpdate.setOptionByText("#task-dialog", "");
             TaskUpdate.changeModalColor("#E7E7E7");
             $( "#task-dialog" ).dialog({ title: "Add Task" });
             $( "#task-dialog" ).dialog( "open" );
-            $( "#task-dialog" ).find( "#due-date" ).datepicker();
+            $( "#task-dialog" ).find( "#dueDate" ).datepicker();
             $( "#task-dialog" ).dialog({buttons:{
                    "Update": function() {
+                        
+                        var bValid = true;
+                        bValid = isNumber( $('#hours').val() );
+                        console.log(bValid);
+                        
                         TaskUpdate.addCard(data, $( "form#task-dialog" ).serializeObject(), storyId);
                         $( "#task-dialog" ).dialog( "close" );
                      },
@@ -128,9 +146,18 @@ TaskUpdate = {
         },
         updateCard: function(card, data){
             $(card).find( ".title" ).text(data.title);
-            $(card).find( ".hours" ).text(data.hours);
+            
+            if(isNumber(data.hours) && data.hours > 0){
+                $(card).find( ".hours" ).text(parseFloat(data.hours).toFixed(1));
+                $(card).find( ".hours" ).show();
+            }
+            else{
+                $(card).find( ".hours" ).hide();
+            }
+                        
             $(card).find( ".description" ).text(data.description);
-            $(card).find( ".due-date" ).text(data.due-date);
+            Test = data;
+            $(card).find( ".dueDate" ).text(data.dueDate);
             $(card).find( ".owner" ).text($("#task-dialog option[value='"+data.assigned+"']").text());
             $(card).css("border-color", $("#task-dialog option[value='"+data.assigned+"']").attr("data-color"));            
             TaskUpdate.ajaxUpdateTask(data);
@@ -138,14 +165,21 @@ TaskUpdate = {
         addCard: function(story, data, storyId){
             var row = $(story).parent().parent().parent().parent();
             var cell = row.find("td.column-2");// put new tasks in the new column
-            console.log(cell);
             cell.append($(".cloneable:last").clone());
             card = cell.find(".cloneable:last");
             
             $(card).find( ".title" ).text(data.title);
-            $(card).find( ".hours" ).text(data.hours);
+            
+            if(isNumber(data.hours) && data.hours > 0){
+                $(card).find( ".hours" ).text(parseFloat(data.hours).toFixed(1));
+                $(card).find( ".hours" ).show();
+            }
+            else{
+                $(card).find( ".hours" ).hide();
+            }
+            
             $(card).find( ".description" ).text(data.description);
-            //$(card).find( ".due-date" ).text(data.due-date);
+            //$(card).find( ".dueDate" ).text(data.dueDate);
             $(card).find( ".owner" ).text($("#task-dialog option[value='"+data.assigned+"']").text());
             $(card).css("border-color", $("#task-dialog option[value='"+data.assigned+"']").attr("data-color"));
             $(card).removeClass("cloneable");
@@ -268,13 +302,38 @@ TaskUpdate = {
         showError:function(taskId){
             task = $('#task_'+taskId);
             task.css({"opacity":".8"});
-            task.append('<div class="error"></div>');
+            task.append('<div class="error" title="An error occured while saving the task!"></div>');
         },
         newShowError:function(taskId){
             task = $('#new_task_'+taskId);
             task.css({"opacity":".8"});
-            task.append('<div class="error"></div>');
+            task.append('<div class="error" title="An error occured while saving the task!"></div>');
         }
+}
+
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function checkLength(o, n, min, max) {
+    if (o.val().length > max || o.val().length < min) {
+        o.addClass("ui-state-error");
+        updateTips("Length of " + n + " must be between " +
+                min + " and " + max + ".");
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function checkRegexp(o, regexp, n) {
+    if (!(regexp.test(o.val()))) {
+        o.addClass("ui-state-error");
+        updateTips(n);
+        return false;
+    } else {
+        return true;
+    }
 }
 
 jQuery.fn.serializeObject = function() {
