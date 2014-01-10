@@ -12,6 +12,18 @@
 				<div class="panel-heading has-buttons clearfix">
 					<h3 class="panel-title pull-left">{{ @issue.name }} <small>#{{ @issue.id }}</small></h3>
 					<div class="pull-right">
+						<check if="{{ @watching }}">
+							<true>
+								<button class="btn btn-default btn-xs">
+									<span class="glyphicon glyphicon-eye-closed"></span>&ensp;Unwatch
+								</button>
+							</true>
+							<false>
+								<button class="btn btn-default btn-xs">
+									<span class="glyphicon glyphicon-eye-open"></span>&ensp;Watch
+								</button>
+							</false>
+						</check>
 						<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
 							<span class="glyphicon glyphicon-pencil"></span>&ensp;Edit
 						</a>
@@ -24,19 +36,22 @@
 				</div>
 				<div class="panel-body">
 					<div class="issue-head clearfix">
-						<img src="{{ h(gravatar(@user.email, 48)) }}" class="profile-picture img-rounded" alt>
+						<img src="{{ h(gravatar(@author.email, 48)) }}" class="profile-picture img-rounded" alt>
 						<p class="pull-left">
 							<a href="/user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a><br>
 							{{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}
 						</p>
 					</div>
 
-					<check if="{{ strtotime(@issue.due_date) > time() }}">
-						<p><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
-					</check>
-					<check if="{{ strtotime(@issue.due_date) && strtotime(@issue.due_date) <= time() }}">
-						<p class="text-danger"><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</p>
-					</check>
+					<p>
+						<strong>Assigned to:</strong> <a href="/user/{{ @owner.username }}">{{ @owner.name }}</a>
+						<check if="{{ strtotime(@issue.due_date) > time() }}">
+							<br><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}
+						</check>
+						<check if="{{ strtotime(@issue.due_date) && strtotime(@issue.due_date) <= time() }}">
+							<br><strong>Due Date:</strong> <span class="text-danger">{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</span>
+						</check>
+					</p>
 					<p>{{ @issue.description }}</p>
 
 					<hr>
