@@ -161,6 +161,9 @@ class Issues extends Base {
 
 		$issue = new \Model\Issue();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
+                
+                $issue = new \Model\Issue();
+		$issue->load(array("id=?", $f3->get("PARAMS.id")));
 
 		if(!$issue->id) {
 			$f3->error(404);
@@ -260,8 +263,19 @@ class Issues extends Base {
 	}
         
         public function upload($f3, $params) {
-               
+                $user_id = $this->_requireLogin();
+                $issue = new \Model\Issue();
+		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("POST.issue_id")));
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+                
+                
                 $web = \Web::instance();
+                
+                
+                
                 
                 $f3->set('UPLOADS','uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
                 if(!file_exists($f3->get("UPLOADS"))) {
@@ -289,10 +303,26 @@ class Issues extends Base {
                             return false; // this file is not valid, return false will skip moving it
                             //
                         //see if a file already exists witih that name
-                        if(file_exists($f3->get("UPLOADS").$file["name"])) { 
-                            $f3->set('ERROR',"A file already exists with that name.");
-                            return false;
-                        }
+//                        if(file_exists($f3->get("UPLOADS").$file["name"])) { 
+//                            $f3->set('ERROR',"A file already exists with that name.");
+//                            return false;
+//                        }
+                        
+                        
+//                        $newfile = new \Model\Issue\File();
+//                        $newfile->issue_id = $issue->id;
+//                        $newfile->user_id = $user_id;
+//                        $newfile->filename = $file['name'];
+//                        $newfile->disk_filename = $file['name'];
+//                        $newfile->disk_directory = $f3->get("UPLOADS");
+//                        $newfile->filesize = $file['size'];
+//                        $newfile->content_type = $file['type'];
+//                        $newfile->digest = md5_file($f3->get("UPLOADS") . $file['name']); 
+//                        $newfile->created_date = date("Y-m-d H:i:s");
+//                        $newfile->save();
+                        
+                        //STILL NEED:
+                        //Name handling
                         
                         // everything went fine, hurray!
                         return true; // allows the file to be moved from php tmp dir to your defined upload dir
@@ -300,7 +330,13 @@ class Issues extends Base {
                     $overwrite,
                     $slug
                 );
-                $f3->reroute('/issues/'.$f3->get("POST.issue_id"));
+                print "<pre>\r\n With Receive\r\n";    
+                print_r ($files);
+                echo "\r\n with _FILES\r\n";
+                print_r ($_FILES);
+		print "</pre><br />";
+                echo "Web receive is not going to work, will have to just use mpve_uploaded_file()";
+                //$f3->reroute('/issues/'.$issue->id);
                 
         }
 

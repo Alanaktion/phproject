@@ -161,14 +161,14 @@ CREATE TABLE `issue_file` (
   `content_type` varchar(255) DEFAULT '',
   `digest` varchar(40) NOT NULL,
   `downloads` int(11) NOT NULL DEFAULT '0',
-  `author_id` int(11) NOT NULL DEFAULT '0',
+  `user_id` int(10) unsigned NOT NULL DEFAULT '0',
   `created_on` datetime DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `disk_directory` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_issue_id` (`issue_id`),
-  KEY `index_attachments_on_author_id` (`author_id`),
-  KEY `index_attachments_on_created_on` (`created_on`)
+  KEY `index_user_id` (`user_id`),
+  KEY `index_created_on` (`created_on`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
