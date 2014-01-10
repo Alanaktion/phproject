@@ -1,11 +1,14 @@
-<div class="row muted" id="footer">
-	<div class="col-lg-12">
-		<p class="text-right"><small>&copy; {{ @site.name }} {{ date("Y") }}</small></p>
-	</div>
-</div>
 <check if="{{ @DEBUG == 3 }}">
 	<pre style="font-size: smaller;">{{ @db.instance->log() }}</pre>
 </check>
+<footer class="row">
+	<div class="col-xs-4">
+		<p><a href="/logout" class="btn btn-default btn-xs">Log Out</a></p>
+	</div>
+	<div class="col-xs-8">
+		<p class="text-right text-muted" title="{{ @revision }}"><small>&copy; {{ @site.name }} {{ date("Y") }}</small></p>
+	</div>
+</footer>
 <script src="/minify/js?files=jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.24709.js"></script>
 <script type="text/javascript">
 jQuery(document).ready(function(){

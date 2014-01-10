@@ -161,6 +161,9 @@ class Issues extends Base {
 
 		$issue = new \Model\Issue();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
+                
+                $issue = new \Model\Issue();
+		$issue->load(array("id=?", $f3->get("PARAMS.id")));
 
 		if(!$issue->id) {
 			$f3->error(404);
@@ -258,5 +261,83 @@ class Issues extends Base {
 		$f3->set("issues", $results);
 		echo \Template::instance()->render("issues/search.html");
 	}
+        
+        public function upload($f3, $params) {
+                $user_id = $this->_requireLogin();
+                $issue = new \Model\Issue();
+		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("POST.issue_id")));
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+                
+                
+                $web = \Web::instance();
+                
+                
+                
+                
+                $f3->set('UPLOADS','uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
+                if(!file_exists($f3->get("UPLOADS"))) {
+                    mkdir($f3->get("UPLOADS"), 0777, true);
+                }
+                $overwrite = false; // set to true, to overwrite an existing file; Default: false
+                $slug = true; // rename file to filesystem-friendly version
+               
+                $files = $web->receive(function($file){
+                        
+                        //var_dump($file);
+                        /* looks like:
+                          array(5) {
+                              ["name"] =>     string(19) "somefile.png"
+                              ["type"] =>     string(9) "image/png"
+                              ["tmp_name"] => string(14) "/tmp/php2YS85Q"
+                              ["error"] =>    int(0)
+                              ["size"] =>     int(172245)
+                            }
+                        */
+                        // $file['name'] already contains the slugged name now
+
+                        // maybe you want to check the file size
+                        if($file['size'] > (2 * 1024 * 1024)) // if bigger than 2 MB
+                            return false; // this file is not valid, return false will skip moving it
+                            //
+                        //see if a file already exists witih that name
+//                        if(file_exists($f3->get("UPLOADS").$file["name"])) { 
+//                            $f3->set('ERROR',"A file already exists with that name.");
+//                            return false;
+//                        }
+                        
+                        
+//                        $newfile = new \Model\Issue\File();
+//                        $newfile->issue_id = $issue->id;
+//                        $newfile->user_id = $user_id;
+//                        $newfile->filename = $file['name'];
+//                        $newfile->disk_filename = $file['name'];
+//                        $newfile->disk_directory = $f3->get("UPLOADS");
+//                        $newfile->filesize = $file['size'];
+//                        $newfile->content_type = $file['type'];
+//                        $newfile->digest = md5_file($f3->get("UPLOADS") . $file['name']); 
+//                        $newfile->created_date = date("Y-m-d H:i:s");
+//                        $newfile->save();
+                        
+                        //STILL NEED:
+                        //Name handling
+                        
+                        // everything went fine, hurray!
+                        return true; // allows the file to be moved from php tmp dir to your defined upload dir
+                    },
+                    $overwrite,
+                    $slug
+                );
+                print "<pre>\r\n With Receive\r\n";    
+                print_r ($files);
+                echo "\r\n with _FILES\r\n";
+                print_r ($_FILES);
+		print "</pre><br />";
+                echo "Web receive is not going to work, will have to just use mpve_uploaded_file()";
+                //$f3->reroute('/issues/'.$issue->id);
+                
+        }
 
 }

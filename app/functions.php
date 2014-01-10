@@ -18,3 +18,12 @@ function h($str) {
 function now($time = true) {
 	return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
 }
+
+class TemplateAddons {
+	public static function placehold($args) {
+		$attr = $args['@attrib'];
+		return sprintf('<img src="data:image/gif;base64,R0lGODlhAQABAID/ AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="background-color: #ccc;" width="%u" height="%u">', $attr["width"], $attr["height"]);
+	}
+}
+
+\Template::instance()->extend("placehold", "TemplateAddons::placehold");

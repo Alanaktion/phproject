@@ -41,17 +41,21 @@
 					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="well">
-						<h3>MySQL Stats</h3>
-						<div class="row">
-							<repeat group="{{ @db_stats }}" value="{{ @val }}">
-								<p class="col-md-4 col-sm-6"><strong>{{ @val.Variable_name }}:</strong> {{ @val.Value }}</p>
-							</repeat>
-						</div>
-					</div>
+			<div class="well">
+				<h3>MySQL Stats</h3>
+				<div class="row">
+					<repeat group="{{ @db_stats }}" value="{{ @val }}">
+						<p class="col-md-4 col-sm-6"><strong>{{ @val.Variable_name }}:</strong> {{ @val.Value }}</p>
+					</repeat>
 				</div>
+			</div>
+			<div class="well clearfix">
+				<form action="/admin" method="post" class="pull-right">
+					<input type="hidden" name="action" value="clearcache">
+					<button type="submit" class="btn btn-danger">Clear Cache</button>
+				</form>
+				<h3>Cache</h3>
+				<p><strong>Mode:</strong> {{ @CACHE }}</p>
 			</div>
 		</div>
 	</div>

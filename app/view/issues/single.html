@@ -45,36 +45,37 @@
 					<ul class="list-inline file-list">
 						<li>
 							<a href="Filename.jpg" title="Filename">
-								<img src="//placehold.it/72x72"><br />
+								<placehold width="72" height="72" /><br />
 								Filename
 							</a>
 						</li>
 						<li>
 							<a href="Filename.jpg" title="Long Filename">
-								<img src="//placehold.it/72x72"><br />
+								<placehold width="72" height="72" /><br />
 								Long Filename
 							</a>
 						</li>
 						<li>
 							<a href="Filename.jpg" title="Really Long Filename">
-								<img src="//placehold.it/72x72"><br />
+								<placehold width="72" height="72" /><br />
 								Really Long Filename
 							</a>
 						</li>
 						<li>
 							<a href="Filename.jpg" title="Filename">
-								<img src="//placehold.it/72x72"><br />
+								<placehold width="72" height="72" /><br />
 								Filename
 							</a>
 						</li>
 					</ul>
 					<p class="clear"></p>
-					<form class="form-inline" method="post" enctype="multipart/form-data" action="">
+					<form class="form-inline" method="post" enctype="multipart/form-data" action="/issues/upload">
+                                            <input type="hidden" name="issue_id" value="{{ @issue.id }}" />
 						<div class="form-group">
-							<input type="file" name="somename" size="chars">
+							<input type="file" name="attachment" size="chars">
 						</div>
 						<div class="form-group">
-							<button type="button" class="btn btn-default btn-sm">Upload</button>
+							<input type="submit" class="btn btn-default btn-sm" value="Upload" />
 						</div>
 					</form>
 
