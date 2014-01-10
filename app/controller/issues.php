@@ -258,5 +258,50 @@ class Issues extends Base {
 		$f3->set("issues", $results);
 		echo \Template::instance()->render("issues/search.html");
 	}
+        
+        public function upload($f3, $params) {
+               
+                $web = \Web::instance();
+                
+                $f3->set('UPLOADS','uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
+                if(!file_exists($f3->get("UPLOADS"))) {
+                    mkdir($f3->get("UPLOADS"), 0777, true);
+                }
+                $overwrite = false; // set to true, to overwrite an existing file; Default: false
+                $slug = true; // rename file to filesystem-friendly version
+               
+                $files = $web->receive(function($file){
+                        
+                        //var_dump($file);
+                        /* looks like:
+                          array(5) {
+                              ["name"] =>     string(19) "somefile.png"
+                              ["type"] =>     string(9) "image/png"
+                              ["tmp_name"] => string(14) "/tmp/php2YS85Q"
+                              ["error"] =>    int(0)
+                              ["size"] =>     int(172245)
+                            }
+                        */
+                        // $file['name'] already contains the slugged name now
+
+                        // maybe you want to check the file size
+                        if($file['size'] > (2 * 1024 * 1024)) // if bigger than 2 MB
+                            return false; // this file is not valid, return false will skip moving it
+                            //
+                        //see if a file already exists witih that name
+                        if(file_exists($f3->get("UPLOADS").$file["name"])) { 
+                            $f3->set('ERROR',"A file already exists with that name.");
+                            return false;
+                        }
+                        
+                        // everything went fine, hurray!
+                        return true; // allows the file to be moved from php tmp dir to your defined upload dir
+                    },
+                    $overwrite,
+                    $slug
+                );
+                $f3->reroute('/issues/'.$f3->get("POST.issue_id"));
+                
+        }
 
 }

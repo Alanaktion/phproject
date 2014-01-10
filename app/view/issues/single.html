@@ -69,12 +69,13 @@
 						</li>
 					</ul>
 					<p class="clear"></p>
-					<form class="form-inline" method="post" enctype="multipart/form-data" action="">
+					<form class="form-inline" method="post" enctype="multipart/form-data" action="/issues/upload">
+                                            <input type="hidden" name="issue_id" value="{{ @issue.id }}" />
 						<div class="form-group">
-							<input type="file" name="somename" size="chars">
+							<input type="file" name="attachment" size="chars">
 						</div>
 						<div class="form-group">
-							<button type="button" class="btn btn-default btn-sm">Upload</button>
+							<input type="submit" class="btn btn-default btn-sm" value="Upload" />
 						</div>
 					</form>
 
