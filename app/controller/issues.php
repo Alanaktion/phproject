@@ -171,13 +171,13 @@ class Issues extends Base {
 		$issue = new \Model\Issue();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
-				$issue = new \Model\Issue();
-		$issue->load(array("id=?", $f3->get("PARAMS.id")));
-
 		if(!$issue->id) {
 			$f3->error(404);
 			return;
 		}
+
+		$type = new \Model\Issue\Type();
+		$type->load(array("id = ?", $issue->type_id));
 
 		// Run actions if passed
 		$post = $f3->get("POST");
@@ -236,6 +236,7 @@ class Issues extends Base {
 		$f3->set("watching", !!$watching->id);
 
 		$f3->set("issue", $issue->cast());
+		$f3->set("type", $type->cast());
 		$f3->set("author", $author->cast());
 		$f3->set("owner", $owner->cast());
 
