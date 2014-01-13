@@ -15,7 +15,36 @@ class Notification extends \Prefab {
 		$comment = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
 		$comment->load(array("id = ?", $comment_id));
 
-		// Build recipient list
+		// Get recipient list and remove current user
+		$recipients = $this->watcher_emails($issue_id);
+		$recipients = array_diff($recipients, array($f3->get("user.email")));
+
+		// Render message body
+		$f3->set("issue", $issue->cast());
+		$f3->set("comment", $comment->cast());
+		$body = \Template::instance()->render("notification/comment.html");
+
+		// Set up headers
+		$smtp = $this->smtp_instance();
+		$smtp->set("Subject", $comment->user_name . " commented on #" . $issue->id . " " . $issue->name);
+		$smtp->set("From", $f3->get("mail.from"));
+		$smtp->set("Reply-to", $f3->get("mail.from"));
+		$smtp->set("Content-type", "text/html");
+
+		// Send to recipients
+		foreach($recipients as $recipient) {
+			$smtp->set("To", $recipient);
+			$smtp->send($body);
+		}
+	}
+
+	// Send an email to watchers detailing the updated fields
+	public function issue_update($issue_id, $update_id) {
+
+	}
+
+	// Get array of email addresses of all watchers on an issue
+	protected function watcher_emails($issue_id) {
 		$recipients = array();
 
 		// Add issue author and owner
@@ -30,32 +59,8 @@ class Notification extends \Prefab {
 			$recipients[] = $watcher["email"];
 		}
 
-		// Remove duplicate users and the current user
-		$recipients = array_unique($recipients);
-		$recipients = array_diff($recipients, array($f3->get("user.email")));
-
-		// Render message body
-		$f3->set("issue", $issue->cast());
-		$f3->set("comment", $comment->cast());
-		$body = \Template::instance()->render("notification/comment.html");
-
-		// Set up headers
-		$smtp = $this->smtp_instance();
-		$smtp->set("Subject", $comment->user_name . " commented on #" . $issue->id . " " . $issue->name);
-		$smtp->set("From", $f3->get("mail.from"));
-		$smtp->set("Reply-to", $f3->get("smtp.from"));
-		$smtp->set("Content-type", "text/html");
-
-		// Send to recipients
-		foreach($recipients as $recipient) {
-			$smtp->set("To", $recipient);
-			$smtp->send($body);
-		}
-	}
-
-	// Send an email to watchers detailing the updated fields
-	public function issue_update($issue_id, $update_id) {
-
+		// Remove duplicate users
+		return array_unique($recipients);
 	}
 
 	protected function smtp_instance() {

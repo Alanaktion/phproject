@@ -66,6 +66,15 @@ class Issues extends Base {
 		echo \Template::instance()->render("issues/edit.html");
 	}
 
+	public function add_selecttype($f3, $params) {
+		$this->_requireLogin();
+
+		$type = new \Model\Issue\Type();
+		$f3->set("types", $type->paginate(0, 50));
+
+		echo \Template::instance()->render("issues/new.html");
+	}
+
 	public function edit($f3, $params) {
 		$this->_requireLogin();
 
@@ -303,11 +312,11 @@ class Issues extends Base {
 		}
 		$overwrite = false; // set to true, to overwrite an existing file; Default: false
 		$slug = true; // rename file to filesystem-friendly version
-		
+
 		//Make a good name
 		$orig_name =  preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']);
 		$_FILES['attachment']['name'] = time() . "_" . $orig_name;
-		
+
 		$i = 0;
 		$parts = pathinfo($_FILES['attachment']['name']);
 		while (file_exists(UPLOAD_DIR . $_FILES['attachment']['name'])) {
@@ -332,7 +341,7 @@ class Issues extends Base {
 			if($file['size'] > (2 * 1024 * 1024)) // if bigger than 2 MB
 				return false; // this file is not valid, return false will skip moving it
 				//
-			
+
 
 
 			$newfile = new \Model\Issue\File();
@@ -353,7 +362,7 @@ class Issues extends Base {
 			$overwrite,
 			$slug
 		);
-	
+
 		$f3->reroute('/issues/'.$issue->id);
 
 	}
