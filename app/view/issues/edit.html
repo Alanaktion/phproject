@@ -17,19 +17,19 @@
 				<div class="form-group">
 					<label class="col-lg-2 control-label">Title</label>
 					<div class="col-lg-10">
-						<input type="text" class="form-control input-lg" name="name" value="{{ empty(@issue) ? "" : @issue.name }}" required>
+						<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : @issue.name }}" required>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-lg-2 control-label">Description</label>
+					<label class="col-lg-2 control-label label-sm">Description</label>
 					<div class="col-lg-10">
-						<textarea class="form-control" name="description">{{ empty(@issue) ? "" : @issue.description }}</textarea>
+						<textarea class="form-control input-sm" name="description">{{ empty(@issue) ? "" : @issue.description }}</textarea>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-lg-2 control-label">Assigned To</label>
+					<label class="col-lg-2 control-label label-sm">Assigned To</label>
 					<div class="col-lg-10">
-						<select class="form-control" name="owner_id">
+						<select class="form-control input-sm" name="owner_id">
 							<optgroup label="Me">
 								<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
 							</optgroup>
@@ -42,22 +42,22 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-lg-2 control-label">Due Date</label>
+					<label class="col-lg-2 control-label label-sm">Due Date</label>
 					<div class="col-lg-10">
-						<input class="form-control" id="due_date" type="date" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus" value="{{ empty(@issue) ? "" : @issue.due_date }}">
+						<input class="form-control input-sm" id="due_date" type="date" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus" value="{{ empty(@issue) ? "" : @issue.due_date }}">
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-lg-2 control-label">Parent ID</label>
+					<label class="col-lg-2 control-label label-sm">Parent ID</label>
 					<div class="col-lg-10">
-						<input class="form-control" type="text" name="parent_id" value="{{ empty(@issue) ? "" : @issue.parent_id }}">
+						<input class="form-control input-sm" type="text" name="parent_id" value="{{ empty(@issue) ? "" : @issue.parent_id }}">
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-lg-offset-2 col-lg-10">
-						<button type="submit" class="btn btn-primary">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
+						<button type="submit" class="btn btn-primary btn-sm">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
 						<check if="{{ !empty(@issue) }}">
-							<button type="reset" class="btn btn-default">Reset</button>
+							<button type="reset" class="btn btn-default btn-sm">Reset</button>
 						</check>
 					</div>
 				</div>

@@ -17,44 +17,44 @@
 			</ul>
 			<div class="row">
 				<div class="col-md-3 col-sm-6">
-					<div class="well text-center">
-						<h3>Users</h3>
+					<div class="well well-sm text-center">
+						<h4>Users</h4>
 						<h2>{{ @count_user }}</h2>
 					</div>
 				</div>
 				<div class="col-md-3 col-sm-6">
-					<div class="well text-center">
-						<h3>Issues</h3>
+					<div class="well well-sm text-center">
+						<h4>Issues</h4>
 						<h2>{{ @count_issue }}</h2>
 					</div>
 				</div>
 				<div class="col-md-3 col-sm-6">
-					<div class="well text-center">
-						<h3>Comments</h3>
+					<div class="well well-sm text-center">
+						<h4>Comments</h4>
 						<h2>{{ @count_issue_comment }}</h2>
 					</div>
 				</div>
 				<div class="col-md-3 col-sm-6">
-					<div class="well text-center">
-						<h3>Updates</h3>
+					<div class="well well-sm text-center">
+						<h4>Updates</h4>
 						<h2>{{ @count_issue_update }}</h2>
 					</div>
 				</div>
 			</div>
-			<div class="well">
-				<h3>MySQL Stats</h3>
+			<div class="well well-sm">
+				<h4>MySQL Stats</h4>
 				<div class="row">
 					<repeat group="{{ @db_stats }}" value="{{ @val }}">
 						<p class="col-md-4 col-sm-6"><strong>{{ @val.Variable_name }}:</strong> {{ @val.Value }}</p>
 					</repeat>
 				</div>
 			</div>
-			<div class="well clearfix">
+			<div class="well well-sm clearfix">
 				<form action="/admin" method="post" class="pull-right">
 					<input type="hidden" name="action" value="clearcache">
 					<button type="submit" class="btn btn-danger">Clear Cache</button>
 				</form>
-				<h3>Cache</h3>
+				<h4>Cache</h4>
 				<p><strong>Mode:</strong> {{ @CACHE }}</p>
 			</div>
 		</div>

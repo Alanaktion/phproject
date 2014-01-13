@@ -139,5 +139,11 @@ select[multiple] {
 	margin-top: 1px;
 	margin-bottom: 1px;
 }
-
+.form-horizontal .control-label.label-sm {
+	padding-top: 8px;
+}
+.navbar-form .input-sm,
+.navbar-form .btn-sm {
+	margin-top: 4px;
+}
 /* </Compact UI> */

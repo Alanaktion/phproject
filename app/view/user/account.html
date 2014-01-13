@@ -16,26 +16,26 @@
 				<div class="tab-pane active" id="profile">
 					<form class="form-horizontal" role="form" action="/user/account" method="post">
 						<div class="form-group">
-							<label for="opass" class="col-sm-2 control-label">Name</label>
+							<label for="opass" class="col-sm-2 control-label label-sm">Name</label>
 							<div class="col-sm-10">
-								<input class="form-control" id="name" name="name" type="text" value="{{ @user.name }}">
+								<input class="form-control input-sm" id="name" name="name" type="text" value="{{ @user.name }}">
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="npass" class="col-sm-2 control-label">Email Address</label>
+							<label for="npass" class="col-sm-2 control-label label-sm">Email Address</label>
 							<div class="col-sm-10">
-								<input class="form-control" id="email" name="email" type="email" value="{{ @user.email }}">
+								<input class="form-control input-sm" id="email" name="email" type="email" value="{{ @user.email }}">
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="npass" class="col-sm-2 control-label">Task Color</label>
+							<label for="npass" class="col-sm-2 control-label label-sm">Task Color</label>
 							<div class="col-sm-4 col-md-2 col-lg-2">
-								<input class="form-control" id="color" name="task_color" type="color" value="#{{ @user.task_color }}" maxlength="7">
+								<input class="form-control input-sm" id="color" name="task_color" type="color" value="#{{ @user.task_color }}" maxlength="7">
 							</div>
 						</div>
 						<div class="form-group">
 							<div class="col-sm-offset-2 col-sm-10">
-								<button type="submit" class="btn btn-primary">Save</button>
+								<button type="submit" class="btn btn-primary btn-sm">Save</button>
 							</div>
 						</div>
 					</form>
@@ -53,20 +53,20 @@
 				<div class="tab-pane" id="password">
 					<form class="form-horizontal" role="form" action="/user/account" method="post">
 						<div class="form-group">
-							<label for="opass" class="col-sm-2 control-label">Current Password</label>
+							<label for="opass" class="col-sm-2 control-label label-sm">Current Password</label>
 							<div class="col-sm-10">
-								<input class="form-control" id="opass" name="old_pass" type="password">
+								<input class="form-control input-sm" id="opass" name="old_pass" type="password">
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="npass" class="col-sm-2 control-label">New Password</label>
+							<label for="npass" class="col-sm-2 control-label label-sm">New Password</label>
 							<div class="col-sm-10">
-								<input class="form-control" id="npass" name="new_pass" type="password">
+								<input class="form-control input-sm" id="npass" name="new_pass" type="password">
 							</div>
 						</div>
 						<div class="form-group">
 							<div class="col-sm-offset-2 col-sm-10">
-								<button type="submit" class="btn btn-primary">Save</button>
+								<button type="submit" class="btn btn-primary btn-sm">Save</button>
 							</div>
 						</div>
 					</form>
