@@ -303,7 +303,17 @@ class Issues extends Base {
 		}
 		$overwrite = false; // set to true, to overwrite an existing file; Default: false
 		$slug = true; // rename file to filesystem-friendly version
-
+		
+		//Make a good name
+		$orig_name =  preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']);
+		$_FILES['attachment']['name'] = time() . "_" . $orig_name;
+		
+		$i = 0;
+		$parts = pathinfo($_FILES['attachment']['name']);
+		while (file_exists(UPLOAD_DIR . $_FILES['attachment']['name'])) {
+			$i++;
+			$_FILES['attachment']['name'] = $parts["filename"] . "-" . $i . "." . $parts["extension"];
+		}
 		$files = $web->receive(function($file){
 
 			//var_dump($file);
@@ -322,27 +332,20 @@ class Issues extends Base {
 			if($file['size'] > (2 * 1024 * 1024)) // if bigger than 2 MB
 				return false; // this file is not valid, return false will skip moving it
 				//
-			//see if a file already exists witih that name
-			// if(file_exists($f3->get("UPLOADS").$file["name"])) {
-			//     $f3->set('ERROR',"A file already exists with that name.");
-			//     return false;
-			// }
+			
 
 
-			// $newfile = new \Model\Issue\File();
-			// $newfile->issue_id = $issue->id;
-			// $newfile->user_id = $user_id;
-			// $newfile->filename = $file['name'];
-			// $newfile->disk_filename = $file['name'];
-			// $newfile->disk_directory = $f3->get("UPLOADS");
-			// $newfile->filesize = $file['size'];
-			// $newfile->content_type = $file['type'];
-			// $newfile->digest = md5_file($f3->get("UPLOADS") . $file['name']);
-			// $newfile->created_date = date("Y-m-d H:i:s");
-			// $newfile->save();
-
-			//STILL NEED:
-			//Name handling
+			$newfile = new \Model\Issue\File();
+			$newfile->issue_id = $issue->id;
+			$newfile->user_id = $user_id;
+			$newfile->filename = $orig_name;
+			$newfile->disk_filename = $file['name'];
+			$newfile->disk_directory = $f3->get("UPLOADS");
+			$newfile->filesize = $file['size'];
+			$newfile->content_type = $file['type'];
+			$newfile->digest = md5_file($f3->get("UPLOADS") . $file['name']);
+			$newfile->created_date = date("Y-m-d H:i:s");
+			$newfile->save();
 
 			// everything went fine, hurray!
 			return true; // allows the file to be moved from php tmp dir to your defined upload dir
@@ -350,13 +353,8 @@ class Issues extends Base {
 			$overwrite,
 			$slug
 		);
-		print "<pre>\r\n With Receive\r\n";
-		print_r ($files);
-		echo "\r\n with _FILES\r\n";
-		print_r ($_FILES);
-		print "</pre><br />";
-		echo "Web receive is not going to work, will have to just use mpve_uploaded_file()";
-		//$f3->reroute('/issues/'.$issue->id);
+	
+		$f3->reroute('/issues/'.$issue->id);
 
 	}
 
