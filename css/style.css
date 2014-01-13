@@ -1,5 +1,6 @@
 body {
 	padding: 80px 0 0;
+	font-size: 14px;
 }
 body.login {
 	padding-top: 20px;
@@ -129,3 +130,14 @@ select[multiple] {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+
+/* <Compact UI> */
+.list-group-item {
+	padding: 7px 9px;
+}
+.list-group-item-heading {
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+
+/* </Compact UI> */
