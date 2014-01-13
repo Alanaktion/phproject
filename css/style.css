@@ -25,6 +25,28 @@ body.login {
 	max-width: none;
 }
 
+/*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar:hover {
+    box-shadow: 0 0 7px rgba(0,0,0,.2) inset;
+}
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+::-webkit-scrollbar-thumb:active {
+    background: #777;
+}
+::-webkit-scrollbar-button {
+    width: 0px;
+    height: 0px;
+    display: none;
+}*/
+
 footer p {
 	line-height: 20px;
 }
