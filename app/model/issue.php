@@ -22,5 +22,9 @@ WHERE _id > 1
 GROUP BY _id");
 	}
 
+	public static function clean($string) {
+		return preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n\n", str_replace("\r\n", "\n", $string));
+	}
+
 }
 
