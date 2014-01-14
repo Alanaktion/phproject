@@ -20,32 +20,22 @@ body.login {
 .navbar-form .input-group {
 	max-width: 206px;
 }
+.navbar-form[role="search"] .input-group {
+	max-width: 256px;
+}
+.navbar-form[role="search"] > .input-group > input:first-child {
+	border-radius: 15px 0 0 15px;
+	padding-left: 15px;
+}
+.navbar-form[role="search"] > .input-group > .input-group-btn:last-child .btn {
+	border-radius: 0 15px 15px 0;
+	padding-right: 15px;
+}
+
 
 .container {
 	max-width: none;
 }
-
-/*::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-::-webkit-scrollbar:hover {
-    box-shadow: 0 0 7px rgba(0,0,0,.2) inset;
-}
-::-webkit-scrollbar-thumb {
-    background: #ccc;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #aaa;
-}
-::-webkit-scrollbar-thumb:active {
-    background: #777;
-}
-::-webkit-scrollbar-button {
-    width: 0px;
-    height: 0px;
-    display: none;
-}*/
 
 footer p {
 	line-height: 20px;
