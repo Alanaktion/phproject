@@ -47,6 +47,10 @@ footer p {
 .js{display: block;}
 .nojs{display: none;}
 
+.pull-left-full {
+	overflow: hidden;
+}
+
 legend, label {
 	font-weight: 300;
 }

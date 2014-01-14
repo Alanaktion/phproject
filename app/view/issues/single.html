@@ -137,7 +137,7 @@
 										<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
 											<div class="comment clearfix">
 												<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="profile-picture img-rounded" alt>
-												<div class="pull-left">
+												<div class="pull-left-full">
 													<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
 													<p>{{ @comment.text }}</p>
 													<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
