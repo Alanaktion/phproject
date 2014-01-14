@@ -3,7 +3,11 @@
 		<img src="{{ h(gravatar(@update.user_email, 48)) }}" class="pull-left profile-picture img-rounded" alt>
 		<div class="pull-left">
 			<p><strong><a href="/user/{{ @update.user_username }}">{{ @update.user_name }}</a></strong> on {{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</p>
-			<p>{{ @update.text }}</p>
+			<ul>
+				<repeat group="{{ @update.changes.subset }}" value="{{ @change }}">
+					<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @change.old_value }}</i> to <i>{{ @change.new_value }}</i></li>
+				</repeat>
+			</ul>
 		</div>
 	</div>
 </repeat>

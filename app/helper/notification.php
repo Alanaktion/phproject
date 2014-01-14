@@ -7,7 +7,6 @@ class Notification extends \Prefab {
 	// Send an email to watchers with the comment body
 	public function issue_comment($issue_id, $comment_id) {
 		$f3 = \Base::instance();
-		$db = $f3->get("db.instance");
 
 		// Get issue and comment data
 		$issue = new \Model\Issue();
@@ -40,11 +39,45 @@ class Notification extends \Prefab {
 
 	// Send an email to watchers detailing the updated fields
 	public function issue_update($issue_id, $update_id) {
+		$f3 = \Base::instance();
 
+		// Get issue and update data
+		$issue = new \Model\Issue();
+		$issue->load(array("id = ?", $issue_id));
+		$f3->set("issue", $issue->cast());
+		$update = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_update_user", null, 3600);
+		$update->load(array("id = ?", $update_id));
+
+		$changes = new \Model\Issue\Update\Field();
+		$f3->set("changes", $changes->paginate(0, 100, array("issue_update_id = ?", $update->id)));
+
+		// Get recipient list and remove current user
+		$recipients = $this->watcher_emails($issue_id);
+		$recipients = array_diff($recipients, array($f3->get("user.email")));
+
+		// Render message body
+		$f3->set("issue", $issue->cast());
+		$f3->set("update", $update->cast());
+		$body = \Template::instance()->render("notification/update.html");
+
+		// Set up headers
+		$smtp = $this->smtp_instance();
+		$smtp->set("Subject", $update->user_name . " updated #" . $issue->id . " " . $issue->name);
+		$smtp->set("From", $f3->get("mail.from"));
+		$smtp->set("Reply-to", $f3->get("mail.from"));
+		$smtp->set("Content-type", "text/html");
+
+		// Send to recipients
+		foreach($recipients as $recipient) {
+			$smtp->set("To", $recipient);
+			$smtp->send($body);
+		}
 	}
 
 	// Get array of email addresses of all watchers on an issue
 	protected function watcher_emails($issue_id) {
+		$f3 = \Base::instance();
+		$db = $f3->get("db.instance");
 		$recipients = array();
 
 		// Add issue author and owner

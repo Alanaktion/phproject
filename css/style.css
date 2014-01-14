@@ -139,7 +139,7 @@ a:active.img-border:before {
 	margin-bottom: 15px;
 }
 .comments .comment p,
-.updates .update p {
+#history .update p {
 	line-height: 20px;
 }
 .comments .comment p:last-child {
@@ -147,12 +147,15 @@ a:active.img-border:before {
 }
 .comments,
 .comments .comment p,
-.updates .update p,
+#history .update p,
 .comments .form-group:last-child {
 	margin-bottom: 0;
 }
 .comments .comment p small {
 	font-size: 12px;
+}
+#history .update ul {
+	padding-left: 1.3em;
 }
 
 .panel-heading.has-buttons .panel-title {

@@ -60,7 +60,7 @@ Variable_name = 'Uptime'"));
 						$user->$i = $val;
 					}
 					$user->save();
-					$f3->set("success", "User chnages saved.");
+					$f3->set("success", "User changes saved.");
 				}
 			}
 			$f3->set("this_user", $user->cast());

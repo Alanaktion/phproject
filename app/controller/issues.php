@@ -135,7 +135,13 @@ class Issues extends Base {
 					}
 				}
 
+				// Save issue
 				$issue->save();
+
+				// Notify watchers
+				$notification = new \Helper\Notification();
+				$notification->issue_update($issue->id, $update->id);
+
 				$f3->reroute("/issues/" . $issue->id);
 			} else {
 				$f3->error(404, "This issue does not exist.");
@@ -162,6 +168,8 @@ class Issues extends Base {
 				$f3->error(500, "An error occurred saving the issue.");
 			}
 
+		} else {
+			$f3->reroute("/issues/new/" . $post["type_id"]);
 		}
 	}
 
@@ -254,10 +262,9 @@ class Issues extends Base {
 		$update_model = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_update_user", null, 3600);
 		$updates = $update_model->paginate(0, 100, array("issue_id = ?", $params["id"]), array("order" => "created_date ASC"));
 		foreach($updates["subset"] as $update) {
-			$update_field_model = new \Model\Issue\Update\Field();
-			$update_field_result = $update_field_model->paginate(0, 100, array("issue_update_id = ?", $update["id"]));
 			$update_array = $update->cast();
-			$update_array["text"] = "Soon.";
+			$update_field_model = new \Model\Issue\Update\Field();
+			$update_array["changes"] = $update_field_model->paginate(0, 100, array("issue_update_id = ?", $update["id"]));
 			$updates_array[] = $update_array;
 		}
 
@@ -339,9 +346,8 @@ class Issues extends Base {
 			// $file['name'] already contains the slugged name now
 
 			// maybe you want to check the file size
-			if($file['size'] > (2 * 1024 * 1024)) // if bigger than 2 MB
+			if($file['size'] > $f3->get("files.maxsize")) // if bigger than 2 MB
 				return false; // this file is not valid, return false will skip moving it
-				//
 
 
 
