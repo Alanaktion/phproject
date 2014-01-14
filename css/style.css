@@ -38,6 +38,7 @@ body.login {
 
 .container {
 	max-width: none;
+	width: auto;
 }
 
 footer p {
