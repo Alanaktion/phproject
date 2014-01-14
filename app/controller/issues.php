@@ -139,7 +139,7 @@ class Issues extends Base {
 				$issue->save();
 
 				// Notify watchers
-				$notification = new \Helper\Notification();
+				$notification = \Helper\Notification::instance();
 				$notification->issue_update($issue->id, $update->id);
 
 				$f3->reroute("/issues/" . $issue->id);
@@ -199,7 +199,7 @@ class Issues extends Base {
 					$comment->created_date = date("Y-m-d H:i:s");
 					$comment->save();
 
-					$notification = new \Helper\Notification();
+					$notification = \Helper\Notification::instance();
 					$notification->issue_comment($issue->id, $comment->id);
 
 					if($f3->get("AJAX")) {
@@ -244,6 +244,7 @@ class Issues extends Base {
 		$f3->set("watching", !!$watching->id);
 
 		$f3->set("issue", $issue->cast());
+		$f3->set("hierarchy", $issue->hierarchy());
 		$f3->set("type", $type->cast());
 		$f3->set("author", $author->cast());
 		$f3->set("owner", $owner->cast());

@@ -49,6 +49,31 @@
 					</repeat>
 				</div>
 			</div>
+			<div class="well well-sm">
+				<h4>Configuration <small>These values can be changed in <span style="font-family: Consolas, monospace;">config.ini</span></small></h4>
+				<h5>Site</h5>
+				<div class="row">
+					<p class="col-md-4 col-sm-6"><strong>Name:</strong> {{ @site.name }}</p>
+					<p class="col-md-4 col-sm-6"><strong>Description:</strong> {{ @site.description }}</p>
+				</div>
+				<h5>SMTP</h5>
+				<div class="row">
+					<p class="col-md-4 col-sm-6"><strong>Host:</strong> {{ @smtp.host }}</p>
+					<p class="col-md-4 col-sm-6"><strong>Port:</strong> {{ @smtp.port }}</p>
+					<p class="col-md-4 col-sm-6"><strong>Scheme:</strong> {{ @smtp.scheme }}</p>
+					<p class="col-md-4 col-sm-6"><strong>Username:</strong> {{ @smtp.user }}</p>
+					<p class="col-md-4 col-sm-6"><strong>Password:</strong> {{ str_repeat("*", strlen(@smtp.pass)) }}</p>
+				</div>
+				<h5>Gravatar</h5>
+				<div class="row">
+					<p class="col-md-4 col-sm-6"><strong>Rating:</strong> {{ @gravatar.rating }}</p>
+					<p class="col-md-4 col-sm-6"><strong>Default:</strong> {{ @gravatar.default }}</p>
+				</div>
+				<h5>Files</h5>
+				<div class="row">
+					<p class="col-md-4 col-sm-6"><strong>Max Size:</strong> {{ @files.maxsize }} ({{ round(@files.maxsize/1024/1024, 2) }}MB)</p>
+				</div>
+			</div>
 			<div class="well well-sm clearfix">
 				<form action="/admin" method="post" class="pull-right">
 					<input type="hidden" name="action" value="clearcache">

@@ -10,7 +10,23 @@
 		<div class="col-lg-12">
 			<div class="panel panel-default">
 				<div class="panel-heading has-buttons clearfix">
-					<h3 class="panel-title pull-left">{{ @issue.name }} <small>#{{ @issue.id }}</small></h3>
+					<check if="{{ count(@hierarchy) > 1 }}">
+						<ol class="breadcrumb panel-title pull-left">
+							<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
+								<check if="{{ @crumb.id == @issue.id }}">
+									<true>
+										<li class="active">{{ @crumb.name }} <small>#{{ @issue.id }}</small></li>
+									</true>
+									<false>
+										<li><a href="/issues/{{ @crumb.id }}">{{ @crumb.name }}</a></li>
+									</false>
+								</check>
+							</repeat>
+						</ol>
+					</check>
+					<!-- <h3 class="panel-title pull-left">
+						{{ @issue.name }} <small>#{{ @issue.id }}</small>
+					</h3> -->
 					<div class="pull-right">
 						<check if="{{ @watching }}">
 							<true>

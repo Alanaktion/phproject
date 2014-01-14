@@ -158,6 +158,9 @@ a:active.img-border:before {
 	padding-left: 1.3em;
 }
 
+.breadcrumb.panel-title {
+	padding: 0;
+}
 .panel-heading.has-buttons .panel-title {
 	line-height: 24px;
 }
