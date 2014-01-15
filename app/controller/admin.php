@@ -16,20 +16,24 @@ class Admin extends Base {
 		// Gather some stats
 		$db = $f3->get("db.instance");
 
-		$db->exec("SELECT id FROM user");
+		$db->exec("SELECT id FROM user WHERE deleted_date IS NULL");
 		$f3->set("count_user", $db->count());
-		$db->exec("SELECT id FROM issue");
+		$db->exec("SELECT id FROM issue WHERE deleted_date IS NULL");
 		$f3->set("count_issue", $db->count());
 		$db->exec("SELECT id FROM issue_update");
 		$f3->set("count_issue_update", $db->count());
 		$db->exec("SELECT id FROM issue_comment");
 		$f3->set("count_issue_comment", $db->count());
 
+		if($f3->get("CACHE") == "apc") {
+			$f3->set("apc_stats", apc_cache_info("user", true));
+		}
+
 		$f3->set("db_stats", $db->exec("SHOW STATUS WHERE
 Variable_name LIKE 'Delayed_%' OR
 Variable_name LIKE 'Table_lock%' OR
-Variable_name = 'Connections' OR
-Variable_name = 'Queries' OR
+-- Variable_name = 'Connections' OR
+-- Variable_name = 'Queries' OR
 Variable_name = 'Uptime'"));
 
 		echo \Template::instance()->render("admin/index.html");
