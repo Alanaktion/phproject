@@ -11,6 +11,11 @@ body.login {
 		margin-right: 8px;
 	}
 }
+
+h3{color:#4AB3D1;}
+
+a{transition:color .25s;}
+
 .navbar {
 	padding: 0 10px;
 }
@@ -33,6 +38,7 @@ body.login {
 .navbar-form[role="search"] > .input-group > .input-group-btn:last-child .btn {
 	border-radius: 0 16px 16px 0;
 	padding-right: 15px;
+        transition:background-color .25s;
 }
 
 
@@ -88,7 +94,7 @@ textarea {
 }
 
 .nav-tabs {
-	margin-bottom: 15px;
+	/*margin-bottom: 15px;*/
 }
 
 .img-border {
