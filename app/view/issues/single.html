@@ -34,12 +34,12 @@
 					<div class="pull-right">
 						<check if="{{ @watching }}">
 							<true>
-								<button class="btn btn-default btn-xs">
-									<span class="glyphicon glyphicon-eye-closed"></span>&ensp;Unwatch
+								<button class="btn btn-default btn-xs" onclick="unwatch_issue();" id="watch-btn">
+									<span class="glyphicon glyphicon-eye-close"></span>&ensp;Unwatch
 								</button>
 							</true>
 							<false>
-								<button class="btn btn-default btn-xs" onclick="watch();" id="watch-btn">
+								<button class="btn btn-default btn-xs" onclick="watch_issue();" id="watch-btn">
 									<span class="glyphicon glyphicon-eye-open"></span>&ensp;Watch
 								</button>
 							</false>
@@ -240,11 +240,14 @@ $(function() {
 	});
 
 });
-function watch() {
-	$.post('/issues/{{ @issue.id }}')
+
+function watch_issue() {
+	$.post('/issues/{{ @issue.id }}', {action: 'watch'});
+	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="glyphicon glyphicon-eye-close"></span>&ensp;Unwatch');
 }
-function unwatch() {
-	$.post('')
+function unwatch_issue() {
+	$.post('/issues/{{ @issue.id }}', {action: 'unwatch'});
+	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="glyphicon glyphicon-eye-open"></span>&ensp;Watch');
 }
 </script>
 </body>
