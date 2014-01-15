@@ -25,6 +25,10 @@ class Admin extends Base {
 		$db->exec("SELECT id FROM issue_comment");
 		$f3->set("count_issue_comment", $db->count());
 
+		if($f3->get("CACHE") == "apc") {
+			$f3->set("apc_stats", apc_cache_info("user", true));
+		}
+
 		$f3->set("db_stats", $db->exec("SHOW STATUS WHERE
 Variable_name LIKE 'Delayed_%' OR
 Variable_name LIKE 'Table_lock%' OR
