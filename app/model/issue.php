@@ -19,7 +19,7 @@ class Issue extends Base {
 	) vars, issue c
 ) c
 WHERE _id > 1
-GROUP BY _id");
+GROUP BY _id", null, 60);
 	}
 
 	public static function clean($string) {

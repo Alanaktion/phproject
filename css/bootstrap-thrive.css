@@ -1715,7 +1715,7 @@ pre code {
 
 table {
 	max-width: 100%;
-	background-color: #FFF;        
+	background-color: #FFF;
 }
 
 th {
@@ -2424,7 +2424,7 @@ fieldset[disabled] .btn {
 .open .dropdown-toggle.btn-default {
 	color: #ffffff;
 	background-color: #9CF301;
-	
+
 }
 
 .btn-default:active,
@@ -3678,7 +3678,7 @@ input[type="button"].btn-block {
 .dropdown-menu > li > a:focus {
 	color: #ffffff;
 	text-decoration: none;
-	background-color: #3d3d3d;        
+	background-color: #3d3d3d;
 }
 
 .dropdown-menu > .active > a,
@@ -7735,3 +7735,9 @@ input[type="color"]:focus,
 .affix {
 	position: fixed;
 }
+
+/* Overrides */
+
+h3{color:#4AB3D1;}
+a{transition:color .25s;}
+
