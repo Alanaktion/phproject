@@ -227,16 +227,37 @@ $(function() {
 		}
 	});
 
-	// Load history and related issues
+	// Add/remove watchers from tab
+	$('#watchers-list').on('click', 'a.delete', function(e) {
+		$li = $(this).parents('li');
+		$.post('/issues/{{ @issue.id }}', {
+			action: 'remove_watcher',
+			user_id: $li.data('user-id')
+		});
+		$li.remove();
+		e.preventDefault();
+	});
+	$('#add_watcher').submit(function(e) {
+		$.post('/issues/{{ @issue.id }}', $(this).serialize());
+
+		e.preventDefault();
+	});
+
+	// Load history, watchers, and related issues
 	$.get('/issues/{{ @issue.id }}/history', {}, function(data) {
 		$('#history').empty().append(data);
 	}, 'html').error(function() {
 		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('Error loading issue history.'));
 	});
+	$.get('/issues/{{ @issue.id }}/watchers', {}, function(data) {
+		$('#watchers').empty().append(data);
+	}, 'html').error(function() {
+		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('Error loading watchers.'));
+	});
 	$.get('/issues/{{ @issue.id }}/related', {}, function(data) {
 		$('#related').empty().append(data);
 	}, 'html').error(function() {
-		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('Error loading related issues.'));
+		$('#related').empty().append($('<p />').addClass('text-center text-danger').text('Error loading related issues.'));
 	});
 
 });

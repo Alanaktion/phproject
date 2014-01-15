@@ -267,7 +267,7 @@ class Issues extends Base {
 
 		// Build updates array
 		$updates_array = array();
-		$update_model = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_update_user", null, 3600);
+		$update_model = new \Model\Custom("issue_update_user");
 		$updates = $update_model->paginate(0, 100, array("issue_id = ?", $params["id"]), array("order" => "created_date ASC"));
 		foreach($updates["subset"] as $update) {
 			$update_array = $update->cast();
@@ -283,9 +283,18 @@ class Issues extends Base {
 
 	public function single_related($f3, $params) {
 		$user_id = $this->_requireLogin();
-		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user", null, 3600);
+		$issues = new \Model\Custom("issue_user");
 		$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $params["id"])));
 		echo \Template::instance()->render("issues/single/related.html");
+	}
+
+	public function single_watchers($f3, $params) {
+		$user_id = $this->_requireLogin();
+		$watchers = new \Model\Custom("issue_watcher_user");
+		$f3->set("watchers", $watchers->paginate(0, 100, array("issue_id = ?", $params["id"])));
+		$users = new \Model\User();
+		$f3->set("users", $users->paginate(0, 100, "deleted_date IS NULL"));
+		echo \Template::instance()->render("issues/single/watchers.html");
 	}
 
 	public function single_delete($f3, $params) {
