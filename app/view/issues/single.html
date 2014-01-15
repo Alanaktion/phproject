@@ -201,8 +201,8 @@ $(function() {
 		$.post($this.attr('action'), $this.serialize(), function(data) {
 			// Append the new comment to the list
 			$('#comment_form')
-					.prop('disabled', false)
-					.before(
+				.prop('disabled', false)
+				.before(
 '<div class="comment clearfix">' +
 '<img src="//gravatar.com/avatar/' + data.user_email_md5 + '?s=48" class="pull-left profile-picture img-rounded" alt>' +
 '<div class="pull-left">' +
@@ -227,22 +227,6 @@ $(function() {
 		}
 	});
 
-	// Add/remove watchers from tab
-	$('#watchers-list').on('click', 'a.delete', function(e) {
-		$li = $(this).parents('li');
-		$.post('/issues/{{ @issue.id }}', {
-			action: 'remove_watcher',
-			user_id: $li.data('user-id')
-		});
-		$li.remove();
-		e.preventDefault();
-	});
-	$('#add_watcher').submit(function(e) {
-		$.post('/issues/{{ @issue.id }}', $(this).serialize());
-
-		e.preventDefault();
-	});
-
 	// Load history, watchers, and related issues
 	$.get('/issues/{{ @issue.id }}/history', {}, function(data) {
 		$('#history').empty().append(data);
@@ -251,6 +235,30 @@ $(function() {
 	});
 	$.get('/issues/{{ @issue.id }}/watchers', {}, function(data) {
 		$('#watchers').empty().append(data);
+
+		// Add/remove watchers from tab
+		$('#watchers-list').on('click', 'a.delete', function(e) {
+			$li = $(this).parents('li');
+			$.post('/issues/{{ @issue.id }}', {
+				action: 'remove_watcher',
+				user_id: $li.data('user-id')
+			});
+			$li.remove();
+			e.preventDefault();
+		});
+		$('#add-watcher').submit(function(e) {
+			$this = $(this);
+			$.post('/issues/{{ @issue.id }}', $this.serialize());
+
+			$select = $this.children('select');
+			$('<li />')
+				.data('user-id', $select.val())
+				.html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $select.children('option:selected').text())
+				.appendTo('#watchers-list');
+
+			e.preventDefault();
+		});
+
 	}, 'html').error(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('Error loading watchers.'));
 	});
@@ -263,11 +271,11 @@ $(function() {
 });
 
 function watch_issue() {
-	$.post('/issues/{{ @issue.id }}', {action: 'watch'});
+	$.post('/issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="glyphicon glyphicon-eye-close"></span>&ensp;Unwatch');
 }
 function unwatch_issue() {
-	$.post('/issues/{{ @issue.id }}', {action: 'unwatch'});
+	$.post('/issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="glyphicon glyphicon-eye-open"></span>&ensp;Watch');
 }
 </script>
