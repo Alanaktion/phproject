@@ -28,8 +28,8 @@ class Admin extends Base {
 		$f3->set("db_stats", $db->exec("SHOW STATUS WHERE
 Variable_name LIKE 'Delayed_%' OR
 Variable_name LIKE 'Table_lock%' OR
-Variable_name = 'Connections' OR
-Variable_name = 'Queries' OR
+-- Variable_name = 'Connections' OR
+-- Variable_name = 'Queries' OR
 Variable_name = 'Uptime'"));
 
 		echo \Template::instance()->render("admin/index.html");

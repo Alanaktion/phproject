@@ -16,72 +16,75 @@
 				<li><a href="/admin/sprints">Sprint Setup</a></li>
 			</ul>
 			<div class="row">
-				<div class="col-md-3 col-sm-6">
-					<div class="well well-sm text-center">
-						<h4>Users</h4>
-						<h2>{{ @count_user }}</h2>
-					</div>
+				<div class="col-md-3 col-sm-6 text-center">
+					<h4>Users</h4>
+					<h2>{{ @count_user }}</h2>
 				</div>
-				<div class="col-md-3 col-sm-6">
-					<div class="well well-sm text-center">
-						<h4>Issues</h4>
-						<h2>{{ @count_issue }}</h2>
-					</div>
+				<div class="col-md-3 col-sm-6 text-center">
+					<h4>Issues</h4>
+					<h2>{{ @count_issue }}</h2>
 				</div>
-				<div class="col-md-3 col-sm-6">
-					<div class="well well-sm text-center">
-						<h4>Comments</h4>
-						<h2>{{ @count_issue_comment }}</h2>
-					</div>
+				<div class="col-md-3 col-sm-6 text-center">
+					<h4>Comments</h4>
+					<h2>{{ @count_issue_comment }}</h2>
 				</div>
-				<div class="col-md-3 col-sm-6">
-					<div class="well well-sm text-center">
-						<h4>Updates</h4>
-						<h2>{{ @count_issue_update }}</h2>
-					</div>
+				<div class="col-md-3 col-sm-6 text-center">
+					<h4>Updates</h4>
+					<h2>{{ @count_issue_update }}</h2>
 				</div>
 			</div>
-			<div class="well well-sm">
-				<h4>MySQL Stats</h4>
-				<div class="row">
+
+			<h3>Configuration <small>These values can be changed in <span style="font-family: Consolas, monospace;">config.ini</span></small></h3>
+			<div class="row">
+				<div class="col-lg-2 col-md-4 col-sm-6">
+					<h4>Site</h4>
+					<b>Name:</b> {{ @site.name }}<br>
+					<b>Description:</b> {{ @site.description }}<br>
+					<b>Theme:</b> {{ @site.theme }}
+				</div>
+				<div class="col-lg-2 col-md-4 col-sm-6">
+					<h4>MySQL Connection</h4>
+					<b>Host:</b> {{ @db.host }}<br>
+					<b>Schema:</b> {{ @db.name }}<br>
+					<b>Username:</b> {{ @db.user }}<br>
+					<b>Password:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
+				</div>
+				<div class="col-lg-2 col-md-4 col-sm-6">
+					<h4>MySQL Stats</h4>
 					<repeat group="{{ @db_stats }}" value="{{ @val }}">
-						<p class="col-md-4 col-sm-6"><strong>{{ @val.Variable_name }}:</strong> {{ @val.Value }}</p>
+						<b>{{ @val.Variable_name }}:</b> {{ @val.Value }}<br>
 					</repeat>
 				</div>
-			</div>
-			<div class="well well-sm">
-				<h4>Configuration <small>These values can be changed in <span style="font-family: Consolas, monospace;">config.ini</span></small></h4>
-				<h5>Site</h5>
-				<div class="row">
-					<p class="col-md-4 col-sm-6"><strong>Name:</strong> {{ @site.name }}</p>
-					<p class="col-md-4 col-sm-6"><strong>Description:</strong> {{ @site.description }}</p>
+				<div class="col-lg-2 col-md-4 col-sm-6">
+					<h4>SMTP</h4>
+					<b>Host:</b> {{ @smtp.host }}<br>
+					<b>Port:</b> {{ @smtp.port }}<br>
+					<b>Scheme:</b> {{ @smtp.scheme }}<br>
+					<b>Username:</b> {{ @smtp.user }}<br>
+					<b>Password:</b> {{ str_repeat("*", strlen(@smtp.pass)) }}
 				</div>
-				<h5>SMTP</h5>
-				<div class="row">
-					<p class="col-md-4 col-sm-6"><strong>Host:</strong> {{ @smtp.host }}</p>
-					<p class="col-md-4 col-sm-6"><strong>Port:</strong> {{ @smtp.port }}</p>
-					<p class="col-md-4 col-sm-6"><strong>Scheme:</strong> {{ @smtp.scheme }}</p>
-					<p class="col-md-4 col-sm-6"><strong>Username:</strong> {{ @smtp.user }}</p>
-					<p class="col-md-4 col-sm-6"><strong>Password:</strong> {{ str_repeat("*", strlen(@smtp.pass)) }}</p>
+				<div class="col-lg-2 col-md-4 col-sm-6">
+					<h4>Gravatar</h4>
+					<b>Rating:</b> {{ @gravatar.rating }}<br>
+					<b>Default:</b> {{ @gravatar.default }}
 				</div>
-				<h5>Gravatar</h5>
-				<div class="row">
-					<p class="col-md-4 col-sm-6"><strong>Rating:</strong> {{ @gravatar.rating }}</p>
-					<p class="col-md-4 col-sm-6"><strong>Default:</strong> {{ @gravatar.default }}</p>
-				</div>
-				<h5>Files</h5>
-				<div class="row">
-					<p class="col-md-4 col-sm-6"><strong>Max Size:</strong> {{ @files.maxsize }} ({{ round(@files.maxsize/1024/1024, 2) }}MB)</p>
+				<div class="col-lg-2 col-md-4 col-sm-6">
+					<h4>Files</h4>
+					<b>Max Size:</b> {{ @files.maxsize }} ({{ round(@files.maxsize/1024/1024, 2) }}MB)
 				</div>
 			</div>
-			<div class="well well-sm clearfix">
-				<form action="/admin" method="post" class="pull-right">
+
+			<br>
+
+			<div class="clearfix">
+				<h3>Cache</h3>
+				<p><b>Mode:</b> {{ @CACHE }}</p>
+				<form action="/admin" method="post">
 					<input type="hidden" name="action" value="clearcache">
-					<button type="submit" class="btn btn-danger">Clear Cache</button>
+					<button type="submit" class="btn btn-warning btn-sm">Clear Cache</button>
 				</form>
-				<h4>Cache</h4>
-				<p><strong>Mode:</strong> {{ @CACHE }}</p>
 			</div>
+
 		</div>
 	</div>
 	<include href="blocks/footer.html" />
