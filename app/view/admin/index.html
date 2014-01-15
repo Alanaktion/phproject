@@ -86,10 +86,14 @@
 
 			<div class="clearfix">
 				<h3>Cache</h3>
-				<p><b>Mode:</b> {{ @CACHE }}</p>
-				<check if="{{ @CACHE == 'apc' }}">
-					<pre>{{ print_r(@apc_stats, true) }}</pre>
-				</check>
+				<p>
+					<b>Mode:</b> {{ @CACHE }}<br>
+					<check if="{{ @CACHE == 'apc' }}">
+						<repeat group="{{ @apc_stats }}" key="{{ @key }}" value="{{ @val }}">
+							<b>{{ @key }}:</b> {{ @val }}<br>
+						</repeat>
+					</check>
+				</p>
 				<form action="/admin" method="post">
 					<input type="hidden" name="action" value="clearcache">
 					<button type="submit" class="btn btn-warning btn-sm">Clear Cache</button>
