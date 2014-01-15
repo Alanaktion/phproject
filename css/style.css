@@ -26,6 +26,7 @@ body.login {
 }
 .navbar-form[role="search"] .input-group {
 	max-width: 256px;
+	margin-right: 10px;
 }
 .navbar-form[role="search"] > .input-group > input:first-child {
 	border-radius: 16px 0 0 16px;
@@ -36,7 +37,6 @@ body.login {
 	padding-right: 15px;
 	transition: background-color .25s;
 }
-
 
 .container {
 	max-width: none;
@@ -49,6 +49,10 @@ footer p {
 
 .js{display: block;}
 .nojs{display: none;}
+
+.nav-tabs {
+	margin-bottom: 15px;
+}
 
 .pull-left-full {
 	overflow: hidden;

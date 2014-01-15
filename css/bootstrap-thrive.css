@@ -1715,7 +1715,6 @@ pre code {
 
 table {
 	max-width: 100%;
-	background-color: #FFF;
 }
 
 th {
@@ -1757,10 +1756,6 @@ th {
 	border-top: 2px solid #FFF;
 }
 
-.table .table {
-	background-color: #ffffff;
-}
-
 .table-condensed > thead > tr > th,
 .table-condensed > tbody > tr > th,
 .table-condensed > tfoot > tr > th,
@@ -1790,12 +1785,12 @@ th {
 
 .table-striped > tbody > tr:nth-child(odd) > td,
 .table-striped > tbody > tr:nth-child(odd) > th {
-	background-color: #f6f6f6;
+	background-color: #fff;
 }
 
 .table-hover > tbody > tr:hover > td,
 .table-hover > tbody > tr:hover > th {
-	background-color: #FFF;
+	background-color: #fff;
 }
 
 table col[class*="col-"] {
