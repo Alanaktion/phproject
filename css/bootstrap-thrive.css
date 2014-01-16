@@ -2126,7 +2126,6 @@ fieldset[disabled] .checkbox-inline {
 	padding: 6px 9px;
 	font-size: 13px;
 	line-height: 1.5;
-	border-radius: 3px;
 }
 
 select.input-sm {
@@ -2143,7 +2142,6 @@ textarea.input-sm {
 	padding: 18px 27px;
 	font-size: 19px;
 	line-height: 1.33;
-	border-radius: 6px;
 }
 
 select.input-lg {
