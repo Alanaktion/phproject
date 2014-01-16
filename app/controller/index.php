@@ -38,8 +38,15 @@ class Index extends Base {
 
 	public function login($f3, $params) {
 		if($f3->get("user.id")) {
-			$f3->reroute("/");
+			if(!$f3->get("GET.to")) {
+				$f3->reroute("/");
+			} else {
+				$f3->reroute($f3->get("GET.to"));
+			}
 		} else {
+			if($f3->get("GET.to")) {
+				$f3->set("to", $f3->get("GET.to"));
+			}
 			echo \Template::instance()->render("index/login.html");
 		}
 	}
@@ -50,8 +57,15 @@ class Index extends Base {
 
 		if($user->verify_password($f3->get("POST.password"))) {
 			$f3->set("SESSION.user_id", $user->id);
-			$f3->reroute("/");
+			if(!$f3->get("POST.to")) {
+				$f3->reroute("/");
+			} else {
+				$f3->reroute($f3->get("POST.to"));
+			}
 		} else {
+			if($f3->get("POST.to")) {
+				$f3->set("to", $f3->get("POST.to"));
+			}
 			$f3->set("login.error", "Invalid login information, try again.");
 			echo \Template::instance()->render("index/login.html");
 		}

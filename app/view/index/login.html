@@ -9,6 +9,7 @@
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4">
 			<form action="/login" method="post" class="form-horizontal">
+				<input type="hidden" name="to" value="{{ empty(@to) ? '/' : @to }}">
 				<fieldset>
 					<legend class="text-center"><strong>Log In</strong>&ensp;<a href="/" class="nolink">{{ @site.name }}</a></legend>
 					<check if="{{ !empty(@login.error) }}">
@@ -38,11 +39,6 @@
 									<input class="form-control" placeholder="Password" name="password" type="password">
 								</false>
 							</check>
-							<!-- <div class="checkbox">
-								<label>
-									<input type="checkbox"> Remember Me
-								</label>
-							</div> -->
 						</div>
 					</div>
 					<div class="form-group">

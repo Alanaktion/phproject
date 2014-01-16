@@ -142,6 +142,7 @@ textarea {
 
 .breadcrumb.panel-title {
 	padding: 0;
+	background-color: transparent;
 }
 .panel-heading.has-buttons .panel-title {
 	line-height: 24px;
