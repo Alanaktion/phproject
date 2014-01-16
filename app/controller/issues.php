@@ -285,9 +285,20 @@ class Issues extends Base {
 
 	public function single_related($f3, $params) {
 		$user_id = $this->_requireLogin();
-		$issues = new \Model\Custom("issue_user");
-		$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $params["id"])));
-		echo \Template::instance()->render("issues/single/related.html");
+		$issue = new \Model\Issue();
+		$issue->load($params["id"]);
+
+		if($issue->id) {
+			$issues = new \Model\Custom("issue_user");
+			if($f3->get("issue_type.project") == $issue->type_id) {
+				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $issue->parent_id)));
+			} else {
+				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND parent_id IS NOT NULL AND parent_id != 0 AND deleted_date IS NULL", $issue->parent_id)));
+			}
+			echo \Template::instance()->render("issues/single/related.html");
+		} else {
+			$f3->error(404);
+		}
 	}
 
 	public function single_watchers($f3, $params) {

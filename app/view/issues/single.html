@@ -123,7 +123,7 @@
 								<li class="active"><a href="#comments" data-toggle="tab">Comments</a></li>
 								<li><a href="#history" data-toggle="tab">History</a></li>
 								<li><a href="#watchers" data-toggle="tab">Watchers</a></li>
-								<check if="{{ @type.name == 'Project' }}">
+								<check if="{{ @issue_type.project == @type.id }}">
 									<true>
 										<li><a href="#related" data-toggle="tab">Child Tasks</a></li>
 									</true>
