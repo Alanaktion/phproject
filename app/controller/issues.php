@@ -221,9 +221,9 @@ class Issues extends Base {
 				case "add_watcher":
 					$watching = new \Model\Issue\Watcher();
 					// Loads just in case the user is already a watcher
-					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")));
+					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
 					$watching->issue_id = $issue->id;
-					$watching->user_id = $user_id;
+					$watching->user_id = $post["user_id"];
 					$watching->save();
 
 					if($f3->get("AJAX"))
@@ -232,7 +232,7 @@ class Issues extends Base {
 
 				case "remove_watcher":
 					$watching = new \Model\Issue\Watcher();
-					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")));
+					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
 					$watching->delete();
 
 					if($f3->get("AJAX"))

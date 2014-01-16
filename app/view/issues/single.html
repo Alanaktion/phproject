@@ -250,7 +250,7 @@ $(function() {
 			$this = $(this);
 			$.post('/issues/{{ @issue.id }}', $this.serialize());
 
-			$select = $this.children('select');
+			$select = $this.find('select');
 			$('<li />')
 				.data('user-id', $select.val())
 				.html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $select.children('option:selected').text())

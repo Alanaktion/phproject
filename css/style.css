@@ -35,7 +35,6 @@ body.login {
 .navbar-form[role="search"] > .input-group > .input-group-btn:last-child .btn {
 	border-radius: 0 16px 16px 0;
 	padding-right: 15px;
-	transition: background-color .25s;
 }
 
 .container {
@@ -82,21 +81,6 @@ textarea {
 	min-height: 3em;
 }
 
-.jumbotron.failwhale {
-	background: #ecf0f1 url(/img/failwave-flatly.png) center bottom repeat-x;
-	padding-bottom: 80px;
-}
-
-.jumbotron.failwhale img {
-	float: right;
-	height: 140px;
-	width: auto;
-}
-
-.nav-tabs {
-	/*margin-bottom: 15px;*/
-}
-
 .img-border {
 	display: inline-block;
 	position: relative;
@@ -111,12 +95,6 @@ textarea {
 	width: 100%;
 	height: 100%;
 	box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.12) inset;
-	transition: box-shadow 0.15s ease-in-out 0s;
-}
-a:hover.img-border:before,
-a:focus.img-border:before,
-a:active.img-border:before {
-	box-shadow: 0px 0px 0px 2px #1ABC9C inset;
 }
 .img-border-rounded:before {
 	border-radius: 6px;

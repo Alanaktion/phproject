@@ -8,7 +8,7 @@
 <form class="form-inline" role="form" id="add-watcher">
 	<input type="hidden" name="action" value="add_watcher">
 	<div class="form-group">
-		<select name="user" class="form-control">
+		<select name="user_id" class="form-control">
 			<repeat group="{{ @users.subset }}" value="{{ @user }}">
 				<option value="{{ @user.id }}">{{ @user.name }}</option>
 			</repeat>
