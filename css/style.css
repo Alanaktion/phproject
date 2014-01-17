@@ -157,7 +157,7 @@ select[multiple] {
 	text-align: center;
 	width: 96px;
 	overflow: hidden;
-	text-overflow: ellipsis;
+	/*text-overflow: ellipsis;*/
 	white-space: nowrap;
 }
 
