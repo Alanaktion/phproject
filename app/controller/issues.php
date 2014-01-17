@@ -290,16 +290,18 @@ class Issues extends Base {
 	public function single_related($f3, $params) {
 		$user_id = $this->_requireLogin();
 		$issue = new \Model\Issue();
-		$issue->load($params["id"]);
+		$issue->load(array("id = ?", $params["id"]));
 
 		if($issue->id) {
 			$issues = new \Model\Custom("issue_user");
 			if($f3->get("issue_type.project") == $issue->type_id) {
 				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $issue->parent_id)));
 			} else {
-				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND parent_id IS NOT NULL AND parent_id != 0 AND deleted_date IS NULL", $issue->parent_id)));
+				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
 			}
 			echo \Template::instance()->render("issues/single/related.html");
+			echo $issue->id;
+			echo $issue->name;
 		} else {
 			$f3->error(404);
 		}
