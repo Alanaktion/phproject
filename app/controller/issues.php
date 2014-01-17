@@ -300,8 +300,6 @@ class Issues extends Base {
 				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
 			}
 			echo \Template::instance()->render("issues/single/related.html");
-			echo $issue->id;
-			echo $issue->name;
 		} else {
 			$f3->error(404);
 		}
