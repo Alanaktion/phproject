@@ -200,7 +200,7 @@ class Issues extends Base {
 					$comment->user_id = $user_id;
 					$comment->issue_id = $issue->id;
 					$comment->text = $post["text"];
-					$comment->created_date = date("Y-m-d H:i:s");
+					$comment->created_date = now();
 					$comment->save();
 
 					$notification = \Helper\Notification::instance();
@@ -251,6 +251,9 @@ class Issues extends Base {
 		$author->load(array("id=?", $issue->author_id));
 		$owner = new \Model\User();
 		$owner->load(array("id=?", $issue->owner_id));
+
+		$files = new \Model\Issue\File();
+		$f3->set("files", $files->paginate(0, 64, array("issue_id = ?", $issue->id)));
 
 		$watching = new \Model\Issue\Watcher();
 		$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $user_id));

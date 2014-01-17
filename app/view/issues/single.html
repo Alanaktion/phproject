@@ -80,33 +80,19 @@
 
 						<div class="col-lg-6">
 							<h4>Files</h4>
-							<ul class="list-inline file-list">
-								<li>
-									<a href="Filename.jpg" title="Filename">
-										<placehold width="72" height="72" /><br />
-										Filename
-									</a>
-								</li>
-								<li>
-									<a href="Filename.jpg" title="Long Filename">
-										<placehold width="72" height="72" /><br />
-										Long Filename
-									</a>
-								</li>
-								<li>
-									<a href="Filename.jpg" title="Really Long Filename">
-										<placehold width="72" height="72" /><br />
-										Really Long Filename
-									</a>
-								</li>
-								<li>
-									<a href="Filename.jpg" title="Filename">
-										<placehold width="72" height="72" /><br />
-										Filename
-									</a>
-								</li>
-							</ul>
-							<p class="clear"></p>
+							<check if="{{ @files.count }}">
+								<ul class="list-inline file-list">
+									<repeat group="{{ @files.subset }}" value="{{ @file }}">
+										<li>
+											<a href="/{{ @file.disk_filename }}" title="{{ @file.filename }}">
+												<placehold width="72" height="72" /><br />
+												{{ @file.filename }}
+											</a>
+										</li>
+									</repeat>
+								</ul>
+								<p class="clear"></p>
+							</check>
 							<form class="form-inline" method="post" enctype="multipart/form-data" action="/issues/upload">
 								<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
 								<div class="form-group">
