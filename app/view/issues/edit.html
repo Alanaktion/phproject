@@ -61,6 +61,7 @@
 						</check>
 						<check if="{{ @user.role == 'admin' }}">
 							<div class="checkbox checkbox-inline">
+								<input type="hidden" name="notify" value="0">
 								<label>
 									<input type="checkbox" name="notify" value="1" checked>
 									Send notifications

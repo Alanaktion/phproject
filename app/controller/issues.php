@@ -120,7 +120,7 @@ class Issues extends Base {
 
 				// Diff contents and save what's changed.
 				foreach($post as $i=>$val) {
-					if($issue->$i != $val) {
+					if($i != "notify" && $issue->$i != $val) {
 						$update_field = new \Model\Issue\Update\Field();
 						$update_field->issue_update_id = $update->id;
 						$update_field->field = $i;
@@ -138,9 +138,13 @@ class Issues extends Base {
 				// Save issue
 				$issue->save();
 
-				// Notify watchers
-				$notification = \Helper\Notification::instance();
-				$notification->issue_update($issue->id, $update->id);
+				if($f3->get("user.role") == "admin" && empty($post["notify"])) {
+					// Don't send notification
+				} else {
+					// Notify watchers
+					$notification = \Helper\Notification::instance();
+					$notification->issue_update($issue->id, $update->id);
+				}
 
 				$f3->reroute("/issues/" . $issue->id);
 			} else {
