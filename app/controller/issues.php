@@ -345,27 +345,31 @@ class Issues extends Base {
 			return;
 		}
 
+		$f3->set("issue", $issue->cast());
+
 		$web = \Web::instance();
 
 
-		$f3->set('UPLOADS','uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
-		if(!file_exists($f3->get("UPLOADS"))) {
+		$f3->set("UPLOADS",'uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
+		if(!is_dir($f3->get("UPLOADS"))) {
 			mkdir($f3->get("UPLOADS"), 0777, true);
 		}
 		$overwrite = false; // set to true, to overwrite an existing file; Default: false
 		$slug = true; // rename file to filesystem-friendly version
 
 		//Make a good name
-		$orig_name =  preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']);
-		$_FILES['attachment']['name'] = time() . "_" . $orig_name;
+		$f3->set("orig_name", preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']));
+		$_FILES['attachment']['name'] = time() . "_" . $f3->get("orig_name");
 
 		$i = 0;
 		$parts = pathinfo($_FILES['attachment']['name']);
-		while (file_exists(UPLOAD_DIR . $_FILES['attachment']['name'])) {
+		while (file_exists($f3->get("UPLOADS") . $_FILES['attachment']['name'])) {
 			$i++;
 			$_FILES['attachment']['name'] = $parts["filename"] . "-" . $i . "." . $parts["extension"];
 		}
+
 		$files = $web->receive(function($file){
+			$f3 = \Base::instance();
 
 			//var_dump($file);
 			/* looks like:
@@ -380,21 +384,20 @@ class Issues extends Base {
 			// $file['name'] already contains the slugged name now
 
 			// maybe you want to check the file size
-			if($file['size'] > $f3->get("files.maxsize")) // if bigger than 2 MB
+			if($file['size'] > $f3->get("files.maxsize"))
 				return false; // this file is not valid, return false will skip moving it
 
 
-
 			$newfile = new \Model\Issue\File();
-			$newfile->issue_id = $issue->id;
-			$newfile->user_id = $user_id;
-			$newfile->filename = $orig_name;
+			$newfile->issue_id = $f3->get("issue.id");
+			$newfile->user_id = $f3->get("user.id");
+			$newfile->filename = $f3->get("orig_name");
 			$newfile->disk_filename = $file['name'];
 			$newfile->disk_directory = $f3->get("UPLOADS");
 			$newfile->filesize = $file['size'];
 			$newfile->content_type = $file['type'];
-			$newfile->digest = md5_file($f3->get("UPLOADS") . $file['name']);
-			$newfile->created_date = date("Y-m-d H:i:s");
+			$newfile->digest = md5_file($file['tmp_name']); // Need to MD5 the tmp file, since the final one doesn't exist yet.
+			$newfile->created_date = now();
 			$newfile->save();
 
 			// everything went fine, hurray!
@@ -404,7 +407,7 @@ class Issues extends Base {
 			$slug
 		);
 
-		$f3->reroute('/issues/'.$issue->id);
+		$f3->reroute("/issues/" . $issue->id);
 
 	}
 
