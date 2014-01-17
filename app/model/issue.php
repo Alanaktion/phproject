@@ -21,7 +21,7 @@ class Issue extends Base {
 ) c
 WHERE _id > 1
 GROUP BY _id
-ORDER BY lvl DESC", null, 60);
+ORDER BY lvl DESC", null, 3600);
 	}
 
 	public static function clean($string) {

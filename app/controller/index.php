@@ -32,7 +32,11 @@ class Index extends Base {
 
 			echo \Template::instance()->render("user/dashboard.html");
 		} else {
-			echo \Template::instance()->render("index/index.html");
+			if($f3->get("site.public")) {
+				echo \Template::instance()->render("index/index.html");
+			} else {
+				$f3->reroute("/login");
+			}
 		}
 	}
 

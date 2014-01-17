@@ -161,6 +161,16 @@ select[multiple] {
 	white-space: nowrap;
 }
 
+.form-horizontal .checkbox-inline {
+	display: inline-block;
+	padding-top: 2px;
+	margin-left: 10px;
+}
+
+textarea.form-control {
+	padding-right: 5px;
+}
+
 /* <Compact UI> */
 .dashboard .list-group-item {
 	padding: 7px 9px;

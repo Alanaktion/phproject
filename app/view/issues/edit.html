@@ -23,7 +23,7 @@
 				<div class="form-group">
 					<label class="col-lg-2 control-label label-sm">Description</label>
 					<div class="col-lg-10">
-						<textarea class="form-control input-sm" name="description">{{ empty(@issue) ? "" : @issue.description }}</textarea>
+						<textarea class="form-control input-sm" name="description" rows="7">{{ empty(@issue) ? "" : @issue.description }}</textarea>
 					</div>
 				</div>
 				<div class="form-group">
@@ -58,6 +58,14 @@
 						<button type="submit" class="btn btn-primary btn-sm">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
 						<check if="{{ !empty(@issue) }}">
 							<button type="reset" class="btn btn-default btn-sm">Reset</button>
+						</check>
+						<check if="{{ @user.role == 'admin' }}">
+							<div class="checkbox checkbox-inline">
+								<label>
+									<input type="checkbox" name="notify" value="1" checked>
+									Send notifications
+								</label>
+							</div>
 						</check>
 					</div>
 				</div>
