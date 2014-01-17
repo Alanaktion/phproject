@@ -31,4 +31,13 @@ abstract class Base extends \DB\SQL\Mapper {
 		}
 	}
 
+	// Load by ID directly
+	public function load($filter=NULL, array $options=NULL) {
+		if(is_numeric($filter)) {
+			return parent::load(array("id = ?", $filter), $options);
+		} else {
+			return parent::load($filter, $options);
+		}
+	}
+
 }

@@ -29,7 +29,7 @@ class Issues extends Base {
 		// Load type if a type_id was passed
 		if(!empty($args["type"])) {
 			$type = new \Model\Issue\Type();
-			$type->load(array("id = ?", $args["type"]));
+			$type->load($args["type"]);
 			if($type->id) {
 				$f3->set("title", $type->name . "s");
 				$f3->set("type", $type->cast());
@@ -108,7 +108,7 @@ class Issues extends Base {
 		if(!empty($post["id"])) {
 
 			// Updating existing issue.
-			$issue->load(array("id = ?", $post["id"]));
+			$issue->load($post["id"]);
 			if($issue->id) {
 
 				// Log changes
@@ -189,7 +189,7 @@ class Issues extends Base {
 		}
 
 		$type = new \Model\Issue\Type();
-		$type->load(array("id = ?", $issue->type_id));
+		$type->load($issue->type_id);
 
 		// Run actions if passed
 		$post = $f3->get("POST");
@@ -290,7 +290,7 @@ class Issues extends Base {
 	public function single_related($f3, $params) {
 		$user_id = $this->_requireLogin();
 		$issue = new \Model\Issue();
-		$issue->load(array("id = ?", $params["id"]));
+		$issue->load($params["id"]);
 
 		if($issue->id) {
 			$issues = new \Model\Custom("issue_user");
@@ -318,7 +318,7 @@ class Issues extends Base {
 		$this->_requireLogin();
 
 		$issue = new \Model\Issue();
-		$issue->load(array("id = ?", $params["id"]));
+		$issue->load($params["id"]);
 		if($f3->get("POST.id")) {
 			$issue->delete();
 			$f3->reroute("/issues");
