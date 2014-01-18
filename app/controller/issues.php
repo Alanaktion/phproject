@@ -403,6 +403,8 @@ class Issues extends Base {
 			$newfile->created_date = now();
 			$newfile->save();
 
+			// TODO: Add history entry to see who uploaded which files and when
+
 			// everything went fine, hurray!
 			return true; // allows the file to be moved from php tmp dir to your defined upload dir
 		},
