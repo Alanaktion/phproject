@@ -15,7 +15,11 @@ class Files extends Base {
 
 		$img = new \Image($file->disk_filename, null, $f3->get("ROOT") . "/");
 		$img->resize($params["size"], $params["size"]);
-		$img->render("jpeg");
+
+		if($params["format"] == "jpg") {
+			$params["format"] = "jpeg";
+		}
+		$img->render($params["format"]);
 	}
 
 }
