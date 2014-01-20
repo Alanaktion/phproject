@@ -7734,6 +7734,12 @@ input[type="color"]:focus,
 h3{color:#4AB3D1;}
 a{transition:color .25s;}
 
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+	color: #FF8147;
+}
+
 .panel-body .nav-tabs {
 	border-bottom-color: #eee;
 }
