@@ -29,7 +29,7 @@ class Issues extends Base {
 		// Load type if a type_id was passed
 		if(!empty($args["type"])) {
 			$type = new \Model\Issue\Type();
-			$type->load(array("id = ?", $args["type"]));
+			$type->load($args["type"]);
 			if($type->id) {
 				$f3->set("title", $type->name . "s");
 				$f3->set("type", $type->cast());
@@ -108,7 +108,7 @@ class Issues extends Base {
 		if(!empty($post["id"])) {
 
 			// Updating existing issue.
-			$issue->load(array("id = ?", $post["id"]));
+			$issue->load($post["id"]);
 			if($issue->id) {
 
 				// Log changes
@@ -120,7 +120,7 @@ class Issues extends Base {
 
 				// Diff contents and save what's changed.
 				foreach($post as $i=>$val) {
-					if($issue->$i != $val) {
+					if($i != "notify" && $issue->$i != $val) {
 						$update_field = new \Model\Issue\Update\Field();
 						$update_field->issue_update_id = $update->id;
 						$update_field->field = $i;
@@ -138,9 +138,13 @@ class Issues extends Base {
 				// Save issue
 				$issue->save();
 
-				// Notify watchers
-				$notification = \Helper\Notification::instance();
-				$notification->issue_update($issue->id, $update->id);
+				if($f3->get("user.role") == "admin" && empty($post["notify"])) {
+					// Don't send notification
+				} else {
+					// Notify watchers
+					$notification = \Helper\Notification::instance();
+					$notification->issue_update($issue->id, $update->id);
+				}
 
 				$f3->reroute("/issues/" . $issue->id);
 			} else {
@@ -185,7 +189,7 @@ class Issues extends Base {
 		}
 
 		$type = new \Model\Issue\Type();
-		$type->load(array("id = ?", $issue->type_id));
+		$type->load($issue->type_id);
 
 		// Run actions if passed
 		$post = $f3->get("POST");
@@ -196,7 +200,7 @@ class Issues extends Base {
 					$comment->user_id = $user_id;
 					$comment->issue_id = $issue->id;
 					$comment->text = $post["text"];
-					$comment->created_date = date("Y-m-d H:i:s");
+					$comment->created_date = now();
 					$comment->save();
 
 					$notification = \Helper\Notification::instance();
@@ -217,17 +221,26 @@ class Issues extends Base {
 						return;
 					}
 					break;
-				case "watch":
+
+				case "add_watcher":
 					$watching = new \Model\Issue\Watcher();
-					$watching->load();
+					// Loads just in case the user is already a watcher
+					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
 					$watching->issue_id = $issue->id;
-					$watching->user_id = $user_id;
+					$watching->user_id = $post["user_id"];
 					$watching->save();
+
+					if($f3->get("AJAX"))
+						return;
 					break;
-				case "unwatch":
+
+				case "remove_watcher":
 					$watching = new \Model\Issue\Watcher();
-					$watching->load();
+					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
 					$watching->delete();
+
+					if($f3->get("AJAX"))
+						return;
 					break;
 			}
 		}
@@ -238,6 +251,9 @@ class Issues extends Base {
 		$author->load(array("id=?", $issue->author_id));
 		$owner = new \Model\User();
 		$owner->load(array("id=?", $issue->owner_id));
+
+		$files = new \Model\Issue\File();
+		$f3->set("files", $files->paginate(0, 64, array("issue_id = ?", $issue->id)));
 
 		$watching = new \Model\Issue\Watcher();
 		$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $user_id));
@@ -260,7 +276,7 @@ class Issues extends Base {
 
 		// Build updates array
 		$updates_array = array();
-		$update_model = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_update_user", null, 3600);
+		$update_model = new \Model\Custom("issue_update_user");
 		$updates = $update_model->paginate(0, 100, array("issue_id = ?", $params["id"]), array("order" => "created_date ASC"));
 		foreach($updates["subset"] as $update) {
 			$update_array = $update->cast();
@@ -276,16 +292,36 @@ class Issues extends Base {
 
 	public function single_related($f3, $params) {
 		$user_id = $this->_requireLogin();
-		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user", null, 3600);
-		$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $params["id"])));
-		echo \Template::instance()->render("issues/single/related.html");
+		$issue = new \Model\Issue();
+		$issue->load($params["id"]);
+
+		if($issue->id) {
+			$issues = new \Model\Custom("issue_user");
+			if($f3->get("issue_type.project") == $issue->type_id) {
+				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $issue->parent_id)));
+			} else {
+				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
+			}
+			echo \Template::instance()->render("issues/single/related.html");
+		} else {
+			$f3->error(404);
+		}
+	}
+
+	public function single_watchers($f3, $params) {
+		$user_id = $this->_requireLogin();
+		$watchers = new \Model\Custom("issue_watcher_user");
+		$f3->set("watchers", $watchers->paginate(0, 100, array("issue_id = ?", $params["id"])));
+		$users = new \Model\User();
+		$f3->set("users", $users->paginate(0, 100, "deleted_date IS NULL"));
+		echo \Template::instance()->render("issues/single/watchers.html");
 	}
 
 	public function single_delete($f3, $params) {
 		$this->_requireLogin();
 
 		$issue = new \Model\Issue();
-		$issue->load(array("id = ?", $params["id"]));
+		$issue->load($params["id"]);
 		if($f3->get("POST.id")) {
 			$issue->delete();
 			$f3->reroute("/issues");
@@ -312,27 +348,31 @@ class Issues extends Base {
 			return;
 		}
 
+		$f3->set("issue", $issue->cast());
+
 		$web = \Web::instance();
 
 
-		$f3->set('UPLOADS','uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
-		if(!file_exists($f3->get("UPLOADS"))) {
+		$f3->set("UPLOADS",'uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
+		if(!is_dir($f3->get("UPLOADS"))) {
 			mkdir($f3->get("UPLOADS"), 0777, true);
 		}
 		$overwrite = false; // set to true, to overwrite an existing file; Default: false
 		$slug = true; // rename file to filesystem-friendly version
 
 		//Make a good name
-		$orig_name =  preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']);
-		$_FILES['attachment']['name'] = time() . "_" . $orig_name;
+		$f3->set("orig_name", preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']));
+		$_FILES['attachment']['name'] = time() . "_" . $f3->get("orig_name");
 
 		$i = 0;
 		$parts = pathinfo($_FILES['attachment']['name']);
-		while (file_exists(UPLOAD_DIR . $_FILES['attachment']['name'])) {
+		while (file_exists($f3->get("UPLOADS") . $_FILES['attachment']['name'])) {
 			$i++;
 			$_FILES['attachment']['name'] = $parts["filename"] . "-" . $i . "." . $parts["extension"];
 		}
+
 		$files = $web->receive(function($file){
+			$f3 = \Base::instance();
 
 			//var_dump($file);
 			/* looks like:
@@ -347,22 +387,23 @@ class Issues extends Base {
 			// $file['name'] already contains the slugged name now
 
 			// maybe you want to check the file size
-			if($file['size'] > $f3->get("files.maxsize")) // if bigger than 2 MB
+			if($file['size'] > $f3->get("files.maxsize"))
 				return false; // this file is not valid, return false will skip moving it
 
 
-
 			$newfile = new \Model\Issue\File();
-			$newfile->issue_id = $issue->id;
-			$newfile->user_id = $user_id;
-			$newfile->filename = $orig_name;
+			$newfile->issue_id = $f3->get("issue.id");
+			$newfile->user_id = $f3->get("user.id");
+			$newfile->filename = $f3->get("orig_name");
 			$newfile->disk_filename = $file['name'];
 			$newfile->disk_directory = $f3->get("UPLOADS");
 			$newfile->filesize = $file['size'];
 			$newfile->content_type = $file['type'];
-			$newfile->digest = md5_file($f3->get("UPLOADS") . $file['name']);
-			$newfile->created_date = date("Y-m-d H:i:s");
+			$newfile->digest = md5_file($file['tmp_name']); // Need to MD5 the tmp file, since the final one doesn't exist yet.
+			$newfile->created_date = now();
 			$newfile->save();
+
+			// TODO: Add history entry to see who uploaded which files and when
 
 			// everything went fine, hurray!
 			return true; // allows the file to be moved from php tmp dir to your defined upload dir
@@ -371,7 +412,7 @@ class Issues extends Base {
 			$slug
 		);
 
-		$f3->reroute('/issues/'.$issue->id);
+		$f3->reroute("/issues/" . $issue->id);
 
 	}
 

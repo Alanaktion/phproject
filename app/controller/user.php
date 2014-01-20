@@ -27,7 +27,7 @@ class User extends Base {
 		$post = array_map("trim", $f3->get("POST"));
 
 		$user = new \Model\User();
-		$user->load(array("id = ?", $id));
+		$user->load($id);
 
 		if(!empty($post["old_pass"])) {
 

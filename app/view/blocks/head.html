@@ -10,7 +10,14 @@
 		<title>{{ @site.name }}</title>
 	</false>
 </check>
-<link rel="stylesheet" href="{{ @site.theme }}">
+<check if="{{ empty(@user.theme) }}">
+	<true>
+		<link rel="stylesheet" href="{{ @site.theme }}">
+	</true>
+	<false>
+		<link rel="stylesheet" href="{{ @user.theme }}">
+	</false>
+</check>
 <link rel="stylesheet" href="/css/style.css">
 <noscript>
 	<style type="text/css">

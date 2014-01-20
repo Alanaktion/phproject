@@ -1,0 +1,20 @@
+<ul class="list-unstyled" id="watchers-list">
+	<repeat group="{{ @watchers.subset }}" value="{{ @watcher }}">
+		<li data-user-id="{{ @watcher.id }}">
+			<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;{{ @watcher.name }}
+		</li>
+	</repeat>
+</ul>
+<form class="form-inline" role="form" id="add-watcher">
+	<input type="hidden" name="action" value="add_watcher">
+	<div class="form-group">
+		<select name="user_id" class="form-control">
+			<repeat group="{{ @users.subset }}" value="{{ @user }}">
+				<option value="{{ @user.id }}">{{ @user.name }}</option>
+			</repeat>
+		</select>
+	</div>
+	<div class="form-group">
+		<button type="submit" class="btn btn-sm btn-primary">Add Watcher</button>
+	</div>
+</form>

@@ -51,8 +51,8 @@ Variable_name = 'Uptime'"));
 		$this->_requireAdmin();
 		$f3->set("title", "Administration");
 
-		$user = new \Model\User;
-		$user->load(array("id = ?", $params["id"]));
+		$user = new \Model\User();
+		$user->load($params["id"]);
 
 		if($user->id) {
 			$f3->set("title", "Edit User");

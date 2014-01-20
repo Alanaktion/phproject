@@ -7,10 +7,10 @@ abstract class Base {
 	// Require a user to be logged in. Redirects to /login if a session is not found.
 	protected function _requireLogin() {
 		$f3 = \Base::instance();
-		if($id = $f3->get('user.id')) {
+		if($id = $f3->get("user.id")) {
 			return $id;
 		} else {
-			$f3->reroute("/login");
+			$f3->reroute("/login?to=" . urlencode($f3->get("PATH")));
 			$f3->unload();
 			return false;
 		}

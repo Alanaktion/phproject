@@ -1552,6 +1552,7 @@ final class Base {
 			'ONERROR'=>NULL,
 			'PACKAGE'=>self::PACKAGE,
 			'PARAMS'=>array(),
+			'PATH'=>parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH),
 			'PATTERN'=>NULL,
 			'PLUGINS'=>$this->fixslashes(__DIR__).'/',
 			'PORT'=>isset($_SERVER['SERVER_PORT'])?

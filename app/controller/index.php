@@ -32,26 +32,48 @@ class Index extends Base {
 
 			echo \Template::instance()->render("user/dashboard.html");
 		} else {
-			echo \Template::instance()->render("index/index.html");
+			if($f3->get("site.public")) {
+				echo \Template::instance()->render("index/index.html");
+			} else {
+				$f3->reroute("/login");
+			}
 		}
 	}
 
 	public function login($f3, $params) {
 		if($f3->get("user.id")) {
-			$f3->reroute("/");
+			if(!$f3->get("GET.to")) {
+				$f3->reroute("/");
+			} else {
+				$f3->reroute($f3->get("GET.to"));
+			}
 		} else {
+			if($f3->get("GET.to")) {
+				$f3->set("to", $f3->get("GET.to"));
+			}
 			echo \Template::instance()->render("index/login.html");
 		}
 	}
 
 	public function loginpost($f3, $params) {
 		$user = new \Model\User();
-		$user->load(array("username=? AND deleted_date IS NULL", $f3->get("POST.username")));
+		if(strpos($f3->get("POST.username"), "@")) {
+			$user->load(array("email=? AND deleted_date IS NULL", $f3->get("POST.username")));
+		} else {
+			$user->load(array("username=? AND deleted_date IS NULL", $f3->get("POST.username")));
+		}
 
 		if($user->verify_password($f3->get("POST.password"))) {
 			$f3->set("SESSION.user_id", $user->id);
-			$f3->reroute("/");
+			if(!$f3->get("POST.to")) {
+				$f3->reroute("/");
+			} else {
+				$f3->reroute($f3->get("POST.to"));
+			}
 		} else {
+			if($f3->get("POST.to")) {
+				$f3->set("to", $f3->get("POST.to"));
+			}
 			$f3->set("login.error", "Invalid login information, try again.");
 			echo \Template::instance()->render("index/login.html");
 		}

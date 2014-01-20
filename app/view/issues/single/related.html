@@ -8,7 +8,7 @@
 				<th>Author</th>
 				<th>Assignee</th>
 				<th>Created</th>
-				<th>Due Date</th>
+				<th>Due</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -18,8 +18,8 @@
 					<td><a href="/issues/{{ @item.id }}">{{ @item.name }}</a></td>
 					<td><a href="/users/{{ @item.author_username }}">{{ @item.author_name }}</a></td>
 					<td><a href="/users/{{ @item.owner_username }}">{{ @item.owner_name }}</a></td>
-					<td>{{ date("n/j/y h:ia", strtotime(@item.created_date)) }}</td>
-					<td>{{ !empty(@item.due_date) ? date("n/j/y", strtotime(@item.due_date)) : "" }}</td>
+					<td title="{{ date('n/j/y h:ia', strtotime(@item.created_date)) }}">{{ date("n/j/y", strtotime(@item.created_date)) }}</td>
+					<td>{{ !empty(@item.due_date) ? date("n/j", strtotime(@item.due_date)) : "" }}</td>
 				</tr>
 			</repeat>
 		</tbody>

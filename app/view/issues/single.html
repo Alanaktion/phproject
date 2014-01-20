@@ -34,12 +34,12 @@
 					<div class="pull-right">
 						<check if="{{ @watching }}">
 							<true>
-								<button class="btn btn-default btn-xs">
-									<span class="glyphicon glyphicon-eye-closed"></span>&ensp;Unwatch
+								<button class="btn btn-default btn-xs" onclick="unwatch_issue();" id="watch-btn">
+									<span class="glyphicon glyphicon-eye-close"></span>&ensp;Unwatch
 								</button>
 							</true>
 							<false>
-								<button class="btn btn-default btn-xs">
+								<button class="btn btn-default btn-xs" onclick="watch_issue();" id="watch-btn">
 									<span class="glyphicon glyphicon-eye-open"></span>&ensp;Watch
 								</button>
 							</false>
@@ -80,33 +80,19 @@
 
 						<div class="col-lg-6">
 							<h4>Files</h4>
-							<ul class="list-inline file-list">
-								<li>
-									<a href="Filename.jpg" title="Filename">
-										<placehold width="72" height="72" /><br />
-										Filename
-									</a>
-								</li>
-								<li>
-									<a href="Filename.jpg" title="Long Filename">
-										<placehold width="72" height="72" /><br />
-										Long Filename
-									</a>
-								</li>
-								<li>
-									<a href="Filename.jpg" title="Really Long Filename">
-										<placehold width="72" height="72" /><br />
-										Really Long Filename
-									</a>
-								</li>
-								<li>
-									<a href="Filename.jpg" title="Filename">
-										<placehold width="72" height="72" /><br />
-										Filename
-									</a>
-								</li>
-							</ul>
-							<p class="clear"></p>
+							<check if="{{ @files.count }}">
+								<ul class="list-inline file-list">
+									<repeat group="{{ @files.subset }}" value="{{ @file }}">
+										<li>
+											<a href="/{{ @file.disk_filename }}" title="{{ @file.filename }}" target="_blank">
+												<img src="/thumb/96/{{ @file.id }}.png" width="96" height="96" /><br />
+												{{ @file.filename }}
+											</a>
+										</li>
+									</repeat>
+								</ul>
+								<p class="clear"></p>
+							</check>
 							<form class="form-inline" method="post" enctype="multipart/form-data" action="/issues/upload">
 								<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
 								<div class="form-group">
@@ -122,7 +108,8 @@
 							<ul class="nav nav-tabs">
 								<li class="active"><a href="#comments" data-toggle="tab">Comments</a></li>
 								<li><a href="#history" data-toggle="tab">History</a></li>
-								<check if="{{ @type.name == 'Project' }}">
+								<li><a href="#watchers" data-toggle="tab">Watchers</a></li>
+								<check if="{{ @issue_type.project == @type.id }}">
 									<true>
 										<li><a href="#related" data-toggle="tab">Child Tasks</a></li>
 									</true>
@@ -166,6 +153,13 @@
 										</div>
 									</div>
 								</div>
+								<div class="tab-pane" id="watchers">
+									<div class="col-md-4 col-md-offset-4">
+										<div class="progress progress-striped active">
+											<div class="progress-bar" style="width: 100%"></div>
+										</div>
+									</div>
+								</div>
 								<div class="tab-pane" id="related">
 									<div class="col-md-4 col-md-offset-4">
 										<div class="progress progress-striped active">
@@ -193,8 +187,8 @@ $(function() {
 		$.post($this.attr('action'), $this.serialize(), function(data) {
 			// Append the new comment to the list
 			$('#comment_form')
-					.prop('disabled', false)
-					.before(
+				.prop('disabled', false)
+				.before(
 '<div class="comment clearfix">' +
 '<img src="//gravatar.com/avatar/' + data.user_email_md5 + '?s=48" class="pull-left profile-picture img-rounded" alt>' +
 '<div class="pull-left">' +
@@ -219,19 +213,57 @@ $(function() {
 		}
 	});
 
-	// Load history and related issues
+	// Load history, watchers, and related issues
 	$.get('/issues/{{ @issue.id }}/history', {}, function(data) {
 		$('#history').empty().append(data);
 	}, 'html').error(function() {
 		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('Error loading issue history.'));
 	});
+	$.get('/issues/{{ @issue.id }}/watchers', {}, function(data) {
+		$('#watchers').empty().append(data);
+
+		// Add/remove watchers from tab
+		$('#watchers-list').on('click', 'a.delete', function(e) {
+			$li = $(this).parents('li');
+			$.post('/issues/{{ @issue.id }}', {
+				action: 'remove_watcher',
+				user_id: $li.data('user-id')
+			});
+			$li.remove();
+			e.preventDefault();
+		});
+		$('#add-watcher').submit(function(e) {
+			$this = $(this);
+			$.post('/issues/{{ @issue.id }}', $this.serialize());
+
+			$select = $this.find('select');
+			$('<li />')
+				.data('user-id', $select.val())
+				.html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $select.children('option:selected').text())
+				.appendTo('#watchers-list');
+
+			e.preventDefault();
+		});
+
+	}, 'html').error(function() {
+		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('Error loading watchers.'));
+	});
 	$.get('/issues/{{ @issue.id }}/related', {}, function(data) {
 		$('#related').empty().append(data);
 	}, 'html').error(function() {
-		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('Error loading related issues.'));
+		$('#related').empty().append($('<p />').addClass('text-center text-danger').text('Error loading related issues.'));
 	});
 
 });
+
+function watch_issue() {
+	$.post('/issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
+	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="glyphicon glyphicon-eye-close"></span>&ensp;Unwatch');
+}
+function unwatch_issue() {
+	$.post('/issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
+	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="glyphicon glyphicon-eye-open"></span>&ensp;Watch');
+}
 </script>
 </body>
 </html>

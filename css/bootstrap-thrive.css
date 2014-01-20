@@ -1715,7 +1715,6 @@ pre code {
 
 table {
 	max-width: 100%;
-	background-color: #FFF;        
 }
 
 th {
@@ -1757,10 +1756,6 @@ th {
 	border-top: 2px solid #FFF;
 }
 
-.table .table {
-	background-color: #ffffff;
-}
-
 .table-condensed > thead > tr > th,
 .table-condensed > tbody > tr > th,
 .table-condensed > tfoot > tr > th,
@@ -1790,12 +1785,12 @@ th {
 
 .table-striped > tbody > tr:nth-child(odd) > td,
 .table-striped > tbody > tr:nth-child(odd) > th {
-	background-color: #f6f6f6;
+	background-color: #fff;
 }
 
 .table-hover > tbody > tr:hover > td,
 .table-hover > tbody > tr:hover > th {
-	background-color: #FFF;
+	background-color: #fff;
 }
 
 table col[class*="col-"] {
@@ -2131,7 +2126,6 @@ fieldset[disabled] .checkbox-inline {
 	padding: 6px 9px;
 	font-size: 13px;
 	line-height: 1.5;
-	border-radius: 3px;
 }
 
 select.input-sm {
@@ -2148,7 +2142,6 @@ textarea.input-sm {
 	padding: 18px 27px;
 	font-size: 19px;
 	line-height: 1.33;
-	border-radius: 6px;
 }
 
 select.input-lg {
@@ -2424,7 +2417,7 @@ fieldset[disabled] .btn {
 .open .dropdown-toggle.btn-default {
 	color: #ffffff;
 	background-color: #9CF301;
-	
+
 }
 
 .btn-default:active,
@@ -3678,7 +3671,7 @@ input[type="button"].btn-block {
 .dropdown-menu > li > a:focus {
 	color: #ffffff;
 	text-decoration: none;
-	background-color: #3d3d3d;        
+	background-color: #3d3d3d;
 }
 
 .dropdown-menu > .active > a,
@@ -7735,3 +7728,23 @@ input[type="color"]:focus,
 .affix {
 	position: fixed;
 }
+
+/* Overrides */
+
+h3{color:#4AB3D1;}
+a{transition:color .25s;}
+
+.panel-body .nav-tabs {
+	border-bottom-color: #eee;
+}
+.panel-body .nav-tabs > li.active > a,
+.panel-body .nav-tabs > li.active > a:hover,
+.panel-body .nav-tabs > li.active > a:focus {
+	background-color: #eee;
+}
+.panel-body .nav > li > a:hover,
+.panel-body .nav > li > a:focus {
+	background-color: #efefef;
+	border-bottom-color: #eee;
+}
+
