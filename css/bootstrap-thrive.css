@@ -2013,7 +2013,7 @@ output {
 	background-color: #ffffff;
 	background-image: none;
 	border: 1px solid #d7d7d7;
-	border-radius: 0px;
+	border-radius: 3px;
 	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 	-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
@@ -7733,6 +7733,12 @@ input[type="color"]:focus,
 
 h3{color:#4AB3D1;}
 a{transition:color .25s;}
+
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+	color: #FF8147;
+}
 
 .panel-body .nav-tabs {
 	border-bottom-color: #eee;

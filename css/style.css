@@ -12,15 +12,16 @@ body.login {
 	}
 }
 
-h3{color:#4AB3D1;}
-
-a{transition:color .25s;}
-
 .navbar {
 	padding: 0 10px;
 }
 
-.navbar-default .navbar-brand:hover, .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus{color:#FF8147}
+.navbar-brand img {
+	height: 40px;
+	width: auto;
+	margin: -12px 0px;
+	vertical-align: baseline;
+}
 
 .navbar-nav > li > a > .glyphicon {
 	line-height: inherit;
@@ -162,10 +163,12 @@ select[multiple] {
 
 .file-list li {
 	text-align: center;
-	width: 96px;
+	width: 106px;
 	overflow: hidden;
-	/*text-overflow: ellipsis;*/
 	white-space: nowrap;
+}
+.file-list li img {
+	width: 96px;
 }
 
 .form-horizontal .checkbox-inline {

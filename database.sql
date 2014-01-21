@@ -335,6 +335,7 @@ CREATE TABLE `user` (
   `password` char(60) NOT NULL,
   `role` enum('user','admin') NOT NULL DEFAULT 'user',
   `task_color` char(6) DEFAULT NULL,
+  `avatar_filename` varchar(50) DEFAULT NULL,
   `created_date` datetime NOT NULL,
   `deleted_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)

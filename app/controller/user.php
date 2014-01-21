@@ -75,6 +75,72 @@ class User extends Base {
 		$user->save();
 		echo \Template::instance()->render("user/account.html");
 	}
+        
+        public function avatar($f3, $params) {
+		$id = $this->_requireLogin();
+		$f3 = \Base::instance();
+		$post = array_map("trim", $f3->get("POST"));
+
+		$user = new \Model\User();
+		$user->load($id);
+		if(!$user->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$f3->set("user", $user->cast());
+
+		$web = \Web::instance();
+
+
+		$f3->set("UPLOADS",'uploads/avatars/'); // don't forget to set an Upload directory, and make it writable!
+		if(!is_dir($f3->get("UPLOADS"))) {
+			mkdir($f3->get("UPLOADS"), 0777, true);
+		}
+		$overwrite = false; // set to true, to overwrite an existing file; Default: false
+		$slug = true; // rename file to filesystem-friendly version
+
+		//Make a good name
+                $parts = pathinfo($_FILES['avatar']['name']);
+                $_FILES['avatar']['name'] = $user->id . "-" . substr(sha1($user->id), 0, 4)  . "." . $parts["extension"];
+		$f3->set("avatar_filename", $_FILES['avatar']['name']);
+                   
+		$files = $web->receive(function($file){
+			$f3 = \Base::instance();
+                        $user = $f3->get("user");
+			//var_dump($file);
+			/* looks like:
+				array(5) {
+					["name"] =>     string(19) "somefile.png"
+					["type"] =>     string(9) "image/png"
+					["tmp_name"] => string(14) "/tmp/php2YS85Q"
+					["error"] =>    int(0)
+					["size"] =>     int(172245)
+				}
+			*/
+			// $file['name'] already contains the slugged name now
+
+			// maybe you want to check the file size
+			if($file['size'] > $f3->get("files.maxsize"))
+				return false; // this file is not valid, return false will skip moving it
+
+
+			$newfile = new \Model\User();
+                        $newfile->load($user["id"]);
+                        
+                        $newfile->avatar_filename = $f3->get("avatar_filename");
+			$newfile->save();
+
+			//NEED TO CONVERT TO JPG AND RESIZE?
+			return true; // allows the file to be moved from php tmp dir to your defined upload dir
+		},
+			$overwrite,
+			$slug
+		);
+                $f3->reroute("/user/account");
+
+	}
+        
 
 	public function single($f3, $params) {
 		$this->_requireLogin();
