@@ -16,6 +16,12 @@ body.login {
 	padding: 0 10px;
 }
 
+.navbar-brand img {
+	height: 40px;
+	width: auto;
+	margin: -11px 0 -10px;
+}
+
 .navbar-nav > li > a > .glyphicon {
 	line-height: inherit;
 }
@@ -156,10 +162,12 @@ select[multiple] {
 
 .file-list li {
 	text-align: center;
-	width: 96px;
+	width: 106px;
 	overflow: hidden;
-	/*text-overflow: ellipsis;*/
 	white-space: nowrap;
+}
+.file-list li img {
+	width: 96px;
 }
 
 .form-horizontal .checkbox-inline {

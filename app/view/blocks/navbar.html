@@ -1,7 +1,14 @@
 <!-- Desktop -->
 <div class="navbar navbar-default navbar-fixed-top hidden-xs" role="navigation">
 	<a class="navbar-brand" href="/">
-		<span class="hidden-sm">{{ @site.name }}</span>
+		<span class="hidden-sm">
+			<check if="{{ empty(@site.logo) }}">
+				<true>{{ @site.name }}</true>
+				<false>
+					<img src="{{ @site.logo }}" />
+				</false>
+			</check>
+		</span>
 		<span class="glyphicon glyphicon-home visible-sm"></span>
 	</a>
 	<ul class="nav navbar-nav">
