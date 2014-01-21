@@ -54,6 +54,7 @@ Backlog = {
          Backlog.ajaxUpdateBacklog(data, item);       
     },
     ajaxUpdateBacklog: function(data, item){
+        console.log(data);
         projectId = data.itemId;
         console.log(data);
         Backlog.block(projectId, item);
