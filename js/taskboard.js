@@ -74,12 +74,12 @@ Taskboard = {
 		  width: 550,
 		  modal: true,
 		  buttons: {
-			"Update": function() {
-				
-			 },
 			Cancel: function() {
 			  $( this ).dialog( "close" );
-			}
+			},
+                        "Update (for Neal)": function() {
+				
+			 }			
 		  },
 		  close: function() {
 			
@@ -136,7 +136,10 @@ Taskboard = {
             $( "#task-dialog" ).dialog({ title: "Edit Task" });
             $( "#task-dialog" ).dialog( "open" );
             $( "#task-dialog" ).dialog({buttons:{
-                   "Update": function() {
+                   Cancel: function() {
+                      $( this ).dialog( "close" );
+                    },
+                    "Update (for neal)": function() {
                         
                         $('.ui-error').remove();
                         $(".input-error").removeClass(".input-error");
@@ -154,10 +157,8 @@ Taskboard = {
                         }
                        
                         
-                     },
-                    Cancel: function() {
-                      $( this ).dialog( "close" );
-                    } 
+                     }
+                    
             }});
             Taskboard.changeModalColor(userColor);
         },

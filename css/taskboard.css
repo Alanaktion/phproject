@@ -45,7 +45,7 @@
 .ui-dialog-titlebar-close{display:none;}
 .ui-dialog-titlebar.ui-widget-header{border: 0px solid #333;background: #999;color:#fff;background-color:#3D3D3D;border-radius:0px;}
 .ui-dialog.ui-widget input, .ui-dialog.ui-widget select, .ui-dialog.ui-widget textarea, .ui-dialog.ui-widget label{font-size:14px;}
-body .ui-dialog{padding:0;}
+body .ui-dialog{padding:0;z-index: 10000;}
 body .ui-widget-content{background:#fff;}
 body .ui-corner-all{border-radius:0px;}
 body .ui-state-default, body .ui-widget-content .ui-state-default{
@@ -55,7 +55,7 @@ body .ui-state-default, body .ui-widget-content .ui-state-default{
     color: inherit;
     outline: inherit;
     color: #FFF;
-    background-color: #7EC500;
+    background-color: #909090;
     padding: 1px 5px;
     font-size: 13px;
     line-height: 1.5;
@@ -64,17 +64,17 @@ body .ui-state-default, body .ui-widget-content .ui-state-default{
 }
 
 body .ui-state-default:last-child, body .ui-widget-content .ui-state-default:last-child{
-background-color:red;   
-background-color: #E74C3C;
-border-color: #E74C3C;
+background-color: #7EC500;
+border-color: #7EC500;
 }
 
 body .ui-state-default:hover, body .ui-widget-content .ui-state-default:hover{
-    background-color:#9CF301;
+    
+    background-color:#ADADAD;
 }
 
 body .ui-state-default:last-child:hover, body .ui-widget-content .ui-state-default:last-child:hover{
-    background-color:#DF2E1B;
+    background-color:#9CF301;    
 }
 
 /* Bootstrap Issues */
