@@ -1,5 +1,13 @@
 
-#backlog ul{min-height:150px;}
-#backlog li{cursor:move;border: 1px solid #E7E7E7;box-shadow: -1px 0px 2px rgba(0, 0, 0, 0.1);margin: 3px 0;position: relative;}
+#backlog ul{min-height:80px;}
+#backlog li{box-sizing:content-box;cursor:move;border: 1px solid #E7E7E7;box-shadow: -1px 0px 2px rgba(0, 0, 0, 0.1);margin: 3px 0;position: relative;padding:6px 11px}
 #backlog .spinner{position:absolute;left:0;right:0;top:0;bottom:0;z-index:50;background-image: url(/img/ajax-loader.gif); background-position: center center;background-repeat: no-repeat}
 #backlog .error{position:absolute;left:0;right:0;top:0;bottom:0;z-index:50;background-image: url(/img/taskboard/warning.png); background-position: right bottom;background-repeat: no-repeat}
+#backlog .panel-heading{position:relative}
+#backlog .panel-heading span.glyphicon{font-size:20px;position:absolute;right:7px;top:6px;cursor:pointer;color:#1E2A36;}
+#backlog .panel-heading a{cursor:pointer;font-weight:bold;}
+#backlog .panel-body.collapse{display:none;}
+#backlog .badge{background-color:#C6C6C6}
+#backlog .badge.new{background-color:#00537D;}
+#backlog .badge.active{background-color:#FFA700;}
+#backlog .badge.completed{background-color:#7EC500}

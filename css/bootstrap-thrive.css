@@ -6125,7 +6125,7 @@ a.list-group-item.active:focus .list-group-item-text {
 .panel-default > .panel-heading {
 	color: #3d3d3d;
 	background-color: #FFF;
-	border-color: #FFF;
+	border-color: #FFF;        
 }
 
 .panel-default > .panel-heading + .panel-collapse .panel-body {
