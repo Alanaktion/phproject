@@ -5,7 +5,6 @@
 #taskboard th{border-bottom:0px;}
 #taskboard ul{width:100%;display:block;z-index:25;min-height:120px;}
 #taskboard ul, #taskboard li{padding:0;margin:0;list-style:none;display:block;}
-#taskboard .cloneable{display:none;}
 #taskboard .card{position:relative;font-size:10px;padding:6px;margin:8px 2px;background-color:#ffffff;box-shadow: 2px 2px 10px rgba(0,0,0,0.11);border-left:6px solid;height:85px;}
 #taskboard .card.task{cursor:move;width:111px;height:92px;float:left;}
 /*#taskboard .card.task:after{content: '';width: 111px;height: 94px;background-color: #FFF;position: absolute;top: -1px;left: -6px;z-index: 1;opacity: .01;}*/
@@ -16,25 +15,25 @@
 #taskboard .card.story .top{height:18px;padding:2px 4px;}
 #taskboard .card.story .owner{display:block;float:right;width:106px;position:static;padding-left:0;margin-right:5px;overflow:hidden;}
 #taskboard .card.story .category{color:#969696;}
-#taskboard .card .add-task{font-size:14px;cursor:pointer;color:#4EC528;transition:opacity .25s;width:12px;height:12px;background-image: url(/img/taskboard/add-icon.png);margin-top:1px;}
-#taskboard .card .add-task:hover{opacity:.8;}
 #taskboard .card .owner{position:absolute;bottom:2px;left:0;width:106px;height:14px;text-align: left;overflow:hidden;padding-left:5px;color:#969696}
-#taskboard .card .hours{position: absolute;bottom: -10px;right: -5px;background-color: #F33;color: #FFF;padding: 3px;width: auto;height: 16px;border-radius: 17px;font-size: 8px;z-index: 10;}
-#taskboard .card .priority{width: 77px;height: 15px;position: absolute;top: -5px;right: -3px;z-index: 100;background-color: #008000;border-radius: 10px;color: #FFF;text-align:center;z-index:10000000000;}
-#taskboard .card .priority:after{content:" Priority";}
+#taskboard .card .hours{position: absolute;bottom: -10px;right: -5px;background-color: #D63300;color: #FFF;padding: 3px;width: auto;height: 16px;border-radius: 17px;font-size: 8px;z-index: 10;}
+#taskboard .card .priority{width: 77px;height: 15px;position: absolute;top: -5px;right: -3px;z-index: 100;background-color: #008000;border-radius: 10px;color: #FFF;text-align:center;}
 #taskboard .card .priority.normal{background-color:#fff;display:none;}
-#taskboard .card .priority.low{background-color:#c5c5c5}
-#taskboard .card .priority.high{background-color:#FF8147}
+#taskboard .card .priority.low{background-color:#c5c5c5;}
+#taskboard .card .priority.high{background-color:#D63300;}
 #taskboard .card .top{position: relative;border-bottom: 1px dotted #E2E2E2;text-align: left;top: -4px;height:15px;overflow: hidden;}
 #taskboard .card .top a{color:#969696;text-decoration:none;}
 #taskboard .card .top a:hover{text-decoration:underline;}
 #taskboard .card .title{position: relative;top: -3px;height: 57px;overflow: hidden;}
 #taskboard .card .dueDate, #taskboard .card .description{display:none;}
+#taskboard .add-task{display:inline-block;font-size:14px;cursor:pointer;color:#4EC528;transition:opacity .25s;width:12px;height:12px;background-image: url(/img/taskboard/add-icon.png);margin-top:1px;}
+#taskboard .add-task:hover{opacity:.8;}
 #taskboard .column-4 .card{text-decoration: line-through;}
 #taskboard .spinner{position:absolute;left:0;right:0;top:0;bottom:0;z-index:50;background-image: url(/img/ajax-loader.gif); background-position: center center;background-repeat: no-repeat}
 #taskboard .column-4 .spinner{background-image: url(/img/taskboard/burn.gif);}
 #taskboard .error{position:absolute;left:0;right:0;top:0;bottom:0;z-index:50;background-image: url(/img/taskboard/warning.png); background-position: right bottom;background-repeat: no-repeat}
 
+.cloneable{display:none;}
 .ui-dialog label{margin-top:5px;margin-bottom:2px;}
 .ui-dialog .form-control{padding:5px;height:36px;}
 .ui-dialog textarea.form-control{height:auto;}
