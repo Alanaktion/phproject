@@ -35,8 +35,8 @@ Backlog = {
             
             data = {
                 itemId: itemId,
-                sender: [senderId, senderSerialized],
-                reciever: [receiverId, receiverSerialized]
+                sender: {senderId:senderId, senderSerialized:senderSerialized},
+                reciever: {receiverId:receiverId, receiverSerialized:receiverSerialized}
             }
             
             Backlog.ajaxUpdateBacklog(data, item);
@@ -48,7 +48,7 @@ Backlog = {
        
         data = {
              itemId: itemId,
-             reciever: [receiverId, receiverSerialized]
+             reciever: {receiverId:receiverId, receiverSerialized:receiverSerialized}
          }
          
          Backlog.ajaxUpdateBacklog(data, item);       
