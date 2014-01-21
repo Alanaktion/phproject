@@ -3,10 +3,14 @@ $(function() {
 });
 
 Backlog = {
-    updateUrl: "test.json",
+    updateUrl: "/taskboard/test.json/1",
     projectReceived: 0,
     init: function(){
-        $('.sortable').sortable({
+        Backlog.makeSortable(".sortable");
+    },
+    makeSortable: function(selector){
+        $(selector).sortable({
+            items: "li:not(.unsortable)",
             connectWith: '.sortable',
             receive: function(event, ui){
                 Backlog.projectReceive($(ui.item), $(ui.sender), sanitizeSortableArray("project", $(this).sortable('serialize')));
@@ -20,10 +24,10 @@ Backlog = {
                     Backlog.projectReceived = false;
                 }
             }
-        }).disableSelection();
+        }).disableSelection();        
     },
     projectReceive: function(item, sender, receiverSerialized){
-        itemId = cleanId("project", $(item).attr("id"));
+        itemId = cleanId("project", $(item).attr("id"));        
         receiverId = cleanId("sprint", $(item).parent().attr("data-list-id"));
         senderId = $(sender).attr("data-list-id");
         if(typeof($(sender).attr("data-list-id") !== "undefined")){
@@ -35,7 +39,7 @@ Backlog = {
                 reciever: [receiverId, receiverSerialized]
             }
             
-            Backlog.ajaxUpdateBacklog(data);
+            Backlog.ajaxUpdateBacklog(data, item);
         }
     },
     sameReceive: function(item, receiverSerialized){
@@ -47,32 +51,44 @@ Backlog = {
              reciever: [receiverId, receiverSerialized]
          }
          
-         Backlog.ajaxUpdateBacklog(data);       
+         Backlog.ajaxUpdateBacklog(data, item);       
     },
-    ajaxUpdateBacklog: function(data){
+    ajaxUpdateBacklog: function(data, item){
         projectId = data.itemId;
-        Backlog.block(projectId);
-        /*$.ajax({
+        console.log(data);
+        Backlog.block(projectId, item);
+        $.ajax({
           type: "POST",
-          url: Backlog.updateURL,
+          url: Backlog.updateUrl,
           data: data,
           success: function(data, textStatus, jqXHR){
-                Backlog.unBlock(projectId);
+                Backlog.unBlock(projectId, item);
           },
           error: function(jqXHR, textStatus, errorThrown){
-                Backlog.unBlock(projectId);
-                console.log("ERROR");
+                Backlog.unBlock(projectId, item);
+                Backlog.showError(projectId, item);
           }		  
-        });*/
+        });
     },
-    block:function(projectId){
+    block:function(projectId, item){
         var project = $('#project_'+projectId);
         project.append('<div class="spinner"></div>');
+        item.addClass("unsortable");
+        Backlog.makeSortable('.sortable');//redo this so it is disabled
     },
-    unBlock:function(projectId){
+    unBlock:function(projectId, item){
         var project = $('#project_'+projectId);
         project.find('.spinner').remove();
+        item.removeClass("unsortable");
+        Backlog.makeSortable('.sortable');//redo this so it is disabled
     },
+    showError:function(projectId, item){
+        project = $('#project_'+projectId);
+        project.css({"opacity":".8"});
+        project.append('<div class="error" title="An error occured while saving the task!"></div>');
+        item.addClass("unsortable");
+        Backlog.makeSortable('.sortable');//redo this so it is disabled
+    }
 }
 
 
@@ -130,7 +146,7 @@ jQuery.fn.serializeObject = function() {
 };
 
 function cleanId(identifier, id){
-    return(id.replace(identifier+"_", id));
+    return(id.replace(identifier+"_", ""));
 }
 
 function sanitizeSortableArray(identifier, sortableString){

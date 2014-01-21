@@ -77,7 +77,7 @@ Taskboard = {
 			Cancel: function() {
 			  $( this ).dialog( "close" );
 			},
-                        "Update (for Neal)": function() {
+                        "Update": function() {
 				
 			 }			
 		  },
@@ -139,7 +139,7 @@ Taskboard = {
                    Cancel: function() {
                       $( this ).dialog( "close" );
                     },
-                    "Update (for neal)": function() {
+                    "Update": function() {
                         
                         $('.ui-error').remove();
                         $(".input-error").removeClass(".input-error");
@@ -177,7 +177,10 @@ Taskboard = {
             $( "#task-dialog" ).dialog( "open" );
             $( "#task-dialog" ).find( "#dueDate" ).datepicker();
             $( "#task-dialog" ).dialog({buttons:{
-                   "Update": function() {
+                    Cancel: function() {
+                      $( this ).dialog( "close" );
+                    }, 
+                    "Update": function() {
                         
                         var bValid = true;
                         bValid = isNumber( $('#hours').val() );
@@ -185,10 +188,7 @@ Taskboard = {
                         
                         Taskboard.addCard(data, $( "form#task-dialog" ).serializeObject(), storyId);
                         $( "#task-dialog" ).dialog( "close" );
-                     },
-                    Cancel: function() {
-                      $( this ).dialog( "close" );
-                    } 
+                     }                    
             }});        
         },
         changeModalColor: function(userColor){
