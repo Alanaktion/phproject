@@ -12,12 +12,11 @@
 				<li><a href="/admin/">Overview</a></li>
 				<li><a href="/admin/users">Users</a></li>
 				<li class="active"><a href="/admin/groups">Groups</a></li>
-				<li><a href="/admin/issue_types">Issue Types</a></li>
-				<li><a href="/admin/issue_attributes">Issue Attributes</a></li>
+				<li><a href="/admin/attributes">Attributes</a></li>
 			</ul>
 			<div class="row">
 				<div class="col-md-8">
-					<p class="alert alert-success saved" style="display: none;">Title saved.</p>
+					<p class="alert alert-success alert-popup saved" style="display: none;">Title saved.</p>
 					<form role="form" onsubmit="return false;">
 						<div class="form-group">
 							<label class="sr-only" for="group-name">Group Name</label>
@@ -64,8 +63,8 @@ $(function(){
 			}, function(data) {
 				$('.saved').show();
 				window.setTimeout(function(){
-					$('.saved').fadeOut('fast');
-				}, 1500);
+					$('.saved').fadeOut(400);
+				}, 3000);
 			}, 'json');
 		}
 	});

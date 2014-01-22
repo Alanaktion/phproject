@@ -12,7 +12,19 @@ class Index extends Base {
 				array(
 					"owner_id=:owner and type_id=:type",
 					":owner" => $f3->get("user.id"),
-					":type" => "2",
+					":type" => $f3->get("issue_type.project"),
+				),array(
+					"order" => "(due_date IS NULL), due_date ASC"
+				)
+			));
+
+			$bugs = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user");
+			$f3->set("bugs", $bugs->paginate(
+				0, 50,
+				array(
+					"owner_id=:owner and type_id=:type",
+					":owner" => $f3->get("user.id"),
+					":type" => $f3->get("issue_type.bug"),
 				),array(
 					"order" => "(due_date IS NULL), due_date ASC"
 				)
@@ -24,7 +36,7 @@ class Index extends Base {
 				array(
 					"owner_id=:owner and type_id=:type",
 					":owner" => $f3->get("user.id"),
-					":type" => "1",
+					":type" => $f3->get("issue_type.task"),
 				),array(
 					"order" => "(due_date IS NULL), due_date ASC"
 				)

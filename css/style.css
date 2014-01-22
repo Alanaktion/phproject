@@ -178,6 +178,12 @@ textarea.form-control {
 	padding-right: 5px;
 }
 
+.alert-popup {
+	position: fixed;
+	top: 65px;
+	right: 15px;
+}
+
 /* <Compact UI> */
 .dashboard .list-group-item {
 	padding: 7px 9px;

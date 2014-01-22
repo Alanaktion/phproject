@@ -43,7 +43,7 @@ Variable_name = 'Uptime'"));
 		$this->_requireAdmin();
 		$f3->set("title", "Manage Users");
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL"));
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'"));
 		echo \Template::instance()->render("admin/users.html");
 	}
 
@@ -108,7 +108,7 @@ Variable_name = 'Uptime'"));
 		$user->load($params["id"]);
 		$user->delete();
 		if($f3->get("AJAX")) {
-			echo json_encode(array("deleted" => 1));
+			print_json(array("deleted" => 1));
 		} else {
 			$f3->reroute("/admin/users");
 		}
@@ -116,8 +116,8 @@ Variable_name = 'Uptime'"));
 
 	public function groups($f3, $params) {
 		$this->_requireAdmin();
-		$group = new \Model\Group();
-		$groups = $group->paginate(0, 100, "deleted_date IS NULL");
+		$group = new \Model\User();
+		$groups = $group->paginate(0, 100, "deleted_date IS NULL AND role = 'group'");
 		$group_array =  array();
 		foreach($groups["subset"] as $g) {
 			$db = $f3->get("db.instance");
@@ -126,6 +126,7 @@ Variable_name = 'Uptime'"));
 			$group_array[] = array(
 				"id" => $g["id"],
 				"name" => $g["name"],
+				"task_color" => $g["task_color"],
 				"count" => $count
 			);
 		}
@@ -136,8 +137,11 @@ Variable_name = 'Uptime'"));
 	public function group_new($f3, $params) {
 		$this->_requireAdmin();
 		if($f3->get("POST")) {
-			$group = new \Model\Group();
+			$group = new \Model\User();
 			$group->name = $f3->get("POST.name");
+			$group->role = "group";
+			$group->task_color = sprintf("#%06X", mt_rand(0, 0xFFFFFF));
+			$group->created_date = now();
 			$group->save();
 			$f3->reroute("/admin/groups");
 		} else {
@@ -148,8 +152,8 @@ Variable_name = 'Uptime'"));
 	public function group_edit($f3, $params) {
 		$this->_requireAdmin();
 
-		$group = new \Model\Group();
-		$group->load(array("id = ? AND deleted_date IS NULL", $params["id"]));
+		$group = new \Model\User();
+		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
 		$f3->set("group", $group->cast());
 
 		$members = new \DB\SQL\Mapper($f3->get("db.instance"), "group_user_user", null, 3600);
@@ -166,7 +170,7 @@ Variable_name = 'Uptime'"));
 		$group->load($params["id"]);
 		$group->delete();
 		if($f3->get("AJAX")) {
-			echo json_encode(array("deleted" => 1));
+			print_json(array("deleted" => 1));
 		} else {
 			$f3->reroute("/admin/groups");
 		}
@@ -179,8 +183,13 @@ Variable_name = 'Uptime'"));
 			$f3->error(400);
 		}
 
-		$group = new \Model\Group();
-		$group->load(array("id = ? AND deleted_date IS NULL", $f3->get("POST.group_id")));
+		$group = new \Model\User();
+		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $f3->get("POST.group_id")));
+
+		if(!$group->id) {
+			$f3->error(404);
+			return;
+		}
 
 		switch($f3->get('POST.action')) {
 			case "add_member":
@@ -200,12 +209,12 @@ Variable_name = 'Uptime'"));
 				$group_user = new \Model\Group\User();
 				$group_user->load(array("user_id = ? AND group_id = ?", $f3->get("POST.user_id"), $f3->get("POST.group_id")));
 				$group_user->delete();
-				echo json_encode(array("deleted" => 1));
+				print_json(array("deleted" => 1));
 				break;
 			case "change_title":
-				$group->name = $f3->get("POST.name");
+				$group->name = trim($f3->get("POST.name"));
 				$group->save();
-				echo json_encode(array("changed" => 1));
+				print_json(array("changed" => 1));
 				break;
 		}
 	}

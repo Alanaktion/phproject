@@ -72,7 +72,7 @@ class Taskboard extends Base {
         $issue->title = $post["title"];
         $issue->save();
 
-        echo $issue->id;
+        print_json($issue->cast() + array("taskId" => $issue->id));
     }
 
     public function edit($f3, $params) {
@@ -93,6 +93,8 @@ class Taskboard extends Base {
             $issue->title = $post["title"];
         }
         $issue->save();
+
+        print_json($issue->cast() + array("taskId" => $issue->id));
     }
 
 

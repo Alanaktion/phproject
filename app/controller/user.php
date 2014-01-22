@@ -147,7 +147,7 @@ class User extends Base {
 		$this->_requireLogin();
 
 		$user = new \Model\User;
-		$user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
+		$user->load(array("username = ? AND deleted_date IS NULL AND role != 'group'", $params["username"]));
 
 		if($user->id) {
 			$f3->set("title", $user->name);
