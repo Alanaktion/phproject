@@ -120,7 +120,7 @@ Taskboard = {
 
 		Taskboard.changeModalPriority(priority);
 		$("#task-dialog input#taskId").val(taskId);
-		$("#task-dialog textarea#title").val(title);
+		$("#task-dialog input#title").val(title);
 		$("#task-dialog textarea#description").val(description);
 		$("#task-dialog input#hours").val(hours);
 		$("#task-dialog input#dueDate").val(date);
