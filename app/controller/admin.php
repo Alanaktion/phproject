@@ -160,7 +160,7 @@ Variable_name = 'Uptime'"));
 		$f3->set("members", $members->paginate(array("group_id = ? AND deleted_date IS NULL", $group->id)));
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 
 		echo \Template::instance()->render("admin/groups/edit.html");
 	}
