@@ -7,7 +7,7 @@
 <div class="hidden-xs" style="padding-top: 160px;"></div>
 <div class="container">
 	<div class="row">
-		<div class="col-md-4 col-md-offset-4">
+		<div class="col-sm-4 col-sm-offset-4">
 			<form action="/login" method="post" class="form-horizontal">
 				<input type="hidden" name="to" value="{{ empty(@to) ? '/' : @to }}">
 				<fieldset>
@@ -16,8 +16,8 @@
 						<p class="alert alert-danger">{{ @login.error }}</p>
 					</check>
 					<div class="form-group">
-						<label for="inputEmail" class="col-lg-4 control-label">Username</label>
-						<div class="col-lg-8">
+						<label for="inputEmail" class="col-md-4 control-label">Username</label>
+						<div class="col-md-8">
 							<check if="{{ !empty(@POST.username) }}">
 								<true>
 									<input class="form-control" placeholder="Username" name="username" type="text" value="{{ @POST.username }}">
@@ -29,8 +29,8 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="inputPassword" class="col-lg-4 control-label">Password</label>
-						<div class="col-lg-8">
+						<label for="inputPassword" class="col-md-4 control-label">Password</label>
+						<div class="col-md-8">
 							<check if="{{ !empty(@POST.username) }}">
 								<true>
 									<input class="form-control" placeholder="Password" name="password" type="password" autofocus>
