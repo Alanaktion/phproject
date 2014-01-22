@@ -260,6 +260,10 @@ class Issues extends Base {
 		$owner = new \Model\User();
 		$owner->load(array("id=?", $issue->owner_id));
 
+		$status = new \Model\Issue\Status();
+		$status->load($issue->status);
+		$f3->set("status", $status->cast());
+
 		$files = new \Model\Issue\File();
 		$f3->set("files", $files->paginate(0, 64, array("issue_id = ?", $issue->id)));
 

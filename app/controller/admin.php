@@ -59,7 +59,9 @@ Variable_name = 'Uptime'"));
 			if($f3->get("POST")) {
 				foreach($f3->get("POST") as $i=>$val) {
 					if($i == "password" && !empty($val)) {
-						$user->password = \Helper\Security::instance()->bcrypt($val);
+						$security = \Helper\Security::instance();
+						$user->salt = $security->salt();
+						$user->password = $security->hash($val, $user->salt);
 					} elseif($user->$i != $val) {
 						$user->$i = $val;
 					}
@@ -82,7 +84,9 @@ Variable_name = 'Uptime'"));
 			$user->username = $f3->get("POST.username");
 			$user->email = $f3->get("POST.email");
 			$user->name = $f3->get("POST.name");
-			$user->password = \Helper\Security::instance()->bcrypt($f3->get("POST.password"));
+			$security = \Helper\Security::instance();
+			$user->salt = $security->salt();
+			$user->password = $security->hash($f3->get("POST.password"), $user->salt);
 			$user->role = $f3->get("POST.role");
 			$user->task_color = ltrim($f3->get("POST.task_color"), "#");
 			$user->created_date = now();

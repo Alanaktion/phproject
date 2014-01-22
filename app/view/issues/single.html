@@ -66,7 +66,8 @@
 							</div>
 
 							<p>
-								<strong>Assigned to:</strong> <a href="/user/{{ @owner.username }}">{{ @owner.name }}</a>
+								<strong>Assigned to:</strong> <a href="/user/{{ @owner.username }}">{{ @owner.name }}</a><br>
+								<strong>Status:</strong> {{ @status.name }}
 								<check if="{{ strtotime(@issue.due_date) > time() }}">
 									<br><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}
 								</check>

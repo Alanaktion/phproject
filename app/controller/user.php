@@ -34,9 +34,10 @@ class User extends Base {
 			$security = \Helper\Security::instance();
 
 			// Update password
-			if($security->bcrypt_verify($user->password, $post["old_pass"])) {
+			if($security->hash($post["old_pass"], $user->salt) == $user->password) {
 				if(strlen($post["new_pass"]) >= 6) {
-					$user->password = $security->bcrypt($post["new_pass"]);
+					$user->salt = $security->salt();
+					$user->password = $security->hash($post["new_pass"], $user->salt);
 					$f3->set("success", "Password updated successfully.");
 				} else {
 					$f3->set("error", "New password must be at least 6 characters.");
@@ -75,8 +76,8 @@ class User extends Base {
 		$user->save();
 		echo \Template::instance()->render("user/account.html");
 	}
-        
-        public function avatar($f3, $params) {
+
+	public function avatar($f3, $params) {
 		$id = $this->_requireLogin();
 		$f3 = \Base::instance();
 		$post = array_map("trim", $f3->get("POST"));
@@ -101,13 +102,13 @@ class User extends Base {
 		$slug = true; // rename file to filesystem-friendly version
 
 		//Make a good name
-                $parts = pathinfo($_FILES['avatar']['name']);
-                $_FILES['avatar']['name'] = $user->id . "-" . substr(sha1($user->id), 0, 4)  . "." . $parts["extension"];
+		$parts = pathinfo($_FILES['avatar']['name']);
+		$_FILES['avatar']['name'] = $user->id . "-" . substr(sha1($user->id), 0, 4)  . "." . $parts["extension"];
 		$f3->set("avatar_filename", $_FILES['avatar']['name']);
-                   
-		$files = $web->receive(function($file){
+
+		$files = $web->receive(function($file) {
 			$f3 = \Base::instance();
-                        $user = $f3->get("user");
+			$user = $f3->get("user");
 			//var_dump($file);
 			/* looks like:
 				array(5) {
@@ -126,9 +127,9 @@ class User extends Base {
 
 
 			$newfile = new \Model\User();
-                        $newfile->load($user["id"]);
-                        
-                        $newfile->avatar_filename = $f3->get("avatar_filename");
+						$newfile->load($user["id"]);
+
+						$newfile->avatar_filename = $f3->get("avatar_filename");
 			$newfile->save();
 
 			//NEED TO CONVERT TO JPG AND RESIZE?
@@ -137,10 +138,10 @@ class User extends Base {
 			$overwrite,
 			$slug
 		);
-                $f3->reroute("/user/account");
+				$f3->reroute("/user/account");
 
 	}
-        
+
 
 	public function single($f3, $params) {
 		$this->_requireLogin();
