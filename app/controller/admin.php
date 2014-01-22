@@ -103,6 +103,17 @@ Variable_name = 'Uptime'"));
 		}
 	}
 
+	public function user_delete($f3, $params) {
+		$user = new \Model\User();
+		$user->load($params["id"]);
+		$user->delete();
+		if($f3->get("AJAX")) {
+			echo json_encode(array("deleted" => 1));
+		} else {
+			$f3->reroute("/admin/users");
+		}
+	}
+
 	public function groups($f3, $params) {
 		$this->_requireAdmin();
 		$group = new \Model\Group();
@@ -150,6 +161,17 @@ Variable_name = 'Uptime'"));
 		echo \Template::instance()->render("admin/groups/edit.html");
 	}
 
+	public function group_delete($f3, $params) {
+		$group = new \Model\Group();
+		$group->load($params["id"]);
+		$group->delete();
+		if($f3->get("AJAX")) {
+			echo json_encode(array("deleted" => 1));
+		} else {
+			$f3->reroute("/admin/groups");
+		}
+	}
+
 	public function group_ajax($f3, $params) {
 		$this->_requireAdmin();
 
@@ -175,9 +197,9 @@ Variable_name = 'Uptime'"));
 				}
 				break;
 			case "remove_member":
-				$user = new \Model\Group\User();
-				$user->load(array("user_id = ? AND group_id = ?", $f3->get("POST.user_id"), $f3->get("POST.group_id")));
-				$user->delete();
+				$group_user = new \Model\Group\User();
+				$group_user->load(array("user_id = ? AND group_id = ?", $f3->get("POST.user_id"), $f3->get("POST.group_id")));
+				$group_user->delete();
 				echo json_encode(array("deleted" => 1));
 				break;
 			case "change_title":
