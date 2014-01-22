@@ -57,13 +57,17 @@ class Index extends Base {
 
 	public function loginpost($f3, $params) {
 		$user = new \Model\User();
+
+		// Load user by username or email address
 		if(strpos($f3->get("POST.username"), "@")) {
 			$user->load(array("email=? AND deleted_date IS NULL", $f3->get("POST.username")));
 		} else {
 			$user->load(array("username=? AND deleted_date IS NULL", $f3->get("POST.username")));
 		}
 
-		if($user->verify_password($f3->get("POST.password"))) {
+		// Verify password
+		$security = \Helper\Security::instance();
+		if($security->hash($f3->get("POST.password"), $user->salt) == $user->password) {
 			$f3->set("SESSION.user_id", $user->id);
 			if(!$f3->get("POST.to")) {
 				$f3->reroute("/");
