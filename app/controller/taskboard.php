@@ -18,13 +18,13 @@ class Taskboard extends Base {
         $f3->set("title", $sprint->name);
 
         // Load issue statuses
-        $status = new \Model\Custom("issue_status");
-        $statuses = $status->paginate(0, 20);
+        $status = new \Model\Issue\Status();
+        $statuses = $status->paginate(0, 100);
         $f3->set("statuses", $statuses);
 
         // Load project list
         $issue = new \Model\Custom("issue_user");
-        $projects = $issue->paginate(0, 100, array("sprint_id = ? AND deleted_date IS NULL", $sprint->id), array("order" => "owner_id ASC"));
+        $projects = $issue->paginate(0, 100, array("sprint_id = ? AND deleted_date IS NULL AND type_id = ?", $sprint->id, $f3->get("issue_type.project")), array("order" => "owner_id ASC"));
 
         // Build multidimensional array of all tasks and projects
         $taskboard = array();
@@ -58,6 +58,45 @@ class Taskboard extends Base {
 		echo \Template::instance()->render("taskboard/index.html");
 
 	}
+
+    public function add($f3, $params) {
+        $post = $f3->get("POST");
+        $issue = new \Model\Issue();
+        $issue->name = $post["title"];
+        $issue->description = $post["description"];
+        $issue->owner_id = $post["assigned"];
+        //$issue->hours_remaining = $post["hours"];
+        $issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
+        //$issue->priority = $post["priority"];
+        $issue->parent_id = $post["storyId"];
+        $issue->title = $post["title"];
+        $issue->save();
+
+        echo $issue->id;
+    }
+
+    public function edit($f3, $params) {
+        $post = $f3->get("POST");
+        $issue = new \Model\Issue();
+        $issue->load($post["taskId"]);
+        if(!empty($post["receiver"])) {
+            $issue->parent_id = $post["receiver"]["story"];
+            $issue->status = $post["receiver"]["status"];
+        } else {
+            $issue->name = $post["title"];
+            $issue->description = $post["description"];
+            $issue->owner_id = $post["assigned"];
+            //$issue->hours_remaining = $post["hours"];
+            $issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
+            //$issue->priority = $post["priority"];
+            $issue->parent_id = $post["storyId"];
+            $issue->title = $post["title"];
+        }
+        $issue->save();
+    }
+
+
+
 
     public function test($f3) {
         $this->_requireLogin();

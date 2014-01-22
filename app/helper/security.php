@@ -20,6 +20,22 @@ class Security extends \Prefab {
 		return (crypt($string,$hash) === $hash);
 	}
 
+	public function hash($string, $salt = null) {
+		if(is_null($salt)) {
+			$salt = $this->salt();
+			return array(
+				"salt" => $salt,
+				"hash" => sha1($salt . sha1($string))
+			);
+		} else {
+			return sha1($salt . sha1($string));
+		}
+	}
+
+	public function salt() {
+		return md5(microtime(true));
+	}
+
 	public function rot13($string) {
 		return str_rot13($string);
 	}
