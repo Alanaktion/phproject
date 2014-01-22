@@ -10,7 +10,8 @@ $f3->mset(array(
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
 	"CACHE" => "tmp/cache/",
-	"AUTOLOAD" => "app/"
+	"AUTOLOAD" => "app/",
+	"PACKAGE" => "OpenProject"
 ));
 
 // Get current Git revision

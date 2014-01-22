@@ -27,9 +27,20 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<label class="col-lg-2 control-label label-sm">Status</label>
+					<div class="col-lg-10">
+						<select class="form-control input-sm" name="status">
+							<repeat group="{{ @statuses.subset }}" value="{{ @item }}">
+								<option value="{{ @item.id }}" {{ !empty(@issue) && @issue.status == @item.id ? "selected" : "" }}>{{ @item.name }}</option>
+							</repeat>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
 					<label class="col-lg-2 control-label label-sm">Assigned To</label>
 					<div class="col-lg-10">
 						<select class="form-control input-sm" name="owner_id">
+							<option value="0">Not Assigned</option>
 							<optgroup label="Me">
 								<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
 							</optgroup>

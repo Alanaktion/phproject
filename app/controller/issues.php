@@ -53,9 +53,12 @@ class Issues extends Base {
 		$type->load(array("id=?", $type_id));
 
 		if(!$type->id) {
-			$f3->error(500, "Issue type does not exist");
+			$f3->error(404, "Issue type does not exist");
 			return;
 		}
+
+		$status = new \Model\Issue\Status();
+		$f3->set("statuses", $status->paginate(0, 100));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
@@ -88,6 +91,9 @@ class Issues extends Base {
 
 		$type = new \Model\Issue\Type();
 		$type->load(array("id=?", $issue->type_id));
+
+		$status = new \Model\Issue\Status();
+		$f3->set("statuses", $status->paginate(0, 100));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
@@ -160,7 +166,9 @@ class Issues extends Base {
 			$issue->name = $post["name"];
 			$issue->description = $post["description"];
 			$issue->owner_id = $post["owner_id"];
-			$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
+			if(!empty($post["due_date"])) {
+				$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
+			}
 			if(!empty($post["parent_id"])) {
 				$issue->parent_id = $post["parent_id"];
 			}
