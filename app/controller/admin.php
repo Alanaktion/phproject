@@ -16,7 +16,7 @@ class Admin extends Base {
 		// Gather some stats
 		$db = $f3->get("db.instance");
 
-		$db->exec("SELECT id FROM user WHERE deleted_date IS NULL");
+		$db->exec("SELECT id FROM user WHERE deleted_date IS NULL AND role != 'group'");
 		$f3->set("count_user", $db->count());
 		$db->exec("SELECT id FROM issue WHERE deleted_date IS NULL");
 		$f3->set("count_issue", $db->count());
