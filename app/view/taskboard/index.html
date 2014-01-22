@@ -74,10 +74,13 @@
 										<label for="assigned">Assigned To</label>
 										<select id="assigned" name="assigned" class="form-control" onchange="Taskboard.changeUser(this)">
 											<option value="0" data-color="#AAAAAA">Not Assigned</option>
-											<optgroup label="Me">
-												<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" selected>{{ @user.name }}</option>
+											<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" selected>{{ @user.name }}</option>
+											<optgroup label="Groups">
+												<repeat group="{{ @groups.subset }}" value="{{ @group }}">
+													<option value="{{ @group.id }}" data-color="#{{ @group.task_color }}">{{ @group.name }}</option>
+												</repeat>
 											</optgroup>
-											<optgroup label="Everyone">
+											<optgroup label="Users">
 												<repeat group="{{ @users.subset }}" value="{{ @user }}">
 													<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}">{{ @user.name }}</option>
 												</repeat>

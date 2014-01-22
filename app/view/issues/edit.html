@@ -41,8 +41,11 @@
 					<div class="col-lg-10">
 						<select class="form-control input-sm" name="owner_id">
 							<option value="0">Not Assigned</option>
-							<optgroup label="Me">
-								<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
+							<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
+							<optgroup label="Groups">
+								<repeat group="{{ @groups.subset }}" value="{{ @group }}">
+									<option value="{{ @group.id }}" data-color="#{{ @group.task_color }}">{{ @group.name }}</option>
+								</repeat>
 							</optgroup>
 							<optgroup label="Everyone">
 								<repeat group="{{ @users.subset }}" value="{{ @item }}">

@@ -53,7 +53,8 @@ class Taskboard extends Base {
 
         // Get user list for select
         $users = new \Model\User();
-        $f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
+        $f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+        $f3->set("groups", $users->paginate(0, 1000, "deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		echo \Template::instance()->render("taskboard/index.html");
 
