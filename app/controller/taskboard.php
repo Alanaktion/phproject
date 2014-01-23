@@ -103,13 +103,4 @@ class Taskboard extends Base {
 		print_json($issue->cast() + array("taskId" => $issue->id));
 	}
 
-
-
-
-	public function test($f3) {
-		$this->_requireLogin();
-		echo \Template::instance()->render("taskboard/test.html");
-	}
-
-
 }

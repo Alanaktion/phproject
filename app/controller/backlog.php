@@ -35,5 +35,4 @@ class Backlog extends Base {
 		print_json($issue->cast());
 	}
 
-
 }
