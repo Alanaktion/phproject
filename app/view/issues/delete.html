@@ -8,7 +8,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4">
-			<form role="form" action="/issues/@issue.id/delete" method="post">
+			<form role="form" action="/issues/{{ @issue.id }}/delete" method="post">
 				<input type="hidden" name="id" value="{{ @issue.id }}">
 				<h3 class="text-center">{{ @issue.name }}&ensp;<small>#{{ @issue.id }}</small></h3>
 				<p class="text-center">Are you sure you want to delete this issue?</p>

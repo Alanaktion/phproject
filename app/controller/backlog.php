@@ -26,5 +26,14 @@ class Backlog extends Base {
 		echo \Template::instance()->render("backlog/index.html");
 	}
 
+	public function edit($f3, $params) {
+		$post = $f3->get("POST");
+		$issue = new \Model\Issue();
+		$issue->load($post["itemId"]);
+		$issue->sprint_id = empty($post["reciever"]["receiverId"]) ? null : $post["reciever"]["receiverId"];
+		$issue->save();
+		print_json($issue->cast());
+	}
+
 
 }

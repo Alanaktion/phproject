@@ -3,7 +3,7 @@ $(function() {
 });
 
 Backlog = {
-    updateUrl: "/taskboard/test.json/1",
+    updateUrl: "/backlog/edit",
     projectReceived: 0,
     init: function(){
         Backlog.makeSortable(".sortable");

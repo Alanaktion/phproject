@@ -21,7 +21,7 @@
 					<div class="panel-body in" id="panel-0">
 						<ul class="list-group sortable" data-list-id="0">
 							<repeat group="{{ @backlog.subset }}" value="{{ @project }}">
-								<li class="list-group-item clearfix" data-category="department" data-status="new" id="project_1351">
+								<li class="list-group-item clearfix" data-category="department" data-status="new" id="project_{{ @project.id }}">
 									<!-- <span class="category">Department</span> -->
 									<span class="title">{{ @project.name }}</span>
 									<a href="/issues/{{ @project.id }}" class="badge" target="_blank">{{ @project.id }}</a>
