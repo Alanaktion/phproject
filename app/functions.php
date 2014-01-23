@@ -21,6 +21,14 @@ function now($time = true) {
 	return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
 }
 
+// Output object as JSON and set appropriate headers
+function print_json($object) {
+	if(!headers_sent()) {
+		header("Content-type: application/json");
+	}
+	echo json_encode($object);
+}
+
 // Convert string to simple "slug"
 function slugify($s,$lower=true) {
 	$spec = 'àáâãäåèéêëìíîïðòóôõöùúûüñç/_,:;';

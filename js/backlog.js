@@ -24,34 +24,34 @@ Backlog = {
                     Backlog.projectReceived = false;
                 }
             }
-        }).disableSelection();        
+        }).disableSelection();
     },
     projectReceive: function(item, sender, receiverSerialized){
-        itemId = cleanId("project", $(item).attr("id"));        
+        itemId = cleanId("project", $(item).attr("id"));
         receiverId = cleanId("sprint", $(item).parent().attr("data-list-id"));
         senderId = $(sender).attr("data-list-id");
         if(typeof($(sender).attr("data-list-id") !== "undefined")){
             var senderSerialized = sanitizeSortableArray("project", $(sender).sortable('serialize'));
-            
+
             data = {
                 itemId: itemId,
                 sender: {senderId:senderId, senderSerialized:senderSerialized},
                 reciever: {receiverId:receiverId, receiverSerialized:receiverSerialized}
             }
-            
+
             Backlog.ajaxUpdateBacklog(data, item);
         }
     },
     sameReceive: function(item, receiverSerialized){
         itemId = cleanId("project", $(item).attr("id"));
         receiverId = cleanId("sprint", $(item).parent().attr("data-list-id"));
-       
+
         data = {
              itemId: itemId,
              reciever: {receiverId:receiverId, receiverSerialized:receiverSerialized}
          }
-         
-         Backlog.ajaxUpdateBacklog(data, item);       
+
+         Backlog.ajaxUpdateBacklog(data, item);
     },
     ajaxUpdateBacklog: function(data, item){
         console.log(data);
@@ -68,7 +68,7 @@ Backlog = {
           error: function(jqXHR, textStatus, errorThrown){
                 Backlog.unBlock(projectId, item);
                 Backlog.showError(projectId, item);
-          }		  
+          }
         });
     },
     block:function(projectId, item){
@@ -152,10 +152,10 @@ function cleanId(identifier, id){
 
 function sanitizeSortableArray(identifier, sortableString){
     sortableString = sortableString.replace(/&/g, "");
-    
+
     sortableArray = new Array();
     sortableArray = sortableString.split(identifier+"[]=");
     sortableArray.splice(0,1);
-    
+
     return(sortableArray);
 }

@@ -61,7 +61,8 @@ class Issues extends Base {
 		$f3->set("statuses", $status->paginate(0, 100));
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+        $f3->set("groups", $users->paginate(0, 1000, "deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$f3->set("title", "New " . $type->name);
 		$f3->set("type", $type->cast());
@@ -96,7 +97,8 @@ class Issues extends Base {
 		$f3->set("statuses", $status->paginate(0, 100));
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL", array("order" => "name ASC")));
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+        $f3->set("groups", $users->paginate(0, 1000, "deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$f3->set("title", "Edit #" . $issue->id);
 		$f3->set("issue", $issue->cast());
@@ -215,7 +217,7 @@ class Issues extends Base {
 					$notification->issue_comment($issue->id, $comment->id);
 
 					if($f3->get("AJAX")) {
-						echo json_encode(
+						print_json(
 							array(
 								"id" => $comment->id,
 								"text" => $comment->text,
@@ -310,7 +312,7 @@ class Issues extends Base {
 		if($issue->id) {
 			$issues = new \Model\Custom("issue_user");
 			if($f3->get("issue_type.project") == $issue->type_id) {
-				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $issue->parent_id)));
+				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $issue->id)));
 			} else {
 				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
 			}
@@ -325,7 +327,7 @@ class Issues extends Base {
 		$watchers = new \Model\Custom("issue_watcher_user");
 		$f3->set("watchers", $watchers->paginate(0, 100, array("issue_id = ?", $params["id"])));
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 100, "deleted_date IS NULL"));
+		$f3->set("users", $users->paginate(0, 100, "deleted_date IS NULL AND role != 'group'"));
 		echo \Template::instance()->render("issues/single/watchers.html");
 	}
 

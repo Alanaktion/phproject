@@ -6,18 +6,6 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 CREATE DATABASE `openproject` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `openproject`;
 
-DROP TABLE IF EXISTS `group`;
-CREATE TABLE `group` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) NOT NULL,
-  `deleted_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-INSERT INTO `group` (`id`, `name`, `deleted_date`) VALUES
-(1, 'I.T.', NULL),
-(2, 'PMO',  NULL);
-
 DROP TABLE IF EXISTS `group_user`;
 CREATE TABLE `group_user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -26,14 +14,9 @@ CREATE TABLE `group_user` (
   PRIMARY KEY (`id`),
   KEY `group_id` (`group_id`),
   KEY `group_user_id` (`user_id`),
-  CONSTRAINT `group_id` FOREIGN KEY (`group_id`) REFERENCES `group` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `group_id` FOREIGN KEY (`group_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `group_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-INSERT INTO `group_user` (`id`, `group_id`, `user_id`) VALUES
-(5, 1,  1),
-(8, 1,  2),
-(9, 1,  3);
 
 DROP VIEW IF EXISTS `group_user_user`;
 CREATE TABLE `group_user_user` (`id` int(10) unsigned, `group_id` int(10) unsigned, `user_id` int(10) unsigned, `user_username` varchar(32), `user_email` varchar(64), `user_name` varchar(32), `user_role` enum('user','admin'), `user_task_color` char(6));
@@ -182,7 +165,7 @@ CREATE TABLE `user` (
   `name` varchar(32) NOT NULL,
   `password` char(40) NOT NULL,
   `salt` char(32) NOT NULL,
-  `role` enum('user','admin') NOT NULL DEFAULT 'user',
+  `role` enum('user','admin','group') NOT NULL DEFAULT 'user',
   `task_color` char(6) DEFAULT NULL,
   `theme` varchar(64) DEFAULT NULL,
   `avatar_filename` varchar(64) DEFAULT NULL,

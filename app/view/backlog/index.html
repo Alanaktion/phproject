@@ -1,206 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-    <include href="blocks/head.html" />
-    <link rel="stylesheet" href="/css/backlog.css">
+	<head>
+	<include href="blocks/head.html" />
+	<link rel="stylesheet" href="/css/backlog.css">
 </head>
 <body>
-    <div class="container">
-        <include href="blocks/navbar.html" />
-        <div class="row" id="backlog">
-            <div class="col-md-6">
-                 <div class="panel panel-default">
-                    <!-- Default panel contents -->
-                    <div class="panel-heading"><a data-toggle="collapse" href="#panel-0">&#177; Backlog</a></div>
-                    <div class="panel-body in" id="panel-0">
-                        <ul class="list-group sortable" data-list-id="0">
-                            <li class="list-group-item" data-category="department" data-status="new" id="project_1351">
-                                <span class="category">
-                                    Department Project
-                                </span>
-                                <span class="title">
-                                    Process Analysis & Map: Receiving
-                                </span>
-                                <span class="badge">
-                                    1351
-                                </span>
-                                <span class="badge status new">
-                                    New
-                                </span>
-                                <div style="clear:both"></div>
-                            </li>
-                            <li class="list-group-item" data-category="department" data-status="active" id="project_285">
-                                <span class="category">
-                                    PMO Project
-                                </span>
-                                <span class="title">
-                                    Product Database Pricing
-                                </span>
-                                <span class="badge project-id">
-                                    285
-                                </span>
-                                <span class="badge status active">
-                                    Active
-                                </span>
-                                <div style="clear:both"></div>
-                            </li>
-                            <li class="list-group-item" data-category="department" data-status="active" id="project_286">
-                                <span class="category">
-                                    PMO Project
-                                </span>
-                                <span class="title">
-                                    Product Database Pricing
-                                </span>
-                                <span class="badge project-id">
-                                    286
-                                </span>
-                                <span class="badge status active">
-                                    Active
-                                </span>
-                                <div style="clear:both"></div>
-                            </li>                           
-                        </ul>
-                    </div><!-- end panel body -->             
-                </div><!-- end panel -->
-            </div>
-            
-            <div class="col-md-6">                
-                <div class="panel panel-default">
-                    <!-- Default panel contents -->
-                    <div class="panel-heading">
-                            <a data-toggle="collapse" href="#panel-1">&#177; Sprint 1/13-1/24</a>
-                            <span class="glyphicon glyphicon-list" onclick="document.location='/taskboard/1'" title='Go to sprint taskboard'></span>
-                    </div>
-                    <div class="panel-body in" id="panel-1">
-                        <ul class="list-group sortable" data-list-id="1">
-                            <li class="list-group-item" data-category="department" data-status="new" id="project_260">
-                                <span class="category">
-                                    Department Project
-                                </span>
-                                <span class="title">
-                                    Process Analysis & Map: Receiving
-                                </span>
-                                <span class="badge">
-                                    260
-                                </span>
-                                <span class="badge status new">
-                                    New
-                                </span>
-                                <div style="clear:both"></div>
-                            </li>
-                            <li class="list-group-item" data-category="department" data-status="active" id="project_261">
-                                <span class="category">
-                                    PMO Project
-                                </span>
-                                <span class="title">
-                                    Product Database Pricing
-                                </span>
-                                <span class="badge project-id">
-                                    261
-                                </span>
-                                <span class="badge status active">
-                                    Active
-                                </span>
-                                <div style="clear:both"></div>
-                            </li>
-                            <li class="list-group-item completed" data-category="department" data-status="new" id="project_262">
-                                <span class="category">
-                                    Department Project
-                                </span>
-                                <span class="title">
-                                    Process Analysis & Map: Receiving
-                                </span>
-                                <span class="badge">
-                                    262
-                                </span>
-                                <span class="badge status completed">
-                                    Completed
-                                </span>
-                                <div style="clear:both"></div>
-                            </li>
-                            <li class="list-group-item" data-category="department" data-status="active" id="project_288">
-                                <span class="category">
-                                    PMO Project
-                                </span>
-                                <span class="title">
-                                    Product Database Pricing
-                                </span>
-                                <span class="badge project-id">
-                                    288
-                                </span>
-                                <span class="badge status hold">
-                                    On Hold
-                                </span>
-                                <div style="clear:both"></div>
-                            </li>                           
-                        </ul>
-                    </div><!-- end panel body -->             
-                </div><!-- end panel -->
-
-                <div class="panel panel-default">
-                    <!-- Default panel contents -->
-                    <div class="panel-heading">
-                            <a data-toggle="collapse" href="#panel-2">&#177; Sprint 1/25-2/7</a>
-                            <span class="glyphicon glyphicon-list" onclick="document.location='/taskboard/2'" title='Go to sprint taskboard'></span>
-                    </div>
-                    <div class="panel-body collapse" id="panel-2">
-                        <ul class="list-group sortable" data-list-id="2">
-                            <li class="list-group-item" data-category="department" data-status="new" id="project_1353">
-                                <span class="category">
-                                    Department Project
-                                </span>
-                                <span class="title">
-                                    Process Analysis & Map: Receiving
-                                </span>
-                                <span class="badge">
-                                    1353
-                                </span>
-                                <span class="badge status hold">
-                                    On Hold
-                                </span>
-                                <div style="clear:both"></div>
-                            </li>
-                            <li class="list-group-item" data-category="department" data-status="active" id="project_289">
-                                <span class="category">
-                                    PMO Project
-                                </span>
-                                <span class="title">
-                                    Product Database Pricing
-                                </span>
-                                <span class="badge project-id">
-                                    289
-                                </span>
-                                <span class="badge status active">
-                                    Active
-                                </span>
-                                <div style="clear:both"></div>
-                            </li>
-                            <li class="list-group-item completed" data-category="department" data-status="active" id="project_290">
-                                <span class="category">
-                                    PMO Project
-                                </span>
-                                <span class="title">
-                                    Product Database Pricing
-                                </span>
-                                <span class="badge project-id">
-                                    290
-                                </span>
-                                <span class="badge status completed">
-                                    Completed
-                                </span>
-                                <div style="clear:both"></div>
-                            </li>                           
-                        </ul>
-                    </div><!-- end panel body -->             
-                </div><!-- end panel -->
-
-            </div>
-            
-        </div>
-        <include href="blocks/footer.html" />
-        <script src="/js/backlog.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-        <script src="/js/jquery.ui.touch-punch.min.js"></script>
-    </div>
+	<div class="container">
+		<include href="blocks/navbar.html" />
+		<div class="row" id="backlog">
+			<div class="col-md-6">
+				 <div class="panel panel-default">
+					<div class="panel-heading has-buttons">
+						Backlog
+						<div class="pull-right">
+							<a href="/issues/new/{{ @issue_type.project }}" class="btn btn-default btn-xs">
+								<span class="glyphicon glyphicon-plus"></span> Add Project
+							</a>
+						</div>
+					</div>
+					<div class="panel-body in" id="panel-0">
+						<ul class="list-group sortable" data-list-id="0">
+							<repeat group="{{ @backlog.subset }}" value="{{ @project }}">
+								<li class="list-group-item clearfix" data-category="department" data-status="new" id="project_1351">
+									<!-- <span class="category">Department</span> -->
+									<span class="title">{{ @project.name }}</span>
+									<a href="/issues/{{ @project.id }}" class="badge" target="_blank">{{ @project.id }}</a>
+									<!-- <span class="badge status new">New</span> -->
+								</li>
+							</repeat>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
+					<div class="panel panel-default">
+						<div class="panel-heading has-buttons">
+							<a data-toggle="collapse" href="#panel-{{ @sprint.id }}">&#177; {{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
+							<div class="pull-right">
+								<a href="/taskboard/{{ @sprint.id }}" class="btn btn-default btn-xs">
+									<span class="glyphicon glyphicon-list"></span> Taskboard
+								</a>
+							</div>
+						</div>
+						<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
+							<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
+								<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
+									<li class="list-group-item clearfix" data-category="department" data-status="new" id="project_{{ @project.id }}">
+										<!-- <span class="category">Department Project</span> -->
+										<span class="title">{{ @project.name }}</span>
+										<a href="/issues/{{ @project.id }}" class="badge" target="_blank">{{ @project.id }}</a>
+										<!-- <span class="badge status new">New</span> -->
+									</li>
+								</repeat>
+							</ul>
+						</div>
+					</div>
+				</repeat>
+			</div>
+		</div>
+		<include href="blocks/footer.html" />
+		<script src="/js/backlog.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+		<script src="/js/jquery.ui.touch-punch.min.js"></script>
+	</div>
 </body>
 </html>

@@ -13,7 +13,6 @@
 				<li><a href="/admin/users">Users</a></li>
 				<li><a href="/admin/groups">Groups</a></li>
 				<li><a href="/admin/attributes">Attributes</a></li>
-				<li><a href="/admin/sprints">Sprint Setup</a></li>
 			</ul>
 
 			<div class="row">
@@ -43,13 +42,14 @@
 				</div>
 			</div>
 
-			<h3>Configuration <small>These values can be changed in <span style="font-family: Consolas, monospace;">config.ini</span></small></h3>
+			<h3>Configuration and Statistics</h3>
 			<div class="row">
 				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>Site</h4>
+					<h4>Site Configuration</h4>
 					<b>Name:</b> {{ @site.name }}<br>
 					<b>Description:</b> {{ @site.description }}<br>
-					<b>Theme:</b> {{ @site.theme }}
+					<b>Theme:</b> {{ @site.theme }}<br>
+					<b>Logo:</b> {{ @site.logo }}
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
 					<h4>MySQL Connection</h4>

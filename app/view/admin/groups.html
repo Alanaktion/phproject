@@ -14,7 +14,6 @@
 					<li><a href="/admin/users">Users</a></li>
 					<li class="active"><a href="/admin/groups">Groups</a></li>
 					<li><a href="/admin/attributes">Attributes</a></li>
-					<li><a href="/admin/sprints">Sprint Setup</a></li>
 				</ul>
 				<div class="pull-right">
 					<a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#new" onclick="window.setTimeout('$(\'#input_name\').focus()',10);">
@@ -28,6 +27,7 @@
 						<th>ID</th>
 						<th>Name</th>
 						<th>Members</th>
+						<th>Task Color</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -37,6 +37,7 @@
 							<td><a href="/admin/groups/{{ @group.id }}">{{ @group.id }}</a></td>
 							<td>{{ @group.name }}</td>
 							<td>{{ @group.count }}</td>
+							<td><span class="badge" style="background-color: #{{ @group.task_color }};">&ensp;</span>&ensp;#{{ @group.task_color }}</td>
 							<td><a href="/admin/groups/{{ @group.id }}/delete" class="has-tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></a></td>
 						</tr>
 					</repeat>

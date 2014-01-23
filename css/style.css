@@ -29,9 +29,6 @@ body.login {
 .navbar-form .input-group {
 	max-width: 206px;
 }
-.navbar-form[role="search"] input[type="search"] {
-	border: none;
-}
 .navbar-form[role="search"] .input-group {
 	max-width: 256px;
 	margin-right: 10px;
@@ -43,6 +40,7 @@ body.login {
 .navbar-form[role="search"] > .input-group > .input-group-btn:last-child .btn {
 	border-radius: 0 16px 16px 0;
 	padding-right: 15px;
+	box-shadow: none;
 }
 
 .container {
@@ -181,6 +179,12 @@ textarea.form-control {
 	padding-right: 5px;
 }
 
+.alert-popup {
+	position: fixed;
+	top: 65px;
+	right: 15px;
+}
+
 /* <Compact UI> */
 .dashboard .list-group-item {
 	padding: 7px 9px;
@@ -192,8 +196,8 @@ textarea.form-control {
 .form-horizontal .control-label.label-sm {
 	padding-top: 8px;
 }
-.navbar-form .input-sm,
-.navbar-form .btn-sm {
-	margin-top: 5px;
-}
 /* </Compact UI> */
+
+a:focus, button:focus, input:focus, .btn:focus {
+	outline: thin none;
+}
