@@ -7762,3 +7762,7 @@ a{transition:color .25s;}
 	box-shadow: -1px 0px 2px rgba(0, 0, 0, 0.1);
 	border: 1px solid #E7E7E7;
 }
+.navbar-form .input-sm,
+.navbar-form .btn-sm {
+	margin-top: 5px;
+}
