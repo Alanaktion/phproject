@@ -196,8 +196,8 @@ textarea.form-control {
 .form-horizontal .control-label.label-sm {
 	padding-top: 8px;
 }
-.navbar-form .input-sm,
-.navbar-form .btn-sm {
-	margin-top: 5px;
-}
 /* </Compact UI> */
+
+a:focus, button:focus, input:focus, .btn:focus {
+	outline: thin none;
+}
