@@ -7,7 +7,7 @@
     box-sizing: content-box;
     cursor: move;
     position: relative;
-    padding: 6px 11px 6px 14px;
+    padding: 6px 6px 6px 14px;
 }
 #backlog li:hover {
     background-image: url(/img/backlog/i_has_grip.png);

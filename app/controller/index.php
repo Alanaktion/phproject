@@ -100,4 +100,19 @@ class Index extends Base {
 		$f3->reroute("/");
 	}
 
+
+
+	public function mailtest($f3, $params) {
+		// Send a test message
+		$f3 = \Base::instance();
+		$smtp = new \SMTP($f3->get("smtp.host"), $f3->get("smtp.port"), $f3->get("smtp.scheme"), $f3->get("smtp.user"), $f3->get("smtp.pass"));
+		$smtp->set("Subject", "This is a test message. You can probably ignore it.");
+		$smtp->set("From", $f3->get("mail.from"));
+		$smtp->set("Reply-to", $f3->get("mail.from"));
+		//$smtp->set("Content-type", "text/html");
+		$smtp->set("To", "ahardman@shelfreliance.com");
+		$smtp->send("This is a test message. Why isn't it working? No idea.");
+		echo '<pre>'.$smtp->log().'</pre>';
+	}
+
 }

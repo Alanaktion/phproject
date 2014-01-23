@@ -45,7 +45,14 @@
 												</div>
 												<div class="title">{{ @task.name }}</div>
 												<div class="description">{{ @task.description }}</div>
-												<div class="dueDate">{{ date('n/j/Y', strtotime(@task.due_date)) }}</div>
+												<check if="{{ strtotime(@task.due_date) > 0 }}">
+													<true>
+														<div class="dueDate">{{ date('n/j/Y', strtotime(@task.due_date)) }}</div>
+													</true>
+													<false>
+														<div class="dueDate"></div>
+													</false>
+												</check>
 												<div class="priority normal">Normal Priority</div>
 												<!-- <div class="priority low">Low Priority</div> -->
 												<!-- <div class="priority high">High Priority</div> -->
