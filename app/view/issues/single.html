@@ -85,8 +85,8 @@
 								<ul class="list-inline file-list">
 									<repeat group="{{ @files.subset }}" value="{{ @file }}">
 										<li>
-											<a href="/{{ @file.disk_filename }}" title="{{ @file.filename }}" target="_blank">
-												<img src="/thumb/96/{{ @file.id }}.png" /><br />
+											<a href="/files/{{ @file.id }}/{{ @file.filename }}" title="{{ @file.filename }}" target="_blank">
+												<img src="/files/thumb/96/{{ @file.id }}.png" /><br />
 												{{ @file.filename }}
 											</a>
 										</li>

@@ -22,4 +22,18 @@ class Files extends Base {
 		$img->render($params["format"]);
 	}
 
+	public function file($f3, $params) {
+		$file = new \Model\Issue\File();
+		$file->load($params["id"]);
+
+		if(!$file->id) {
+			$f3->error(404);
+			return;
+		}
+
+		header("Content-Type: " . $file->content_type);
+		header("Content-Length: " . filesize($file->disk_filename));
+		readfile($file->disk_filename);
+	}
+
 }
