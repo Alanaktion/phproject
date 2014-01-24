@@ -6,7 +6,7 @@ class Index extends Base {
 
 	public function index($f3, $params) {
 		if($f3->get("user.id")) {
-			$projects = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user");
+			$projects = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail");
 			$f3->set("projects", $projects->paginate(
 				0, 50,
 				array(
@@ -18,7 +18,7 @@ class Index extends Base {
 				)
 			));
 
-			$bugs = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user");
+			$bugs = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail");
 			$f3->set("bugs", $bugs->paginate(
 				0, 50,
 				array(
@@ -30,7 +30,7 @@ class Index extends Base {
 				)
 			));
 
-			$tasks = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user");
+			$tasks = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail");
 			$f3->set("tasks", $tasks->paginate(
 				0, 50,
 				array(

@@ -7,7 +7,7 @@ class Issues extends Base {
 	public function index($f3, $params) {
 		$this->_requireLogin();
 
-		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user", null, 3600);
+		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail", null, 3600);
 
 		// Filter issue listing by URL parameters
 		$filter = array();
@@ -310,7 +310,7 @@ class Issues extends Base {
 		$issue->load($params["id"]);
 
 		if($issue->id) {
-			$issues = new \Model\Custom("issue_user");
+			$issues = new \Model\Custom("issue_detail");
 			if($f3->get("issue_type.project") == $issue->type_id) {
 				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $issue->id)));
 			} else {
@@ -347,7 +347,7 @@ class Issues extends Base {
 
 	public function search($f3, $params) {
 		$query = "%" . $f3->get("GET.q") . "%";
-		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_user", null, 3600);
+		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail", null, 3600);
 		$results = $issues->paginate(0, 50, array("name LIKE ? OR description LIKE ? AND deleted_date IS NULL", $query, $query), array("order" => "created_date ASC"));
 		$f3->set("issues", $results);
 		echo \Template::instance()->render("issues/search.html");

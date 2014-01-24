@@ -23,7 +23,7 @@ class Taskboard extends Base {
 		$f3->set("statuses", $statuses);
 
 		// Load project list
-		$issue = new \Model\Custom("issue_user");
+		$issue = new \Model\Custom("issue_detail");
 		$projects = $issue->paginate(0, 100, array("sprint_id = ? AND deleted_date IS NULL AND type_id = ?", $sprint->id, $f3->get("issue_type.project")), array("order" => "owner_id ASC"));
 
 		// Build multidimensional array of all tasks and projects
