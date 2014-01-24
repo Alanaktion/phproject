@@ -174,9 +174,9 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `user` (`id`, `username`, `email`, `name`, `password`, `role`, `task_color`, `theme`, `avatar_filename`, `created_date`, `deleted_date`) VALUES
-(1, 'ahardman', 'ahardman@thrivelife.com',  'Alan Hardman', '58b9b6f0c0d021bf1b5fd4f90e4843c96a64fb40', 'e2bf8c4c2f3e74fcaa29a878b823b28d', 'admin',  'b5ed3f', NULL, NULL, '2014-01-03 16:23:40',  NULL),
-(2, 'shelf',  'ahardman+tron@thrivelife.com', 'Shelf Testy', 'b76614097e5860a207dd6ca69de4fadef8915d9c', '18d0fa4a469ab43a4f629b03039f2d18', 'admin',  'efefef', NULL, NULL, '2014-01-03 16:23:42',  NULL);
+INSERT INTO `user` (`id`, `username`, `email`, `name`, `password`, `salt`, `role`, `task_color`, `theme`, `avatar_filename`, `created_date`, `deleted_date`) VALUES
+(1, 'ahardman', 'ahardman@thrivelife.com',  'Alan Hardman', '58b9b6f0c0d021bf1b5fd4f90e4843c96a64fb40', 'e2bf8c4c2f3e74fcaa29a878b823b28d', 'admin', 'b5ed3f', NULL, NULL, '2014-01-03 16:23:40',  NULL),
+(2, 'shelf',  'ahardman+tron@thrivelife.com', 'Shelf Testy', 'b76614097e5860a207dd6ca69de4fadef8915d9c', '18d0fa4a469ab43a4f629b03039f2d18', 'admin', 'efefef', NULL, NULL, '2014-01-03 16:23:42',  NULL);
 
 DROP TABLE IF EXISTS `group_user_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `group_user_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`group_user` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));
