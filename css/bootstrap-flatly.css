@@ -7730,3 +7730,8 @@ input[type="color"]:focus,
 .affix {
 	position: fixed;
 }
+
+.navbar-form .input-sm,
+.navbar-form .btn-sm {
+	margin-top: 5px;
+}

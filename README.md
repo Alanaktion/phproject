@@ -1,4 +1,4 @@
-OpenProject
+Phproject
 ===========
 *A lightweight project management system in PHP*
 
