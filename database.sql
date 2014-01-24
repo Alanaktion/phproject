@@ -3,8 +3,8 @@ SET foreign_key_checks = 0;
 SET time_zone = '-07:00';
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-CREATE DATABASE `openproject` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `openproject`;
+CREATE DATABASE `phproject` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `phproject`;
 
 DROP TABLE IF EXISTS `group_user`;
 CREATE TABLE `group_user` (

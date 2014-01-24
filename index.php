@@ -11,7 +11,7 @@ $f3->mset(array(
 	"TEMP" => "tmp/",
 	"CACHE" => "tmp/cache/",
 	"AUTOLOAD" => "app/",
-	"PACKAGE" => "OpenProject"
+	"PACKAGE" => "Phproject"
 ));
 
 // Get current Git revision
