@@ -139,6 +139,13 @@ class Issues extends Base {
 							$issue->$i = null;
 						} else {
 							$issue->$i = $val;
+							if($i == "status") {
+								$status = new \Model\Issue\Status();
+								$status->load($val);
+								if($status->closed) {
+									$issue->date_closed = now();
+								}
+							}
 						}
 					}
 				}

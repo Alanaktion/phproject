@@ -18,7 +18,7 @@ class Backlog extends Base {
 			$sprint_details[] = $sprint->cast() + array("projects" => $projects["subset"]);
 		}
 
-		$unset_projects = $issue->paginate(0, 1000, array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ?", $f3->get("issue_type.project")));
+		$unset_projects = $issue->paginate(0, 1000, array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL", $f3->get("issue_type.project")));
 
 		$f3->set("sprints", $sprint_details);
 		$f3->set("backlog", $unset_projects);
