@@ -19,8 +19,8 @@ OpenProject
 5. Ensure tmp/, tmp/cache/, and log/ directories exist and are writable by the web server
 
 ### Additional setup
-- DEBUG in config.ini supports levels 1-3, with 3 being the most verbose. Use 1 in a production environment.
-- OpenProject is fast, but you can significantly increase performance by installing an op code caching layer like APC
+- DEBUG in config.ini supports levels 0-3, with 3 being the most verbose. You should always use 0 in a production environment!
+- OpenProject is fast, but you can significantly increase performance by installing an op code caching layer like APC. Using APC also greatly increases the speed of temporary cached data, including minified code and common database queries.
 
 ### Updating
 Simply pulling the repo again should be safe for updates. If database.sql has been modified, you will need to merge the changes into your database. If something breaks after updating, clearing the tmp/ and tmp/cache/ directories of everything except .gitignore will usually solve the problem.
