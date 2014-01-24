@@ -13,13 +13,19 @@ class Files extends Base {
 			return;
 		}
 
-		$img = new \Image($file->disk_filename, null, $f3->get("ROOT") . "/");
-		$img->resize($params["size"], $params["size"]);
+		// Output thumbnail of image file
+		if(substr($file->content_type, 0, 5) == "image") {
+			$img = new \Image($file->disk_filename, null, $f3->get("ROOT") . "/");
+			$img->resize($params["size"], $params["size"]);
 
-		if($params["format"] == "jpg") {
-			$params["format"] = "jpeg";
+			// Ensure proper content-type for JPEG images
+			if($params["format"] == "jpg") {
+				$params["format"] = "jpeg";
+			}
+
+			$img->render($params["format"]);
+			return;
 		}
-		$img->render($params["format"]);
 	}
 
 	public function file($f3, $params) {
