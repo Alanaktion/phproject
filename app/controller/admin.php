@@ -62,6 +62,8 @@ Variable_name = 'Uptime'"));
 						$security = \Helper\Security::instance();
 						$user->salt = $security->salt();
 						$user->password = $security->hash($val, $user->salt);
+					} elseif($i == "salt") {
+						// don't change the salt, it'll just break the updated password
 					} elseif($user->$i != $val) {
 						$user->$i = $val;
 					}
