@@ -154,6 +154,9 @@ aside a.button {
   margin-bottom: 20px;
   font-size: 21px;
 }
+aside a.button.demo {
+  background-image: url(../images/demo-button.png);
+}
 
 code, pre {
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
