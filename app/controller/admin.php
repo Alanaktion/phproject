@@ -142,7 +142,7 @@ Variable_name = 'Uptime'"));
 			$group = new \Model\User();
 			$group->name = $f3->get("POST.name");
 			$group->role = "group";
-			$group->task_color = sprintf("#%06X", mt_rand(0, 0xFFFFFF));
+			$group->task_color = sprintf("%06X", mt_rand(0, 0xFFFFFF));
 			$group->created_date = now();
 			$group->save();
 			$f3->reroute("/admin/groups");
