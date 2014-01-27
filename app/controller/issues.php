@@ -298,7 +298,7 @@ class Issues extends Base {
 		// Build updates array
 		$updates_array = array();
 		$update_model = new \Model\Custom("issue_update_user");
-		$updates = $update_model->paginate(0, 100, array("issue_id = ?", $params["id"]), array("order" => "created_date ASC"));
+		$updates = $update_model->paginate(0, 100, array("issue_id = ?", $params["id"]), array("order" => "created_date DESC"));
 		foreach($updates["subset"] as $update) {
 			$update_array = $update->cast();
 			$update_field_model = new \Model\Issue\Update\Field();

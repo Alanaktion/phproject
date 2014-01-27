@@ -15,7 +15,11 @@ $f3->mset(array(
 ));
 
 // Get current Git revision
-$f3->set("revision", @file_get_contents(".git/refs/heads/master"));
+if(is_file(".git/refs/heads/master")) {
+	$f3->set("revision", @file_get_contents(".git/refs/heads/master"));
+} else {
+	$f3->set("revision", "");
+}
 
 // Load routes
 $f3->config("app/routes.ini");
