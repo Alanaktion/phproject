@@ -60,6 +60,9 @@ class Index extends Base {
 				$f3->reroute($f3->get("GET.to"));
 			}
 		} else {
+			if($f3->exists("GET.demo")) {
+				$f3->set("login.error", 'Log in with username and password "demo".');
+			}
 			if($f3->get("GET.to")) {
 				$f3->set("to", $f3->get("GET.to"));
 			}
