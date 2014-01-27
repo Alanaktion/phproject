@@ -5,125 +5,142 @@
 	<include href="blocks/task-head.html" />
 </head>
 <body>
-	<div class="container">
-		<include href="blocks/navbar.html" />
-		<div class="row">
-			<div class="col-lg-12">
-				<section id="taskboard">
-					<table class="table">
-						<tr class="taskboard-head tb-row">
-							<th class="column column-1 droppable">Project</th>
-							<repeat group="{{ @statuses.subset }}" key="{{ @key }}" value="{{ @value }}">
-								<th class="column column-{{ @key + 2 }} droppable">{{ @value.name }}</th>
-							</repeat>
-						</tr>
-					</table>
-					<table id="task-table" class="table">
-						<repeat group="{{ @taskboard }}" value="{{ @row }}">
-							<tr data-story-id="{{ @row.project.id }}" class="tb-row">
-								<td class="column column-1">
-									<div data-departement="I.T." class="card story" style="border-color:#{{ @row.project.owner_task_color }};">
-										<div class="top">
-											<i title="Add Task" class="add-task pull-right"></i>
-											<span class="owner">
-												<a href="/user/{{ @row.project.owner_username }}" target="_blank">{{ @row.project.owner_name }}</a>
-											</span>
-											<span class="task-id">
-												<a href="/issues/{{ @row.project.id }}" target="_blank">{{ @row.project.id }}</a>
-											</span>
-										</div>
-										<div class="title">{{ @row.project.name }}</div>
-										<!-- <div class="category">Department Work</div> -->
-									</div>
-								</td>
-								<repeat group="{{ @row.columns }}" key="{{ @status_id }}" value="{{ @col }}">
-									<td class="column column-{{ @status_id + 1 }} droppable" data-status="{{ @status_id }}">
-										<repeat group="{{ @col }}" value="{{ @task }}">
-											<div data-departement="" class="card task {{ @task.status_closed ? 'completed' : '' }}" id="task_{{ @task.id }}" style="border-color:#{{ @task.owner_task_color }};">
-												<div class="hours">14.0</div><div class="top">
-													<span class="task-id"><a href="/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
-												</div>
-												<div class="title">{{ @task.name }}</div>
-												<div class="description">{{ @task.description }}</div>
-												<check if="{{ strtotime(@task.due_date) > 0 }}">
-													<true>
-														<div class="dueDate">{{ date('n/j/Y', strtotime(@task.due_date)) }}</div>
-													</true>
-													<false>
-														<div class="dueDate"></div>
-													</false>
-												</check>
-												<div class="priority normal">Normal Priority</div>
-												<!-- <div class="priority low">Low Priority</div> -->
-												<!-- <div class="priority high">High Priority</div> -->
-												<div class="owner">
-													<a href="/user/{{ @task.owner_username }}" target="_blank">{{ @task.owner_name }}</a>
-												</div>
-											</div>
-										</repeat>
-									</td>
-								</repeat>
-							</tr>
-						</repeat>
-					</table>
-					<div id="task-dialog" class="dialog" title="Edit Task" style="display:none;">
-						<div class="row">
-							<form id="task-dialog">
-								<fieldset>
-									<input type="hidden" name="taskId" id="taskId" value="">
-									<div class="col-md-7">
-										<label for="title">Title</label>
-										<input type="text" name="title" id="title" class="form-control" />
-										<label for="Description">Description</label>
-										<textarea name="description" id="description" class="form-control"  rows="6"></textarea>
-									</div>
-									<div class="col-md-5">
-										<label for="assigned">Assigned To</label>
-										<select id="assigned" name="assigned" class="form-control" onchange="Taskboard.changeUser(this)">
-											<option value="0" data-color="#AAAAAA">Not Assigned</option>
-											<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" selected>{{ @user.name }}</option>
-											<optgroup label="Groups">
-												<repeat group="{{ @groups.subset }}" value="{{ @group }}">
-													<option value="{{ @group.id }}" data-color="#{{ @group.task_color }}">{{ @group.name }}</option>
-												</repeat>
-											</optgroup>
-											<optgroup label="Users">
-												<repeat group="{{ @users.subset }}" value="{{ @user }}">
-													<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}">{{ @user.name }}</option>
-												</repeat>
-											</optgroup>
-										</select>
-										<label for="hours">Remaining (Hours)</label>
-										<input type="textbox" name="hours" id="hours" class="form-control">
-										<label for="password">Due Date</label>
-										<input type="textbox" name="dueDate" id="dueDate" value="" class="dueDate form-control">
-										<label for="priority">Priority</label>
-										<select id="priority" name="priority" class="form-control" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
-											<option value="Normal">Normal</option>
-											<option value="High">High</option>
-											<option value="Low">Low Priority</option>
-										</select>
-									</div>
-								</fieldset>
-							</form>
-						</div>
-					</div>
-				</section>
-			</div>
-		</div>
-		<div data-departement="" class="card task cloneable" id="new_task">
-			<div class="hours"></div><div class="top">
-				<span class="task-id"></span>
-			</div>
-			<div class="title"></div>
-			<div class="description"></div>
-			<div class="dueDate"></div>
-			<div class="priority normal">Normal Priority</div><div class="owner"></div>
-		</div>
-		<include href="blocks/footer.html" />
-		<script src="/js/taskboard.js"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-		<script src="/js/jquery.ui.touch-punch.min.js"></script>
+	<div class="navbar navbar-default navbar-fixed-top hidden-xs" role="navigation">
+		<a class="navbar-brand" href="/">
+			<check if="{{ empty(@site.logo) }}">
+				<true>{{ @site.name }}</true>
+				<false>
+					<img src="{{ @site.logo }}" />
+				</false>
+			</check>
+		</a>
+		<repeat group="{{ @statuses.subset }}" key="{{ @key }}" value="{{ @value }}">
+			<th class="column column-{{ @key + 2 }} droppable"></th>
+			<p class="navbar-text">{{ @value.name }}</p>
+		</repeat>
 	</div>
+	<section id="taskboard">
+		<!-- <table class="table">
+			<tr class="taskboard-head tb-row">
+				<th class="column column-1">Project</th>
+				<repeat group="{{ @statuses.subset }}" key="{{ @key }}" value="{{ @value }}">
+					<th class="column column-{{ @key + 2 }}">{{ @value.name }}</th>
+				</repeat>
+			</tr>
+		</table> -->
+		<table id="task-table" class="table">
+			<repeat group="{{ @taskboard }}" value="{{ @row }}">
+				<tr data-story-id="{{ @row.project.id }}" class="tb-row">
+					<td class="column column-1">
+						<div data-departement="I.T." class="card story" style="border-color:#{{ @row.project.owner_task_color }};">
+							<div class="top">
+								<i title="Add Task" class="add-task pull-right"></i>
+								<span class="owner">
+									<a href="/user/{{ @row.project.owner_username }}" target="_blank">{{ @row.project.owner_name }}</a>
+								</span>
+								<span class="task-id">
+									<a href="/issues/{{ @row.project.id }}" target="_blank">{{ @row.project.id }}</a>
+								</span>
+							</div>
+							<div class="title">{{ @row.project.name }}</div>
+						</div>
+					</td>
+					<repeat group="{{ @row.columns }}" key="{{ @status_id }}" value="{{ @col }}">
+						<td class="column column-{{ @status_id + 1 }} droppable" data-status="{{ @status_id }}">
+							<repeat group="{{ @col }}" value="{{ @task }}">
+								<div data-departement="" class="card task {{ @task.status_closed ? 'completed' : '' }}" id="task_{{ @task.id }}" style="border-color:#{{ @task.owner_task_color }};">
+									<div class="hours">14.0</div><div class="top">
+										<span class="task-id"><a href="/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
+									</div>
+									<div class="title">{{ @task.name }}</div>
+									<div class="description">{{ @task.description }}</div>
+									<check if="{{ strtotime(@task.due_date) > 0 }}">
+										<true>
+											<div class="dueDate">{{ date('n/j/Y', strtotime(@task.due_date)) }}</div>
+										</true>
+										<false>
+											<div class="dueDate"></div>
+										</false>
+									</check>
+									<check if="{{ @task.priority == 0 }}">
+										<true>
+											<div class="priority normal">{{ @task.priority_name }}</div>
+										</true>
+										<false>
+											<check if="{{ @task.priority < 0 }}">
+												<true>
+													<div class="priority high">{{ @task.priority_name }}</div>
+												</true>
+												<false>
+													<div class="priority low">{{ @task.priority_name }}</div>
+												</false>
+											</check>
+										</false>
+									</check>
+									<div class="owner">
+										<a href="/user/{{ @task.owner_username }}" target="_blank">{{ @task.owner_name }}</a>
+									</div>
+								</div>
+							</repeat>
+						</td>
+					</repeat>
+				</tr>
+			</repeat>
+		</table>
+		<div id="task-dialog" class="dialog" title="Edit Task" style="display:none;">
+			<div class="row">
+				<form id="task-dialog">
+					<fieldset>
+						<input type="hidden" name="taskId" id="taskId" value="">
+						<div class="col-md-7">
+							<label for="title">Title</label>
+							<input type="text" name="title" id="title" class="form-control" />
+							<label for="Description">Description</label>
+							<textarea name="description" id="description" class="form-control"  rows="6"></textarea>
+						</div>
+						<div class="col-md-5">
+							<label for="assigned">Assigned To</label>
+							<select id="assigned" name="assigned" class="form-control" onchange="Taskboard.changeUser(this)">
+								<option value="0" data-color="#AAAAAA">Not Assigned</option>
+								<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" selected>{{ @user.name }}</option>
+								<optgroup label="Groups">
+									<repeat group="{{ @groups.subset }}" value="{{ @group }}">
+										<option value="{{ @group.id }}" data-color="#{{ @group.task_color }}">{{ @group.name }}</option>
+									</repeat>
+								</optgroup>
+								<optgroup label="Users">
+									<repeat group="{{ @users.subset }}" value="{{ @user }}">
+										<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}">{{ @user.name }}</option>
+									</repeat>
+								</optgroup>
+							</select>
+							<label for="hours">Remaining (Hours)</label>
+							<input type="textbox" name="hours" id="hours" class="form-control">
+							<label for="password">Due Date</label>
+							<input type="textbox" name="dueDate" id="dueDate" value="" class="dueDate form-control">
+							<label for="priority">Priority</label>
+							<select id="priority" name="priority" class="form-control" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
+								<option value="Normal">Normal</option>
+								<option value="High">High</option>
+								<option value="Low">Low Priority</option>
+							</select>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</section>
+	<div data-departement="" class="card task cloneable" id="new_task">
+		<div class="hours"></div><div class="top">
+			<span class="task-id"></span>
+		</div>
+		<div class="title"></div>
+		<div class="description"></div>
+		<div class="dueDate"></div>
+		<div class="priority normal">Normal Priority</div><div class="owner"></div>
+	</div>
+	<script src="/js/taskboard.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script src="/js/jquery.ui.touch-punch.min.js"></script>
 </body>
 </html>

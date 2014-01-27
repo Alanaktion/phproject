@@ -8,9 +8,9 @@ class Backlog extends Base {
 		$this->_requireLogin();
 
 		$sprint_model = new \Model\Sprint();
-		$sprints = $sprint_model->paginate(0, 100, array("end_date > ?", now(false)), array("order" => "start_date ASC"));
+		$sprints = $sprint_model->paginate(0, 100, array("end_date >= ?", now(false)), array("order" => "start_date ASC"));
 
-		$issue = new \Model\Issue();
+		$issue = new \Model\Custom("issue_detail");
 
 		$sprint_details = array();
 		foreach($sprints["subset"] as $sprint) {

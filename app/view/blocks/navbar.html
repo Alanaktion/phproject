@@ -36,11 +36,9 @@
 				<li><a href="/issues?type=1&amp;owner=">Unassigned Tasks</a></li>
 			</ul>
 		</li>
-                <li>
-                    <a href="/backlog">
-                            Backlog
-                    </a>
-                </li>
+		<li>
+			<a href="/backlog">Backlog</a>
+		</li>
 	</ul>
 	<ul class="nav navbar-nav navbar-right">
 		<check if="{{ @user.role=='admin' }}">
@@ -64,7 +62,14 @@
 	</ul>
 	<form class="navbar-form navbar-right" role="search" action="/search" method="get">
 		<div class="input-group">
-			<input type="search" name="q" class="form-control input-sm" placeholder="Quickly find an issue">
+			<check if="{{ empty(@GET.q) }}">
+				<true>
+					<input type="search" name="q" class="form-control input-sm" placeholder="Quickly find an issue">
+				</true>
+				<false>
+					<input type="search" name="q" class="form-control input-sm" placeholder="Quickly find an issue" value="{{ @GET.q }}">
+				</false>
+			</check>
 			<span class="input-group-btn">
 				<button type="submit" class="btn btn-default btn-sm">
 					<span class="sr-only">Search</span>

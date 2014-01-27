@@ -61,13 +61,19 @@ class Taskboard extends Base {
 	}
 
 	public function add($f3, $params) {
+		$user_id = $this->_requireLogin();
 		$post = $f3->get("POST");
+
 		$issue = new \Model\Issue();
 		$issue->name = $post["title"];
 		$issue->description = $post["description"];
+		$issue->author_id = $user_id;
 		$issue->owner_id = $post["assigned"];
+		$issue->created_date = now();
 		//$issue->hours_remaining = $post["hours"];
-		$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
+		if(!empty($post["dueDate"])) {
+			$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
+		}
 		//$issue->priority = $post["priority"];
 		$issue->parent_id = $post["storyId"];
 		$issue->save();

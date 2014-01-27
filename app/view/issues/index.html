@@ -24,6 +24,11 @@
 						<th colspan="2">
 						</th>
 						<th>
+							<select name="status">
+
+							</select>
+						</th>
+						<th>
 							<select name="author">
 
 							</select>
@@ -38,6 +43,7 @@
 					<tr>
 						<th>ID</th>
 						<th>Title</th>
+						<th>Status</th>
 						<th>Author</th>
 						<th>Assignee</th>
 						<th>Created</th>
@@ -49,6 +55,7 @@
 						<tr>
 							<td><a href="/issues/{{ @item.id }}">{{ @item.id }}</a></td>
 							<td><a href="/issues/{{ @item.id }}">{{ @item.name }}</a></td>
+							<td>{{ @item.status_name }}</td>
 							<td><a href="/user/{{ @item.author_username }}">{{ @item.author_name }}</a></td>
 							<td><a href="/user/{{ @item.owner_username }}">{{ @item.owner_name }}</a></td>
 							<td>{{ date("n/j/y h:ia", strtotime(@item.created_date)) }}</td>

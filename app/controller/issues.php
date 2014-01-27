@@ -7,7 +7,7 @@ class Issues extends Base {
 	public function index($f3, $params) {
 		$this->_requireLogin();
 
-		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail", null, 3600);
+		$issues = new \Model\Custom("issue_detail");
 
 		// Filter issue listing by URL parameters
 		$filter = array();
@@ -143,7 +143,7 @@ class Issues extends Base {
 								$status = new \Model\Issue\Status();
 								$status->load($val);
 								if($status->closed) {
-									$issue->date_closed = now();
+									$issue->closed_date = now();
 								}
 							}
 						}

@@ -21,11 +21,10 @@
 					<div class="panel-body in" id="panel-0">
 						<ul class="list-group sortable" data-list-id="0">
 							<repeat group="{{ @backlog.subset }}" value="{{ @project }}">
-								<li class="list-group-item clearfix" data-category="department" data-status="new" id="project_{{ @project.id }}">
-									<!-- <span class="category">Department</span> -->
+								<li class="list-group-item" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 									<span class="title">{{ @project.name }}</span>
-									<a href="/issues/{{ @project.id }}" class="badge" target="_blank">{{ @project.id }}</a>
-									<!-- <span class="badge status new">New</span> -->
+									<a href="/issues/{{ @project.id }}" class="badge" target="_blank">#{{ @project.id }}</a>
+									<span class="badge status">{{ @project.status_name }}</span>
 								</li>
 							</repeat>
 						</ul>
@@ -46,11 +45,10 @@
 						<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
 							<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
 								<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
-									<li class="list-group-item clearfix" data-category="department" data-status="new" id="project_{{ @project.id }}">
-										<!-- <span class="category">Department Project</span> -->
+									<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 										<span class="title">{{ @project.name }}</span>
-										<a href="/issues/{{ @project.id }}" class="badge" target="_blank">{{ @project.id }}</a>
-										<!-- <span class="badge status new">New</span> -->
+										<a href="/issues/{{ @project.id }}" class="badge" target="_blank">#{{ @project.id }}</a>
+										<span class="badge status">{{ @project.status_name }}</span>
 									</li>
 								</repeat>
 							</ul>
