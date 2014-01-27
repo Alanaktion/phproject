@@ -2,7 +2,7 @@ body {
 	padding-top: 60px;
 }
 
-.navbar-brand {
+/*.navbar-brand {
 	margin-left: -10px;
 	width: 252px;
 }
@@ -20,7 +20,7 @@ body {
 .navbar-text:last-child,
 .navbar-default .navbar-text:last-child {
 	border-right: 1px dotted rgba(255, 255, 255, .5);
-}
+}*/
 
 #taskboard {
 	font-size: 12px;
