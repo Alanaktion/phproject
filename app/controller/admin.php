@@ -168,7 +168,7 @@ Variable_name = 'Uptime'"));
 	}
 
 	public function group_delete($f3, $params) {
-		$group = new \Model\Group();
+		$group = new \Model\User();
 		$group->load($params["id"]);
 		$group->delete();
 		if($f3->get("AJAX")) {
