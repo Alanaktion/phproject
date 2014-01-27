@@ -3,7 +3,8 @@ body {
 }
 
 .navbar-brand {
-	width: 242px;
+	margin-left: -10px;
+	width: 252px;
 }
 .navbar-text,
 .navbar-default .navbar-text {
