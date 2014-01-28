@@ -37,7 +37,7 @@ class Taskboard extends Base {
 			}
 
 			// Get all tasks under the project, put them under their status
-			$tasks = $issue->paginate(0, 100, array("parent_id = ? AND deleted_Date IS NULL", $project["id"]), array("order" => "due_date ASC"));
+			$tasks = $issue->paginate(0, 100, array("parent_id = ? AND type_id = ? AND deleted_Date IS NULL", $project["id"], $f3->get("issue_type.task")), array("order" => "due_date ASC"));
 			foreach($tasks["subset"] as $task) {
 				$columns[$task["status"]][] = $task;
 			}

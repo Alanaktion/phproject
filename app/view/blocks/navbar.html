@@ -78,15 +78,6 @@
 			</span>
 		</div>
 	</form>
-
-	<check if="{{ !empty(@taskboard) }}">
-		<div class="pull-left">
-			<p class="navbar-text">Project</p>
-			<repeat group="{{ @statuses.subset }}" key="{{ @key }}" value="{{ @value }}">
-				<p class="navbar-text">{{ @value.name }}</p>
-			</repeat>
-		</div>
-	</check>
 </div>
 
 <!-- Mobile -->

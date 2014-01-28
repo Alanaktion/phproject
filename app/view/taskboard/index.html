@@ -7,14 +7,14 @@
 <body>
 	<include href="blocks/navbar.html" />
 	<section id="taskboard">
-		<!-- <table class="table">
-			<tr class="taskboard-head tb-row">
+		<table class="table taskboard-head">
+			<tr class="tb-row">
 				<th class="column column-1">Project</th>
 				<repeat group="{{ @statuses.subset }}" key="{{ @key }}" value="{{ @value }}">
 					<th class="column column-{{ @key + 2 }}">{{ @value.name }}</th>
 				</repeat>
 			</tr>
-		</table> -->
+		</table>
 		<table id="task-table" class="table">
 			<repeat group="{{ @taskboard }}" value="{{ @row }}">
 				<tr data-story-id="{{ @row.project.id }}" class="tb-row">
@@ -56,10 +56,10 @@
 										<false>
 											<check if="{{ @task.priority < 0 }}">
 												<true>
-													<div class="priority high">{{ @task.priority_name }}</div>
+													<div class="priority low">{{ @task.priority_name }}</div>
 												</true>
 												<false>
-													<div class="priority low">{{ @task.priority_name }}</div>
+													<div class="priority high">{{ @task.priority_name }}</div>
 												</false>
 											</check>
 										</false>

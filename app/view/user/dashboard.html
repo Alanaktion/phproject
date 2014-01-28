@@ -45,6 +45,7 @@
 				<repeat group="{{ @tasks.subset }}" value="{{ @item }}">
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
 						<span class="badge">#{{ @item.id }}</span>
+						<span class="badge status">{{ @item.status_name }}</span>
 						<check if="{{ @item.author_id != @item.owner_id }}">
 							<p class="pull-right badge-sibling hidden-xs has-tooltip" title="Author">{{ @item.author_name }}</p>
 						</check>

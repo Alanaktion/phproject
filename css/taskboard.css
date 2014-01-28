@@ -1,40 +1,23 @@
 body {
 	padding-top: 90px;
 }
-.navbar {
-	height: 90px;
-}
-.navbar-text,
-.navbar-default .navbar-text {
-	width: 252px;
-	margin: 0;
-	padding: 0 10px;
-	height: 30px;
-	line-height: 30px;
-	/*border-left: 1px dotted rgba(255, 255, 255, .5);*/
-}
-.navbar-text:last-child,
-.navbar-default .navbar-text:last-child {
-	/*border-right: 1px dotted rgba(255, 255, 255, .5);*/
-	width: auto;
-}
-.navbar-text:first-child,
-.navbar-default .navbar-text:first-child {
-	border-left: none;
-	margin-left: -10px;
-}
-
-@media screen and (max-width: 1240px) {
-	.navbar-text,
-	.navbar-default .navbar-text {
-		width: 142px;
-	}
-}
-
 #taskboard {
 	font-size: 12px;
 	width: 100%;
 	margin: 0 auto;
+}
+#taskboard .taskboard-head {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 91px;
+	z-index: 1025;
+}
+#taskboard .taskboard-head th {
+	vertical-align: bottom;
+	background-color: #fff;
+	background-color: rgba(255, 255, 255, 0.7);
+	border-bottom: solid 1px #e7e7e7;
 }
 #taskboard table {
 	border-collapse: collapse;
@@ -45,6 +28,8 @@ body {
 	padding: 4px;
 	border: 1px dotted #cecece;
 	border-top: solid 1px #e7e7e7;
+}
+#task-table td, #task-table th {
 	vertical-align: top;
 }
 #taskboard td:first-child, #taskboard th:first-child {
@@ -71,11 +56,11 @@ body {
 #taskboard .table .column {
 	width: 252px;
 }
-@media screen and (max-width: 1240px) {
+/*@media screen and (max-width: 1240px) {
 	#taskboard .table .column {
 		width: 142px;
 	}
-}
+}*/
 #taskboard .card {
 	position: relative;
 	font-size: 10px;
@@ -161,8 +146,9 @@ body {
 	display: none;
 }
 #taskboard .card .priority {
-	width: 77px;
-	height: 15px;
+	padding: 0 5px;
+	max-width: 77px;
+	line-height: 15px;
 	position: absolute;
 	top: -5px;
 	right: -3px;
@@ -173,7 +159,6 @@ body {
 	text-align: center;
 }
 #taskboard .card .priority.normal {
-	background-color: #fff;
 	display: none;
 }
 #taskboard .card .priority.low {
