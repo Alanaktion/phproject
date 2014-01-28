@@ -12,12 +12,17 @@ class Issues extends Base {
 		// Filter issue listing by URL parameters
 		$filter = array();
 		$args = $f3->get("GET");
-		if(!empty($args["type"])) {
-			$filter["type_id"] = intval($args["type"]);
+		foreach($args as $key=>$val) {
+			if(!empty($val)) {
+				$filter[addslashes($key)] = addslashes($val);
+			}
 		}
-		if(isset($args["owner"])) {
-			$filter["owner_id"] = intval($args["owner"]);
+		/*if(!empty($args["type_id"])) {
+			$filter["type_id"] = intval($args["type_id"]);
 		}
+		if(isset($args["owner_id"])) {
+			$filter["owner_id"] = intval($args["owner_id"]);
+		}*/
 
 		// Build SQL string to use for filtering
 		$filter_str = "";
@@ -29,7 +34,7 @@ class Issues extends Base {
 		// Load type if a type_id was passed
 		if(!empty($args["type"])) {
 			$type = new \Model\Issue\Type();
-			$type->load($args["type"]);
+			$type->load($args["type_id"]);
 			if($type->id) {
 				$f3->set("title", $type->name . "s");
 				$f3->set("type", $type->cast());

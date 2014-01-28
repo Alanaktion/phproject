@@ -6,14 +6,6 @@
 <body>
 <div class="container">
 	<include href="blocks/navbar.html" />
-	<check if="{{ !empty(@type) }}">
-		<true>
-			<h4>{{ @type.name . "s" }}</h4>
-		</true>
-		<false>
-			<h4>{{ "Issues" }}</h4>
-		</false>
-	</check>
 	<include href="blocks/issue-list.html" />
 	<include href="blocks/footer.html" />
 </div>
