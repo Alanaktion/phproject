@@ -5508,7 +5508,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 	text-align: center;
 	white-space: nowrap;
 	vertical-align: baseline;
-	background-color: #7EC500;
+	background-color: #999;
 	border-radius: 10px;
 }
 
@@ -5842,7 +5842,7 @@ a.thumbnail.active {
 	padding: 10px 15px;
 	margin-bottom: -1px;
 	background-color: #ffffff;
-	border: 1px solid #FFF;
+	border-bottom: 2px solid #efefef;
 }
 
 .list-group-item:first-child {

@@ -60,6 +60,9 @@ class Issues extends Base {
 		$status = new \Model\Issue\Status();
 		$f3->set("statuses", $status->paginate(0, 100));
 
+		$priority = new \Model\Issue\Priority();
+		$f3->set("priorities", $priority->paginate(0, 100, null, array("order" => "value DESC")));
+
 		$users = new \Model\User();
 		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
         $f3->set("groups", $users->paginate(0, 1000, "deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
@@ -95,6 +98,9 @@ class Issues extends Base {
 
 		$status = new \Model\Issue\Status();
 		$f3->set("statuses", $status->paginate(0, 100));
+
+		$priority = new \Model\Issue\Priority();
+		$f3->set("priorities", $priority->paginate(0, 100, null, array("order" => "value DESC")));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -174,6 +180,8 @@ class Issues extends Base {
 			$issue->created_date = now();
 			$issue->name = $post["name"];
 			$issue->description = $post["description"];
+			$issue->priority = $post["priority"];
+			$issue->status = $post["status"];
 			$issue->owner_id = $post["owner_id"];
 			if(!empty($post["due_date"])) {
 				$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
