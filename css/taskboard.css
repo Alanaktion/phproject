@@ -56,11 +56,6 @@ body {
 #taskboard .table .column {
 	width: 252px;
 }
-/*@media screen and (max-width: 1240px) {
-	#taskboard .table .column {
-		width: 142px;
-	}
-}*/
 #taskboard .card {
 	position: relative;
 	font-size: 10px;
@@ -78,7 +73,7 @@ body {
 	float: left;
 	margin-right: 8px;
 }
-/*#taskboard .card.task: after {
+/*#taskboard .card.task:after {
 	content: '';
 	width: 111px;
 	height: 94px;
@@ -90,17 +85,16 @@ body {
 	opacity: .01;
 }*/
 #taskboard .card.task.placeholder {
-	background-color: green;
+	background-color: #fff;
+	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
 	opacity: .1;
-	border: 0px;
+	/*border: 0;*/
 }
 #taskboard .card.story {
-	height: 101px;
+	height: 92px;
 }
 #taskboard .card.story .task-id {
 	float: left;
-}
-#taskboard .card.story .task-id a {
 }
 #taskboard .card.story .top {
 	height: 18px;
@@ -131,14 +125,14 @@ body {
 }
 #taskboard .card .hours {
 	position: absolute;
-	bottom: -10px;
-	right: -5px;
-	background-color: #D63300;
+	bottom: -3px;
+	right: -3px;
+	background-color: #777;
 	color: #FFF;
-	padding: 3px;
+	line-height: 15px;
+	padding: 0 5px;
 	width: auto;
-	height: 16px;
-	border-radius: 17px;
+	border-radius: 10px;
 	font-size: 8px;
 	z-index: 10;
 }
@@ -150,9 +144,9 @@ body {
 	max-width: 77px;
 	line-height: 15px;
 	position: absolute;
-	top: -5px;
+	top: -3px;
 	right: -3px;
-	z-index: 100;
+	z-index: 10;
 	background-color: #008000;
 	border-radius: 10px;
 	color: #FFF;
@@ -175,10 +169,10 @@ body {
 	height: 15px;
 	overflow: hidden;
 }
-#taskboard .card .top a {
+/*#taskboard .card .top a {
 	color: #969696;
 	text-decoration: none;
-}
+}*/
 #taskboard .card .top a:hover {
 	text-decoration: underline;
 }
@@ -302,6 +296,6 @@ body .ui-state-default: last-child:hover, body .ui-widget-content .ui-state-defa
 	background-color: #9CF301;
 }
 /* Bootstrap Issues */
- table.table {
+table.table {
 	margin: 0;
 }
