@@ -111,6 +111,14 @@ textarea {
 	background-color: #ecf0f1;
 }
 
+.issue-list .issue-filters th {
+	padding-left: 0;
+}
+.issue-list .issue-filters th .form-control {
+	height: auto;
+	padding: 2px;
+}
+
 .issue-head .profile-picture,
 .comment .profile-picture,
 .update .profile-picture {

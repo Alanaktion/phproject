@@ -34,9 +34,21 @@ class Issues extends Base {
 				$f3->set("title", $type->name . "s");
 				$f3->set("type", $type->cast());
 			}
+		} else {
+			$f3->set("title", "Issues");
 		}
 
-		$f3->set("issues", $issues->paginate(0, 50, $filter_str));
+		$status = new \Model\Issue\Status();
+		$f3->set("statuses", $status->paginate(0, 100));
+
+		$priority = new \Model\Issue\Priority();
+		$f3->set("priorities", $priority->paginate(0, 100, null, array("order" => "value DESC")));
+
+		$users = new \Model\User();
+		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+        $f3->set("groups", $users->paginate(0, 1000, "deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+
+		$f3->set("issues", $issues->paginate(0, 100, $filter_str));
 		echo \Template::instance()->render("issues/index.html");
 	}
 
