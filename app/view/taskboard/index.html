@@ -6,29 +6,15 @@
 </head>
 <body>
 	<include href="blocks/navbar.html" />
-	<!-- <div class="navbar navbar-default navbar-fixed-top hidden-xs" role="navigation">
-		<a class="navbar-brand" href="/">
-			<check if="{{ empty(@site.logo) }}">
-				<true>{{ @site.name }}</true>
-				<false>
-					<img src="{{ @site.logo }}" />
-				</false>
-			</check>
-		</a>
-		<repeat group="{{ @statuses.subset }}" key="{{ @key }}" value="{{ @value }}">
-			<th class="column column-{{ @key + 2 }} droppable"></th>
-			<p class="navbar-text">{{ @value.name }}</p>
-		</repeat>
-	</div> -->
 	<section id="taskboard">
-		<table class="table">
+		<!-- <table class="table">
 			<tr class="taskboard-head tb-row">
 				<th class="column column-1">Project</th>
 				<repeat group="{{ @statuses.subset }}" key="{{ @key }}" value="{{ @value }}">
 					<th class="column column-{{ @key + 2 }}">{{ @value.name }}</th>
 				</repeat>
 			</tr>
-		</table>
+		</table> -->
 		<table id="task-table" class="table">
 			<repeat group="{{ @taskboard }}" value="{{ @row }}">
 				<tr data-story-id="{{ @row.project.id }}" class="tb-row">

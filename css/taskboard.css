@@ -1,26 +1,37 @@
 body {
-	padding-top: 60px;
+	padding-top: 90px;
 }
-
-/*.navbar-brand {
-	margin-left: -10px;
-	width: 252px;
+.navbar {
+	height: 90px;
 }
 .navbar-text,
 .navbar-default .navbar-text {
 	width: 252px;
 	margin: 0;
 	padding: 0 10px;
-	height: 60px;
-	line-height: 60px;
+	height: 30px;
+	line-height: 30px;
 	color: white;
 	text-shadow: 0 1px 0 #000;
-	border-left: 1px dotted rgba(255, 255, 255, .5);
+	/*border-left: 1px dotted rgba(255, 255, 255, .5);*/
 }
 .navbar-text:last-child,
 .navbar-default .navbar-text:last-child {
-	border-right: 1px dotted rgba(255, 255, 255, .5);
-}*/
+	/*border-right: 1px dotted rgba(255, 255, 255, .5);*/
+	width: auto;
+}
+.navbar-text:first-child,
+.navbar-default .navbar-text:first-child {
+	border-left: none;
+	margin-left: -10px;
+}
+
+@media screen and (max-width: 1240px) {
+	.navbar-text,
+	.navbar-default .navbar-text {
+		width: 142px;
+	}
+}
 
 #taskboard {
 	font-size: 12px;
@@ -61,6 +72,11 @@ body {
 }
 #taskboard .table .column {
 	width: 252px;
+}
+@media screen and (max-width: 1240px) {
+	#taskboard .table .column {
+		width: 142px;
+	}
 }
 #taskboard .card {
 	position: relative;
