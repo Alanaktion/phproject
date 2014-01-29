@@ -10,7 +10,11 @@ abstract class Base {
 		if($id = $f3->get("user.id")) {
 			return $id;
 		} else {
-			$f3->reroute("/login?to=" . urlencode($f3->get("PATH")));
+			if(empty($_GET)) {
+				$f3->reroute("/login?to=" . urlencode($f3->get("PATH")));
+			} else {
+				$f3->reroute("/login?to=" . urlencode($f3->get("PATH")) . urlencode("?" . http_build_query($_GET)));
+			}
 			$f3->unload();
 			return false;
 		}
