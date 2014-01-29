@@ -16,7 +16,7 @@ class Notification extends \Prefab {
 		$comment->load($comment_id);
 
 		// Get recipient list and remove current user
-		$recipients = $this->watcher_emails($issue_id);
+		$recipients = $this->_issue_watchers($issue_id);
 		$recipients = array_diff($recipients, array($f3->get("user.email")));
 
 		// Render message body
@@ -57,7 +57,7 @@ class Notification extends \Prefab {
 		$f3->set("changes", $changes->paginate(0, 100, array("issue_update_id = ?", $update->id)));
 
 		// Get recipient list and remove current user
-		$recipients = $this->watcher_emails($issue_id);
+		$recipients = $this->_issue_watchers($issue_id);
 		$recipients = array_diff($recipients, array($f3->get("user.email")));
 
 		// Render message body
@@ -83,7 +83,7 @@ class Notification extends \Prefab {
 	}
 
 	// Get array of email addresses of all watchers on an issue
-	protected function watcher_emails($issue_id) {
+	protected function _issue_watchers($issue_id) {
 		$f3 = \Base::instance();
 		$db = $f3->get("db.instance");
 		$recipients = array();
