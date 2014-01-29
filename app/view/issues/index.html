@@ -7,6 +7,24 @@
 <div class="container">
 	<include href="blocks/navbar.html" />
 	<include href="blocks/issue-list.html" />
+	<ul class="pager">
+		<check if="{{ !empty(@prev) }}">
+			<true>
+				<li class="previous"><a href="/issues{{ @prev }}">&larr; Previous</a></li>
+			</true>
+			<false>
+				<li class="previous disabled"><a href="#">&larr; Previous</a></li>
+			</false>
+		</check>
+		<check if="{{ !empty(@next) }}">
+			<true>
+				<li class="next"><a href="/issues{{ @next }}">Next &rarr;</a></li>
+			</true>
+			<false>
+				<li class="next disabled"><a href="#">Next &rarr;</a></li>
+			</false>
+		</check>
+	</ul>
 	<include href="blocks/footer.html" />
 </div>
 </body>

@@ -13,27 +13,21 @@ class Issues extends Base {
 		$filter = array();
 		$args = $f3->get("GET");
 		foreach($args as $key=>$val) {
-			if(!empty($val)) {
-				$filter[addslashes($key)] = addslashes($val);
+			if(!empty($val) && $issues->exists($key)) {
+				$filter[$key] = $val;
 			}
 		}
-		/*if(!empty($args["type_id"])) {
-			$filter["type_id"] = intval($args["type_id"]);
-		}
-		if(isset($args["owner_id"])) {
-			$filter["owner_id"] = intval($args["owner_id"]);
-		}*/
 
 		// Build SQL string to use for filtering
 		$filter_str = "";
 		foreach($filter as $i => $val) {
-			$filter_str .= "$i = '$val' AND ";
+			$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
 		}
 		$filter_str .= "deleted_date IS NULL";
 
 		// Load type if a type_id was passed
-		if(!empty($args["type"])) {
-			$type = new \Model\Issue\Type();
+		$type = new \Model\Issue\Type();
+		if(!empty($args["type_id"])) {
 			$type->load($args["type_id"]);
 			if($type->id) {
 				$f3->set("title", $type->name . "s");
@@ -49,11 +43,27 @@ class Issues extends Base {
 		$priority = new \Model\Issue\Priority();
 		$f3->set("priorities", $priority->paginate(0, 100, null, array("order" => "value DESC")));
 
+		$f3->set("types", $type->paginate(0, 100));
+
 		$users = new \Model\User();
 		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
         $f3->set("groups", $users->paginate(0, 1000, "deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
-		$f3->set("issues", $issues->paginate(0, 100, $filter_str));
+        if(empty($args["page"])) {
+        	$args["page"] = 0;
+        }
+        $issue_page = $issues->paginate($args["page"], 50, $filter_str);
+		$f3->set("issues", $issue_page);
+
+		// Set up pagination
+		$filter_get = http_build_query($filter);
+		if($issue_page["limit"] * $issue_page["pos"] + $issue_page["count"] > $issue_page["total"]) {
+			$f3->set("next", "?page=" . ($issue_page["pos"] + 1) . "&" . $filter_get);
+		}
+		if($issue_page["pos"] > 0) {
+			$f3->set("prev", "?page=" . ($issue_page["pos"] - 1) . "&" . $filter_get);
+		}
+
 		echo \Template::instance()->render("issues/index.html");
 	}
 
