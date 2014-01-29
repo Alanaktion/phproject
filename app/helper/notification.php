@@ -7,6 +7,7 @@ class Notification extends \Prefab {
 	// Send an email to watchers with the comment body
 	public function issue_comment($issue_id, $comment_id) {
 		$f3 = \Base::instance();
+		$log = new \Log("smtp.log");
 
 		// Get issue and comment data
 		$issue = new \Model\Issue();
@@ -34,12 +35,16 @@ class Notification extends \Prefab {
 		foreach($recipients as $recipient) {
 			$smtp->set("To", $recipient);
 			$smtp->send($body);
+			$log->write("Sent comment notification to: " . $recipient);
 		}
+
+		$log->write($smtp->log());
 	}
 
 	// Send an email to watchers detailing the updated fields
 	public function issue_update($issue_id, $update_id) {
 		$f3 = \Base::instance();
+		$log = new \Log("smtp.log");
 
 		// Get issue and update data
 		$issue = new \Model\Issue();
@@ -71,7 +76,10 @@ class Notification extends \Prefab {
 		foreach($recipients as $recipient) {
 			$smtp->set("To", $recipient);
 			$smtp->send($body);
+			$log->write("Sent update notification to: " . $recipient);
 		}
+
+		$log->write($smtp->log());
 	}
 
 	// Get array of email addresses of all watchers on an issue

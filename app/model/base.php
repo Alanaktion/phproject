@@ -40,4 +40,13 @@ abstract class Base extends \DB\SQL\Mapper {
 		}
 	}
 
+	// Get most recent value of field
+	protected function get_prev($key) {
+		if(!$this->query) {
+			return null;
+		}
+		$prev_fields = $this->query[count($this->query) - 1]->fields;
+		return array_key_exists($key, $prev_fields) ? $prev_fields[$key]["value"] : null;
+	}
+
 }

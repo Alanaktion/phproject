@@ -156,22 +156,9 @@ class Issues extends Base {
 			$issue->load($post["id"]);
 			if($issue->id) {
 
-				// Log changes
-				$update = new \Model\Issue\Update();
-				$update->issue_id = $issue->id;
-				$update->user_id = $user_id;
-				$update->created_date = now();
-				$update->save();
-
 				// Diff contents and save what's changed.
 				foreach($post as $i=>$val) {
 					if($i != "notify" && $issue->$i != $val) {
-						$update_field = new \Model\Issue\Update\Field();
-						$update_field->issue_update_id = $update->id;
-						$update_field->field = $i;
-						$update_field->old_value = $issue->$i;
-						$update_field->new_value = $val;
-						$update_field->save();
 						if(empty($val)) {
 							$issue->$i = null;
 						} else {
@@ -188,15 +175,8 @@ class Issues extends Base {
 				}
 
 				// Save issue
-				$issue->save();
-
-				if($f3->get("user.role") == "admin" && empty($post["notify"])) {
-					// Don't send notification
-				} else {
-					// Notify watchers
-					$notification = \Helper\Notification::instance();
-					$notification->issue_update($issue->id, $update->id);
-				}
+				$notify = $f3->get("user.role") == "admin" && empty($post["notify"]);
+				$issue->save($notify);
 
 				$f3->reroute("/issues/" . $issue->id);
 			} else {
@@ -220,7 +200,10 @@ class Issues extends Base {
 			if(!empty($post["parent_id"])) {
 				$issue->parent_id = $post["parent_id"];
 			}
-			$issue->save();
+
+			// Save issue
+			$notify = $f3->get("user.role") == "admin" && empty($post["notify"]);
+			$issue->save($notify);
 
 			if($issue->id) {
 				$f3->reroute("/issues/" . $issue->id);
