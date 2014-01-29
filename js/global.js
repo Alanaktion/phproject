@@ -25,4 +25,9 @@ $(document).ready(function(){
 		self.location = '/issues/' + $(this).data('id');
 	});
 
+	// Auto-submit when select box is changed
+	$('.issue-filters').on('change', 'select, input', function(e) {
+		$(this).parents('form').submit();
+	});
+
 });
