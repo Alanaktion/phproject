@@ -110,13 +110,13 @@ var Taskboard = {
 	},
 	modalEdit: function(data) {
 		var user = $(data).find('.owner').text().trim(),
-		userColor = $(data).css('border-color'),
-		taskId = $(data).attr('id').replace('task_', ''),
-		title = $(data).find('.title').text().trim(),
-		description = $(data).find('.description').text().trim(),
-		hours = $(data).find('.hours').text().trim(),
-		date = $(data).find('.dueDate').text().trim(),
-		priority = $(data).find('.priority').data('value');
+			userColor = $(data).css('border-color'),
+			taskId = $(data).attr('id').replace('task_', ''),
+			title = $(data).find('.title').text().trim(),
+			description = $(data).find('.description').text().trim(),
+			hours = $(data).find('.hours').text().trim(),
+			date = $(data).find('.dueDate').text().trim(),
+			priority = $(data).find('.priority').data('value');
 
 		// console.log(priority);
 
@@ -335,17 +335,17 @@ var Taskboard = {
 	},*/
 	TaskboardSame: function(task, receiverSerialized) {
 		var taskId = $(task).attr("id").replace("task_", ""),
-		receiverStatus = $(task).parent().attr("data-status"),
-		receiverStory = $(task).parent().parent().attr("data-story-id"),
+			receiverStatus = $(task).parent().attr("data-status"),
+			receiverStory = $(task).parent().parent().attr("data-story-id"),
 
-		data = {
-			taskId: taskId,
-			receiver: {
-				"story": receiverStory,
-				"status": receiverStatus,
-				"sortingOrder": receiverSerialized
-			}
-		};
+			data = {
+				taskId: taskId,
+				receiver: {
+					"story": receiverStory,
+					"status": receiverStatus,
+					"sortingOrder": receiverSerialized
+				}
+			};
 
 		Taskboard.ajaxSendTaskPosition(data);
 
