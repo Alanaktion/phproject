@@ -55,9 +55,9 @@ require_once "app/functions.php";
 
 // Minify static resources
 // Cache for 3600s (1h)
-$f3->route("GET /minify/@type", function($f3, $args) {
+$f3->route("GET /minify/@type/@files", function($f3, $args) {
 	$f3->set("UI", $args["type"] . "/");
-	echo Web::instance()->minify($_GET["files"]);
+	echo Web::instance()->minify($args["files"]);
 }, 3600);
 
 // Load user if session exists

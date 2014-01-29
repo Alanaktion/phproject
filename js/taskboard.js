@@ -1,8 +1,10 @@
+/*jslint browser: true, ass: true, debug: true, eqeq: true, newcap: true, nomen: true, plusplus: true, unparam: true, sloppy: true, sub: true, vars: true, white: true */
+
 $(function() {
 	Taskboard.init();
 });
 
-Taskboard = {
+var Taskboard = {
 	updateURL: 'edit', //AJAX Update Route (id is added dynamically)
 	addURL: 'add', //AJAX Add Route
 	taskReceived: false, //used for checking tasks resorted within the same list or to another
@@ -107,16 +109,16 @@ Taskboard = {
 		});
 	},
 	modalEdit: function(data) {
-		user = $(data).find('.owner').text().trim();
-		userColor = $(data).css('border-color');
-		taskId = $(data).attr('id');
-		taskId = taskId.replace('task_', '');
-		title = $(data).find('.title').text().trim();
-		description = $(data).find('.description').text().trim();
-		hours = $(data).find('.hours').text().trim();
-		date = $(data).find('.dueDate').text().trim();
+		var user = $(data).find('.owner').text().trim(),
+		userColor = $(data).css('border-color'),
+		taskId = $(data).attr('id').replace('task_', ''),
+		title = $(data).find('.title').text().trim(),
+		description = $(data).find('.description').text().trim(),
+		hours = $(data).find('.hours').text().trim(),
+		date = $(data).find('.dueDate').text().trim(),
 		priority = $(data).find('.priority').text().trim();
-		console.log(priority);
+
+		// console.log(priority);
 
 		Taskboard.changeModalPriority(priority);
 		$("#task-dialog input#taskId").val(taskId);
@@ -141,18 +143,15 @@ Taskboard = {
 
 					$('.ui-error').remove();
 					$(".input-error").removeClass(".input-error");
-					var bValid = true;
-					bValid = bValid && isNumber($('#hours').val());
-					if (bValid) {
-						console.log('here');
-						console.log($("form#task-dialog").serializeObject());
+					if (isNumber($('#hours').val())) {
+						// console.log('here');
+						// console.log($("form#task-dialog").serializeObject());
 						Taskboard.updateCard(data, $("form#task-dialog").serializeObject());
 						$("#task-dialog").dialog("close");
 					} else {
 						$("#hours").before("<label style='color:red;display:block;' class='ui-error'>Value must be a number!</label>");
 						$("#hours").addClass("input-error");
 					}
-
 
 				}
 
@@ -185,7 +184,7 @@ Taskboard = {
 
 					var bValid = true;
 					bValid = isNumber($('#hours').val());
-					console.log(bValid);
+					// console.log(bValid);
 
 					Taskboard.addCard(data, $("form#task-dialog").serializeObject(), storyId);
 					$("#task-dialog").dialog("close");
@@ -214,7 +213,7 @@ Taskboard = {
 			}*/
 	},
 	updateCardPriority: function(priority, card) {
-		console.log(priority);
+		// console.log(priority);
 		switch (priority) {
 			case "normal":
 				$(card).find('.priority').attr("class", "priority normal");
@@ -229,7 +228,7 @@ Taskboard = {
 				$(card).find('.priority').text("High Priority");
 				break;
 			default:
-				console.log("no valid priority was set on Taskboard.updateCardPriority");
+				// console.log("no valid priority was set on Taskboard.updateCardPriority");
 				break;
 		}
 	},
@@ -261,15 +260,15 @@ Taskboard = {
 		$(card).find(".owner").text($("#task-dialog option[value='" + data.assigned + "']").text());
 		$(card).css("border-color", $("#task-dialog option[value='" + data.assigned + "']").attr("data-color"));
 		Taskboard.updateCardPriority(data.priority, card);
-		console.log(data);
-		console.log("PRIORITY:" + data.priority);
+		// console.log(data);
+		// console.log("PRIORITY:" + data.priority);
 		Taskboard.ajaxUpdateTask(data);
 	},
 	addCard: function(story, data, storyId) {
 		var row = $(story).parent().parent().parent().parent();
 		var cell = row.find("td.column-2"); // put new tasks in the new column
 		cell.append($(".cloneable:last").clone());
-		card = cell.find(".cloneable:last");
+		var card = cell.find(".cloneable:last");
 
 		$(card).find(".title").text(data.title);
 
@@ -307,7 +306,7 @@ Taskboard = {
 				"story": receiverStory,
 				"status": receiverStatus
 			}
-		}
+		};
 
 		Taskboard.ajaxSendTaskPosition(data);
 
@@ -335,10 +334,9 @@ Taskboard = {
 		}
 	},*/
 	TaskboardSame: function(task, receiverSerialized) {
-		taskId = $(task).attr("id");
-		taskId = taskId.replace("task_", "");
-		receiverStatus = $(task).parent().attr("data-status");
-		receiverStory = $(task).parent().parent().attr("data-story-id");
+		var taskId = $(task).attr("id").replace("task_", ""),
+		receiverStatus = $(task).parent().attr("data-status"),
+		receiverStory = $(task).parent().parent().attr("data-story-id"),
 
 		data = {
 			taskId: taskId,
@@ -347,16 +345,16 @@ Taskboard = {
 				"status": receiverStatus,
 				"sortingOrder": receiverSerialized
 			}
-		}
+		};
 
 		Taskboard.ajaxSendTaskPosition(data);
 
 	},
 	ajaxSendTaskPosition: function(data) {
-		taskId = data.taskId;
+		var taskId = data.taskId;
 		Taskboard.block(taskId);
-		console.log("ajaxSendTaskPosition:")
-		console.log(data);
+		// console.log("ajaxSendTaskPosition:")
+		// console.log(data);
 		$.ajax({
 			type: "POST",
 			url: Taskboard.updateURL + "/" + taskId,
@@ -372,10 +370,10 @@ Taskboard = {
 		});
 	},
 	ajaxUpdateTask: function(data) {
-		taskId = data.taskId;
+		var taskId = data.taskId;
 		Taskboard.block(taskId);
-		console.log("AjaxUpdateTask:");
-		console.log(data);
+		// console.log("AjaxUpdateTask:");
+		// console.log(data);
 		$.ajax({
 			type: "POST",
 			url: Taskboard.updateURL + "/" + taskId,
@@ -391,10 +389,10 @@ Taskboard = {
 		});
 	},
 	ajaxAddTask: function(data, card) {
-		taskId = data.newTaskId;
+		var taskId = data.newTaskId;
 		Taskboard.newBlock(taskId);
-		console.log("AjaxAddTask (this will need to pass bask taskId with new task id) :");
-		console.log(data);
+		// console.log("AjaxAddTask (this will need to pass bask taskId with new task id) :");
+		// console.log(data);
 		$.ajax({
 			type: "POST",
 			url: Taskboard.addURL,
@@ -416,36 +414,28 @@ Taskboard = {
 		});
 	},
 	block: function(taskId) {
-		task = $('#task_' + taskId);
-		task.append('<div class="spinner"></div>');
+		$('#task_' + taskId).append('<div class="spinner"></div>');
 	},
 	unBlock: function(taskId) {
-		task = $('#task_' + taskId);
-		task.find('.spinner').remove();
+		$('#task_' + taskId).find('.spinner').remove();
 	},
 	newBlock: function(taskId) {
-		task = $('#new_task_' + taskId);
-		task.append('<div class="spinner"></div>');
+		$('#new_task_' + taskId).append('<div class="spinner"></div>');
 	},
 	newUnBlock: function(taskId) {
-		task = $('#new_task_' + taskId);
-		task.find('.spinner').remove();
+		$('#new_task_' + taskId).find('.spinner').remove();
 	},
 	showError: function(taskId) {
-		task = $('#task_' + taskId);
-		task.css({
+		$('#task_' + taskId).css({
 			"opacity": ".8"
-		});
-		task.append('<div class="error" title="An error occured while saving the task!"></div>');
+		}).append('<div class="error" title="An error occured while saving the task!"></div>');
 	},
 	newShowError: function(taskId) {
-		task = $('#new_task_' + taskId);
-		task.css({
+		$('#new_task_' + taskId).css({
 			"opacity": ".8"
-		});
-		task.append('<div class="error" title="An error occured while saving the task!"></div>');
+		}).append('<div class="error" title="An error occured while saving the task!"></div>');
 	}
-}
+};
 
 function isNumber(n) {
 	return !isNaN(parseFloat(n)) && isFinite(n);
@@ -465,11 +455,10 @@ function checkLength(o, n, min, max) {
 function checkRegexp(o, regexp, n) {
 	if (!(regexp.test(o.val()))) {
 		o.addClass("ui-state-error");
-		updateTips(n);
+		//updateTips(n); // updateTips() function does not exist
 		return false;
-	} else {
-		return true;
 	}
+	return true;
 }
 
 jQuery.fn.serializeObject = function() {

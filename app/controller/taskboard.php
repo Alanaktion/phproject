@@ -92,13 +92,13 @@ class Taskboard extends Base {
 			$issue->name = $post["title"];
 			$issue->description = $post["description"];
 			$issue->owner_id = $post["assigned"];
-			//$issue->hours_remaining = $post["hours"];
+			$issue->hours_remaining = $post["hours"];
 			if(!empty($post["dueDate"])) {
 				$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
 			} else {
 				$issue->due_date = null;
 			}
-			//$issue->priority = $post["priority"];
+			$issue->priority = $post["priority"];
 			if(!empty($post["storyId"])) {
 				$issue->parent_id = $post["storyId"];
 			}
