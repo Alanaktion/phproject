@@ -177,6 +177,10 @@ select[multiple] {
 	width: 96px;
 }
 
+.issue-list tr.closed {
+	text-decoration: line-through;
+}
+
 .form-horizontal .checkbox-inline {
 	display: inline-block;
 	padding-top: 2px;

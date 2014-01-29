@@ -104,7 +104,7 @@
 		</thead>
 		<tbody>
 			<repeat group="{{ @issues.subset }}" value="{{ @item }}">
-				<tr data-id="{{ @item.id }}">
+				<tr data-id="{{ @item.id }}" class="{{ @item.status_closed ? 'closed' : '' }}">
 					<td><input type="checkbox" name="id[]" value="{{ @item.id }}"></td>
 					<td><a href="/issues/{{ @item.id }}">{{ @item.id }}</a></td>
 					<td><a href="/issues/{{ @item.id }}">{{ @item.name }}</a></td>
