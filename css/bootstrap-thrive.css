@@ -1790,7 +1790,7 @@ th {
 
 .table-hover > tbody > tr:hover > td,
 .table-hover > tbody > tr:hover > th {
-	background-color: #fff;
+	background-color: #7EC500;
 }
 
 table col[class*="col-"] {

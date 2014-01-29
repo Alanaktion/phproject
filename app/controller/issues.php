@@ -21,7 +21,11 @@ class Issues extends Base {
 		// Build SQL string to use for filtering
 		$filter_str = "";
 		foreach($filter as $i => $val) {
-			$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
+			if($i == "name") {
+				$filter_str .= "`$i` LIKE '%" . addslashes($val) . "%' AND ";
+			} else {
+				$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
+			}
 		}
 		$filter_str .= "deleted_date IS NULL";
 
