@@ -16,7 +16,7 @@
 							<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
 								<check if="{{ @crumb.id == @issue.id }}">
 									<true>
-										<li class="active">{{ @issue.name }} <small>#{{ @issue.id }}</small></li>
+										<li class="active">{{ @crumb.name }} <small>#{{ @crumb.id }}</small></li>
 									</true>
 									<false>
 										<li><a href="/issues/{{ @crumb.id }}">{{ @crumb.name }}</a></li>

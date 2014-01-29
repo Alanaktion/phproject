@@ -111,7 +111,7 @@
 					<td>{{ @item.type_name }}</td>
 					<td>{{ @item.priority_name }}</td>
 					<td>{{ @item.status_name }}</td>
-					<td><a href="/user/{{ @item.author_username }}">{{ @item.author_name }}</a></td>
+					<td><a href="/user/{{ @item.author_username }}" rel="author">{{ @item.author_name }}</a></td>
 					<td><a href="/user/{{ @item.owner_username }}">{{ @item.owner_name }}</a></td>
 					<td>{{ date("n/j/y h:ia", strtotime(@item.created_date)) }}</td>
 					<td>{{ !empty(@item.due_date) ? date("n/j/y", strtotime(@item.due_date)) : "" }}</td>
