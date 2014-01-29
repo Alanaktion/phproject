@@ -22,6 +22,10 @@ class Taskboard extends Base {
 		$statuses = $status->paginate(0, 100);
 		$f3->set("statuses", $statuses);
 
+		// Load issue priorities
+		$priority = new \Model\Issue\Priority();
+		$f3->set("priorities", $priority->paginate(0, 100));
+
 		// Load project list
 		$issue = new \Model\Custom("issue_detail");
 		$projects = $issue->paginate(0, 100, array("sprint_id = ? AND deleted_date IS NULL AND type_id = ?", $sprint->id, $f3->get("issue_type.project")), array("order" => "owner_id ASC"));

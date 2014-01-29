@@ -285,14 +285,14 @@ body .ui-state-default, body .ui-widget-content .ui-state-default {
 	border-radius: 3px;
 	transition: background-color .25s;
 }
-body .ui-state-default: last-child, body .ui-widget-content .ui-state-default:last-child {
+body .ui-state-default:last-child, body .ui-widget-content .ui-state-default:last-child {
 	background-color: #7EC500;
 	border-color: #7EC500;
 }
 body .ui-state-default:hover, body .ui-widget-content .ui-state-default:hover {
 	background-color: #ADADAD;
 }
-body .ui-state-default: last-child:hover, body .ui-widget-content .ui-state-default:last-child:hover {
+body .ui-state-default:last-child:hover, body .ui-widget-content .ui-state-default:last-child:hover {
 	background-color: #9CF301;
 }
 /* Bootstrap Issues */

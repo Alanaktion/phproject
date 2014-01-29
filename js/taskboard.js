@@ -116,7 +116,7 @@ var Taskboard = {
 		description = $(data).find('.description').text().trim(),
 		hours = $(data).find('.hours').text().trim(),
 		date = $(data).find('.dueDate').text().trim(),
-		priority = $(data).find('.priority').text().trim();
+		priority = $(data).find('.priority').data('value');
 
 		// console.log(priority);
 

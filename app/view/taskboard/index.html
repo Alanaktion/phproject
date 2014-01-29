@@ -108,9 +108,9 @@
 							<input type="textbox" name="dueDate" id="dueDate" value="" class="dueDate form-control">
 							<label for="priority">Priority</label>
 							<select id="priority" name="priority" class="form-control" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
-								<option value="Normal">Normal</option>
-								<option value="High">High</option>
-								<option value="Low">Low Priority</option>
+								<repeat group="{{ @priorities.subset }}" value="{{ @priority }}">
+									<option value="{{ @priority.value }}">{{ @priority.name }}</option>
+								</repeat>
 							</select>
 						</div>
 					</fieldset>
