@@ -10,7 +10,7 @@ class Backlog extends Base {
 		$sprint_model = new \Model\Sprint();
 		$sprints = $sprint_model->paginate(0, 100, array("end_date >= ?", now(false)), array("order" => "start_date ASC"));
 
-		$issue = new \Model\Custom("issue_detail");
+		$issue = new \Model\Issue\Detail();
 
 		$sprint_details = array();
 		foreach($sprints["subset"] as $sprint) {

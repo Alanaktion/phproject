@@ -7,7 +7,7 @@ class Issues extends Base {
 	public function index($f3, $params) {
 		$this->_requireLogin();
 
-		$issues = new \Model\Custom("issue_detail");
+		$issues = new \Model\Issue\Detail();
 
 		// Filter issue listing by URL parameters
 		$filter = array();
@@ -343,7 +343,7 @@ class Issues extends Base {
 		$issue->load($params["id"]);
 
 		if($issue->id) {
-			$issues = new \Model\Custom("issue_detail");
+			$issues = new \Model\Issue\Detail();
 			if($f3->get("issue_type.project") == $issue->type_id) {
 				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $issue->id)));
 			} else {

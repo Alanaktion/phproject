@@ -6,7 +6,8 @@ class Index extends Base {
 
 	public function index($f3, $params) {
 		if($f3->get("user.id")) {
-			$projects = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail");
+			$projects = new \Model\Issue\Detail();
+			$order = "priority DESC, has_due_date ASC, due_date ASC";
 			$f3->set("projects", $projects->paginate(
 				0, 50,
 				array(
@@ -14,7 +15,7 @@ class Index extends Base {
 					":owner" => $f3->get("user.id"),
 					":type" => $f3->get("issue_type.project"),
 				),array(
-					"order" => "(due_date IS NULL), due_date ASC"
+					"order" => $order
 				)
 			));
 
@@ -26,7 +27,7 @@ class Index extends Base {
 					":owner" => $f3->get("user.id"),
 					":type" => $f3->get("issue_type.bug"),
 				),array(
-					"order" => "(due_date IS NULL), due_date ASC"
+					"order" => $order
 				)
 			));
 
@@ -38,7 +39,7 @@ class Index extends Base {
 					":owner" => $f3->get("user.id"),
 					":type" => $f3->get("issue_type.task"),
 				),array(
-					"order" => "(due_date IS NULL), due_date ASC"
+					"order" => $order
 				)
 			));
 

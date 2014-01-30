@@ -27,7 +27,7 @@ class Taskboard extends Base {
 		$f3->set("priorities", $priority->paginate(0, 100));
 
 		// Load project list
-		$issue = new \Model\Custom("issue_detail");
+		$issue = new \Model\Issue\Detail();
 		$projects = $issue->paginate(0, 100, array("sprint_id = ? AND deleted_date IS NULL AND type_id = ?", $sprint->id, $f3->get("issue_type.project")), array("order" => "owner_id ASC"));
 
 		// Build multidimensional array of all tasks and projects
@@ -41,7 +41,7 @@ class Taskboard extends Base {
 			}
 
 			// Get all tasks under the project, put them under their status
-			$tasks = $issue->paginate(0, 100, array("parent_id = ? AND type_id = ? AND deleted_Date IS NULL", $project["id"], $f3->get("issue_type.task")), array("order" => "due_date ASC"));
+			$tasks = $issue->paginate(0, 100, array("parent_id = ? AND type_id = ? AND deleted_Date IS NULL", $project["id"], $f3->get("issue_type.task")), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
 			foreach($tasks["subset"] as $task) {
 				$columns[$task["status"]][] = $task;
 			}
