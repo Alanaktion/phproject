@@ -210,6 +210,15 @@ textarea.form-control {
 }
 /* </Compact UI> */
 
+/* Single line definition tags */
+dl.inline dt {
+	float: left;
+	margin-right: .5em;
+}
+dl.inline dt:after {
+	content: ':';
+}
+
 a:focus, button:focus, input:focus, .btn:focus {
 	outline: thin none;
 }

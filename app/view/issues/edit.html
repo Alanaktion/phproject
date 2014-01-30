@@ -77,14 +77,14 @@
 					<div class="form-group">
 						<label class="col-md-2 control-label label-sm">Total Hours</label>
 						<div class="col-md-6">
-							<input class="form-control input-sm" type="text" name="hours_total" value="{{ @issue.total_hours }}">
+							<input class="form-control input-sm" type="text" name="hours_total" value="{{ @issue.hours_total }}">
 						</div>
 					</div>
 				</check>
 				<div class="form-group">
 					<label class="col-md-2 control-label label-sm">Remaining Hours</label>
 					<div class="col-md-6">
-						<input class="form-control input-sm" type="text" name="hours_remaining" value="{{ empty(@issue) ? "" : @issue.remaining_hours }}">
+						<input class="form-control input-sm" type="text" name="hours_remaining" value="{{ empty(@issue) ? "" : @issue.hours_remaining }}">
 					</div>
 				</div>
 

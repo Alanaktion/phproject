@@ -65,17 +65,33 @@
 								</p>
 							</div>
 
-							<p>
-								<strong>Assigned to:</strong> <a href="/user/{{ @owner.username }}">{{ @owner.name }}</a><br>
-								<strong>Status:</strong> {{ @status.name }}
-								<check if="{{ strtotime(@issue.due_date) > time() }}">
-									<br><strong>Due Date:</strong> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}
+							<dl class="inline">
+								<dt>Assigned to</dt>
+								<dd><a href="/user/{{ @owner.username }}">{{ @owner.name }}</a></dd>
+
+								<dt>Priority</dt>
+								<dd>{{ @issue.priority_name }}</dd>
+
+								<dt>Status</dt>
+								<dd>{{ @issue.status_name }}</dd>
+
+								<dt>Total Hours</dt>
+								<dd>{{ @issue.hours_total }}</dd>
+
+								<dt>Remaining Hours</dt>
+								<dd>{{ @issue.hours_remaining }}</dd>
+
+								<check if="{{ strtotime(@issue.due_date) }}">
+									<dt>Due Date</dt>
+									<dd>{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</dd>
 								</check>
-								<check if="{{ strtotime(@issue.due_date) && strtotime(@issue.due_date) <= time() }}">
-									<br><strong>Due Date:</strong> <span class="text-danger">{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</span>
-								</check>
-							</p>
-							<p>{{ nl2br(\Model\Issue::clean(@issue.description)) }}</p>
+							</dl>
+
+							<dl>
+								<dt>Description:</dt>
+								<dd>{{ nl2br(\Model\Issue::clean(@issue.description)) }}</dd>
+							</dl>
+
 							<hr class="hidden-lg">
 						</div>
 

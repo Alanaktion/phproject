@@ -158,7 +158,7 @@ class Issues extends Base {
 
 				// Diff contents and save what's changed.
 				foreach($post as $i=>$val) {
-					if($issue->$i != $val && $issue->exists($i)) {
+					if($i != "notify" && $issue->$i != $val && $issue->exists($i)) {
 						if(empty($val)) {
 							$issue->$i = null;
 						} else {
@@ -221,7 +221,7 @@ class Issues extends Base {
 	public function single($f3, $params) {
 		$user_id = $this->_requireLogin();
 
-		$issue = new \Model\Issue();
+		$issue = new \Model\Issue\Detail();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
 		if(!$issue->id) {
@@ -292,10 +292,6 @@ class Issues extends Base {
 		$author->load(array("id=?", $issue->author_id));
 		$owner = new \Model\User();
 		$owner->load(array("id=?", $issue->owner_id));
-
-		$status = new \Model\Issue\Status();
-		$status->load($issue->status);
-		$f3->set("status", $status->cast());
 
 		$files = new \Model\Issue\File();
 		$f3->set("files", $files->paginate(0, 64, array("issue_id = ?", $issue->id)));
