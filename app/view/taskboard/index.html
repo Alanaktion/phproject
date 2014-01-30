@@ -36,7 +36,7 @@
 						<td class="column column-{{ @status_id + 1 }} droppable" data-status="{{ @status_id }}">
 							<repeat group="{{ @col }}" value="{{ @task }}">
 								<div data-departement="" class="card task {{ @task.status_closed ? 'completed' : '' }}" id="task_{{ @task.id }}" style="border-color:#{{ @task.owner_task_color }};">
-									<div class="hours">{{ @task.hours_remaining }}</div>
+									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
 										<span class="task-id"><a href="/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
 									</div>

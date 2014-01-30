@@ -234,6 +234,9 @@ body {
 	margin-top: 5px;
 	margin-bottom: 2px;
 }
+.ui-dialog .ui-dialog-content {
+	overflow: hidden;
+}
 .ui-dialog .form-control {
 	padding: 5px;
 	height: 36px;
