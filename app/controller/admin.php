@@ -221,4 +221,49 @@ Variable_name = 'Uptime'"));
 		}
 	}
 
+	public function attributes($f3, $params) {
+		$this->_requireAdmin();
+		$f3->set("title", "Manage Issue Attributes");
+		echo \Template::instance()->render("admin/attributes.html");
+	}
+
+	public function sprints($f3, $params) {
+		$this->_requireAdmin();
+		$f3->set("title", "Manage Sprints");
+		$sprints = new \Model\Sprint();
+		$f3->set("sprints", $sprints->paginate(0, 1000));
+		echo \Template::instance()->render("admin/sprints.html");
+	}
+
+	public function sprint_new($f3, $params) {
+		$this->_requireAdmin();
+		$f3->set("title", "New Sprint");
+
+		if($post = $f3->get("POST")) {
+			if(empty($post["start_date"]) || empty($post["end_date"])) {
+				$f3->set("error", "Start and end date are required");
+				echo \Template::instance()->render("admin/sprints/new.html");
+				return;
+			}
+
+			$start = strtotime($post["start_date"]);
+			$end = strtotime($post["end_date"]);
+
+			if($end <= $start) {
+				$f3->set("error", "End date must be after start date");
+				echo \Template::instance()->render("admin/sprints/new.html");
+				return;
+			}
+
+			$sprint = new \Model\Sprint();
+			$sprint->name = trim($post["name"]);
+			$sprint->start_date = date("Y-m-d", $start);
+			$sprint->end_date = date("Y-m-d", $end);
+			$sprint->save();
+			$f3->reroute("/admin/sprints");
+		}
+
+		echo \Template::instance()->render("admin/sprints/new.html");
+	}
+
 }

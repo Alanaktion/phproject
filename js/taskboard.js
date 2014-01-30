@@ -59,8 +59,11 @@ var Taskboard = {
 
 		});
 
-		//initialize modal double clicks
-		$(".card.task").click(function() {
+		//initialize issue editing handler
+		$(".card.task a").click(function(e) {
+			e.stopPropagation();
+		});
+		$(".card.task").click(function(e) {
 			Taskboard.modalEdit($(this));
 		});
 
