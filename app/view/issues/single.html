@@ -65,9 +65,12 @@
 								</p>
 							</div>
 
-							<dl class="inline">
+							<dl class="dl-inline">
 								<dt>Assigned to</dt>
 								<dd><a href="/user/{{ @owner.username }}">{{ @owner.name }}</a></dd>
+
+								<dt>Type</dt>
+								<dd>{{ @issue.type_name }}</dd>
 
 								<dt>Priority</dt>
 								<dd>{{ @issue.priority_name }}</dd>

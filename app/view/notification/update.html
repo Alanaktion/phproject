@@ -21,7 +21,7 @@
 		<p style="margin: 0 0 10px;"><strong><a href="{{ @SCHEME }}://{{ @HOST }}/issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> updated by <a href="{{ @SCHEME }}://{{ @HOST }}/users/{{ @update.user_username }}">{{ @update.user_name }}</a>:</strong></p>
 		<img src="https:{{ gravatar(@update.user_email, 48) }}" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left">
-			<ul>
+			<ul style="padding: 0;">
 				<repeat group="{{ @changes.subset }}" value="{{ @change }}">
 					<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @change.old_value }}</i> to <i>{{ @change.new_value }}</i></li>
 				</repeat>

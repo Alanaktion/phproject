@@ -60,7 +60,7 @@ var Taskboard = {
 		});
 
 		//initialize modal double clicks
-		$(".card.task").dblclick(function() {
+		$(".card.task").click(function() {
 			Taskboard.modalEdit($(this));
 		});
 
