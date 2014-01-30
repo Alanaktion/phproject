@@ -3,32 +3,31 @@
 <head>
 	<meta charset="UTF-8">
 	<style type="text/css">
-        body {
-        	margin: 0;
-            padding: 0;
-            font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
-            font-size: 14px;
-            line-height: 16px;
-            color: #000;
-        }
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+			font-size: 14px;
+			line-height: 16px;
+			color: #000;
+		}
 	</style>
 </head>
 <body>
-    <div style="padding: 10px; background-color: #3D3D3C;">
-        <h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME }}://{{ @HOST }}" style="color: #FFFFFF; text-decoration: none;">{{ @site.name }}</a></h1>
-    </div>
-    <div style="padding: 10px;">
-        <p style="margin: 0 0 10px;"><strong><a href="{{ @SCHEME }}://{{ @HOST }}/issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> updated by {{ @update.user_name }}:</strong></p>
-        <img src="{{ gravatar(@update.user_email) }}" alt="" style="float: left; margin-right: 10px;">
-        <div style="float: left">
-            <a href="{{ @SCHEME }}://{{ @HOST }}/users/{{ @update.user_username }}">{{ @update.user_name }}</a><br>
-            <ul>
-                <repeat group="{{ @changes.subset }}" value="{{ @change }}">
-                    <li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @change.old_value }}</i> to <i>{{ @change.new_value }}</i></li>
-                </repeat>
-            </ul>
-            <span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</small></span>
-        </div>
-    </div>
+	<div style="padding: 10px; background-color: #3D3D3C;">
+		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME }}://{{ @HOST }}" style="color: #FFFFFF; text-decoration: none;">{{ @site.name }}</a></h1>
+	</div>
+	<div style="padding: 10px;">
+		<p style="margin: 0 0 10px;"><strong><a href="{{ @SCHEME }}://{{ @HOST }}/issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> updated by <a href="{{ @SCHEME }}://{{ @HOST }}/users/{{ @update.user_username }}">{{ @update.user_name }}</a>:</strong></p>
+		<img src="https:{{ gravatar(@update.user_email, 48) }}" alt="" style="float: left; margin-right: 10px;">
+		<div style="float: left">
+			<ul>
+				<repeat group="{{ @changes.subset }}" value="{{ @change }}">
+					<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @change.old_value }}</i> to <i>{{ @change.new_value }}</i></li>
+				</repeat>
+			</ul>
+			<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</small></span>
+		</div>
+	</div>
 </body>
 </html>

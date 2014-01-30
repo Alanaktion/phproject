@@ -158,7 +158,7 @@ class Issues extends Base {
 
 				// Diff contents and save what's changed.
 				foreach($post as $i=>$val) {
-					if($i != "notify" && $issue->$i != $val) {
+					if($issue->$i != $val && $issue->exists($i)) {
 						if(empty($val)) {
 							$issue->$i = null;
 						} else {
@@ -194,6 +194,8 @@ class Issues extends Base {
 			$issue->priority = $post["priority"];
 			$issue->status = $post["status"];
 			$issue->owner_id = $post["owner_id"];
+			$issue->hours_total = $post["hours_remaining"];
+			$issue->hours_remaining = $post["hours_remaining"];
 			if(!empty($post["due_date"])) {
 				$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
 			}

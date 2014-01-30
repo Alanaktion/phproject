@@ -72,6 +72,22 @@
 						</select>
 					</div>
 				</div>
+
+				<check if="{{ !empty(@issue) }}">
+					<div class="form-group">
+						<label class="col-md-2 control-label label-sm">Total Hours</label>
+						<div class="col-md-6">
+							<input class="form-control input-sm" type="text" name="hours_total" value="{{ @issue.total_hours }}">
+						</div>
+					</div>
+				</check>
+				<div class="form-group">
+					<label class="col-md-2 control-label label-sm">Remaining Hours</label>
+					<div class="col-md-6">
+						<input class="form-control input-sm" type="text" name="hours_remaining" value="{{ empty(@issue) ? "" : @issue.remaining_hours }}">
+					</div>
+				</div>
+
 				<div class="form-group">
 					<label class="col-md-2 control-label label-sm">Due Date</label>
 					<div class="col-md-6">
