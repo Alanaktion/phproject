@@ -296,6 +296,12 @@ class Issues extends Base {
 		$files = new \Model\Issue\File();
 		$f3->set("files", $files->paginate(0, 64, array("issue_id = ?", $issue->id)));
 
+		if($issue->sprint_id) {
+			$sprint = new \Model\Sprint();
+			$sprint->load($issue->sprint_id);
+			$f3->set("sprint", $sprint->cast());
+		}
+
 		$watching = new \Model\Issue\Watcher();
 		$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $user_id));
 		$f3->set("watching", !!$watching->id);
