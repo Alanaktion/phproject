@@ -75,7 +75,7 @@
 								<dt>Status</dt>
 								<dd>{{ @issue.status_name }}</dd>
 
-								<check if="{{ !empty(@issue.hours_total }}">
+								<check if="{{ !empty(@issue.hours_total) }}">
 									<dt>Total Hours</dt>
 									<dd>{{ @issue.hours_total }}</dd>
 
