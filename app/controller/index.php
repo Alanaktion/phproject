@@ -11,7 +11,7 @@ class Index extends Base {
 			$f3->set("projects", $projects->paginate(
 				0, 50,
 				array(
-					"owner_id=:owner and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL",
+					"owner_id=:owner and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 					":owner" => $f3->get("user.id"),
 					":type" => $f3->get("issue_type.project"),
 				),array(
@@ -23,7 +23,7 @@ class Index extends Base {
 			$f3->set("bugs", $bugs->paginate(
 				0, 50,
 				array(
-					"owner_id=:owner and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL",
+					"owner_id=:owner and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 					":owner" => $f3->get("user.id"),
 					":type" => $f3->get("issue_type.bug"),
 				),array(
@@ -35,7 +35,7 @@ class Index extends Base {
 			$f3->set("tasks", $tasks->paginate(
 				0, 50,
 				array(
-					"owner_id=:owner AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL",
+					"owner_id=:owner AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 					":owner" => $f3->get("user.id"),
 					":type" => $f3->get("issue_type.task"),
 				),array(

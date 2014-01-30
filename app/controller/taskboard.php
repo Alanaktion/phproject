@@ -92,6 +92,11 @@ class Taskboard extends Base {
 		if(!empty($post["receiver"])) {
 			$issue->parent_id = $post["receiver"]["story"];
 			$issue->status = $post["receiver"]["status"];
+			$status = new \Model\Issue\Status();
+			$status->load($issue->status);
+			if($status->closed) {
+				$issue->closed_date = now();
+			}
 		} else {
 			$issue->name = $post["title"];
 			$issue->description = $post["description"];
