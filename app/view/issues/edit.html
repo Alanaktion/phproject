@@ -91,7 +91,8 @@
 				<div class="form-group">
 					<label class="col-md-2 control-label label-sm">Due Date</label>
 					<div class="col-md-6">
-						<input class="form-control input-sm" id="due_date" type="date" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus" value="{{ empty(@issue) ? "" : @issue.due_date }}">
+						<input class="form-control input-sm" id="due_date" type="date" name="due_date">
+						<!-- <input class="form-control input-sm" id="due_date" type="date" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus" value="{{ empty(@issue) ? "" : @issue.due_date }}"> -->
 					</div>
 				</div>
 				<div class="form-group">
@@ -122,10 +123,19 @@
 	</div>
 	<include href="blocks/footer.html" />
 </div>
+<script src="/minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(function() {
 	if(!Modernizr.inputtypes.date) {
-		$('#due_date').popover();
+		//$('#due_date').popover();
+		var nowTemp = new Date();
+		var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+		$('#due_date').datepicker({
+			format: 'yy-mm-dd',
+			onRender: function(date) {
+				return date.valueOf() < now.valueOf() ? 'disabled' : '';
+			}
+		});
 	}
 });
 </script>
