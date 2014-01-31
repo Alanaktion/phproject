@@ -133,15 +133,15 @@
 							<br>
 
 							<ul class="nav nav-tabs">
-								<li class="active"><a href="#comments" data-toggle="tab">Comments</a></li>
-								<li><a href="#history" data-toggle="tab">History</a></li>
-								<li><a href="#watchers" data-toggle="tab">Watchers</a></li>
+								<li class="active"><a href="#comments" data-toggle="tab">Comments&ensp;<span class="badge">{{ @comments.total }}</span></a></li>
+								<li><a href="#history" data-toggle="tab" id="tab_history">History</a></li>
+								<li><a href="#watchers" data-toggle="tab" id="tab_watchers">Watchers</a></li>
 								<check if="{{ @issue_type.project == @type.id }}">
 									<true>
-										<li><a href="#related" data-toggle="tab">Child Tasks</a></li>
+										<li><a href="#related" data-toggle="tab" id="tab_related">Child Tasks</a></li>
 									</true>
 									<false>
-										<li><a href="#related" data-toggle="tab">Related Tasks</a></li>
+										<li><a href="#related" data-toggle="tab" id="tab_related">Related Tasks</a></li>
 									</false>
 								</check>
 							</ul>
@@ -246,12 +246,14 @@ $(function() {
 
 	// Load history, watchers, and related issues
 	$.get('/issues/{{ @issue.id }}/history', {}, function(data) {
-		$('#history').empty().append(data);
-	}, 'html').error(function() {
+		$('#history').empty().append(data.html);
+		$('#tab_history').html('History&ensp;<span class="badge">' + data.total + '</span>');
+	}, 'json').error(function() {
 		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('Error loading issue history.'));
 	});
 	$.get('/issues/{{ @issue.id }}/watchers', {}, function(data) {
-		$('#watchers').empty().append(data);
+		$('#watchers').empty().append(data.html);
+		$('#tab_watchers').html('Watchers&ensp;<span class="badge">' + data.total + '</span>');
 
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
@@ -276,12 +278,13 @@ $(function() {
 			e.preventDefault();
 		});
 
-	}, 'html').error(function() {
+	}, 'json').error(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('Error loading watchers.'));
 	});
 	$.get('/issues/{{ @issue.id }}/related', {}, function(data) {
-		$('#related').empty().append(data);
-	}, 'html').error(function() {
+		$('#related').empty().append(data.html);
+		$('#tab_related').html($('#tab_related').text() + '&ensp;<span class="badge">' + data.total + '</span>');
+	}, 'json').error(function() {
 		$('#related').empty().append($('<p />').addClass('text-center text-danger').text('Error loading related issues.'));
 	});
 

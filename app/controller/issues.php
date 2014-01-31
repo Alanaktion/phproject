@@ -334,7 +334,10 @@ class Issues extends Base {
 
 		$f3->set("updates", $updates_array);
 
-		echo \Template::instance()->render("issues/single/history.html");
+		print_json(array(
+			"total" => $updates["total"],
+			"html" => \Template::instance()->render("issues/single/history.html")
+		));
 	}
 
 	public function single_related($f3, $params) {
@@ -349,7 +352,11 @@ class Issues extends Base {
 			} else {
 				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
 			}
-			echo \Template::instance()->render("issues/single/related.html");
+
+			print_json(array(
+				"total" => $f3->get("issues.total"),
+				"html" => \Template::instance()->render("issues/single/related.html")
+			));
 		} else {
 			$f3->error(404);
 		}
@@ -361,7 +368,11 @@ class Issues extends Base {
 		$f3->set("watchers", $watchers->paginate(0, 100, array("issue_id = ?", $params["id"])));
 		$users = new \Model\User();
 		$f3->set("users", $users->paginate(0, 100, "deleted_date IS NULL AND role != 'group'"));
-		echo \Template::instance()->render("issues/single/watchers.html");
+
+		print_json(array(
+			"total" => $f3->get("watchers.total"),
+			"html" => \Template::instance()->render("issues/single/watchers.html")
+		));
 	}
 
 	public function single_delete($f3, $params) {
