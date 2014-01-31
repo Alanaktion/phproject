@@ -18,7 +18,13 @@ class Backlog extends Base {
 			$sprint_details[] = $sprint->cast() + array("projects" => $projects["subset"]);
 		}
 
-		$unset_projects = $issue->paginate(0, 1000, array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL", $f3->get("issue_type.project")));
+		$large_projects = $f3->get("db.instance")->exec("SELECT parent_id FROM issue WHERE parent_id IS NOT NULL AND type_id = ?", $f3->get("issue_type.project"));
+		$large_project_ids = array();
+		foreach($large_projects as $p) {
+			$large_project_ids[] = $p["parent_id"];
+		}
+		$large_project_ids = implode(",", $large_project_ids);
+		$unset_projects = $issue->paginate(0, 1000, array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids})", $f3->get("issue_type.project")));
 
 		$f3->set("sprints", $sprint_details);
 		$f3->set("backlog", $unset_projects);
