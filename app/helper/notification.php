@@ -12,7 +12,7 @@ class Notification extends \Prefab {
 		// Get issue and comment data
 		$issue = new \Model\Issue();
 		$issue->load($issue_id);
-		$comment = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
+		$comment = new \Model\Custom("issue_comment_user");
 		$comment->load($comment_id);
 
 		// Get recipient list and remove current user
@@ -50,7 +50,7 @@ class Notification extends \Prefab {
 		$issue = new \Model\Issue();
 		$issue->load($issue_id);
 		$f3->set("issue", $issue->cast());
-		$update = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_update_user", null, 3600);
+		$comment = new \Model\Custom("issue_update_user");
 		$update->load($update_id);
 
 		$changes = new \Model\Issue\Update\Field();

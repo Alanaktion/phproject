@@ -131,28 +131,27 @@ textarea {
 	padding: 4px 0;
 }
 
-.comment,
-.update {
-	margin-bottom: 15px;
-}
-.comments .comment p,
-#history .update p {
+.comments > .media p,
+#history .media p {
 	line-height: 20px;
 }
 .comments .comment p:last-child {
 	line-height: 16px;
 }
 .comments,
-.comments .comment p,
-#history .update p,
+.comments > .media p,
+#history .media p,
 .comments .form-group:last-child {
 	margin-bottom: 0;
 }
-.comments .comment p small {
+.comments > .media p small {
 	font-size: 12px;
 }
-#history .update ul {
+#history .media ul {
 	padding-left: 1.3em;
+}
+.comments > form {
+	margin-top: 15px;
 }
 
 .breadcrumb.panel-title {
@@ -197,7 +196,7 @@ textarea.form-control {
 	right: 15px;
 }
 
-/* <Compact UI> */
+/* Compact UI */
 .dashboard .list-group-item {
 	padding: 7px 9px;
 }
@@ -208,10 +207,8 @@ textarea.form-control {
 .form-horizontal .control-label.label-sm {
 	padding-top: 8px;
 }
-/* </Compact UI> */
+/* */
 
-
-/* Single line definition tags */
 dl.dl-inline dt {
 	float: left;
 	clear: left;
@@ -223,6 +220,18 @@ dl.dl-inline dt:after {
 
 dl.dl-horizontal-left dt {
 	text-align: left;
+}
+
+.panel-heading a[data-toggle='collapse']:before {
+	content: '\25bc';
+	margin-right: 5px;
+}
+.panel-heading a[data-toggle='collapse'].collapsed:before {
+	content: '\25b6';
+}
+.panel-heading a[data-toggle='collapse']:hover,
+.panel-heading a[data-toggle='collapse']:focus {
+	text-decoration: none;
 }
 
 a:focus, button:focus, input:focus, .btn:focus {

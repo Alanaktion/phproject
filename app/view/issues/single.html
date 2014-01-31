@@ -149,10 +149,12 @@
 								<div class="tab-pane active" id="comments">
 									<div class="comments" id="comments">
 										<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
-											<div class="comment clearfix">
-												<img src="{{ h(gravatar(@comment.user_email, 48)) }}" class="profile-picture img-rounded" alt>
-												<div class="pull-left-full">
-													<p><strong><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
+											<div class="media">
+												<a class="pull-left" href="/user/{{ @comment.user_username }}">
+													<img class="profile-picture media-object img-rounded" src="{{ h(gravatar(@comment.user_email, 48)) }}" alt>
+												</a>
+												<div class="media-body">
+													<p class="media-heading"><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
 													<p>{{ @comment.text }}</p>
 													<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
 												</div>
@@ -216,13 +218,15 @@ $(function() {
 			$('#comment_form')
 				.prop('disabled', false)
 				.before(
-'<div class="comment clearfix">' +
-'<img src="//gravatar.com/avatar/' + data.user_email_md5 + '?s=48" class="pull-left profile-picture img-rounded" alt>' +
-'<div class="pull-left">' +
-'<p><strong><a href="/user/' + data.user_username + '">' + data.user_name + '</a></strong></p>' +
-'<p>' + data.text + '</p>' +
-'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
-'</div>' +
+'<div class="media">' +
+	'<a class="pull-left" href="/user/' + data.user_username + '">' +
+		'<img src="//gravatar.com/avatar/' + data.user_email_md5 + '?s=48" class="media-object profile-picture img-rounded" alt>' +
+	'</a>' +
+	'<div class="media-body">' +
+		'<p class="media-heading"><a href="/user/' + data.user_username + '">' + data.user_name + '</a></p>' +
+		'<p>' + data.text + '</p>' +
+		'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
+	'</div>' +
 '</div>');
 			$('#comment_textarea').val('');
 		}, 'json');

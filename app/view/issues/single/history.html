@@ -1,8 +1,10 @@
 <repeat group="{{ @updates }}" value="{{ @update }}">
-	<div class="update clearfix">
-		<img src="{{ h(gravatar(@update.user_email, 48)) }}" class="pull-left profile-picture img-rounded" alt>
-		<div class="pull-left-full">
-			<p><strong><a href="/user/{{ @update.user_username }}">{{ @update.user_name }}</a></strong> on {{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</p>
+	<div class="media">
+		<a class="pull-left" href="/user/{{ @update.user_username }}">
+			<img src="{{ h(gravatar(@update.user_email, 48)) }}" class="media-object profile-picture img-rounded" alt>
+		</a>
+		<div class="media-body">
+			<p class="media-heading"><strong><a href="/user/{{ @update.user_username }}">{{ @update.user_name }}</a></strong> on {{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</p>
 			<ul>
 				<repeat group="{{ @update.changes.subset }}" value="{{ @change }}">
 					<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @change.old_value }}</i> to <i>{{ @change.new_value }}</i></li>

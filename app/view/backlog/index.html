@@ -35,7 +35,7 @@
 				<repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
 					<div class="panel panel-default">
 						<div class="panel-heading has-buttons">
-							<a data-toggle="collapse" href="#panel-{{ @sprint.id }}">&#177; {{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
+							<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
 							<div class="pull-right">
 								<a href="/taskboard/{{ @sprint.id }}" class="btn btn-default btn-xs">
 									<span class="glyphicon glyphicon-list"></span> Taskboard
