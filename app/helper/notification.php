@@ -50,7 +50,7 @@ class Notification extends \Prefab {
 		$issue = new \Model\Issue();
 		$issue->load($issue_id);
 		$f3->set("issue", $issue->cast());
-		$comment = new \Model\Custom("issue_update_user");
+		$update = new \Model\Custom("issue_update_user");
 		$update->load($update_id);
 
 		$changes = new \Model\Issue\Update\Field();
