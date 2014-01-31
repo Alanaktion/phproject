@@ -14,11 +14,11 @@
 	</style>
 </head>
 <body>
-	<div style="padding: 10px; background-color: #3D3D3C;">
-		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME }}://{{ @HOST }}" style="color: #FFFFFF; text-decoration: none;">{{ @site.name }}</a></h1>
+	<div style="padding: 0 10px;">
+		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME }}://{{ @HOST }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
 	</div>
 	<div style="padding: 10px;">
-		<p style="margin: 0 0 10px;"><strong>New comment on <a href="{{ @SCHEME }}://{{ @HOST }}/issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>: by <a href="{{ @SCHEME }}://{{ @HOST }}/users/{{ @comment.user_username }}">{{ @comment.user_name }}</a></strong></p>
+		<p style="margin: 0 0 10px;"><strong>New comment from <a href="{{ @SCHEME }}://{{ @HOST }}/users/{{ @comment.user_username }}">{{ @comment.user_name }}</a> on <a href="{{ @SCHEME }}://{{ @HOST }}/issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>:</strong></p>
 		<img src="https:{{ gravatar(@comment.user_email, 48) }}" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left">
 			{{ @comment.text }}<br>
