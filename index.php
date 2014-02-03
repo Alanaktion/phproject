@@ -3,6 +3,9 @@
 if ((float)PCRE_VERSION<7.9)
 	trigger_error('PCRE version is out of date');
 
+// Performance tracking
+$mtime = microtime(true);
+
 // Initialize core
 $f3=require("lib/base.php");
 $f3->mset(array(
@@ -60,8 +63,8 @@ $f3->route("GET /minify/@type/@files", function($f3, $args) {
 	echo Web::instance()->minify($args["files"]);
 }, 3600);
 
-// Instantiate session handler
-// session_name("PHPROJSESS");
+// Set up session handler
+session_name("PHPROJSESS");
 // new Session();
 
 // Load user if session exists
