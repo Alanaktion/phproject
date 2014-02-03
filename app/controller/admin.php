@@ -123,7 +123,7 @@ Variable_name = 'Uptime'"));
 		$group_array =  array();
 		foreach($groups["subset"] as $g) {
 			$db = $f3->get("db.instance");
-			$db->exec("SELECT id FROM group_user WHERE group_id = ?", $g["id"]);
+			$db->exec("SELECT id FROM user_group WHERE group_id = ?", $g["id"]);
 			$count = $db->count();
 			$group_array[] = array(
 				"id" => $g["id"],
@@ -158,7 +158,7 @@ Variable_name = 'Uptime'"));
 		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
 		$f3->set("group", $group->cast());
 
-		$members = new \DB\SQL\Mapper($f3->get("db.instance"), "group_user_user", null, 3600);
+		$members = new \DB\SQL\Mapper($f3->get("db.instance"), "user_group_user", null, 3600);
 		$f3->set("members", $members->paginate(array("group_id = ? AND deleted_date IS NULL", $group->id)));
 
 		$users = new \Model\User();
@@ -196,21 +196,21 @@ Variable_name = 'Uptime'"));
 		switch($f3->get('POST.action')) {
 			case "add_member":
 				foreach($f3->get("POST.user") as $user_id) {
-					$user = new \Model\Group\User();
-					$user->load(array("user_id = ? AND group_id = ?", $user_id, $f3->get("POST.group_id")));
-					if(!$user->id) {
-						$user->group_id = $f3->get("POST.group_id");
-						$user->user_id = $user_id;
-						$user->save();
+					$user_group = new \Model\User\Group();
+					$user_group->load(array("user_id = ? AND group_id = ?", $user_id, $f3->get("POST.group_id")));
+					if(!$user_group->id) {
+						$user_group->group_id = $f3->get("POST.group_id");
+						$user_group->user_id = $user_id;
+						$user_group->save();
 					} else {
 						// user already in group
 					}
 				}
 				break;
 			case "remove_member":
-				$group_user = new \Model\Group\User();
-				$group_user->load(array("user_id = ? AND group_id = ?", $f3->get("POST.user_id"), $f3->get("POST.group_id")));
-				$group_user->delete();
+				$user_group = new \Model\User\Group();
+				$user_group->load(array("user_id = ? AND group_id = ?", $f3->get("POST.user_id"), $f3->get("POST.group_id")));
+				$user_group->delete();
 				print_json(array("deleted" => 1));
 				break;
 			case "change_title":
