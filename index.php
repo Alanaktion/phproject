@@ -9,7 +9,7 @@ $f3->mset(array(
 	"UI" => "app/view/",
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
-	"CACHE" => "tmp/cache/",
+	"CACHE" => true,
 	"AUTOLOAD" => "app/",
 	"PACKAGE" => "Phproject"
 ));
@@ -59,6 +59,9 @@ $f3->route("GET /minify/@type/@files", function($f3, $args) {
 	$f3->set("UI", $args["type"] . "/");
 	echo Web::instance()->minify($args["files"]);
 }, 3600);
+
+// Instantiate session handler
+new Session();
 
 // Load user if session exists
 $user = new Model\User();
