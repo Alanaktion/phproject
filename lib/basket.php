@@ -1,7 +1,7 @@
 <?php
 
 /*
-	Copyright (c) 2009-2013 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2014 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfree.sf.net).
 
@@ -141,7 +141,6 @@ class Basket {
 		if (!$this->id)
 			$this->id=uniqid(NULL,TRUE);
 		$_SESSION[$this->key][$this->id]=$this->item;
-		session_commit();
 		return $this->item;
 	}
 
@@ -155,7 +154,6 @@ class Basket {
 		$found=$this->find($key,$val);
 		if ($found && $id=$found[0]->id) {
 			unset($_SESSION[$this->key][$id]);
-			session_commit();
 			if ($id==$this->id)
 				$this->reset();
 			return TRUE;
@@ -178,7 +176,6 @@ class Basket {
 	**/
 	function drop() {
 		unset($_SESSION[$this->key]);
-		session_commit();
 	}
 
 	/**

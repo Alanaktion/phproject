@@ -1,7 +1,7 @@
 <?php
 
 /*
-	Copyright (c) 2009-2013 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2014 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfree.sf.net).
 
@@ -71,8 +71,7 @@ class Jig {
 				$out=$fw->serialize($data);
 				break;
 		}
-		$out=$fw->write($this->dir.$file,$out);
-		return $out;
+		return $fw->write($this->dir.$file,$out);
 	}
 
 	/**

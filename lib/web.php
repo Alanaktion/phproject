@@ -1,7 +1,7 @@
 <?php
 
 /*
-	Copyright (c) 2009-2013 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2014 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfree.sf.net).
 
@@ -154,7 +154,7 @@ class Web extends Prefab {
 	*	@return array|bool
 	*	@param $func callback
 	*	@param $overwrite bool
-	*	@param $slug bool
+	*	@param $slug callback|bool
 	**/
 	function receive($func=NULL,$overwrite=FALSE,$slug=TRUE) {
 		$fw=Base::instance();
@@ -162,8 +162,39 @@ class Web extends Prefab {
 		if (!is_dir($dir))
 			mkdir($dir,Base::MODE,TRUE);
 		if ($fw->get('VERB')=='PUT') {
-			$fw->write($dir.basename($fw->get('URI')),$fw->get('BODY'));
-			return TRUE;
+			$tmp=$fw->get('TEMP').
+				$fw->hash($fw->get('ROOT').$fw->get('BASE')).'.'.
+				$fw->hash(uniqid());
+			if (!$fw->get('RAW'))
+				$fw->write($tmp,$fw->get('BODY'));
+			else {
+				$src=@fopen('php://input','r');
+				$dst=@fopen($tmp,'w');
+				if (!$src || !$dst)
+					return FALSE;
+				while (!feof($src) &&
+					($info=stream_get_meta_data($src)) &&
+					!$info['timed_out'] && $str=fgets($src,4096))
+					fputs($dst,$str,strlen($str));
+				fclose($dst);
+				fclose($src);
+			}
+			$base=basename($fw->get('URI'));
+			$file=array(
+				'name'=>$dir.
+					($slug && preg_match('/(.+?)(\.\w+)?$/',$base,$parts)?
+						(is_callable($slug)?
+							$slug($base):
+							($this->slug($parts[1]).
+								(isset($parts[2])?$parts[2]:''))):
+						$base),
+				'tmp_name'=>$tmp,
+				'type'=>$this->mime($base),
+				'size'=>filesize($tmp)
+			);
+			return (!file_exists($file['name']) || $overwrite) &&
+				(!$func || $fw->call($func,array($file))!==FALSE) &&
+				rename($tmp,$file['name']);
 		}
 		$out=array();
 		foreach ($_FILES as $item) {
@@ -183,12 +214,15 @@ class Web extends Prefab {
 				$base=basename($file['name']);
 				$file['name']=$dir.
 					($slug && preg_match('/(.+?)(\.\w+)?$/',$base,$parts)?
-						($this->slug($parts[1]).
-						(isset($parts[2])?$parts[2]:'')):$base);
+						(is_callable($slug)?
+							$slug($base):
+							($this->slug($parts[1]).
+								(isset($parts[2])?$parts[2]:''))):
+						$base);
 				$out[$file['name']]=!$file['error'] &&
 					is_uploaded_file($file['tmp_name']) &&
 					(!file_exists($file['name']) || $overwrite) &&
-					(!$func || $fw->call($func,array($file))) &&
+					(!$func || $fw->call($func,array($file))!==FALSE) &&
 					move_uploaded_file($file['tmp_name'],$file['name']);
 			}
 		}
@@ -503,7 +537,7 @@ class Web extends Prefab {
 		preg_match('/\w+$/',$files[0],$ext);
 		$cache=Cache::instance();
 		$dst='';
-		foreach ($fw->split($path?:$fw->get('UI')) as $dir)
+		foreach ($fw->split($path?:$fw->get('UI').';./') as $dir)
 			foreach ($files as $file)
 				if (is_file($save=$fw->fixslashes($dir.$file))) {
 					if ($fw->get('CACHE') &&
@@ -689,7 +723,6 @@ class Web extends Prefab {
 	function slug($text) {
 		return trim(strtolower(preg_replace('/([^\pL\pN])+/u','-',
 			trim(strtr(str_replace('\'','',$text),
-			Base::instance()->get('DIACRITICS')+
 			array(
 				'Ǎ'=>'A','А'=>'A','Ā'=>'A','Ă'=>'A','Ą'=>'A','Å'=>'A',
 				'Ǻ'=>'A','Ä'=>'Ae','Á'=>'A','À'=>'A','Ã'=>'A','Â'=>'A',
@@ -738,7 +771,7 @@ class Web extends Prefab {
 				'ǜ'=>'u','ǔ'=>'u','ǖ'=>'u','ũ'=>'u','ü'=>'ue','в'=>'v',
 				'ŵ'=>'w','ы'=>'y','ÿ'=>'y','ý'=>'y','ŷ'=>'y','ź'=>'z',
 				'ž'=>'z','з'=>'z','ż'=>'z','ж'=>'zh'
-			))))),'-');
+			)+Base::instance()->get('DIACRITICS'))))),'-');
 	}
 
 	/**
@@ -786,7 +819,7 @@ if (!function_exists('gzdecode')) {
 
 	/**
 	*	Decode gzip-compressed string
-	*	@param $data string
+	*	@param $str string
 	**/
 	function gzdecode($str) {
 		$fw=Base::instance();

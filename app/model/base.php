@@ -6,7 +6,7 @@ abstract class Base extends \DB\SQL\Mapper {
 
 	protected $fields = array();
 
-	public function __construct($table_name = null) {
+	function __construct($table_name = null) {
 		$f3 = \Base::instance();
 
 		if(empty($this->_table_name)) {
@@ -17,12 +17,12 @@ abstract class Base extends \DB\SQL\Mapper {
 			}
 		}
 
-		parent::__construct($f3->get("db.instance"), $this->_table_name, 3600);
+		parent::__construct($f3->get("db.instance"), $this->_table_name, null, 3600);
 		return $this;
 	}
 
 	// Savely delete object if possible, if not, erase the record.
-	public function delete() {
+	function delete() {
 		if(array_key_exists("deleted_date", $this->fields)) {
 			$this->deleted_date = now();
 			return $this->save();
@@ -32,11 +32,11 @@ abstract class Base extends \DB\SQL\Mapper {
 	}
 
 	// Load by ID directly
-	public function load($filter=NULL, array $options=NULL) {
+	function load($filter=NULL, array $options=NULL, $ttl=0) {
 		if(is_numeric($filter)) {
-			return parent::load(array("id = ?", $filter), $options);
+			return parent::load(array("id = ?", $filter), $options, $ttl);
 		} else {
-			return parent::load($filter, $options);
+			return parent::load($filter, $options, $ttl);
 		}
 	}
 

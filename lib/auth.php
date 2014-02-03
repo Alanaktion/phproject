@@ -1,7 +1,7 @@
 <?php
 
 /*
-	Copyright (c) 2009-2013 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2014 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfree.sf.net).
 
@@ -40,7 +40,7 @@ class Auth {
 	protected function _jig($id,$pw,$realm) {
 		return (bool)
 			call_user_func_array(
-				array($this->mapper,'findone'),
+				array($this->mapper,'load'),
 				array(
 					array_merge(
 						array(
@@ -65,7 +65,7 @@ class Auth {
 	**/
 	protected function _mongo($id,$pw,$realm) {
 		return (bool)
-			$this->mapper->findone(
+			$this->mapper->load(
 				array(
 					$this->args['id']=>$id,
 					$this->args['pw']=>$pw
@@ -85,7 +85,7 @@ class Auth {
 	protected function _sql($id,$pw,$realm) {
 		return (bool)
 			call_user_func_array(
-				array($this->mapper,'findone'),
+				array($this->mapper,'load'),
 				array(
 					array_merge(
 						array(
@@ -190,10 +190,14 @@ class Auth {
 	function basic($func=NULL) {
 		$fw=Base::instance();
 		$realm=$fw->get('REALM');
+		$hdr=NULL;
 		if (isset($_SERVER['HTTP_AUTHORIZATION']))
+			$hdr=$_SERVER['HTTP_AUTHORIZATION'];
+		elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']))
+			$hdr=$_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+		if (!empty($hdr))
 			list($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW'])=
-				explode(':',base64_decode(
-					substr($_SERVER['HTTP_AUTHORIZATION'],6)));
+				explode(':',base64_decode(substr($hdr,6)));
 		if (isset($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW']) &&
 			$this->login(
 				$_SERVER['PHP_AUTH_USER'],
