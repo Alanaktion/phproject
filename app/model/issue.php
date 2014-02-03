@@ -36,6 +36,8 @@ class Issue extends Base {
 			$update->created_date = now();
 			$update->save();
 
+			$updated = 0;
+
 			// Log updated fields
 			foreach ($this->fields as $key=>$field) {
 				if ($field["changed"] && $field["value"] != $this->get_prev($key)) {
@@ -45,13 +47,18 @@ class Issue extends Base {
 					$update_field->old_value = $this->get_prev($key);
 					$update_field->new_value = $field["value"];
 					$update_field->save();
+					$updated ++;
 				}
 			}
 
-			// Send notifications
-			if($notify) {
-				$notification = \Helper\Notification::instance();
-				$notification->issue_update($this->id, $update->id);
+			if($updated) {
+				// Send notifications
+				if($notify) {
+					$notification = \Helper\Notification::instance();
+					$notification->issue_update($this->id, $update->id);
+				}
+			} else {
+				$update->delete();
 			}
 
 		} else {
