@@ -9,7 +9,7 @@ Phproject
 - PDO extension
 - GD extension
 - MySQL/MariaDB server
-- Web server with support for URL rewrites (Apache .htaccess file included)
+- Web server with support for URL rewrites (Apache .htaccess file and nginx sample configuration included)
 
 ### Installation
 1. Create a database on your MySQL server
