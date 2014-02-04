@@ -101,6 +101,7 @@ class Admin extends Base {
 	}
 
 	public function user_delete($f3, $params) {
+		$this->_requireAdmin();
 		$user = new \Model\User();
 		$user->load($params["id"]);
 		$user->delete();
@@ -163,6 +164,7 @@ class Admin extends Base {
 	}
 
 	public function group_delete($f3, $params) {
+		$this->_requireAdmin();
 		$group = new \Model\User();
 		$group->load($params["id"]);
 		$group->delete();
@@ -225,12 +227,14 @@ class Admin extends Base {
 	}
 
 	public function attribute_new($f3, $params) {
+		$this->_requireAdmin();
 		$types = new \Model\Issue\Type();
 		$f3->set("issue_types", $types->paginate(0, 100));
 		echo \Template::instance()->render("admin/attributes/edit.html");
 	}
 
 	public function attribute_edit($f3, $params) {
+		$this->_requireAdmin();
 		$types = new \Model\Issue\Type();
 		$f3->set("issue_types", $types->paginate(0, 100));
 		echo \Template::instance()->render("admin/attributes/edit.html");
