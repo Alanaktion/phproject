@@ -55,7 +55,7 @@ class Issue extends Base {
 				// Send notifications
 				if($notify) {
 					$notification = \Helper\Notification::instance();
-					$notification->issue_update($this->id, $update->id);
+					$notification->issue_update($this->get("id"), $update->id);
 				}
 			} else {
 				$update->delete();
@@ -66,6 +66,19 @@ class Issue extends Base {
 		}
 
 		return parent::save();
+	}
+
+	// Preload custom attributes
+	function load($filter=NULL, array $options=NULL, $ttl=0) {
+		// Load issue from
+		$return = parent::load($filter, $options, $ttl);
+
+		if($this->get("id")) {
+			$attrs = new \Model\Custom("attribute_value_detail");
+			$attrs->load(array("issue_id = ?", $this->get("id")));
+		}
+
+		return $return;
 	}
 
 }

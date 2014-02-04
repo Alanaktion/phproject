@@ -11,26 +11,7 @@ var Taskboard = {
 	newTaskId: 0, //keep track of new tasks in case there are a few error tasks
 	init: function() {
 
-		//initialize sorting / drag / drop
-
-		/****** SORTABLE ********/
-		/*$("td.droppable").sortable({
-			connectWith: 'td.droppable',
-			placeholder: "card task placeholder",
-			receive: function(event, ui){
-				Taskboard.TaskboardReceive($(ui.item), $(ui.sender), $(this).sortable('serialize'));
-				Taskboard.taskReceived = true;//keep from repeating if changed lists
-			},
-			stop: function(event, ui){
-				if(Taskboard.taskReceived !== true){
-					Taskboard.TaskboardSame($(ui.item), $(this).sortable('serialize'));
-				}
-				else{
-					Taskboard.taskReceived = false;
-				}
-			}
-		}).disableSelection();*/
-
+		//initialize drag / drop
 		Taskboard.makeDraggable($(".card.task"));
 
 		$(".droppable").droppable({
@@ -56,7 +37,6 @@ var Taskboard = {
 				);
 				Taskboard.TaskboardReceive($(ui.draggable));
 			}
-
 		});
 
 		//initialize issue editing handler
@@ -121,8 +101,6 @@ var Taskboard = {
 			date = $(data).find('.dueDate').text().trim(),
 			priority = $(data).find('.priority').data('value');
 
-		// console.log(priority);
-
 		Taskboard.changeModalPriority(priority);
 		$("#task-dialog input#taskId").val(taskId);
 		$("#task-dialog input#title").val(title);
@@ -143,33 +121,25 @@ var Taskboard = {
 					$(this).dialog("close");
 				},
 				"Update": function() {
-
 					$('.ui-error').remove();
 					$(".input-error").removeClass(".input-error");
-					if (isNumber($('#hours').val())) {
-						// console.log('here');
-						// console.log($("form#task-dialog").serializeObject());
+					if ($('#hours').val() == '' || isNumber($('#hours').val())) {
 						Taskboard.updateCard(data, $("form#task-dialog").serializeObject());
 						$("#task-dialog").dialog("close");
 					} else {
 						$("#hours").before("<label style='color:red;display:block;' class='ui-error'>Value must be a number!</label>");
 						$("#hours").addClass("input-error");
 					}
-
 				}
-
 			}
 		});
 		Taskboard.changeModalColor(userColor);
 	},
 	modalAdd: function(data) {
+		var storyId = data.parents('.tb-row').attr("data-story-id");
 		Taskboard.changeModalPriority("normal");
-		storyId = data.parent().parent().parent().parent().attr("data-story-id");
-		$("#task-dialog input#taskId").val("");
-		$("#task-dialog textarea#title").val("");
-		$("#task-dialog textarea#description").val("");
-		$("#task-dialog input#hours").val("");
-		$("#task-dialog input#dueDate").val("");
+		$("#task-dialog input").val("");
+		$("#task-dialog textarea").val("");
 		$("#task-dialog #priority").val($("#task-dialog #priority option:first").val());
 		Taskboard.setOptionByText("#task-dialog", "");
 		Taskboard.changeModalColor("#E7E7E7");
@@ -184,11 +154,6 @@ var Taskboard = {
 					$(this).dialog("close");
 				},
 				"Update": function() {
-
-					var bValid = true;
-					bValid = isNumber($('#hours').val());
-					// console.log(bValid);
-
 					Taskboard.addCard(data, $("form#task-dialog").serializeObject(), storyId);
 					$("#task-dialog").dialog("close");
 				}
@@ -199,54 +164,34 @@ var Taskboard = {
 		$(".ui-dialog").css("border", "7px solid " + userColor);
 	},
 	changeModalPriority: function(priority) {
-
-		/*switch(priority){
-				case "normal":
-					$( '.ui-dialog-title' ).css("color", Taskboard.priorityColors.normal);
-					break;
-				case "low":
-					$( '.ui-dialog-title' ).css("color", Taskboard.priorityColors.low);
-					break;
-				case "high":
-					$( '.ui-dialog-title' ).css("color", Taskboard.priorityColors.high);
-					break;
-				default:
-					console.log("no valid priority was set");
-					break;
-			}*/
+		/*if(priority == 0) {
+			$('.ui-dialog-title').css("color", Taskboard.priorityColors.normal);
+		} elseif(priority < 0) {
+			$('.ui-dialog-title').css("color", Taskboard.priorityColors.low);
+		} elseif(priority > 0) {
+			$('.ui-dialog-title').css("color", Taskboard.priorityColors.high);
+		}*/
 	},
 	updateCardPriority: function(priority, card) {
-		// console.log(priority);
-		switch (priority) {
-			case "normal":
-				$(card).find('.priority').attr("class", "priority normal");
-				$(card).find('.priority').text("Normal Priority");
-				break;
-			case "low":
-				$(card).find('.priority').attr("class", "priority low");
-				$(card).find('.priority').text("Low Priority");
-				break;
-			case "high":
-				$(card).find('.priority').attr("class", "priority high");
-				$(card).find('.priority').text("High Priority");
-				break;
-			default:
-				// console.log("no valid priority was set on Taskboard.updateCardPriority");
-				break;
+		if(priority == 0) {
+			$(card).find('.priority').attr("class", "priority normal");
+			$(card).find('.priority').text("Normal Priority");
+		} else if(priority < 0) {
+			$(card).find('.priority').attr("class", "priority low");
+			$(card).find('.priority').text("Low Priority");
+		} else if(priority > 0) {
+			$(card).find('.priority').attr("class", "priority high");
+			$(card).find('.priority').text("High Priority");
 		}
 	},
 	changeUser: function(selected) {
-		color = $(selected).find("option:selected").attr("data-color");
+		var color = $(selected).find("option:selected").attr("data-color");
 		Taskboard.changeModalColor(color);
 	},
 	setOptionByText: function(selectId, text) {
 		$(selectId + " option").filter(function() {
 			return $(this).text() == text;
 		}).prop('selected', true);
-	},
-	getTextByOption: function(selectId, val) {
-		var text = $(selectId + " option[value='" + val + "']").text();
-		return text;
 	},
 	updateCard: function(card, data) {
 		$(card).find(".title").text(data.title);
@@ -260,15 +205,13 @@ var Taskboard = {
 
 		$(card).find(".description").text(data.description);
 		$(card).find(".dueDate").text(data.dueDate);
-		$(card).find(".owner").text($("#task-dialog #assigned option[value='" + data.assigned + "']").text());
-		$(card).css("border-color", $("#task-dialog #assigned option[value='" + data.assigned + "']").attr("data-color"));
+		$(card).find(".owner").text($("#task-dialog #assigned option[value='" + data.assigned + "']").first().text());
+		$(card).css("border-color", $("#task-dialog #assigned option[value='" + data.assigned + "']").first().attr("data-color"));
 		Taskboard.updateCardPriority(data.priority, card);
-		// console.log(data);
-		// console.log("PRIORITY:" + data.priority);
 		Taskboard.ajaxUpdateTask(data);
 	},
 	addCard: function(story, data, storyId) {
-		var row = $(story).parent().parent().parent().parent();
+		var row = $(story).parents('.tb-row');
 		var cell = row.find("td.column-2"); // put new tasks in the new column
 		cell.append($(".cloneable:last").clone());
 		var card = cell.find(".cloneable:last");
@@ -283,9 +226,9 @@ var Taskboard = {
 		}
 
 		$(card).find(".description").text(data.description);
-		//$(card).find( ".dueDate" ).text(data.dueDate);
-		$(card).find(".owner").text($("#task-dialog #assigned option[value='" + data.assigned + "']").text());
-		$(card).css("border-color", $("#task-dialog #assigned option[value='" + data.assigned + "']").attr("data-color"));
+		// $(card).find(".dueDate").text(data.dueDate);
+		$(card).find(".owner").text($("#task-dialog #assigned option[value='" + data.assigned + "']").first().text());
+		$(card).css("border-color", $("#task-dialog #assigned option[value='" + data.assigned + "']").first().attr("data-color"));
 		$(card).removeClass("cloneable");
 		$(card).attr("id", "new_task_" + Taskboard.newTaskId);
 		Taskboard.updateCardPriority(data.priority, card);
@@ -298,49 +241,22 @@ var Taskboard = {
 		card.show();
 	},
 	TaskboardReceive: function(task) { //if the task changes statuses/stories
-		taskId = $(task).attr("id");
-		taskId = taskId.replace("task_", "");
-		receiverStatus = $(task).parent().attr("data-status");
-		receiverStory = $(task).parent().parent().attr("data-story-id");
-
-		data = {
-			taskId: taskId,
-			receiver: {
-				"story": receiverStory,
-				"status": receiverStatus
-			}
-		};
-
-		Taskboard.ajaxSendTaskPosition(data);
-
-
-	},
-	/* *** SORTABLE ****************
-		TaskboardReceive: function (task, sender, receiverSerialized){//if the task changes statuses/stories
-		taskId = $(task).attr("id");
-		taskId = taskId.replace("task_","");
-		receiverStatus = $(task).parent().attr("data-status");
-		receiverStory = $(task).parent().parent().attr("data-story-id");
-		senderStatus = $(sender).attr("data-status");
-		senderStory = $(sender).parent().attr("data-story-id");
-
-		if(typeof(senderStatus) !== "undefined"){
-			senderSerialized = $(sender).sortable('serialize');
-
+		var taskId = $(task).attr("id").replace("task_", ""),
+			receiverStatus = $(task).parent().attr("data-status"),
+			receiverStory = $(task).parents('.tb-row').attr("data-story-id"),
 			data = {
 				taskId: taskId,
-				sender: {"story":senderStory, "status":senderStatus, "sortingOrder":senderSerialized},
-				receiver: {"story":receiverStory, "status":receiverStatus, "sortingOrder":receiverSerialized}
-			}
-
-			Taskboard.ajaxSendTaskPosition(data);
-		}
-	},*/
+				receiver: {
+					"story": receiverStory,
+					"status": receiverStatus
+				}
+			};
+		Taskboard.ajaxSendTaskPosition(data);
+	},
 	TaskboardSame: function(task, receiverSerialized) {
 		var taskId = $(task).attr("id").replace("task_", ""),
 			receiverStatus = $(task).parent().attr("data-status"),
-			receiverStory = $(task).parent().parent().attr("data-story-id"),
-
+			receiverStory = $(task).parents('.tb-row').attr("data-story-id"),
 			data = {
 				taskId: taskId,
 				receiver: {
@@ -349,15 +265,11 @@ var Taskboard = {
 					"sortingOrder": receiverSerialized
 				}
 			};
-
 		Taskboard.ajaxSendTaskPosition(data);
-
 	},
 	ajaxSendTaskPosition: function(data) {
 		var taskId = data.taskId;
 		Taskboard.block(taskId);
-		// console.log("ajaxSendTaskPosition:")
-		// console.log(data);
 		$.ajax({
 			type: "POST",
 			url: Taskboard.updateURL + "/" + taskId,
@@ -375,8 +287,6 @@ var Taskboard = {
 	ajaxUpdateTask: function(data) {
 		var taskId = data.taskId;
 		Taskboard.block(taskId);
-		// console.log("AjaxUpdateTask:");
-		// console.log(data);
 		$.ajax({
 			type: "POST",
 			url: Taskboard.updateURL + "/" + taskId,
@@ -394,8 +304,6 @@ var Taskboard = {
 	ajaxAddTask: function(data, card) {
 		var taskId = data.newTaskId;
 		Taskboard.newBlock(taskId);
-		// console.log("AjaxAddTask (this will need to pass bask taskId with new task id) :");
-		// console.log(data);
 		$.ajax({
 			type: "POST",
 			url: Taskboard.addURL,
@@ -404,9 +312,10 @@ var Taskboard = {
 				Taskboard.newUnBlock(taskId);
 				$(card).find(".task-id").text(data.taskId);
 				$(card).attr("id", "task_" + data.taskId);
-				$(card).dblclick(function() {
+				$(card).click(function() {
+					//add binding for click on new card only if the id is set
 					Taskboard.modalEdit($(this));
-				}); //add binding for double click on new card only if the id is set
+				});
 				Taskboard.makeDraggable(card);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -447,12 +356,10 @@ function isNumber(n) {
 function checkLength(o, n, min, max) {
 	if (o.val().length > max || o.val().length < min) {
 		o.addClass("ui-state-error");
-		updateTips("Length of " + n + " must be between " +
-			min + " and " + max + ".");
+		// updateTips("Length of " + n + " must be between " min + " and " + max + "."); // updateTips() function does not exist
 		return false;
-	} else {
-		return true;
 	}
+	return true;
 }
 
 function checkRegexp(o, regexp, n) {

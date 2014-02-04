@@ -286,7 +286,7 @@ class Issues extends Base {
 			}
 		}
 
-		$f3->set("title", $issue->name);
+		$f3->set("title", $type->name . " #" . $issue->id  . ": " . $issue->name);
 
 		$author = new \Model\User();
 		$author->load(array("id=?", $issue->author_id));

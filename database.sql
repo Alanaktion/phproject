@@ -27,7 +27,7 @@ CREATE TABLE `issue` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `status` int(11) NOT NULL DEFAULT '1',
   `type_id` int(11) unsigned NOT NULL DEFAULT '1',
-  `name` varchar(64) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `parent_id` int(11) unsigned DEFAULT NULL,
   `author_id` int(11) unsigned NOT NULL,
@@ -66,7 +66,7 @@ DROP VIEW IF EXISTS `issue_detail`;
 CREATE TABLE `issue_detail` (
   `id` int(10) unsigned, `status` int(11),
   `type_id` int(11) unsigned,
-  `name` varchar(64),
+  `name` varchar(255),
   `description` text,
   `parent_id` int(11) unsigned,
   `author_id` int(11) unsigned,
@@ -276,3 +276,58 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_update_user` AS (sel
 
 DROP TABLE IF EXISTS `issue_watcher_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_watcher_user` AS (select `w`.`id` AS `watcher_id`,`w`.`issue_id` AS `issue_id`,`u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`email` AS `email`,`u`.`name` AS `name`,`u`.`password` AS `password`,`u`.`role` AS `role`,`u`.`task_color` AS `task_color`,`u`.`created_date` AS `created_date`,`u`.`deleted_date` AS `deleted_date` from (`issue_watcher` `w` join `user` `u` on((`w`.`user_id` = `u`.`id`))));
+
+DROP TABLE IF EXISTS `attribute`;
+
+CREATE TABLE `attribute` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL,
+  `type` enum('text','numeric','datetime','bool','list') NOT NULL DEFAULT 'text',
+  `default` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `attribute_issue_type`;
+
+CREATE TABLE `attribute_issue_type` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `attribute_id` int(10) unsigned NOT NULL,
+  `issue_type_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `issue_type` (`issue_type_id`),
+  KEY `attribute_issue_type_attribute_id` (`attribute_id`),
+  CONSTRAINT `attribute_issue_type_attribute_id` FOREIGN KEY (`attribute_id`) REFERENCES `attribute` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `attribute_issue_type_issue_type_id` FOREIGN KEY (`issue_type_id`) REFERENCES `issue_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `attribute_value`;
+
+CREATE TABLE `attribute_value` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `attribute_id` int(10) unsigned NOT NULL,
+  `issue_id` int(10) unsigned NOT NULL,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `object` (`attribute_id`,`issue_id`),
+  CONSTRAINT `attribute_value_attribute_id` FOREIGN KEY (`attribute_id`) REFERENCES `attribute` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `attribute_value_detail`;
+
+DROP VIEW IF EXISTS `attribute_value_detail`;
+DROP TABLE IF EXISTS `attribute_value_detail`;
+
+CREATE TABLE  `attribute_value_detail`(
+ `id` int(10) unsigned ,
+ `attribute_id` int(10) unsigned ,
+ `issue_id` int(10) unsigned ,
+ `value` text ,
+ `name` varchar(64) ,
+ `type` enum('text','numeric','datetime','bool','list') ,
+ `default` text
+)*/;
+
+DROP TABLE IF EXISTS `attribute_value_detail`;
+DROP VIEW IF EXISTS `attribute_value_detail`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `attribute_value_detail` AS (select `v`.`id` AS `id`,`v`.`attribute_id` AS `attribute_id`,`v`.`issue_id` AS `issue_id`,`v`.`value` AS `value`,`a`.`name` AS `name`,`a`.`type` AS `type`,`a`.`default` AS `default` from (`attribute_value` `v` join `attribute` `a` on((`v`.`attribute_id` = `a`.`id`))));

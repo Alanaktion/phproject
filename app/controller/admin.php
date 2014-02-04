@@ -237,6 +237,9 @@ class Admin extends Base {
 		$this->_requireAdmin();
 		$types = new \Model\Issue\Type();
 		$f3->set("issue_types", $types->paginate(0, 100));
+		$attr = new \Model\Attribute();
+		$attr->load($params["id"]);
+		$f3->set("attribute", $attr->cast());
 		echo \Template::instance()->render("admin/attributes/edit.html");
 	}
 
