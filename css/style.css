@@ -237,3 +237,8 @@ dl.dl-horizontal-left dt {
 a:focus, button:focus, input:focus, .btn:focus {
 	outline: thin none;
 }
+
+.form-horizontal .checkbox-left {
+	float: left;
+	margin-right: 1em;
+}

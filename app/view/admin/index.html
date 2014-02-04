@@ -62,7 +62,14 @@
 				<div class="col-lg-2 col-md-4 col-sm-6">
 					<h4>MySQL Stats</h4>
 					<repeat group="{{ @db_stats }}" value="{{ @val }}">
-						<b>{{ @val.Variable_name }}:</b> {{ @val.Value }}<br>
+						<check if="{{ @val.Variable_name == 'Uptime' }}">
+							<true>
+								<b>{{ @val.Variable_name }}:</b> {{ @val.Value < 86400 ? round(@val.Value / 3600) . ' hours' : round(@val.Value / 86400) . ' days' }}<br>
+							</true>
+							<false>
+								<b>{{ @val.Variable_name }}:</b> {{ @val.Value }}<br>
+							</false>
+						</check>
 					</repeat>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">

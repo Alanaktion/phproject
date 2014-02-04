@@ -29,12 +29,7 @@ class Admin extends Base {
 			$f3->set("apc_stats", apc_cache_info("user", true));
 		}
 
-		$f3->set("db_stats", $db->exec("SHOW STATUS WHERE
-Variable_name LIKE 'Delayed_%' OR
-Variable_name LIKE 'Table_lock%' OR
--- Variable_name = 'Connections' OR
--- Variable_name = 'Queries' OR
-Variable_name = 'Uptime'"));
+		$f3->set("db_stats", $db->exec("SHOW STATUS WHERE Variable_name LIKE 'Delayed_%' OR Variable_name LIKE 'Table_lock%' OR Variable_name = 'Uptime'"));
 
 		echo \Template::instance()->render("admin/index.html");
 	}
@@ -224,7 +219,21 @@ Variable_name = 'Uptime'"));
 	public function attributes($f3, $params) {
 		$this->_requireAdmin();
 		$f3->set("title", "Manage Issue Attributes");
+		$attributes = new \Model\Attribute();
+		$f3->set("attributes", $attributes->paginate(0, 1000));
 		echo \Template::instance()->render("admin/attributes.html");
+	}
+
+	public function attribute_new($f3, $params) {
+		$types = new \Model\Issue\Type();
+		$f3->set("issue_types", $types->paginate(0, 100));
+		echo \Template::instance()->render("admin/attributes/edit.html");
+	}
+
+	public function attribute_edit($f3, $params) {
+		$types = new \Model\Issue\Type();
+		$f3->set("issue_types", $types->paginate(0, 100));
+		echo \Template::instance()->render("admin/attributes/edit.html");
 	}
 
 	public function sprints($f3, $params) {
