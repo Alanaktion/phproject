@@ -30,7 +30,7 @@
 					<label class="col-md-2 control-label label-sm">Priority</label>
 					<div class="col-md-10">
 						<select class="form-control input-sm" name="priority">
-							<repeat group="{{ @priorities.subset }}" value="{{ @item }}">
+							<repeat group="{{ @priorities }}" value="{{ @item }}">
 								<check if="{{ empty(@issue) }}">
 									<true>
 										<option value="{{ @item.value }}" {{ @item.value == 0 ? "selected" : "" }}>{{ @item.name }}</option>
@@ -47,7 +47,7 @@
 					<label class="col-md-2 control-label label-sm">Status</label>
 					<div class="col-md-10">
 						<select class="form-control input-sm" name="status">
-							<repeat group="{{ @statuses.subset }}" value="{{ @item }}">
+							<repeat group="{{ @statuses }}" value="{{ @item }}">
 								<option value="{{ @item.id }}" {{ !empty(@issue) && @issue.status == @item.id ? "selected" : "" }}>{{ @item.name }}</option>
 							</repeat>
 						</select>
@@ -60,12 +60,12 @@
 							<option value="0">Not Assigned</option>
 							<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
 							<optgroup label="Groups">
-								<repeat group="{{ @groups.subset }}" value="{{ @group }}">
+								<repeat group="{{ @groups }}" value="{{ @group }}">
 									<option value="{{ @group.id }}">{{ @group.name }}</option>
 								</repeat>
 							</optgroup>
 							<optgroup label="Users">
-								<repeat group="{{ @users.subset }}" value="{{ @item }}">
+								<repeat group="{{ @users }}" value="{{ @item }}">
 									<option value="{{ @item.id }}">{{ @item.name }}</option>
 								</repeat>
 							</optgroup>

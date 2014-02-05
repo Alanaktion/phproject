@@ -1,4 +1,4 @@
-<check if="{{ @issues.count }}">
+<check if="{{ !empty(@issues) }}">
 	<true>
 		<table class="table table-striped table-responsive table-condensed">
 		<thead>
@@ -12,7 +12,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<repeat group="{{ @issues.subset }}" value="{{ @item }}">
+			<repeat group="{{ @issues }}" value="{{ @item }}">
 				<tr>
 					<td><a href="/issues/{{ @item.id }}">{{ @item.id }}</a></td>
 					<td><a href="/issues/{{ @item.id }}">{{ @item.name }}</a></td>

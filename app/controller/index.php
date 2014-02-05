@@ -19,7 +19,7 @@ class Index extends Base {
 				)
 			));
 
-			$bugs = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail");
+			$bugs = new \Model\Issue\Detail();
 			$f3->set("bugs", $bugs->paginate(
 				0, 50,
 				array(
@@ -31,9 +31,9 @@ class Index extends Base {
 				)
 			));
 
-			$tasks = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail");
+			$tasks = new \Model\Issue\Detail();
 			$f3->set("tasks", $tasks->paginate(
-				0, 50,
+				0, 100,
 				array(
 					"owner_id=:owner AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 					":owner" => $f3->get("user.id"),

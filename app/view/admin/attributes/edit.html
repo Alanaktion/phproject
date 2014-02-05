@@ -20,31 +20,31 @@
 				<div class="form-group">
 					<label for="name" class="col-lg-2 control-label label-sm">Name</label>
 					<div class="col-lg-10">
-						<input class="form-control input-sm" id="name" type="text" name="name" value="{{ empty(@POST) ? "" : @POST.name }}" autofocus>
+						<input class="form-control input-sm" id="name" type="text" name="name" value="{{ empty(@attribute.name) ? "" : @attribute.name }}" autofocus>
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="type" class="col-lg-2 control-label label-sm">Type</label>
 					<div class="col-lg-10">
 						<select class="form-control input-sm" id="type" name="type">
-							<option value="text">Text</option>
-							<option value="numeric">Numeric</option>
-							<option value="datetime">Date/Time</option>
-							<option value="list">List</option>
-							<option value="bool">Boolean</option>
+							<option value="text" {{ empty(@attribute) && @attribute.type = "text" ? "selected" : "" }}>Text</option>
+							<option value="numeric" {{ empty(@attribute) && @attribute.type = "numeric" ? "selected" : "" }}>Numeric</option>
+							<option value="datetime" {{ empty(@attribute) && @attribute.type = "datetime" ? "selected" : "" }}>Date/Time</option>
+							<option value="list" {{ empty(@attribute) && @attribute.type = "list" ? "selected" : "" }}>List</option>
+							<option value="bool" {{ empty(@attribute) && @attribute.type = "bool" ? "selected" : "" }}>Boolean</option>
 						</select>
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="default" class="col-lg-2 control-label label-sm">Default Value</label>
 					<div class="col-lg-10">
-						<input class="form-control input-sm" id="default" type="text" name="default" value="{{ empty(@POST) ? "" : @POST.default }}">
+						<input class="form-control input-sm" id="default" type="text" name="default" value="{{ empty(@attribute.default) ? "" : @attribute.default }}">
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-lg-2 control-label label-sm">Issue Types</label>
 					<div class="col-lg-10 clearfix">
-						<repeat group="{{ @issue_types.subset }}" value="{{ @type }}">
+						<repeat group="{{ @issue_types }}" value="{{ @type }}">
 							<div class="checkbox checkbox-left">
 								<input type="hidden" name="types[{{ @type.id }}]" value="0">
 								<label><input type="checkbox" name="types[{{ @type.id }}]" value="1"> {{ @type.name }}</label>

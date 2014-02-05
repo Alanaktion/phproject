@@ -19,30 +19,30 @@ class Taskboard extends Base {
 
 		// Load issue statuses
 		$status = new \Model\Issue\Status();
-		$statuses = $status->paginate(0, 100);
+		$statuses = $status->find();
 		$f3->set("statuses", $statuses);
 
 		// Load issue priorities
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->paginate(0, 100));
+		$f3->set("priorities", $priority->find());
 
 		// Load project list
 		$issue = new \Model\Issue\Detail();
-		$projects = $issue->paginate(0, 100, array("sprint_id = ? AND deleted_date IS NULL AND type_id = ?", $sprint->id, $f3->get("issue_type.project")), array("order" => "owner_id ASC"));
+		$projects = $issue->find(array("sprint_id = ? AND deleted_date IS NULL AND type_id = ?", $sprint->id, $f3->get("issue_type.project")), array("order" => "owner_id ASC"));
 
 		// Build multidimensional array of all tasks and projects
 		$taskboard = array();
-		foreach($projects["subset"] as $project) {
+		foreach($projects as $project) {
 
 			// Build array of statuses to put tasks under
 			$columns = array();
-			foreach($statuses["subset"] as $status) {
+			foreach($statuses as $status) {
 				$columns[$status["id"]] = array();
 			}
 
 			// Get all tasks under the project, put them under their status
-			$tasks = $issue->paginate(0, 100, array("parent_id = ? AND type_id = ? AND deleted_Date IS NULL", $project["id"], $f3->get("issue_type.task")), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
-			foreach($tasks["subset"] as $task) {
+			$tasks = $issue->find(array("parent_id = ? AND type_id = ? AND deleted_Date IS NULL", $project["id"], $f3->get("issue_type.task")), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
+			foreach($tasks as $task) {
 				$columns[$task["status"]][] = $task;
 			}
 
@@ -57,8 +57,8 @@ class Taskboard extends Base {
 
 		// Get user list for select
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-		$f3->set("groups", $users->paginate(0, 1000, "deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		echo \Template::instance()->render("taskboard/index.html");
 

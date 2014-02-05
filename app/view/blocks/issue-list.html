@@ -10,7 +10,7 @@
 				<th>
 					<select class="form-control input-sm" name="type_id">
 						<option></option>
-						<repeat group="{{ @types.subset }}" value="{{ @item }}">
+						<repeat group="{{ @types }}" value="{{ @item }}">
 							<check if="{{ !empty(@GET.type_id) && @GET.type_id == @item.id }}">
 								<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
 								<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
@@ -21,7 +21,7 @@
 				<th>
 					<select class="form-control input-sm" name="priority">
 						<option></option>
-						<repeat group="{{ @priorities.subset }}" value="{{ @item }}">
+						<repeat group="{{ @priorities }}" value="{{ @item }}">
 							<check if="{{ !empty(@GET.priority) && @GET.priority == @item.value }}">
 								<true><option value="{{ @item.value }}" selected>{{ @item.name }}</option></true>
 								<false><option value="{{ @item.value }}">{{ @item.name }}</option></false>
@@ -32,7 +32,7 @@
 				<th>
 					<select class="form-control input-sm" name="status">
 						<option></option>
-						<repeat group="{{ @statuses.subset }}" value="{{ @item }}">
+						<repeat group="{{ @statuses }}" value="{{ @item }}">
 							<check if="{{ !empty(@GET.status) && @GET.status == @item.id }}">
 								<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
 								<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
@@ -45,7 +45,7 @@
 						<option></option>
 						<option value="{{ @user.id }}">{{ @user.name }}</option>
 						<optgroup label="Groups">
-							<repeat group="{{ @groups.subset }}" value="{{ @item }}">
+							<repeat group="{{ @groups }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
 									<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
 									<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
@@ -53,7 +53,7 @@
 							</repeat>
 						</optgroup>
 						<optgroup label="Users">
-							<repeat group="{{ @users.subset }}" value="{{ @item }}">
+							<repeat group="{{ @users }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
 									<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
 									<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
@@ -67,7 +67,7 @@
 						<option></option>
 						<option value="{{ @user.id }}">{{ @user.name }}</option>
 						<optgroup label="Groups">
-							<repeat group="{{ @groups.subset }}" value="{{ @item }}">
+							<repeat group="{{ @groups }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
 									<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
 									<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
@@ -75,7 +75,7 @@
 							</repeat>
 						</optgroup>
 						<optgroup label="Users">
-							<repeat group="{{ @users.subset }}" value="{{ @item }}">
+							<repeat group="{{ @users }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
 									<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
 									<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>

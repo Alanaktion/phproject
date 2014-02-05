@@ -89,17 +89,14 @@ class User extends Base {
 			return;
 		}
 
-		$f3->set("user", $user->cast());
-
 		$web = \Web::instance();
 
-
-		$f3->set("UPLOADS",'uploads/avatars/'); // don't forget to set an Upload directory, and make it writable!
+		$f3->set("UPLOADS",'uploads/avatars/');
 		if(!is_dir($f3->get("UPLOADS"))) {
 			mkdir($f3->get("UPLOADS"), 0777, true);
 		}
-		$overwrite = false; // set to true, to overwrite an existing file; Default: false
-		$slug = true; // rename file to filesystem-friendly version
+		$overwrite = false;
+		$slug = true;
 
 		//Make a good name
 		$parts = pathinfo($_FILES['avatar']['name']);
@@ -109,37 +106,25 @@ class User extends Base {
 		$files = $web->receive(function($file) {
 			$f3 = \Base::instance();
 			$user = $f3->get("user");
-			//var_dump($file);
-			/* looks like:
-				array(5) {
-					["name"] =>     string(19) "somefile.png"
-					["type"] =>     string(9) "image/png"
-					["tmp_name"] => string(14) "/tmp/php2YS85Q"
-					["error"] =>    int(0)
-					["size"] =>     int(172245)
-				}
-			*/
-			// $file['name'] already contains the slugged name now
 
-			// maybe you want to check the file size
 			if($file['size'] > $f3->get("files.maxsize"))
-				return false; // this file is not valid, return false will skip moving it
+				return false;
 
 
 			$newfile = new \Model\User();
-						$newfile->load($user["id"]);
+			$newfile->load($user["id"]);
 
-						$newfile->avatar_filename = $f3->get("avatar_filename");
+			$newfile->avatar_filename = $f3->get("avatar_filename");
 			$newfile->save();
 
-			//NEED TO CONVERT TO JPG AND RESIZE?
-			return true; // allows the file to be moved from php tmp dir to your defined upload dir
+			// NEED TO CONVERT TO JPG AND RESIZE?
+			return true;
 		},
 			$overwrite,
 			$slug
 		);
-				$f3->reroute("/user/account");
 
+		$f3->reroute("/user/account");
 	}
 
 

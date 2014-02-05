@@ -38,7 +38,7 @@ class Admin extends Base {
 		$this->_requireAdmin();
 		$f3->set("title", "Manage Users");
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'"));
+		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'"));
 		echo \Template::instance()->render("admin/users.html");
 	}
 
@@ -115,10 +115,10 @@ class Admin extends Base {
 	public function groups($f3, $params) {
 		$this->_requireAdmin();
 		$group = new \Model\User();
-		$groups = $group->paginate(0, 100, "deleted_date IS NULL AND role = 'group'");
-		$group_array =  array();
-		foreach($groups["subset"] as $g) {
-			$db = $f3->get("db.instance");
+		$groups = $group->find("deleted_date IS NULL AND role = 'group'");
+		$group_array = array();
+		$db = $f3->get("db.instance");
+		foreach($groups as $g) {
 			$db->exec("SELECT id FROM user_group WHERE group_id = ?", $g["id"]);
 			$count = $db->count();
 			$group_array[] = array(
@@ -154,11 +154,11 @@ class Admin extends Base {
 		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
 		$f3->set("group", $group->cast());
 
-		$members = new \DB\SQL\Mapper($f3->get("db.instance"), "user_group_user", null, 3600);
-		$f3->set("members", $members->paginate(array("group_id = ? AND deleted_date IS NULL", $group->id)));
+		$members = new \Model\Custom("user_group_user");
+		$f3->set("members", $members->find(array("group_id = ? AND deleted_date IS NULL", $group->id)));
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 
 		echo \Template::instance()->render("admin/groups/edit.html");
 	}
@@ -222,24 +222,30 @@ class Admin extends Base {
 		$this->_requireAdmin();
 		$f3->set("title", "Manage Issue Attributes");
 		$attributes = new \Model\Attribute();
-		$f3->set("attributes", $attributes->paginate(0, 1000));
+		$f3->set("attributes", $attributes->find());
 		echo \Template::instance()->render("admin/attributes.html");
 	}
 
 	public function attribute_new($f3, $params) {
 		$this->_requireAdmin();
 		$types = new \Model\Issue\Type();
-		$f3->set("issue_types", $types->paginate(0, 100));
+		$f3->set("issue_types", $types->find());
+
+		if($f3->get("POST")) {
+			$f3->set("attribute", $f3->get("POST"));
+		}
 		echo \Template::instance()->render("admin/attributes/edit.html");
 	}
 
 	public function attribute_edit($f3, $params) {
 		$this->_requireAdmin();
 		$types = new \Model\Issue\Type();
-		$f3->set("issue_types", $types->paginate(0, 100));
+		$f3->set("issue_types", $types->find());
+
 		$attr = new \Model\Attribute();
 		$attr->load($params["id"]);
 		$f3->set("attribute", $attr->cast());
+
 		echo \Template::instance()->render("admin/attributes/edit.html");
 	}
 
@@ -247,7 +253,7 @@ class Admin extends Base {
 		$this->_requireAdmin();
 		$f3->set("title", "Manage Sprints");
 		$sprints = new \Model\Sprint();
-		$f3->set("sprints", $sprints->paginate(0, 1000));
+		$f3->set("sprints", $sprints->find());
 		echo \Template::instance()->render("admin/sprints.html");
 	}
 

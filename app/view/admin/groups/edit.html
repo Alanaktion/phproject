@@ -25,7 +25,7 @@
 						</div>
 					</form>
 					<ul id="members" class="list-unstyled">
-						<repeat group="{{ @members.subset }}" value="{{ @val }}">
+						<repeat group="{{ @members }}" value="{{ @val }}">
 							<li data-user-id="{{ @val.user_id }}">
 								<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;{{ @val.user_name }}
 							</li>
@@ -38,7 +38,7 @@
 						<input type="hidden" name="group_id" value="{{ @group.id }}">
 						<div class="form-group">
 							<select name="user[]" style="height: 160px;" class="form-control" multiple>
-								<repeat group="{{ @users.subset }}" value="{{ @val }}">
+								<repeat group="{{ @users }}" value="{{ @val }}">
 									<option value="{{ @val.id }}">{{ @val.name }}</option>
 								</repeat>
 							</select>

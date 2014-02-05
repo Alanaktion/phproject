@@ -8,14 +8,14 @@ class Backlog extends Base {
 		$this->_requireLogin();
 
 		$sprint_model = new \Model\Sprint();
-		$sprints = $sprint_model->paginate(0, 100, array("end_date >= ?", now(false)), array("order" => "start_date ASC"));
+		$sprints = $sprint_model->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC"));
 
 		$issue = new \Model\Issue\Detail();
 
 		$sprint_details = array();
-		foreach($sprints["subset"] as $sprint) {
-			$projects = $issue->paginate(0, 100, array("deleted_date IS NULL AND sprint_id = ? AND type_id = ?", $sprint->id, $f3->get("issue_type.project")));
-			$sprint_details[] = $sprint->cast() + array("projects" => $projects["subset"]);
+		foreach($sprints as $sprint) {
+			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND type_id = ?", $sprint->id, $f3->get("issue_type.project")));
+			$sprint_details[] = $sprint->cast() + array("projects" => $projects);
 		}
 
 		$large_projects = $f3->get("db.instance")->exec("SELECT parent_id FROM issue WHERE parent_id IS NOT NULL AND type_id = ?", $f3->get("issue_type.project"));
@@ -24,7 +24,7 @@ class Backlog extends Base {
 			$large_project_ids[] = $p["parent_id"];
 		}
 		$large_project_ids = implode(",", $large_project_ids);
-		$unset_projects = $issue->paginate(0, 1000, array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids})", $f3->get("issue_type.project")));
+		$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids})", $f3->get("issue_type.project")));
 
 		$f3->set("sprints", $sprint_details);
 		$f3->set("backlog", $unset_projects);

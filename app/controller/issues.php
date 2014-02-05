@@ -42,16 +42,16 @@ class Issues extends Base {
 		}
 
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->paginate(0, 100));
+		$f3->set("statuses", $status->find());
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->paginate(0, 100, null, array("order" => "value DESC")));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC")));
 
-		$f3->set("types", $type->paginate(0, 100));
+		$f3->set("types", $type->find());
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-        $f3->set("groups", $users->paginate(0, 1000, "deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
         if(empty($args["page"])) {
         	$args["page"] = 0;
@@ -89,14 +89,14 @@ class Issues extends Base {
 		}
 
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->paginate(0, 100));
+		$f3->set("statuses", $status->find());
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->paginate(0, 100, null, array("order" => "value DESC")));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC")));
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-        $f3->set("groups", $users->paginate(0, 1000, "deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$f3->set("title", "New " . $type->name);
 		$f3->set("type", $type->cast());
@@ -108,7 +108,7 @@ class Issues extends Base {
 		$this->_requireLogin();
 
 		$type = new \Model\Issue\Type();
-		$f3->set("types", $type->paginate(0, 50));
+		$f3->set("types", $type->find());
 
 		echo \Template::instance()->render("issues/new.html");
 	}
@@ -128,14 +128,14 @@ class Issues extends Base {
 		$type->load(array("id=?", $issue->type_id));
 
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->paginate(0, 100));
+		$f3->set("statuses", $status->find());
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->paginate(0, 100, null, array("order" => "value DESC")));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC")));
 
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 1000, "deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-        $f3->set("groups", $users->paginate(0, 1000, "deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$f3->set("title", "Edit #" . $issue->id);
 		$f3->set("issue", $issue->cast());
@@ -294,7 +294,8 @@ class Issues extends Base {
 		$owner->load(array("id=?", $issue->owner_id));
 
 		$files = new \Model\Issue\File();
-		$f3->set("files", $files->paginate(0, 64, array("issue_id = ?", $issue->id)));
+		$f3->set("files", $files->paginate(0, 16, array("issue_id = ?", $issue->id)));
+		// TODO: add All Files link/page to issues/single view
 
 		if($issue->sprint_id) {
 			$sprint = new \Model\Sprint();
@@ -313,7 +314,7 @@ class Issues extends Base {
 		$f3->set("owner", $owner->cast());
 
 		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
-		$f3->set("comments", $comments->paginate(0, 100, array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
+		$f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
 
 		echo \Template::instance()->render("issues/single.html");
 	}
@@ -324,18 +325,18 @@ class Issues extends Base {
 		// Build updates array
 		$updates_array = array();
 		$update_model = new \Model\Custom("issue_update_user");
-		$updates = $update_model->paginate(0, 100, array("issue_id = ?", $params["id"]), array("order" => "created_date DESC"));
-		foreach($updates["subset"] as $update) {
+		$updates = $update_model->find(array("issue_id = ?", $params["id"]), array("order" => "created_date DESC"));
+		foreach($updates as $update) {
 			$update_array = $update->cast();
 			$update_field_model = new \Model\Issue\Update\Field();
-			$update_array["changes"] = $update_field_model->paginate(0, 100, array("issue_update_id = ?", $update["id"]));
+			$update_array["changes"] = $update_field_model->find(array("issue_update_id = ?", $update["id"]));
 			$updates_array[] = $update_array;
 		}
 
 		$f3->set("updates", $updates_array);
 
 		print_json(array(
-			"total" => $updates["total"],
+			"total" => count($updates),
 			"html" => \Template::instance()->render("issues/single/history.html")
 		));
 	}
@@ -348,13 +349,13 @@ class Issues extends Base {
 		if($issue->id) {
 			$issues = new \Model\Issue\Detail();
 			if($f3->get("issue_type.project") == $issue->type_id) {
-				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND deleted_date IS NULL", $issue->id)));
+				$f3->set("issues", $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id)));
 			} else {
-				$f3->set("issues", $issues->paginate(0, 100, array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
+				$f3->set("issues", $issues->find(array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
 			}
 
 			print_json(array(
-				"total" => $f3->get("issues.total"),
+				"total" => count($f3->get("issues")),
 				"html" => \Template::instance()->render("issues/single/related.html")
 			));
 		} else {
@@ -365,12 +366,12 @@ class Issues extends Base {
 	public function single_watchers($f3, $params) {
 		$user_id = $this->_requireLogin();
 		$watchers = new \Model\Custom("issue_watcher_user");
-		$f3->set("watchers", $watchers->paginate(0, 100, array("issue_id = ?", $params["id"])));
+		$f3->set("watchers", $watchers->find(array("issue_id = ?", $params["id"])));
 		$users = new \Model\User();
-		$f3->set("users", $users->paginate(0, 100, "deleted_date IS NULL AND role != 'group'"));
+		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'"));
 
 		print_json(array(
-			"total" => $f3->get("watchers.total"),
+			"total" => count($f3->get("watchers")),
 			"html" => \Template::instance()->render("issues/single/watchers.html")
 		));
 	}
@@ -393,6 +394,7 @@ class Issues extends Base {
 		$query = "%" . $f3->get("GET.q") . "%";
 		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail", null, 3600);
 		$results = $issues->paginate(0, 50, array("name LIKE ? OR description LIKE ? AND deleted_date IS NULL", $query, $query), array("order" => "created_date ASC"));
+		// TODO: Add pagination to results page
 		$f3->set("issues", $results);
 		echo \Template::instance()->render("issues/search.html");
 	}
@@ -415,10 +417,10 @@ class Issues extends Base {
 		if(!is_dir($f3->get("UPLOADS"))) {
 			mkdir($f3->get("UPLOADS"), 0777, true);
 		}
-		$overwrite = false; // set to true, to overwrite an existing file; Default: false
+		$overwrite = false; // set to true to overwrite an existing file; Default: false
 		$slug = true; // rename file to filesystem-friendly version
 
-		//Make a good name
+		// Make a good name
 		$f3->set("orig_name", preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']));
 		$_FILES['attachment']['name'] = time() . "_" . $f3->get("orig_name");
 
@@ -432,22 +434,8 @@ class Issues extends Base {
 		$files = $web->receive(function($file){
 			$f3 = \Base::instance();
 
-			//var_dump($file);
-			/* looks like:
-				array(5) {
-					["name"] =>     string(19) "somefile.png"
-					["type"] =>     string(9) "image/png"
-					["tmp_name"] => string(14) "/tmp/php2YS85Q"
-					["error"] =>    int(0)
-					["size"] =>     int(172245)
-				}
-			*/
-			// $file['name'] already contains the slugged name now
-
-			// maybe you want to check the file size
 			if($file['size'] > $f3->get("files.maxsize"))
-				return false; // this file is not valid, return false will skip moving it
-
+				return false;
 
 			$newfile = new \Model\Issue\File();
 			$newfile->issue_id = $f3->get("issue.id");
@@ -457,14 +445,13 @@ class Issues extends Base {
 			$newfile->disk_directory = $f3->get("UPLOADS");
 			$newfile->filesize = $file['size'];
 			$newfile->content_type = $file['type'];
-			$newfile->digest = md5_file($file['tmp_name']); // Need to MD5 the tmp file, since the final one doesn't exist yet.
+			$newfile->digest = md5_file($file['tmp_name']);
 			$newfile->created_date = now();
 			$newfile->save();
 
 			// TODO: Add history entry to see who uploaded which files and when
 
-			// everything went fine, hurray!
-			return true; // allows the file to be moved from php tmp dir to your defined upload dir
+			return true; // moves file from php tmp dir to upload dir
 		},
 			$overwrite,
 			$slug

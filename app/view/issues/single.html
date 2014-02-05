@@ -133,7 +133,7 @@
 							<br>
 
 							<ul class="nav nav-tabs">
-								<li class="active"><a href="#comments" data-toggle="tab">Comments&ensp;<span class="badge">{{ @comments.total }}</span></a></li>
+								<li class="active"><a href="#comments" data-toggle="tab">Comments&ensp;<span class="badge">{{ count(@comments) }}</span></a></li>
 								<li><a href="#history" data-toggle="tab" id="tab_history">History</a></li>
 								<li><a href="#watchers" data-toggle="tab" id="tab_watchers">Watchers</a></li>
 								<check if="{{ @issue_type.project == @type.id }}">
@@ -148,7 +148,7 @@
 							<div class="tab-content">
 								<div class="tab-pane active" id="comments">
 									<div class="comments" id="comments">
-										<repeat group="{{ @comments.subset }}" value="{{ @comment }}">
+										<repeat group="{{ @comments }}" value="{{ @comment }}">
 											<div class="media">
 												<a class="pull-left" href="/user/{{ @comment.user_username }}">
 													<img class="profile-picture media-object img-rounded" src="{{ h(gravatar(@comment.user_email, 48)) }}" alt>

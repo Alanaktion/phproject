@@ -10,7 +10,7 @@
 		<table class="table taskboard-head">
 			<tr class="tb-row">
 				<th class="column column-1">Project</th>
-				<repeat group="{{ @statuses.subset }}" key="{{ @key }}" value="{{ @value }}">
+				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
 					<th class="column column-{{ @key + 2 }}">{{ @value.name }}</th>
 				</repeat>
 			</tr>
@@ -92,12 +92,12 @@
 								<option value="0" data-color="#AAAAAA">Not Assigned</option>
 								<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" selected>{{ @user.name }}</option>
 								<optgroup label="Groups">
-									<repeat group="{{ @groups.subset }}" value="{{ @group }}">
+									<repeat group="{{ @groups }}" value="{{ @group }}">
 										<option value="{{ @group.id }}" data-color="#{{ @group.task_color }}">{{ @group.name }}</option>
 									</repeat>
 								</optgroup>
 								<optgroup label="Users">
-									<repeat group="{{ @users.subset }}" value="{{ @user }}">
+									<repeat group="{{ @users }}" value="{{ @user }}">
 										<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" data-username="{{ @user.username }}">{{ @user.name }}</option>
 									</repeat>
 								</optgroup>
@@ -108,7 +108,7 @@
 							<input type="textbox" name="dueDate" id="dueDate" value="" class="dueDate form-control">
 							<label for="priority">Priority</label>
 							<select id="priority" name="priority" class="form-control" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
-								<repeat group="{{ @priorities.subset }}" value="{{ @priority }}">
+								<repeat group="{{ @priorities }}" value="{{ @priority }}">
 									<option value="{{ @priority.value }}">{{ @priority.name }}</option>
 								</repeat>
 							</select>

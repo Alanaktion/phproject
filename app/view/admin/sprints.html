@@ -30,7 +30,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<repeat group="{{ @sprints.subset }}" value="{{ @sprint }}">
+					<repeat group="{{ @sprints }}" value="{{ @sprint }}">
 						<tr data-sprint-id="{{ @sprint.id }}">
 							<td>{{ @sprint.id }}</td>
 							<td>{{ @sprint.name }}</td>

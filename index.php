@@ -64,11 +64,7 @@ $f3->route("GET /minify/@type/@files", function($f3, $args) {
 }, 3600 * 24 * 7);
 
 // Set up session handler
-session_set_cookie_params($f3->get("JAR.expire"));
 session_name("PHPROJSESS");
-if(isset($_COOKIE[session_name()])) {
-	setcookie(session_name(), $_COOKIE[session_name()], time() + $f3->get("JAR.expire"), "/", is_int(strpos($_SERVER["SERVER_NAME"], ".")) && !filter_var($_SERVER["SERVER_NAME"], FILTER_VALIDATE_IP) ? $_SERVER["SERVER_NAME"] : "");
-}
 // new Session();
 
 // Load user if session exists

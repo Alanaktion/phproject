@@ -74,8 +74,8 @@ class Issue extends Base {
 		$return = parent::load($filter, $options, $ttl);
 
 		if($this->get("id")) {
-			$attrs = new \Model\Custom("attribute_value_detail");
-			$attrs->load(array("issue_id = ?", $this->get("id")));
+			$attr = new \Model\Custom("attribute_value_detail");
+			$attrs = $attr->find(array("issue_id = ?", $this->get("id")));
 		}
 
 		return $return;

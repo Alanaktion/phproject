@@ -6,7 +6,7 @@
 		<div class="media-body">
 			<p class="media-heading"><strong><a href="/user/{{ @update.user_username }}">{{ @update.user_name }}</a></strong> on {{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</p>
 			<ul>
-				<repeat group="{{ @update.changes.subset }}" value="{{ @change }}">
+				<repeat group="{{ @update.changes }}" value="{{ @change }}">
 					<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @change.old_value }}</i> to <i>{{ @change.new_value }}</i></li>
 				</repeat>
 			</ul>

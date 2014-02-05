@@ -20,7 +20,7 @@ CREATE TABLE `group_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP VIEW IF EXISTS `user_group_user`;
-CREATE TABLE `user_group_user` (`id` int(10) unsigned, `group_id` int(10) unsigned, `user_id` int(10) unsigned, `user_username` varchar(32), `user_email` varchar(64), `user_name` varchar(32), `user_role` enum('user','admin','group'), `user_task_color` char(6));
+CREATE TABLE `user_group_user` (`id` int(10) unsigned, `group_id` int(10) unsigned, `user_id` int(10) unsigned, `user_username` varchar(32), `user_email` varchar(64), `user_name` varchar(32), `user_role` enum('user','admin','group'), `user_task_color` char(6), `deleted_date` datetime);
 
 DROP TABLE IF EXISTS `issue`;
 CREATE TABLE `issue` (
@@ -223,7 +223,7 @@ INSERT INTO `user` (`id`, `username`, `email`, `name`, `password`, `salt`, `role
 (2, 'shelf',    'ahardman+tron@thrivelife.com', 'Shalf Tasty',  'b76614097e5860a207dd6ca69de4fadef8915d9c', '18d0fa4a469ab43a4f629b03039f2d18', 'admin',    '336699',   NULL,   NULL,   '2014-01-03 16:23:42',  NULL);
 
 DROP TABLE IF EXISTS `user_group_user`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `user_group_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `user_group_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color`,`u`.`deleted_date` AS `deleted_date` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));
 
 DROP TABLE IF EXISTS `issue_comment_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_comment_user` AS (select `c`.`id` AS `id`,`c`.`issue_id` AS `issue_id`,`c`.`user_id` AS `user_id`,`c`.`text` AS `text`,`c`.`created_date` AS `created_date`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`issue_comment` `c` join `user` `u` on((`c`.`user_id` = `u`.`id`))));
