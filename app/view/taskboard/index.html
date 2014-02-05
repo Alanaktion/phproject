@@ -98,7 +98,7 @@
 								</optgroup>
 								<optgroup label="Users">
 									<repeat group="{{ @users.subset }}" value="{{ @user }}">
-										<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}">{{ @user.name }}</option>
+										<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" data-username="{{ @user.username }}">{{ @user.name }}</option>
 									</repeat>
 								</optgroup>
 							</select>
