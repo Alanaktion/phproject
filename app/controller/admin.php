@@ -44,7 +44,7 @@ class Admin extends Base {
 
 	public function user_edit($f3, $params) {
 		$this->_requireAdmin();
-		$f3->set("title", "Administration");
+		$f3->set("title", "Edit User");
 
 		$user = new \Model\User();
 		$user->load($params["id"]);
@@ -76,6 +76,7 @@ class Admin extends Base {
 
 	public function user_new($f3, $params) {
 		$this->_requireAdmin();
+		$f3->set("title", "New User");
 		if($f3->get("POST")) {
 			$user = new \Model\User();
 			$user->username = $f3->get("POST.username");
@@ -114,8 +115,11 @@ class Admin extends Base {
 
 	public function groups($f3, $params) {
 		$this->_requireAdmin();
+		$f3->set("title", "Manage Groups");
+
 		$group = new \Model\User();
 		$groups = $group->find("deleted_date IS NULL AND role = 'group'");
+
 		$group_array = array();
 		$db = $f3->get("db.instance");
 		foreach($groups as $g) {
@@ -134,6 +138,7 @@ class Admin extends Base {
 
 	public function group_new($f3, $params) {
 		$this->_requireAdmin();
+		$f3->set("title", "New Group");
 		if($f3->get("POST")) {
 			$group = new \Model\User();
 			$group->name = $f3->get("POST.name");
@@ -149,6 +154,7 @@ class Admin extends Base {
 
 	public function group_edit($f3, $params) {
 		$this->_requireAdmin();
+		$f3->set("title", "Edit Group");
 
 		$group = new \Model\User();
 		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
@@ -220,7 +226,7 @@ class Admin extends Base {
 
 	public function attributes($f3, $params) {
 		$this->_requireAdmin();
-		$f3->set("title", "Manage Issue Attributes");
+		$f3->set("title", "Manage Attributes");
 		$attributes = new \Model\Attribute();
 		$f3->set("attributes", $attributes->find());
 		echo \Template::instance()->render("admin/attributes.html");
@@ -228,6 +234,7 @@ class Admin extends Base {
 
 	public function attribute_new($f3, $params) {
 		$this->_requireAdmin();
+		$f3->set("title", "New Attribute");
 		$types = new \Model\Issue\Type();
 		$f3->set("issue_types", $types->find());
 
@@ -239,6 +246,7 @@ class Admin extends Base {
 
 	public function attribute_edit($f3, $params) {
 		$this->_requireAdmin();
+		$f3->set("title", "Edit Attribute");
 		$types = new \Model\Issue\Type();
 		$f3->set("issue_types", $types->find());
 
