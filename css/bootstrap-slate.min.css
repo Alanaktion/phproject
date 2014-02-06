@@ -10,7 +10,7 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 
 .navbar-form .input-sm,
 .navbar-form .btn-sm {
-    margin-top: 5px;
+    margin-top: 4px;
 }
 #taskboard table.taskboard-head {
     background-color: transparent;
