@@ -13,7 +13,20 @@
 				<repeat group="{{ @projects.subset }}" value="{{ @item }}">
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
 						<span class="badge">#{{ @item.id }}</span>
-						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
+						<span class="badge status">{{ @item.status_name }}</span>
+						<h4 class="list-group-item-heading">
+							{{ @item.name }}
+							<check if="{{ @item.priority != 0 }}">
+								<check if="{{ @item.priority < 0 }}">
+									<true>
+										<span class="label label-default">{{ @item.priority_name }}</span>
+									</true>
+									<false>
+										<span class="label label-danger">{{ @item.priority_name }}</span>
+									</false>
+								</check>
+							</check>
+						</h4>
 						<check if="{{ strtotime(@item.due_date) }}">
 							<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 						</check>
@@ -25,7 +38,20 @@
 				<repeat group="{{ @bugs.subset }}" value="{{ @item }}">
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
 						<span class="badge">#{{ @item.id }}</span>
-						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
+						<span class="badge status">{{ @item.status_name }}</span>
+						<h4 class="list-group-item-heading">
+							{{ @item.name }}
+							<check if="{{ @item.priority != 0 }}">
+								<check if="{{ @item.priority < 0 }}">
+									<true>
+										<span class="label label-default">{{ @item.priority_name }}</span>
+									</true>
+									<false>
+										<span class="label label-danger">{{ @item.priority_name }}</span>
+									</false>
+								</check>
+							</check>
+						</h4>
 						<check if="{{ strtotime(@item.due_date) }}">
 							<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 						</check>
@@ -43,7 +69,19 @@
 						<check if="{{ @item.author_id != @item.owner_id }}">
 							<p class="pull-right badge-sibling hidden-xs has-tooltip" title="Author">{{ @item.author_name }}</p>
 						</check>
-						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
+						<h5 class="list-group-item-heading">
+							{{ @item.name }}
+							<check if="{{ @item.priority != 0 }}">
+								<check if="{{ @item.priority < 0 }}">
+									<true>
+										<span class="label label-default">{{ @item.priority_name }}</span>
+									</true>
+									<false>
+										<span class="label label-danger">{{ @item.priority_name }}</span>
+									</false>
+								</check>
+							</check>
+						</h5>
 						<check if="{{ strtotime(@item.due_date) }}">
 							<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 						</check>
