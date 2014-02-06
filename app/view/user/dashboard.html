@@ -14,11 +14,8 @@
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
 						<span class="badge">#{{ @item.id }}</span>
 						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
-						<check if="{{ strtotime(@item.due_date) > time() }}">
+						<check if="{{ strtotime(@item.due_date) }}">
 							<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
-						</check>
-						<check if="{{ strtotime(@item.due_date) && strtotime(@item.due_date) <= time() }}">
-							<p class="list-group-item-text text-danger">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 						</check>
 					</a>
 				</repeat>
@@ -29,11 +26,8 @@
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
 						<span class="badge">#{{ @item.id }}</span>
 						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
-						<check if="{{ strtotime(@item.due_date) > time() }}">
+						<check if="{{ strtotime(@item.due_date) }}">
 							<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
-						</check>
-						<check if="{{ strtotime(@item.due_date) && strtotime(@item.due_date) <= time() }}">
-							<p class="list-group-item-text text-danger">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 						</check>
 					</a>
 				</repeat>
@@ -50,11 +44,8 @@
 							<p class="pull-right badge-sibling hidden-xs has-tooltip" title="Author">{{ @item.author_name }}</p>
 						</check>
 						<h4 class="list-group-item-heading">{{ @item.name }}</h4>
-						<check if="{{ strtotime(@item.due_date) > time() }}">
+						<check if="{{ strtotime(@item.due_date) }}">
 							<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
-						</check>
-						<check if="{{ strtotime(@item.due_date) && strtotime(@item.due_date) <= time() }}">
-							<p class="list-group-item-text text-danger">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 						</check>
 					</a>
 				</repeat>
