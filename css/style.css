@@ -242,3 +242,7 @@ a:focus, button:focus, input:focus, .btn:focus {
 	float: left;
 	margin-right: 1em;
 }
+
+.list-group-item .label {
+	margin: 0 0.3em;
+}
