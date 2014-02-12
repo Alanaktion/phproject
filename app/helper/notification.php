@@ -25,20 +25,31 @@ class Notification extends \Prefab {
 		$body = \Template::instance()->render("notification/comment.html");
 
 		// Set up headers
-		$smtp = $this->smtp_instance();
-		$smtp->set("Subject", $comment->user_name . " commented on #" . $issue->id . " " . $issue->name);
-		$smtp->set("From", $f3->get("mail.from"));
-		$smtp->set("Reply-to", $f3->get("mail.from"));
-		$smtp->set("Content-type", "text/html");
+		//$smtp = $this->smtp_instance();
+		//$smtp->set("Subject", $comment->user_name . " commented on #" . $issue->id . " " . $issue->name);
+		//$smtp->set("From", $f3->get("mail.from"));
+		//$smtp->set("Reply-to", $f3->get("mail.from"));
+		//$smtp->set("Content-type", "text/html");
+		
+		
 
 		// Send to recipients
 		foreach($recipients as $recipient) {
-			$smtp->set("To", $recipient);
-			$smtp->send($body);
+			$subject =  $comment->user_name . " commented on #" . $issue->id . " " . $issue->name;
+			// To send HTML mail, the Content-type header must be set
+			$headers  = 'MIME-Version: 1.0' . "\r\n";
+			$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+
+			// Additional headers
+			$headers .= 'To: '.$recipient . "\r\n";
+			$headers .= 'From: TRON ADMIN <admin@thrivelife.com>' . "\r\n";
+			//$smtp->set("To", $recipient);
+			//$smtp->send($body);
+			mail($recipient, $subject, $body, $headers);
 			$log->write("Sent comment notification to: " . $recipient);
 		}
 
-		$log->write($smtp->log());
+		//$log->write($smtp->log());
 	}
 
 	// Send an email to watchers detailing the updated fields
