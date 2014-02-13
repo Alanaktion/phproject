@@ -1,15 +1,25 @@
 <?php
 if (!defined('STDIN'))
 	die("Cron jobs must be run from the command line.");
+	
+$homedir = preg_replace("@cron@", "", __DIR__);
+set_include_path($homedir);
 
-$f3=require("../lib/base.php");
+$f3=require($homedir."lib/base.php");
 $f3->mset(array(
-	"UI" => "app/view/",
-	"LOGS" => "log/",
-	"AUTOLOAD" => "app/"
+	"UI" => $homedir."app/view/",
+	"LOGS" => $homedir."log/",
+	"AUTOLOAD" => $homedir."app/"
 ));
 
 // Load local configuration
-$f3->config("../config.ini");
+$f3->config($homedir."config.ini");
 
-require_once "../app/functions.php";
+// Connect to database
+$f3->set("db.instance", new DB\SQL(
+	"mysql:host=" . $f3->get("db.host") . ";port=3306;dbname=" . $f3->get("db.name"),
+	$f3->get("db.user"),
+	$f3->get("db.pass")
+));
+
+require_once $homedir . "app/functions.php";
