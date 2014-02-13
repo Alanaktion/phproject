@@ -25,9 +25,7 @@ require_once "base.php";
 			preg_match("@<(.+)>@", $overview[0]->from, $matches);
 			$from = $matches[1];
 			
-			//DEBUG 
-			print $from;
-			
+					
 			/* is the sender a user? */
 			$user = new \Model\User();
 			$user->load(array('email=? AND (deleted_date IS NULL OR deleted_date != ?)',$from, '0000-00-00 00:00:00'));
