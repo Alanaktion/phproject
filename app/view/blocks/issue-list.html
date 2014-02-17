@@ -2,12 +2,12 @@
 	<table class="table table-striped table-hover table-responsive table-condensed issue-list">
 		<thead>
 			<tr class="issue-filters">
-				<th colspan="2">
-				</th>
-				<th>
+				<td colspan="2">
+				</td>
+				<td>
 					<input type="text" class="form-control input-sm" name="name" value="{{ !empty(@GET.name) ? @GET.name : '' }}">
-				</th>
-				<th>
+				</td>
+				<td>
 					<select class="form-control input-sm" name="type_id">
 						<option></option>
 						<repeat group="{{ @types }}" value="{{ @item }}">
@@ -17,8 +17,8 @@
 							</check>
 						</repeat>
 					</select>
-				</th>
-				<th>
+				</td>
+				<td>
 					<select class="form-control input-sm" name="priority">
 						<option></option>
 						<repeat group="{{ @priorities }}" value="{{ @item }}">
@@ -28,8 +28,8 @@
 							</check>
 						</repeat>
 					</select>
-				</th>
-				<th>
+				</td>
+				<td>
 					<select class="form-control input-sm" name="status">
 						<option></option>
 						<repeat group="{{ @statuses }}" value="{{ @item }}">
@@ -39,8 +39,8 @@
 							</check>
 						</repeat>
 					</select>
-				</th>
-				<th>
+				</td>
+				<td>
 					<select class="form-control input-sm" name="author_id">
 						<option></option>
 						<option value="{{ @user.id }}">{{ @user.name }}</option>
@@ -61,8 +61,8 @@
 							</repeat>
 						</optgroup>
 					</select>
-				</th>
-				<th>
+				</td>
+				<td>
 					<select class="form-control input-sm" name="owner_id">
 						<option></option>
 						<option value="{{ @user.id }}">{{ @user.name }}</option>
@@ -83,11 +83,11 @@
 							</repeat>
 						</optgroup>
 					</select>
-				</th>
-				<th></th>
-				<th class="text-right">
+				</td>
+				<td></td>
+				<td class="text-right">
 					<button type="submit" class="btn btn-xs btn-primary">Submit</button>
-				</th>
+				</td>
 			</tr>
 			<tr>
 				<th></th>
