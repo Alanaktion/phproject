@@ -13,14 +13,14 @@ class Files extends Base {
 			return;
 		}
 
-		if(!is_file($f3->get("ROOT") . "/" . $file->disk_filename)) {
-			$f3->error(404);
-			return;
-		}
-
 		// Output thumbnail of image file
 		if(substr($file->content_type, 0, 5) == "image") {
-			$img = new \Image($file->disk_filename, null, $f3->get("ROOT") . "/");
+			if(is_file($f3->get("ROOT") . "/" . $file->disk_filename)) {
+				$img = new \Image($file->disk_filename, null, $f3->get("ROOT") . "/");
+			} else {
+				http_response_code(404);
+				$img = new \Image("img/404.png", null, $f3->get("ROOT") . "/");
+			}
 			$img->resize($params["size"], $params["size"]);
 
 			// Ensure proper content-type for JPEG images
