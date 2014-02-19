@@ -62,7 +62,12 @@ class Issue extends Base {
 			}
 
 		} else {
-			// TODO: New issue notififcation
+			$issue = parent::save();
+			if($notify) {
+				$notification = \Helper\Notification::instance();
+				$notification->issue_create($issue->id);
+			}
+			return $issue;
 		}
 
 		return parent::save();

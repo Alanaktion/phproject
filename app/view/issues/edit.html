@@ -96,6 +96,16 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<label class="col-md-2 control-label label-sm">Repeat Cycle</label>
+					<div class="col-md-6">
+						<select class="form-control input-sm" name="repeat_cycle">
+							<option value="none">Not Repeating</option>
+							<option value="week" {{ !empty(@issue) && @issue.repeat_cycle == 'week' ? "selected" : "" }}>Weekly</option>
+							<option value="month" {{ !empty(@issue) && @issue.repeat_cycle == 'month' ? "selected" : "" }}>Monthly</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
 					<label class="col-md-2 control-label label-sm">Parent ID</label>
 					<div class="col-md-6">
 						<input class="form-control input-sm" type="text" name="parent_id" value="{{ empty(@issue) ? "" : @issue.parent_id }}">

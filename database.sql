@@ -39,9 +39,11 @@ CREATE TABLE `issue` (
   `closed_date` datetime DEFAULT NULL,
   `deleted_date` datetime DEFAULT NULL,
   `due_date` date DEFAULT NULL,
-  `repeat_cycle` enum('none','daily','weekly','monthly') NOT NULL DEFAULT 'none',
+  `repeat_cycle` enum('none','day','week','month') NOT NULL DEFAULT 'none',
   `sprint_id` int(10) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `sprint_id` (`sprint_id`),
+  KEY `repeat_cycle` (`repeat_cycle`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_comment`;
@@ -63,37 +65,41 @@ DROP VIEW IF EXISTS `issue_comment_user`;
 CREATE TABLE `issue_comment_user` (`id` int(10) unsigned, `issue_id` int(10) unsigned, `user_id` int(10) unsigned, `text` text, `created_date` datetime, `user_username` varchar(32), `user_email` varchar(64), `user_name` varchar(32), `user_role` enum('user','admin','group'), `user_task_color` char(6));
 
 DROP VIEW IF EXISTS `issue_detail`;
-CREATE TABLE `issue_detail` (
-  `id` int(10) unsigned, `status` int(11),
-  `type_id` int(11) unsigned,
-  `name` varchar(255),
-  `description` text,
-  `parent_id` int(11) unsigned,
-  `author_id` int(11) unsigned,
-  `owner_id` int(11) unsigned,
-  `priority` int(11) NOT NULL DEFAULT '0',
-  `hours_total` double unsigned DEFAULT NULL,
-  `hours_remaining` double unsigned DEFAULT NULL,
-  `created_date` datetime,
-  `closed_date` datetime,
-  `deleted_date` datetime,
-  `due_date` date,
-  `has_due_date` int(1),
-  `repeat_cycle` enum('none','daily','weekly','monthly'),
-  `sprint_id` int(10) unsigned,
-  `type_name` varchar(32),
-  `status_name` varchar(32),
-  `status_closed` tinyint(1),
-  `priority_id` int(10) unsigned,
-  `priority_name` varchar(64),
-  `author_username` varchar(32),
-  `author_name` varchar(32),
-  `author_email` varchar(64),
-  `author_task_color` char(6),
-  `owner_username` varchar(32),
-  `owner_name` varchar(32),
-  `owner_email` varchar(64),
-  `owner_task_color` char(6)
+CREATE TABLE  `issue_detail`(
+ `id` int(10) unsigned ,
+ `status` int(11) ,
+ `type_id` int(11) unsigned ,
+ `name` varchar(255) ,
+ `description` text ,
+ `parent_id` int(11) unsigned ,
+ `author_id` int(11) unsigned ,
+ `owner_id` int(11) unsigned ,
+ `priority` int(11) ,
+ `hours_total` double unsigned ,
+ `hours_remaining` double unsigned ,
+ `created_date` datetime ,
+ `closed_date` datetime ,
+ `deleted_date` datetime ,
+ `due_date` date ,
+ `has_due_date` int(1) ,
+ `repeat_cycle` enum('none','daily','weekly','monthly') ,
+ `sprint_id` int(10) unsigned ,
+ `sprint_name` varchar(60) ,
+ `sprint_start_date` date ,
+ `sprint_end_date` date ,
+ `type_name` varchar(32) ,
+ `status_name` varchar(32) ,
+ `status_closed` tinyint(1) ,
+ `priority_id` int(10) unsigned ,
+ `priority_name` varchar(64) ,
+ `author_username` varchar(32) ,
+ `author_name` varchar(32) ,
+ `author_email` varchar(64) ,
+ `author_task_color` char(6) ,
+ `owner_username` varchar(32) ,
+ `owner_name` varchar(32) ,
+ `owner_email` varchar(64) ,
+ `owner_task_color` char(6)
 );
 
 DROP TABLE IF EXISTS `issue_file`;
@@ -215,12 +221,14 @@ CREATE TABLE `user` (
   `avatar_filename` varchar(64) DEFAULT NULL,
   `created_date` datetime NOT NULL,
   `deleted_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `user` (`id`, `username`, `email`, `name`, `password`, `salt`, `role`, `task_color`, `theme`, `avatar_filename`, `created_date`, `deleted_date`) VALUES
 (1, 'ahardman', 'ahardman@thrivelife.com',  'Alan Hardman', '7b9e164b5ec6bbd1208f092d0f88ca8cdcf5eaad', '2cbc81d479e7664070d2f1657787904d', 'admin',    'b5ed3f',   '/css/bootstrap-flatly.min.css',    '1-356a.png',   '2014-01-03 16:23:40',  NULL),
-(2, 'shelf',    'ahardman+tron@thrivelife.com', 'Shalf Tasty',  'b76614097e5860a207dd6ca69de4fadef8915d9c', '18d0fa4a469ab43a4f629b03039f2d18', 'admin',    '336699',   NULL,   NULL,   '2014-01-03 16:23:42',  NULL);
+(2, 'shelf',    'ahardman+tron@thrivelife.com', 'Shelf Tasty',  'b76614097e5860a207dd6ca69de4fadef8915d9c', '18d0fa4a469ab43a4f629b03039f2d18', 'admin',    '336699',   NULL,   NULL,   '2014-01-03 16:23:42',  NULL);
 
 DROP TABLE IF EXISTS `user_group_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `user_group_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color`,`u`.`deleted_date` AS `deleted_date` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));
@@ -228,48 +236,7 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `user_group_user` AS (selec
 DROP TABLE IF EXISTS `issue_comment_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_comment_user` AS (select `c`.`id` AS `id`,`c`.`issue_id` AS `issue_id`,`c`.`user_id` AS `user_id`,`c`.`text` AS `text`,`c`.`created_date` AS `created_date`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`issue_comment` `c` join `user` `u` on((`c`.`user_id` = `u`.`id`))));
 
-DROP TABLE IF EXISTS `issue_detail`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_detail` AS (
-  select
-    `issue`.`id` AS `id`,
-    `issue`.`status` AS `status`,
-    `issue`.`type_id` AS `type_id`,
-    `issue`.`name` AS `name`,
-    `issue`.`description` AS `description`,
-    `issue`.`parent_id` AS `parent_id`,
-    `issue`.`author_id` AS `author_id`,
-    `issue`.`owner_id` AS `owner_id`,
-    `issue`.`priority` AS `priority`,
-    `issue`.`hours_total` AS `hours_total`,
-    `issue`.`hours_remaining` AS `hours_remaining`,
-    `issue`.`created_date` AS `created_date`,
-    `issue`.`closed_date` AS `closed_date`,
-    `issue`.`deleted_date` AS `deleted_date`,
-    `issue`.`due_date` AS `due_date`,
-    `issue`.`due_date` IS NULL AS `has_due_date`,
-    `issue`.`repeat_cycle` AS `repeat_cycle`,
-    `issue`.`sprint_id` AS `sprint_id`,
-    `type`.`name` AS `type_name`,
-    `status`.`name` AS `status_name`,
-    `status`.`closed` AS `status_closed`,
-    `priority`.`id` AS `priority_id`,
-    `priority`.`name` AS `priority_name`,
-    `author`.`username` AS `author_username`,
-    `author`.`name` AS `author_name`,
-    `author`.`email` AS `author_email`,
-    `author`.`task_color` AS `author_task_color`,
-    `owner`.`username` AS `owner_username`,
-    `owner`.`name` AS `owner_name`,
-    `owner`.`email` AS `owner_email`,
-    `owner`.`task_color` AS `owner_task_color`
-  from (
-    ((((`issue`
-      left join `user` `author` on((`issue`.`author_id` = `author`.`id`)))
-      left join `user` `owner` on((`issue`.`owner_id` = `owner`.`id`)))
-      left join `issue_status` `status` on((`issue`.`status` = `status`.`id`)))
-      left join `issue_priority` `priority` on((`issue`.`priority` = `priority`.`value`)))
-      left join `issue_type` `type` on((`issue`.`type_id` = `type`.`id`)))
-);
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `issue_detail` AS select `issue`.`id` AS `id`,`issue`.`status` AS `status`,`issue`.`type_id` AS `type_id`,`issue`.`name` AS `name`,`issue`.`description` AS `description`,`issue`.`parent_id` AS `parent_id`,`issue`.`author_id` AS `author_id`,`issue`.`owner_id` AS `owner_id`,`issue`.`priority` AS `priority`,`issue`.`hours_total` AS `hours_total`,`issue`.`hours_remaining` AS `hours_remaining`,`issue`.`created_date` AS `created_date`,`issue`.`closed_date` AS `closed_date`,`issue`.`deleted_date` AS `deleted_date`,`issue`.`due_date` AS `due_date`,isnull(`issue`.`due_date`) AS `has_due_date`,`issue`.`repeat_cycle` AS `repeat_cycle`,`issue`.`sprint_id` AS `sprint_id`,`sprint`.`name` AS `sprint_name`,`sprint`.`start_date` AS `sprint_start_date`,`sprint`.`end_date` AS `sprint_end_date`,`type`.`name` AS `type_name`,`status`.`name` AS `status_name`,`status`.`closed` AS `status_closed`,`priority`.`id` AS `priority_id`,`priority`.`name` AS `priority_name`,`author`.`username` AS `author_username`,`author`.`name` AS `author_name`,`author`.`email` AS `author_email`,`author`.`task_color` AS `author_task_color`,`owner`.`username` AS `owner_username`,`owner`.`name` AS `owner_name`,`owner`.`email` AS `owner_email`,`owner`.`task_color` AS `owner_task_color` from ((((((`issue` left join `user` `author` on((`issue`.`author_id` = `author`.`id`))) left join `user` `owner` on((`issue`.`owner_id` = `owner`.`id`))) left join `issue_status` `status` on((`issue`.`status` = `status`.`id`))) left join `issue_priority` `priority` on((`issue`.`priority` = `priority`.`value`))) left join `issue_type` `type` on((`issue`.`type_id` = `type`.`id`))) left join `sprint` on((`issue`.`sprint_id` = `sprint`.`id`)))
 
 DROP TABLE IF EXISTS `issue_update_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_update_user` AS (select `i`.`id` AS `id`,`i`.`issue_id` AS `issue_id`,`i`.`user_id` AS `user_id`,`i`.`created_date` AS `created_date`,`u`.`username` AS `user_username`,`u`.`name` AS `user_name`,`u`.`email` AS `user_email` from (`issue_update` `i` join `user` `u` on((`i`.`user_id` = `u`.`id`))));

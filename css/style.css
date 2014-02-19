@@ -111,10 +111,12 @@ textarea {
 	background-color: #ecf0f1;
 }
 
-.issue-list .issue-filters th {
+.issue-list .issue-filters th,
+.issue-list .issue-filters td {
 	padding-left: 0;
 }
-.issue-list .issue-filters th .form-control {
+.issue-list .issue-filters th .form-control,
+.issue-list .issue-filters td .form-control {
 	height: auto;
 	padding: 2px;
 }
@@ -241,4 +243,8 @@ a:focus, button:focus, input:focus, .btn:focus {
 .form-horizontal .checkbox-left {
 	float: left;
 	margin-right: 1em;
+}
+
+.list-group-item .label {
+	margin: 0 0.3em;
 }

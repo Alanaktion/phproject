@@ -238,8 +238,19 @@ class Admin extends Base {
 		$types = new \Model\Issue\Type();
 		$f3->set("issue_types", $types->find());
 
-		if($f3->get("POST")) {
-			$f3->set("attribute", $f3->get("POST"));
+		if($post = $f3->get("POST")) {
+			if(!empty($post["name"]) && !empty($post["types"])) {
+				$attr = new \Model\Attribute();
+				$attr->name = trim($post["name"]);
+				$attr->type = trim($post["type"]);
+				$attr->default = trim($post["default"]);
+				$attr->save();
+				foreach($post["types"] as $type) {
+					// Save types
+				}
+			} else {
+				$f3->set("attribute", $f3->get("POST"));
+			}
 		}
 		echo \Template::instance()->render("admin/attributes/edit.html");
 	}
