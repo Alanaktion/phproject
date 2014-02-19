@@ -30,12 +30,12 @@ class Notification extends \Prefab {
 		//$smtp->set("From", $f3->get("mail.from"));
 		//$smtp->set("Reply-to", $f3->get("mail.from"));
 		//$smtp->set("Content-type", "text/html");
-		
-		
+
+
 		$subject =  "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
 		// Send to recipients
 		foreach($recipients as $recipient) {
-			
+
 			// To send HTML mail, the Content-type header must be set
 			$headers  = 'MIME-Version: 1.0' . "\r\n";
 			$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
@@ -83,11 +83,11 @@ class Notification extends \Prefab {
 		//$smtp->set("Reply-to", $f3->get("mail.from"));
 		//$smtp->set("Content-type", "text/html");
 
-		
-		$subject =  "[#" . $issue->id . "] - ".$comment->user_name . " updated  " . $issue->name;
+
+		$subject =  "[#" . $issue->id . "] - ".$update->user_name . " updated  " . $issue->name;
 		// Send to recipients
 		foreach($recipients as $recipient) {
-			
+
 			// To send HTML mail, the Content-type header must be set
 			$headers  = 'MIME-Version: 1.0' . "\r\n";
 			$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
@@ -103,7 +103,7 @@ class Notification extends \Prefab {
 
 		//$log->write($smtp->log());
 	}
-	
+
 	// Send an email to watchers detailing the updated fields
 	public function issue_create($issue_id) {
 		$f3 = \Base::instance();
@@ -119,7 +119,7 @@ class Notification extends \Prefab {
 
 		// Render message body
 		$f3->set("issue", $issue->cast());
-		
+
 		$body = \Template::instance()->render("notification/update.html");
 
 		// Set up headers
@@ -133,7 +133,7 @@ class Notification extends \Prefab {
 		$subject =  "[#" . $issue->id . "] - ".$comment->user_name . " created " . $issue->name;
 		// Send to recipients
 		foreach($recipients as $recipient) {
-			
+
 			// To send HTML mail, the Content-type header must be set
 			$headers  = 'MIME-Version: 1.0' . "\r\n";
 			$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
