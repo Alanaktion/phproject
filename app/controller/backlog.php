@@ -39,7 +39,7 @@ class Backlog extends Base {
 		$issue->load($post["itemId"]);
 		$issue->sprint_id = empty($post["reciever"]["receiverId"]) ? null : $post["reciever"]["receiverId"];
 		$issue->save();
-		print_json($issue->cast());
+		print_json($issue);
 	}
 
 }

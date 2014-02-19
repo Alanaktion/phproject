@@ -35,7 +35,7 @@ class Issues extends Base {
 			$type->load($args["type_id"]);
 			if($type->id) {
 				$f3->set("title", $type->name . "s");
-				$f3->set("type", $type->cast());
+				$f3->set("type", $type);
 			}
 		} else {
 			$f3->set("title", "Issues");
@@ -99,7 +99,7 @@ class Issues extends Base {
         $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$f3->set("title", "New " . $type->name);
-		$f3->set("type", $type->cast());
+		$f3->set("type", $type);
 
 		echo \Template::instance()->render("issues/edit.html");
 	}
@@ -138,8 +138,8 @@ class Issues extends Base {
         $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$f3->set("title", "Edit #" . $issue->id);
-		$f3->set("issue", $issue->cast());
-		$f3->set("type", $type->cast());
+		$f3->set("issue", $issue);
+		$f3->set("type", $type);
 
 		echo \Template::instance()->render("issues/edit.html");
 	}
@@ -300,18 +300,18 @@ class Issues extends Base {
 		if($issue->sprint_id) {
 			$sprint = new \Model\Sprint();
 			$sprint->load($issue->sprint_id);
-			$f3->set("sprint", $sprint->cast());
+			$f3->set("sprint", $sprint);
 		}
 
 		$watching = new \Model\Issue\Watcher();
 		$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $user_id));
 		$f3->set("watching", !!$watching->id);
 
-		$f3->set("issue", $issue->cast());
+		$f3->set("issue", $issue);
 		$f3->set("hierarchy", $issue->hierarchy());
-		$f3->set("type", $type->cast());
-		$f3->set("author", $author->cast());
-		$f3->set("owner", $owner->cast());
+		$f3->set("type", $type);
+		$f3->set("author", $author);
+		$f3->set("owner", $owner);
 
 		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
 		$f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
@@ -327,7 +327,7 @@ class Issues extends Base {
 		$update_model = new \Model\Custom("issue_update_user");
 		$updates = $update_model->find(array("issue_id = ?", $params["id"]), array("order" => "created_date DESC"));
 		foreach($updates as $update) {
-			$update_array = $update->cast();
+			$update_array = $update;
 			$update_field_model = new \Model\Issue\Update\Field();
 			$update_array["changes"] = $update_field_model->find(array("issue_update_id = ?", $update["id"]));
 			$updates_array[] = $update_array;
@@ -385,7 +385,7 @@ class Issues extends Base {
 			$issue->delete();
 			$f3->reroute("/issues");
 		} else {
-			$f3->set("issue", $issue->cast());
+			$f3->set("issue", $issue);
 			echo \Template::instance()->render("issues/delete.html");
 		}
 	}
@@ -408,7 +408,7 @@ class Issues extends Base {
 			return;
 		}
 
-		$f3->set("issue", $issue->cast());
+		$f3->set("issue", $issue);
 
 		$web = \Web::instance();
 

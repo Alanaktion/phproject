@@ -8,12 +8,12 @@ class Issue extends Base {
 
 	public function hierarchy() {
 		$issues = array();
-		$issues[] = $this->cast();
+		$issues[] = $this;
 		$parent_id = $this->parent_id;
 		while($parent_id) {
 			$issue = new Issue();
 			$issue->load($parent_id);
-			$issues[] = $issue->cast();
+			$issues[] = $issue;
 			$parent_id = $issue->parent_id;
 		}
 

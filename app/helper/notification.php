@@ -20,8 +20,8 @@ class Notification extends \Prefab {
 		$recipients = array_diff($recipients, array($f3->get("user.email")));
 
 		// Render message body
-		$f3->set("issue", $issue->cast());
-		$f3->set("comment", $comment->cast());
+		$f3->set("issue", $issue);
+		$f3->set("comment", $comment);
 		$body = \Template::instance()->render("notification/comment.html");
 
 		// Set up headers //SMTP NOT WORKING CORRECTLY
@@ -60,7 +60,7 @@ class Notification extends \Prefab {
 		// Get issue and update data
 		$issue = new \Model\Issue();
 		$issue->load($issue_id);
-		$f3->set("issue", $issue->cast());
+		$f3->set("issue", $issue);
 		$update = new \Model\Custom("issue_update_user");
 		$update->load($update_id);
 
@@ -72,8 +72,8 @@ class Notification extends \Prefab {
 		$recipients = array_diff($recipients, array($f3->get("user.email")));
 
 		// Render message body
-		$f3->set("issue", $issue->cast());
-		$f3->set("update", $update->cast());
+		$f3->set("issue", $issue);
+		$f3->set("update", $update);
 		$body = \Template::instance()->render("notification/update.html");
 
 		// Set up headers
@@ -112,13 +112,13 @@ class Notification extends \Prefab {
 		// Get issue and update data
 		$issue = new \Model\Issue();
 		$issue->load($issue_id);
-		$f3->set("issue", $issue->cast());
+		$f3->set("issue", $issue);
 		// Get recipient list and remove current user
 		$recipients = $this->_issue_watchers($issue_id);
 		$recipients = array_diff($recipients, array($f3->get("user.email")));
 
 		// Render message body
-		$f3->set("issue", $issue->cast());
+		$f3->set("issue", $issue);
 
 		$body = \Template::instance()->render("notification/update.html");
 

@@ -136,7 +136,7 @@ class User extends Base {
 
 		if($user->id) {
 			$f3->set("title", $user->name);
-			$f3->set("this_user", $user->cast());
+			$f3->set("this_user", $user);
 			echo \Template::instance()->render("user/single.html");
 		} else {
 			$f3->error(404);

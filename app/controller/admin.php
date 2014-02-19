@@ -66,7 +66,7 @@ class Admin extends Base {
 					$f3->set("success", "User changes saved.");
 				}
 			}
-			$f3->set("this_user", $user->cast());
+			$f3->set("this_user", $user);
 			echo \Template::instance()->render("admin/users/edit.html");
 		} else {
 			$f3->error(404, "User does not exist.");
@@ -158,7 +158,7 @@ class Admin extends Base {
 
 		$group = new \Model\User();
 		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
-		$f3->set("group", $group->cast());
+		$f3->set("group", $group);
 
 		$members = new \Model\Custom("user_group_user");
 		$f3->set("members", $members->find(array("group_id = ? AND deleted_date IS NULL", $group->id)));
@@ -263,7 +263,7 @@ class Admin extends Base {
 
 		$attr = new \Model\Attribute();
 		$attr->load($params["id"]);
-		$f3->set("attribute", $attr->cast());
+		$f3->set("attribute", $attr);
 
 		echo \Template::instance()->render("admin/attributes/edit.html");
 	}

@@ -14,7 +14,7 @@ class Taskboard extends Base {
 			$f3->error(404);
 			return;
 		}
-		$f3->set("sprint", $sprint->cast());
+		$f3->set("sprint", $sprint);
 		$f3->set("title", $sprint->name);
 
 		// Load issue statuses
