@@ -26,5 +26,16 @@ class User extends Base {
 		return $security->bcrypt_verify($this->password, $password);
 	}
 
+	// Get path to user's avatar or gravatar
+	public function avatar($size = 80) {
+		if(!$this->get("id")) {
+			return false;
+		}
+		if($this->get("avatar_filename")) {
+			return "/avatar/$size/" . $this->get("id") . ".png";
+		}
+		return gravatar($this->get("email"), $size);
+	}
+
 }
 

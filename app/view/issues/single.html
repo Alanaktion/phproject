@@ -58,7 +58,7 @@
 					<div class="row">
 						<div class="col-lg-5">
 							<div class="issue-head clearfix">
-								<img src="{{ h(gravatar(@author.email, 48)) }}" class="profile-picture img-rounded" alt>
+								<img src="{{ h(@author->avatar(48)) }}" class="profile-picture img-rounded" alt>
 								<p class="pull-left">
 									<a href="/user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a><br>
 									{{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}
@@ -151,7 +151,7 @@
 										<repeat group="{{ @comments }}" value="{{ @comment }}">
 											<div class="media">
 												<a class="pull-left" href="/user/{{ @comment.user_username }}">
-													<img class="profile-picture media-object img-rounded" src="{{ h(gravatar(@comment.user_email, 48)) }}" alt>
+													<img class="profile-picture media-object img-rounded" src="/avatar/48/{{ @comment.user_id }}.png" alt>
 												</a>
 												<div class="media-body">
 													<p class="media-heading"><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
@@ -220,7 +220,7 @@ $(function() {
 				.before(
 '<div class="media">' +
 	'<a class="pull-left" href="/user/' + data.user_username + '">' +
-		'<img src="//gravatar.com/avatar/' + data.user_email_md5 + '?s=48&amp;d={{ @gravatar.default }}&amp;r={{ @gravatar.rating }}" class="media-object profile-picture img-rounded" alt>' +
+		'<img src="{{ @user.avatar->(48) }}" class="media-object profile-picture img-rounded" alt>' +
 	'</a>' +
 	'<div class="media-body">' +
 		'<p class="media-heading"><a href="/user/' + data.user_username + '">' + data.user_name + '</a></p>' +

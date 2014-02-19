@@ -19,7 +19,7 @@
 	</div>
 	<div style="padding: 10px;">
 		<p style="margin: 0 0 10px;"><strong>New comment from <a href="{{ @SCHEME }}://{{ @HOST }}/users/{{ @comment.user_username }}">{{ @comment.user_name }}</a> on <a href="{{ @SCHEME }}://{{ @HOST }}/issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>:</strong></p>
-		<img src="https:{{ gravatar(@comment.user_email, 48) }}" alt="" style="float: left; margin-right: 10px;">
+		<img src="{{ @SCHEME }}://{{ @HOST }}/avatar/48/{{ @comment.user_id }}.png" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left">
 			{{ @comment.text }}<br>
 			<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></span>

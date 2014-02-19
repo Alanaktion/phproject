@@ -1,7 +1,7 @@
 <repeat group="{{ @updates }}" value="{{ @update }}">
 	<div class="media">
 		<a class="pull-left" href="/user/{{ @update.user_username }}">
-			<img src="{{ h(gravatar(@update.user_email, 48)) }}" class="media-object profile-picture img-rounded" alt>
+			<img src="/avatar/48/{{ @update.user_id }}.png" class="media-object profile-picture img-rounded" alt>
 		</a>
 		<div class="media-body">
 			<p class="media-heading"><strong><a href="/user/{{ @update.user_username }}">{{ @update.user_name }}</a></strong> on {{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</p>

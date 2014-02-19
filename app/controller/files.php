@@ -28,6 +28,30 @@ class Files extends Base {
 		}
 	}
 
+	public function avatar($f3, $params) {
+		$user = new \Model\User();
+		$user->load($params["id"]);
+
+		// Use Gravatar if user does not have an avatar
+		// Note: this should rarely be used, as the URL for Gravatars should be used directly in most cases
+		if(!$user->avatar_filename) {
+			header("Content-type: image/png");
+			readfile(gravatar($user->email, $params["size"]));
+			return;
+		}
+
+		$img = new \Image($user->avatar_filename, null, $f3->get("ROOT") . "/uploads/avatars/");
+		$img->resize($params["size"], $params["size"]);
+
+		// Ensure proper content-type for JPEG images
+		if($params["format"] == "jpg") {
+			$params["format"] = "jpeg";
+		}
+
+		$img->render($params["format"]);
+		return;
+	}
+
 	public function file($f3, $params) {
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);
