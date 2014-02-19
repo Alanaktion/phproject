@@ -36,6 +36,7 @@ $f3->set("ONERROR", function($f3) {
 	switch($f3->get("ERROR.code")) {
 		case 404:
 			$f3->set("title", "Not Found");
+			$f3->set("ESCAPE", false);
 			echo Template::instance()->render("error/404.html");
 			break;
 		case 403:

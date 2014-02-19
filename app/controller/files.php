@@ -13,6 +13,11 @@ class Files extends Base {
 			return;
 		}
 
+		if(!is_file($f3->get("ROOT") . "/" . $file->disk_filename)) {
+			$f3->error(404);
+			return;
+		}
+
 		// Output thumbnail of image file
 		if(substr($file->content_type, 0, 5) == "image") {
 			$img = new \Image($file->disk_filename, null, $f3->get("ROOT") . "/");
