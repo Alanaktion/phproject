@@ -24,7 +24,6 @@ class Files extends Base {
 			}
 
 			$img->render($params["format"]);
-			return;
 		}
 	}
 
@@ -32,24 +31,26 @@ class Files extends Base {
 		$user = new \Model\User();
 		$user->load($params["id"]);
 
-		// Use Gravatar if user does not have an avatar
-		// Note: this should rarely be used, as the URL for Gravatars should be used directly in most cases
-		if(!$user->avatar_filename) {
+		if($user->avatar_filename && is_file($f3->get("ROOT") . "/uploads/avatars/" . $user->avatar_filename)) {
+
+			// Use local file
+			$img = new \Image($user->avatar_filename, null, $f3->get("ROOT") . "/uploads/avatars/");
+			$img->resize($params["size"], $params["size"]);
+
+			// Ensure proper content-type for JPEG images
+			if($params["format"] == "jpg") {
+				$params["format"] = "jpeg";
+			}
+			$img->render($params["format"]);
+
+		} else {
+
+			// Use Gravatar if user does not have an avatar
+			// Note: this should rarely be used, as the URL for Gravatars should be used directly in most cases
 			header("Content-type: image/png");
-			readfile(gravatar($user->email, $params["size"]));
-			return;
+			readfile("http:" . gravatar($user->email, $params["size"]));
+
 		}
-
-		$img = new \Image($user->avatar_filename, null, $f3->get("ROOT") . "/uploads/avatars/");
-		$img->resize($params["size"], $params["size"]);
-
-		// Ensure proper content-type for JPEG images
-		if($params["format"] == "jpg") {
-			$params["format"] = "jpeg";
-		}
-
-		$img->render($params["format"]);
-		return;
 	}
 
 	public function file($f3, $params) {
