@@ -220,7 +220,7 @@ $(function() {
 				.before(
 '<div class="media">' +
 	'<a class="pull-left" href="/user/' + data.user_username + '">' +
-		'<img src="{{ @user.avatar->(48) }}" class="media-object profile-picture img-rounded" alt>' +
+		'<img src="{{ @user->avatar(48) }}" class="media-object profile-picture img-rounded" alt>' +
 	'</a>' +
 	'<div class="media-body">' +
 		'<p class="media-heading"><a href="/user/' + data.user_username + '">' + data.user_name + '</a></p>' +
