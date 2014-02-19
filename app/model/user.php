@@ -13,6 +13,7 @@ class User extends Base {
 			$this->load(array("id = ? AND deleted_date IS NULL", $user_id));
 			if($this->id) {
 				$f3->set("user", $this->cast());
+				$f3->set("user_obj", $this);
 			}
 		}
 		return $this;
