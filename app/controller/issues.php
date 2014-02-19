@@ -327,7 +327,7 @@ class Issues extends Base {
 		$update_model = new \Model\Custom("issue_update_user");
 		$updates = $update_model->find(array("issue_id = ?", $params["id"]), array("order" => "created_date DESC"));
 		foreach($updates as $update) {
-			$update_array = $update;
+			$update_array = $update->cast();
 			$update_field_model = new \Model\Issue\Update\Field();
 			$update_array["changes"] = $update_field_model->find(array("issue_update_id = ?", $update["id"]));
 			$updates_array[] = $update_array;
@@ -368,7 +368,7 @@ class Issues extends Base {
 		$watchers = new \Model\Custom("issue_watcher_user");
 		$f3->set("watchers", $watchers->find(array("issue_id = ?", $params["id"])));
 		$users = new \Model\User();
-		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'"));
+		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 
 		print_json(array(
 			"total" => count($f3->get("watchers")),

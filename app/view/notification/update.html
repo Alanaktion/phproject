@@ -22,7 +22,7 @@
 		<img src="{{ @SCHEME }}://{{ @HOST }}/avatar/48/{{ @update.user_id }}.png" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left">
 			<ul style="padding: 0;">
-				<repeat group="{{ @changes.subset }}" value="{{ @change }}">
+				<repeat group="{{ @changes }}" value="{{ @change }}">
 					<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @change.old_value }}</i> to <i>{{ @change.new_value }}</i></li>
 				</repeat>
 			</ul>
