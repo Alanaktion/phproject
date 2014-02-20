@@ -2,7 +2,7 @@
 if (!defined('STDIN'))
 	die("Cron jobs must be run from the command line.");
 
-$homedir = dirname(dirname(__FILE__));
+$homedir = dirname(dirname(__FILE__)) . "/";
 set_include_path($homedir);
 
 $f3=require($homedir."lib/base.php");
