@@ -9,6 +9,7 @@
 require_once "base.php";
 
 $issue_type_project = $f3->get("issue_type.project");
+$issue_type_task = $f3->get("issue_type.task");
 
 // Get all current and future sprints
 $sprint = new \Model\Sprint();
@@ -27,7 +28,7 @@ if($projects && $sprints) {
 			"parent_id = :project AND due_date > :now AND type_id != :type",
 			":project" => $project->id,
 			":now" => now(),
-			":type" => $issue_type_project
+			":type" => $issue_type_task
 		));
 
 		if($tasks) {
@@ -51,7 +52,11 @@ if($projects && $sprints) {
 					$sprint_project = new \Model\Issue();
 					$sprint_project->parent_id = $project->id;
 					$sprint_project->sprint_id = $sprint->id;
-					$sprint_project->name = "Sprint Project";
+					if($sprint->name) {
+						$sprint_project->name = $project->name . " - " . $sprint->name . " - " . date('n/j', strtotime($sprint->start_date) . "-" . date('n/j', strtotime($sprint->start_date));
+					} else {
+						$sprint_project->name = $project->name . " - " . date('n/j', strtotime($sprint->start_date) . "-" . date('n/j', strtotime($sprint->start_date));
+					}
 					$sprint_project->save();
 
 					// Move tasks into sprint project
