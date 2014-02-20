@@ -53,9 +53,9 @@ if($projects && $sprints) {
 					$sprint_project->parent_id = $project->id;
 					$sprint_project->sprint_id = $sprint->id;
 					if($sprint->name) {
-						$sprint_project->name = $project->name . " - " . $sprint->name . " - " . date('n/j', strtotime($sprint->start_date) . "-" . date('n/j', strtotime($sprint->start_date));
+						$sprint_project->name = $project->name . " - " . $sprint->name . " - " . date('n/j', strtotime($sprint->start_date)) . "-" . date('n/j', strtotime($sprint->start_date));
 					} else {
-						$sprint_project->name = $project->name . " - " . date('n/j', strtotime($sprint->start_date) . "-" . date('n/j', strtotime($sprint->start_date));
+						$sprint_project->name = $project->name . " - " . date('n/j', strtotime($sprint->start_date)) . "-" . date('n/j', strtotime($sprint->start_date));
 					}
 					$sprint_project->save();
 
