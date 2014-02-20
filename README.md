@@ -4,7 +4,7 @@ Phproject
 
 
 ### Requirements
-- PHP 5.3 or later
+- PHP 5.3.3 or later (5.4/5.5 recommended)
 - bcrypt extension
 - PDO extension
 - GD extension
