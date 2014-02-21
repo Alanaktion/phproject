@@ -64,6 +64,11 @@ class Notification extends \Prefab {
 		$update = new \Model\Custom("issue_update_user");
 		$update->load($update_id);
 
+		// Avoid errors from bad calls
+		if(!$issue->id || !$update->id) {
+			return false;
+		}
+
 		$changes = new \Model\Issue\Update\Field();
 		$f3->set("changes", $changes->paginate(0, 100, array("issue_update_id = ?", $update->id)));
 
@@ -106,6 +111,9 @@ class Notification extends \Prefab {
 
 	// Send an email to watchers detailing the updated fields
 	public function issue_create($issue_id) {
+		// TODO: make this not use the update data :P
+		return false; // exit early since it won't work yet.
+
 		$f3 = \Base::instance();
 		$log = new \Log("smtp.log");
 
