@@ -155,7 +155,7 @@ class Notification extends \Prefab {
 			$log->write("Sent update notification to: " . $recipient);
 		}
 
-		$log->write($smtp->log());
+		//$log->write($smtp->log());
 	}
 
 	// Get array of email addresses of all watchers on an issue
