@@ -70,7 +70,7 @@ class Notification extends \Prefab {
 		}
 
 		$changes = new \Model\Issue\Update\Field();
-		$f3->set("changes", $changes->paginate(0, 100, array("issue_update_id = ?", $update->id)));
+		$f3->set("changes", $changes->find(array("issue_update_id = ?", $update->id)));
 
 		// Get recipient list and remove current user
 		$recipients = $this->_issue_watchers($issue_id);
