@@ -30,7 +30,6 @@ body.login {
 	max-width: 206px;
 }
 .navbar-form[role="search"] .input-group {
-	max-width: 256px;
 	margin-right: 10px;
 }
 .navbar-form[role="search"] > .input-group > input:first-child {
