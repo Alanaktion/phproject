@@ -87,15 +87,16 @@ class Issues extends Base {
 			$f3->error(404, "Issue type does not exist");
 			return;
 		}
-                if($f3->get("PARAMS.parent")) {
-                    $parent = $f3->get("PARAMS.parent");
-                    $parent_issue = new \Model\Issue();
-                    $parent_issue->load(array("id=? AND (closed_date IS NULL OR closed_date = '0000-00-00 00:00:00')", $parent));
-                    if($parent_issue->id){
-			$f3->set("parent", $parent);
-                    }
-                }
-                
+
+		if($f3->get("PARAMS.parent")) {
+			$parent = $f3->get("PARAMS.parent");
+			$parent_issue = new \Model\Issue();
+			$parent_issue->load(array("id=? AND (closed_date IS NULL OR closed_date = '0000-00-00 00:00:00')", $parent));
+			if($parent_issue->id){
+				$f3->set("parent", $parent);
+			}
+		}
+
 		$status = new \Model\Issue\Status();
 		$f3->set("statuses", $status->find());
 
