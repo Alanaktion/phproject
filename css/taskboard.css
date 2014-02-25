@@ -199,7 +199,7 @@ body {
 #taskboard .add-task:hover {
 	opacity: .8;
 }
-#taskboard .completed .card, #taskboard .card.completed {
+#taskboard .completed .card {
 	text-decoration: line-through;
 }
 #taskboard .spinner {
