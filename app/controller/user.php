@@ -103,23 +103,16 @@ class User extends Base {
 		$_FILES['avatar']['name'] = $user->id . "-" . substr(sha1($user->id), 0, 4)  . "." . $parts["extension"];
 		$f3->set("avatar_filename", $_FILES['avatar']['name']);
 
-		$files = $web->receive(function($file) {
-			$f3 = \Base::instance();
-			$user = $f3->get("user");
+		$files = $web->receive(
+			function($file) use($f3, $user) {
+				if($file['size'] > $f3->get("files.maxsize")) {
+					return false;
+				}
 
-			if($file['size'] > $f3->get("files.maxsize"))
-				return false;
-
-
-			$newfile = new \Model\User();
-			$newfile->load($user["id"]);
-
-			$newfile->avatar_filename = $f3->get("avatar_filename");
-			$newfile->save();
-
-			// NEED TO CONVERT TO JPG AND RESIZE?
-			return true;
-		},
+				$user->avatar_filename = $f3->get("avatar_filename");
+				$user->save();
+				return true;
+			},
 			$overwrite,
 			$slug
 		);

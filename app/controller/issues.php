@@ -441,28 +441,28 @@ class Issues extends Base {
 			$_FILES['attachment']['name'] = $parts["filename"] . "-" . $i . "." . $parts["extension"];
 		}
 
-		$files = $web->receive(function($file){
-			$f3 = \Base::instance();
+		$files = $web->receive(
+			function($file) use($f3) {
 
-			if($file['size'] > $f3->get("files.maxsize"))
-				return false;
+				if($file['size'] > $f3->get("files.maxsize"))
+					return false;
 
-			$newfile = new \Model\Issue\File();
-			$newfile->issue_id = $f3->get("issue.id");
-			$newfile->user_id = $f3->get("user.id");
-			$newfile->filename = $f3->get("orig_name");
-			$newfile->disk_filename = $file['name'];
-			$newfile->disk_directory = $f3->get("UPLOADS");
-			$newfile->filesize = $file['size'];
-			$newfile->content_type = $file['type'];
-			$newfile->digest = md5_file($file['tmp_name']);
-			$newfile->created_date = now();
-			$newfile->save();
+				$newfile = new \Model\Issue\File();
+				$newfile->issue_id = $f3->get("issue.id");
+				$newfile->user_id = $f3->get("user.id");
+				$newfile->filename = $f3->get("orig_name");
+				$newfile->disk_filename = $file['name'];
+				$newfile->disk_directory = $f3->get("UPLOADS");
+				$newfile->filesize = $file['size'];
+				$newfile->content_type = $file['type'];
+				$newfile->digest = md5_file($file['tmp_name']);
+				$newfile->created_date = now();
+				$newfile->save();
 
-			// TODO: Add history entry to see who uploaded which files and when
+				// TODO: Add history entry to see who uploaded which files and when
 
-			return true; // moves file from php tmp dir to upload dir
-		},
+				return true; // moves file from php tmp dir to upload dir
+			},
 			$overwrite,
 			$slug
 		);

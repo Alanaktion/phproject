@@ -3096,8 +3096,8 @@ textarea.input-group-sm > .form-control, textarea.input-group-sm > .input-group-
 }
 .tab-content > .tab-pane {
 	display: none;
-	background-color: #fff;
-	padding: 15px;
+	/*background-color: #fff;
+	padding: 15px;*/
 }
 .tab-content > .active {
 	display: block;

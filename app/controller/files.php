@@ -67,9 +67,9 @@ class Files extends Base {
 			return;
 		}
 
-		header("Content-Type: " . $file->content_type);
-		header("Content-Length: " . filesize($file->disk_filename));
-		readfile($file->disk_filename);
+		if(!\Web::instance()->send($f3->get("ROOT") . "/" . $file->disk_filename)) {
+			$f3->error(404);
+		}
 	}
 
 }
