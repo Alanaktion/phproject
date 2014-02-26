@@ -13,6 +13,9 @@ class Files extends Base {
 			return;
 		}
 
+		$fg = 0x000000;
+		$bg = 0xFFFFFF;
+
 		// Generate thumbnail of image file
 		if(substr($file->content_type, 0, 5) == "image") {
 			if(is_file($f3->get("ROOT") . "/" . $file->disk_filename)) {
@@ -22,6 +25,9 @@ class Files extends Base {
 				$img = new \Helper\Image("img/404.png", null, $f3->get("ROOT") . "/");
 			}
 			$img->resize($params["size"], $params["size"]);
+
+			$fg = 0xFFFFFF;
+			$bg = 0x000000;
 
 			// Ensure proper content-type for JPEG images
 			if($params["format"] == "jpg") {
@@ -59,8 +65,8 @@ class Files extends Base {
 
 		// Render file extension over image
 		$ext = strtoupper(pathinfo($file->disk_filename, PATHINFO_EXTENSION));
-		$img->text($ext, 16, 0, 2, 3, 0xFFFFFF);
-		$img->text($ext, 16, 0, 1, 2, 0x000000);
+		$img->text($ext, 16, 0, 2, 3, $bg);
+		$img->text($ext, 16, 0, 1, 2, $fg);
 
 		$img->render($params["format"]);
 	}
