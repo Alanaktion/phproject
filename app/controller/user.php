@@ -117,6 +117,13 @@ class User extends Base {
 			$slug
 		);
 
+		// Clear cached profile picture data
+		$cache = \Cache::instance();
+		$cache->clear($f3->hash("GET /avatar/48/{$user->id}.png") . ".url");
+		$cache->clear($f3->hash("GET /avatar/96/{$user->id}.png") . ".url");
+		$cache->clear($f3->hash("GET /avatar/128/{$user->id}.png") . ".url");
+
+
 		$f3->reroute("/user/account");
 	}
 
