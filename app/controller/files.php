@@ -16,10 +16,10 @@ class Files extends Base {
 		// Generate thumbnail of image file
 		if(substr($file->content_type, 0, 5) == "image") {
 			if(is_file($f3->get("ROOT") . "/" . $file->disk_filename)) {
-				$img = new \Image($file->disk_filename, null, $f3->get("ROOT") . "/");
+				$img = new \Helper\Image($file->disk_filename, null, $f3->get("ROOT") . "/");
 			} else {
 				http_response_code(404);
-				$img = new \Image("img/404.png", null, $f3->get("ROOT") . "/");
+				$img = new \Helper\Image("img/404.png", null, $f3->get("ROOT") . "/");
 			}
 			$img->resize($params["size"], $params["size"]);
 
@@ -54,7 +54,7 @@ class Files extends Base {
 
 		// Use generic file icon if type is not supported
 		else {
-			$img = new \Image("img/mime/base.png", null, $f3->get("ROOT") . "/");
+			$img = new \Helper\Image("img/mime/base.png", null, $f3->get("ROOT") . "/");
 		}
 
 		// Render file extension over image
