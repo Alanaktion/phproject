@@ -13,7 +13,7 @@ class Files extends Base {
 			return;
 		}
 
-		// Output thumbnail of image file
+		// Generate thumbnail of image file
 		if(substr($file->content_type, 0, 5) == "image") {
 			if(is_file($f3->get("ROOT") . "/" . $file->disk_filename)) {
 				$img = new \Image($file->disk_filename, null, $f3->get("ROOT") . "/");
@@ -27,9 +27,42 @@ class Files extends Base {
 			if($params["format"] == "jpg") {
 				$params["format"] = "jpeg";
 			}
-
-			$img->render($params["format"]);
 		}
+
+		// Generate thumbnail of text contents
+		elseif(substr($file->content_type, 0, 4) == "text") {
+
+			// Get first 2KB of file
+			$fh = fopen($f3->get("ROOT") . "/" . $file->disk_filename, "r");
+			$str = fread($fh, 2048);
+			fclose($fh);
+
+			// Replace tabs with spaces
+			$str = str_replace("\t", "  ", $str);
+
+			$img = new \Helper\Image();
+			$img->create($params["size"], $params["size"]);
+			$img->fill(0xFFFFFF);
+			$img->text($str, 5, 0, 2, 2, 0x777777);
+
+			// Show file type icon if available
+			if($file->content_type == "text/csv" || $file->content_type == "text/tsv") {
+				$icon = new \Image("img/mime/table.png", null, $f3->get("ROOT") . "/");
+				$img->overlay($icon);
+			}
+		}
+
+		// Use generic file icon if type is not supported
+		else {
+			$img = new \Image("img/mime/base.png", null, $f3->get("ROOT") . "/");
+		}
+
+		// Render file extension over image
+		$ext = strtoupper(pathinfo($file->disk_filename, PATHINFO_EXTENSION));
+		$img->text($ext, 12, 0, 2, 3, 0xFFFFFF);
+		$img->text($ext, 16, 0, 1, 2, 0x000000);
+
+		$img->render($params["format"]);
 	}
 
 	public function avatar($f3, $params) {
