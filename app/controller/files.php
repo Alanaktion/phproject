@@ -59,7 +59,7 @@ class Files extends Base {
 
 		// Render file extension over image
 		$ext = strtoupper(pathinfo($file->disk_filename, PATHINFO_EXTENSION));
-		$img->text($ext, 12, 0, 2, 3, 0xFFFFFF);
+		$img->text($ext, 16, 0, 2, 3, 0xFFFFFF);
 		$img->text($ext, 16, 0, 1, 2, 0x000000);
 
 		$img->render($params["format"]);
