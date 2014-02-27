@@ -6,6 +6,25 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 CREATE DATABASE `phproject` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `phproject`;
 
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(32) DEFAULT NULL,
+  `email` varchar(64) DEFAULT NULL,
+  `name` varchar(32) NOT NULL,
+  `password` char(40) DEFAULT NULL,
+  `salt` char(32) DEFAULT NULL,
+  `role` enum('user','admin','group') NOT NULL DEFAULT 'user',
+  `task_color` char(6) DEFAULT NULL,
+  `theme` varchar(64) DEFAULT NULL,
+  `avatar_filename` varchar(64) DEFAULT NULL,
+  `created_date` datetime NOT NULL,
+  `deleted_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `user_group`;
 CREATE TABLE `group_user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -57,7 +76,7 @@ CREATE TABLE `issue_comment` (
   KEY `issue_id` (`issue_id`),
   KEY `user` (`user_id`),
   CONSTRAINT `issue` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -206,29 +225,6 @@ CREATE TABLE `sprint` (
   `end_date` date NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(32) DEFAULT NULL,
-  `email` varchar(64) DEFAULT NULL,
-  `name` varchar(32) NOT NULL,
-  `password` char(40) DEFAULT NULL,
-  `salt` char(32) DEFAULT NULL,
-  `role` enum('user','admin','group') NOT NULL DEFAULT 'user',
-  `task_color` char(6) DEFAULT NULL,
-  `theme` varchar(64) DEFAULT NULL,
-  `avatar_filename` varchar(64) DEFAULT NULL,
-  `created_date` datetime NOT NULL,
-  `deleted_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-INSERT INTO `user` (`id`, `username`, `email`, `name`, `password`, `salt`, `role`, `task_color`, `theme`, `avatar_filename`, `created_date`, `deleted_date`) VALUES
-(1, 'ahardman', 'ahardman@thrivelife.com',  'Alan Hardman', '7b9e164b5ec6bbd1208f092d0f88ca8cdcf5eaad', '2cbc81d479e7664070d2f1657787904d', 'admin',    'b5ed3f',   '/css/bootstrap-flatly.min.css',    '1-356a.png',   '2014-01-03 16:23:40',  NULL),
-(2, 'shelf',    'ahardman+tron@thrivelife.com', 'Shelf Tasty',  'b76614097e5860a207dd6ca69de4fadef8915d9c', '18d0fa4a469ab43a4f629b03039f2d18', 'admin',    '336699',   NULL,   NULL,   '2014-01-03 16:23:42',  NULL);
 
 DROP TABLE IF EXISTS `user_group_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `user_group_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color`,`u`.`deleted_date` AS `deleted_date` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));

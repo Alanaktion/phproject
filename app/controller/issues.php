@@ -418,10 +418,7 @@ class Issues extends Base {
 			return;
 		}
 
-		$f3->set("issue", $issue);
-
 		$web = \Web::instance();
-
 
 		$f3->set("UPLOADS",'uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
 		if(!is_dir($f3->get("UPLOADS"))) {
@@ -431,8 +428,8 @@ class Issues extends Base {
 		$slug = true; // rename file to filesystem-friendly version
 
 		// Make a good name
-		$f3->set("orig_name", preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']));
-		$_FILES['attachment']['name'] = time() . "_" . $f3->get("orig_name");
+		$orig_name = preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']);
+		$_FILES['attachment']['name'] = time() . "_" . $orig_name;
 
 		$i = 0;
 		$parts = pathinfo($_FILES['attachment']['name']);
@@ -442,15 +439,15 @@ class Issues extends Base {
 		}
 
 		$files = $web->receive(
-			function($file) use($f3) {
+			function($file) use($f3, $orig_name, $user_id, $issue) {
 
 				if($file['size'] > $f3->get("files.maxsize"))
 					return false;
 
 				$newfile = new \Model\Issue\File();
-				$newfile->issue_id = $f3->get("issue.id");
-				$newfile->user_id = $f3->get("user.id");
-				$newfile->filename = $f3->get("orig_name");
+				$newfile->issue_id = $issue->id;
+				$newfile->user_id = $user_id;
+				$newfile->filename = $orig_name;
 				$newfile->disk_filename = $file['name'];
 				$newfile->disk_directory = $f3->get("UPLOADS");
 				$newfile->filesize = $file['size'];
