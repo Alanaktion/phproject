@@ -38,7 +38,7 @@ require_once "base.php";
 				$user->load(array('email=?',$overview[0]->to));
 				$owner = !empty($user->id) ? $user->id : '';
 				
-				preg_match("@^\[#([0-9]+)\] -@", $overview[0]->subject, $matches);
+				preg_match("@\[#([0-9]+)\] -@", $overview[0]->subject, $matches);
 			
 				$issue = new \Model\Issue();
 				$issue->load($matches[1]);
