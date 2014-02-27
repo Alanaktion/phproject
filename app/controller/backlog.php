@@ -23,8 +23,12 @@ class Backlog extends Base {
 		foreach($large_projects as $p) {
 			$large_project_ids[] = $p["parent_id"];
 		}
-		$large_project_ids = implode(",", $large_project_ids);
-		$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids})", $f3->get("issue_type.project")));
+		if(!empty($large_project_ids)) {
+			$large_project_ids = implode(",", $large_project_ids);
+			$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids})", $f3->get("issue_type.project")));
+		} else {
+			$unset_projects = array();
+		}
 
 		$f3->set("sprints", $sprint_details);
 		$f3->set("backlog", $unset_projects);
