@@ -61,12 +61,18 @@
 							<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
 							<optgroup label="Groups">
 								<repeat group="{{ @groups }}" value="{{ @group }}">
-									<option value="{{ @group.id }}">{{ @group.name }}</option>
+									<check if="{{ @issue.owner_id == @group.id }}">
+										<true><option value="{{ @group.id }}" selected>{{ @group.name }}</option></true>
+										<false><option value="{{ @group.id }}">{{ @group.name }}</option></false>
+									</check>
 								</repeat>
 							</optgroup>
 							<optgroup label="Users">
 								<repeat group="{{ @users }}" value="{{ @item }}">
-									<option value="{{ @item.id }}">{{ @item.name }}</option>
+									<check if="{{ @issue.owner_id == @item.id }}">
+										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
+										<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
+									</check>
 								</repeat>
 							</optgroup>
 						</select>
