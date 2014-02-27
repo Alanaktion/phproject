@@ -5,7 +5,29 @@ namespace Controller;
 class Taskboard extends Base {
 
 	public function index($f3, $params) {
-		$this->_requireLogin();
+		$user_id = $this->_requireLogin();
+
+		if(empty($params["filter"])) {
+			$params["filter"] = "groups";
+		}
+
+		// Get list of all users in the user's groups
+		if($params["filter"] == "groups") {
+			$group_model = new \Model\User\Group();
+			$groups_result = $group_model->find(array("user_id = ?", $user_id));
+			$groups = array();
+			foreach($groups_result as $g) {
+				$groups[] = $g["group_id"];
+			}
+			$groups = implode(",", $groups);
+			$users_result = $group_model->find("group_id IN ({$groups})");
+			$filter_users = array();
+			foreach($users_result as $u) {
+				$filter_users[] = $u["user_id"];
+			}
+		} elseif($params["filter"] == "me") {
+			$filter_users = array($user_id);
+		}
 
 		// Load the requested sprint
 		$sprint = new \Model\Sprint();
@@ -53,6 +75,49 @@ class Taskboard extends Base {
 			);
 
 		}
+
+		// Filter tasks and projects
+		if(!empty($filter_users)) {
+
+			// Determinw which projects to keep and which to remove
+			$remove_project_indexes = array();
+			foreach ($taskboard as $pi=>&$p) {
+
+				$kept_task_count = 0;
+				foreach($p["columns"] as &$c) {
+
+					// Determine which tasks to keep and which to remove
+					$remove_task_indexes = array();
+					foreach($c as $ci=>&$t) {
+						if(!in_array($t["owner_id"], $filter_users)) {
+							// Task is not in list of shown users, mark for removal
+							$remove_task_indexes[] = $ci;
+						} else {
+							// Task is in list of shown users, increment kept task counter
+							$kept_task_count ++;
+						}
+					}
+
+					// Remove marked tasks
+					foreach($remove_task_indexes as $r) {
+						unset($c[$r]);
+					}
+				}
+
+				// Project is empty and not in the list of shown users, mark for removal
+				if(!$kept_task_count && !in_array($p["project"]["owner_id"], $filter_users)) {
+					$remove_project_indexes[] = $pi;
+				}
+
+			}
+
+			// Remove marked projects
+			foreach($remove_project_indexes as $r) {
+				unset($taskboard[$r]);
+			}
+		}
+
+
 		$f3->set("taskboard", $taskboard);
 
 		// Get user list for select
