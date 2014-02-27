@@ -10,10 +10,15 @@
 		<table class="table taskboard-head">
 			<tr class="tb-row">
 				<th class="column column-1">
-					<div class="btn-group btn-group-xs">
-						<a href="/taskboard/{{ @PARAMS.id }}/all" class="btn btn-default {{ @filter == 'all' ? 'active' : '' }}">All Tasks</a>
-						<a href="/taskboard/{{ @PARAMS.id }}/groups" class="btn btn-default {{ @filter == 'groups' ? 'active' : '' }}">My Groups</a>
-						<a href="/taskboard/{{ @PARAMS.id }}/me" class="btn btn-default {{ @filter == 'me' ? 'active' : '' }}">Me</a>
+					<div class="btn-group">
+						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+							Filter Tasks <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="/taskboard/{{ @PARAMS.id }}/all">All Tasks</a></li>
+							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="/taskboard/{{ @PARAMS.id }}/groups">My Groups</a></li>
+							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="/taskboard/{{ @PARAMS.id }}/me">My Tasks</a></li>
+						</ul>
 					</div>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">

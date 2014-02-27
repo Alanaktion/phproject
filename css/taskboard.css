@@ -38,7 +38,7 @@ body {
 #taskboard th {
 	border-bottom: 0px;
 }
-#taskboard ul {
+/*#taskboard ul {
 	width: 100%;
 	display: block;
 	z-index: 25;
@@ -49,7 +49,7 @@ body {
 	margin: 0;
 	list-style: none;
 	display: block;
-}
+}*/
 #taskboard .table {
 	width: auto;
 }
