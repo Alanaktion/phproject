@@ -15,13 +15,12 @@ class Taskboard extends Base {
 		if($params["filter"] == "groups") {
 			$group_model = new \Model\User\Group();
 			$groups_result = $group_model->find(array("user_id = ?", $user_id));
-			$groups = array();
-			foreach($groups_result as $g) {
-				$groups[] = $g["group_id"];
-			}
-			$groups = implode(",", $groups);
-			$users_result = $group_model->find("group_id IN ({$groups})");
 			$filter_users = array();
+			foreach($groups_result as $g) {
+				$filter_users[] = $g["group_id"];
+			}
+			$groups = implode(",", $filter_users);
+			$users_result = $group_model->find("group_id IN ({$groups})");
 			foreach($users_result as $u) {
 				$filter_users[] = $u["user_id"];
 			}
