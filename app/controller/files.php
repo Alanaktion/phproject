@@ -61,6 +61,7 @@ class Files extends Base {
 		// Use generic file icon if type is not supported
 		else {
 			$img = new \Helper\Image("img/mime/base.png", null, $f3->get("ROOT") . "/");
+			$img->resize($params["size"], $params["size"]);
 		}
 
 		// Render file extension over image
