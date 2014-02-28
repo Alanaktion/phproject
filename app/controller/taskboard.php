@@ -15,7 +15,7 @@ class Taskboard extends Base {
 		if($params["filter"] == "groups") {
 			$group_model = new \Model\User\Group();
 			$groups_result = $group_model->find(array("user_id = ?", $user_id));
-			$filter_users = array();
+			$filter_users = array($user_id);
 			foreach($groups_result as $g) {
 				$filter_users[] = $g["group_id"];
 			}
