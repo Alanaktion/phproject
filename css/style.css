@@ -15,7 +15,9 @@ body.login {
 .navbar {
 	padding: 0 10px;
 }
-
+.navbar-brand {
+	height: 100%;
+}
 .navbar-brand img {
 	height: 40px;
 	width: auto;

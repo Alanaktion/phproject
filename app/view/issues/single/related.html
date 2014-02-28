@@ -31,7 +31,8 @@
 </check>
 <check if="{{ !@parent.closed_date }}">
 	<check if="{{ @parent.type_id == @issue_type.project }}">
-		<a class="btn btn-default btn-sm" href="/issues/new/{{ @issue_type.project }}/{{ @parent }}">New Sub-Project</a>
+		<a class="btn btn-default btn-sm" href="/issues/new/{{ @issue_type.project }}/{{ @parent.id }}">New Sub-Project</a>
 	</check>
-	<a class="btn btn-default btn-sm" href="/issues/new/{{ @issue_type.task }}/{{ @parent }}">New Task</a>
+	<a class="btn btn-default btn-sm" href="/issues/new/{{ @issue_type.task }}/{{ @parent.id }}">New Task</a>
+	<span class="hidden-xs">&ensp;Under <a href="/issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a></span>
 </check>
