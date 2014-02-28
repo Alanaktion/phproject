@@ -6,44 +6,8 @@ class Index extends Base {
 
 	public function index($f3, $params) {
 		if($f3->get("user.id")) {
-			$projects = new \Model\Issue\Detail();
-			$order = "priority DESC, has_due_date ASC, due_date ASC";
-			$f3->set("projects", $projects->paginate(
-				0, 50,
-				array(
-					"owner_id=:owner and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-					":owner" => $f3->get("user.id"),
-					":type" => $f3->get("issue_type.project"),
-				),array(
-					"order" => $order
-				)
-			));
-
-			$bugs = new \Model\Issue\Detail();
-			$f3->set("bugs", $bugs->paginate(
-				0, 50,
-				array(
-					"owner_id=:owner and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-					":owner" => $f3->get("user.id"),
-					":type" => $f3->get("issue_type.bug"),
-				),array(
-					"order" => $order
-				)
-			));
-
-			$tasks = new \Model\Issue\Detail();
-			$f3->set("tasks", $tasks->paginate(
-				0, 100,
-				array(
-					"owner_id=:owner AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-					":owner" => $f3->get("user.id"),
-					":type" => $f3->get("issue_type.task"),
-				),array(
-					"order" => $order
-				)
-			));
-
-			echo \Template::instance()->render("user/dashboard.html");
+			$user_controller = new \Controller\User();
+			return $user_controller->dashboard($f3, $params);
 		} else {
 			if($f3->get("site.public")) {
 				echo \Template::instance()->render("index/index.html");

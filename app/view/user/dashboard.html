@@ -14,6 +14,9 @@
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
 						<span class="badge">#{{ @item.id }}</span>
 						<span class="badge status">{{ @item.status_name }}</span>
+						<check if="{{ @item.owner_id != @user.id }}">
+							<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="Assigned Group">{{ @item.owner_name }}</p>
+						</check>
 						<h4 class="list-group-item-heading">
 							{{ @item.name }}
 							<check if="{{ @item.priority != 0 }}">
@@ -42,6 +45,9 @@
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
 						<span class="badge">#{{ @item.id }}</span>
 						<span class="badge status">{{ @item.status_name }}</span>
+						<check if="{{ @item.owner_id != @user.id }}">
+							<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="Assigned Group">{{ @item.owner_name }}</p>
+						</check>
 						<h4 class="list-group-item-heading">
 							{{ @item.name }}
 							<check if="{{ @item.priority != 0 }}">
@@ -69,8 +75,11 @@
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
 						<span class="badge">#{{ @item.id }}</span>
 						<span class="badge status">{{ @item.status_name }}</span>
+						<check if="{{ @item.owner_id != @user.id }}">
+							<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="Assigned Group">{{ @item.owner_name }}</p>
+						</check>
 						<check if="{{ @item.author_id != @item.owner_id }}">
-							<p class="pull-right badge-sibling hidden-xs has-tooltip" title="Author">{{ @item.author_name }}</p>
+							<p class="pull-right badge-sibling hidden-xs author has-tooltip" title="Author">{{ @item.author_name }}</p>
 						</check>
 						<h5 class="list-group-item-heading">
 							{{ @item.name }}

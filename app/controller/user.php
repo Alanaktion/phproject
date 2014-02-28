@@ -10,8 +10,51 @@ class User extends Base {
 	}
 
 	public function dashboard($f3, $params) {
-		$this->_requireLogin();
-		$f3->reroute("/");
+		$user_id = $this->_requireLogin();
+		$projects = new \Model\Issue\Detail();
+
+		// Add user's group IDs to owner filter
+		$owner_ids = array($user_id);
+		$groups = new \Model\User\Group();
+		foreach($groups->find(array("user_id = ?", $user_id)) as $r) {
+			$owner_ids[] = $r->group_id;
+		}
+		$owner_ids = implode(",", $owner_ids);
+
+		$order = "priority DESC, has_due_date ASC, due_date ASC";
+		$f3->set("projects", $projects->paginate(
+			0, 50,
+			array(
+				"owner_id IN ($owner_ids) and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
+				":type" => $f3->get("issue_type.project"),
+			),array(
+				"order" => $order
+			)
+		));
+
+		$bugs = new \Model\Issue\Detail();
+		$f3->set("bugs", $bugs->paginate(
+			0, 50,
+			array(
+				"owner_id IN ($owner_ids) and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
+				":type" => $f3->get("issue_type.bug"),
+			),array(
+				"order" => $order
+			)
+		));
+
+		$tasks = new \Model\Issue\Detail();
+		$f3->set("tasks", $tasks->paginate(
+			0, 100,
+			array(
+				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
+				":type" => $f3->get("issue_type.task"),
+			),array(
+				"order" => $order
+			)
+		));
+
+		echo \Template::instance()->render("user/dashboard.html");
 	}
 
 	public function account($f3, $params) {
