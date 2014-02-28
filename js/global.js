@@ -3,7 +3,6 @@ $(document).ready(function(){
 	$(".has-tooltip").tooltip();
 	$(".has-popover").popover();
 
-
 	// Handle checkboxes on issue listings
 	$('.issue-list tbody tr input').click(function(e) {
 		e.stopPropagation();

@@ -29,4 +29,9 @@
 		<p class="text-center text-muted">No related issues</p>
 	</false>
 </check>
-<a class="btn btn-default btn-sm" href="/issues/new/{{ @issue_type.project }}/{{ @parent }}">New Sub-Project</a> <a class="btn btn-default btn-sm" href="/issues/new/{{ @issue_type.task }}/{{ @parent }}">New Task</a>
+<check if="{{ !@parent.closed_date }}">
+	<check if="{{ @parent.type_id == @issue_type.project }}">
+		<a class="btn btn-default btn-sm" href="/issues/new/{{ @issue_type.project }}/{{ @parent }}">New Sub-Project</a>
+	</check>
+	<a class="btn btn-default btn-sm" href="/issues/new/{{ @issue_type.task }}/{{ @parent }}">New Task</a>
+</check>

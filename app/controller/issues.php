@@ -51,12 +51,12 @@ class Issues extends Base {
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
-        if(empty($args["page"])) {
-        	$args["page"] = 0;
-        }
-        $issue_page = $issues->paginate($args["page"], 50, $filter_str);
+		if(empty($args["page"])) {
+			$args["page"] = 0;
+		}
+		$issue_page = $issues->paginate($args["page"], 50, $filter_str);
 		$f3->set("issues", $issue_page);
 
 		// Set up pagination
@@ -105,7 +105,7 @@ class Issues extends Base {
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$f3->set("title", "New " . $type->name);
 		$f3->set("type", $type);
@@ -144,7 +144,7 @@ class Issues extends Base {
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$f3->set("title", "Edit #" . $issue->id);
 		$f3->set("issue", $issue);
@@ -356,7 +356,7 @@ class Issues extends Base {
 		$issue->load($params["id"]);
 
 		if($issue->id) {
-                        $f3->set("parent", $issue->id);
+			$f3->set("parent", $issue->id);
 			$issues = new \Model\Issue\Detail();
 			if($f3->get("issue_type.project") == $issue->type_id) {
 				$f3->set("issues", $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id)));
