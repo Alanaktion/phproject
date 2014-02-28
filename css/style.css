@@ -42,11 +42,6 @@ body.login {
 	box-shadow: none;
 }
 
-.container {
-	max-width: none;
-	width: auto;
-}
-
 footer p {
 	line-height: 20px;
 }
