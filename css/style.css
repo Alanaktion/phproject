@@ -71,6 +71,10 @@ a.nolink:hover {
 	text-decoration: underline;
 }
 
+.badge.status {
+	background-color: #C6C6C6;
+	color: #fff;
+}
 .dashboard .list-group-item .badge {
 	margin-top: 3px;
 }

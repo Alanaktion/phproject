@@ -1,72 +1,72 @@
 #backlog ul {
-    min-height: 80px;
-    margin: 0;
+	min-height: 80px;
+	margin: 0;
 }
 #backlog li {
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
-    cursor: move;
-    position: relative;
-    padding: 6px 6px 6px 14px;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	cursor: move;
+	position: relative;
+	padding: 6px 6px 6px 14px;
 }
 #backlog li:hover {
-    background-image: url(/img/backlog/i_has_grip.png);
-    background-position: 2px center;
-    background-repeat: no-repeat;
+	background-image: url(/img/backlog/i_has_grip.png);
+	background-position: 2px center;
+	background-repeat: no-repeat;
 }
 #backlog li.completed {
-    text-decoration: line-through;
+	text-decoration: line-through;
 }
 #backlog .spinner {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 50;
-    background-image: url(/img/ajax-loader.gif);
-    background-position: center center;
-    background-repeat: no-repeat
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 50;
+	background-image: url(/img/ajax-loader.gif);
+	background-position: center center;
+	background-repeat: no-repeat
 }
 #backlog .error {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 50;
-    background-image: url(/img/taskboard/warning.png);
-    background-position: right bottom;
-    background-repeat: no-repeat
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 50;
+	background-image: url(/img/taskboard/warning.png);
+	background-position: right bottom;
+	background-repeat: no-repeat
 }
 #backlog .panel-heading {
-    position: relative
+	position: relative
 }
 #backlog .panel-heading > span.glyphicon {
-    font-size: 20px;
-    position: absolute;
-    right: 7px;
-    top: 6px;
-    cursor: pointer;
-    color: #1E2A36;
+	font-size: 20px;
+	position: absolute;
+	right: 7px;
+	top: 6px;
+	cursor: pointer;
+	color: #1E2A36;
 }
 #backlog .panel-heading > a {
-    cursor: pointer;
-    font-weight: bold;
+	cursor: pointer;
+	font-weight: bold;
 }
 #backlog .panel-body.collapse {
-    display: none;
+	display: none;
 }
-#backlog .badge.status {
-    background-color: #C6C6C6;
-    color: #fff;
+.badge.status {
+	background-color: #C6C6C6;
+	color: #fff;
 }
 #backlog .badge.status.new {
-    background-color: #00537D;
+	background-color: #00537D;
 }
 #backlog .badge.status.active {
-    background-color: #FFA700;
+	background-color: #FFA700;
 }
 #backlog .badge.status.completed {
-    background-color: #7EC500
+	background-color: #7EC500
 }
