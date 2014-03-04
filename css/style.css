@@ -33,6 +33,7 @@ body.login {
 }
 .navbar-form[role="search"] .input-group {
 	max-width: 240px;
+	min-width: 225px;
 	margin-right: 10px;
 	display: block;
 }
