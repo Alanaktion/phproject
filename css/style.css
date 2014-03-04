@@ -32,7 +32,9 @@ body.login {
 	max-width: 206px;
 }
 .navbar-form[role="search"] .input-group {
+	max-width: 240px;
 	margin-right: 10px;
+	display: block;
 }
 .navbar-form[role="search"] > .input-group > input:first-child {
 	border-radius: 16px 0 0 16px;
