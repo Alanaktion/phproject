@@ -17,7 +17,7 @@
 			</ul>
 			<form action="/admin/users/{{ @this_user.id }}" method="post" role="form" class="form-horizontal">
 				<legend>Edit User #{{ @this_user.id }}</legend>
-				<repeat group="{{ @this_user }}" key="{{ @field }}" value="{{ @val }}">
+				<repeat group="{{ @this_user->cast() }}" key="{{ @field }}" value="{{ @val }}">
 					<check if="{{ @field != 'id' }}">
 						<div class="form-group">
 							<label for="{{ @field }}" class="col-lg-2 control-label label-sm">{{ @field }}</label>
