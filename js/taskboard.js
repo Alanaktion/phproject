@@ -310,7 +310,7 @@ var Taskboard = {
 			data: data,
 			success: function(data, textStatus, jqXHR) {
 				Taskboard.newUnBlock(taskId);
-				$(card).find(".task-id").text('<a href="/issues/' + data.taskId + '" target="_blank">' + data.taskId + '</a>');
+				$(card).find(".task-id").html('<a href="/issues/' + data.taskId + '" target="_blank">' + data.taskId + '</a>');
 				$(card).attr("id", "task_" + data.taskId);
 				$(card).click(function() {
 					//add binding for click on new card only if the id is set
