@@ -20,6 +20,7 @@ class Files extends Base {
 		if(substr($file->content_type, 0, 5) == "image") {
 			if(is_file($f3->get("ROOT") . "/" . $file->disk_filename)) {
 				$img = new \Helper\Image($file->disk_filename, null, $f3->get("ROOT") . "/");
+				$hide_ext = true;
 			} else {
 				http_response_code(404);
 				$img = new \Helper\Image("img/404.png", null, $f3->get("ROOT") . "/");
@@ -65,9 +66,11 @@ class Files extends Base {
 		}
 
 		// Render file extension over image
-		$ext = strtoupper(pathinfo($file->disk_filename, PATHINFO_EXTENSION));
-		$img->text($ext, 16, 0, 3, 4, $bg);
-		$img->text($ext, 16, 0, 2, 3, $fg);
+		if(empty($hide_ext)) {
+			$ext = strtoupper(pathinfo($file->disk_filename, PATHINFO_EXTENSION));
+			$img->text($ext, 12, 0, 5, 5, $bg);
+			$img->text($ext, 12, 0, 4, 4, $fg);
+		}
 
 		$img->render($params["format"]);
 	}

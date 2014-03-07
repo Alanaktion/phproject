@@ -1,4 +1,4 @@
-@import url("//fonts.googleapis.com/css?family=Lato:400,700,900,400italic");
+@import url("//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic");
 
 /*!
  * Bootswatch v3.1.0
@@ -230,7 +230,7 @@ html {
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 body {
-	font-family:"Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family:"Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 15px;
 	line-height: 1.42857143;
 	color: #2c3e50;
@@ -246,7 +246,7 @@ a {
 	text-decoration: none;
 }
 a:hover, a:focus {
-	color: #18bc9c;
+	color: #107f6a;
 	text-decoration: underline;
 }
 a:focus {
@@ -300,7 +300,7 @@ hr {
 	border: 0;
 }
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-	font-family:"Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family:"Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: 500;
 	line-height: 1.1;
 	color: inherit;
