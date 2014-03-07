@@ -58,7 +58,7 @@ $f3->set("db.instance", new DB\SQL(
 require_once "app/functions.php";
 
 // Minify static resources
-// Cache for 3600s (1h)
+// Cache for 1 week
 $f3->route("GET /minify/@type/@files", function($f3, $args) {
 	$f3->set("UI", $args["type"] . "/");
 	echo Web::instance()->minify($args["files"]);
