@@ -8,199 +8,193 @@
 	<include href="blocks/navbar.html" />
 	<div class="row">
 		<div class="col-lg-12">
-			<div class="panel panel-default">
-				<div class="panel-heading has-buttons clearfix">
-					<check if="{{ count(@hierarchy) > 1 }}">
+			<check if="{{ count(@hierarchy) > 1 }}">
+				<true>
+					<ol class="breadcrumb pull-left issue-heading">
+						<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
+							<check if="{{ @crumb.id == @issue.id }}">
+								<true>
+									<li class="active">{{ @crumb.name }} <small>#{{ @crumb.id }}</small></li>
+								</true>
+								<false>
+									<li><a href="/issues/{{ @crumb.id }}">{{ @crumb.name }}</a></li>
+								</false>
+							</check>
+						</repeat>
+					</ol>
+				</true>
+				<false>
+					<h3 class="pull-left issue-heading">
+						{{ @issue.name }} <small>#{{ @issue.id }}</small>
+					</h3>
+				</false>
+			</check>
+			<div class="pull-right">
+				<check if="{{ @watching }}">
+					<true>
+						<button class="btn btn-default btn-xs" onclick="unwatch_issue();" id="watch-btn">
+							<span class="glyphicon glyphicon-eye-close"></span>&ensp;Unwatch
+						</button>
+					</true>
+					<false>
+						<button class="btn btn-default btn-xs" onclick="watch_issue();" id="watch-btn">
+							<span class="glyphicon glyphicon-eye-open"></span>&ensp;Watch
+						</button>
+					</false>
+				</check>
+				<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
+					<span class="glyphicon glyphicon-pencil"></span>&ensp;Edit
+				</a>
+				<check if="{{ @user.role == 'admin' }}">
+					<a href="/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
+						<span class="glyphicon glyphicon-remove"></span>&ensp;Delete
+					</a>
+				</check>
+			</div>
+		</div>
+		<div class="col-lg-12">
+			<div class="col-lg-5">
+				<div class="issue-head clearfix">
+					<img src="{{ h(@author->avatar(48)) }}" class="profile-picture img-rounded" alt>
+					<p class="pull-left">
+						<a href="/user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a><br>
+						{{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}
+					</p>
+				</div>
+
+				<dl class="dl-inline">
+					<check if="{{ @issue.sprint_id }}">
+						<dt>Sprint</dt>
+						<dd><a href="/taskboard/{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
+					</check>
+
+					<dt>Type</dt>
+					<dd>{{ @issue.type_name }}</dd>
+
+					<dt>Priority</dt>
+					<dd>{{ @issue.priority_name }}</dd>
+
+					<dt>Status</dt>
+					<dd>{{ @issue.status_name }}</dd>
+
+					<dt>Assigned to</dt>
+					<dd><a href="/user/{{ @owner.username }}">{{ @owner.name }}</a></dd>
+
+					<check if="{{ !empty(@issue.hours_total) }}">
+						<dt>Total Hours</dt>
+						<dd>{{ @issue.hours_total }}</dd>
+
+						<dt>Remaining Hours</dt>
+						<dd>{{ @issue.hours_remaining }}</dd>
+					</check>
+
+					<check if="{{ strtotime(@issue.due_date) }}">
+						<dt>Due Date</dt>
+						<dd>{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</dd>
+					</check>
+				</dl>
+
+				<dl>
+					<dt>Description:</dt>
+					<dd>{{ nl2br(\Model\Issue::clean(@issue.description)) }}</dd>
+				</dl>
+
+				<hr class="hidden-lg">
+			</div>
+
+			<div class="col-lg-7">
+				<h4>Files</h4>
+				<check if="{{ @files.count }}">
+					<ul class="list-inline file-list">
+						<repeat group="{{ @files.subset }}" value="{{ @file }}">
+							<li>
+								<a href="/files/{{ @file.id }}/{{ @file.filename }}" title="{{ @file.filename }}" target="_blank">
+									<img src="/files/thumb/96/{{ @file.id }}.png" /><br />
+									{{ @file.filename }}
+								</a>
+							</li>
+						</repeat>
+					</ul>
+					<p class="clear"></p>
+				</check>
+				<form class="form-inline" method="post" enctype="multipart/form-data" action="/issues/upload">
+					<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
+					<div class="form-group">
+						<input type="file" name="attachment" size="chars">
+					</div>
+					<div class="form-group">
+						<input type="submit" class="btn btn-default btn-sm" value="Upload" />
+					</div>
+				</form>
+
+				<br>
+
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#comments" data-toggle="tab">Comments&ensp;<span class="badge">{{ count(@comments) }}</span></a></li>
+					<li><a href="#history" data-toggle="tab" id="tab_history">History</a></li>
+					<li><a href="#watchers" data-toggle="tab" id="tab_watchers">Watchers</a></li>
+					<check if="{{ @issue_type.project == @type.id }}">
 						<true>
-						<ol class="breadcrumb panel-title pull-left">
-							<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
-								<check if="{{ @crumb.id == @issue.id }}">
-									<true>
-										<li class="active">{{ @crumb.name }} <small>#{{ @crumb.id }}</small></li>
-									</true>
-									<false>
-										<li><a href="/issues/{{ @crumb.id }}">{{ @crumb.name }}</a></li>
-									</false>
-								</check>
-							</repeat>
-						</ol>
+							<li><a href="#related" data-toggle="tab" id="tab_related">Child Tasks</a></li>
 						</true>
 						<false>
-							<h3 class="panel-title pull-left">
-								{{ @issue.name }} <small>#{{ @issue.id }}</small>
-							</h3>
+							<li><a href="#related" data-toggle="tab" id="tab_related">Related Tasks</a></li>
 						</false>
 					</check>
-					<div class="pull-right">
-						<check if="{{ @watching }}">
-							<true>
-								<button class="btn btn-default btn-xs" onclick="unwatch_issue();" id="watch-btn">
-									<span class="glyphicon glyphicon-eye-close"></span>&ensp;Unwatch
-								</button>
-							</true>
-							<false>
-								<button class="btn btn-default btn-xs" onclick="watch_issue();" id="watch-btn">
-									<span class="glyphicon glyphicon-eye-open"></span>&ensp;Watch
-								</button>
-							</false>
-						</check>
-						<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
-							<span class="glyphicon glyphicon-pencil"></span>&ensp;Edit
-						</a>
-						<check if="{{ @user.role == 'admin' }}">
-							<a href="/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
-								<span class="glyphicon glyphicon-remove"></span>&ensp;Delete
-							</a>
-						</check>
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="row">
-						<div class="col-lg-5">
-							<div class="issue-head clearfix">
-								<img src="{{ h(@author->avatar(48)) }}" class="profile-picture img-rounded" alt>
-								<p class="pull-left">
-									<a href="/user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a><br>
-									{{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}
-								</p>
-							</div>
-
-							<dl class="dl-inline">
-								<check if="{{ @issue.sprint_id }}">
-									<dt>Sprint</dt>
-									<dd><a href="/taskboard/{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
-								</check>
-
-								<dt>Type</dt>
-								<dd>{{ @issue.type_name }}</dd>
-
-								<dt>Priority</dt>
-								<dd>{{ @issue.priority_name }}</dd>
-
-								<dt>Status</dt>
-								<dd>{{ @issue.status_name }}</dd>
-
-								<dt>Assigned to</dt>
-								<dd><a href="/user/{{ @owner.username }}">{{ @owner.name }}</a></dd>
-
-								<check if="{{ !empty(@issue.hours_total) }}">
-									<dt>Total Hours</dt>
-									<dd>{{ @issue.hours_total }}</dd>
-
-									<dt>Remaining Hours</dt>
-									<dd>{{ @issue.hours_remaining }}</dd>
-								</check>
-
-								<check if="{{ strtotime(@issue.due_date) }}">
-									<dt>Due Date</dt>
-									<dd>{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</dd>
-								</check>
-							</dl>
-
-							<dl>
-								<dt>Description:</dt>
-								<dd>{{ nl2br(\Model\Issue::clean(@issue.description)) }}</dd>
-							</dl>
-
-							<hr class="hidden-lg">
-						</div>
-
-						<div class="col-lg-7">
-							<h4>Files</h4>
-							<check if="{{ @files.count }}">
-								<ul class="list-inline file-list">
-									<repeat group="{{ @files.subset }}" value="{{ @file }}">
-										<li>
-											<a href="/files/{{ @file.id }}/{{ @file.filename }}" title="{{ @file.filename }}" target="_blank">
-												<img src="/files/thumb/96/{{ @file.id }}.png" /><br />
-												{{ @file.filename }}
-											</a>
-										</li>
-									</repeat>
-								</ul>
-								<p class="clear"></p>
-							</check>
-							<form class="form-inline" method="post" enctype="multipart/form-data" action="/issues/upload">
-								<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="comments">
+						<div class="comments" id="comments">
+							<repeat group="{{ @comments }}" value="{{ @comment }}">
+								<div class="media">
+									<a class="pull-left" href="/user/{{ @comment.user_username }}">
+										<img class="profile-picture media-object img-rounded" src="/avatar/48/{{ @comment.user_id }}.png" alt>
+									</a>
+									<div class="media-body">
+										<p class="media-heading"><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
+										<p>{{ nl2br(@comment.text) }}</p>
+										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
+									</div>
+								</div>
+							</repeat>
+							<form action="/issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
+								<input type="hidden" name="action" value="comment">
 								<div class="form-group">
-									<input type="file" name="attachment" size="chars">
+									<div class="col-md-12">
+										<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
+									</div>
 								</div>
 								<div class="form-group">
-									<input type="submit" class="btn btn-default btn-sm" value="Upload" />
+									<div class="col-md-12 text-right">
+										<button type="submit" class="btn btn-primary btn-sm">Save Comment</button>
+									</div>
 								</div>
 							</form>
-
-							<br>
-
-							<ul class="nav nav-tabs">
-								<li class="active"><a href="#comments" data-toggle="tab">Comments&ensp;<span class="badge">{{ count(@comments) }}</span></a></li>
-								<li><a href="#history" data-toggle="tab" id="tab_history">History</a></li>
-								<li><a href="#watchers" data-toggle="tab" id="tab_watchers">Watchers</a></li>
-								<check if="{{ @issue_type.project == @type.id }}">
-									<true>
-										<li><a href="#related" data-toggle="tab" id="tab_related">Child Tasks</a></li>
-									</true>
-									<false>
-										<li><a href="#related" data-toggle="tab" id="tab_related">Related Tasks</a></li>
-									</false>
-								</check>
-							</ul>
-							<div class="tab-content">
-								<div class="tab-pane active" id="comments">
-									<div class="comments" id="comments">
-										<repeat group="{{ @comments }}" value="{{ @comment }}">
-											<div class="media">
-												<a class="pull-left" href="/user/{{ @comment.user_username }}">
-													<img class="profile-picture media-object img-rounded" src="/avatar/48/{{ @comment.user_id }}.png" alt>
-												</a>
-												<div class="media-body">
-													<p class="media-heading"><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
-													<p>{{ nl2br(@comment.text) }}</p>
-													<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
-												</div>
-											</div>
-										</repeat>
-										<form action="/issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
-											<input type="hidden" name="action" value="comment">
-											<div class="form-group">
-												<div class="col-md-12">
-													<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="col-md-12 text-right">
-													<button type="submit" class="btn btn-primary btn-sm">Save Comment</button>
-												</div>
-											</div>
-										</form>
-									</div>
-								</div>
-								<div class="tab-pane" id="history">
-									<div class="col-md-4 col-md-offset-4">
-										<div class="progress progress-striped active">
-											<div class="progress-bar" style="width: 100%"></div>
-										</div>
-									</div>
-								</div>
-								<div class="tab-pane" id="watchers">
-									<div class="col-md-4 col-md-offset-4">
-										<div class="progress progress-striped active">
-											<div class="progress-bar" style="width: 100%"></div>
-										</div>
-									</div>
-								</div>
-								<div class="tab-pane" id="related">
-									<div class="col-md-4 col-md-offset-4">
-										<div class="progress progress-striped active">
-											<div class="progress-bar" style="width: 100%"></div>
-										</div>
-									</div>
-								</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="history">
+						<div class="col-md-4 col-md-offset-4">
+							<div class="progress progress-striped active">
+								<div class="progress-bar" style="width: 100%"></div>
 							</div>
-
+						</div>
+					</div>
+					<div class="tab-pane" id="watchers">
+						<div class="col-md-4 col-md-offset-4">
+							<div class="progress progress-striped active">
+								<div class="progress-bar" style="width: 100%"></div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="related">
+						<div class="col-md-4 col-md-offset-4">
+							<div class="progress progress-striped active">
+								<div class="progress-bar" style="width: 100%"></div>
+							</div>
 						</div>
 					</div>
 				</div>
+
 			</div>
 		</div>
 	</div>

@@ -124,6 +124,16 @@ textarea {
 	padding: 2px;
 }
 
+.issue-heading {
+	margin: 0 10px 20px;
+}
+ol.issue-heading.breadcrumb {
+	padding: 0;
+	background-color: transparent;
+	font-size: 26px;
+	line-height: 1.1;
+}
+
 .issue-head .profile-picture,
 .comment .profile-picture,
 .update .profile-picture {
