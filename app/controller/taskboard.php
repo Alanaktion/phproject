@@ -78,28 +78,32 @@ class Taskboard extends Base {
 		// Filter tasks and projects
 		if(!empty($filter_users)) {
 
-			// Determinw which projects to keep and which to remove
+			// Determine which projects to keep and which to remove
 			$remove_project_indexes = array();
 			foreach ($taskboard as $pi=>&$p) {
 
 				$kept_task_count = 0;
-				foreach($p["columns"] as &$c) {
 
-					// Determine which tasks to keep and which to remove
-					$remove_task_indexes = array();
-					foreach($c as $ci=>&$t) {
-						if(!in_array($t["owner_id"], $filter_users)) {
-							// Task is not in list of shown users, mark for removal
-							$remove_task_indexes[] = $ci;
-						} else {
-							// Task is in list of shown users, increment kept task counter
-							$kept_task_count ++;
+				// Only remove tasks if project isn't in the list of shown users
+				if(!in_array($p["project"]["owner_id"], $filter_users)) {
+					foreach($p["columns"] as &$c) {
+
+						// Determine which tasks to keep and which to remove
+						$remove_task_indexes = array();
+						foreach($c as $ci=>&$t) {
+							if(!in_array($t["owner_id"], $filter_users)) {
+								// Task is not in list of shown users, mark for removal
+								$remove_task_indexes[] = $ci;
+							} else {
+								// Task is in list of shown users, increment kept task counter
+								$kept_task_count ++;
+							}
 						}
-					}
 
-					// Remove marked tasks
-					foreach($remove_task_indexes as $r) {
-						unset($c[$r]);
+						// Remove marked tasks
+						foreach($remove_task_indexes as $r) {
+							unset($c[$r]);
+						}
 					}
 				}
 
