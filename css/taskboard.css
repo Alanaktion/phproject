@@ -325,6 +325,10 @@ table.table {
 	#taskboard .card .top {
 		height: 20px;
 	}
+	#taskboard .card .title {
+	    top: -4px;
+	    height: 78px;
+	}
 	#taskboard .card .owner {
 		height: 18px;
 	}
