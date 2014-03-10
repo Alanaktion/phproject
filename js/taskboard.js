@@ -57,7 +57,7 @@ var Taskboard = {
 				Cancel: function() {
 					$(this).dialog("close");
 				},
-				"Update": function() {
+				"Save": function() {
 
 				}
 			},
@@ -120,7 +120,7 @@ var Taskboard = {
 				Cancel: function() {
 					$(this).dialog("close");
 				},
-				"Update": function() {
+				"Save": function() {
 					$('.ui-error').remove();
 					$(".input-error").removeClass(".input-error");
 					if ($('#hours').val() == '' || isNumber($('#hours').val())) {
@@ -153,7 +153,7 @@ var Taskboard = {
 				Cancel: function() {
 					$(this).dialog("close");
 				},
-				"Update": function() {
+				"Save": function() {
 					Taskboard.addCard(data, $("form#task-dialog").serializeObject(), storyId);
 					$("#task-dialog").dialog("close");
 				}
