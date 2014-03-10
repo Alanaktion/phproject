@@ -3,6 +3,12 @@
 <head>
 	<include href="blocks/head.html" />
 	<include href="blocks/taskboard-head.html" />
+	<style type="text/css">
+	#taskboard table {
+		min-width: {{ 252 * (count(@taskboard[0].columns) + 1) }}px;
+		/* Ensures 2-column layout on all display sizes, may be changed later. */
+	}
+	</style>
 </head>
 <body>
 	<include href="blocks/navbar.html" />
