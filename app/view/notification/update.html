@@ -23,7 +23,14 @@
 		<div style="float: left">
 			<ul style="padding: 0;">
 				<repeat group="{{ @changes }}" value="{{ @change }}">
-					<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @change.old_value }}</i> to <i>{{ @change.new_value }}</i></li>
+					<check if="{{ @change.old_value }}">
+						<true>
+							<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @change.old_value }}</i> to <i>{{ @change.new_value }}</i></li>
+						</true>
+						<false>
+							<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> set to <i>{{ @change.new_value }}</i></li>
+						</false>
+					</check>
 				</repeat>
 			</ul>
 			<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</small></span>
