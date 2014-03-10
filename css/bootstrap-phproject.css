@@ -310,7 +310,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small, .h1 small, .h2 small
 	line-height: 1;
 	color: #b4bcc2;
 }
-h1, .h1, h2, .h2, h3, .h3 {
+h1, .h1, h2, .h2, h3, .h3, .issue-heading {
 	font-weight: 300;
 	margin-top: 21px;
 	margin-bottom: 10.5px;
