@@ -301,7 +301,7 @@ hr {
 }
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .issue-heading {
 	font-family:"Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: 300;
+	font-weight: normal;
 	line-height: 1.1;
 	color: inherit;
 }
@@ -311,6 +311,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small, .h1 small, .h2 small
 	color: #b4bcc2;
 }
 h1, .h1, h2, .h2, h3, .h3 {
+	font-weight: 300;
 	margin-top: 21px;
 	margin-bottom: 10.5px;
 }

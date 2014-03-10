@@ -48,7 +48,7 @@
 						<check if="{{ @item.owner_id != @user.id }}">
 							<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="Assigned Group">{{ @item.owner_name }}</p>
 						</check>
-						<h4 class="list-group-item-heading">
+						<p class="list-group-item-heading">
 							{{ @item.name }}
 							<check if="{{ @item.priority != 0 }}">
 								<check if="{{ @item.priority < 0 }}">
@@ -60,7 +60,7 @@
 									</false>
 								</check>
 							</check>
-						</h4>
+						</p>
 						<check if="{{ strtotime(@item.due_date) }}">
 							<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 						</check>
@@ -81,7 +81,7 @@
 						<check if="{{ @item.author_id != @item.owner_id }}">
 							<p class="pull-right badge-sibling hidden-xs author has-tooltip" title="Author">{{ @item.author_name }}</p>
 						</check>
-						<h5 class="list-group-item-heading">
+						<p class="list-group-item-heading">
 							{{ @item.name }}
 							<check if="{{ @item.priority != 0 }}">
 								<check if="{{ @item.priority < 0 }}">
@@ -93,7 +93,7 @@
 									</false>
 								</check>
 							</check>
-						</h5>
+						</p>
 						<check if="{{ strtotime(@item.due_date) }}">
 							<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 						</check>
