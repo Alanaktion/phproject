@@ -11,7 +11,7 @@ body {
 	top: 0;
 	left: 0;
 	height: 91px;
-	z-index: 1025;
+	z-index: 25;
 }
 #taskboard .taskboard-head th {
 	vertical-align: bottom;
