@@ -61,8 +61,8 @@ class Taskboard extends Base {
 				$columns[$status["id"]] = array();
 			}
 
-			// Get all tasks under the project, put them under their status
-			$tasks = $issue->find(array("parent_id = ? AND type_id = ? AND deleted_Date IS NULL", $project["id"], $f3->get("issue_type.task")), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
+			// Get all non-projects (generally tasks) under the project, put them under their status
+			$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_Date IS NULL", $project["id"], $f3->get("issue_type.project")), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
 			foreach($tasks as $task) {
 				$columns[$task["status"]][] = $task;
 			}
