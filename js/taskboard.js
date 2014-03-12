@@ -40,7 +40,7 @@ var Taskboard = {
 		});
 
 		//initialize issue editing handler
-		$(".card.task a").click(function(e) {
+		$("#taskboard").on("click", ".card a", function(e) {
 			e.stopPropagation();
 		});
 		$(".card.task").click(function(e) {
