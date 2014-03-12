@@ -9,11 +9,12 @@
 	<div class="row">
 		<div class="col-md-12">
 			<form class="form-horizontal well" role="form" action="/issues/save" method="post">
-				<legend>{{ empty(@issue) ? "New" : "Edit" }} {{ @type.name }}</legend>
-				<input type="hidden" name="type_id" value="{{ @type.id }}">
 				<check if="{{ !empty(@issue) }}">
+					<a href="/issues/{{ @issue.id }}" class="close">&times;</a>
 					<input type="hidden" name="id" value="{{ @issue.id }}">
 				</check>
+				<legend>{{ empty(@issue) ? "New" : "Edit" }} {{ @type.name }}</legend>
+				<input type="hidden" name="type_id" value="{{ @type.id }}">
 				<div class="form-group">
 					<label class="col-md-2 control-label">Title</label>
 					<div class="col-md-10">
@@ -129,6 +130,7 @@
 						<button type="submit" class="btn btn-primary btn-sm">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
 						<check if="{{ !empty(@issue) }}">
 							<button type="reset" class="btn btn-default btn-sm">Reset</button>
+							<a href="/issues/{{ @issue.id }}" class="btn btn-default btn-sm">Cancel</a>
 						</check>
 						<check if="{{ @user.role == 'admin' }}">
 							<div class="checkbox checkbox-inline">
