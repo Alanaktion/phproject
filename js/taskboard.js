@@ -175,13 +175,13 @@ var Taskboard = {
 	updateCardPriority: function(priority, card) {
 		if(priority == 0) {
 			$(card).find('.priority').attr("class", "priority normal");
-			$(card).find('.priority').text("Normal Priority");
+			$(card).find('.priority').text("Normal");
 		} else if(priority < 0) {
 			$(card).find('.priority').attr("class", "priority low");
-			$(card).find('.priority').text("Low Priority");
+			$(card).find('.priority').text("Low");
 		} else if(priority > 0) {
 			$(card).find('.priority').attr("class", "priority high");
-			$(card).find('.priority').text("High Priority");
+			$(card).find('.priority').text("High");
 		}
 	},
 	changeUser: function(selected) {
