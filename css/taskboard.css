@@ -202,6 +202,9 @@ body {
 #taskboard .completed .card {
 	text-decoration: line-through;
 }
+#taskboard .completed .hours {
+	display: none;
+}
 #taskboard .spinner {
 	position: absolute;
 	left: 0;
