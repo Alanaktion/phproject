@@ -164,7 +164,11 @@ class Taskboard extends Base {
 			$status = new \Model\Issue\Status();
 			$status->load($issue->status);
 			if($status->closed) {
-				$issue->closed_date = now();
+				if(!$issue->closed_date) {
+					$issue->closed_date = now();
+				}
+			} else {
+				$issue->closed_date = null;
 			}
 		} else {
 			$issue->name = $post["title"];

@@ -175,8 +175,14 @@ class Issues extends Base {
 							if($i == "status") {
 								$status = new \Model\Issue\Status();
 								$status->load($val);
+
+								// Toggle closed_date if issue has been closed/restored
 								if($status->closed) {
-									$issue->closed_date = now();
+									if(!$issue->closed_date) {
+										$issue->closed_date = now();
+									}
+								} else {
+									$issue->closed_date = null;
 								}
 							}
 						}

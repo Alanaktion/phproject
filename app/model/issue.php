@@ -52,6 +52,11 @@ class Issue extends Base {
 			}
 
 			if($updated) {
+				// Set hours remaining to 0 if the issue has been closed
+				if($issue->get("closed_date") && $issue->get("hours_remaining")) {
+					$issue->set("hours_remaining", 0);
+				}
+
 				// Send notifications
 				if($notify) {
 					$notification = \Helper\Notification::instance();
