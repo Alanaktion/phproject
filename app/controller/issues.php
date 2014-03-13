@@ -61,7 +61,7 @@ class Issues extends Base {
 
 		// Set up pagination
 		$filter_get = http_build_query($filter);
-		if($issue_page["limit"] * $issue_page["pos"] + $issue_page["count"] > $issue_page["total"]) {
+		if($issue_page["pos"] < $issue_page["count"] - 1) {
 			$f3->set("next", "?page=" . ($issue_page["pos"] + 1) . "&" . $filter_get);
 		}
 		if($issue_page["pos"] > 0) {
