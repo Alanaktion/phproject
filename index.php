@@ -3,9 +3,6 @@
 if ((float)PCRE_VERSION<7.9)
 	trigger_error('PCRE version is out of date');
 
-// Performance tracking
-$mtime = microtime(true);
-
 // Initialize core
 $f3=require("lib/base.php");
 $f3->mset(array(
@@ -14,7 +11,8 @@ $f3->mset(array(
 	"TEMP" => "tmp/",
 	"CACHE" => true,
 	"AUTOLOAD" => "app/",
-	"PACKAGE" => "Phproject"
+	"PACKAGE" => "Phproject",
+	"microtime" => microtime(true)
 ));
 
 // Get current Git revision

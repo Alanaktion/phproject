@@ -6,7 +6,13 @@
 		<p class="visible-sm visible-xs"><a href="/logout" class="btn btn-default btn-xs">Log Out</a></p>
 	</div>
 	<div class="col-xs-8">
-		<p class="text-right text-muted" title="{{ @revision }}"><small>&copy; {{ @site.name }} {{ date("Y") }}</small></p>
+		<p class="text-right text-muted"><small>
+			<check if="{{ !empty(@microtime) }}">
+				<set pagemtime="{{ microtime(true) - @microtime }}" />
+				<span title="Page generated in {{ round(@pagemtime, 10) }} seconds">{{ round(@pagemtime * 1000, 0) }}ms</span> &middot;
+			</check>
+			<span title="{{ @revision }}">&copy; {{ @site.name }} {{ date("Y") }}</span>
+		</small></p>
 	</div>
 </footer>
 <script src="/minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.24709.js,global.js"></script>
