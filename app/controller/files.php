@@ -110,7 +110,13 @@ class Files extends Base {
 			return;
 		}
 
-		if(!\Web::instance()->send($f3->get("ROOT") . "/" . $file->disk_filename)) {
+		$force = true;
+		if(substr($file->content_type, 0, 5) == "image") {
+			// Don't force download on image files
+			$force = false;
+		}
+
+		if(!\Web::instance()->send($f3->get("ROOT") . "/" . $file->disk_filename, null, 0, $force)) {
 			$f3->error(404);
 		}
 	}
