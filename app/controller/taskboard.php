@@ -120,7 +120,7 @@ class Taskboard extends Base {
 			}
 		}
 
-		$f3->set("taskboard", $taskboard);
+		$f3->set("taskboard", array_values($taskboard));
 		$f3->set("filter", $params["filter"]);
 
 		// Get user list for select
