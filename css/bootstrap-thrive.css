@@ -5035,7 +5035,7 @@ button.close {
 	color: #fff;
 }
 .pager .disabled > a, .pager .disabled > a:hover, .pager .disabled > a:focus, .pager .disabled > span {
-	background-color: #3be6c4;
+	background-color: #ddd;
 }
 .alert a, .alert .alert-link {
 	color: #fff;
