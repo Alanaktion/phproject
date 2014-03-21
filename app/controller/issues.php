@@ -68,6 +68,7 @@ class Issues extends Base {
 			$f3->set("prev", "?page=" . ($issue_page["pos"] - 1) . "&" . $filter_get);
 		}
 
+		$f3->set("show_filters", true);
 		echo \Template::instance()->render("issues/index.html");
 	}
 
@@ -412,9 +413,21 @@ class Issues extends Base {
 	public function search($f3, $params) {
 		$query = "%" . $f3->get("GET.q") . "%";
 		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail", null, 3600);
-		$results = $issues->paginate(0, 50, array("name LIKE ? OR description LIKE ? AND deleted_date IS NULL", $query, $query), array("order" => "created_date ASC"));
-		// TODO: Add pagination to results page
-		$f3->set("issues", $results);
+
+		$args = $f3->get("GET");
+		if(empty($args["page"])) {
+			$args["page"] = 0;
+		}
+
+		$where = "(id = ? OR name LIKE ? OR description LIKE ?
+				OR author_name LIKE ? OR owner_name LIKE ?
+				OR author_username LIKE ? OR owner_username LIKE ?
+				OR author_email LIKE ? OR owner_email LIKE ?)
+			AND deleted_date IS NULL";
+		$issue_page = $issues->paginate($args["page"], 50, array($where, $f3->get("GET.q"), $query, $query, $query, $query, $query, $query, $query, $query), array("order" => "created_date DESC"));
+		$f3->set("issues", $issue_page);
+
+		$f3->set("show_filters", false);
 		echo \Template::instance()->render("issues/search.html");
 	}
 
