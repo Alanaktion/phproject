@@ -19,9 +19,9 @@
 			<ul class="dropdown-menu">
 				<li><a href="/issues/new/{{ @issue_type.project }}">New Project</a></li>
 				<li class="divider"></li>
-				<li><a href="/issues?type_id={{ @issue_type.project }}">All Projects</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.project }}&amp;owner_id={{ @user.id }}">My Projects</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.project }}&amp;owner_id=">Unassigned Projects</a></li>
+				<li><a href="/issues?type_id={{ @issue_type.project }}&amp;status=open">All Projects</a></li>
+				<li><a href="/issues?type_id={{ @issue_type.project }}&amp;owner_id={{ @user.id }}&amp;status=open">My Projects</a></li>
+				<li><a href="/issues?type_id={{ @issue_type.project }}&amp;owner_id=&amp;status=open">Unassigned Projects</a></li>
 			</ul>
 		</li>
 		<li class="dropdown">
@@ -31,9 +31,9 @@
 			<ul class="dropdown-menu">
 				<li><a href="/issues/new/{{ @issue_type.task }}">New Task</a></li>
 				<li class="divider"></li>
-				<li><a href="/issues?type_id={{ @issue_type.task }}">All Tasks</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.task }}&amp;owner_id={{ @user.id }}">My Tasks</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.task }}&amp;owner_id=">Unassigned Tasks</a></li>
+				<li><a href="/issues?type_id={{ @issue_type.task }}&amp;status=open">All Tasks</a></li>
+				<li><a href="/issues?type_id={{ @issue_type.task }}&amp;owner_id={{ @user.id }}&amp;status=open">My Tasks</a></li>
+				<li><a href="/issues?type_id={{ @issue_type.task }}&amp;owner_id=&amp;status=open">Unassigned Tasks</a></li>
 			</ul>
 		</li>
 		<li class="dropdown">
@@ -43,9 +43,9 @@
 			<ul class="dropdown-menu">
 				<li><a href="/issues/new/{{ @issue_type.bug }}">New Bug</a></li>
 				<li class="divider"></li>
-				<li><a href="/issues?type_id={{ @issue_type.bug }}">All Bugs</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.bug }}&amp;owner_id={{ @user.id }}">My Bugs</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.bug }}&amp;owner_id=">Unassigned Bugs</a></li>
+				<li><a href="/issues?type_id={{ @issue_type.bug }}&amp;status=open">All Bugs</a></li>
+				<li><a href="/issues?type_id={{ @issue_type.bug }}&amp;owner_id={{ @user.id }}&amp;status=open">My Bugs</a></li>
+				<li><a href="/issues?type_id={{ @issue_type.bug }}&amp;owner_id=&amp;status=open">Unassigned Bugs</a></li>
 			</ul>
 		</li>
 		<li>

@@ -33,12 +33,24 @@
 					<td>
 						<select class="form-control input-sm" name="status">
 							<option></option>
-							<repeat group="{{ @statuses }}" value="{{ @item }}">
-								<check if="{{ !empty(@GET.status) && @GET.status == @item.id }}">
-									<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
-									<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
+							<optgroup label="General">
+								<check if="{{ !empty(@GET.status) && @GET.status == 'open' }}">
+									<true><option value="open" selected>Open</option></true>
+									<false><option value="open">Open</option></false>
 								</check>
-							</repeat>
+								<check if="{{ !empty(@GET.status) && @GET.status == 'closed' }}">
+									<true><option value="closed" selected>Closed</option></true>
+									<false><option value="closed">Closed</option></false>
+								</check>
+							</optgroup>
+							<optgroup label="Exact Match">
+								<repeat group="{{ @statuses }}" value="{{ @item }}">
+									<check if="{{ !empty(@GET.status) && @GET.status == @item.id }}">
+										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
+										<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
+									</check>
+								</repeat>
+							</optgroup>
 						</select>
 					</td>
 					<td>

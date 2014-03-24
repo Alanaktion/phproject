@@ -23,6 +23,10 @@ class Issues extends Base {
 		foreach($filter as $i => $val) {
 			if($i == "name") {
 				$filter_str .= "`$i` LIKE '%" . addslashes($val) . "%' AND ";
+			} elseif($i == "status" && $val == "open") {
+				$filter_str .= "closed_date IS NULL AND ";
+			} elseif($i == "status" && $val == "closed") {
+				$filter_str .= "closed_date IS NOT NULL AND ";
 			} else {
 				$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
 			}
