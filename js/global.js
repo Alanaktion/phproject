@@ -24,7 +24,15 @@ $(document).ready(function(){
 		self.location = '/issues/' + $(this).data('id');
 	});
 
-	// Auto-submit when select box is changed
+	// Submit from textarea if Ctrl+Enter is pressed
+	$('body').on('keypress', 'textarea', function(e) {
+		if(e.keyCode == 13 && (e.target.type != 'textarea' || (e.target.type == 'textarea' && e.ctrlKey))) {
+			$(this).parents('form')[0].submit();
+			e.preventDefault();
+		}
+	});
+
+	// Auto-submit filters when select box is changed
 	$('.issue-filters').on('change', 'select, input', function(e) {
 		$(this).parents('form').submit();
 	});
