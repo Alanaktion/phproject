@@ -8,6 +8,9 @@
 	<div class="col-xs-8">
 		<p class="text-right text-muted"><small>
 			<check if="{{ !empty(@microtime) }}">
+				<set queries_total="{{ substr_count(@db.instance->log(), date('O (')) }}" />
+				<set queries_cached="{{ substr_count(@db.instance->log(), '[CACHED]') }}" />
+				<span title="{{ @queries_total }} total queries, {{ @queries_cached }} cached">{{ @queries_total - @queries_cached }} queries</span> &middot;
 				<set pagemtime="{{ microtime(true) - @microtime }}" />
 				<span title="Page generated in {{ round(@pagemtime, 10) }} seconds">{{ round(@pagemtime * 1000, 0) }}ms</span> &middot;
 			</check>
