@@ -46,12 +46,12 @@ class Issues extends Base {
 		}
 
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->find());
+		$f3->set("statuses", $status->find(null, null, 3600));
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->find(null, array("order" => "value DESC")));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), 3600));
 
-		$f3->set("types", $type->find());
+		$f3->set("types", $type->find(null, null, 3600));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -103,10 +103,10 @@ class Issues extends Base {
 		}
 
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->find());
+		$f3->set("statuses", $status->find(null, null, 3600));
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->find(null, array("order" => "value DESC")));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), 3600));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -122,7 +122,7 @@ class Issues extends Base {
 		$this->_requireLogin();
 
 		$type = new \Model\Issue\Type();
-		$f3->set("types", $type->find());
+		$f3->set("types", $type->find(null, null, 3600));
 
 		echo \Template::instance()->render("issues/new.html");
 	}
@@ -142,10 +142,10 @@ class Issues extends Base {
 		$type->load(array("id=?", $issue->type_id));
 
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->find());
+		$f3->set("statuses", $status->find(null, null, 3600));
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->find(null, array("order" => "value DESC")));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), 3600));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -339,10 +339,10 @@ class Issues extends Base {
 
 		// Extra data needed for inline edit form
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->find());
+		$f3->set("statuses", $status->find(null, null, 3600));
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->find(null, array("order" => "value DESC")));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), 3600));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
