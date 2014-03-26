@@ -1,0 +1,136 @@
+<form class="form-horizontal well" role="form" action="/issues/save" method="post">
+	<check if="{{ !empty(@issue) }}">
+		<a href="/issues/{{ @issue.id }}" class="close">&times;</a>
+		<input type="hidden" name="id" value="{{ @issue.id }}">
+	</check>
+	<legend>{{ empty(@issue) ? "New" : "Edit" }} {{ @type.name }}</legend>
+	<input type="hidden" name="type_id" value="{{ @type.id }}">
+	<div class="form-group">
+		<label class="col-md-2 control-label">Title</label>
+		<div class="col-md-10">
+			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : @issue.name }}" required>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label label-sm">Description</label>
+		<div class="col-md-10">
+			<textarea class="form-control input-sm" name="description" rows="7">{{ empty(@issue) ? "" : @issue.description }}</textarea>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label label-sm">Priority</label>
+		<div class="col-md-10">
+			<select class="form-control input-sm" name="priority">
+				<repeat group="{{ @priorities }}" value="{{ @item }}">
+					<check if="{{ empty(@issue) }}">
+						<true>
+							<option value="{{ @item.value }}" {{ @item.value == 0 ? "selected" : "" }}>{{ @item.name }}</option>
+						</true>
+						<false>
+							<option value="{{ @item.value }}" {{ @issue.priority == @item.value ? "selected" : "" }}>{{ @item.name }}</option>
+						</false>
+					</check>
+				</repeat>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label label-sm">Status</label>
+		<div class="col-md-10">
+			<select class="form-control input-sm" name="status">
+				<repeat group="{{ @statuses }}" value="{{ @item }}">
+					<option value="{{ @item.id }}" {{ !empty(@issue) && @issue.status == @item.id ? "selected" : "" }}>{{ @item.name }}</option>
+				</repeat>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label label-sm">Assigned To</label>
+		<div class="col-md-10">
+			<select class="form-control input-sm" name="owner_id">
+				<option value="0">Not Assigned</option>
+				<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
+				<optgroup label="Groups">
+					<repeat group="{{ @groups }}" value="{{ @group }}">
+						<check if="{{ !empty(@issue) && @issue.owner_id == @group.id }}">
+							<true><option value="{{ @group.id }}" selected>{{ @group.name }}</option></true>
+							<false><option value="{{ @group.id }}">{{ @group.name }}</option></false>
+						</check>
+					</repeat>
+				</optgroup>
+				<optgroup label="Users">
+					<repeat group="{{ @users }}" value="{{ @item }}">
+						<check if="{{ !empty(@issue) && @issue.owner_id == @item.id }}">
+							<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
+							<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
+						</check>
+					</repeat>
+				</optgroup>
+			</select>
+		</div>
+	</div>
+
+	<check if="{{ !empty(@issue) }}">
+		<div class="form-group">
+			<label class="col-md-2 control-label label-sm">Total Hours</label>
+			<div class="col-md-6">
+				<input class="form-control input-sm" type="text" name="hours_total" value="{{ @issue.hours_total }}">
+			</div>
+		</div>
+	</check>
+	<div class="form-group">
+		<label class="col-md-2 control-label label-sm">Remaining Hours</label>
+		<div class="col-md-6">
+			<input class="form-control input-sm" type="text" name="hours_remaining" value="{{ empty(@issue) ? "" : @issue.hours_remaining }}">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-md-2 control-label label-sm">Due Date</label>
+		<div class="col-md-6">
+			<input class="form-control input-sm" id="due_date" type="date" name="due_date">
+			<!-- <input class="form-control input-sm" id="due_date" type="date" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus" value="{{ empty(@issue) ? "" : @issue.due_date }}"> -->
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label label-sm">Repeat Cycle</label>
+		<div class="col-md-6">
+			<select class="form-control input-sm" name="repeat_cycle">
+				<option value="none">Not Repeating</option>
+				<option value="week" {{ !empty(@issue) && @issue.repeat_cycle == 'week' ? "selected" : "" }}>Weekly</option>
+				<option value="month" {{ !empty(@issue) && @issue.repeat_cycle == 'month' ? "selected" : "" }}>Monthly</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label label-sm">Parent ID</label>
+		<div class="col-md-6">
+			<check if="{{ !empty(@issue) }}">
+				<true>
+					<input class="form-control input-sm" type="text" name="parent_id" value="{{ empty(@issue) ? "" : @issue.parent_id }}">
+				</true>
+				<false>
+					<input class="form-control input-sm" type="text" name="parent_id" value="{{ empty(@parent) ? "" : @parent }}">
+				</false>
+			</check>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-md-offset-2 col-md-10">
+			<button type="submit" class="btn btn-primary btn-sm">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
+			<check if="{{ !empty(@issue) }}">
+				<button type="reset" class="btn btn-default btn-sm">Reset</button>
+				<a href="/issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">Cancel</a>
+			</check>
+			<check if="{{ @user.role == 'admin' }}">
+				<div class="checkbox checkbox-inline">
+					<input type="hidden" name="notify" value="0">
+					<label>
+						<input type="checkbox" name="notify" value="1" checked>
+						Send notifications
+					</label>
+				</div>
+			</check>
+		</div>
+	</div>
+</form>
