@@ -155,7 +155,11 @@ class Issues extends Base {
 		$f3->set("issue", $issue);
 		$f3->set("type", $type);
 
-		echo \Template::instance()->render("issues/edit.html");
+		if($f3->get("AJAX")) {
+			echo \Template::instance()->render("issues/edit-form.html");
+		} else {
+			echo \Template::instance()->render("issues/edit.html");
+		}
 	}
 
 	public function save($f3, $params) {
@@ -332,6 +336,17 @@ class Issues extends Base {
 		$f3->set("type", $type);
 		$f3->set("author", $author);
 		$f3->set("owner", $owner);
+
+		// Extra data needed for inline edit form
+		$status = new \Model\Issue\Status();
+		$f3->set("statuses", $status->find());
+
+		$priority = new \Model\Issue\Priority();
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC")));
+
+		$users = new \Model\User();
+		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
 		$f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));

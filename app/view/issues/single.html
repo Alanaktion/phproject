@@ -6,6 +6,13 @@
 <body>
 <div class="container-fluid">
 	<include href="blocks/navbar.html" />
+
+	<div id="form-edit" style="display: none;">
+		<set edit_inline="1" />
+		<include href="issues/edit-form.html" />
+		<hr />
+	</div>
+
 	<div class="row">
 		<div class="col-lg-12">
 			<check if="{{ count(@hierarchy) > 1 }}">
@@ -42,7 +49,7 @@
 						</button>
 					</false>
 				</check>
-				<a href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
+				<a id="btn-edit" href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
 					<span class="glyphicon glyphicon-pencil"></span>&ensp;Edit
 				</a>
 				<check if="{{ @user.role == 'admin' }}">
@@ -275,6 +282,12 @@ $(function() {
 	}, 'json').error(function() {
 		$('#related').empty().append($('<p />').addClass('text-center text-danger').text('Error loading related issues.'));
 	});
+
+	// Handle inline edit form
+	$("#btn-edit, #form-edit .close, #form-edit .btn-cancel").click(function(e) {
+		$("#form-edit").slideToggle("fast");
+		e.preventDefault();
+	})
 
 });
 
