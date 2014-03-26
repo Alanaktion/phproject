@@ -46,12 +46,12 @@ class Issues extends Base {
 		}
 
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->find(null, null, 3600));
+		$f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), 3600));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
-		$f3->set("types", $type->find(null, null, 3600));
+		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -103,10 +103,10 @@ class Issues extends Base {
 		}
 
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->find(null, null, 3600));
+		$f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), 3600));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -122,7 +122,7 @@ class Issues extends Base {
 		$this->_requireLogin();
 
 		$type = new \Model\Issue\Type();
-		$f3->set("types", $type->find(null, null, 3600));
+		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
 		echo \Template::instance()->render("issues/new.html");
 	}
@@ -142,10 +142,10 @@ class Issues extends Base {
 		$type->load(array("id=?", $issue->type_id));
 
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->find(null, null, 3600));
+		$f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), 3600));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -339,16 +339,16 @@ class Issues extends Base {
 
 		// Extra data needed for inline edit form
 		$status = new \Model\Issue\Status();
-		$f3->set("statuses", $status->find(null, null, 3600));
+		$f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), 3600));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
-		$comments = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_comment_user", null, 3600);
+		$comments = new \Model\Custom("issue_comment_user");
 		$f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
 
 		echo \Template::instance()->render("issues/single.html");
@@ -431,7 +431,7 @@ class Issues extends Base {
 
 	public function search($f3, $params) {
 		$query = "%" . $f3->get("GET.q") . "%";
-		$issues = new \DB\SQL\Mapper($f3->get("db.instance"), "issue_detail", null, 3600);
+		$issues = new \Model\Issue\Detail();
 
 		$args = $f3->get("GET");
 		if(empty($args["page"])) {

@@ -50,7 +50,10 @@
 					<b>Name:</b> {{ @site.name }}<br>
 					<b>Description:</b> {{ @site.description }}<br>
 					<b>Theme:</b> {{ @site.theme }}<br>
-					<b>Logo:</b> {{ @site.logo }}
+					<b>Logo:</b> {{ @site.logo }}<br>
+					<small><br>Cache timeouts</small><br>
+					<b>DB:</b> {{ @cache_expire.db }}<br>
+					<b>Minify:</b> {{ @cache_expire.minify }}<br>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
 					<h4>MySQL Connection</h4>
@@ -73,12 +76,8 @@
 					</repeat>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>SMTP</h4>
-					<b>Host:</b> {{ @smtp.host }}<br>
-					<b>Port:</b> {{ @smtp.port }}<br>
-					<b>Scheme:</b> {{ @smtp.scheme }}<br>
-					<b>Username:</b> {{ @smtp.user }}<br>
-					<b>Password:</b> {{ str_repeat("*", strlen(@smtp.pass)) }}
+					<h4>IMAP</h4>
+					<p>In progress&hellip;</p>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
 					<h4>Gravatar</h4>

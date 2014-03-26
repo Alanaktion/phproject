@@ -236,7 +236,7 @@ class Admin extends Base {
 		$this->_requireAdmin();
 		$f3->set("title", "New Attribute");
 		$types = new \Model\Issue\Type();
-		$f3->set("issue_types", $types->find(null, null, 3600));
+		$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
 
 		if($post = $f3->get("POST")) {
 			if(!empty($post["name"]) && !empty($post["types"])) {
@@ -259,7 +259,7 @@ class Admin extends Base {
 		$this->_requireAdmin();
 		$f3->set("title", "Edit Attribute");
 		$types = new \Model\Issue\Type();
-		$f3->set("issue_types", $types->find(null, null, 3600));
+		$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
 
 		$attr = new \Model\Attribute();
 		$attr->load($params["id"]);

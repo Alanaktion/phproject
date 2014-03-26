@@ -40,12 +40,12 @@ class Taskboard extends Base {
 
 		// Load issue statuses
 		$status = new \Model\Issue\Status();
-		$statuses = $status->find(null, null, 3600);
+		$statuses = $status->find(null, null, $f3->get("cache_expire.db"));
 		$f3->set("statuses", $statuses);
 
 		// Load issue priorities
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->find(null, null, 3600));
+		$f3->set("priorities", $priority->find(null, null, $f3->get("cache_expire.db")));
 
 		// Load project list
 		$issue = new \Model\Issue\Detail();

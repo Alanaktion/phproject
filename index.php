@@ -60,7 +60,7 @@ require_once "app/functions.php";
 $f3->route("GET /minify/@type/@files", function($f3, $args) {
 	$f3->set("UI", $args["type"] . "/");
 	echo Web::instance()->minify($args["files"]);
-}, 3600 * 24 * 7);
+}, $f3->get("cache_expire.minify"));
 
 // Set up session handler
 session_name("PHPROJSESS");

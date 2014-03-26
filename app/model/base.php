@@ -17,7 +17,7 @@ abstract class Base extends \DB\SQL\Mapper {
 			}
 		}
 
-		parent::__construct($f3->get("db.instance"), $this->_table_name, null, 3600);
+		parent::__construct($f3->get("db.instance"), $this->_table_name, null, $f3->get("cache_expire.db"));
 		return $this;
 	}
 
