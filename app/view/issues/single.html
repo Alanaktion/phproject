@@ -209,6 +209,7 @@
 	</div>
 	<include href="blocks/footer.html" />
 </div>
+<script src="/minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(function() {
 
@@ -288,6 +289,16 @@ $(function() {
 		$("#form-edit").slideToggle("fast");
 		e.preventDefault();
 	})
+	if(!Modernizr.inputtypes.date) {
+		var nowTemp = new Date();
+		var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+		$('#due_date').datepicker({
+			format: 'yy-mm-dd',
+			onRender: function(date) {
+				return date.valueOf() < now.valueOf() ? 'disabled' : '';
+			}
+		});
+	}
 
 });
 
