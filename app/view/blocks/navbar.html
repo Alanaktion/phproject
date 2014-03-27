@@ -17,8 +17,8 @@
 				New <b class="caret"></b>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="/issues/new/">New Issue&hellip;</a></li>
-				<li class="divider"></li>
+				<!-- <li><a href="/issues/new/">New Issue&hellip;</a></li>
+				<li class="divider"></li> -->
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
 					<li><a href="/issues/new/{{ @type.id }}">{{ @type.name }}</a></li>
 				</repeat>
@@ -89,6 +89,9 @@
 	<div class="pull-right">
 		<a href="/issues/new" class="btn btn-default navbar-btn">
 			<span class="glyphicon glyphicon-plus"></span>
+		</a>
+		<a href="/issues" class="btn btn-default navbar-btn">
+			<span class="glyphicon glyphicon-th-list"></span>
 		</a>
 		<check if="{{ @user.role=='admin' }}">
 			<a href="/admin" class="btn btn-default navbar-btn">
