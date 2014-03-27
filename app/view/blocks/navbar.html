@@ -29,7 +29,7 @@
 				Browse <b class="caret"></b>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="/issues/">All Issues</a></li>
+				<li><a href="/issues/?status=open">All Issues</a></li>
 				<li class="divider"></li>
 				<set inflector="{{ \Helper\Inflector::instance() }}" />
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
