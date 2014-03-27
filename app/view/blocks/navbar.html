@@ -14,38 +14,27 @@
 	<ul class="nav navbar-nav">
 		<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				Projects <b class="caret"></b>
+				New <b class="caret"></b>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="/issues/new/{{ @issue_type.project }}">New Project</a></li>
+				<li><a href="/issues/new/">New Issue&hellip;</a></li>
 				<li class="divider"></li>
-				<li><a href="/issues?type_id={{ @issue_type.project }}&amp;status=open">All Projects</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.project }}&amp;owner_id={{ @user.id }}&amp;status=open">My Projects</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.project }}&amp;owner_id=&amp;status=open">Unassigned Projects</a></li>
+				<repeat group="{{ @issue_types }}" value="{{ @type }}">
+					<li><a href="/issues/new/{{ @type.id }}">{{ @type.name }}</a></li>
+				</repeat>
 			</ul>
 		</li>
 		<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				Tasks <b class="caret"></b>
+				Browse <b class="caret"></b>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="/issues/new/{{ @issue_type.task }}">New Task</a></li>
+				<li><a href="/issues/">All Issues</a></li>
 				<li class="divider"></li>
-				<li><a href="/issues?type_id={{ @issue_type.task }}&amp;status=open">All Tasks</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.task }}&amp;owner_id={{ @user.id }}&amp;status=open">My Tasks</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.task }}&amp;owner_id=&amp;status=open">Unassigned Tasks</a></li>
-			</ul>
-		</li>
-		<li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				Bugs <b class="caret"></b>
-			</a>
-			<ul class="dropdown-menu">
-				<li><a href="/issues/new/{{ @issue_type.bug }}">New Bug</a></li>
-				<li class="divider"></li>
-				<li><a href="/issues?type_id={{ @issue_type.bug }}&amp;status=open">All Bugs</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.bug }}&amp;owner_id={{ @user.id }}&amp;status=open">My Bugs</a></li>
-				<li><a href="/issues?type_id={{ @issue_type.bug }}&amp;owner_id=&amp;status=open">Unassigned Bugs</a></li>
+				<set inflector="{{ \Helper\Inflector::instance() }}" />
+				<repeat group="{{ @issue_types }}" value="{{ @type }}">
+					<li><a href="/issues?type_id={{ @type.id }}&amp;status=open">{{ @inflector->pluralize(@type.name) }}</a></li>
+				</repeat>
 			</ul>
 		</li>
 		<li>

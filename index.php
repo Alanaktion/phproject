@@ -70,5 +70,11 @@ session_name("PHPROJSESS");
 $user = new Model\User();
 $user->loadCurrent();
 
+// Load issue types if user is logged in
+if($f3->get("user")) {
+	$types = new \Model\Issue\Type();
+	$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
+}
+
 // Run the application
 $f3->run();

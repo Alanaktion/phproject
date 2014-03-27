@@ -235,8 +235,6 @@ class Admin extends Base {
 	public function attribute_new($f3, $params) {
 		$this->_requireAdmin();
 		$f3->set("title", "New Attribute");
-		$types = new \Model\Issue\Type();
-		$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
 
 		if($post = $f3->get("POST")) {
 			if(!empty($post["name"]) && !empty($post["types"])) {
