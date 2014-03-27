@@ -17,11 +17,30 @@
 				New <b class="caret"></b>
 			</a>
 			<ul class="dropdown-menu">
-				<!-- <li><a href="/issues/new/">New Issue&hellip;</a></li>
-				<li class="divider"></li> -->
+				<check if="{{ @user.role == 'admin' }}">
+					<li><a href="/admin/sprints/new">Sprint</a></li>
+					<li role="presentation" class="divider"></li>
+				</check>
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
 					<li><a href="/issues/new/{{ @type.id }}">{{ @type.name }}</a></li>
 				</repeat>
+				<check if="{{ !empty(@issue) && !@issue.closed_date }}">
+					<li role="presentation" class="divider"></li>
+					<check if="{{ @issue.type_id == @issue_type.project }}">
+						<true>
+							<li role="presentation" class="dropdown-header">Related</li>
+							<li><a href="/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">Task</a></li>
+							<li><a href="/issues/new/{{ @issue_type.project }}/{{ @issue.id }}">Sub-project</a></li>
+						</true>
+						<false>
+							<li role="presentation" class="dropdown-header">Current issue</li>
+							<li><a href="/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">Child Task</a></li>
+							<check if="{{ @issue.parent_id }}">
+								<li><a href="/issues/new/{{ @issue_type.task }}/{{ @issue.parent_id }}">Related Task</a></li>
+							</check>
+						</false>
+					</check>
+				</check>
 			</ul>
 		</li>
 		<li class="dropdown">
@@ -29,8 +48,12 @@
 				Browse <b class="caret"></b>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="/issues/?status=open">All Issues</a></li>
-				<li class="divider"></li>
+				<li><a href="/issues/?status=open">Open</a></li>
+				<li><a href="/issues/?status=closed">Closed</a></li>
+				<li role="presentation" class="divider"></li>
+				<li><a href="/issues/?status=open&amp;author_id={{ @user.id }}">Created by Me</a></li>
+				<li><a href="/issues/?status=open&amp;owner_id={{ @user.id }}">Assigned to Me</a></li>
+				<li role="presentation" class="divider"></li>
 				<set inflector="{{ \Helper\Inflector::instance() }}" />
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
 					<li><a href="/issues?type_id={{ @type.id }}&amp;status=open">{{ @inflector->pluralize(@type.name) }}</a></li>
