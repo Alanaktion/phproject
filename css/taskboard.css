@@ -116,7 +116,7 @@ body {
 	position: absolute;
 	bottom: 2px;
 	left: 0;
-	width: 106px;
+	/*width: 106px;*/
 	height: 14px;
 	text-align: left;
 	overflow: hidden;
