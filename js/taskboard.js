@@ -123,11 +123,11 @@ var Taskboard = {
 				"Save": function() {
 					$('.ui-error').remove();
 					$(".input-error").removeClass(".input-error");
-					if ($('#hours').val() == '' || isNumber($('#hours').val())) {
+					if ($('#hours').val() === '' || isNumber($('#hours').val())) {
 						Taskboard.updateCard(data, $("form#task-dialog").serializeObject());
 						$("#task-dialog").dialog("close");
 					} else {
-						$("#hours").before("<label style='color:red;display:block;' class='ui-error'>Value must be a number!</label>");
+						$("#hours").before('<label style="color:red;display:block;"" class="ui-error">Value must be a number!</label>');
 						$("#hours").addClass("input-error");
 					}
 				}
@@ -173,7 +173,7 @@ var Taskboard = {
 		}*/
 	},
 	updateCardPriority: function(priority, card) {
-		if(priority == 0) {
+		if(priority === 0) {
 			$(card).find('.priority').attr("class", "priority normal");
 			$(card).find('.priority').text("Normal");
 		} else if(priority < 0) {
@@ -379,13 +379,13 @@ jQuery.fn.serializeObject = function() {
 	$.each(arrayData, function() {
 		var value;
 
-		if (this.value != null) {
+		if (this.value !== null) {
 			value = this.value;
 		} else {
 			value = '';
 		}
 
-		if (objectData[this.name] != null) {
+		if (objectData[this.name] !== null) {
 			if (!objectData[this.name].push) {
 				objectData[this.name] = [objectData[this.name]];
 			}
