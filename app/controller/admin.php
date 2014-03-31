@@ -305,4 +305,11 @@ class Admin extends Base {
 		echo \Template::instance()->render("admin/sprints/new.html");
 	}
 
+	public function sprint_breaker($f3, $params) {
+		$this->_requireAdmin();
+		$f3->set("title", "SprintBreaker");
+
+		echo \Template::instance()->render("admin/sprints/breaker.html");
+	}
+
 }
