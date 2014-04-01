@@ -194,10 +194,16 @@ class Issues extends Base {
 									$issue->closed_date = null;
 								}
 							}
+                                                        //Save to the sprint of the due date
+                                                        if ($i=="due_date" && !empty($val)) {
+                                                                $sprint = new \Model\Sprint();
+                                                                $sprint->load(array("date(?) between start_date and end_date",$val));
+                                                                //$sprint->load("id=9");
+                                                                $issue->sprint_id = $sprint->id;                                                            
+                                                            }
 						}
 					}
 				}
-
 				// Save issue
 				$notify = $f3->get("user.role") == "admin" && empty($post["notify"]);
 				$issue->save($notify);
@@ -221,8 +227,13 @@ class Issues extends Base {
 			$issue->hours_total = $post["hours_remaining"];
 			$issue->hours_remaining = $post["hours_remaining"];
                         $issue->repeat_cycle = $post["repeat_cycle"];
+
 			if(!empty($post["due_date"])) {
 				$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
+                                //Save to the sprint of the due date
+                                $sprint = new \Model\Sprint();
+                                $sprint->load(array("date(?) between start_date and end_date",$issue->due_date));
+                                $issue->sprint_id = $sprint->id;
 			}
 			if(!empty($post["parent_id"])) {
 				$issue->parent_id = $post["parent_id"];
