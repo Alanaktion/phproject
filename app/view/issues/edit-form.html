@@ -99,6 +99,7 @@
 				<option value="none">Not Repeating</option>
 				<option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>Weekly</option>
 				<option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>Monthly</option>
+                                <option value="sprint" {{ !empty(@issue) && @issue.repeat_cycle == 'sprint' ? "selected" : "" }}>Sprint</option>
 			</select>
 		</div>
 	</div>

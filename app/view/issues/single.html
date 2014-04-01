@@ -88,6 +88,9 @@
 					<dt>Assigned to</dt>
 					<dd><a href="/user/{{ @owner.username }}">{{ @owner.name }}</a></dd>
 
+                                        <dt>Repeat Cycle</dt>
+					<dd>{{ @issue.repeat_cycle }}</dd>
+                                        
 					<check if="{{ !empty(@issue.hours_total) }}">
 						<dt>Total Hours</dt>
 						<dd>{{ @issue.hours_total }}</dd>
