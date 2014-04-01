@@ -220,6 +220,7 @@ class Issues extends Base {
 			$issue->owner_id = $post["owner_id"];
 			$issue->hours_total = $post["hours_remaining"];
 			$issue->hours_remaining = $post["hours_remaining"];
+                        $issue->repeat_cycle = $post["repeat_cycle"];
 			if(!empty($post["due_date"])) {
 				$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
 			}
