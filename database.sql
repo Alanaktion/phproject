@@ -63,6 +63,18 @@ CREATE TABLE `issue` (
   KEY `repeat_cycle` (`repeat_cycle`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `issue_checklist`;
+CREATE TABLE `issue_checklist` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `issue_id` int(10) unsigned NOT NULL,
+  `text` text NOT NULL,
+  `checked` tinyint(1) unsigned NOT NULL,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `issue_checklist_issue_id` (`issue_id`),
+  CONSTRAINT `issue_checklist_issue_id` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `issue_comment`;
 CREATE TABLE `issue_comment` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
