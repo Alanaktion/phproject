@@ -97,8 +97,8 @@
 		<div class="col-md-6">
 			<select class="form-control input-sm" name="repeat_cycle">
 				<option value="none">Not Repeating</option>
-				<option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'week' ? "selected" : "" }}>Weekly</option>
-				<option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'month' ? "selected" : "" }}>Monthly</option>
+				<option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>Weekly</option>
+				<option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>Monthly</option>
 			</select>
 		</div>
 	</div>
