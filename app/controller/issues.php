@@ -260,11 +260,11 @@ class Issues extends Base {
 		$issue = new \Model\Issue\Detail();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
-		if(!$issue->id) {
+                if(!$issue->id) {
 			$f3->error(404);
 			return;
 		}
-
+                
 		$type = new \Model\Issue\Type();
 		$type->load($issue->type_id);
 
@@ -364,6 +364,7 @@ class Issues extends Base {
 		$f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
 
 		echo \Template::instance()->render("issues/single.html");
+                
 	}
 
 	public function single_history($f3, $params) {
