@@ -47,6 +47,7 @@
 								<span class="task-id">
 									<a href="/issues/{{ @row.project.id }}" target="_blank">{{ @row.project.id }}</a>
 								</span>
+                                                                <span class="task-dueDate">{{ empty(@row.project.due_date) ? "" : date('n/j', strtotime(@row.project.due_date)) }}</span>
 							</div>
 							<div class="title">{{ @row.project.name }}</div>
 						</div>
@@ -58,6 +59,7 @@
 									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
 										<span class="task-id"><a href="/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
+                                                                                <span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
 									</div>
 									<div class="title">{{ @task.name }}</div>
 									<div class="description">{{ @task.description }}</div>
@@ -69,7 +71,7 @@
 											<div class="dueDate"></div>
 										</false>
 									</check>
-									<check if="{{ @task.priority == 0 }}">
+                                                                        <check if="{{ @task.priority == 0 }}">
 										<true>
 											<div class="priority normal">{{ @task.priority_name }}</div>
 										</true>

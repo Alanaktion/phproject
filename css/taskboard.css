@@ -305,6 +305,10 @@ body .ui-state-default:last-child:hover, body .ui-widget-content .ui-state-defau
 table.table {
 	margin: 0;
 }
+.task-dueDate {
+	margin-left: 30px;
+}
+
 
 /* Make large screens more useful */
 @media screen and (min-width: 1660px) {
