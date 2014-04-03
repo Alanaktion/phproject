@@ -18,6 +18,17 @@
 			</div>
 		</div>
 	</div>
+	<br>
+	<div class="row">
+		<div class="col-md-12">
+			<p>
+				Browse all:&nbsp;
+				<a href="/issues?status=open&amp;author_id={{ @user.id }}">Created Issues</a>&nbsp;
+				<a href="/issues?status=open&amp;owner_id={{ @user.id }}">Assigned Issues</a>
+			</p>
+			<include href="blocks/issue-list.html" />
+		</div>
+	</div>
 	<include href="blocks/footer.html" />
 </div>
 </body>

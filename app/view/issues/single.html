@@ -88,9 +88,11 @@
 					<dt>Assigned to</dt>
 					<dd><a href="/user/{{ @owner.username }}">{{ @owner.name }}</a></dd>
 
-                                        <dt>Repeat Cycle</dt>
-					<dd>{{ @issue.repeat_cycle }}</dd>
-                                        
+					<check if="{{ @issue.repeat_cycle != 'none' }}">
+						<dt>Repeat Cycle</dt>
+						<dd>{{ ucfirst(@issue.repeat_cycle) }}</dd>
+					</check>
+
 					<check if="{{ !empty(@issue.hours_total) }}">
 						<dt>Total Hours</dt>
 						<dd>{{ @issue.hours_total }}</dd>

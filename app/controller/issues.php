@@ -194,13 +194,14 @@ class Issues extends Base {
 									$issue->closed_date = null;
 								}
 							}
-                                                        //Save to the sprint of the due date
-                                                        if ($i=="due_date" && !empty($val)) {
-                                                                $sprint = new \Model\Sprint();
-                                                                $sprint->load(array("date(?) between start_date and end_date",$val));
-                                                                //$sprint->load("id=9");
-                                                                $issue->sprint_id = $sprint->id;                                                            
-                                                            }
+
+							// Save to the sprint of the due date
+							if ($i=="due_date" && !empty($val)) {
+								$sprint = new \Model\Sprint();
+								$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
+								// $sprint->load("id=9");
+								$issue->sprint_id = $sprint->id;
+							}
 						}
 					}
 				}
@@ -226,14 +227,15 @@ class Issues extends Base {
 			$issue->owner_id = $post["owner_id"];
 			$issue->hours_total = $post["hours_remaining"];
 			$issue->hours_remaining = $post["hours_remaining"];
-                        $issue->repeat_cycle = $post["repeat_cycle"];
+			$issue->repeat_cycle = $post["repeat_cycle"];
 
 			if(!empty($post["due_date"])) {
 				$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
-                                //Save to the sprint of the due date
-                                $sprint = new \Model\Sprint();
-                                $sprint->load(array("date(?) between start_date and end_date",$issue->due_date));
-                                $issue->sprint_id = $sprint->id;
+
+				//Save to the sprint of the due date
+				$sprint = new \Model\Sprint();
+				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
+				$issue->sprint_id = $sprint->id;
 			}
 			if(!empty($post["parent_id"])) {
 				$issue->parent_id = $post["parent_id"];
@@ -260,11 +262,11 @@ class Issues extends Base {
 		$issue = new \Model\Issue\Detail();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
-                if(!$issue->id) {
+				if(!$issue->id) {
 			$f3->error(404);
 			return;
 		}
-                
+
 		$type = new \Model\Issue\Type();
 		$type->load($issue->type_id);
 
@@ -364,7 +366,7 @@ class Issues extends Base {
 		$f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
 
 		echo \Template::instance()->render("issues/single.html");
-                
+
 	}
 
 	public function single_history($f3, $params) {

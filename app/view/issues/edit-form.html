@@ -88,8 +88,7 @@
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">Due Date</label>
 		<div class="col-md-6">
-			<input class="form-control input-sm" id="due_date" type="date" name="due_date"  value="{{empty(@issue) ? "" :  @issue.due_date }}">
-			<!-- <input class="form-control input-sm" id="due_date" type="date" name="due_date" data-title="Due Date" data-content="Due dates can be entered in any standard format like Dec 17, or in a general format like Tomorrow or Friday." data-placement="top" data-trigger="focus" value="{{ empty(@issue) ? "" : @issue.due_date }}"> -->
+			<input class="form-control input-sm" id="due_date" type="date" name="due_date"  value="{{ empty(@issue) ? "" : @issue.due_date }}">
 		</div>
 	</div>
 	<div class="form-group">
@@ -99,7 +98,7 @@
 				<option value="none">Not Repeating</option>
 				<option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>Weekly</option>
 				<option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>Monthly</option>
-                                <option value="sprint" {{ !empty(@issue) && @issue.repeat_cycle == 'sprint' ? "selected" : "" }}>Sprint</option>
+				<option value="sprint" {{ !empty(@issue) && @issue.repeat_cycle == 'sprint' ? "selected" : "" }}>Sprint</option>
 			</select>
 		</div>
 	</div>
