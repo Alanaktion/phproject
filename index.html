@@ -57,15 +57,18 @@
 </ul>
 
 <h3><a name="updating" class="anchor" href="#updating"><span class="octicon octicon-link"></span></a>Updating</h3>
-<p>Simply pulling the repo again should be safe for updates. If database.sql has been modified, you will need to merge the changes into your database. If something breaks after updating, clearing the tmp/ and tmp/cache/ directories of everything except .gitignore will usually solve the problem.</p>
+<p>Simply pulling the repo again should be safe for updates. If database.sql has been modified, you will need to merge the changes into your database. If something breaks after updating, clearing the APC cache or the tmp/ and tmp/cache/ directories of everything except .gitignore will usually solve the problem.</p>
 
 <h3><a name="customization" class="anchor" href="#customization"><span class="octicon octicon-link"></span></a>Customization</h3>
-<p>Phproject's UI is built around Twitter Bootstrap 3, and is compatible with customized Bootstrap styles including Bootswatch. Simply change the site.theme entry in config.ini to the web path of a Bootstrap CSS file and it will replace the main CSS. Phproject's additions to the Bootstrap core are designed to add features without breaking any existing components, so unless your customized Bootstrap is very heavily modified, everything should continue to work consistently.</p>
-<p>To give your site a custom title and meta description, update the site.name and site.description entries in config.ini.</p>
-<p>You can also customize the default user image that is shown when a user does not have a Gravatar (Phproject uses "mm" by default) as well as the maximum content rating of Gravatars to show ("pg" by default). The gravatar.default and gravatar.rating entries in config.ini can be updated to change these.</p>
+<p>Phproject's UI is built around <a href="http://getbootstrap.com">Twitter Bootstrap 3</a>, and is compatible with customized Bootstrap styles including Bootswatch. Simply change the site.theme entry in config.ini to the web path of a Bootstrap CSS file and it will replace the main CSS. Phproject's additions to the Bootstrap core are designed to add features without breaking any existing components, so unless your customized Bootstrap is very heavily modified, everything should continue to work consistently.</p>
+<p>To give your site a custom title and meta description, update the <code>site.name</code> and <code>site.description</code> entries in config.ini.</p>
+<p>You can also customize the default user image that is shown when a user does not have a Gravatar (Phproject uses <code>mm</code> by default) as well as the maximum content rating of Gravatars to show (<code>pg</code> by default). The <code>gravatar.default</code> and <code>gravatar.rating</code> entries in config.ini can be updated to change these.</p>
 
 <h3><a name="internal-details" class="anchor" href="#internal-details"><span class="octicon octicon-link"></span></a>Internal details</h3>
-<p>Phproject uses the Fat Free Framework as it's base, allowing it to have a simple but powerful feature set without compromising performance. Every template file is compiled at run time, and only needs to be recompiled when the code is changed. Phproject includes internal caching that prevents duplicate or bulk database queries from being used, greatly improving performance on large pages with lots of data. This caching will only work if the tmp/ directory is writeable or APC is installed and configured on the server.</p>
+<p>Phproject uses the <a href="http://fatfreeframework.com/home">Fat Free Framework</a> as it's base, allowing it to have a simple but powerful feature set without compromising performance. Every template file is compiled at run time, and only needs to be recompiled when the code is changed. Phproject includes internal caching that prevents duplicate or bulk database queries from being used, greatly improving performance on large pages with lots of data. This caching will only work if the tmp/ directory is writeable or APC is installed and configured on the server.</p>
+
+<h3><a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h3>
+<p>Phproject is maintained as an open source project for use by anyone around the world. If you find a bug or would like to see a new feature added, feel free to <a href="https://github.com/Alanaktion/phproject/issues/new" target="_blank">create an issue on Github</a> or <a href="https://github.com/Alanaktion/phproject/compare/" target="_blank">submit a pull request</a> with new code.</p>
 				</section>
 
 				<aside id="sidebar">
