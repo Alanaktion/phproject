@@ -287,7 +287,7 @@ class Issues extends Base {
 						print_json(
 							array(
 								"id" => $comment->id,
-								"text" => $comment->text,
+								"text" => make_clickable($comment->text),
 								"date_formatted" => date("D, M j, Y \\a\\t g:ia"),
 								"user_name" => $f3->get('user.name'),
 								"user_username" => $f3->get('user.username'),
