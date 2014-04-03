@@ -180,6 +180,11 @@ class User extends Base {
 		if($user->id) {
 			$f3->set("title", $user->name);
 			$f3->set("this_user", $user);
+
+			$issue = new \Model\Issue\Detail;
+			$issues = $issue->paginate(0, 100, array("closed_date IS NULL AND (owner_id = ? OR author_id = ?)", $user->id, $user->id));
+			$f3->set("issues", $issues);
+
 			echo \Template::instance()->render("user/single.html");
 		} else {
 			$f3->error(404);
