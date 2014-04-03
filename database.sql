@@ -56,7 +56,7 @@ CREATE TABLE `issue` (
   `closed_date` datetime DEFAULT NULL,
   `deleted_date` datetime DEFAULT NULL,
   `due_date` date DEFAULT NULL,
-  `repeat_cycle` enum('none','day','week','month') NOT NULL DEFAULT 'none',
+  `repeat_cycle` varchar(10) NOT NULL DEFAULT 'none',
   `sprint_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sprint_id` (`sprint_id`),
