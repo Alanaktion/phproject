@@ -161,7 +161,23 @@ class Issues extends Base {
 			echo \Template::instance()->render("issues/edit.html");
 		}
 	}
+	public function close($f3, $params){
+		$this->_requireLogin();
 
+		$issue = new \Model\Issue();
+		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+
+		if(!$issue->id) {
+			$f3->error(404, "Issue does not exist");
+			return;
+		}
+		$status = new \model\issue\status;
+		$status-> load(array("Closed = ?", 1));
+		$issue -> status = $status -> id;
+		$issue-> closed_date = now();
+		$issue-> save();
+		$f3->reroute("/issues/" . $issue->id);
+	}
 	public function save($f3, $params) {
 		$user_id = $this->_requireLogin();
 
