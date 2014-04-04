@@ -5,9 +5,46 @@
 	<include href="blocks/taskboard-head.html" />
 	<check if="{{ !empty(@taskboard[0]) }}">
 		<style type="text/css">
+		/*  */
 		#taskboard table {
 			min-width: {{ 252 * (count(@taskboard[0].columns) + 1) }}px;
-			/* Ensures 2-column layout on all display sizes, may be changed later. */
+		}
+
+		/* Make large screens more useful */
+		@media screen and (min-width: min-width: {{ 350 * (count(@taskboard[0].columns) + 1) }}px) {
+			#taskboard, #taskboard .card {
+				font-size: 14px;
+			}
+			#taskboard .column:not(.column-1) {
+				width: 350px;
+			}
+			#taskboard .card.story .top {
+				height: 20px;
+				padding: 0;
+			}
+			#taskboard .card.story .owner {
+				width: 135px;
+			}
+			#taskboard .card.task {
+				width: 160px;
+				height: 120px;
+			}
+			#taskboard .card .top {
+				height: 20px;
+			}
+			#taskboard .card .title {
+			    top: -4px;
+			    height: 78px;
+			}
+			#taskboard .card .owner {
+				height: 18px;
+			}
+			#taskboard .card .hours,
+			#taskboard .card .priority {
+				padding: 0px 7px;
+				line-height: 18px;
+				font-size: 16px;
+			}
 		}
 		</style>
 	</check>
