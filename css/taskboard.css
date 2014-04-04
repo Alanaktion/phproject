@@ -305,3 +305,6 @@ body .ui-state-default:last-child:hover, body .ui-widget-content .ui-state-defau
 table.table {
 	margin: 0;
 }
+.task-dueDate {
+	margin-left: 30px;
+}
