@@ -36,6 +36,11 @@
 				</false>
 			</check>
 			<div class="pull-right">
+				<check if="{{ !@issue.closed_date }}">
+				<a id="btn-Mark Complete" href="/issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
+					<span class="glyphicon glyphicon-check"></span>&ensp;Mark Complete
+				</a>
+				</check>
 				<check if="{{ @watching }}">
 					<true>
 						<button class="btn btn-default btn-xs" onclick="unwatch_issue();" id="watch-btn">

@@ -5,9 +5,46 @@
 	<include href="blocks/taskboard-head.html" />
 	<check if="{{ !empty(@taskboard[0]) }}">
 		<style type="text/css">
+		/* Ensure optimal column widths */
 		#taskboard table {
 			min-width: {{ 252 * (count(@taskboard[0].columns) + 1) }}px;
-			/* Ensures 2-column layout on all display sizes, may be changed later. */
+		}
+
+		/* Make large screens more useful */
+		@media screen and (min-width: {{ 350 * (count(@taskboard[0].columns) + 1) }}px) {
+			#taskboard, #taskboard .card {
+				font-size: 14px;
+			}
+			#taskboard .column:not(.column-1) {
+				width: 350px;
+			}
+			#taskboard .card.story .top {
+				height: 20px;
+				padding: 0;
+			}
+			#taskboard .card.story .owner {
+				width: 135px;
+			}
+			#taskboard .card.task {
+				width: 160px;
+				height: 120px;
+			}
+			#taskboard .card .top {
+				height: 20px;
+			}
+			#taskboard .card .title {
+				top: -4px;
+				height: 78px;
+			}
+			#taskboard .card .owner {
+				height: 18px;
+			}
+			#taskboard .card .hours,
+			#taskboard .card .priority {
+				padding: 0px 7px;
+				line-height: 18px;
+				font-size: 16px;
+			}
 		}
 		</style>
 	</check>
@@ -47,7 +84,7 @@
 								<span class="task-id">
 									<a href="/issues/{{ @row.project.id }}" target="_blank">{{ @row.project.id }}</a>
 								</span>
-                                                                <span class="task-dueDate">{{ empty(@row.project.due_date) ? "" : date('n/j', strtotime(@row.project.due_date)) }}</span>
+								<span class="task-dueDate">{{ empty(@row.project.due_date) ? "" : date('n/j', strtotime(@row.project.due_date)) }}</span>
 							</div>
 							<div class="title">{{ @row.project.name }}</div>
 						</div>
@@ -59,7 +96,7 @@
 									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
 										<span class="task-id"><a href="/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
-                                                                                <span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
+										<span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
 									</div>
 									<div class="title">{{ @task.name }}</div>
 									<div class="description">{{ @task.description }}</div>
@@ -71,7 +108,7 @@
 											<div class="dueDate"></div>
 										</false>
 									</check>
-                                                                        <check if="{{ @task.priority == 0 }}">
+									<check if="{{ @task.priority == 0 }}">
 										<true>
 											<div class="priority normal">{{ @task.priority_name }}</div>
 										</true>
