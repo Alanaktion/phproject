@@ -14,12 +14,6 @@ function cp_issue($issue, $parent_id = NULL) {
     $repeat_issue->description = $issue->description;
     $repeat_issue->repeat_cycle = $issue->repeat_cycle;
 
-    if(!empty($repeat_issue->sprint_id )) {
-        $sprint = new \Model\Sprint();
-        $sprint->load(array("start_date > NOW()"), array('order'=>'start_date'));
-        $repeat_issue->sprint_id = $sprint->id;
-    }
-
     //FIND A DUE DATE IN THE FUTURE
     if($issue->repeat_cycle == 'weekly') {
         $dow = date("l", strtotime($issue->due_date));
@@ -34,10 +28,15 @@ function cp_issue($issue, $parent_id = NULL) {
     } else if($issue->repeat_cycle == 'sprint') {
         $sprint = new \Model\Sprint();
         $sprint->load(array("start_date > NOW()"), array('order'=>'start_date'));
-        $repeat_issue->sprint_id = $sprint->id;
         $repeat_issue->due_date =  $sprint->end_date;
-}
+    }
 
+    // IF THE PROJECT WAS IN A SPRINT BEFORE, PUT IT IN A SPRINT AGAIN
+    if(!empty($issue->sprint_id )) {
+        $sprint = new \Model\Sprint();
+        $sprint->load(array("end_date < $repeat_issue->due_date"), array('order'=>'start_date'));
+        $repeat_issue->sprint_id = $sprint->id;
+    }
 
     $repeat_issue->created_date = now();
     $repeat_issue->save();
