@@ -159,23 +159,25 @@ CREATE TABLE `issue_priority` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `issue_priority` (`id`, `value`, `name`) VALUES
-(1, 0,  'Normal'),
-(2, 1,  'High'),
-(3, -1,  'Low');
+(1, 0, 'Normal'),
+(2, 1, 'High'),
+(3, -1, 'Low');
 
 DROP TABLE IF EXISTS `issue_status`;
 CREATE TABLE `issue_status` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   `closed` tinyint(1) NOT NULL DEFAULT '0',
+  `taskboard` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `issue_status` (`id`, `name`, `closed`) VALUES
-(1, 'New',  0),
-(2, 'Active',   0),
-(3, 'Completed',    1),
-(4, 'On Hold',  0);
+INSERT INTO `issue_status` (`id`, `name`, `closed`, `taskboard`) VALUES
+(1, 'New', 0, 1),
+(2, 'Active', 0, 1),
+(3, 'Completed', 1, 1),
+(4, 'On Hold', 0, 1),
+(5, 'Canceled', 0, 0);
 
 DROP TABLE IF EXISTS `issue_type`;
 CREATE TABLE `issue_type` (
