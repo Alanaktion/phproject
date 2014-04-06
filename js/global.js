@@ -3,6 +3,12 @@ $(document).ready(function(){
 	$(".has-tooltip").tooltip();
 	$(".has-popover").popover();
 
+	// Handle custom nested input focusing
+	$(".form-control.has-child").click(function(e) {
+		$(this).find(".form-control-child input").focus();
+		e.stopPropagation();
+	});
+
 	// Handle checkboxes on issue listings
 	$('.issue-list tbody tr input').click(function(e) {
 		e.stopPropagation();

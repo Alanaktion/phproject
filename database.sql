@@ -306,3 +306,28 @@ DROP TABLE IF EXISTS `attribute_value_detail`;
 DROP VIEW IF EXISTS `attribute_value_detail`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `attribute_value_detail` AS (select `v`.`id` AS `id`,`v`.`attribute_id` AS `attribute_id`,`v`.`issue_id` AS `issue_id`,`v`.`value` AS `value`,`a`.`name` AS `name`,`a`.`type` AS `type`,`a`.`default` AS `default` from (`attribute_value` `v` join `attribute` `a` on((`v`.`attribute_id` = `a`.`id`))));
+
+DROP TABLE IF EXISTS `wiki_page`;
+CREATE TABLE `wiki_page` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL,
+  `slug` varchar(64) NOT NULL,
+  `content` mediumtext NOT NULL,
+  `parent_id` int(10) unsigned DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `deleted` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `wiki_page_update`;
+CREATE TABLE `wiki_page_update` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `wiki_page_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `old_name` varchar(64) DEFAULT NULL,
+  `new_name` varchar(64) NOT NULL,
+  `old_content` mediumtext,
+  `new_content` mediumtext NOT NULL,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body>
+<div class="container-fluid">
+	<include href="blocks/navbar.html" />
+	<h2>{{ @page.name }}</h2>
+	<div>
+		{{ make_clickable(nl2br(@page.content)) }}
+	</div>
+	<include href="blocks/footer.html" />
+</div>
+</body>
+</html>

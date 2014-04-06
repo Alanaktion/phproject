@@ -262,3 +262,11 @@ a:focus, button:focus, input:focus, .btn:focus {
 .list-group-item .label {
 	margin: 0 0.3em;
 }
+
+.form-control .form-control-child {
+	overflow: hidden;
+}
+.form-control .form-control-child input {
+	width: 100%;
+	border-width: 0;
+}

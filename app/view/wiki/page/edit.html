@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body>
+<div class="container-fluid">
+	<include href="blocks/navbar.html" />
+	<form class="well" action="/wiki/edit" method="post">
+		<input type="hidden" name="id" value="{{ @page.id }}">
+		<check if="{{ @page.id }}">
+			<true>
+				<legend>Edit Page</legend>
+			</true>
+			<false>
+				<legend>New Page</legend>
+			</false>
+		</check>
+		<div class="row">
+			<div class="form-group col-md-6">
+				<label for="name">Page Title</label>
+				<input type="text" id="name" name="name" class="form-control" value="{{ @page.name }}">
+			</div>
+			<div class="form-group col-md-6">
+				<label for="slug">URL Key</label>
+				<div class="form-control has-child clearfix">
+					<div class="pull-left">{{ @HOST }}/wiki/view/</div>
+					<div class="form-control-child">
+						<input type="text" id="slug" name="slug" placeholder="page-title" value="{{ @page.slug }}">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="content">Content</label>
+			<textarea id="content" name="content" class="form-control" rows="15">{{ @page.content }}</textarea>
+		</div>
+		<div class="form-group">
+			<label for="parent">Parent Page</label>
+			<select id="parent" name="parent" class="form-control">
+				<option value="">[No Parent]</option>
+				<repeat group="{{ @pages }}" value="{{ @item }}">
+					<option value="{{ @item.id }}">{{ @item.name }}</option>
+				</repeat>
+			</select>
+		</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-primary btn-sm">Save Page</button>
+			<button type="reset" class="btn btn-default btn-sm">Reset</button>
+			<a href="/wiki/view/{{ @page.slug }}" class="btn btn-default btn-sm btn-cancel">Cancel</a>
+		</div>
+	</form>
+	<include href="blocks/footer.html" />
+</div>
+</body>
+</html>
