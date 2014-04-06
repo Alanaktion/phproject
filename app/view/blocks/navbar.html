@@ -12,7 +12,7 @@
 		<span class="glyphicon glyphicon-home visible-sm"></span>
 	</a>
 	<ul class="nav navbar-nav">
-		<li class="dropdown">
+		<li class="dropdown {{ @menuitem == 'new' ? 'active':'' }}">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 				New <b class="caret"></b>
 			</a>
@@ -43,7 +43,7 @@
 				</check>
 			</ul>
 		</li>
-		<li class="dropdown">
+		<li class="dropdown {{ @menuitem == 'browse' ? 'active':'' }}">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 				Browse <b class="caret"></b>
 			</a>
@@ -60,18 +60,20 @@
 				</repeat>
 			</ul>
 		</li>
-		<li>
+		<li class="{{ @menuitem == 'backlog' ? 'active':'' }}">
 			<a href="/backlog">Backlog</a>
 		</li>
 	</ul>
 	<ul class="nav navbar-nav navbar-right">
 		<check if="{{ @user.role=='admin' }}">
-			<li><a href="/admin">
-				<span class="hidden-sm">Administration</span>
-				<span class="glyphicon glyphicon-wrench visible-sm"></span>
-			</a></li>
+			<li class="{{ @menuitem == 'admin' ? 'active':'' }}">
+				<a href="/admin">
+					<span class="hidden-sm">Administration</span>
+					<span class="glyphicon glyphicon-wrench visible-sm"></span>
+				</a>
+			</li>
 		</check>
-		<li class="dropdown">
+		<li class="dropdown {{ @menuitem == 'user' ? 'active':'' }}">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 				<span class="hidden-sm">{{ @user.name }} <b class="caret"></b></span>
 				<span class="glyphicon glyphicon-user visible-sm"></span>

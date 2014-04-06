@@ -77,4 +77,5 @@ if($f3->get("user")) {
 }
 
 // Run the application
+$f3->set("menuitem", false);
 $f3->run();

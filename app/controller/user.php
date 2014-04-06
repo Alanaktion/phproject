@@ -60,6 +60,7 @@ class User extends Base {
 	public function account($f3, $params) {
 		$this->_requireLogin();
 		$f3->set("title", "My Account");
+		$f3->set("menuitem", "user");
 		echo \Template::instance()->render("user/account.html");
 	}
 
@@ -117,6 +118,8 @@ class User extends Base {
 		}
 
 		$user->save();
+		$f3->set("title", "My Account");
+		$f3->set("menuitem", "user");
 		echo \Template::instance()->render("user/account.html");
 	}
 

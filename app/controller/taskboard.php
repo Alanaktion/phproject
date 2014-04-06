@@ -35,8 +35,10 @@ class Taskboard extends Base {
 			$f3->error(404);
 			return;
 		}
+		
 		$f3->set("sprint", $sprint);
 		$f3->set("title", $sprint->name);
+		$f3->set("menuitem", "backlog");
 
 		// Load issue statuses
 		$status = new \Model\Issue\Status();

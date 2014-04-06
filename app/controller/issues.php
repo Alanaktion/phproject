@@ -73,6 +73,7 @@ class Issues extends Base {
 		}
 
 		$f3->set("show_filters", true);
+		$f3->set("menuitem", "browse");
 		echo \Template::instance()->render("issues/index.html");
 	}
 
@@ -86,7 +87,7 @@ class Issues extends Base {
 		}
 
 		$type = new \Model\Issue\Type();
-		$type->load(array("id=?", $type_id));
+		$type->load($type_id);
 
 		if(!$type->id) {
 			$f3->error(404, "Issue type does not exist");
@@ -113,6 +114,7 @@ class Issues extends Base {
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$f3->set("title", "New " . $type->name);
+		$f3->set("menuitem", "new");
 		$f3->set("type", $type);
 
 		echo \Template::instance()->render("issues/edit.html");
@@ -124,6 +126,8 @@ class Issues extends Base {
 		$type = new \Model\Issue\Type();
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
+		$f3->set("title", "New Issue");
+		$f3->set("menuitem", "new");
 		echo \Template::instance()->render("issues/new.html");
 	}
 
@@ -131,7 +135,7 @@ class Issues extends Base {
 		$this->_requireLogin();
 
 		$issue = new \Model\Issue();
-		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		$issue->load($f3->get("PARAMS.id"));
 
 		if(!$issue->id) {
 			$f3->error(404, "Issue does not exist");
@@ -139,7 +143,7 @@ class Issues extends Base {
 		}
 
 		$type = new \Model\Issue\Type();
-		$type->load(array("id=?", $issue->type_id));
+		$type->load("id=?", $issue->type_id);
 
 		$status = new \Model\Issue\Status();
 		$f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
@@ -161,23 +165,27 @@ class Issues extends Base {
 			echo \Template::instance()->render("issues/edit.html");
 		}
 	}
+
 	public function close($f3, $params){
 		$this->_requireLogin();
 
 		$issue = new \Model\Issue();
-		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		$issue->load($f3->get("PARAMS.id"));
 
 		if(!$issue->id) {
 			$f3->error(404, "Issue does not exist");
 			return;
 		}
+
 		$status = new \model\issue\status;
-		$status-> load(array("Closed = ?", 1));
-		$issue -> status = $status -> id;
-		$issue-> closed_date = now();
-		$issue-> save();
+		$status->load(array("closed = ?", 1));
+		$issue->status = $status->id;
+		$issue->closed_date = now();
+		$issue->save();
+
 		$f3->reroute("/issues/" . $issue->id);
 	}
+
 	public function save($f3, $params) {
 		$user_id = $this->_requireLogin();
 
@@ -341,11 +349,12 @@ class Issues extends Base {
 		}
 
 		$f3->set("title", $type->name . " #" . $issue->id  . ": " . $issue->name);
+		$f3->set("menuitem", "browse");
 
 		$author = new \Model\User();
-		$author->load(array("id=?", $issue->author_id));
+		$author->load($issue->author_id);
 		$owner = new \Model\User();
-		$owner->load(array("id=?", $issue->owner_id));
+		$owner->load($issue->owner_id);
 
 		$files = new \Model\Issue\File();
 		$f3->set("files", $files->paginate(0, 16, array("issue_id = ?", $issue->id)));
@@ -483,6 +492,7 @@ class Issues extends Base {
 
 	public function upload($f3, $params) {
 		$user_id = $this->_requireLogin();
+
 		$issue = new \Model\Issue();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("POST.issue_id")));
 		if(!$issue->id) {
@@ -528,8 +538,6 @@ class Issues extends Base {
 				$newfile->created_date = now();
 				$newfile->save();
 
-				// TODO: Add history entry to see who uploaded which files and when
-
 				return true; // moves file from php tmp dir to upload dir
 			},
 			$overwrite,
@@ -537,7 +545,6 @@ class Issues extends Base {
 		);
 
 		$f3->reroute("/issues/" . $issue->id);
-
 	}
 
 }

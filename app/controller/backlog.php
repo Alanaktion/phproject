@@ -34,6 +34,7 @@ class Backlog extends Base {
 		$f3->set("backlog", $unset_projects);
 
 		$f3->set("title", "Backlog");
+		$f3->set("menuitem", "backlog");
 		echo \Template::instance()->render("backlog/index.html");
 	}
 
