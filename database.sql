@@ -300,7 +300,7 @@ CREATE TABLE  `attribute_value_detail`(
  `name` varchar(64) ,
  `type` enum('text','numeric','datetime','bool','list') ,
  `default` text
-)*/;
+);
 
 DROP TABLE IF EXISTS `attribute_value_detail`;
 DROP VIEW IF EXISTS `attribute_value_detail`;
@@ -317,7 +317,7 @@ CREATE TABLE `wiki_page` (
   `created` datetime NOT NULL,
   `deleted` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `wiki_page_update`;
 CREATE TABLE `wiki_page_update` (
@@ -330,4 +330,4 @@ CREATE TABLE `wiki_page_update` (
   `new_content` mediumtext NOT NULL,
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
