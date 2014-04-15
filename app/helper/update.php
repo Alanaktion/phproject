@@ -16,7 +16,12 @@ class Update extends \Prefab {
 				$new_val = $user->name;
 				break;
 			case "status":
-				// Do stuff
+				// Load old and new status and get names
+				$status = new \Model\issue\status;
+				$status->load($old_val);
+				$old_val = $status->name;
+				$status->load($new_val);
+				$new_val = $status->name;
 				break;
 		}
 		return array("old" => $old_val, "new" => $new_val);
