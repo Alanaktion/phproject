@@ -5,7 +5,7 @@ namespace Helper;
 class Update extends \Prefab {
 
 	function humanReadableValues($field, $old_val, $new_val) {
-		switch($field) {
+		switch($field):
 			case "owner_id":
 			case "author_id":
 				// Load old and new user and get names
@@ -23,7 +23,7 @@ class Update extends \Prefab {
 				$status->load($new_val);
 				$new_val = $status->name;
 				break;
-		}
+		endswitch;
 		return array("old" => $old_val, "new" => $new_val);
 	}
 
