@@ -19,7 +19,7 @@ class Update extends \Prefab {
 				// Do stuff
 				break;
 		}
-		return array($old_val, $new_val);
+		return array("old" => $old_val, "new" => $new_val);
 	}
 
 }

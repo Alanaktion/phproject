@@ -23,12 +23,13 @@
 		<div style="float: left">
 			<ul style="padding: 0;">
 				<repeat group="{{ @changes }}" value="{{ @change }}">
+					<set human_readable="{{ \Helper\Update::instance()->humanReadableValues(@change.field, @change.old_value, @change.new_value) }}" />
 					<check if="{{ @change.old_value }}">
 						<true>
-							<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @change.old_value }}</i> to <i>{{ @change.new_value }}</i></li>
+							<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @human_readable.old }}</i> to <i>{{ @human_readable.new }}</i></li>
 						</true>
 						<false>
-							<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> set to <i>{{ @change.new_value }}</i></li>
+							<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> set to <i>{{ @human_readable.new }}</i></li>
 						</false>
 					</check>
 				</repeat>
