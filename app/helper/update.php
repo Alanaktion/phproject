@@ -8,7 +8,7 @@ class Update extends \Prefab {
 		switch($field) {
 			case "owner_id":
 			case "author_id":
-				// Load old and new user and get names
+				// Load old and new users and get names
 				$user = new \Model\User;
 				$user->load($old_val);
 				$old_val = $user->name;
@@ -16,7 +16,7 @@ class Update extends \Prefab {
 				$new_val = $user->name;
 				break;
 			case "status":
-				// Load old and new status and get names
+				// Load old and new statuses and get names
 				$status = new \Model\Issue\Status;
 				$status->load($old_val);
 				$old_val = $status->name;
@@ -24,15 +24,28 @@ class Update extends \Prefab {
 				$new_val = $status->name;
 				break;
 			case "priority":
-				// Load old and new priority and get names
+				// Load old and new priorities and get names
 				$priority = new \Model\Issue\Priority;
 				$priority->load(array("value = ?", $old_val));
 				$old_val = $priority->name;
 				$priority->load(array("value = ?", $new_val));
 				$new_val = $priority->name;
 				break;
+			case "parent_id":
+				$name = "Parent";
+				$issue = new \Model\Issue;
+				$issue->load($old_val);
+				$old_val = $issue->name;
+				$issue->load($new_val);
+				$new_val = $issue->name;
 		}
-		return array("old" => $old_val, "new" => $new_val);
+
+		// Generate human readable field name if not already specified
+		if(empty($name)) {
+			$name = ucwords(str_replace("_", " ", $field));
+		}
+
+		return array("field" => $name, "old" => $old_val, "new" => $new_val);
 	}
 
 }
