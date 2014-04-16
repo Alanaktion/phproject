@@ -54,7 +54,7 @@ class User extends Base {
 			)
 		));
 
-		$f3->set("menuitem", "user");
+		$f3->set("menuitem", "index");
 		echo \Template::instance()->render("user/dashboard.html");
 	}
 

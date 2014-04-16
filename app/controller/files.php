@@ -22,7 +22,8 @@ class Files extends Base {
 				$img = new \Helper\Image($file->disk_filename, null, $f3->get("ROOT") . "/");
 				$hide_ext = true;
 			} else {
-				http_response_code(404);
+				$protocol = isset($_SERVER["SERVER_PROTOCOL"]) ? $_SERVER["SERVER_PROTOCOL"] : "HTTP/1.0";
+				header($protocol . " 404 Not Found");
 				$img = new \Helper\Image("img/404.png", null, $f3->get("ROOT") . "/");
 			}
 			$img->resize($params["size"], $params["size"]);
