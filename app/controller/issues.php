@@ -143,7 +143,7 @@ class Issues extends Base {
 		}
 
 		$type = new \Model\Issue\Type();
-		$type->load("id=?", $issue->type_id);
+		$type->load($issue->type_id);
 
 		$status = new \Model\Issue\Status();
 		$f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
