@@ -29,6 +29,7 @@ class User extends Base {
 
 	// Get path to user's avatar or gravatar
 	public function avatar($size = 80) {
+		$f3 = \Base::instance();
 		if(!$this->get("id")) {
 			return false;
 		}
