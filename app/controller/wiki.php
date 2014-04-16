@@ -49,7 +49,7 @@ class Wiki extends Base {
 
 			// Set page slug if page does not exist and no slug was passed
 			if(!$page->id && !$f3->get("POST.slug")) {
-				$page->slug = slugify($f3->get("POST.name"));
+				$page->slug = Web::instance()->slug($f3->get("POST.name"));
 			} elseif(!$page->id) {
 				$page->slug = $f3->get("POST.slug");
 			}

@@ -29,16 +29,6 @@ function print_json($object) {
 	echo json_encode($object);
 }
 
-// Convert string to simple "slug"
-function slugify($s,$lower=true) {
-	$spec = "àáâãäåèéêëìíîïðòóôõöùúûüñç/_,:;";
-	$simp = "aaaaaaeeeeiiiioooooouuuunc-----";
-	$s = str_replace(str_split($spec),str_split($simp),trim($lower ? strtolower($s) : $s));
-	$s = preg_replace("/[^\w -]/","",$s); // Remove special characters
-	$s = str_replace(array("_"," "),"-",$s); // Whitespace to hyphen
-	$s = preg_replace("/-+/","-",$s); // Collapse hypens
-	return trim($s,"-");
-}
 function _make_url_clickable_cb($matches) {
     $ret = '';
     $url = $matches[2];
