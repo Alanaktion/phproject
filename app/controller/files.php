@@ -94,10 +94,15 @@ class Files extends Base {
 
 		} else {
 
-			// Use Gravatar if user does not have an avatar
-			// Note: this should rarely be used, as the URL for Gravatars should be used directly in most cases
+			// Remove avatar from user if needed and load from Gravatar
+			if($user->avatar_filename) {
+				$user->avatar_filename = null;
+				$user->save();
+			}
+
 			header("Content-type: image/png");
-			readfile("http:" . gravatar($user->email, $params["size"]));
+			$file = file_get_contents("http:" . gravatar($user->email, $params["size"]));
+			echo $file;
 
 		}
 	}
