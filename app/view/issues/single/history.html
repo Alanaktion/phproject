@@ -10,7 +10,14 @@
 					<set human_readable="{{ \Helper\Update::instance()->humanReadableValues(@change.field, @change.old_value, @change.new_value) }}" />
 					<check if="{{ @change.old_value }}">
 						<true>
-							<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @human_readable.old }}</i> to <i>{{ @human_readable.new }}</i></li>
+							<check if="{{ @change.new_value !== '' }}">
+								<true>
+									<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> changed from <i>{{ @human_readable.old }}</i> to <i>{{ @human_readable.new }}</i></li>
+								</true>
+								<false>
+									<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> removed</li>
+								</false>
+							</check>
 						</true>
 						<false>
 							<li><b>{{ ucwords(str_replace("_", " ", @change.field)) }}</b> set to <i>{{ @human_readable.new }}</i></li>
