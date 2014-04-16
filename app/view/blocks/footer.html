@@ -1,5 +1,18 @@
 <check if="{{ @DEBUG == 3 }}">
-	<br><pre style="font-size: smaller; color: inherit;" class="well well-sm">{{ @db.instance->log() }}</pre>
+	<set dblog="{{ explode(PHP_EOL, @db.instance->log()) }}" />
+	<br>
+	<div class="well well-sm log">
+		<repeat group="{{ @dblog }}" value="{{ @row }}">
+			<check if="{{ strpos(@row, '[CACHED]') }}">
+				<true>
+					<div class="text-muted">{{ @row }}</div>
+				</true>
+				<false>
+					<div>{{ @row }}</div>
+				</false>
+			</check>
+		</repeat>
+	</div>
 </check>
 <footer class="row">
 	<div class="col-xs-4">
