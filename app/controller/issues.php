@@ -546,5 +546,25 @@ class Issues extends Base {
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
+// Quick add button for adding tasks to projects
+	public function quickadd($f3, $params) {
+		$user_id = $this->_requireLogin();
+		$post = $f3->get("POST");
 
+		$issue = new \Model\Issue();
+		$issue->name = $post["title"];
+		$issue->description = $post["description"];
+		$issue->author_id = $user_id;
+		$issue->owner_id = $post["assigned"];
+		$issue->created_date = now();
+		$issue->hours_total = $post["hours"];
+		if(!empty($post["dueDate"])) {
+			$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
+		}
+		$issue->priority = $post["priority"];
+		$issue->parent_id = $post["storyId"];
+		$issue->save();
+
+		print_json($issue->cast() + array("taskId" => $issue->id));
+	}
 }
