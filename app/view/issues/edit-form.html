@@ -116,6 +116,24 @@
 		</div>
 	</div>
 	<div class="form-group">
+		<label class="col-md-2 control-label label-sm">Sprint</label>
+		<div class="col-md-6">
+			<select class="form-control input-sm" name="sprint_id">
+				<option value="">No Sprint</option>
+				<repeat group="{{ @sprints }}" value="{{ @item }}">
+					<check if="{{ @issue.sprint_id == @item.id }}">
+						<true>
+							<option value="{{ @item.id }}" selected>{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+						</true>
+						<false>
+							<option value="{{ @item.id }}">{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+						</false>
+					</check>
+				</repeat>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
 		<div class="col-md-offset-2 col-md-10">
 			<button type="submit" class="btn btn-primary btn-sm">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
 			<check if="{{ !empty(@issue) }}">
