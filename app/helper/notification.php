@@ -29,15 +29,7 @@ class Notification extends \Prefab {
 			$subject =  "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
 			// Send to recipients
 			foreach($recipients as $recipient) {
-
-				// To send HTML mail, the Content-type header must be set
-				$headers  = 'MIME-Version: 1.0' . "\r\n";
-				$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-
-				// Additional headers
-				$headers .= 'To: '.$recipient . "\r\n";
-				$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
-				mail($recipient, $subject, $body, $headers);
+				utf8mail($recipient, $subject, $body);
 				$log->write("Sent comment notification to: " . $recipient);
 			}
 		}
@@ -77,15 +69,7 @@ class Notification extends \Prefab {
 			$subject =  "[#" . $issue->id . "] - ".$update->user_name . " updated  " . $issue->name;
 			// Send to recipients
 			foreach($recipients as $recipient) {
-
-				// To send HTML mail, the Content-type header must be set
-				$headers  = 'MIME-Version: 1.0' . "\r\n";
-				$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-
-				// Additional headers
-				$headers .= 'To: '.$recipient . "\r\n";
-				$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
-				mail($recipient, $subject, $body, $headers);
+				utf8mail($recipient, $subject, $body);
 				$log->write("Sent update notification to: " . $recipient);
 			}
 		}
@@ -118,15 +102,7 @@ class Notification extends \Prefab {
 			$subject =  "[#" . $issue->id . "] - ".$comment->user_name . " created " . $issue->name;
 			// Send to recipients
 			foreach($recipients as $recipient) {
-
-				// To send HTML mail, the Content-type header must be set
-				$headers  = 'MIME-Version: 1.0' . "\r\n";
-				$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-
-				// Additional headers
-				$headers .= 'To: '.$recipient . "\r\n";
-				$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
-				mail($recipient, $subject, $body, $headers);
+				utf8mail($recipient, $subject, $body);
 				$log->write("Sent update notification to: " . $recipient);
 			}
 		}

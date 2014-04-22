@@ -75,6 +75,18 @@ function make_clickable($s) {
     return $s;
 }
 
+function utf8mail($to, $subject, $body) {
+
+    // Set content-type with UTF charset
+    $headers  = 'MIME-Version: 1.0' . "\r\n";
+    $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+
+    // Add sender and recipient information
+    $headers .= 'To: '. $to . "\r\n";
+    $headers .= 'From: '. $f3->get("mail.from") . "\r\n";
+
+    return mail($to, $subject, $body, $headers);
+}
 
 class TemplateAddons {
 	public static function placehold($args) {
