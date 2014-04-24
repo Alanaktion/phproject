@@ -238,6 +238,25 @@ class Admin extends Base {
 		}
 	}
 
+	public function group_setmanager($f3, $params) {
+		$this->_requireAdmin();
+		$db = $f3->get("db.instance");
+
+		$group = new \Model\User();
+		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
+
+		if(!$group->id) {
+			$f3->error(404);
+			return;
+		}
+
+		// Remove Manager status from all members and set manager status on specified user
+		$db->exec("UPDATE user_group SET manager = 0 WHERE group_id = ?", $group->id);
+		$db->exec("UPDATE user_group SET manager = 1 WHERE id = ?", $params["user_group_id"]);
+
+		$f3->reroute("/admin/groups/" . $group->id);
+	}
+
 	public function attributes($f3, $params) {
 		$this->_requireAdmin();
 		$f3->set("title", "Manage Attributes");
