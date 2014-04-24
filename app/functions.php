@@ -76,6 +76,7 @@ function make_clickable($s) {
 }
 
 function utf8mail($to, $subject, $body) {
+    $f3 = \Base::instance();
 
     // Set content-type with UTF charset
     $headers  = 'MIME-Version: 1.0' . "\r\n";
