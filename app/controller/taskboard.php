@@ -43,12 +43,14 @@ class Taskboard extends Base {
 		// Load issue statuses
 		$status = new \Model\Issue\Status();
 		$statuses = $status->find(array('taskboard = 1'), null, $f3->get("cache_expire.db"));
-		$f3->set("statuses", $statuses);
-
+		$mapped_statuses = array();
 		$visible_status_ids = array();
 		foreach($statuses as $s) {
 			$visible_status_ids[] = $s->id;
+			$mapped_statuses[$s->id] = $s;
 		}
+
+		$f3->set("statuses", $mapped_statuses);
 
 		// Load issue priorities
 		$priority = new \Model\Issue\Priority();
@@ -92,10 +94,10 @@ class Taskboard extends Base {
 				}
 			} elseif ($project["sprint_id"] != $sprint->id) {
 				// Get tasks that are due during the sprint with a parent project not in the sprint
-				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND sprint_id = ? AND status IN (?)", $project["id"], $f3->get("issue_type.project"), $sprint->id), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
+				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND sprint_id = ? AND status IN (?)", $project["id"], $f3->get("issue_type.project"), $sprint->id, $visible_status_ids), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
 			} else {
 				// Get all non-projects (generally tasks) under the project, put them under their status
-				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN (?)", $project["id"], $f3->get("issue_type.project")), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
+				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN (?)", $project["id"], $f3->get("issue_type.project"), $visible_status_ids), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
 			}
 
 			foreach($tasks as $task) {
