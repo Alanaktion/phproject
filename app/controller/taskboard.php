@@ -157,6 +157,18 @@ class Taskboard extends Base {
 			}
 		}
 
+		// Build an array of all visible task IDs (used by the burndown)
+		$visible_tasks = array();
+		foreach($taskboard as $p) {
+			foreach($p["columns"] as $c) {
+				foreach($c as $t) {
+					$visible_tasks[] = $t["id"];
+				}
+			}
+		}
+
+		// TODO: Add queries for burndown
+
 		$f3->set("taskboard", array_values($taskboard));
 		$f3->set("filter", $params["filter"]);
 
