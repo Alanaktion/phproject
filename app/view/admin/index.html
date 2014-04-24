@@ -115,7 +115,7 @@
 					<h4>IMAP <small>(Incoming mail)</small></h4>
 					<b>Hostname:</b> {{ @imap.hostname }}<br>
 					<b>Username:</b> {{ @imap.username }}<br>
-					<b>Password:</b> {{ @imap.password }}<br>
+					<b>Password:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
 					<h4>Gravatar</h4>
