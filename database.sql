@@ -66,7 +66,7 @@ CREATE TABLE `issue_checklist` (
 	`issue_id` int(10) unsigned NOT NULL,
 	`text` text NOT NULL,
 	`checked` tinyint(1) unsigned NOT NULL,
-	`created` datetime NOT NULL,
+	`created_date` datetime NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `issue_checklist_issue_id` (`issue_id`),
 	CONSTRAINT `issue_checklist_issue_id` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`)
@@ -244,8 +244,8 @@ CREATE TABLE `wiki_page` (
 	`slug` varchar(64) NOT NULL,
 	`content` mediumtext NOT NULL,
 	`parent_id` int(10) unsigned DEFAULT NULL,
-	`created` datetime NOT NULL,
-	`deleted` datetime NOT NULL,
+	`created_date` datetime NOT NULL,
+	`deleted_date` datetime NOT NULL,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -258,6 +258,6 @@ CREATE TABLE `wiki_page_update` (
 	`new_name` varchar(64) NOT NULL,
 	`old_content` mediumtext,
 	`new_content` mediumtext NOT NULL,
-	`created` datetime NOT NULL,
+	`created_date` datetime NOT NULL,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
