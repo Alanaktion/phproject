@@ -51,7 +51,7 @@ class Update extends \Prefab {
 
 		// Generate human readable field name if not already specified
 		if(empty($name)) {
-			$name = ucwords(str_replace("_", " ", $field));
+			$name = ucwords(str_replace(array("_", "id"), array(" ", "ID"), $field));
 		}
 
 		return array("field" => $name, "old" => $old_val, "new" => $new_val);
