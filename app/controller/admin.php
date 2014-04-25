@@ -62,8 +62,8 @@ class Admin extends Base {
 						$security = \Helper\Security::instance();
 						$user->salt = $security->salt();
 						$user->password = $security->hash($val, $user->salt);
-					} elseif($i == "salt") {
-						// don't change the salt, it'll just break the updated password
+					} elseif($i == "salt" || $i == "api_key") {
+						// don't change the salt or API key
 					} elseif($user->$i != $val) {
 						$user->$i = $val;
 					}
@@ -92,6 +92,7 @@ class Admin extends Base {
 			$security = \Helper\Security::instance();
 			$user->salt = $security->salt();
 			$user->password = $security->hash($f3->get("POST.password"), $user->salt);
+			$user->api_key = $security->rand_hash();
 			$user->role = $f3->get("POST.role");
 			$user->task_color = ltrim($f3->get("POST.task_color"), "#");
 			$user->created_date = now();
