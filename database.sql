@@ -65,7 +65,7 @@ CREATE TABLE `issue_checklist` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`issue_id` int(10) unsigned NOT NULL,
 	`text` text NOT NULL,
-	`checked` tinyint(1) unsigned NOT NULL,
+	`checked` tinyint(1) unsigned NOT NULL DEFAULT '0',
 	`created_date` datetime NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `issue_checklist_issue_id` (`issue_id`),
