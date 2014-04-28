@@ -191,7 +191,9 @@ class Issues extends \Controller\Api\Base {
 		}
 
 		$issue->save();
-		print_json($issue->cast());
+		print_json(array(
+			"issue" => $issue->cast()
+		));
 	}
 
 	// Get a single issue's details
