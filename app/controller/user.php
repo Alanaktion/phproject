@@ -4,19 +4,23 @@ namespace Controller;
 
 class User extends Base {
 
+	protected $_userId;
+
+	public function __construct() {
+		$this->_userId = $this->_requireLogin();
+	}
+
 	public function index($f3, $params) {
-		$this->_requireLogin();
 		$f3->reroute("/user/account");
 	}
 
 	public function dashboard($f3, $params) {
-		$user_id = $this->_requireLogin();
 		$projects = new \Model\Issue\Detail();
 
 		// Add user's group IDs to owner filter
-		$owner_ids = array($user_id);
+		$owner_ids = array($this->_userId);
 		$groups = new \Model\User\Group();
-		foreach($groups->find(array("user_id = ?", $user_id)) as $r) {
+		foreach($groups->find(array("user_id = ?", $this->_userId)) as $r) {
 			$owner_ids[] = $r->group_id;
 		}
 		$owner_ids = implode(",", $owner_ids);
@@ -59,20 +63,17 @@ class User extends Base {
 	}
 
 	public function account($f3, $params) {
-		$this->_requireLogin();
 		$f3->set("title", "My Account");
 		$f3->set("menuitem", "user");
 		echo \Template::instance()->render("user/account.html");
 	}
 
 	public function save($f3, $params) {
-		$id = $this->_requireLogin();
-
 		$f3 = \Base::instance();
 		$post = array_map("trim", $f3->get("POST"));
 
 		$user = new \Model\User();
-		$user->load($id);
+		$user->load($this->_userId);
 
 		if(!empty($post["old_pass"])) {
 
@@ -125,12 +126,11 @@ class User extends Base {
 	}
 
 	public function avatar($f3, $params) {
-		$id = $this->_requireLogin();
 		$f3 = \Base::instance();
 		$post = array_map("trim", $f3->get("POST"));
 
 		$user = new \Model\User();
-		$user->load($id);
+		$user->load($this->_userId);
 		if(!$user->id) {
 			$f3->error(404);
 			return;

@@ -4,8 +4,13 @@ namespace Controller;
 
 class Admin extends Base {
 
+	protected $_userId;
+
+	public function __construct() {
+		$this->_userId = $this->_requireAdmin();
+	}
+
 	public function index($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Administration");
 		$f3->set("menuitem", "admin");
 
@@ -36,7 +41,6 @@ class Admin extends Base {
 	}
 
 	public function users($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Manage Users");
 		$f3->set("menuitem", "admin");
 
@@ -47,7 +51,6 @@ class Admin extends Base {
 	}
 
 	public function user_edit($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Edit User");
 		$f3->set("menuitem", "admin");
 
@@ -80,7 +83,6 @@ class Admin extends Base {
 	}
 
 	public function user_new($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "New User");
 		$f3->set("menuitem", "admin");
 
@@ -110,8 +112,6 @@ class Admin extends Base {
 	}
 
 	public function user_delete($f3, $params) {
-		$this->_requireAdmin();
-
 		$user = new \Model\User();
 		$user->load($params["id"]);
 		$user->delete();
@@ -124,7 +124,6 @@ class Admin extends Base {
 	}
 
 	public function groups($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Manage Groups");
 		$f3->set("menuitem", "admin");
 
@@ -149,7 +148,6 @@ class Admin extends Base {
 	}
 
 	public function group_new($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "New Group");
 		$f3->set("menuitem", "admin");
 
@@ -167,7 +165,6 @@ class Admin extends Base {
 	}
 
 	public function group_edit($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Edit Group");
 		$f3->set("menuitem", "admin");
 
@@ -185,7 +182,6 @@ class Admin extends Base {
 	}
 
 	public function group_delete($f3, $params) {
-		$this->_requireAdmin();
 		$group = new \Model\User();
 		$group->load($params["id"]);
 		$group->delete();
@@ -197,8 +193,6 @@ class Admin extends Base {
 	}
 
 	public function group_ajax($f3, $params) {
-		$this->_requireAdmin();
-
 		if(!$f3->get("AJAX")) {
 			$f3->error(400);
 		}
@@ -240,7 +234,6 @@ class Admin extends Base {
 	}
 
 	public function group_setmanager($f3, $params) {
-		$this->_requireAdmin();
 		$db = $f3->get("db.instance");
 
 		$group = new \Model\User();
@@ -259,7 +252,6 @@ class Admin extends Base {
 	}
 
 	public function attributes($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Manage Attributes");
 		$f3->set("menuitem", "admin");
 
@@ -270,7 +262,6 @@ class Admin extends Base {
 	}
 
 	public function attribute_new($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "New Attribute");
 
 		if($post = $f3->get("POST")) {
@@ -292,7 +283,6 @@ class Admin extends Base {
 	}
 
 	public function attribute_edit($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Edit Attribute");
 		$types = new \Model\Issue\Type();
 		$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
@@ -305,7 +295,6 @@ class Admin extends Base {
 	}
 
 	public function sprints($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Manage Sprints");
 		$f3->set("menuitem", "admin");
 
@@ -316,7 +305,6 @@ class Admin extends Base {
 	}
 
 	public function sprint_new($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "New Sprint");
 		$f3->set("menuitem", "admin");
 
@@ -348,7 +336,6 @@ class Admin extends Base {
 	}
 
 	public function sprint_breaker($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "SprintBreaker");
 		$f3->set("menuitem", "admin");
 
