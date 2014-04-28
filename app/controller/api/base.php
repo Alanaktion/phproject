@@ -40,4 +40,11 @@ class Base extends \Controller\Base {
 		}
 	}
 
+	protected function _error($message = 1) {
+		print_json(array(
+			"error" => $message
+		));
+		exit();
+	}
+
 }
