@@ -56,7 +56,7 @@
 			<tr class="tb-row">
 				<th class="column column-1">
 					<div class="btn-group">
-						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
 							Filter Tasks <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
@@ -65,6 +65,9 @@
 							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="/taskboard/{{ @PARAMS.id }}/me">My Tasks</a></li>
 						</ul>
 					</div>
+					<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
+					  	Burndown Chart
+					</button>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
 					<th class="column column-{{ @key + 2 }}">{{ @value.name }}</th>
@@ -188,7 +191,35 @@
 	<div class="container-fluid">
 		<include href="blocks/footer.html" />
 	</div>
+
+	<div class="modal fade" id="burndown-modal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" style="min-width:970px;width:80%;max-width:1000px;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        					<h4 class="modal-title" id="myModalLabel">Burndown Chart</h4>
+				</div>
+				<div class="modal-body">
+					<div style="width:920px;margin:0 auto;">
+						<canvas width="920" height="400" id="burndown"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
 	<script src="/minify/js/jquery-ui-1.10.3.min.js,jquery.ui.touch-punch.min.js"></script>
 	<script src="/minify/js/taskboard.js"></script>
+	<script src="/js/chart.js"></script>
+	<script>
+		BurndownData = {{ @burndown | raw }};
+		$(document).ready(function() {
+		    Burndown.init();
+		    alert('yyy');
+		});
+	</script>
+	<script src="/js/burndown.js"></script>
 </body>
 </html>
