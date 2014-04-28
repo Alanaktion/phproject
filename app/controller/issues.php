@@ -298,7 +298,7 @@ class Issues extends Base {
 			switch($post["action"]) {
 				case "comment":
 					$comment = new \Model\Issue\Comment();
-					$comment->user_id = $user_id;
+					$comment->user_id = $this->userId;
 					$comment->issue_id = $issue->id;
 					$comment->text = $post["text"];
 					$comment->created_date = now();
