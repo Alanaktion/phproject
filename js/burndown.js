@@ -13,10 +13,10 @@ Burndown = {
         datasets: []
     },
     targetVelocity: {
-        fillColor: "rgba(105,9,255,0.5)",
-        strokeColor: "rgba(105,9,255,1)",
-        pointColor: "#3d2a5b",
-        pointStrokeColor: "#3d2a5b",
+        fillColor: "rgba(105,9,255,0.05)",
+        strokeColor: "rgba(105,9,255,.5)",
+        pointColor: "rgba(105,9,255,0)",
+        pointStrokeColor: "rgba(105,9,255,0)",
         data: []
     },
     actualVelocity: {
@@ -27,7 +27,7 @@ Burndown = {
         data: []
     },
     hoursDay: {
-        fillColor: "rgba(60,185,145,0.5)",
+        fillColor: "rgba(60,185,145,0.3)",
         strokeColor: "rgba(60,185,145,1)",
         pointColor: "rgba(220,220,220,1)",
         pointStrokeColor: "#326a58",
@@ -41,6 +41,7 @@ Burndown = {
         Burndown.createData();
         Burndown.data.datasets.push(Burndown.actualVelocity);
         Burndown.data.datasets.push(Burndown.targetVelocity);
+        Burndown.data.datasets.push(Burndown. hoursDay);
         var ctx = document.getElementById(Burndown.canvasId).getContext("2d");
         var burndown = new Chart(ctx).Line(Burndown.data, Burndown.options);
     },
@@ -63,8 +64,8 @@ Burndown = {
 
         var target = Burndown.initialHours;
         var ratio = Burndown.initialHours / (Burndown.days - 1);
+        var i = Burndown.days;//tick days down for daily hours needed
 
-        var i = Burndown.days;
         $.each(Burndown.rawData, function(key, val) {
             //set  labels for each day
             Burndown.data.labels.push(key);
@@ -72,12 +73,14 @@ Burndown = {
             //set actual velocity
             if (val) { //check if it's null for actual velocity
                 Burndown.actualVelocity.data.push(Burndown.sumHours(this));
+            	 Burndown. hoursDay.data.push(Burndown.sumHours(this) / i );
             }
 
             //set target data
             Burndown.targetVelocity.data.push(target);
             target = target - ratio;
 
+            i--;
 
         });
     },
