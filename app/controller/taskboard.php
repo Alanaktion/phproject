@@ -158,7 +158,7 @@ class Taskboard extends Base {
 		}
 
 
-/*
+
 		// Build an array of all visible task IDs (used by the burndown)
 		$visible_tasks = array();
 		foreach($taskboard as $p) {
@@ -285,7 +285,7 @@ class Taskboard extends Base {
 
 		$burndown = array($burnDays);
 
-		$f3->set("burndown", json_encode($burndown));*/
+		$f3->set("burndown", json_encode($burndown));
 
 		$f3->set("taskboard", array_values($taskboard));
 		$f3->set("filter", $params["filter"]);
