@@ -4,9 +4,13 @@ namespace Controller;
 
 class Issues extends Base {
 
-	public function index($f3, $params) {
-		$this->_requireLogin();
+	protected $_userId;
 
+	public function __construct() {
+		$this->_userId = $this->_requireAdmin();
+	}
+
+	public function index($f3, $params) {
 		$issues = new \Model\Issue\Detail();
 
 		// Filter issue listing by URL parameters
@@ -78,8 +82,6 @@ class Issues extends Base {
 	}
 
 	public function add($f3, $params) {
-		$this->_requireLogin();
-
 		if($f3->get("PARAMS.type")) {
 			$type_id = $f3->get("PARAMS.type");
 		} else {
@@ -124,8 +126,6 @@ class Issues extends Base {
 	}
 
 	public function add_selecttype($f3, $params) {
-		$this->_requireLogin();
-
 		$type = new \Model\Issue\Type();
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
@@ -135,8 +135,6 @@ class Issues extends Base {
 	}
 
 	public function edit($f3, $params) {
-		$this->_requireLogin();
-
 		$issue = new \Model\Issue();
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -173,8 +171,6 @@ class Issues extends Base {
 	}
 
 	public function close($f3, $params){
-		$this->_requireLogin();
-
 		$issue = new \Model\Issue();
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -193,8 +189,6 @@ class Issues extends Base {
 	}
 
 	public function save($f3, $params) {
-		$user_id = $this->_requireLogin();
-
 		$post = array_map("trim", $f3->get("POST"));
 
 		$issue = new \Model\Issue();
@@ -287,8 +281,6 @@ class Issues extends Base {
 	}
 
 	public function single($f3, $params) {
-		$user_id = $this->_requireLogin();
-
 		$issue = new \Model\Issue\Detail();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
@@ -373,7 +365,7 @@ class Issues extends Base {
 		}
 
 		$watching = new \Model\Issue\Watcher();
-		$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $user_id));
+		$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $this->_userId));
 		$f3->set("watching", !!$watching->id);
 
 		$f3->set("issue", $issue);
@@ -404,8 +396,6 @@ class Issues extends Base {
 	}
 
 	public function single_history($f3, $params) {
-		$user_id = $this->_requireLogin();
-
 		// Build updates array
 		$updates_array = array();
 		$update_model = new \Model\Custom("issue_update_user");
@@ -426,7 +416,6 @@ class Issues extends Base {
 	}
 
 	public function single_related($f3, $params) {
-		$user_id = $this->_requireLogin();
 		$issue = new \Model\Issue();
 		$issue->load($params["id"]);
 
@@ -452,7 +441,6 @@ class Issues extends Base {
 	}
 
 	public function single_watchers($f3, $params) {
-		$user_id = $this->_requireLogin();
 		$watchers = new \Model\Custom("issue_watcher_user");
 		$f3->set("watchers", $watchers->find(array("issue_id = ?", $params["id"])));
 		$users = new \Model\User();
@@ -465,8 +453,6 @@ class Issues extends Base {
 	}
 
 	public function single_delete($f3, $params) {
-		$this->_requireLogin();
-
 		$issue = new \Model\Issue();
 		$issue->load($params["id"]);
 		if($f3->get("POST.id")) {
@@ -500,7 +486,7 @@ class Issues extends Base {
 	}
 
 	public function upload($f3, $params) {
-		$user_id = $this->_requireLogin();
+		$user_id = $this->_userId;
 
 		$issue = new \Model\Issue();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("POST.issue_id")));
@@ -555,15 +541,16 @@ class Issues extends Base {
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
-// Quick add button for adding tasks to projects
+
+	// Quick add button for adding tasks to projects
+	// TODO: Update code to work with frontend outside of taskboard
 	public function quickadd($f3, $params) {
-		$user_id = $this->_requireLogin();
 		$post = $f3->get("POST");
 
 		$issue = new \Model\Issue();
 		$issue->name = $post["title"];
 		$issue->description = $post["description"];
-		$issue->author_id = $user_id;
+		$issue->author_id = $this->_userId;
 		$issue->owner_id = $post["assigned"];
 		$issue->created_date = now();
 		$issue->hours_total = $post["hours"];

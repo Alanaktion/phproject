@@ -4,9 +4,13 @@ namespace Controller;
 
 class Wiki extends Base {
 
-	public function index($f3) {
-		$this->_requireLogin();
+	protected $_userId;
 
+	public function __construct() {
+		$this->_userId = $this->_requireLogin();
+	}
+
+	public function index($f3) {
 		$page = new \Model\Wiki\Page;
 		$page->load(array("slug = ?", "index"));
 
@@ -22,8 +26,6 @@ class Wiki extends Base {
 	}
 
 	public function view($f3, $params) {
-		$this->_requireLogin();
-
 		$page = new \Model\Wiki\Page;
 		$page->load(array("slug = ?", $params["slug"]));
 
@@ -36,8 +38,6 @@ class Wiki extends Base {
 	}
 
 	public function edit($f3, $params) {
-		$user_id = $this->_requireLogin();
-
 		// Save page on POST request
 		if($post = $f3->get("POST")) {
 			$page = new \Model\Wiki\Page;

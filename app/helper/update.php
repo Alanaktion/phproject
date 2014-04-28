@@ -38,18 +38,20 @@ class Update extends \Prefab {
 				$old_val = $issue->name;
 				$issue->load($new_val);
 				$new_val = $issue->name;
+				break;
 			case "sprint_id":
-				$name = "sprint";
-				$issue = new \Model\sprint;
+				$name = "Sprint";
+				$issue = new \Model\Sprint;
 				$issue->load($old_val);
 				$old_val = $issue->name;
 				$issue->load($new_val);
-				$new_val = $issue->name." - ". date('n/j', strtotime($issue->start_date))."-".date('n/j', strtotime($issue->end_date));	
+				$new_val = $issue->name." - ". date('n/j', strtotime($issue->start_date))."-".date('n/j', strtotime($issue->end_date));
+				break;
 		}
 
 		// Generate human readable field name if not already specified
 		if(empty($name)) {
-			$name = ucwords(str_replace("_", " ", $field));
+			$name = ucwords(str_replace(array("_", "id"), array(" ", "ID"), $field));
 		}
 
 		return array("field" => $name, "old" => $old_val, "new" => $new_val);

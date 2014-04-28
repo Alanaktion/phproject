@@ -36,6 +36,10 @@ class Security extends \Prefab {
 		return md5(microtime(true));
 	}
 
+	public function rand_hash() {
+		return sha1($this->salt());
+	}
+
 	public function rot13($string) {
 		return str_rot13($string);
 	}
@@ -65,7 +69,7 @@ class Security extends \Prefab {
 		);
 	}
 
-	public function rand_bytes($length = 16) {
+	private function rand_bytes($length = 16) {
 
 		// Use OpenSSL cryptography extension if available
 		if(function_exists("openssl_random_pseudo_bytes")) {

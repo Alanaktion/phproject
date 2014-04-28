@@ -4,9 +4,13 @@ namespace Controller;
 
 class Backlog extends Base {
 
-	public function index($f3, $params) {
-		$this->_requireLogin();
+	protected $_userId;
 
+	public function __construct() {
+		$this->_userId = $this->_requireAdmin();
+	}
+
+	public function index($f3, $params) {
 		$sprint_model = new \Model\Sprint();
 		$sprints = $sprint_model->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC"));
 
