@@ -209,7 +209,8 @@ class Issues extends \Controller\Api\Base {
 
 	// Update a single issue
 	public function single_put($f3, $params) {
-
+		// TODO: Implement dis.
+		$f3->error(501);
 	}
 
 	// Delete a single issue
