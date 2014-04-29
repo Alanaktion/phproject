@@ -59,6 +59,9 @@ class Wiki extends \Prefab {
 			// List items
 			"/^[#\*]+ *(.+)$/m", // Wraps all list items to <li/>
 
+			// Clean up newlines
+			"/(?:(?:\r\n|\r|\n)\s*){2}/s",
+
 			// Newlines (TODO: make it smarter and so that it grouped paragraphs)
 			"/^(?!<li|dd).+(?=(<a|strong|em|img)).+$/mi", // Ones with breakable elements (TODO: Fix this crap, the li|dd comparison here is just stupid)
 			"/^[^><\n\r]+$/m", // Ones with no elements
@@ -102,6 +105,9 @@ class Wiki extends \Prefab {
 			// List items
 			"<li>$1</li>",
 
+			// Clean up newlines
+			"\n\n",
+
 			// Newlines
 			"$0<br/>",
 			"$0<br/>",
@@ -113,12 +119,41 @@ class Wiki extends \Prefab {
 			}
 		}
 	}
-	public function parse($input) {
-		if(!empty($input)) {
-			$output = preg_replace($this->patterns, $this->replacements, htmlentities($input));
-		} else {
-			$output = false;
+
+	public function parse($str) {
+		if(empty($str)) {
+			return false;
 		}
-		return $output;
+
+		$str = htmlentities($str); // Clean HTML
+		$str = str_replace(array("\r\n", "\r"), "\n", $str); // Normalize newlines
+		$str = preg_replace($this->patterns, $this->replacements, $str); // Parse markup
+
+		return $str;
+	}
+
+	public function test_tables() {
+		$t =
+"TESTYTESTY
+|Main Category| Website|
+| Sub Category| Q Error|
+| Consultant Id | 2456 |
+| Customer Id | 53061 |
+
+TESTYTESTY
+
+| Customer Name | Mary Lou Paulsen |
+| Customer Email | idahofarmgirl@hotmail.com |
+|How did it happen? | Q wouldn't add Bakery items |
+|Original Order # | n/a |
+TESTYTESTY";
+
+		$t = str_replace(array("\r\n", "\r"), "\n", $t); // Normalize newlines
+
+		$t = preg_replace("/^(?<=\|)(.*)\|(.*)(?=\|)$/m", "$1</td><td>$2", $t); // Surround cells with <td>s
+		$t = preg_replace("/^\|(.*)\|$/m", "<tr><td>$1</td></tr>", $t); // Surround rows with <tr>s
+		$t = preg_replace("/(?<!\>|\n)\n(\<tr\>.+\<\/tr\>\n)+(?!\<|\n)/s", "\n<table>\n$1</table>\n", $t); // Surround tables with <table>s
+
+		echo "<pre>" . htmlentities($t) . "</pre>";
 	}
 }
