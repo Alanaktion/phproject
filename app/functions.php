@@ -108,3 +108,28 @@ function createDateRangeArray($strDateFrom, $strDateTo) {
     }
     return $aryRange;
 }
+
+// Passes a string through the Textile parser, caching the result
+function parseTextile($str, $ttl = 0) {
+    if($ttl) {
+        $cache = \Cache::instance();
+        $hash = sha1($str);
+
+        // Return value if cached
+        if(($val = $cache->get("$hash.tex")) !== false) {
+            return $val;
+        }
+    }
+
+    // Value wasn't cached, run the parser
+    $tex = new \Helper\Textile\Parser();
+    $val = $tex->parse($str);
+
+    // Cache the value if $ttl was given
+    if($ttl) {
+        $cache->set("$hash.tex", $val, $ttl);
+    }
+
+    // Return the parsed value
+    return $val;
+}

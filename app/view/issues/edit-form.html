@@ -134,12 +134,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<div class="col-md-offset-2 col-md-10">
-			<button type="submit" class="btn btn-primary btn-sm">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
-			<check if="{{ !empty(@issue) }}">
-				<button type="reset" class="btn btn-default btn-sm">Reset</button>
-				<a href="/issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">Cancel</a>
-			</check>
+		<div class="col-md-offset-2 col-md-10 text-right">
 			<check if="{{ @user.role == 'admin' }}">
 				<div class="checkbox checkbox-inline">
 					<input type="hidden" name="notify" value="0">
@@ -149,6 +144,11 @@
 					</label>
 				</div>
 			</check>
+			<check if="{{ !empty(@issue) }}">
+				<a href="/issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">Cancel</a>
+				<button type="reset" class="btn btn-default btn-sm">Reset</button>
+			</check>
+			<button type="submit" class="btn btn-primary btn-sm">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
 		</div>
 	</div>
 </form>

@@ -311,7 +311,7 @@ class Issues extends Base {
 						print_json(
 							array(
 								"id" => $comment->id,
-								"text" => \Helper\Wiki::instance()->parse($comment->text),
+								"text" => parseTextile($comment->text),
 								"date_formatted" => date("D, M j, Y \\a\\t g:ia"),
 								"user_name" => $f3->get('user.name'),
 								"user_username" => $f3->get('user.username'),
