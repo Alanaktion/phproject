@@ -114,7 +114,7 @@
 
 				<dl>
 					<dt>Description:</dt>
-					<dd>{{ nl2br(make_clickable(\Model\Issue::clean(@issue.description))) }}</dd>
+					<dd>{{ \Helper\Wiki::instance()->parse(@issue.description) | raw }}</dd>
 				</dl>
 
 				<hr class="hidden-lg">
@@ -170,7 +170,7 @@
 									</a>
 									<div class="media-body">
 										<p class="media-heading"><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
-										<p>{{ nl2br(make_clickable(@comment.text)) }}</p>
+										<p>{{ \Helper\Wiki::instance()->parse(@comment.text) | raw }}</p>
 										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
 									</div>
 								</div>

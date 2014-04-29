@@ -8,7 +8,7 @@
 	<include href="blocks/navbar.html" />
 	<h2>{{ @page.name }}</h2>
 	<div>
-		{{ make_clickable(nl2br(@page.content)) }}
+		{{ \Helper\Wiki::instance()->parse(@page.content) | raw }}
 	</div>
 	<include href="blocks/footer.html" />
 </div>

@@ -15,7 +15,9 @@
  * Creative Commons Attribution 3.0 Unported License, http://creativecommons.org/licenses/by/3.0/
  */
 
-class Wiki {
+namespace Helper;
+
+class Wiki extends \Prefab {
 	private $patterns, $replacements;
 
 	public function __construct($analyze = false) {
@@ -113,7 +115,7 @@ class Wiki {
 	}
 	public function parse($input) {
 		if(!empty($input)) {
-			$output = preg_replace($this->patterns, $this->replacements, $input);
+			$output = preg_replace($this->patterns, $this->replacements, htmlentities($input));
 		} else {
 			$output = false;
 		}
