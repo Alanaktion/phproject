@@ -276,3 +276,12 @@ a:focus, button:focus, input:focus, .btn:focus {
 	font-size: 11px;
 	overflow-x: auto;
 }
+
+/* Textile processed styles */
+.tex table {
+	margin: 15px 0;
+}
+.tex table td {
+	padding: 2px 5px;
+	border: 1px solid #ccc;
+}
