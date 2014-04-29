@@ -51,17 +51,17 @@ class Issue extends Base {
 				}
 			}
 
+			// Set hours_total to the hours_remaining value if it's 0 or null
+			if($this->get("hours_remaining") && !$this->get("hours_total")) {
+				$this->set("hours_total", $this->get("hours_remaining"));
+			}
+
+			// Set hours remaining to 0 if the issue has been closed
+			if($this->get("closed_date") && $this->get("hours_remaining")) {
+				$this->set("hours_remaining", 0);
+			}
+
 			if($updated) {
-				// Set the total hours to a new hours value if it was previously 0 or null
-				if($this->get("hours_remaining") && !$this->get("hours_total")) {
-					$this->set("hours_total", $this->get("hours_remaining"));
-				}
-
-				// Set hours remaining to 0 if the issue has been closed
-				if($this->get("closed_date") && $this->get("hours_remaining")) {
-					$this->set("hours_remaining", 0);
-				}
-
 				// Send notifications
 				if($notify) {
 					$notification = \Helper\Notification::instance();
