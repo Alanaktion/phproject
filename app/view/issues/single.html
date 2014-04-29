@@ -170,7 +170,7 @@
 									</a>
 									<div class="media-body">
 										<p class="media-heading"><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
-										<p class="tex">{{ parseTextile(@comment.text) | raw }}</p>
+										<div class="tex">{{ parseTextile(@comment.text) | raw }}</div>
 										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
 									</div>
 								</div>
@@ -237,7 +237,7 @@ $(function() {
 	'</a>' +
 	'<div class="media-body">' +
 		'<p class="media-heading"><a href="/user/' + data.user_username + '">' + data.user_name + '</a></p>' +
-		'<p>' + data.text.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2') + '</p>' +
+		'<p class="tex">' + data.text + '</p>' +
 		'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
 	'</div>' +
 '</div>');

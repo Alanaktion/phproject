@@ -115,7 +115,7 @@ function createDateRangeArray($strDateFrom, $strDateTo) {
  *
  * @param $ttl int|bool
  */
-function parseTextile($str, $ttl=0) {
+function parseTextile($str, $ttl=86400) {
     if($ttl !== false) {
         $cache = \Cache::instance();
         $hash = sha1($str);
