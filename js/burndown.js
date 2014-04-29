@@ -13,24 +13,24 @@ Burndown = {
 		datasets: []
 	},
 	targetVelocity: {
-		fillColor: "rgba(105,9,255,0.05)",
+		fillColor: "rgba(105,9,255,0.1)",
 		strokeColor: "rgba(105,9,255,.5)",
 		pointColor: "rgba(105,9,255,0)",
 		pointStrokeColor: "rgba(105,9,255,0)",
 		data: []
 	},
 	actualVelocity: {
-		fillColor: "rgba(220,220,220,0.0)",
+		fillColor: "rgba(255,132,0,0.0)",
 		strokeColor: "rgba(255,132,0,1)",
-		pointColor: "rgba(118,82,43,1)",
-		pointStrokeColor: "rgba(118,82,43,1)",
+		pointColor: "rgba(220,220,220,1)",
+		pointStrokeColor: "#B96000",
 		data: []
 	},
 	hoursDay: {
-		fillColor: "rgba(60,185,145,0.3)",
+		fillColor: "rgba(60,185,145,0.2)",
 		strokeColor: "rgba(60,185,145,1)",
 		pointColor: "rgba(220,220,220,1)",
-		pointStrokeColor: "#326a58",
+		pointStrokeColor: "rgba(60,185,145,1)",
 		data: []
 	},
 	days: 0,
