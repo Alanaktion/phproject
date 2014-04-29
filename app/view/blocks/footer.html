@@ -1,5 +1,18 @@
 <check if="{{ @DEBUG == 3 }}">
-	<br><pre style="font-size: smaller; color: inherit;" class="well well-sm">{{ @db.instance->log() }}</pre>
+	<set dblog="{{ @db.instance->log(true) }}" />
+	<br>
+	<div class="well well-sm log">
+		<repeat group="{{ @dblog }}" value="{{ @row }}">
+			<check if="{{ @row.cached }}">
+				<true>
+					<div class="text-muted">{{ @row.timestamp }} ({{ @row.runtime }}) {{ @row.query }}</div>
+				</true>
+				<false>
+					<div>{{ @row.timestamp }} ({{ @row.runtime }}) {{ @row.query }}</div>
+				</false>
+			</check>
+		</repeat>
+	</div>
 </check>
 <footer class="row">
 	<div class="col-xs-4">
@@ -8,10 +21,10 @@
 	<div class="col-xs-8">
 		<p class="text-right text-muted">
 			<check if="{{ @db.instance->log() }}">
-				<set queries_log="{{ @db.instance->log() }}" />
-				<set queries_total="{{ substr_count(@queries_log, date('O (')) }}" />
-				<set queries_cached="{{ substr_count(@queries_log, '[CACHED]') }}" />
-				<span title="{{ @queries_total }} total queries, {{ @queries_cached }} cached">{{ @queries_total - @queries_cached }} queries</span> &middot;
+				<set queries_log="{{ @db.instance->log(true) }}" />
+				<set cached="0" />
+				{~ foreach(@queries_log as @r) if(@r.cached) ++@cached; ~}
+				<span title="{{ count(@queries_log) }} total queries, {{ @cached }} cached">{{ count(@queries_log) - @cached }} queries</span> &middot;
 			</check>
 			<check if="{{ !empty(@microtime) }}">
 				<set pagemtime="{{ microtime(true) - @microtime }}" />

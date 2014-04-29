@@ -43,69 +43,91 @@
 				</div>
 			</div>
 
-			<h3>Configuration and Statistics</h3>
 			<div class="row">
 				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>Site Configuration</h4>
-					<b>Name:</b> {{ @site.name }}<br>
-					<b>Description:</b> {{ @site.description }}<br>
+					<h4>{{ @site.name }}</h4>
+					<p class="lead">{{ @site.description }}</p>
 					<b>Theme:</b> {{ @site.theme }}<br>
 					<b>Logo:</b> {{ @site.logo }}<br>
-					<small><br>Cache timeouts</small><br>
-					<b>DB:</b> {{ @cache_expire.db }}<br>
-					<b>Minify:</b> {{ @cache_expire.minify }}<br>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>MySQL Connection</h4>
-					<b>Host:</b> {{ @db.host }}<br>
-					<b>Schema:</b> {{ @db.name }}<br>
-					<b>Username:</b> {{ @db.user }}<br>
-					<b>Password:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#db-config" data-toggle="tab">Database Config</a></li>
+						<li><a href="#db-stats" data-toggle="tab">Stats</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="db-config">
+							<b>Host:</b> {{ @db.host }}<br>
+							<b>Schema:</b> {{ @db.name }}<br>
+							<b>Username:</b> {{ @db.user }}<br>
+							<b>Password:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
+						</div>
+						<div class="tab-pane" id="db-stats">
+							<repeat group="{{ @db_stats }}" value="{{ @val }}">
+								<check if="{{ @val.Variable_name == 'Uptime' }}">
+									<true>
+										<b>{{ @val.Variable_name }}:</b> {{ @val.Value < 86400 ? round(@val.Value / 3600) . ' hours' : round(@val.Value / 86400) . ' days' }}<br>
+									</true>
+									<false>
+										<b>{{ @val.Variable_name }}:</b> {{ @val.Value }}<br>
+									</false>
+								</check>
+							</repeat>
+						</div>
+					</div>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>MySQL Stats</h4>
-					<repeat group="{{ @db_stats }}" value="{{ @val }}">
-						<check if="{{ @val.Variable_name == 'Uptime' }}">
-							<true>
-								<b>{{ @val.Variable_name }}:</b> {{ @val.Value < 86400 ? round(@val.Value / 3600) . ' hours' : round(@val.Value / 86400) . ' days' }}<br>
-							</true>
-							<false>
-								<b>{{ @val.Variable_name }}:</b> {{ @val.Value }}<br>
-							</false>
-						</check>
-					</repeat>
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#cache-config" data-toggle="tab">Cache Config</a></li>
+						<li><a href="#cache-stats" data-toggle="tab">Stats</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="cache-config">
+							<div class="clearfix">
+								<p class="pull-left"><b>Mode:</b> {{ @CACHE }}</p>
+								<form class="pull-right" action="/admin" method="post">
+									<input type="hidden" name="action" value="clearcache">
+									<button type="submit" class="btn btn-warning btn-xs">Clear Cache</button>
+								</form>
+							</div>
+							<small>Timeouts</small><br>
+							<b>Queries:</b> {{ @cache_expire.db }}<br>
+							<b>Minify:</b> {{ @cache_expire.minify }}<br>
+							<b>Attachments:</b> {{ @cache_expire.attachments }}<br>
+						</div>
+						<div class="tab-pane" id="cache-stats">
+							<check if="{{ @CACHE == 'apc' }}">
+								<true>
+									<repeat group="{{ @apc_stats }}" key="{{ @key }}" value="{{ @val }}">
+										<b>{{ @key }}:</b> {{ @val }}<br>
+									</repeat>
+								</true>
+								<false>
+									No stats available for this cache mode.
+								</false>
+							</check>
+						</div>
+					</div>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>IMAP</h4>
-					<p>In progress&hellip;</p>
+					<h4>SMTP <small>(Outgoing mail)</small></h4>
+					<p><b>From:</b> {{ @mail.from }}</p>
+					<h4>IMAP <small>(Incoming mail)</small></h4>
+					<b>Hostname:</b> {{ @imap.hostname }}<br>
+					<b>Username:</b> {{ @imap.username }}<br>
+					<b>Password:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
 					<h4>Gravatar</h4>
-					<b>Rating:</b> {{ @gravatar.rating }}<br>
-					<b>Default:</b> {{ @gravatar.default }}
+					<b>Max rating:</b> {{ @gravatar.rating }}<br>
+					<b>Default:</b> {{ @gravatar.default }}<br>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>Files</h4>
-					<b>Max Size:</b> {{ @files.maxsize }} ({{ round(@files.maxsize/1024/1024, 2) }}MB)
+					<h4>Miscellaneous</h4>
+					<b>Debug level:</b> {{ @DEBUG }}<br>
+					<b>Session Lifetime:</b> {{ gmdate("z\\d G\\h", @JAR.expire) }}<br>
+					<b>Max upload:</b> {{ round(@files.maxsize/1024/1024, 2) }}MB<br>
 				</div>
-			</div>
-
-			<br>
-
-			<div class="clearfix">
-				<h3>Cache</h3>
-				<p>
-					<b>Mode:</b> {{ @CACHE }}<br>
-					<check if="{{ @CACHE == 'apc' }}">
-						<repeat group="{{ @apc_stats }}" key="{{ @key }}" value="{{ @val }}">
-							<b>{{ @key }}:</b> {{ @val }}<br>
-						</repeat>
-					</check>
-				</p>
-				<form action="/admin" method="post">
-					<input type="hidden" name="action" value="clearcache">
-					<button type="submit" class="btn btn-warning btn-sm">Clear Cache</button>
-				</form>
 			</div>
 
 		</div>

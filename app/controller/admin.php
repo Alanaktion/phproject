@@ -4,9 +4,15 @@ namespace Controller;
 
 class Admin extends Base {
 
+	protected $_userId;
+
+	public function __construct() {
+		$this->_userId = $this->_requireAdmin();
+	}
+
 	public function index($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Administration");
+		$f3->set("menuitem", "admin");
 
 		if($f3->get("POST.action") == "clearcache") {
 			\Cache::instance()->reset();
@@ -35,16 +41,18 @@ class Admin extends Base {
 	}
 
 	public function users($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Manage Users");
+		$f3->set("menuitem", "admin");
+
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'"));
+
 		echo \Template::instance()->render("admin/users.html");
 	}
 
 	public function user_edit($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Edit User");
+		$f3->set("menuitem", "admin");
 
 		$user = new \Model\User();
 		$user->load($params["id"]);
@@ -57,8 +65,8 @@ class Admin extends Base {
 						$security = \Helper\Security::instance();
 						$user->salt = $security->salt();
 						$user->password = $security->hash($val, $user->salt);
-					} elseif($i == "salt") {
-						// don't change the salt, it'll just break the updated password
+					} elseif($i == "salt" || $i == "api_key") {
+						// don't change the salt or API key
 					} elseif($user->$i != $val) {
 						$user->$i = $val;
 					}
@@ -75,8 +83,9 @@ class Admin extends Base {
 	}
 
 	public function user_new($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "New User");
+		$f3->set("menuitem", "admin");
+
 		if($f3->get("POST")) {
 			$user = new \Model\User();
 			$user->username = $f3->get("POST.username");
@@ -85,6 +94,7 @@ class Admin extends Base {
 			$security = \Helper\Security::instance();
 			$user->salt = $security->salt();
 			$user->password = $security->hash($f3->get("POST.password"), $user->salt);
+			$user->api_key = $security->rand_hash();
 			$user->role = $f3->get("POST.role");
 			$user->task_color = ltrim($f3->get("POST.task_color"), "#");
 			$user->created_date = now();
@@ -102,10 +112,10 @@ class Admin extends Base {
 	}
 
 	public function user_delete($f3, $params) {
-		$this->_requireAdmin();
 		$user = new \Model\User();
 		$user->load($params["id"]);
 		$user->delete();
+
 		if($f3->get("AJAX")) {
 			print_json(array("deleted" => 1));
 		} else {
@@ -114,8 +124,8 @@ class Admin extends Base {
 	}
 
 	public function groups($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Manage Groups");
+		$f3->set("menuitem", "admin");
 
 		$group = new \Model\User();
 		$groups = $group->find("deleted_date IS NULL AND role = 'group'");
@@ -133,12 +143,14 @@ class Admin extends Base {
 			);
 		}
 		$f3->set("groups", $group_array);
+
 		echo \Template::instance()->render("admin/groups.html");
 	}
 
 	public function group_new($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "New Group");
+		$f3->set("menuitem", "admin");
+
 		if($f3->get("POST")) {
 			$group = new \Model\User();
 			$group->name = $f3->get("POST.name");
@@ -153,8 +165,8 @@ class Admin extends Base {
 	}
 
 	public function group_edit($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Edit Group");
+		$f3->set("menuitem", "admin");
 
 		$group = new \Model\User();
 		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
@@ -170,7 +182,6 @@ class Admin extends Base {
 	}
 
 	public function group_delete($f3, $params) {
-		$this->_requireAdmin();
 		$group = new \Model\User();
 		$group->load($params["id"]);
 		$group->delete();
@@ -182,8 +193,6 @@ class Admin extends Base {
 	}
 
 	public function group_ajax($f3, $params) {
-		$this->_requireAdmin();
-
 		if(!$f3->get("AJAX")) {
 			$f3->error(400);
 		}
@@ -224,16 +233,35 @@ class Admin extends Base {
 		}
 	}
 
+	public function group_setmanager($f3, $params) {
+		$db = $f3->get("db.instance");
+
+		$group = new \Model\User();
+		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
+
+		if(!$group->id) {
+			$f3->error(404);
+			return;
+		}
+
+		// Remove Manager status from all members and set manager status on specified user
+		$db->exec("UPDATE user_group SET manager = 0 WHERE group_id = ?", $group->id);
+		$db->exec("UPDATE user_group SET manager = 1 WHERE id = ?", $params["user_group_id"]);
+
+		$f3->reroute("/admin/groups/" . $group->id);
+	}
+
 	public function attributes($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Manage Attributes");
+		$f3->set("menuitem", "admin");
+
 		$attributes = new \Model\Attribute();
 		$f3->set("attributes", $attributes->find());
+
 		echo \Template::instance()->render("admin/attributes.html");
 	}
 
 	public function attribute_new($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "New Attribute");
 
 		if($post = $f3->get("POST")) {
@@ -250,11 +278,11 @@ class Admin extends Base {
 				$f3->set("attribute", $f3->get("POST"));
 			}
 		}
+
 		echo \Template::instance()->render("admin/attributes/edit.html");
 	}
 
 	public function attribute_edit($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Edit Attribute");
 		$types = new \Model\Issue\Type();
 		$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
@@ -267,16 +295,18 @@ class Admin extends Base {
 	}
 
 	public function sprints($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "Manage Sprints");
+		$f3->set("menuitem", "admin");
+
 		$sprints = new \Model\Sprint();
 		$f3->set("sprints", $sprints->find());
+
 		echo \Template::instance()->render("admin/sprints.html");
 	}
 
 	public function sprint_new($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "New Sprint");
+		$f3->set("menuitem", "admin");
 
 		if($post = $f3->get("POST")) {
 			if(empty($post["start_date"]) || empty($post["end_date"])) {
@@ -306,8 +336,8 @@ class Admin extends Base {
 	}
 
 	public function sprint_breaker($f3, $params) {
-		$this->_requireAdmin();
 		$f3->set("title", "SprintBreaker");
+		$f3->set("menuitem", "admin");
 
 		echo \Template::instance()->render("admin/sprints/breaker.html");
 	}

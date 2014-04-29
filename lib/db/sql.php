@@ -32,7 +32,9 @@ class SQL extends \PDO {
 		//! Number of rows affected by query
 		$rows=0,
 		//! SQL log
-		$log;
+		$log,
+		//! SQL log array
+		$logarr=array();
 
 	/**
 	*	Begin SQL transaction
@@ -171,11 +173,16 @@ class SQL extends \PDO {
 					user_error('PDO: '.$error[2]);
 				}
 			}
-			if ($log)
+			if ($log) {
 				$this->log.=date('r').' ('.
 					sprintf('%.1f',1e3*(microtime(TRUE)-$now)).'ms) '.
 					(empty($cached)?'':'[CACHED] ').
 					preg_replace($keys,$vals,$cmd,1).PHP_EOL;
+				$this->logarr[]=array("timestamp"=>date('r'),
+					"runtime"=>sprintf('%.1f',1e3*(microtime(TRUE)-$now)).'ms',
+					"cached"=>!empty($cached),
+					"query"=>preg_replace($keys,$vals,$cmd,1));
+			}
 		}
 		if ($this->trans && $auto)
 			$this->commit();
@@ -192,10 +199,10 @@ class SQL extends \PDO {
 
 	/**
 	*	Return SQL profiler results
-	*	@return string
+	*	@return string|array
 	**/
-	function log() {
-		return $this->log;
+	function log($array=FALSE) {
+		return $array?$this->logarr:$this->log;
 	}
 
 	/**

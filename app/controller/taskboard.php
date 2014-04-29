@@ -35,13 +35,24 @@ class Taskboard extends Base {
 			$f3->error(404);
 			return;
 		}
+
 		$f3->set("sprint", $sprint);
 		$f3->set("title", $sprint->name);
+		$f3->set("menuitem", "backlog");
 
 		// Load issue statuses
 		$status = new \Model\Issue\Status();
 		$statuses = $status->find(array('taskboard = 1'), null, $f3->get("cache_expire.db"));
-		$f3->set("statuses", $statuses);
+		$mapped_statuses = array();
+		$visible_status_ids = array();
+		foreach($statuses as $s) {
+			$visible_status_ids[] = $s->id;
+			$mapped_statuses[$s->id] = $s;
+		}
+
+		$visible_status_ids = implode(",", $visible_status_ids);
+
+		$f3->set("statuses", $mapped_statuses);
 
 		// Load issue priorities
 		$priority = new \Model\Issue\Priority();
@@ -53,7 +64,7 @@ class Taskboard extends Base {
 		//Add the default project for non assigned bugs or tasks (id=0)
 		//Add any projects where the project may not be due, but a task within the project is due this sprint (3rd OR)
 		$projects = $issue->find(array(
-			"id = 0 OR (sprint_id = ? AND deleted_date IS NULL AND type_id = ?) OR (id IN (SELECT parent_id FROM issue WHERE type_id != ? AND sprint_id = ?) AND IFNULL(sprint_id, 0) != ?)",
+			"id = 0 OR ((sprint_id = ? AND deleted_date IS NULL AND type_id = ?) OR (id IN (SELECT parent_id FROM issue WHERE type_id != ? AND sprint_id = ?) AND IFNULL(sprint_id, 0) != ?)) AND status IN ($visible_status_ids)",
 			$sprint->id,
 			$f3->get("issue_type.project"),
 			$f3->get("issue_type.project"),
@@ -73,18 +84,21 @@ class Taskboard extends Base {
 
 			if ($project["id"] == 0) {
 				// Orphaned sprint tasks - grab and attach here
-				$tasks = $issue->find(array("type_id!=? and IFNULL(parent_id,'')='' and deleted_date is null and sprint_id=?",$f3->get("issue_type.project"),$sprint->id), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
+				$tasks = $issue->find(array(
+					"type_id != ? AND IFNULL(parent_id, '') = '' AND deleted_date IS NULL AND sprint_id = ? AND status IN ($visible_status_ids)",
+					$f3->get("issue_type.project"),
+					$sprint->id
+				), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
 				foreach ($tasks as $task) {
 					$task["parent_id"] = 0;
 				}
 			} elseif ($project["sprint_id"] != $sprint->id) {
 				// Get tasks that are due during the sprint with a parent project not in the sprint
-				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_Date IS NULL and sprint_id=?", $project["id"], $f3->get("issue_type.project"), $sprint->id), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
+				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND sprint_id = ? AND status IN ($visible_status_ids)", $project["id"], $f3->get("issue_type.project"), $sprint->id), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
 			} else {
 				// Get all non-projects (generally tasks) under the project, put them under their status
-				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_Date IS NULL", $project["id"], $f3->get("issue_type.project")), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
+				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN ($visible_status_ids)", $project["id"], $f3->get("issue_type.project")), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
 			}
-
 
 			foreach($tasks as $task) {
 				$columns[$task["status"]][] = $task;
@@ -142,6 +156,136 @@ class Taskboard extends Base {
 				unset($taskboard[$r]);
 			}
 		}
+
+
+
+		// Build an array of all visible task IDs (used by the burndown)
+		$visible_tasks = array();
+		foreach($taskboard as $p) {
+			foreach($p["columns"] as $c) {
+				foreach($c as $t) {
+					$visible_tasks[] = $t["id"];
+				}
+			}
+		}
+
+		// Get today's date
+		$today = date('Y-m-d');
+		$today = $today . " 23:59:59";
+
+		//Check to see  if the sprint is completed
+		if ($today < $sprint->end_date){
+			$burnComplete = 0;
+			$burnDates = createDateRangeArray($sprint->start_date, $today);
+			$remainingDays = createDateRangeArray($today, $sprint->end_date);
+		}
+		else{
+			$burnComplete = 1;
+			$burnDates = createDateRangeArray($sprint->start_date, $sprint->end_date);
+			$remainingDays = array();
+		}
+
+		$burnDays = array();
+		$burnDatesCount = count($burnDates);
+		$i = 1;
+
+		$db = $f3->get("db.instance");
+
+		foreach($burnDates as $date){
+
+			//Get total_hours, which is the initial amount entered on each task, and cache this query
+			if($i == 1){
+				$burnDays[$date] =
+					$db->exec("
+						SELECT i.hours_total AS remaining
+						FROM issue i
+						WHERE i.id IN (". implode(",", $visible_tasks) .")
+						AND i.created_date < '" . $sprint->start_date  . " 00:00:00'", // Only count tasks added before sprint
+						NULL,
+						2678400 // 31 days
+					);
+			}
+
+			//Get between day values and cache them... this also will get the last day of completed sprints so they will be cached
+			else if($i < $burnDatesCount || $burnComplete ){
+				$burnDays[$date] = $db->exec("
+					SELECT IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value) AS remaining
+					FROM issue_update_field f
+					JOIN issue_update u ON u.id = f.issue_update_id
+					JOIN (
+						SELECT MAX(u.id) AS max_id
+						FROM issue_update u
+						JOIN issue_update_field f ON f.issue_update_id = u.id
+						WHERE f.field = 'hours_remaining'
+						AND u.created_date < '". $date . " 23:59:59'
+						GROUP BY u.issue_id
+					) a ON a.max_id = u.id
+					RIGHT JOIN issue i ON i.id = u.issue_id
+					WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
+					AND i.id IN (". implode(",", $visible_tasks) . ")
+					AND i.created_date < '". $date . " 23:59:59'",
+					NULL,
+					2678400 // 31 days
+				);
+			}
+
+			//Get the today's info and don't cache it
+			else{
+				$burnDays[$date] =
+					$db->exec("
+						SELECT IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value) AS remaining
+						FROM issue_update_field f
+						JOIN issue_update u ON u.id = f.issue_update_id
+						JOIN (
+							SELECT MAX(u.id) AS max_id
+							FROM issue_update u
+							JOIN issue_update_field f ON f.issue_update_id = u.id
+							WHERE f.field = 'hours_remaining'
+							AND u.created_date < '" . $date . " 23:59:59'
+							GROUP BY u.issue_id
+						) a ON a.max_id = u.id
+						RIGHT JOIN issue i ON i.id = u.issue_id
+						WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
+						AND i.created_date < '". $date . " 23:59:59'
+						AND i.id IN (". implode(",", $visible_tasks) . ")"
+				);
+			}
+
+			$i++;
+		}
+
+		if(!$burnComplete){//add in empty days
+			$i = 0;
+			foreach($remainingDays as $day) {
+				if($i != 0){
+					$burnDays[$day] = NULL;
+				}
+				$i++;
+			}
+		}
+
+		//reformat the date and remove weekends
+		$i = 0;
+		foreach($burnDays as $burnKey => $burnDay){
+
+			$weekday = date("D", strtotime($burnKey));
+			$weekendDays = array("Sat","Sun");
+
+			if( !in_array($weekday, $weekendDays) ){
+				$newDate = date("M j", strtotime($burnKey));
+				$burnDays[$newDate] = $burnDays[$burnKey];
+				unset($burnDays[$burnKey]);
+			}
+			else{//remove weekend days
+				unset($burnDays[$burnKey]);
+			}
+
+			$i++;
+		}
+
+		$burndown = array($burnDays);
+
+		$f3->set("burndown", json_encode($burndown));
 
 		$f3->set("taskboard", array_values($taskboard));
 		$f3->set("filter", $params["filter"]);

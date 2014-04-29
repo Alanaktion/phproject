@@ -371,30 +371,19 @@ function checkRegexp(o, regexp, n) {
 	return true;
 }
 
-jQuery.fn.serializeObject = function() {
-	var arrayData, objectData;
-	arrayData = this.serializeArray();
-	objectData = {};
-
-	$.each(arrayData, function() {
-		var value;
-
-		if (this.value !== null) {
-			value = this.value;
-		} else {
-			value = '';
-		}
-
-		if (objectData[this.name] !== null) {
-			if (!objectData[this.name].push) {
-				objectData[this.name] = [objectData[this.name]];
-			}
-
-			objectData[this.name].push(value);
-		} else {
-			objectData[this.name] = value;
-		}
-	});
-
-	return objectData;
+$.fn.serializeObject = function()
+{
+   var o = {};
+   var a = this.serializeArray();
+   $.each(a, function() {
+       if (o[this.name]) {
+           if (!o[this.name].push) {
+               o[this.name] = [o[this.name]];
+           }
+           o[this.name].push(this.value || '');
+       } else {
+           o[this.name] = this.value || '';
+       }
+   });
+   return o;
 };

@@ -22,7 +22,8 @@ class Files extends Base {
 				$img = new \Helper\Image($file->disk_filename, null, $f3->get("ROOT") . "/");
 				$hide_ext = true;
 			} else {
-				http_response_code(404);
+				$protocol = isset($_SERVER["SERVER_PROTOCOL"]) ? $_SERVER["SERVER_PROTOCOL"] : "HTTP/1.0";
+				header($protocol . " 404 Not Found");
 				$img = new \Helper\Image("img/404.png", null, $f3->get("ROOT") . "/");
 			}
 			$img->resize($params["size"], $params["size"]);
@@ -93,10 +94,15 @@ class Files extends Base {
 
 		} else {
 
-			// Use Gravatar if user does not have an avatar
-			// Note: this should rarely be used, as the URL for Gravatars should be used directly in most cases
+			// Remove avatar from user if needed and load from Gravatar
+			if($user->avatar_filename) {
+				$user->avatar_filename = null;
+				$user->save();
+			}
+
 			header("Content-type: image/png");
-			readfile("http:" . gravatar($user->email, $params["size"]));
+			$file = file_get_contents("http:" . gravatar($user->email, $params["size"]));
+			echo $file;
 
 		}
 	}

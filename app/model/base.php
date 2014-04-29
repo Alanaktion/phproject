@@ -21,7 +21,15 @@ abstract class Base extends \DB\SQL\Mapper {
 		return $this;
 	}
 
-	// Savely delete object if possible, if not, erase the record.
+	// Set object created date if possible
+	function save() {
+		if(array_key_exists("created_date", $this->fields) && !$this->query) {
+			$this->set("created_date", now());
+		}
+		return parent::save();
+	}
+
+	// Safely delete object if possible, if not, erase the record.
 	function delete() {
 		if(array_key_exists("deleted_date", $this->fields)) {
 			$this->deleted_date = now();
