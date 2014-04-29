@@ -57,7 +57,7 @@
 				<th class="column column-1">
 					<div class="btn-group">
 						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
-							Filter Tasks <span class="caret"></span>
+							<span class="glyphicon glyphicon-filter"></span> Filter Tasks <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
 							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="/taskboard/{{ @PARAMS.id }}/all">All Tasks</a></li>
@@ -66,7 +66,7 @@
 						</ul>
 					</div>
 					<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
-					  	Burndown Chart
+					  	<span class="glyphicon glyphicon-fire"></span> Burndown Chart
 					</button>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
