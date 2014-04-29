@@ -87,7 +87,9 @@ Burndown = {
 	sumHours: function(data) {
 		var sum = 0;
 		$.each(data, function(key1, val1) {
-			sum = parseFloat(this.remaining) + sum;
+			if(!isNaN(parseFloat(this.remaining))){
+				sum = parseFloat(this.remaining) + sum;
+			}
 		});
 		return (sum);
 	},
