@@ -50,6 +50,8 @@ class Taskboard extends Base {
 			$mapped_statuses[$s->id] = $s;
 		}
 
+		$visible_status_ids = implode(",", $visible_status_ids);
+
 		$f3->set("statuses", $mapped_statuses);
 
 		// Load issue priorities
@@ -62,13 +64,12 @@ class Taskboard extends Base {
 		//Add the default project for non assigned bugs or tasks (id=0)
 		//Add any projects where the project may not be due, but a task within the project is due this sprint (3rd OR)
 		$projects = $issue->find(array(
-			"id = 0 OR ((sprint_id = ? AND deleted_date IS NULL AND type_id = ?) OR (id IN (SELECT parent_id FROM issue WHERE type_id != ? AND sprint_id = ?) AND IFNULL(sprint_id, 0) != ?)) AND status IN (?)",
+			"id = 0 OR ((sprint_id = ? AND deleted_date IS NULL AND type_id = ?) OR (id IN (SELECT parent_id FROM issue WHERE type_id != ? AND sprint_id = ?) AND IFNULL(sprint_id, 0) != ?)) AND status IN ($visible_status_ids)",
 			$sprint->id,
 			$f3->get("issue_type.project"),
 			$f3->get("issue_type.project"),
 			$sprint->id,
-			$sprint->id,
-			$visible_status_ids
+			$sprint->id
 		), array("order" => "owner_id ASC"));
 
 		// Build multidimensional array of all tasks and projects
@@ -84,20 +85,19 @@ class Taskboard extends Base {
 			if ($project["id"] == 0) {
 				// Orphaned sprint tasks - grab and attach here
 				$tasks = $issue->find(array(
-					"type_id != ? AND IFNULL(parent_id, '') = '' AND deleted_date IS NULL AND sprint_id = ? AND status IN (?)",
+					"type_id != ? AND IFNULL(parent_id, '') = '' AND deleted_date IS NULL AND sprint_id = ? AND status IN ($visible_status_ids)",
 					$f3->get("issue_type.project"),
-					$sprint->id,
-					$visible_status_ids
+					$sprint->id
 				), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
 				foreach ($tasks as $task) {
 					$task["parent_id"] = 0;
 				}
 			} elseif ($project["sprint_id"] != $sprint->id) {
 				// Get tasks that are due during the sprint with a parent project not in the sprint
-				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND sprint_id = ? AND status IN (?)", $project["id"], $f3->get("issue_type.project"), $sprint->id, $visible_status_ids), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
+				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND sprint_id = ? AND status IN ($visible_status_ids)", $project["id"], $f3->get("issue_type.project"), $sprint->id), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
 			} else {
 				// Get all non-projects (generally tasks) under the project, put them under their status
-				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN (?)", $project["id"], $f3->get("issue_type.project"), $visible_status_ids), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
+				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN ($visible_status_ids)", $project["id"], $f3->get("issue_type.project")), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
 			}
 
 			foreach($tasks as $task) {
