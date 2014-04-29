@@ -49,6 +49,7 @@ function _make_web_ftp_clickable_cb($m) {
 
     if (empty($d))
         return $m[0];
+
     // removed trailing [,;:] from URL
     if(in_array(substr($d,-1),array('.',',',';',':')) === true) {
         $s = substr($d,-1);
@@ -89,21 +90,18 @@ function utf8mail($to, $subject, $body) {
     return mail($to, $subject, $body, $headers);
 }
 
-function createDateRangeArray($strDateFrom,$strDateTo)
-{
+function createDateRangeArray($strDateFrom, $strDateTo) {
     // takes two dates formatted as YYYY-MM-DD and creates an
     // inclusive array of the dates between the from and to dates.
 
     $aryRange=array();
 
-    $iDateFrom=mktime(1,0,0,substr($strDateFrom,5,2),     substr($strDateFrom,8,2),substr($strDateFrom,0,4));
-    $iDateTo=mktime(1,0,0,substr($strDateTo,5,2),     substr($strDateTo,8,2),substr($strDateTo,0,4));
+    $iDateFrom=mktime(1,0,0,substr($strDateFrom,5,2),substr($strDateFrom,8,2),substr($strDateFrom,0,4));
+    $iDateTo=mktime(1,0,0,substr($strDateTo,5,2),substr($strDateTo,8,2),substr($strDateTo,0,4));
 
-    if ($iDateTo>=$iDateFrom)
-    {
+    if ($iDateTo>=$iDateFrom) {
         array_push($aryRange,date('Y-m-d',$iDateFrom)); // first entry
-        while ($iDateFrom<$iDateTo)
-        {
+        while ($iDateFrom<$iDateTo) {
             $iDateFrom+=86400; // add 24 hours
             array_push($aryRange,date('Y-m-d',$iDateFrom));
         }
