@@ -25,8 +25,8 @@ class Issue extends Base {
 	}
 
 	// Delete without sending notification
-	function delete() {
-		$this->set("deleted_date") = now();
+	public function delete() {
+		$this->set("deleted_date", now());
 		return $this->save(false);
 	}
 
