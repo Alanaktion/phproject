@@ -7,7 +7,7 @@ class Issues extends Base {
 	protected $_userId;
 
 	public function __construct() {
-		$this->_userId = $this->_requireAdmin();
+		$this->_userId = $this->_requireLogin();
 	}
 
 	public function index($f3, $params) {
