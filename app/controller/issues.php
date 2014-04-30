@@ -229,8 +229,8 @@ class Issues extends Base {
 						}
 					}
 				}
-				// Save issue
-				$notify = $f3->get("user.role") == "admin" && empty($post["notify"]);
+				// Save issue, send notifications (unless admin opts out)
+				$notify =  empty($post["notify"]) ? false : true;
 				$issue->save($notify);
 
 				$f3->reroute("/issues/" . $issue->id);
@@ -265,8 +265,8 @@ class Issues extends Base {
 				$issue->parent_id = $post["parent_id"];
 			}
 
-			// Save issue
-			$notify = $f3->get("user.role") == "admin" && empty($post["notify"]);
+			// Save issue, send notifications (unless admin opts out)
+			$notify =  empty($post["notify"]) ? false : true;
 			$issue->save($notify);
 
 			if($issue->id) {
