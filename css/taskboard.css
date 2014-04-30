@@ -67,6 +67,9 @@ body {
 	border-left: 6px solid;
 	height: 85px;
 }
+#taskboard .card a {
+	color: #27C;
+}
 #taskboard .card.task {
 	cursor: move;
 	width: 111px;
