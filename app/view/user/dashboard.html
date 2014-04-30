@@ -12,22 +12,14 @@
 			<div class="list-group">
 				<repeat group="{{ @projects.subset }}" value="{{ @item }}">
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
-						<span class="badge">#{{ @item.id }}</span>
 						<span class="badge status">{{ @item.status_name }}</span>
 						<check if="{{ @item.owner_id != @user.id }}">
 							<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="Assigned Group">{{ @item.owner_name }}</p>
 						</check>
 						<h4 class="list-group-item-heading">
-							{{ @item.name }}
+							#{{ @item.id }} - {{ @item.name }}
 							<check if="{{ @item.priority != 0 }}">
-								<check if="{{ @item.priority < 0 }}">
-									<true>
-										<span class="label label-default">{{ @item.priority_name }}</span>
-									</true>
-									<false>
-										<span class="label label-danger">{{ @item.priority_name }}</span>
-									</false>
-								</check>
+								<span class="label-{{ @item.priority < 0 ? 'default' : 'danger' }} priority"></span>
 							</check>
 						</h4>
 						<check if="{{ strtotime(@item.due_date) }}">
@@ -43,22 +35,14 @@
 			<div class="list-group">
 				<repeat group="{{ @bugs.subset }}" value="{{ @item }}">
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
-						<span class="badge">#{{ @item.id }}</span>
 						<span class="badge status">{{ @item.status_name }}</span>
 						<check if="{{ @item.owner_id != @user.id }}">
 							<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="Assigned Group">{{ @item.owner_name }}</p>
 						</check>
 						<p class="list-group-item-heading">
-							{{ @item.name }}
+							#{{ @item.id }} - {{ @item.name }}
 							<check if="{{ @item.priority != 0 }}">
-								<check if="{{ @item.priority < 0 }}">
-									<true>
-										<span class="label label-default">{{ @item.priority_name }}</span>
-									</true>
-									<false>
-										<span class="label label-danger">{{ @item.priority_name }}</span>
-									</false>
-								</check>
+								<span class="label-{{ @item.priority < 0 ? 'default' : 'danger' }} priority"></span>
 							</check>
 						</p>
 						<check if="{{ strtotime(@item.due_date) }}">
@@ -73,7 +57,6 @@
 			<div class="list-group">
 				<repeat group="{{ @tasks.subset }}" value="{{ @item }}">
 					<a class="list-group-item" href="/issues/{{ @item.id }}">
-						<span class="badge">#{{ @item.id }}</span>
 						<span class="badge status">{{ @item.status_name }}</span>
 						<check if="{{ @item.owner_id != @user.id }}">
 							<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="Assigned Group">{{ @item.owner_name }}</p>
@@ -82,16 +65,9 @@
 							<p class="pull-right badge-sibling hidden-xs author has-tooltip" title="Author">{{ @item.author_name }}</p>
 						</check>
 						<p class="list-group-item-heading">
-							{{ @item.name }}
+							#{{ @item.id }} - {{ @item.name }}
 							<check if="{{ @item.priority != 0 }}">
-								<check if="{{ @item.priority < 0 }}">
-									<true>
-										<span class="label label-default">{{ @item.priority_name }}</span>
-									</true>
-									<false>
-										<span class="label label-danger">{{ @item.priority_name }}</span>
-									</false>
-								</check>
+								<span class="label-{{ @item.priority < 0 ? 'default' : 'danger' }} priority"></span>
 							</check>
 						</p>
 						<check if="{{ strtotime(@item.due_date) }}">

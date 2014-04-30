@@ -212,9 +212,17 @@ textarea.form-control {
 	right: 15px;
 }
 
-/* Compact UI */
+/* Dashboard Compact UI */
 .dashboard .list-group-item {
-	padding: 5px 7px;
+	padding: 5px 10px;
+	position: relative;
+}
+.dashboard .list-group-item .priority {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 3px;
+	height: 100%;
 }
 .dashboard .list-group-item-heading {
 	margin-top: 1px;
@@ -223,7 +231,7 @@ textarea.form-control {
 .form-horizontal .control-label.label-sm {
 	padding-top: 8px;
 }
-/* */
+
 
 dl.dl-inline dt {
 	float: left;
