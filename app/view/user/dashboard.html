@@ -7,7 +7,7 @@
 <div class="container-fluid">
 	<include href="blocks/navbar.html" />
 	<div class="row">
-		<div class="col-sm-4">
+		<div class="col-sm-5">
 			<h3>My Projects&ensp;<small>{{ @projects.total }}</small>&emsp;<a class="btn btn-sm btn-default has-tooltip" href="/issues/new/{{ @issue_type.project }}" title="Add Project"><span class="glyphicon glyphicon-plus"></span></a></h3>
 			<div class="list-group">
 				<repeat group="{{ @projects.subset }}" value="{{ @item }}">
@@ -68,7 +68,7 @@
 				</repeat>
 			</div>
 		</div>
-		<div class="col-sm-8">
+		<div class="col-sm-7">
 			<h3>My Tasks&ensp;<small>{{ @tasks.total }}</small>&emsp;<a class="btn btn-sm btn-default has-tooltip" href="/issues/new/{{ @issue_type.task }}" title="Add Task"><span class="glyphicon glyphicon-plus"></span></a></h3>
 			<div class="list-group">
 				<repeat group="{{ @tasks.subset }}" value="{{ @item }}">
