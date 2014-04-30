@@ -76,8 +76,7 @@ a.nolink:hover {
 }
 
 .badge.status {
-	background-color: #C6C6C6;
-	color: #fff;
+	opacity: 0.7;
 }
 .dashboard .list-group-item .badge {
 	margin-top: 3px;
