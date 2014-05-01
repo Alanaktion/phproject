@@ -67,7 +67,7 @@ class Admin extends Base {
 						$user->password = $security->hash($val, $user->salt);
 					} elseif($i == "salt" || $i == "api_key") {
 						// don't change the salt or API key
-					} elseif($user->$i != $val) {
+					} elseif($user->$i != $val && $i != "password"){
 						$user->$i = $val;
 					}
 					$user->save();
