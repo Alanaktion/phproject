@@ -24,6 +24,12 @@ class Issue extends Base {
 		return preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n\n", str_replace("\r\n", "\n", $string));
 	}
 
+	// Delete without sending notification
+	public function delete() {
+		$this->set("deleted_date", now());
+		return $this->save(false);
+	}
+
 	// Log issue update, send notifications
 	public function save($notify = true) {
 		$f3 = \Base::instance();

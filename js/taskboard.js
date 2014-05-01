@@ -92,24 +92,24 @@ var Taskboard = {
 		});
 	},
 	modalEdit: function(data) {
-		var user = $(data).find('.owner').text().trim(),
+		var user = $(data).find('.owner').data('id'),
 			userColor = $(data).css('border-color'),
 			taskId = $(data).attr('id').replace('task_', ''),
 			title = $(data).find('.title').text().trim(),
 			description = $(data).find('.description').text().trim(),
 			hours = $(data).find('.hours').text().trim(),
 			date = $(data).find('.dueDate').text().trim(),
-			priority = $(data).find('.priority').data('value');
+			priority = $(data).find('.priority').data('val');
 
-		Taskboard.changeModalPriority(priority);
+		// Taskboard.changeModalPriority(priority);
 		$("#task-dialog input#taskId").val(taskId);
 		$("#task-dialog input#title").val(title);
 		$("#task-dialog textarea#description").val(description);
 		$("#task-dialog input#hours").val(hours);
 		$("#task-dialog input#dueDate").val(date);
 		$("#task-dialog").find("#dueDate").datepicker();
-		Taskboard.setOptionByText("#task-dialog", user);
-		Taskboard.setOptionByText("#priority", priority);
+		Taskboard.setOptionByVal("#task-dialog", user);
+		Taskboard.setOptionByVal("#priority", priority);
 
 		$("#task-dialog").dialog({
 			title: "Edit Task"
@@ -137,7 +137,7 @@ var Taskboard = {
 	},
 	modalAdd: function(data) {
 		var storyId = data.parents('.tb-row').attr("data-story-id");
-		Taskboard.changeModalPriority("normal");
+		// Taskboard.changeModalPriority("normal");
 		$("#task-dialog input").val("");
 		$("#task-dialog textarea").val("");
 		$("#task-dialog #priority").val($("#task-dialog #priority option:first").val());
@@ -193,6 +193,11 @@ var Taskboard = {
 			return $(this).text() == text;
 		}).prop('selected', true);
 	},
+	setOptionByVal: function(selectId, val) {
+		$(selectId + " option").filter(function() {
+			return $(this).attr("value") == val;
+		}).prop('selected', true);
+	},
 	updateCard: function(card, data) {
 		$(card).find(".title").text(data.title);
 
@@ -205,7 +210,7 @@ var Taskboard = {
 
 		$(card).find(".description").text(data.description);
 		$(card).find(".dueDate").text(data.dueDate);
-		$(card).find(".owner").text($("#task-dialog #assigned option[value='" + data.assigned + "']").first().text());
+		$(card).find(".owner").text($("#task-dialog #assigned option[value='" + data.assigned + "']").first().text()).data('id', data.assigned);
 		$(card).css("border-color", $("#task-dialog #assigned option[value='" + data.assigned + "']").first().attr("data-color"));
 		Taskboard.updateCardPriority(data.priority, card);
 		Taskboard.ajaxUpdateTask(data);
