@@ -24,6 +24,12 @@ class Issue extends Base {
 		return preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n\n", str_replace("\r\n", "\n", $string));
 	}
 
+	// Delete without sending notification
+	public function delete() {
+		$this->set("deleted_date", now());
+		return $this->save(false);
+	}
+
 	// Log issue update, send notifications
 	public function save($notify = true) {
 		$f3 = \Base::instance();
@@ -51,12 +57,17 @@ class Issue extends Base {
 				}
 			}
 
-			if($updated) {
-				// Set hours remaining to 0 if the issue has been closed
-				if($this->get("closed_date") && $this->get("hours_remaining")) {
-					$this->set("hours_remaining", 0);
-				}
+			// Set hours_total to the hours_remaining value if it's 0 or null
+			if($this->get("hours_remaining") && !$this->get("hours_total")) {
+				$this->set("hours_total", $this->get("hours_remaining"));
+			}
 
+			// Set hours remaining to 0 if the issue has been closed
+			if($this->get("closed_date") && $this->get("hours_remaining")) {
+				$this->set("hours_remaining", 0);
+			}
+
+			if($updated) {
 				// Send notifications
 				if($notify) {
 					$notification = \Helper\Notification::instance();

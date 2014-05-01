@@ -106,7 +106,7 @@
 	</form>
 </div>
 
-<!-- Mobile -->
+<!-- Mobile Menu -->
 <div class="navbar navbar-default navbar-fixed-top visible-xs" role="navigation">
 	<a class="navbar-brand" href="/">
 		<span class="glyphicon glyphicon-home"></span>
@@ -117,6 +117,9 @@
 		</a>
 		<a href="/issues" class="btn btn-default navbar-btn">
 			<span class="glyphicon glyphicon-th-list"></span>
+		</a>
+		<a href="/backlog" class="btn btn-default navbar-btn">
+			<span class="glyphicon glyphicon-tasks"></span>
 		</a>
 		<check if="{{ @user.role=='admin' }}">
 			<a href="/admin" class="btn btn-default navbar-btn">

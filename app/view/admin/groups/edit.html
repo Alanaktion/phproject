@@ -27,7 +27,16 @@
 					<ul id="members" class="list-unstyled">
 						<repeat group="{{ @members }}" value="{{ @val }}">
 							<li data-user-id="{{ @val.user_id }}">
-								<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;{{ @val.user_name }}
+								<a href="#" class="delete text-danger has-tooltip" data-placement="right" title="Remove from Group"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+								<check if="{{ @val.manager }}">
+									<true>
+										<span class="manager text-warning has-tooltip" data-placement="right" title="Manager"><span class="glyphicon glyphicon-star"></span></span>&nbsp;
+									</true>
+									<false>
+										<a href="/admin/groups/{{ @group.id }}/setmanager/{{ @val.id }}" class="manager text-muted has-tooltip" data-placement="right" title="Set as Manager"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
+									</false>
+								</check>
+								{{ @val.user_name }}
 							</li>
 						</repeat>
 					</ul>

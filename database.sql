@@ -18,6 +18,7 @@ CREATE TABLE `user` (
 	`task_color` char(6) DEFAULT NULL,
 	`theme` varchar(64) DEFAULT NULL,
 	`avatar_filename` varchar(64) DEFAULT NULL,
+	`api_key` varchar(40) NOT NULL,
 	`created_date` datetime NOT NULL,
 	`deleted_date` datetime DEFAULT NULL,
 	PRIMARY KEY (`id`),
@@ -65,8 +66,8 @@ CREATE TABLE `issue_checklist` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`issue_id` int(10) unsigned NOT NULL,
 	`text` text NOT NULL,
-	`checked` tinyint(1) unsigned NOT NULL,
-	`created` datetime NOT NULL,
+	`checked` tinyint(1) unsigned NOT NULL DEFAULT '0',
+	`created_date` datetime NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `issue_checklist_issue_id` (`issue_id`),
 	CONSTRAINT `issue_checklist_issue_id` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`)
@@ -244,8 +245,8 @@ CREATE TABLE `wiki_page` (
 	`slug` varchar(64) NOT NULL,
 	`content` mediumtext NOT NULL,
 	`parent_id` int(10) unsigned DEFAULT NULL,
-	`created` datetime NOT NULL,
-	`deleted` datetime NOT NULL,
+	`created_date` datetime NOT NULL,
+	`deleted_date` datetime NOT NULL,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -258,6 +259,6 @@ CREATE TABLE `wiki_page_update` (
 	`new_name` varchar(64) NOT NULL,
 	`old_content` mediumtext,
 	`new_content` mediumtext NOT NULL,
-	`created` datetime NOT NULL,
+	`created_date` datetime NOT NULL,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

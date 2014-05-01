@@ -76,8 +76,7 @@ a.nolink:hover {
 }
 
 .badge.status {
-	background-color: #C6C6C6;
-	color: #fff;
+	opacity: 0.7;
 }
 .dashboard .list-group-item .badge {
 	margin-top: 3px;
@@ -212,9 +211,17 @@ textarea.form-control {
 	right: 15px;
 }
 
-/* Compact UI */
+/* Dashboard Compact UI */
 .dashboard .list-group-item {
-	padding: 7px 9px;
+	padding: 5px 10px;
+	position: relative;
+}
+.dashboard .list-group-item .priority {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 3px;
+	height: 100%;
 }
 .dashboard .list-group-item-heading {
 	margin-top: 1px;
@@ -223,7 +230,7 @@ textarea.form-control {
 .form-horizontal .control-label.label-sm {
 	padding-top: 8px;
 }
-/* */
+
 
 dl.dl-inline dt {
 	float: left;
@@ -275,4 +282,13 @@ a:focus, button:focus, input:focus, .btn:focus {
 	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 	font-size: 11px;
 	overflow-x: auto;
+}
+
+/* Textile processed styles */
+.tex table {
+	margin: 10px 0;
+}
+.tex table td {
+	padding: 2px 5px;
+	border: 1px solid #ccc;
 }

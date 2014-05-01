@@ -49,6 +49,7 @@ function _make_web_ftp_clickable_cb($m) {
 
     if (empty($d))
         return $m[0];
+
     // removed trailing [,;:] from URL
     if(in_array(substr($d,-1),array('.',',',';',':')) === true) {
         $s = substr($d,-1);
@@ -75,12 +76,65 @@ function make_clickable($s) {
     return $s;
 }
 
+function utf8mail($to, $subject, $body) {
+    $f3 = \Base::instance();
 
-class TemplateAddons {
-	public static function placehold($args) {
-		$attr = $args["@attrib"];
-		return sprintf('<img src="data:image/gif;base64,R0lGODlhAQABAID/ AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="background-color: #ccc;" width="%u" height="%u">', $attr["width"], $attr["height"]);
-	}
+    // Set content-type with UTF charset
+    $headers  = 'MIME-Version: 1.0' . "\r\n";
+    $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+
+    // Add sender and recipient information
+    $headers .= 'To: '. $to . "\r\n";
+    $headers .= 'From: '. $f3->get("mail.from") . "\r\n";
+
+    return mail($to, $subject, $body, $headers);
 }
 
-\Template::instance()->extend("placehold", "TemplateAddons::placehold");
+function createDateRangeArray($strDateFrom, $strDateTo) {
+    // takes two dates formatted as YYYY-MM-DD and creates an
+    // inclusive array of the dates between the from and to dates.
+
+    $aryRange=array();
+
+    $iDateFrom=mktime(1,0,0,substr($strDateFrom,5,2),substr($strDateFrom,8,2),substr($strDateFrom,0,4));
+    $iDateTo=mktime(1,0,0,substr($strDateTo,5,2),substr($strDateTo,8,2),substr($strDateTo,0,4));
+
+    if ($iDateTo>=$iDateFrom) {
+        array_push($aryRange,date('Y-m-d',$iDateFrom)); // first entry
+        while ($iDateFrom<$iDateTo) {
+            $iDateFrom+=86400; // add 24 hours
+            array_push($aryRange,date('Y-m-d',$iDateFrom));
+        }
+    }
+    return $aryRange;
+}
+
+/*
+ * Passes a string through the Textile parser
+ * Pass false in $ttl to disable caching
+ *
+ * @param $ttl int|bool
+ */
+function parseTextile($str, $ttl=86400) {
+    if($ttl !== false) {
+        $cache = \Cache::instance();
+        $hash = sha1($str);
+
+        // Return value if cached
+        if(($val = $cache->get("$hash.tex")) !== false) {
+            return $val;
+        }
+    }
+
+    // Value wasn't cached, run the parser
+    $tex = new \Helper\Textile\Parser();
+    $val = $tex->parse($str);
+
+    // Cache the value if $ttl was given
+    if($ttl !== false) {
+        $cache->set("$hash.tex", $val, $ttl);
+    }
+
+    // Return the parsed value
+    return $val;
+}

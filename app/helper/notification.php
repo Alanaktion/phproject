@@ -29,15 +29,7 @@ class Notification extends \Prefab {
 			$subject =  "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
 			// Send to recipients
 			foreach($recipients as $recipient) {
-
-				// To send HTML mail, the Content-type header must be set
-				$headers  = 'MIME-Version: 1.0' . "\r\n";
-				$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-
-				// Additional headers
-				$headers .= 'To: '.$recipient . "\r\n";
-				$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
-				mail($recipient, $subject, $body, $headers);
+				utf8mail($recipient, $subject, $body);
 				$log->write("Sent comment notification to: " . $recipient);
 			}
 		}
@@ -77,15 +69,7 @@ class Notification extends \Prefab {
 			$subject =  "[#" . $issue->id . "] - ".$update->user_name . " updated  " . $issue->name;
 			// Send to recipients
 			foreach($recipients as $recipient) {
-
-				// To send HTML mail, the Content-type header must be set
-				$headers  = 'MIME-Version: 1.0' . "\r\n";
-				$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-
-				// Additional headers
-				$headers .= 'To: '.$recipient . "\r\n";
-				$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
-				mail($recipient, $subject, $body, $headers);
+				utf8mail($recipient, $subject, $body);
 				$log->write("Sent update notification to: " . $recipient);
 			}
 		}
@@ -93,16 +77,12 @@ class Notification extends \Prefab {
 
 	// Send an email to watchers detailing the updated fields
 	public function issue_create($issue_id) {
-		// TODO: make this not use the update data :P
-		return false; // exit early since it won't work yet.
-
 		$f3 = \Base::instance();
-
 		if($f3->get("mail.from")) {
 			$log = new \Log("mail.log");
 
 			// Get issue and update data
-			$issue = new \Model\Issue();
+			$issue = new \Model\Issue\Detail();
 			$issue->load($issue_id);
 			$f3->set("issue", $issue);
 			// Get recipient list and remove current user
@@ -112,22 +92,14 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 
-			$body = \Template::instance()->render("notification/update.html");
+			$body = \Template::instance()->render("notification/new.html");
 
 			// Send to recipients
-			$subject =  "[#" . $issue->id . "] - ".$comment->user_name . " created " . $issue->name;
+			$subject =  "[#" . $issue->id . "] - ".$issue->owner_name . " created " . $issue->name;
 			// Send to recipients
 			foreach($recipients as $recipient) {
-
-				// To send HTML mail, the Content-type header must be set
-				$headers  = 'MIME-Version: 1.0' . "\r\n";
-				$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-
-				// Additional headers
-				$headers .= 'To: '.$recipient . "\r\n";
-				$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
-				mail($recipient, $subject, $body, $headers);
-				$log->write("Sent update notification to: " . $recipient);
+				utf8mail($recipient, $subject, $body);
+				$log->write("Sent create notification to: " . $recipient);
 			}
 		}
 	}

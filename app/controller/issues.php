@@ -4,9 +4,13 @@ namespace Controller;
 
 class Issues extends Base {
 
-	public function index($f3, $params) {
-		$this->_requireLogin();
+	protected $_userId;
 
+	public function __construct() {
+		$this->_userId = $this->_requireLogin();
+	}
+
+	public function index($f3, $params) {
 		$issues = new \Model\Issue\Detail();
 
 		// Filter issue listing by URL parameters
@@ -78,8 +82,6 @@ class Issues extends Base {
 	}
 
 	public function add($f3, $params) {
-		$this->_requireLogin();
-
 		if($f3->get("PARAMS.type")) {
 			$type_id = $f3->get("PARAMS.type");
 		} else {
@@ -109,6 +111,9 @@ class Issues extends Base {
 		$priority = new \Model\Issue\Priority();
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
+		$sprint = new \Model\Sprint();
+		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
+
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
@@ -121,8 +126,6 @@ class Issues extends Base {
 	}
 
 	public function add_selecttype($f3, $params) {
-		$this->_requireLogin();
-
 		$type = new \Model\Issue\Type();
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
@@ -132,8 +135,6 @@ class Issues extends Base {
 	}
 
 	public function edit($f3, $params) {
-		$this->_requireLogin();
-
 		$issue = new \Model\Issue();
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -151,6 +152,9 @@ class Issues extends Base {
 		$priority = new \Model\Issue\Priority();
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
+		$sprint = new \Model\Sprint();
+		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
+
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
@@ -167,8 +171,6 @@ class Issues extends Base {
 	}
 
 	public function close($f3, $params){
-		$this->_requireLogin();
-
 		$issue = new \Model\Issue();
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -187,8 +189,6 @@ class Issues extends Base {
 	}
 
 	public function save($f3, $params) {
-		$user_id = $this->_requireLogin();
-
 		$post = array_map("trim", $f3->get("POST"));
 
 		$issue = new \Model\Issue();
@@ -229,8 +229,8 @@ class Issues extends Base {
 						}
 					}
 				}
-				// Save issue
-				$notify = $f3->get("user.role") == "admin" && empty($post["notify"]);
+				// Save issue, send notifications (unless admin opts out)
+				$notify =  empty($post["notify"]) ? false : true;
 				$issue->save($notify);
 
 				$f3->reroute("/issues/" . $issue->id);
@@ -265,8 +265,8 @@ class Issues extends Base {
 				$issue->parent_id = $post["parent_id"];
 			}
 
-			// Save issue
-			$notify = $f3->get("user.role") == "admin" && empty($post["notify"]);
+			// Save issue, send notifications (unless admin opts out)
+			$notify =  empty($post["notify"]) ? false : true;
 			$issue->save($notify);
 
 			if($issue->id) {
@@ -281,8 +281,6 @@ class Issues extends Base {
 	}
 
 	public function single($f3, $params) {
-		$user_id = $this->_requireLogin();
-
 		$issue = new \Model\Issue\Detail();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
@@ -300,7 +298,7 @@ class Issues extends Base {
 			switch($post["action"]) {
 				case "comment":
 					$comment = new \Model\Issue\Comment();
-					$comment->user_id = $user_id;
+					$comment->user_id = $this->_userId;
 					$comment->issue_id = $issue->id;
 					$comment->text = $post["text"];
 					$comment->created_date = now();
@@ -313,7 +311,7 @@ class Issues extends Base {
 						print_json(
 							array(
 								"id" => $comment->id,
-								"text" => make_clickable($comment->text),
+								"text" => parseTextile($comment->text),
 								"date_formatted" => date("D, M j, Y \\a\\t g:ia"),
 								"user_name" => $f3->get('user.name'),
 								"user_username" => $f3->get('user.username'),
@@ -367,7 +365,7 @@ class Issues extends Base {
 		}
 
 		$watching = new \Model\Issue\Watcher();
-		$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $user_id));
+		$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $this->_userId));
 		$f3->set("watching", !!$watching->id);
 
 		$f3->set("issue", $issue);
@@ -383,6 +381,9 @@ class Issues extends Base {
 		$priority = new \Model\Issue\Priority();
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
+		$sprint = new \Model\Sprint();
+		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
+
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
@@ -395,8 +396,6 @@ class Issues extends Base {
 	}
 
 	public function single_history($f3, $params) {
-		$user_id = $this->_requireLogin();
-
 		// Build updates array
 		$updates_array = array();
 		$update_model = new \Model\Custom("issue_update_user");
@@ -417,7 +416,6 @@ class Issues extends Base {
 	}
 
 	public function single_related($f3, $params) {
-		$user_id = $this->_requireLogin();
 		$issue = new \Model\Issue();
 		$issue->load($params["id"]);
 
@@ -443,7 +441,6 @@ class Issues extends Base {
 	}
 
 	public function single_watchers($f3, $params) {
-		$user_id = $this->_requireLogin();
 		$watchers = new \Model\Custom("issue_watcher_user");
 		$f3->set("watchers", $watchers->find(array("issue_id = ?", $params["id"])));
 		$users = new \Model\User();
@@ -456,8 +453,6 @@ class Issues extends Base {
 	}
 
 	public function single_delete($f3, $params) {
-		$this->_requireLogin();
-
 		$issue = new \Model\Issue();
 		$issue->load($params["id"]);
 		if($f3->get("POST.id")) {
@@ -491,7 +486,7 @@ class Issues extends Base {
 	}
 
 	public function upload($f3, $params) {
-		$user_id = $this->_requireLogin();
+		$user_id = $this->_userId;
 
 		$issue = new \Model\Issue();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("POST.issue_id")));
@@ -547,4 +542,25 @@ class Issues extends Base {
 		$f3->reroute("/issues/" . $issue->id);
 	}
 
+	// Quick add button for adding tasks to projects
+	// TODO: Update code to work with frontend outside of taskboard
+	public function quickadd($f3, $params) {
+		$post = $f3->get("POST");
+
+		$issue = new \Model\Issue();
+		$issue->name = $post["title"];
+		$issue->description = $post["description"];
+		$issue->author_id = $this->_userId;
+		$issue->owner_id = $post["assigned"];
+		$issue->created_date = now();
+		$issue->hours_total = $post["hours"];
+		if(!empty($post["dueDate"])) {
+			$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
+		}
+		$issue->priority = $post["priority"];
+		$issue->parent_id = $post["storyId"];
+		$issue->save();
+
+		print_json($issue->cast() + array("taskId" => $issue->id));
+	}
 }
