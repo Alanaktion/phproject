@@ -9,7 +9,6 @@ $f3->mset(array(
 	"UI" => "app/view/",
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
-	"CACHE" => true,
 	"AUTOLOAD" => "app/",
 	"PACKAGE" => "Phproject",
 	"microtime" => microtime(true)
