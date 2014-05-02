@@ -44,6 +44,16 @@ class Issue extends Base {
 
 			$updated = 0;
 
+			// Set hours_total to the hours_remaining value if it's 0 or null
+			if($this->get("hours_remaining") && !$this->get("hours_total")) {
+				$this->set("hours_total", $this->get("hours_remaining"));
+			}
+
+			// Set hours remaining to 0 if the issue has been closed
+			if($this->get("closed_date") && $this->get("hours_remaining")) {
+				$this->set("hours_remaining", 0);
+			}
+
 			// Log updated fields
 			foreach ($this->fields as $key=>$field) {
 				if ($field["changed"] && $field["value"] != $this->get_prev($key)) {
@@ -55,16 +65,6 @@ class Issue extends Base {
 					$update_field->save();
 					$updated ++;
 				}
-			}
-
-			// Set hours_total to the hours_remaining value if it's 0 or null
-			if($this->get("hours_remaining") && !$this->get("hours_total")) {
-				$this->set("hours_total", $this->get("hours_remaining"));
-			}
-
-			// Set hours remaining to 0 if the issue has been closed
-			if($this->get("closed_date") && $this->get("hours_remaining")) {
-				$this->set("hours_remaining", 0);
 			}
 
 			if($updated) {
