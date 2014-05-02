@@ -174,7 +174,7 @@ class Taskboard extends Base {
 		$today = $today . " 23:59:59";
 
 		//Check to see  if the sprint is completed
-		if ($today < $sprint->end_date){
+		if ($today < strtotime($sprint->end_date . ' + 1 day')){
 			$burnComplete = 0;
 			$burnDates = createDateRangeArray($sprint->start_date, $today);
 			$remainingDays = createDateRangeArray($today, $sprint->end_date);
@@ -207,7 +207,7 @@ class Taskboard extends Base {
 			}
 
 			//Get between day values and cache them... this also will get the last day of completed sprints so they will be cached
-			else if($i < $burnDatesCount || $burnComplete ){
+			else if($i < ($burnDatesCount - 1) || $burnComplete ){
 				$burnDays[$date] = $db->exec("
 					SELECT IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value) AS remaining
 					FROM issue_update_field f
