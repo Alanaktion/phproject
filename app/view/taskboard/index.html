@@ -47,7 +47,19 @@
 			}
 		}
 		</style>
+
+	<!--[if lte IE 9]>
+		/*  FIX RGBA ISSUES */
+   		<style type="text/css">
+			#taskboard .card{
+				color:#000000;
+				background-color:#ffffff;
+			}
+   		</style>
+	<![endif]-->
+
 	</check>
+
 </head>
 <body>
 	<include href="blocks/navbar.html" />
@@ -95,7 +107,7 @@
 					<repeat group="{{ @row.columns }}" key="{{ @status_id }}" value="{{ @col }}">
 						<td class="column column-{{ @status_id + 1 }} {{ @statuses[@status_id]['closed'] ? 'completed' : '' }} droppable" data-status="{{ @status_id }}">
 							<repeat group="{{ @col }}" value="{{ @task }}">
-								<div data-departement="" class="card task" id="task_{{ @task.id }}" data-id="{{ @task.id }}" style="border-color:#{{ @task.owner_task_color }};">
+								<div data-departement="" class="card task well" id="task_{{ @task.id }}" data-id="{{ @task.id }}" style="border-color:#{{ @task.owner_task_color }};">
 									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
 										<span class="task-id"><a href="/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
