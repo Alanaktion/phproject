@@ -62,9 +62,28 @@ class User extends Base {
 		echo \Template::instance()->render("user/dashboard.html");
 	}
 
+	private function _loadThemes() {
+		$f3 = \Base::instance();
+
+		// Get theme list
+		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3");
+		$themes = array();
+		foreach (glob("css/*.css") as $file) {
+			$name = pathinfo($file, PATHINFO_FILENAME);
+			if(!in_array($name, $hidden_themes)) {
+				$themes[] = $name;
+			}
+		}
+
+		$f3->set("themes", $themes);
+	}
+
 	public function account($f3, $params) {
 		$f3->set("title", "My Account");
 		$f3->set("menuitem", "user");
+
+		$this->_loadThemes();
+
 		echo \Template::instance()->render("user/account.html");
 	}
 
@@ -111,6 +130,12 @@ class User extends Base {
 				$error = "Please enter a valid 6-hexit color code.";
 			}
 
+			if(empty($post["theme"])) {
+				$user->theme = null;
+			} else {
+				$user->theme = $post["theme"];
+			}
+
 			if(empty($error)) {
 				$f3->set("success", "Profile updated successfully.");
 			} else {
@@ -122,6 +147,11 @@ class User extends Base {
 		$user->save();
 		$f3->set("title", "My Account");
 		$f3->set("menuitem", "user");
+
+		// Use new user values for page
+		$user->loadCurrent();
+		$this->_loadThemes();
+
 		echo \Template::instance()->render("user/account.html");
 	}
 

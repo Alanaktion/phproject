@@ -28,6 +28,17 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label for="npass" class="col-sm-2 control-label label-sm">Theme</label>
+							<div class="col-sm-4 col-md-2 col-lg-2">
+								<select name="theme" class="form-control">
+									<option value="">[ Default ]</option>
+									<repeat group="{{ @themes }}" value="{{ @item }}">
+										<option value="/css/{{ @item }}.css" {{ (@user.theme == '/css/'.@item.'.css') ? 'selected' : '' }}>{{ str_replace(array("bootstrap-", ".min"), "", @item) }}</option>
+									</repeat>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
 							<label for="npass" class="col-sm-2 control-label label-sm">Task Color</label>
 							<div class="col-sm-4 col-md-2 col-lg-2">
 								<input class="form-control input-sm" id="color" name="task_color" type="color" value="#{{ @user.task_color }}" maxlength="7">
