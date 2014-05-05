@@ -1,0 +1,7 @@
+<div class="alert alert-danger">
+	<p class="lead"><strong><?php echo $f3->get("ERROR.code"); ?></strong> <?php echo $f3->get("ERROR.status"); ?></p>
+	<p><?php echo $f3->get("ERROR.text"); ?></p>
+	<?php if($f3->get("DEBUG") >= 2) { ?>
+		<p><?php echo $f3->get("ERROR.trace.0.file"); ?>:<b><?php echo $f3->get("ERROR.trace.0.line"); ?></b></p>
+	<?php } ?>
+</div>
