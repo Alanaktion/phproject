@@ -95,7 +95,7 @@ class Notification extends \Prefab {
 			$body = \Template::instance()->render("notification/new.html");
 
 			// Send to recipients
-			$subject =  "[#" . $issue->id . "] - ".$issue->owner_name . " created " . $issue->name;
+			$subject =  "[#" . $issue->id . "] - ".$issue->author_name . " created " . $issue->name;
 			// Send to recipients
 			foreach($recipients as $recipient) {
 				utf8mail($recipient, $subject, $body);

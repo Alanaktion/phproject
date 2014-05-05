@@ -22,10 +22,8 @@
 		<img src="{{ @SCHEME }}://{{ @HOST }}/avatar/48/{{ @issue.author_id }}.png" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left">
 			{{ nl2br(@issue.description) }}
-
-
 		</div>
-		<div style="clear:both"</div><br />
+		<div style="clear:both"></div><br />
 		<div style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}</small></div>
 	</div>
 </body>
