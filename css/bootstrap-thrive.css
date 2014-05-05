@@ -5130,3 +5130,8 @@ a{transition:color .25s;}
 .navbar-form .btn-sm {
 	margin-top: 5px;
 }
+
+body #taskboard .card{
+	color:#000000;
+	background-color:#ffffff;
+}
