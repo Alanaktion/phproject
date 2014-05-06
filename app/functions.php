@@ -109,13 +109,12 @@ function createDateRangeArray($strDateFrom, $strDateTo) {
     return $aryRange;
 }
 
-/*
- * Passes a string through the Textile parser
- * Pass false in $ttl to disable caching
+/* Passes a string through the Textile parser
+ * Also converts issue IDs and usernames to links
  *
  * @param $ttl int|bool
  */
-function parseTextile($str, $ttl=86400) {
+function parseTextile($str, $ttl=false) {
     if($ttl !== false) {
         $cache = \Cache::instance();
         $hash = sha1($str);
@@ -129,6 +128,12 @@ function parseTextile($str, $ttl=86400) {
     // Value wasn't cached, run the parser
     $tex = new \Helper\Textile\Parser();
     $val = $tex->parse($str);
+
+    // Find issue IDs and convert to links
+    $val = preg_replace("/#([0-9]+)/", "<a href=\"/issues/$1\">#$1</a>", $val);
+
+    // Find usernames and replace with links
+    $val = preg_replace("/@([a-z0-9_-]+)/i", "<a href=\"/user/$1\">@$1</a>", $val);
 
     // Cache the value if $ttl was given
     if($ttl !== false) {
