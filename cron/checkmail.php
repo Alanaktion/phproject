@@ -90,8 +90,12 @@ require_once "base.php";
 
 
 				// add other recipients as watchers
-				$watchers = array_merge($header->to, $header->cc);
-				var_dump($watchers);
+				if(!empty( $header->cc)) {
+					$watchers = array_merge($header->to, $header->cc);
+				} else {
+					$watchers =$header->to;
+				}
+
 				foreach($watchers as $more_people) {
 					$watcher_email = $more_people->mailbox . "@" . $more_people->host;
 					$watcher = new \Model\User();
