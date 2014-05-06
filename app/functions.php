@@ -130,7 +130,7 @@ function parseTextile($str, $ttl=false) {
     $val = $tex->parse($str);
 
     // Find issue IDs and convert to links
-    $val = preg_replace("/#([0-9]+)/", "<a href=\"/issues/$1\">#$1</a>", $val);
+    $val = preg_replace("/(?<!&)#([0-9]+)/", "<a href=\"/issues/$1\">#$1</a>", $val);
 
     // Find usernames and replace with links
     $val = preg_replace("/@([a-z0-9_-]+)/i", "<a href=\"/user/$1\">@$1</a>", $val);
