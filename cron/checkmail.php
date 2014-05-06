@@ -21,7 +21,14 @@ require_once "base.php";
 			// get information specific to this email
 
 			$header = imap_headerinfo($inbox, $email_number);
-			$message = imap_fetchbody($inbox,$email_number,2);
+			$message = quoted_printable_decode(imap_fetchbody($inbox,$email_number,2,FT_INTERNAL));
+			$message = str_replace(array("<br>","<br />"), "\r\n", $message);
+
+			$truncate = $f3->get("mail.truncate_lines");
+			foreach ($truncate as $truncator) {
+				$parts = explode($truncator, $message);
+				$message = $parts[0];
+			}
 
 			// is the sender a user?
 			$from = $header->from[0]->mailbox . "@" . $header->from[0]->host ;
@@ -88,28 +95,30 @@ require_once "base.php";
 					}
 				}
 
-
 				// add other recipients as watchers
-				if(!empty( $header->cc)) {
-					$watchers = array_merge($header->to, $header->cc);
-				} else {
-					$watchers =$header->to;
-				}
+				if(!empty($header->cc) || count($header->to) > 1) {
 
-				foreach($watchers as $more_people) {
-					$watcher_email = $more_people->mailbox . "@" . $more_people->host;
-					$watcher = new \Model\User();
-					$watcher->load(array('email=? AND (deleted_date IS NULL OR deleted_date != ?)', $watcher_email, '0000-00-00 00:00:00'));
-
-					if(!empty($watcher->id)){
-						$watching = new \Model\Issue\Watcher();
-						// Loads just in case the user is already a watcher
-						$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $watcher->id));
-						$watching->issue_id = $issue->id;
-						$watching->user_id =  $watcher->id;
-						$watching->save();
+					if(!empty( $header->cc)) {
+						$watchers = array_merge($header->to, $header->cc);
+					} else {
+						$watchers =$header->to;
 					}
 
+					foreach($watchers as $more_people) {
+						$watcher_email = $more_people->mailbox . "@" . $more_people->host;
+						$watcher = new \Model\User();
+						$watcher->load(array('email=? AND (deleted_date IS NULL OR deleted_date != ?)', $watcher_email, '0000-00-00 00:00:00'));
+
+						if(!empty($watcher->id)){
+							$watching = new \Model\Issue\Watcher();
+							// Loads just in case the user is already a watcher
+							$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $watcher->id));
+							$watching->issue_id = $issue->id;
+							$watching->user_id =  $watcher->id;
+							$watching->save();
+						}
+
+					}
 				}
 
 			}
