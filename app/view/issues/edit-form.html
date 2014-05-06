@@ -17,6 +17,18 @@
 			<textarea class="form-control input-sm" name="description" rows="7">{{ empty(@issue) ? "" : @issue.description }}</textarea>
 		</div>
 	</div>
+	<check if="{{ !empty(@issue) }}">
+		<div class="form-group">
+			<label class="col-md-2 control-label label-sm">Type</label>
+			<div class="col-md-10">
+				<select class="form-control input-sm" name="type_id">
+					<repeat group="{{ @issue_types }}" value="{{ @item }}">
+						<option value="{{ @item.id }}" {{ @issue.type_id == @item.id ? "selected" : "" }}>{{ @item.name }}</option>
+					</repeat>
+				</select>
+			</div>
+		</div>
+	</check>
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">Priority</label>
 		<div class="col-md-10">
