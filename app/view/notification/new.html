@@ -14,16 +14,19 @@
 	</style>
 </head>
 <body>
-	<div style="padding: 0 10px;">
-		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME }}://{{ @HOST }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
-	</div>
+<span style="display:none">--- ---</span>
+
 	<div style="padding: 10px;">
 		<p style="margin: 0 0 10px;"><strong><a href="{{ @SCHEME }}://{{ @HOST }}/issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> created by <a href="{{ @SCHEME }}://{{ @HOST }}/users/{{ @issue.author_username }}">{{ @issue.author_name }}</a>:</strong></p>
 		<img src="{{ @SCHEME }}://{{ @HOST }}/avatar/48/{{ @issue.author_id }}.png" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left">
 			{{ nl2br(@issue.description) }}
 		</div>
-		<div style="clear:both"></div><br />
+		<div style="clear:both"></div>
+
+	</div>
+	<div style="padding: 0 10px;">
+		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME }}://{{ @HOST }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
 		<div style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}</small></div>
 	</div>
 </body>

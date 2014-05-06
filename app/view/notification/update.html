@@ -14,9 +14,8 @@
 	</style>
 </head>
 <body>
-	<div style="padding: 0 10px;">
-		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME }}://{{ @HOST }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
-	</div>
+<span style="display:none">--- ---</span>
+
 	<div style="padding: 10px;">
 		<p style="margin: 0 0 10px;"><strong><a href="{{ @SCHEME }}://{{ @HOST }}/issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> updated by <a href="{{ @SCHEME }}://{{ @HOST }}/users/{{ @update.user_username }}">{{ @update.user_name }}</a>:</strong></p>
 		<img src="{{ @SCHEME }}://{{ @HOST }}/avatar/48/{{ @update.user_id }}.png" alt="" style="float: left; margin-right: 10px;">
@@ -41,8 +40,12 @@
 					</check>
 				</repeat>
 			</ul>
-			<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</small></span>
+
 		</div>
+	</div>
+	<div style="padding: 0 10px;">
+		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME }}://{{ @HOST }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
+		<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</small></span>
 	</div>
 </body>
 </html>
