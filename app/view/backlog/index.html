@@ -22,9 +22,11 @@
 						<ul class="list-group sortable" data-list-id="0">
 							<repeat group="{{ @backlog }}" value="{{ @project }}">
 								<li class="list-group-item" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
-									<span class="title">{{ @project.name }}</span>
-									<a href="/issues/{{ @project.id }}" class="badge" target="_blank">#{{ @project.id }}</a>
-									<span class="badge status">{{ @project.status_name }}</span>
+									<span class="title">
+										<a href="/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
+										{{ @project.name }}
+									</span>
+									<span class="badge">{{ @project.status_name }}</span>
 								</li>
 							</repeat>
 						</ul>
@@ -46,9 +48,11 @@
 							<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
 								<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
 									<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
-										<span class="title">{{ @project.name }}</span>
-										<a href="/issues/{{ @project.id }}" class="badge" target="_blank">#{{ @project.id }}</a>
-										<span class="badge status">{{ @project.status_name }}</span>
+										<span class="title">
+											<a href="/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
+											{{ @project.name }}
+										</span>
+										<span class="badge">{{ @project.status_name }}</span>
 									</li>
 								</repeat>
 							</ul>
