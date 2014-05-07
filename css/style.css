@@ -28,6 +28,9 @@ body.login {
 .navbar-nav > li > a > .glyphicon {
 	line-height: inherit;
 }
+.navbar-form.navbar-right {
+	margin-right: 15px;
+}
 /*.navbar-form .input-group {
 	max-width: 206px;
 }
