@@ -11,7 +11,17 @@
 			<div class="col-md-6">
 				 <div class="panel panel-default">
 					<div class="panel-heading has-buttons">
-						Backlog
+						Backlog&ensp;
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
+								<span class="glyphicon glyphicon-filter"></span> Filter Projects <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="/backlog/all">All Projects</a></li>
+								<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="/backlog/groups">My Groups</a></li>
+								<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="/backlog/me">My Projects</a></li>
+							</ul>
+						</div>
 						<div class="pull-right">
 							<a href="/issues/new/{{ @issue_type.project }}" class="btn btn-default btn-xs">
 								<span class="glyphicon glyphicon-plus"></span> Add Project
