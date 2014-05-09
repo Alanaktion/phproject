@@ -54,6 +54,52 @@ class Issue extends Base {
 				$this->set("hours_remaining", 0);
 			}
 
+			// Create a new task if repeating
+			if($this->get("closed_date") && $this->get("repeat_cycle") != "none") {
+
+				$repeat_issue = new \Model\Issue();
+				$repeat_issue->name = $this->get("name");
+				$repeat_issue->type_id = $this->get("type_id");
+				$repeat_issue->sprint_id = $this->get("sprint_id");
+				$repeat_issue->author_id = $this->get("author_id");
+				$repeat_issue->owner_id = $this->get("owner_id");
+				$repeat_issue->description = $this->get("description");
+				$repeat_issue->repeat_cycle = $this->get("repeat_cycle");
+				$repeat_issue->created_date = now();
+
+				//Find a due date in the future
+				if($repeat_issue->repeat_cycle == 'daily') {
+					$repeat_issue->due_date = date("Y-m-d", strtotime("tomorrow"));
+
+				} else if($repeat_issue->repeat_cycle == 'weekly') {
+					$dow = date("l", strtotime($this->get("due_date")));
+					$repeat_issue->due_date = date("Y-m-d", strtotime("Next {$dow}"));
+
+				} else if($repeat_issue->repeat_cycle == 'monthly') {
+					$day = date("d", strtotime($this->get("due_date")));
+					$month = date("m");
+					$year = date("Y");
+					$repeat_issue->due_date = date("Y-m-d", mktime(0,0,0, $month +1, $day, $year));
+
+				} else if($repeat_issue->repeat_cycle == 'sprint') {
+					$sprint = new \Model\Sprint();
+					$sprint->load(array("start_date > NOW()"), array('order'=>'start_date'));
+					$repeat_issue->due_date =  $sprint->end_date;
+				}
+
+				// IF THE PROJECT WAS IN A SPRINT BEFORE, PUT IT IN A SPRINT AGAIN
+				if($this->get("sprint_id")) {
+					$sprint = new \Model\Sprint();
+					$sprint->load(array("end_date < $repeat_issue->due_date"), array('order'=>'start_date'));
+					$repeat_issue->sprint_id = $sprint->id;
+				}
+
+				$repeat_issue->save();
+				$notification = \Helper\Notification::instance();
+				$notification->issue_create($repeat_issue->id);
+				$this->set("repeat_cycle", "none");
+			}
+
 			// Log updated fields
 			foreach ($this->fields as $key=>$field) {
 				if ($field["changed"] && $field["value"] != $this->get_prev($key)) {

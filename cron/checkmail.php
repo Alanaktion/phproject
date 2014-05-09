@@ -18,7 +18,7 @@ require_once "base.php";
 		$reg_email = "/([_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3}))/i";
 		foreach($emails as $email_number) {
 
-			// get information specific to this email
+			// get the to and from and strip stuff from the body
 
 			$header = imap_headerinfo($inbox, $email_number);
 			$message = quoted_printable_decode(imap_fetchbody($inbox,$email_number,2,FT_INTERNAL));

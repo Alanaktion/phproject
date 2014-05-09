@@ -1,5 +1,9 @@
 <?php //USED TO GENERATE REPEATABLE TASKS AND PUT THEM INTO SPRINTS IF APPLICABLE
 
+/*
+// DEPRECATED 5/9/2014  Remove after review
+
+
 require_once "base.php";
 
 //RECURSIVE FUNCTION TO MOVE A TASK AND ALL CHILDREN
@@ -77,4 +81,4 @@ while ( !$issue->dry() ) {
 	$issue->next();
 }
 
-
+*/
