@@ -11,6 +11,31 @@ class Backlog extends Base {
 	}
 
 	public function index($f3, $params) {
+
+		if(empty($params["filter"])) {
+			$params["filter"] = "all";
+		}
+
+		// Get list of all users in the user's groups
+		if($params["filter"] == "groups") {
+			$group_model = new \Model\User\Group();
+			$groups_result = $group_model->find(array("user_id = ?", $this->_userId));
+			$filter_users = array($this->_userId);
+			foreach($groups_result as $g) {
+				$filter_users[] = $g["group_id"];
+			}
+			$groups = implode(",", $filter_users);
+			$users_result = $group_model->find("group_id IN ({$groups})");
+			foreach($users_result as $u) {
+				$filter_users[] = $u["user_id"];
+			}
+		} elseif($params["filter"] == "me") {
+			$filter_users = array($this->_userId);
+		}
+
+		$filter_string = empty($filter_users) ? "" : "AND owner_id IN (" . implode(",", $filter_users) . ")";
+		$f3->set("filter", $params["filter"]);
+
 		$sprint_model = new \Model\Sprint();
 		$sprints = $sprint_model->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC"));
 
@@ -18,7 +43,7 @@ class Backlog extends Base {
 
 		$sprint_details = array();
 		foreach($sprints as $sprint) {
-			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND type_id = ?", $sprint->id, $f3->get("issue_type.project")));
+			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND type_id = ? $filter_string", $sprint->id, $f3->get("issue_type.project")));
 			$sprint_details[] = $sprint->cast() + array("projects" => $projects);
 		}
 
@@ -29,7 +54,7 @@ class Backlog extends Base {
 		}
 		if(!empty($large_project_ids)) {
 			$large_project_ids = implode(",", $large_project_ids);
-			$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids})", $f3->get("issue_type.project")));
+			$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids}) $filter_string", $f3->get("issue_type.project")));
 		} else {
 			$unset_projects = array();
 		}

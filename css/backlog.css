@@ -2,19 +2,19 @@
 	min-height: 80px;
 	margin: 0;
 }
-#backlog li {
+#backlog li.list-group-item {
 	-moz-box-sizing: content-box;
 	box-sizing: content-box;
 	cursor: move;
 	position: relative;
 	padding: 6px 6px 6px 14px;
 }
-#backlog li:hover {
+#backlog li.list-group-item:hover {
 	background-image: url(/img/backlog/i_has_grip.png);
 	background-position: 2px center;
 	background-repeat: no-repeat;
 }
-#backlog li.completed {
+#backlog li.list-group-item.completed {
 	text-decoration: line-through;
 }
 #backlog .spinner {

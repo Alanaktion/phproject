@@ -7,59 +7,27 @@
 		<style type="text/css">
 		/* Ensure optimal column widths */
 		#taskboard table {
-			min-width: {{ 252 * (count(@taskboard[0].columns) + 1) }}px;
+			min-width: {{ 320 * count(@taskboard[0].columns) + 252 }}px;
+			width: auto;
 		}
 
-		/* Make large screens more useful */
-		@media screen and (min-width: {{ 350 * (count(@taskboard[0].columns) + 1) }}px) {
-			#taskboard, #taskboard .card {
-				font-size: 14px;
-			}
-			#taskboard .column:not(.column-1) {
-				width: 350px;
-			}
-			#taskboard .card.story .top {
-				height: 20px;
-				padding: 0;
-			}
-			#taskboard .card.story .owner {
-				width: 135px;
-			}
-			#taskboard .card.task {
-				width: 160px;
-				height: 120px;
-			}
-			#taskboard .card .top {
-				height: 20px;
-			}
-			#taskboard .card .title {
-				top: -4px;
-				height: 78px;
-			}
-			#taskboard .card .owner {
-				height: 18px;
-			}
-			#taskboard .card .hours,
-			#taskboard .card .priority {
-				padding: 0px 7px;
-				line-height: 18px;
-				font-size: 16px;
+		/* Show 3 columns when possible */
+		@media screen and (min-width: {{ 490 * count(@taskboard[0].columns) + 252 }}px) {
+			#taskboard table .column:not(.column-1) {
+				width: 490px;
 			}
 		}
 		</style>
-
+	</check>
 	<!--[if lte IE 9]>
-		/*  FIX RGBA ISSUES */
    		<style type="text/css">
-			#taskboard .card{
-				color:#000000;
-				background-color:#ffffff;
+   			/*  Fix RGBA issues */
+			#taskboard .card {
+				color: #000000;
+				background-color: #ffffff;
 			}
    		</style>
 	<![endif]-->
-
-	</check>
-
 </head>
 <body>
 	<include href="blocks/navbar.html" />
@@ -78,7 +46,7 @@
 						</ul>
 					</div>
 					<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
-					  	<span class="glyphicon glyphicon-fire"></span> Burndown Chart
+					  	<span class="glyphicon glyphicon-fire"></span> Burndown
 					</button>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">

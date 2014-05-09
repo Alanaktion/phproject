@@ -4,8 +4,11 @@ namespace Controller;
 
 class Taskboard extends Base {
 
+	public function __construct() {
+		$this->_userId = $this->_requireLogin();
+	}
+
 	public function index($f3, $params) {
-		$user_id = $this->_requireLogin();
 
 		if(empty($params["filter"])) {
 			$params["filter"] = "groups";
@@ -14,8 +17,8 @@ class Taskboard extends Base {
 		// Get list of all users in the user's groups
 		if($params["filter"] == "groups") {
 			$group_model = new \Model\User\Group();
-			$groups_result = $group_model->find(array("user_id = ?", $user_id));
-			$filter_users = array($user_id);
+			$groups_result = $group_model->find(array("user_id = ?", $this->_userId));
+			$filter_users = array($this->_userId);
 			foreach($groups_result as $g) {
 				$filter_users[] = $g["group_id"];
 			}
@@ -25,7 +28,7 @@ class Taskboard extends Base {
 				$filter_users[] = $u["user_id"];
 			}
 		} elseif($params["filter"] == "me") {
-			$filter_users = array($user_id);
+			$filter_users = array($this->_userId);
 		}
 
 		// Load the requested sprint
@@ -300,13 +303,12 @@ class Taskboard extends Base {
 	}
 
 	public function add($f3, $params) {
-		$user_id = $this->_requireLogin();
 		$post = $f3->get("POST");
 
 		$issue = new \Model\Issue();
 		$issue->name = $post["title"];
 		$issue->description = $post["description"];
-		$issue->author_id = $user_id;
+		$issue->author_id = $this->_userId;
 		$issue->owner_id = $post["assigned"];
 		$issue->created_date = now();
 		$issue->hours_total = $post["hours"];
