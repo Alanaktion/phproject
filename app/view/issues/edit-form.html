@@ -17,6 +17,18 @@
 			<textarea class="form-control input-sm" name="description" rows="7">{{ empty(@issue) ? "" : @issue.description }}</textarea>
 		</div>
 	</div>
+	<check if="{{ !empty(@issue) }}">
+		<div class="form-group">
+			<label class="col-md-2 control-label label-sm">Type</label>
+			<div class="col-md-10">
+				<select class="form-control input-sm" name="type_id">
+					<repeat group="{{ @issue_types }}" value="{{ @item }}">
+						<option value="{{ @item.id }}" {{ @issue.type_id == @item.id ? "selected" : "" }}>{{ @item.name }}</option>
+					</repeat>
+				</select>
+			</div>
+		</div>
+	</check>
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">Priority</label>
 		<div class="col-md-10">
@@ -96,6 +108,7 @@
 		<div class="col-md-6">
 			<select class="form-control input-sm" name="repeat_cycle">
 				<option value="none">Not Repeating</option>
+				<option value="daily" {{ !empty(@issue) && @issue.repeat_cycle == 'daily' ? "selected" : "" }}>Daily</option>
 				<option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>Weekly</option>
 				<option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>Monthly</option>
 				<option value="sprint" {{ !empty(@issue) && @issue.repeat_cycle == 'sprint' ? "selected" : "" }}>Sprint</option>

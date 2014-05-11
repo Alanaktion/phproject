@@ -28,7 +28,11 @@ body.login {
 .navbar-nav > li > a > .glyphicon {
 	line-height: inherit;
 }
-.navbar-form .input-group {
+.navbar-form.navbar-right,
+.navbar-form.navbar-right:last-child {
+	margin-right: 0px;
+}
+/*.navbar-form .input-group {
 	max-width: 206px;
 }
 .navbar-form[role="search"] .input-group {
@@ -45,7 +49,7 @@ body.login {
 	border-radius: 0 16px 16px 0;
 	padding-right: 15px;
 	box-shadow: none;
-}
+}*/
 
 footer p {
 	line-height: 20px;
