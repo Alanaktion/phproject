@@ -6,6 +6,9 @@
 <body>
 <div class="container-fluid">
 	<include href="blocks/navbar.html" />
+	<check if="{{ !empty(@GET.deleted) }}">
+		<p class="alert alert-success">Issue #{{ @GET.deleted }} successfully deleted.&ensp;<a href="/issues/undelete/{{ @GET.deleted }}">Undo</a></p>
+	</check>
 	<include href="blocks/issue-list.html" />
 	<ul class="pager">
 		<check if="{{ !empty(@prev) }}">
