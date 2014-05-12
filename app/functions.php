@@ -135,6 +135,9 @@ function parseTextile($str, $ttl=false) {
     // Find usernames and replace with links
     $val = preg_replace("/@([a-z0-9_-]+)/i", "<a href=\"/user/$1\">@$1</a>", $val);
 
+    // Convert URLs to links
+    $val = make_clickable($val);
+
     // Cache the value if $ttl was given
     if($ttl !== false) {
         $cache->set("$hash.tex", $val, $ttl);
