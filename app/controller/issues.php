@@ -455,13 +455,27 @@ class Issues extends Base {
 	public function single_delete($f3, $params) {
 		$issue = new \Model\Issue();
 		$issue->load($params["id"]);
+		$issue->delete();
+		$f3->reroute("/issues?deleted={$issue->id}");
+
+		/* Old delete with confirmation
+		$issue = new \Model\Issue();
+		$issue->load($params["id"]);
 		if($f3->get("POST.id")) {
 			$issue->delete();
 			$f3->reroute("/issues");
 		} else {
 			$f3->set("issue", $issue);
 			echo \Template::instance()->render("issues/delete.html");
-		}
+		}*/
+	}
+
+	public function single_undelete($f3, $params) {
+		$issue = new \Model\Issue();
+		$issue->load($params["id"]);
+		$issue->deleted_date = null;
+		$issue->save();
+		$f3->reroute("/issues/{$issue->id}");
 	}
 
 	public function search($f3, $params) {
