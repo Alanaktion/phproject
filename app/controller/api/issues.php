@@ -74,7 +74,7 @@ class Issues extends \Controller\Api\Base {
 	public function get($f3, $params) {
 		$issue = new \Model\Issue\Detail();
 		$result = $issue->paginate(
-			$f3->get("GET.offset") / $f3->get("GET.limit") ?: 30,
+			$f3->get("GET.offset") / ($f3->get("GET.limit") ?: 30),
 			$f3->get("GET.limit") ?: 30
 		);
 
