@@ -11,8 +11,8 @@ RewriteRule ^app/ - [R=404]
 
 # Remove trailing slash
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_URI} (.*)$
-RewriteRule ^(.+)/$ http://%{HTTP_HOST}/$1 [R,L]
+RewriteCond %{THE_REQUEST_FILENAME} \ /(.*)/(\ |$|\?)
+RewriteRule ^(.*)/$ $1 [R,L]
 
 # Route requests to framework
 RewriteCond %{REQUEST_FILENAME} !-l
