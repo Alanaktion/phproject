@@ -40,9 +40,9 @@
 							<span class="glyphicon glyphicon-filter"></span> Filter Tasks <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="/taskboard/{{ @PARAMS.id }}/all">All Tasks</a></li>
-							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="/taskboard/{{ @PARAMS.id }}/groups">My Groups</a></li>
-							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="/taskboard/{{ @PARAMS.id }}/me">My Tasks</a></li>
+							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/all">All Tasks</a></li>
+							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/groups">My Groups</a></li>
+							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/me">My Tasks</a></li>
 						</ul>
 					</div>
 					<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
@@ -62,10 +62,10 @@
 							<div class="top">
 								<i title="Add Task" class="add-task pull-right"></i>
 								<span class="owner">
-									<a href="/user/{{ @row.project.owner_username }}" target="_blank">{{ @row.project.owner_name }}</a>
+									<a href="user/{{ @row.project.owner_username }}" target="_blank">{{ @row.project.owner_name }}</a>
 								</span>
 								<span class="task-id">
-									<a href="/issues/{{ @row.project.id }}" target="_blank">{{ @row.project.id }}</a>
+									<a href="issues/{{ @row.project.id }}" target="_blank">{{ @row.project.id }}</a>
 								</span>
 								<span class="task-dueDate">{{ empty(@row.project.due_date) ? "" : date('n/j', strtotime(@row.project.due_date)) }}</span>
 							</div>
@@ -78,7 +78,7 @@
 								<div data-departement="" class="card task well" id="task_{{ @task.id }}" data-id="{{ @task.id }}" style="border-color:#{{ @task.owner_task_color }};">
 									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
-										<span class="task-id"><a href="/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
+										<span class="task-id"><a href="issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
 										<span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
 									</div>
 									<div class="title">{{ @task.name }}</div>
@@ -107,7 +107,7 @@
 										</false>
 									</check>
 									<div class="owner" data-id="{{ @task.owner_id }}">
-										<a href="/user/{{ @task.owner_username }}" target="_blank">{{ @task.owner_name }}</a>
+										<a href="user/{{ @task.owner_username }}" target="_blank">{{ @task.owner_name }}</a>
 									</div>
 								</div>
 							</repeat>
@@ -188,15 +188,15 @@
 		</div>
 	</div>
 
-	<script src="/minify/js/jquery-ui-1.10.3.min.js,jquery.ui.touch-punch.min.js"></script>
-	<script src="/minify/js/taskboard.js"></script>
-	<script src="/js/chart.js"></script>
+	<script src="minify/js/jquery-ui-1.10.3.min.js,jquery.ui.touch-punch.min.js"></script>
+	<script src="minify/js/taskboard.js"></script>
+	<script src="js/chart.js"></script>
 	<script>
 		BurndownData = {{ @burndown | raw }};
 		$(document).ready(function() {
 		    Burndown.init();
 		});
 	</script>
-	<script src="/js/burndown.js"></script>
+	<script src="js/burndown.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <!-- Desktop -->
 <div class="navbar navbar-default navbar-fixed-top hidden-xs" role="navigation">
-	<a class="navbar-brand" href="/">
+	<a class="navbar-brand" href="">
 		<span class="hidden-sm">
 			<check if="{{ empty(@site.logo) }}">
 				<true>{{ @site.name }}</true>
@@ -18,25 +18,25 @@
 			</a>
 			<ul class="dropdown-menu">
 				<check if="{{ @user.role == 'admin' }}">
-					<li><a href="/admin/sprints/new">Sprint</a></li>
+					<li><a href="admin/sprints/new">Sprint</a></li>
 					<li role="presentation" class="divider"></li>
 				</check>
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
-					<li><a href="/issues/new/{{ @type.id }}">{{ @type.name }}</a></li>
+					<li><a href="issues/new/{{ @type.id }}">{{ @type.name }}</a></li>
 				</repeat>
 				<check if="{{ !empty(@issue) && !@issue.closed_date }}">
 					<li role="presentation" class="divider"></li>
 					<check if="{{ @issue.type_id == @issue_type.project }}">
 						<true>
 							<li role="presentation" class="dropdown-header">Related</li>
-							<li><a href="/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">Task</a></li>
-							<li><a href="/issues/new/{{ @issue_type.project }}/{{ @issue.id }}">Sub-project</a></li>
+							<li><a href="issues/new/{{ @issue_type.task }}/{{ @issue.id }}">Task</a></li>
+							<li><a href="issues/new/{{ @issue_type.project }}/{{ @issue.id }}">Sub-project</a></li>
 						</true>
 						<false>
 							<li role="presentation" class="dropdown-header">Current issue</li>
-							<li><a href="/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">Child Task</a></li>
+							<li><a href="issues/new/{{ @issue_type.task }}/{{ @issue.id }}">Child Task</a></li>
 							<check if="{{ @issue.parent_id }}">
-								<li><a href="/issues/new/{{ @issue_type.task }}/{{ @issue.parent_id }}">Related Task</a></li>
+								<li><a href="issues/new/{{ @issue_type.task }}/{{ @issue.parent_id }}">Related Task</a></li>
 							</check>
 						</false>
 					</check>
@@ -48,26 +48,26 @@
 				Browse <b class="caret"></b>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="/issues/?status=open">Open</a></li>
-				<li><a href="/issues/?status=closed">Closed</a></li>
+				<li><a href="issues/?status=open">Open</a></li>
+				<li><a href="issues/?status=closed">Closed</a></li>
 				<li role="presentation" class="divider"></li>
-				<li><a href="/issues/?status=open&amp;author_id={{ @user.id }}">Created by Me</a></li>
-				<li><a href="/issues/?status=open&amp;owner_id={{ @user.id }}">Assigned to Me</a></li>
+				<li><a href="issues/?status=open&amp;author_id={{ @user.id }}">Created by Me</a></li>
+				<li><a href="issues/?status=open&amp;owner_id={{ @user.id }}">Assigned to Me</a></li>
 				<li role="presentation" class="divider"></li>
 				<set inflector="{{ \Helper\Inflector::instance() }}" />
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
-					<li><a href="/issues?type_id={{ @type.id }}&amp;status=open">{{ @inflector->pluralize(@type.name) }}</a></li>
+					<li><a href="issues?type_id={{ @type.id }}&amp;status=open">{{ @inflector->pluralize(@type.name) }}</a></li>
 				</repeat>
 			</ul>
 		</li>
 		<li class="{{ @menuitem == 'backlog' ? 'active':'' }}">
-			<a href="/backlog">Backlog</a>
+			<a href="backlog">Backlog</a>
 		</li>
 	</ul>
 	<ul class="nav navbar-nav navbar-right">
 		<check if="{{ @user.role=='admin' }}">
 			<li class="{{ @menuitem == 'admin' ? 'active':'' }}">
-				<a href="/admin">
+				<a href="admin">
 					<span class="hidden-sm">Administration</span>
 					<span class="glyphicon glyphicon-wrench visible-sm"></span>
 				</a>
@@ -79,15 +79,15 @@
 				<span class="glyphicon glyphicon-user visible-sm"></span>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="/">Dashboard</a></li>
-				<li><a href="/user/{{ @user.username }}">My Issues</a></li>
-				<li><a href="/user">My Account</a></li>
+				<li><a href="">Dashboard</a></li>
+				<li><a href="user/{{ @user.username }}">My Issues</a></li>
+				<li><a href="user">My Account</a></li>
 				<li class="divider"></li>
-				<li><a href="/logout">Log Out</a></li>
+				<li><a href="logout">Log Out</a></li>
 			</ul>
 		</li>
 	</ul>
-	<form class="navbar-form navbar-right" role="search" action="/search" method="get">
+	<form class="navbar-form navbar-right" role="search" action="search" method="get">
 		<div class="form-group">
 			<check if="{{ empty(@GET.q) }}">
 				<true>
@@ -107,25 +107,25 @@
 
 <!-- Mobile Menu -->
 <div class="navbar navbar-default navbar-fixed-top visible-xs" role="navigation">
-	<a class="navbar-brand" href="/">
+	<a class="navbar-brand" href="">
 		<span class="glyphicon glyphicon-home"></span>
 	</a>
 	<div class="pull-right">
-		<a href="/issues/new" class="btn btn-default navbar-btn">
+		<a href="issues/new" class="btn btn-default navbar-btn">
 			<span class="glyphicon glyphicon-plus"></span>
 		</a>
-		<a href="/issues" class="btn btn-default navbar-btn">
+		<a href="issues" class="btn btn-default navbar-btn">
 			<span class="glyphicon glyphicon-th-list"></span>
 		</a>
-		<a href="/backlog" class="btn btn-default navbar-btn">
+		<a href="backlog" class="btn btn-default navbar-btn">
 			<span class="glyphicon glyphicon-tasks"></span>
 		</a>
 		<check if="{{ @user.role=='admin' }}">
-			<a href="/admin" class="btn btn-default navbar-btn">
+			<a href="admin" class="btn btn-default navbar-btn">
 				<span class="glyphicon glyphicon-wrench"></span>
 			</a>
 		</check>
-		<a href="/user" class="btn btn-default navbar-btn">
+		<a href="user" class="btn btn-default navbar-btn">
 			<span class="glyphicon glyphicon-user"></span>
 		</a>
 	</div>

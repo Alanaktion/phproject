@@ -26,6 +26,8 @@ CREATE TABLE `user` (
 	UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `user` ( `id`, `username`, `email`, `name`, `password`, `salt`, `role`, `task_color`, `theme`, `avatar_filename`, `api_key`, `created_date`, `deleted_date`) VALUES (1,	 'admin', 'admin@local', 'Admin', '703983b055847560176a1e2e8508dd68d237ddfa', 'Qfv42OMfAS751Mn6hsKeTECDgyq5dVf7', 'admin', NULL, NULL, NULL, '', NOW(), NULL);
+
 DROP TABLE IF EXISTS `user_group`;
 CREATE TABLE `user_group` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,

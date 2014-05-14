@@ -23,7 +23,7 @@
 									<li class="active">{{ @crumb.name }} <small>#{{ @crumb.id }}</small></li>
 								</true>
 								<false>
-									<li><a href="/issues/{{ @crumb.id }}">{{ @crumb.name }}</a></li>
+									<li><a href="issues/{{ @crumb.id }}">{{ @crumb.name }}</a></li>
 								</false>
 							</check>
 						</repeat>
@@ -37,7 +37,7 @@
 			</check>
 			<div class="pull-right">
 				<check if="{{ !@issue.closed_date }}">
-				<a id="btn-Mark Complete" href="/issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
+				<a id="btn-Mark Complete" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
 					<span class="glyphicon glyphicon-check"></span>&ensp;Mark Complete
 				</a>
 				</check>
@@ -53,11 +53,11 @@
 						</button>
 					</false>
 				</check>
-				<a id="btn-edit" href="/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
+				<a id="btn-edit" href="issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
 					<span class="glyphicon glyphicon-pencil"></span>&ensp;Edit
 				</a>
 				<check if="{{ @user.role == 'admin' }}">
-					<a href="/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
+					<a href="issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
 						<span class="glyphicon glyphicon-remove"></span>&ensp;Delete
 					</a>
 				</check>
@@ -70,7 +70,7 @@
 				<div class="issue-head clearfix">
 					<img src="{{ h(@author->avatar(48)) }}" class="profile-picture img-rounded" alt>
 					<p class="pull-left">
-						<a href="/user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a><br>
+						<a href="user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a><br>
 						{{ date("M j, Y \\a\\t g:ia", strtotime(@issue.created_date)) }}
 					</p>
 				</div>
@@ -78,7 +78,7 @@
 				<dl class="dl-inline">
 					<check if="{{ @issue.sprint_id }}">
 						<dt>Sprint</dt>
-						<dd><a href="/taskboard/{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
+						<dd><a href="taskboard/{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
 					</check>
 
 					<dt>Type</dt>
@@ -91,7 +91,7 @@
 					<dd>{{ @issue.status_name }}</dd>
 
 					<dt>Assigned to</dt>
-					<dd><a href="/user/{{ @owner.username }}">{{ @owner.name }}</a></dd>
+					<dd><a href="user/{{ @owner.username }}">{{ @owner.name }}</a></dd>
 
 					<check if="{{ @issue.repeat_cycle != 'none' }}">
 						<dt>Repeat Cycle</dt>
@@ -126,8 +126,8 @@
 					<ul class="list-inline file-list">
 						<repeat group="{{ @files.subset }}" value="{{ @file }}">
 							<li>
-								<a href="/files/{{ @file.id }}/{{ @file.filename }}" title="{{ @file.filename }}" target="_blank">
-									<img src="/files/thumb/96/{{ @file.id }}.png" /><br />
+								<a href="files/{{ @file.id }}/{{ @file.filename }}" title="{{ @file.filename }}" target="_blank">
+									<img src="files/thumb/96/{{ @file.id }}.png" /><br />
 									{{ @file.filename }}
 								</a>
 							</li>
@@ -135,7 +135,7 @@
 					</ul>
 					<p class="clear"></p>
 				</check>
-				<form class="form-inline" method="post" enctype="multipart/form-data" action="/issues/upload">
+				<form class="form-inline" method="post" enctype="multipart/form-data" action="issues/upload">
 					<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
 					<div class="form-group">
 						<input type="file" name="attachment" size="chars">
@@ -165,17 +165,17 @@
 						<div class="comments" id="comments">
 							<repeat group="{{ @comments }}" value="{{ @comment }}">
 								<div class="media">
-									<a class="pull-left" href="/user/{{ @comment.user_username }}">
-										<img class="profile-picture media-object img-rounded" src="/avatar/48/{{ @comment.user_id }}.png" alt>
+									<a class="pull-left" href="user/{{ @comment.user_username }}">
+										<img class="profile-picture media-object img-rounded" src="avatar/48/{{ @comment.user_id }}.png" alt>
 									</a>
 									<div class="media-body">
-										<p class="media-heading"><a href="/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
+										<p class="media-heading"><a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
 										<div class="tex">{{ parseTextile(@comment.text) | raw }}</div>
 										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
 									</div>
 								</div>
 							</repeat>
-							<form action="/issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
+							<form action="issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
 								<input type="hidden" name="action" value="comment">
 								<div class="form-group">
 									<div class="col-md-12">
@@ -218,7 +218,7 @@
 	</div>
 	<include href="blocks/footer.html" />
 </div>
-<script src="/minify/js/bootstrap-datepicker.js"></script>
+<script src="minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(function() {
 
@@ -232,11 +232,11 @@ $(function() {
 				.prop('disabled', false)
 				.before(
 '<div class="media">' +
-	'<a class="pull-left" href="/user/' + data.user_username + '">' +
+	'<a class="pull-left" href="user/' + data.user_username + '">' +
 		'<img src="{{ h(@user_obj->avatar(48)) }}" class="media-object profile-picture img-rounded" alt>' +
 	'</a>' +
 	'<div class="media-body">' +
-		'<p class="media-heading"><a href="/user/' + data.user_username + '">' + data.user_name + '</a></p>' +
+		'<p class="media-heading"><a href="user/' + data.user_username + '">' + data.user_name + '</a></p>' +
 		'<p class="tex">' + data.text + '</p>' +
 		'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
 	'</div>' +

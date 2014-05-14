@@ -1,6 +1,6 @@
-<form class="form-horizontal well" role="form" action="/issues/save" method="post">
+<form class="form-horizontal well" role="form" action="issues/save" method="post">
 	<check if="{{ !empty(@issue) }}">
-		<a href="/issues/{{ @issue.id }}" class="close">&times;</a>
+		<a href="issues/{{ @issue.id }}" class="close">&times;</a>
 		<input type="hidden" name="id" value="{{ @issue.id }}">
 	</check>
 	<legend>{{ empty(@issue) ? "New" : "Edit" }} {{ @type.name }}</legend>
@@ -164,7 +164,7 @@
 			</check>
 			</div>
 			<check if="{{ !empty(@issue) }}">
-				<a href="/issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">Cancel</a>
+				<a href="issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">Cancel</a>
 				<button type="reset" class="btn btn-default btn-sm">Reset</button>
 			</check>
 			<button type="submit" class="btn btn-primary btn-sm">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
