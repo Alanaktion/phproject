@@ -18,7 +18,7 @@ CREATE TABLE `user` (
 	`task_color` char(6) DEFAULT NULL,
 	`theme` varchar(64) DEFAULT NULL,
 	`avatar_filename` varchar(64) DEFAULT NULL,
-	`api_key` varchar(40) NOT NULL,
+	`api_key` varchar(40) NULL,
 	`created_date` datetime NOT NULL,
 	`deleted_date` datetime DEFAULT NULL,
 	PRIMARY KEY (`id`),
