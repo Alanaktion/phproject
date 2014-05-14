@@ -7,13 +7,13 @@
 <div class="container-fluid">
 	<include href="blocks/navbar.html" />
 	<check if="{{ !empty(@GET.deleted) }}">
-		<p class="alert alert-success">Issue #{{ @GET.deleted }} successfully deleted.&ensp;<a href="/issues/undelete/{{ @GET.deleted }}">Undo</a></p>
+		<p class="alert alert-success">Issue #{{ @GET.deleted }} successfully deleted.&ensp;<a href="issues/undelete/{{ @GET.deleted }}">Undo</a></p>
 	</check>
 	<include href="blocks/issue-list.html" />
 	<ul class="pager">
 		<check if="{{ !empty(@prev) }}">
 			<true>
-				<li class="previous"><a href="/issues{{ @prev }}" rel="prev">&larr; Previous</a></li>
+				<li class="previous"><a href="issues{{ @prev }}" rel="prev">&larr; Previous</a></li>
 			</true>
 			<false>
 				<li class="previous disabled"><a href="javascript:void(0)">&larr; Previous</a></li>
@@ -21,7 +21,7 @@
 		</check>
 		<check if="{{ !empty(@next) }}">
 			<true>
-				<li class="next"><a href="/issues{{ @next }}" rel="next">Next &rarr;</a></li>
+				<li class="next"><a href="issues{{ @next }}" rel="next">Next &rarr;</a></li>
 			</true>
 			<false>
 				<li class="next disabled"><a href="javascript:void(0)">Next &rarr;</a></li>

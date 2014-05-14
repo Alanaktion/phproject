@@ -10,14 +10,14 @@
 		<div class="col-lg-12">
 			<div class="clearfix">
 				<ul class="nav nav-tabs pull-left">
-					<li><a href="/admin/">Overview</a></li>
-					<li><a href="/admin/users">Users</a></li>
-					<li><a href="/admin/groups">Groups</a></li>
-					<li class="active"><a href="/admin/attributes">Attributes</a></li>
-					<li><a href="/admin/sprints">Sprints</a></li>
+					<li><a href="admin/">Overview</a></li>
+					<li><a href="admin/users">Users</a></li>
+					<li><a href="admin/groups">Groups</a></li>
+					<li class="active"><a href="admin/attributes">Attributes</a></li>
+					<li><a href="admin/sprints">Sprints</a></li>
 				</ul>
 				<div class="pull-right">
-					<a href="/admin/attributes/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;New</a>
+					<a href="admin/attributes/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;New</a>
 				</div>
 			</div>
 			<table class="table table-striped">
@@ -31,11 +31,11 @@
 				</thead>
 				<tbody>
 					<repeat group="{{ @attributes }}" value="{{ @attr }}">
-						<tr onclick="self.location='/admin/attributes/{{ @attr.id }}'" style="cursor: pointer">
-							<td><a href="/admin/attributes/{{ @attr.id }}">{{ @attr.id }}</a></td>
+						<tr onclick="self.location='admin/attributes/{{ @attr.id }}'" style="cursor: pointer">
+							<td><a href="admin/attributes/{{ @attr.id }}">{{ @attr.id }}</a></td>
 							<td>{{ @attr.name }}</td>
 							<td>{{ @attr.type }}</td>
-							<td><a href="/admin/attributes/{{ @attr.id }}/delete" class="has-tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></a></td>
+							<td><a href="admin/attributes/{{ @attr.id }}/delete" class="has-tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></a></td>
 						</tr>
 					</repeat>
 				</tbody>

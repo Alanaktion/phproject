@@ -8,10 +8,10 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-sm-4 col-sm-offset-4">
-			<form action="/login" method="post" class="form-horizontal">
+			<form action="login" method="post" class="form-horizontal">
 				<input type="hidden" name="to" value="{{ empty(@to) ? '/' : @to }}">
 				<fieldset>
-					<legend class="text-center"><strong>Log In</strong>&ensp;<a href="/" class="nolink">{{ @site.name }}</a></legend>
+					<legend class="text-center"><strong>Log In</strong>&ensp;<a href="" class="nolink">{{ @site.name }}</a></legend>
 					<check if="{{ !empty(@login.error) }}">
 						<p class="alert alert-danger">{{ @login.error }}</p>
 					</check>
@@ -44,7 +44,7 @@
 					<div class="form-group">
 						<div class="col-lg-8 col-lg-offset-4">
 							<button type="submit" class="btn btn-primary">Log In</button>
-							<a href="/reset" class="btn btn-link">Reset Password</a>
+							<a href="reset" class="btn btn-link">Reset Password</a>
 						</div>
 					</div>
 				</fieldset>

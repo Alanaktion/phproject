@@ -6,7 +6,7 @@
 <body>
 <div class="container-fluid">
 	<include href="blocks/navbar.html" />
-	<form class="well" action="/wiki/edit" method="post">
+	<form class="well" action="wiki/edit" method="post">
 		<input type="hidden" name="id" value="{{ @page.id }}">
 		<check if="{{ @page.id }}">
 			<true>
@@ -47,7 +47,7 @@
 		<div class="form-group">
 			<button type="submit" class="btn btn-primary btn-sm">Save Page</button>
 			<button type="reset" class="btn btn-default btn-sm">Reset</button>
-			<a href="/wiki/view/{{ @page.slug }}" class="btn btn-default btn-sm btn-cancel">Cancel</a>
+			<a href="wiki/view/{{ @page.slug }}" class="btn btn-default btn-sm btn-cancel">Cancel</a>
 		</div>
 	</form>
 	<include href="blocks/footer.html" />

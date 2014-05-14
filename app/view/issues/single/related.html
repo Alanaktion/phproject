@@ -14,10 +14,10 @@
 		<tbody>
 			<repeat group="{{ @issues }}" value="{{ @item }}">
 				<tr data-id="{{ @item.id }}" class="{{ @item.status_closed ? 'closed' : '' }}">
-					<td><a href="/issues/{{ @item.id }}">{{ @item.id }}</a></td>
-					<td><a href="/issues/{{ @item.id }}">{{ @item.name }}</a></td>
-					<td><a href="/users/{{ @item.author_username }}">{{ @item.author_name }}</a></td>
-					<td><a href="/users/{{ @item.owner_username }}">{{ @item.owner_name }}</a></td>
+					<td><a href="issues/{{ @item.id }}">{{ @item.id }}</a></td>
+					<td><a href="issues/{{ @item.id }}">{{ @item.name }}</a></td>
+					<td><a href="users/{{ @item.author_username }}">{{ @item.author_name }}</a></td>
+					<td><a href="users/{{ @item.owner_username }}">{{ @item.owner_name }}</a></td>
 					<td title="{{ date('n/j/y h:ia', strtotime(@item.created_date)) }}">{{ date("n/j/y", strtotime(@item.created_date)) }}</td>
 					<td>{{ !empty(@item.due_date) ? date("n/j", strtotime(@item.due_date)) : "" }}</td>
 				</tr>
@@ -31,9 +31,9 @@
 </check>
 <check if="{{ !@parent.closed_date }}">
 	<check if="{{ @parent.type_id == @issue_type.project }}">
-		<a class="btn btn-default btn-sm" href="/issues/new/{{ @issue_type.project }}/{{ @parent.id }}">New Sub-Project</a>
+		<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.project }}/{{ @parent.id }}">New Sub-Project</a>
 	</check>
-	<a class="btn btn-default btn-sm" href="/issues/new/{{ @issue_type.task }}/{{ @parent.id }}">New Task</a>
-	<!-- <a class="btn btn-default btn-sm" href="/issues/quickadd{{ @issue_type.task }}/{{ @parent.id }}">Quick Add</a> -->
-	<span class="hidden-xs">&ensp;Under <a href="/issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a></span>
+	<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.task }}/{{ @parent.id }}">New Task</a>
+	<!-- <a class="btn btn-default btn-sm" href="issues/quickadd{{ @issue_type.task }}/{{ @parent.id }}">Quick Add</a> -->
+	<span class="hidden-xs">&ensp;Under <a href="issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a></span>
 </check>
