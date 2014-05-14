@@ -33,7 +33,7 @@
 								<select name="theme" class="form-control">
 									<option value="">[ Default ]</option>
 									<repeat group="{{ @themes }}" value="{{ @item }}">
-										<option value="/css/{{ @item }}.css" {{ (@user.theme == '/css/'.@item.'.css') ? 'selected' : '' }}>{{ str_replace(array("bootstrap-", ".min"), "", @item) }}</option>
+										<option value="css/{{ @item }}.css" {{ (@user.theme == 'css/'.@item.'.css') ? 'selected' : '' }}>{{ str_replace(array("bootstrap-", ".min"), "", @item) }}</option>
 									</repeat>
 								</select>
 							</div>
