@@ -22,10 +22,9 @@ class Base extends \Controller\Base {
 			$key = $_GET["key"];
 		} elseif($f3->get("HEADERS.X-Redmine-API-Key")) {
 			$key = $f3->get("HEADERS.X-Redmine-API-Key");
-		} elseif($f3->get("HEADERS.X-Phproject-API-Key")) {
-			$key = $f3->get("HEADERS.X-Phproject-API-Key");
+		} elseif($f3->get("HEADERS.X-API-Key")) {
+			$key = $f3->get("HEADERS.X-API-Key");
 		}
-		// TODO: HTTP Authentication - http://www.redmine.org/projects/redmine/wiki/Rest_api
 
 		$user->load(array("api_key", $key));
 
