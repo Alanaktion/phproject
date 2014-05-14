@@ -250,20 +250,20 @@ $(function() {
 	});
 
 	// Load history, watchers, and related issues
-	$.get('/issues/{{ @issue.id }}/history', {}, function(data) {
+	$.get('issues/{{ @issue.id }}/history', {}, function(data) {
 		$('#history').empty().append(data.html);
 		$('#tab_history').html('History&ensp;<span class="badge">' + data.total + '</span>');
 	}, 'json').error(function() {
 		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('Error loading issue history.'));
 	});
-	$.get('/issues/{{ @issue.id }}/watchers', {}, function(data) {
+	$.get('issues/{{ @issue.id }}/watchers', {}, function(data) {
 		$('#watchers').empty().append(data.html);
 		$('#tab_watchers').html('Watchers&ensp;<span class="badge">' + data.total + '</span>');
 
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
 			$li = $(this).parents('li');
-			$.post('/issues/{{ @issue.id }}', {
+			$.post('issues/{{ @issue.id }}', {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
 			});
@@ -272,7 +272,7 @@ $(function() {
 		});
 		$('#add-watcher').submit(function(e) {
 			$this = $(this);
-			$.post('/issues/{{ @issue.id }}', $this.serialize());
+			$.post('issues/{{ @issue.id }}', $this.serialize());
 
 			$select = $this.find('select');
 			$('<li />')
@@ -286,7 +286,7 @@ $(function() {
 	}, 'json').error(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('Error loading watchers.'));
 	});
-	$.get('/issues/{{ @issue.id }}/related', {}, function(data) {
+	$.get('issues/{{ @issue.id }}/related', {}, function(data) {
 		$('#related').empty().append(data.html);
 		$('#tab_related').html($('#tab_related').text() + '&ensp;<span class="badge">' + data.total + '</span>');
 	}, 'json').error(function() {
@@ -312,11 +312,11 @@ $(function() {
 });
 
 function watch_issue() {
-	$.post('/issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
+	$.post('issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="glyphicon glyphicon-eye-close"></span>&ensp;Unwatch');
 }
 function unwatch_issue() {
-	$.post('/issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
+	$.post('issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="glyphicon glyphicon-eye-open"></span>&ensp;Watch');
 }
 </script>

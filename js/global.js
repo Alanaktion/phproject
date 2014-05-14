@@ -27,7 +27,7 @@ $(document).ready(function(){
 
 	// Add double click on issue listing
 	$('.issue-list tbody tr').dblclick(function(e) {
-		self.location = '/issues/' + $(this).data('id');
+		self.location = 'issues/' + $(this).data('id');
 	});
 
 	// Submit from textarea if Ctrl+Enter is pressed
