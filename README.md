@@ -14,7 +14,7 @@ Phproject
 ### Installation
 1. Create a database on your MySQL server
 2. Import the database.sql file into your new database
-2.1 a user named "admin" with the password "admin" will be created automatically
+	1. a user named "admin" with the password "admin" will be created automatically
 3. Copy config-base.ini to config.ini
 4. Update config.ini with your database connection details
 5. Ensure the tmp/, tmp/cache/, and log/ directories exist and are writable by the web server
