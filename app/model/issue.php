@@ -67,6 +67,7 @@ class Issue extends Base {
 				$repeat_issue->repeat_cycle = $this->get("repeat_cycle");
 				$repeat_issue->created_date = now();
 
+
 				//Find a due date in the future
 				if($repeat_issue->repeat_cycle == 'daily') {
 					$repeat_issue->due_date = date("Y-m-d", strtotime("tomorrow"));
@@ -85,6 +86,9 @@ class Issue extends Base {
 					$sprint = new \Model\Sprint();
 					$sprint->load(array("start_date > NOW()"), array('order'=>'start_date'));
 					$repeat_issue->due_date =  $sprint->end_date;
+				} else {
+					//Not a valid repeat_cycle
+					$repeat_issue->repeat_cycle == 'none';
 				}
 
 				// IF THE PROJECT WAS IN A SPRINT BEFORE, PUT IT IN A SPRINT AGAIN
