@@ -108,6 +108,12 @@ CREATE TABLE `issue_file` (
 	KEY `index_created_on` (`created_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE VIEW `openproject`.`issue_file_detail` AS (
+	SELECT f.*, u.username AS user_username, u.email AS user_email, u.name AS user_name, u.task_color AS user_task_color
+	FROM issue_file f
+	JOIN `user` u ON f.user_id = u.id
+);
+
 DROP TABLE IF EXISTS `issue_priority`;
 CREATE TABLE `issue_priority` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -204,6 +210,9 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_update_user` AS (sel
 
 DROP VIEW IF EXISTS `issue_watcher_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_watcher_user` AS (select `w`.`id` AS `watcher_id`,`w`.`issue_id` AS `issue_id`,`u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`email` AS `email`,`u`.`name` AS `name`,`u`.`password` AS `password`,`u`.`role` AS `role`,`u`.`task_color` AS `task_color`,`u`.`created_date` AS `created_date`,`u`.`deleted_date` AS `deleted_date` from (`issue_watcher` `w` join `user` `u` on((`w`.`user_id` = `u`.`id`))));
+
+DROP VIEW IF EXISTS `issue_file_detail`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_file_detail` AS (select  `f`.`id` AS `id`,  `f`.`issue_id` AS `issue_id`,  `f`.`filename` AS `filename`,  `f`.`disk_filename` AS `disk_filename`,  `f`.`disk_directory` AS `disk_directory`,  `f`.`filesize` AS `filesize`,  `f`.`content_type` AS `content_type`,  `f`.`digest` AS `digest`,  `f`.`downloads` AS `downloads`,  `f`.`user_id` AS `user_id`,  `f`.`created_date` AS `created_date`,  `u`.`username` AS `user_username`,  `u`.`email` AS `user_email`,  `u`.`name` AS `user_name`,  `u`.`task_color` AS `user_task_color` from (`issue_file` `f`  join `user` `u`  on ((`f`.`user_id` = `u`.`id`))));
 
 DROP TABLE IF EXISTS `attribute`;
 CREATE TABLE `attribute` (
