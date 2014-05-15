@@ -66,11 +66,9 @@ require_once "base.php";
 					$comment->created_date = now();
 					$comment->save();
 
-					//Send notification if the ticket is not already assigned to the sender
-					if($issue->owner_id != $author){
-						$notification = \Helper\Notification::instance();
-						$notification->issue_comment($issue->id, $comment->id);
-					}
+					$notification = \Helper\Notification::instance();
+					$notification->issue_comment($issue->id, $comment->id);
+
 				} else {
 
 					if(!empty($header->subject)) {
