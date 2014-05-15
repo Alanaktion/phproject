@@ -12,7 +12,8 @@ $f3->mset(array(
 	"CACHE" => true,
 	"AUTOLOAD" => "app/",
 	"PACKAGE" => "Phproject",
-	"microtime" => microtime(true)
+	"microtime" => microtime(true),
+	"site.url" => $f3->get("SCHEME") . "://" . $f3->get("HOST") . $f3->get("BASE") . "/"
 ));
 
 // Get current Git revision

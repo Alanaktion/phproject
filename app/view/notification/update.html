@@ -17,8 +17,8 @@
 <!-- --- --- -->
 
 	<div style="padding: 10px;">
-		<p style="margin: 0 0 10px;"><strong><a href="{{ @SCHEME . '://' . @site.url  . '/' }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> updated by <a href="{{ @SCHEME . '://' . @site.url  . '/' }}user/{{ @update.user_username }}">{{ @update.user_name }}</a>:</strong></p>
-		<img src="{{ @SCHEME . '://' . @site.url  . '/' }}avatar/48/{{ @update.user_id }}.png" alt="" style="float: left; margin-right: 10px;">
+		<p style="margin: 0 0 10px;"><strong><a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> updated by <a href="{{ @site.url }}user/{{ @update.user_username }}">{{ @update.user_name }}</a>:</strong></p>
+		<img src="{{ @site.url }}avatar/48/{{ @update.user_id }}.png" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left">
 			<ul style="padding: 0;">
 				<repeat group="{{ @changes }}" value="{{ @change }}">
@@ -45,7 +45,7 @@
 		<div style="clear:both"></div>
 	</div>
 	<div style="padding: 0 10px;">
-		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME . '://' . @site.url  . '/' }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
+		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @site.url }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
 		<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@update.created_date)) }}</small></span>
 	</div>
 </body>
