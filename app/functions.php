@@ -133,7 +133,7 @@ function parseTextile($str, $ttl=false) {
     $val = preg_replace("/\b(?<!&)#([0-9]+)\b/", "<a href=\"/issues/$1\">#$1</a>", $val);
 
     // Find usernames and replace with links
-    $val = preg_replace("/\b@([a-z0-9_-]+)\b/i", "<a href=\"/user/$1\">@$1</a>", $val);
+    $val = preg_replace("/\s@([a-z0-9_-]+)\s/i", " <a href=\"/user/$1\">@$1</a> ", $val);
 
     // Convert URLs to links
     $val = make_clickable($val);
