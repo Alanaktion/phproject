@@ -5,8 +5,8 @@ $(function() {
 });
 
 var Taskboard = {
-	updateURL: '/taskboard/edit', //AJAX Update Route (id is added dynamically)
-	addURL: '/taskboard/add', //AJAX Add Route
+	updateURL: 'taskboard/edit', //AJAX Update Route (id is added dynamically)
+	addURL: 'taskboard/add', //AJAX Add Route
 	taskReceived: false, //used for checking tasks resorted within the same list or to another
 	newTaskId: 0, //keep track of new tasks in case there are a few error tasks
 	init: function() {
@@ -100,7 +100,7 @@ var Taskboard = {
 			hours = $(data).find('.hours').text().trim(),
 			date = $(data).find('.dueDate').text().trim(),
 			priority = $(data).find('.priority').data('val');
-			
+
 		Window.testData = data;
 
 		// Taskboard.changeModalPriority(priority);
@@ -163,7 +163,7 @@ var Taskboard = {
 		});
 	},
 	changeModalColor: function(userColor) {
-		$(".ui-dialog").css("border", "7px solid " + userColor);		
+		$(".ui-dialog").css("border", "7px solid " + userColor);
 	},
 	changeModalPriority: function(priority) {
 		/*if(priority == 0) {
@@ -336,7 +336,7 @@ var Taskboard = {
 		$('#task_' + taskId).append('<div class="spinner"></div>');
 	},
 	unBlock: function(taskId) {
-		setTimeout(function(){$('#task_' + taskId).find('.spinner').remove()}, 500);
+		setTimeout(function(){$('#task_' + taskId).find('.spinner').remove();}, 500);
 	},
 	newBlock: function(taskId) {
 		$('#new_task_' + taskId).append('<div class="spinner"></div>');
