@@ -93,13 +93,15 @@ var Taskboard = {
 	},
 	modalEdit: function(data) {
 		var user = $(data).find('.owner').data('id'),
-			userColor = $(data).css('border-color'),
+			userColor = $(data).css('border-left-color'),
 			taskId = $(data).attr('id').replace('task_', ''),
 			title = $(data).find('.title').text().trim(),
 			description = $(data).find('.description').text().trim(),
 			hours = $(data).find('.hours').text().trim(),
 			date = $(data).find('.dueDate').text().trim(),
 			priority = $(data).find('.priority').data('val');
+			
+		Window.testData = data;
 
 		// Taskboard.changeModalPriority(priority);
 		$("#task-dialog input#taskId").val(taskId);
@@ -161,7 +163,7 @@ var Taskboard = {
 		});
 	},
 	changeModalColor: function(userColor) {
-		$(".ui-dialog").css("border", "7px solid " + userColor);
+		$(".ui-dialog").css("border", "7px solid " + userColor);		
 	},
 	changeModalPriority: function(priority) {
 		/*if(priority == 0) {
