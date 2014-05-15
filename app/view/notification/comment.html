@@ -17,8 +17,8 @@
 <!-- --- --- -->
 
 	<div style="padding: 10px;">
-		<p style="margin: 0 0 10px;"><strong>New comment from <a href="{{ @SCHEME . '://' . @HOST . @BASE . '/' }}users/{{ @comment.user_username }}">{{ @comment.user_name }}</a> on <a href="{{ @SCHEME . '://' . @HOST . @BASE . '/' }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>:</strong></p>
-		<img src="{{ @SCHEME . '://' . @HOST . @BASE . '/' }}avatar/48/{{ @comment.user_id }}.png" alt="" style="float: left; margin-right: 10px;">
+		<p style="margin: 0 0 10px;"><strong>New comment from <a href="{{ @SCHEME . '://' . @site.url  . '/' }}users/{{ @comment.user_username }}">{{ @comment.user_name }}</a> on <a href="{{ @SCHEME . '://' . @site.url . '/' }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>:</strong></p>
+		<img src="{{ @SCHEME . '://' . @site.url . '/' }}avatar/48/{{ @comment.user_id }}.png" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left" class="tex">
 			{{ parseTextile(@comment.text) | raw }}
 
@@ -26,7 +26,7 @@
 		<div style="clear:both"></div>
 	</div>
 	<div style="padding: 0 10px;">
-		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME . '://' . @HOST . @BASE . '/' }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
+		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @SCHEME . '://' . @site.url  . '/' }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
 		<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></span>
 	</div>
 
