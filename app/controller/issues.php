@@ -354,7 +354,7 @@ class Issues extends Base {
 		$owner = new \Model\User();
 		$owner->load($issue->owner_id);
 
-		$files = new \Model\Issue\File();
+		$files = new \Model\Issue\File\Detail();
 		$f3->set("files", $files->paginate(0, 16, array("issue_id = ?", $issue->id)));
 		// TODO: add All Files link/page to issues/single view
 
