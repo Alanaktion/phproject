@@ -296,3 +296,7 @@ a:focus, button:focus, input:focus, .btn:focus {
 	padding: 2px 5px;
 	border: 1px solid #ccc;
 }
+.popover-content {
+	text-overflow:ellipsis;
+	overflow:hidden;
+}
