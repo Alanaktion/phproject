@@ -125,9 +125,9 @@
 				<check if="{{ @files.count }}">
 					<ul class="list-inline file-list">
 						<repeat group="{{ @files.subset }}" value="{{ @file }}">
-							<li>
+							<li class="has-popover" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p> {{ @file.filename }} <br/> {{ date('M j, Y', strtotime(@file.created_date)) }}">
 								<a href="files/{{ @file.id }}/{{ @file.filename }}" title="{{ @file.filename }}" target="_blank">
-									<img src="files/thumb/96/{{ @file.id }}.png" /><br />
+									<img class src="files/thumb/96/{{ @file.id }}.png" /><br />
 									{{ @file.filename }}
 								</a>
 							</li>
