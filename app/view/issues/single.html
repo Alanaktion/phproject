@@ -186,6 +186,9 @@
 									<div class="media-body">
 										<p class="media-heading"><a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
 										<div class="tex">{{ parseTextile(@comment.text) | raw }}</div>
+										<check if="{{@comment.file_id}}">
+											<div><a href="files/{{ @comment.file_id }}/{{ @comment.file_filename }}">{{@comment.file_filename}}</a></div>
+										</check>
 										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
 									</div>
 								</div>
