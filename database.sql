@@ -3,9 +3,6 @@ SET foreign_key_checks = 0;
 SET time_zone = '-07:00';
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-CREATE DATABASE `phproject` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `phproject`;
-
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -109,7 +106,7 @@ CREATE TABLE `issue_file` (
 	KEY `index_created_on` (`created_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE VIEW `openproject`.`issue_file_detail` AS (
+CREATE VIEW `issue_file_detail` AS (
 	SELECT f.*, u.username AS user_username, u.email AS user_email, u.name AS user_name, u.task_color AS user_task_color
 	FROM issue_file f
 	JOIN `user` u ON f.user_id = u.id
