@@ -546,12 +546,26 @@ class Issues extends Base {
 				$newfile->digest = md5_file($file['tmp_name']);
 				$newfile->created_date = now();
 				$newfile->save();
+				$f3->set('file_id', $newfile->id);
 
 				return true; // moves file from php tmp dir to upload dir
 			},
 			$overwrite,
 			$slug
 		);
+
+		if($f3->get("POST.text")) {
+			$comment = new \Model\Issue\Comment();
+			$comment->user_id = $this->_userId;
+			$comment->issue_id = $issue->id;
+			$comment->text = $f3->get("POST.text");
+			$comment->created_date = now();
+			$comment->file_id = $f3->get('file_id');
+			$comment->save();
+
+			$notification = \Helper\Notification::instance();
+			$notification->issue_comment($issue->id, $comment->id);
+		}
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
