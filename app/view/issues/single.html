@@ -139,28 +139,26 @@
 					<a class="btn btn-default btn-sm" data-toggle="modal" href="#" data-target="#upload">Upload</a>
 				</p>
 				<form class="modal fade in" id="upload" method="post" enctype="multipart/form-data" action="issues/upload">
-				  <div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				        <h4 class="modal-title">Upload A File</h4>
-				      </div>
-				      <div class="modal-body">
-							<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
-							<div class="form-group">
-								<input type="file" name="attachment" size="chars">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h4 class="modal-title">Upload A File</h4>
 							</div>
-						<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="Write a comment…"></textarea>
-				      </div>
-				      <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				        <button type="submit" class="btn btn-primary">
-							Upload
-						</button>
-				      </div>
-				    </div><!-- /.modal-content -->
-				  </div><!-- /.modal-dialog -->
-				</form><!-- /.modal -->
+							<div class="modal-body">
+								<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
+								<div class="form-group">
+									<input type="file" name="attachment" size="chars">
+								</div>
+								<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								<button type="submit" class="btn btn-primary">Upload</button>
+							</div>
+						</div>
+					</div>
+				</form>
 				<br>
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#comments" data-toggle="tab">Comments&ensp;<span class="badge">{{ count(@comments) }}</span></a></li>
@@ -187,7 +185,7 @@
 										<p class="media-heading"><a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
 										<div class="tex">{{ parseTextile(@comment.text) | raw }}</div>
 										<check if="{{@comment.file_id}}">
-											<div><a href="files/{{ @comment.file_id }}/{{ @comment.file_filename }}">{{@comment.file_filename}}</a></div>
+											<div><i>Attached file:</i> <a href="files/{{ @comment.file_id }}/{{ @comment.file_filename }}">{{@comment.file_filename}}</a></div>
 										</check>
 										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
 									</div>
