@@ -12,9 +12,9 @@ class Notification extends \Prefab {
 			$log = new \Log("mail.log");
 
 			// Get issue and comment data
-			$issue = new \Model\Issue();
+			$issue = new \Model\Issue;
 			$issue->load($issue_id);
-			$comment = new \Model\Custom("issue_comment_user");
+			$comment = new \Model\Issue\Comment\Detail;
 			$comment->load($comment_id);
 
 			// Get recipient list and remove current user
