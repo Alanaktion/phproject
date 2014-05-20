@@ -17,7 +17,7 @@
 <!-- --- --- -->
 
 	<div style="padding: 10px;">
-		<p style="margin: 0 0 10px;"><strong><a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> created by <a href="{{ @SCHEME . '://' .@site.url  . '/' }}user/{{ @issue.author_username }}">{{ @issue.author_name }}</a>:</strong></p>
+		<p style="margin: 0 0 10px;"><strong><a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> created by <a href="{{ @site.url  . '/' }}user/{{ @issue.author_username }}">{{ @issue.author_name }}</a>:</strong></p>
 		<img src="{{ @site.url }}avatar/48/{{ @issue.author_id }}.png" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left">
 			{{ nl2br(@issue.description) }}

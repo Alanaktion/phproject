@@ -17,8 +17,8 @@
 <span style="font-size:0px;"> --- --- </span>
 
 	<div style="padding: 10px;">
-		<p style="margin: 0 0 10px;"><strong>New comment from <a href="{{ @site.url }}user/{{ @comment.user_username }}">{{ @comment.user_name }}</a> on <a href="{{ @SCHEME . '://' . @site.url . '/' }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>:</strong></p>
-		<img src="{{ @SCHEME . '://' . @site.url . '/' }}avatar/48/{{ @comment.user_id }}.png" alt="" style="float: left; margin-right: 10px;">
+		<p style="margin: 0 0 10px;"><strong>New comment from <a href="{{ @site.url }}user/{{ @comment.user_username }}">{{ @comment.user_name }}</a> on <a href="{{ @site.url . '/' }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>:</strong></p>
+		<img src="{{  @site.url . '/' }}avatar/48/{{ @comment.user_id }}.png" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left" class="tex">
 			{{ parseTextile(@comment.text) | raw }}
 
