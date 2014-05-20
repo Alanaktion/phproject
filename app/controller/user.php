@@ -11,7 +11,7 @@ class User extends Base {
 	}
 
 	public function index($f3, $params) {
-		$f3->reroute("/user/account");
+		$f3->reroute("/user");
 	}
 
 	public function dashboard($f3, $params) {
@@ -172,7 +172,7 @@ class User extends Base {
 		if(!is_dir($f3->get("UPLOADS"))) {
 			mkdir($f3->get("UPLOADS"), 0777, true);
 		}
-		$overwrite = false;
+		$overwrite = true;
 		$slug = true;
 
 		//Make a good name
@@ -201,7 +201,7 @@ class User extends Base {
 		$cache->clear($f3->hash("GET /avatar/128/{$user->id}.png") . ".url");
 
 
-		$f3->reroute("/user/account");
+		$f3->reroute("/user");
 	}
 
 
