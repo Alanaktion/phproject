@@ -149,12 +149,12 @@
 							<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
 							<div class="form-group">
 								<input type="file" name="attachment" size="chars">
-							</div>			
+							</div>
 						<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="Write a comment…"></textarea>
 				      </div>
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				        <button type="submit" class="btn btn-primary">								
+				        <button type="submit" class="btn btn-primary">
 							Upload
 						</button>
 				      </div>
@@ -312,7 +312,7 @@ $(function() {
 	$("#btn-edit, #form-edit .close, #form-edit .btn-cancel").click(function(e) {
 		$("#form-edit").slideToggle("fast");
 		e.preventDefault();
-	})
+	});
 	if(!Modernizr.inputtypes.date) {
 		var nowTemp = new Date();
 		var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
