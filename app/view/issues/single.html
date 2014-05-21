@@ -9,7 +9,7 @@
 
 	<div id="form-edit" style="display: none;">
 		<include href="issues/edit-form.html" />
-		<hr />
+		<hr>
 	</div>
 
 	<div id="alert" class="alert alert-success alert-popup alert-popup-center clearfix" style="display: none;">
@@ -204,7 +204,7 @@
 									</div>
 								</div>
 							</repeat>
-							<form action="issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
+							<form action="issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal" autocomplete="off">
 								<input type="hidden" name="action" value="comment">
 								<div class="form-group">
 									<div class="col-md-12">
