@@ -355,8 +355,7 @@ class Issues extends Base {
 		$owner->load($issue->owner_id);
 
 		$files = new \Model\Issue\File\Detail();
-		$f3->set("files", $files->paginate(0, 16, array("issue_id = ?", $issue->id)));
-		// TODO: add All Files link/page to issues/single view
+		$f3->set("files", $files->find(array("issue_id = ? AND deleted_date IS NULL", $issue->id)));
 
 		if($issue->sprint_id) {
 			$sprint = new \Model\Sprint();
@@ -476,6 +475,21 @@ class Issues extends Base {
 		$issue->deleted_date = null;
 		$issue->save();
 		$f3->reroute("/issues/{$issue->id}");
+	}
+
+	public function file_delete($f3, $params) {
+		$file = new \Model\Issue\File();
+		$file->load($f3->get("POST.id"));
+		$file->delete();
+		print_json($file->cast());
+	}
+
+	public function file_undelete($f3, $params) {
+		$file = new \Model\Issue\File();
+		$file->load($f3->get("POST.id"));
+		$file->deleted_date = null;
+		$file->save();
+		print_json($file->cast());
 	}
 
 	public function search($f3, $params) {
