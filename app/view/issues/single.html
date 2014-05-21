@@ -183,7 +183,7 @@
 					<div class="tab-pane active" id="comments">
 						<div class="comments" id="comments">
 							<repeat group="{{ @comments }}" value="{{ @comment }}">
-								<div class="media">
+								<div class="media" id="c-{{ @comment.id }}">
 									<a class="pull-left" href="user/{{ @comment.user_username }}">
 										<img class="profile-picture media-object img-rounded" src="avatar/48/{{ @comment.user_id }}.png" alt>
 									</a>
