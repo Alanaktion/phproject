@@ -130,7 +130,7 @@
 				<check if="{{ !empty(@files) }}">
 					<ul class="list-inline file-list">
 						<repeat group="{{ @files }}" value="{{ @file }}">
-							<li class="has-popover" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p> {{ @file.filename }} <br/> {{ format_filesize(@file.filesize) }} &middot; {{ date('M j, Y h:ia', strtotime(@file.created_date)) }}">
+							<li class="has-popover" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y at g:ia', strtotime(@file.created_date)) }}<br>{{ format_filesize(@file.filesize) }}">
 								<a href="files/{{ @file.id }}/{{ @file.filename }}" target="_blank">
 									<img class src="files/thumb/96/{{ @file.id }}.png" /><br />
 									{{ @file.filename }}
