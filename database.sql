@@ -57,7 +57,8 @@ CREATE TABLE `issue` (
 	`sprint_id` int(10) unsigned DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `sprint_id` (`sprint_id`),
-	KEY `repeat_cycle` (`repeat_cycle`)
+	KEY `repeat_cycle` (`repeat_cycle`),
+	KEY `due_date` (`due_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_checklist`;
