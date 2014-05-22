@@ -47,6 +47,14 @@ class Update extends \Prefab {
 				$issue->load($new_val);
 				$new_val = $issue->name." - ". date('n/j', strtotime($issue->start_date))."-".date('n/j', strtotime($issue->end_date));
 				break;
+			case "type_id":
+				$name = "Type";
+				$type = new \Model\Issue\Type;
+				$type->load($old_val);
+				$old_val = $type->name;
+				$type->load($new_val);
+				$new_val = $type->name;
+				break;
 		}
 
 		// Generate human readable field name if not already specified
