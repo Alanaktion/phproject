@@ -9,7 +9,12 @@
 
 	<div id="form-edit" style="display: none;">
 		<include href="issues/edit-form.html" />
-		<hr />
+		<hr>
+	</div>
+
+	<div id="alert" class="alert alert-success alert-popup alert-popup-center clearfix" style="display: none;">
+		<span></span>
+		<button type="button" class="close">&times;</button>
 	</div>
 
 	<div class="row">
@@ -122,14 +127,15 @@
 
 			<div class="col-lg-7">
 				<h4>Files</h4>
-				<check if="{{ @files.count }}">
+				<check if="{{ !empty(@files) }}">
 					<ul class="list-inline file-list">
-						<repeat group="{{ @files.subset }}" value="{{ @file }}">
-							<li class="has-popover" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p> {{ @file.filename }} <br/> {{ format_filesize(@file.filesize) }} &middot; {{ date('M j, Y', strtotime(@file.created_date)) }}">
+						<repeat group="{{ @files }}" value="{{ @file }}">
+							<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y \a\t g:ia', strtotime(@file.created_date)) }}<br>{{ format_filesize(@file.filesize) }}">
 								<a href="files/{{ @file.id }}/{{ @file.filename }}" target="_blank">
 									<img class src="files/thumb/96/{{ @file.id }}.png" /><br />
 									{{ @file.filename }}
 								</a>
+								<button class="btn btn-xs btn-danger delete" title="Delete File">&times;</button>
 							</li>
 						</repeat>
 					</ul>
@@ -176,26 +182,11 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="comments">
 						<div class="comments" id="comments">
-							<repeat group="{{ @comments }}" value="{{ @comment }}">
-								<div class="media">
-									<a class="pull-left" href="user/{{ @comment.user_username }}">
-										<img class="profile-picture media-object img-rounded" src="avatar/48/{{ @comment.user_id }}.png" alt>
-									</a>
-									<div class="media-body">
-										<p class="media-heading"><a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
-										<div class="tex">{{ parseTextile(@comment.text) | raw }}</div>
-										<check if="{{@comment.file_id}}">
-											<div><i>Attached file:</i> <a href="files/{{ @comment.file_id }}/{{ @comment.file_filename }}">{{@comment.file_filename}}</a></div>
-										</check>
-										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
-									</div>
-								</div>
-							</repeat>
 							<form action="issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
 								<input type="hidden" name="action" value="comment">
 								<div class="form-group">
 									<div class="col-md-12">
-										<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
+										<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;" autocomplete="off"></textarea>
 									</div>
 								</div>
 								<div class="form-group">
@@ -204,6 +195,28 @@
 									</div>
 								</div>
 							</form>
+							<repeat group="{{ @comments }}" value="{{ @comment }}">
+								<div class="media" id="c-{{ @comment.id }}">
+									<a class="pull-left" href="user/{{ @comment.user_username }}">
+										<img class="profile-picture media-object img-rounded" src="avatar/48/{{ @comment.user_id }}.png" alt>
+									</a>
+									<div class="media-body">
+										<p class="media-heading"><a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
+										<div class="tex">{{ parseTextile(@comment.text) | raw }}</div>
+										<check if="{{ @comment.file_id }}">
+											<check if="{{ @comment.file_deleted_date }}">
+												<true>
+													<div><b>Attached file:</b> <span style="text-decoration: line-through;">{{@comment.file_filename}}</span></div>
+												</true>
+												<false>
+													<div><b>Attached file:</b> <a href="files/{{ @comment.file_id }}/{{ @comment.file_filename }}">{{@comment.file_filename}}</a></div>
+												</false>
+											</check>
+										</check>
+										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", strtotime(@comment.created_date)) }}</small></p>
+									</div>
+								</div>
+							</repeat>
 						</div>
 					</div>
 					<div class="tab-pane" id="history">
@@ -246,7 +259,7 @@ $(function() {
 			// Append the new comment to the list
 			$('#comment_form')
 				.prop('disabled', false)
-				.before(
+				.after(
 '<div class="media">' +
 	'<a class="pull-left" href="user/' + data.user_username + '">' +
 		'<img src="{{ h(@user_obj->avatar(48)) }}" class="media-object profile-picture img-rounded" alt>' +
@@ -325,7 +338,30 @@ $(function() {
 		});
 	}
 
+	// Handle file deletion
+	$(".file-list").on("click", ".delete", function(e) {
+		var $li = $(this).parents("li");
+		$li.fadeTo(100, 0.5).popover("hide");
+		$.post("issues/file/delete", {id: $li.data("id")}, function(data) {
+			$("#alert span").html('File deleted. <a href="javascript:void(0);" onclick="restoreFile(' + data.id + ')">Undo</a>');
+			$("#alert").show();
+			$("li[data-id='" + data.id + "']").remove();
+		}, "json");
+	});
+
+	// Handle alert hide
+	$("#alert .close").click(function(e) {
+		$("#alert span").empty();
+		$("#alert").hide();
+	});
+
 });
+
+function restoreFile(file_id) {
+	$.post("issues/file/undelete", {id: file_id}, function(data) {
+		window.location = window.location;
+	});
+}
 
 function watch_issue() {
 	$.post('issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
