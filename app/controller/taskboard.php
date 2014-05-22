@@ -40,7 +40,7 @@ class Taskboard extends Base {
 		}
 
 		$f3->set("sprint", $sprint);
-		$f3->set("title", $sprint->name);
+		$f3->set("title", $sprint->name . " " . date('n/j', strtotime($sprint->start_date)) . "-" . date('n/j', strtotime($sprint->end_date)));
 		$f3->set("menuitem", "backlog");
 
 		// Load issue statuses
