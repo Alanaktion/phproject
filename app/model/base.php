@@ -23,7 +23,7 @@ abstract class Base extends \DB\SQL\Mapper {
 
 	// Set object created date if possible
 	function save() {
-		if(array_key_exists("created_date", $this->fields) && !$this->query) {
+		if(array_key_exists("created_date", $this->fields) && !$this->query && !$this->get("created_date")) {
 			$this->set("created_date", now());
 		}
 		return parent::save();
