@@ -21,8 +21,9 @@ protected function user_array(\Model\User $user){
 	 	
 	 	$group = new \Model\Custom("user_group");
 	 	$man = $group->find(array("group_id = ? AND manager = 1", $user->id));
+	 	$man = array_filter($man);
 
-	 	if($man[0]->user_id > 0)
+	 	if(!empty($man) && $man[0]->user_id > 0)
 	 	{//echo $man[0]->manager;
 	 		$group_id = $man[0]->user_id;
 	 	}
