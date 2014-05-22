@@ -53,14 +53,32 @@ if($user->id) {
  		}
 }
 
+public function single_email($f3, $params) {
+
+ $user = new \Model\User();
+$user->load(array("email = ? AND deleted_date IS NULL", $params["email"]));
+if($user->id) {
+ 			print_json(array("User" => $this->user_array($user)));
+ 		} else {
+ 			$f3->error(404);
+ 		}
+}
+
 
 //Gets a List of uers
 public function get($f3, $params){
 
+	$pagLimit = $f3->get("GET.limit") ?: 30;
+	if($pagLimit == -1)
+	{
+		$pagLimit = 100000;
+	}
+
+
 	$user = new \Model\User;
 	$result = $user->paginate(
-			$f3->get("GET.offset") / ($f3->get("GET.limit") ?: 30),
-			$f3->get("GET.limit") ?: 30,
+			$f3->get("GET.offset") / $pagLimit,
+			$pagLimit,
 			"deleted_date IS NULL AND role != 'group'"
 		);
 
@@ -84,10 +102,18 @@ public function get($f3, $params){
 //Gets a list of Uers
 public function get_group($f3, $params){
 
+	$pagLimit = $f3->get("GET.limit") ?: 30;
+	
+	if($pagLimit == -1)
+	{
+
+		$pagLimit = 100000;
+	}
+
 	$user = new \Model\User;
 	$result = $user->paginate(
-			$f3->get("GET.offset") / ($f3->get("GET.limit") ?: 30),
-			$f3->get("GET.limit") ?: 30,
+			$f3->get("GET.offset") / $pagLimit,
+			$pagLimit,
 			"deleted_date IS NULL AND role = 'group'"
 		);
 
