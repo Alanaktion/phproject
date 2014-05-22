@@ -130,7 +130,7 @@
 				<check if="{{ !empty(@files) }}">
 					<ul class="list-inline file-list">
 						<repeat group="{{ @files }}" value="{{ @file }}">
-							<li class="has-popover" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p> {{ @file.filename }} <br/> {{ format_filesize(@file.filesize) }} &middot; {{ date('M j, Y', strtotime(@file.created_date)) }}">
+							<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y \a\t g:ia', strtotime(@file.created_date)) }}<br>{{ format_filesize(@file.filesize) }}">
 								<a href="files/{{ @file.id }}/{{ @file.filename }}" target="_blank">
 									<img class src="files/thumb/96/{{ @file.id }}.png" /><br />
 									{{ @file.filename }}
@@ -182,8 +182,21 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="comments">
 						<div class="comments" id="comments">
+							<form action="issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
+								<input type="hidden" name="action" value="comment">
+								<div class="form-group">
+									<div class="col-md-12">
+										<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;" autocomplete="off"></textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-md-12 text-right">
+										<button type="submit" class="btn btn-primary btn-sm">Save Comment</button>
+									</div>
+								</div>
+							</form>
 							<repeat group="{{ @comments }}" value="{{ @comment }}">
-								<div class="media">
+								<div class="media" id="c-{{ @comment.id }}">
 									<a class="pull-left" href="user/{{ @comment.user_username }}">
 										<img class="profile-picture media-object img-rounded" src="avatar/48/{{ @comment.user_id }}.png" alt>
 									</a>
@@ -204,19 +217,6 @@
 									</div>
 								</div>
 							</repeat>
-							<form action="issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal" autocomplete="off">
-								<input type="hidden" name="action" value="comment">
-								<div class="form-group">
-									<div class="col-md-12">
-										<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-md-12 text-right">
-										<button type="submit" class="btn btn-primary btn-sm">Save Comment</button>
-									</div>
-								</div>
-							</form>
 						</div>
 					</div>
 					<div class="tab-pane" id="history">
@@ -259,7 +259,7 @@ $(function() {
 			// Append the new comment to the list
 			$('#comment_form')
 				.prop('disabled', false)
-				.before(
+				.after(
 '<div class="media">' +
 	'<a class="pull-left" href="user/' + data.user_username + '">' +
 		'<img src="{{ h(@user_obj->avatar(48)) }}" class="media-object profile-picture img-rounded" alt>' +
@@ -270,7 +270,7 @@ $(function() {
 		'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
 	'</div>' +
 '</div>');
-			$('#comment_textarea').val('');
+			$('#comment_textarea').val('').html('');
 		}, 'json');
 
 		$this.prop('disabled', true);

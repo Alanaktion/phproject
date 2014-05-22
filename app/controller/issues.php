@@ -28,9 +28,9 @@ class Issues extends Base {
 			if($i == "name") {
 				$filter_str .= "`$i` LIKE '%" . addslashes($val) . "%' AND ";
 			} elseif($i == "status" && $val == "open") {
-				$filter_str .= "closed_date IS NULL AND ";
+				$filter_str .= "status_closed = 0 AND ";
 			} elseif($i == "status" && $val == "closed") {
-				$filter_str .= "closed_date IS NOT NULL AND ";
+				$filter_str .= "status_closed = 1 AND ";
 			} else {
 				$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
 			}
@@ -388,7 +388,7 @@ class Issues extends Base {
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$comments = new \Model\Issue\Comment\Detail;
-		$f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
+		$f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC")));
 
 		echo \Template::instance()->render("issues/single.html");
 
