@@ -73,6 +73,12 @@ public function get($f3, $params){
 	{
 		$pagLimit = 100000;
 	}
+	else if ($pagLimit < 0)
+	{
+		$pagLimit = 30;
+
+	}
+
 
 
 	$user = new \Model\User;
@@ -109,6 +115,12 @@ public function get_group($f3, $params){
 
 		$pagLimit = 100000;
 	}
+	else if ($pagLimit < 0)
+	{
+		$pagLimit = 30;
+
+	}
+
 
 	$user = new \Model\User;
 	$result = $user->paginate(
