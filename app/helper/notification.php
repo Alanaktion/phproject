@@ -131,8 +131,6 @@ class Notification extends \Prefab {
 		if($result && $result[0]["role"] == 'group') {
 			$group_users = $db->exec("SELECT g.user_email FROM user_group_user g  WHERE g.group_id = :id", array("id" => $result[0]["id"]));
 			foreach($group_users as $group_user) {
-
-				$log->write($group_user["user_email"]);
 				if(!empty( $group_user["user_email"])) {
 					$recipients[] = $group_user["user_email"];
 				}
