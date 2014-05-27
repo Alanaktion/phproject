@@ -47,7 +47,7 @@ $user = new \Model\User();
 $user->load($params["username"]);
 //;echo $user->username;
 if($user->id) {
- 			print_json(array("User" => $this->user_array($user)));
+ 			print_json($this->user_array($user));
  		} else {
  			$f3->error(404);
  		}
@@ -58,7 +58,7 @@ public function single_email($f3, $params) {
  $user = new \Model\User();
 $user->load(array("email = ? AND deleted_date IS NULL", $params["email"]));
 if($user->id) {
- 			print_json(array("User" => $this->user_array($user)));
+ 			print_json($this->user_array($user));
  		} else {
  			$f3->error(404);
  		}

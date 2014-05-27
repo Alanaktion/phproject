@@ -93,11 +93,13 @@ class Issues extends \Controller\Api\Base {
 
 	// Create a new issue
 	public function post($f3, $params) {
-		if($_POST) {
+		if($_REQUEST) {
 			// By default, use standard HTTP POST fields
-			$post = $_POST;
+			$post = $_REQUEST;
+			//$logger->write($_POST);
 		} else {
 
+			
 			// For Redmine compatibility, also accept a JSON object
 			try {
 				$post = json_decode(file_get_contents('php://input'), true);
@@ -139,9 +141,10 @@ class Issues extends \Controller\Api\Base {
 			$post["status"] = 1;
 		}
 
+
 		// Verify the required "name" field is passed
 		if(empty($post["name"])) {
-			$this->_error("The 'name' field is required.");
+			$this->_error("The 'name' value is required.");
 		}
 
 		// Verify given values are valid (types, statueses, priorities)
@@ -176,7 +179,8 @@ class Issues extends \Controller\Api\Base {
 
 		// Create a new issue based on the data
 		$issue = new \Model\Issue();
-		$issue->author_id = $this->_userId;
+
+		$issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $this->_userId;
 		$issue->name = trim($post["name"]);
 		$issue->type_id = empty($post["type_id"]) ? 1 : $post["type_id"];
 		$issue->priority_id = empty($post["priority_id"]) ? 0 : $post["priority_id"];
@@ -186,7 +190,7 @@ class Issues extends \Controller\Api\Base {
 		if(!empty($post["parent_id"])) {
 			$issue->parent_id = $post["parent_id"];
 		}
-		if(!empty($post["assigned_to_id"])) {
+		if(!empty($post["owner_id"])) {
 			$issue->owner_id = $post["owner_id"];
 		}
 
