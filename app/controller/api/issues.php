@@ -93,11 +93,13 @@ class Issues extends \Controller\Api\Base {
 
 	// Create a new issue
 	public function post($f3, $params) {
-		if($_POST) {
+		if($_REQUEST) {
 			// By default, use standard HTTP POST fields
-			$post = $_POST;
+			$post = $_REQUEST;
+			//$logger->write($_POST);
 		} else {
 
+			
 			// For Redmine compatibility, also accept a JSON object
 			try {
 				$post = json_decode(file_get_contents('php://input'), true);
@@ -139,9 +141,10 @@ class Issues extends \Controller\Api\Base {
 			$post["status"] = 1;
 		}
 
+
 		// Verify the required "name" field is passed
 		if(empty($post["name"])) {
-			$this->_error("The 'name' field is required.");
+			$this->_error("The 'name' value is required.");
 		}
 
 		// Verify given values are valid (types, statueses, priorities)
