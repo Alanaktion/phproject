@@ -190,7 +190,7 @@ class Issues extends \Controller\Api\Base {
 		if(!empty($post["parent_id"])) {
 			$issue->parent_id = $post["parent_id"];
 		}
-		if(!empty($post["assigned_to_id"])) {
+		if(!empty($post["owner_id"])) {
 			$issue->owner_id = $post["owner_id"];
 		}
 
