@@ -26,8 +26,7 @@ class User extends Base {
 		$owner_ids = implode(",", $owner_ids);
 
 		$order = "priority DESC, has_due_date ASC, due_date ASC";
-		$f3->set("projects", $projects->paginate(
-			0, 50,
+		$f3->set("projects", $projects->find(
 			array(
 				"owner_id IN ($owner_ids) and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.project"),
@@ -37,8 +36,7 @@ class User extends Base {
 		));
 
 		$bugs = new \Model\Issue\Detail();
-		$f3->set("bugs", $bugs->paginate(
-			0, 50,
+		$f3->set("bugs", $bugs->find(
 			array(
 				"owner_id IN ($owner_ids) and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.bug"),
@@ -48,8 +46,7 @@ class User extends Base {
 		));
 
 		$tasks = new \Model\Issue\Detail();
-		$f3->set("tasks", $tasks->paginate(
-			0, 100,
+		$f3->set("tasks", $tasks->find(
 			array(
 				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.task"),

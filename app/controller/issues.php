@@ -284,7 +284,7 @@ class Issues extends Base {
 		$issue = new \Model\Issue\Detail();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
-				if(!$issue->id) {
+		if(!$issue->id) {
 			$f3->error(404);
 			return;
 		}

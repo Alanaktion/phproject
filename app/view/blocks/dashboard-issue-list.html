@@ -1,0 +1,22 @@
+<div class="list-group">
+	<repeat group="{{ @issues }}" value="{{ @item }}">
+		<a class="list-group-item" href="issues/{{ @item.id }}">
+			<span class="badge status">{{ @item.status_name }}</span>
+			<check if="{{ @item.owner_id != @user.id }}">
+				<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="Assigned Group">{{ @item.owner_name }}</p>
+			</check>
+			<p class="list-group-item-heading">
+				#{{ @item.id }} - {{ @item.name }}
+				<check if="{{ @item.priority != 0 }}">
+					<span class="label-{{ @item.priority < 0 ? 'default' : 'danger' }} priority" style="width: {{ 3 * abs(@item.priority) }}px;"></span>
+				</check>
+			</p>
+			<check if="{{ strtotime(@item.due_date) }}">
+				<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
+			</check>
+			<check if="{{ @item.sprint_id }}">
+				<p class="list-group-item-text text-muted"><span class="has-tooltip" title="Sprint #{{ @item.sprint_id }}" data-placement="right">{{ @item.sprint_name }}</span></p>
+			</check>
+		</a>
+	</repeat>
+</div>
