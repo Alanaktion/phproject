@@ -421,12 +421,14 @@ class Issues extends Base {
 		if($issue->id) {
 			$issues = new \Model\Issue\Detail();
 			if($f3->get("issue_type.project") == $issue->type_id) {
-				$f3->set("issues", $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id)));
+				$found_issues = $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id));
+				$f3->set("issues", $found_issues);
 				$f3->set("parent", $issue);
 			} else {
 				//This may be causing a memory leak.
 				if($issue->parent_id > 0) {
-					$f3->set("issues", $issues->find(array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
+					$found_issues = $issues->find(array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id));
+					$f3->set("issues", $found_issues);
 				} else {
 					$f3->set("issues", array());
 				}
