@@ -75,7 +75,7 @@ class Issue extends Base {
 						break;
 					case 'weekly':
 						$dow = date("l", strtotime($this->get("due_date")));
-						$repeat_issue->due_date = date("Y-m-d", strtotime("Next {$dow}"));
+						$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 week" ));
 						break;
 					case 'monthly':
 						$day = date("d", strtotime($this->get("due_date")));
@@ -95,7 +95,7 @@ class Issue extends Base {
 				// IF THE PROJECT WAS IN A SPRINT BEFORE, PUT IT IN A SPRINT AGAIN
 				if($this->get("sprint_id")) {
 					$sprint = new \Model\Sprint();
-					$sprint->load(array("end_date < $repeat_issue->due_date"), array('order'=>'start_date'));
+					$sprint->load(array(" id > ? AND end_date > ? AND start_date < ?", $this->get("sprint_id"), $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
 					$repeat_issue->sprint_id = $sprint->id;
 				}
 
