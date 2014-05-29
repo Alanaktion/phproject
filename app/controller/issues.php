@@ -424,10 +424,17 @@ class Issues extends Base {
 				$f3->set("issues", $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id)));
 				$f3->set("parent", $issue);
 			} else {
-				$f3->set("issues", $issues->find(array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
+				//This may be causing a memory leak.
+				if($issue->parent_id > 0) {
+					$f3->set("issues", $issues->find(array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
+				} else {
+					$f3->set("issues", array());
+				}
+
 				$parent = new \Model\Issue();
 				$parent->load($issue->parent_id);
 				$f3->set("parent", $parent);
+
 			}
 
 			print_json(array(
