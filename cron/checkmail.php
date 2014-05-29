@@ -59,16 +59,17 @@ require_once "base.php";
 
 				// post a comment if replying to an issue
 				if(!empty($issue->id)) {
-					$comment = new \Model\Issue\Comment();
-					$comment->user_id = $author;
-					$comment->issue_id = $issue->id;
-					$comment->text = strip_tags($message);
-					$comment->created_date = now();
-					$comment->save();
+					if(!empty($message)) {
+						$comment = new \Model\Issue\Comment();
+						$comment->user_id = $author;
+						$comment->issue_id = $issue->id;
+						$comment->text = strip_tags($message);
+						$comment->created_date = now();
+						$comment->save();
 
-					$notification = \Helper\Notification::instance();
-					$notification->issue_comment($issue->id, $comment->id);
-
+						$notification = \Helper\Notification::instance();
+						$notification->issue_comment($issue->id, $comment->id);
+					}
 				} else {
 
 					if(!empty($header->subject)) {
@@ -96,32 +97,133 @@ require_once "base.php";
 					}
 				}
 
-				// add other recipients as watchers
-				if(!empty($header->cc) || count($header->to) > 1) {
+				if(!empty($issue->id)) {
+					// add other recipients as watchers
+					if(!empty($header->cc) || count($header->to) > 1) {
 
-					if(!empty( $header->cc)) {
-						$watchers = array_merge($header->to, $header->cc);
-					} else {
-						$watchers =$header->to;
-					}
-
-					foreach($watchers as $more_people) {
-						$watcher_email = $more_people->mailbox . "@" . $more_people->host;
-						$watcher = new \Model\User();
-						$watcher->load(array('email=? AND (deleted_date IS NULL OR deleted_date != ?)', $watcher_email, '0000-00-00 00:00:00'));
-
-						if(!empty($watcher->id)){
-							$watching = new \Model\Issue\Watcher();
-							// Loads just in case the user is already a watcher
-							$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $watcher->id));
-							$watching->issue_id = $issue->id;
-							$watching->user_id =  $watcher->id;
-							$watching->save();
+						if(!empty( $header->cc)) {
+							$watchers = array_merge($header->to, $header->cc);
+						} else {
+							$watchers =$header->to;
 						}
 
+						foreach($watchers as $more_people) {
+							$watcher_email = $more_people->mailbox . "@" . $more_people->host;
+							$watcher = new \Model\User();
+							$watcher->load(array('email=? AND (deleted_date IS NULL OR deleted_date != ?)', $watcher_email, '0000-00-00 00:00:00'));
+
+							if(!empty($watcher->id)){
+								$watching = new \Model\Issue\Watcher();
+								// Loads just in case the user is already a watcher
+								$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $watcher->id));
+								$watching->issue_id = $issue->id;
+								$watching->user_id =  $watcher->id;
+								$watching->save();
+							}
+
+						}
+					}
+
+					//Copy Attachments as Files
+					/* Mod from http://www.codediesel.com/php/downloading-gmail-attachments-using-php/ */
+					/* get mail structure */
+					$structure = imap_fetchstructure($inbox, $email_number);
+
+					$attachments = array();
+
+					/* if any attachments found... */
+					if(isset($structure->parts) && count($structure->parts)) {
+						for($i = 0; $i < count($structure->parts); $i++) {
+							$attachments[$i] = array(
+								'is_attachment' => false,
+								'filename' => '',
+								'name' => '',
+								'attachment' => '',
+								'size' => ''
+							);
+
+							if($structure->parts[$i]->ifdparameters) {
+								foreach($structure->parts[$i]->dparameters as $object) {
+									if(strtolower($object->attribute) == 'filename') {
+										$attachments[$i]['is_attachment'] = true;
+										$attachments[$i]['filename'] = $object->value;
+									}
+								}
+							}
+
+							if($structure->parts[$i]->ifparameters)   {
+							    foreach($structure->parts[$i]->parameters as $object)  {
+							        if(strtolower($object->attribute) == 'name')  {
+							            $attachments[$i]['is_attachment'] = true;
+							            $attachments[$i]['name'] = $object->value;
+							        }
+							    }
+							}
+
+							if($attachments[$i]['is_attachment'])  {
+							    $attachments[$i]['attachment'] = imap_fetchbody($inbox, $email_number, $i+1);
+
+							    /* 4 = QUOTED-PRINTABLE encoding */
+							    if($structure->parts[$i]->encoding == 3) {
+
+							        $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
+
+							    /* 3 = BASE64 encoding */
+							    } elseif($structure->parts[$i]->encoding == 4)  {
+							        $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
+							    }
+							}
+						}
+					}
+
+					/* iterate through each attachment and save it */
+					foreach($attachments as $attachment) {
+						if($attachment['is_attachment'] == 1) {
+							$filename = $attachment['name'];
+							if(empty($filename)) $filename = $attachment['filename'];
+
+							if(empty($filename)) $filename = time() . ".dat";
+
+							/* prefix the email number to the filename in case two emails
+							 * have the attachment with the same file name.
+							 */
+
+
+							$f3->set("UPLOADS",'uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
+							if(!is_dir($f3->get("UPLOADS"))) {
+								mkdir($f3->get("UPLOADS"), 0777, true);
+							}
+
+							// Make a good name
+							$orig_name = preg_replace("/[^A-Z0-9._-]/i", "_", $filename);
+							$filename = time() . "_" . $orig_name;
+
+							$i = 0;
+							$parts = pathinfo($filename);
+							while (file_exists($f3->get("UPLOADS") . $filename)) {
+								$i++;
+								$filename= $parts["filename"] . "-" . $i . "." . $parts["extension"];
+							}
+
+
+							$newfile = new \Model\Issue\File();
+							$newfile->issue_id = $issue->id;
+							$newfile->user_id = $user_id;
+							$newfile->filename = $orig_name;
+							$newfile->disk_filename =$f3->get("UPLOADS").$filename;
+							$newfile->disk_directory = $f3->get("UPLOADS");
+							$newfile->filesize = $file['size'];
+							$newfile->content_type = $file['type'];
+							$newfile->digest = md5_file($filename);
+							$newfile->created_date = now();
+							$newfile->save();
+
+							$fp = fopen($f3->get("UPLOADS")  . $filename, "w+");
+							fwrite($fp, $attachment['attachment']);
+							fclose($fp);
+					    	}
 					}
 				}
-
 			}
 
 		}
