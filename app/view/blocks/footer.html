@@ -30,6 +30,7 @@
 				<set pagemtime="{{ microtime(true) - @microtime }}" />
 				<span title="Page generated in {{ round(@pagemtime, 10) }} seconds">{{ round(@pagemtime * 1000, 0) }}ms</span> &middot;
 			</check>
+			<span title="Real usage: {{ memory_get_peak_usage(true) }} bytes">{{ format_filesize(memory_get_peak_usage()) }}</span> &middot;
 			<check if="{{ @revision }}">
 				<a class="nolink" title="Current commit: {{ @revision }}" href="https://github.com/Alanaktion/phproject/commit/{{ @revision }}" target="_blank">{{ substr(@revision, 0, 7) }}</a> &middot;
 			</check>
