@@ -106,6 +106,37 @@ class Notification extends \Prefab {
 		}
 	}
 
+	// Send an email to watchers with the file info
+	public function issue_file($issue_id, $file_id) {
+		$f3 = \Base::instance();
+
+		if($f3->get("mail.from")) {
+			$log = new \Log("mail.log");
+
+			// Get issue and comment data
+			$issue = new \Model\Issue;
+			$issue->load($issue_id);
+			$file = new \Model\Issue\File\Detail;
+			$file->load($file_id);
+
+			// Get recipient list and remove current user
+			$recipients = $this->_issue_watchers($issue_id);
+			$recipients = array_diff($recipients, array($file->user_email));
+
+			// Render message body
+			$f3->set("issue", $issue);
+			$f3->set("file", $file);
+			$body = \Template::instance()->render("notification/file.html");
+
+			$subject =  "[#" . $issue->id . "] - ".$file->user_name . " attached a file to " . $issue->name;
+			// Send to recipients
+			foreach($recipients as $recipient) {
+				utf8mail($recipient, $subject, $body);
+				$log->write("Sent file notification to: " . $recipient);
+			}
+		}
+	}
+
 	// Get array of email addresses of all watchers on an issue
 	protected function _issue_watchers($issue_id) {
 		$f3 = \Base::instance();

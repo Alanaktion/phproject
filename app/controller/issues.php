@@ -588,6 +588,9 @@ class Issues extends Base {
 
 			$notification = \Helper\Notification::instance();
 			$notification->issue_comment($issue->id, $comment->id);
+		} else {
+			$notification = \Helper\Notification::instance();
+			$notification->issue_file($issue->id, $file->id);
 		}
 
 		$f3->reroute("/issues/" . $issue->id);
