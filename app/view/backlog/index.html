@@ -18,8 +18,12 @@
 							</button>
 							<ul class="dropdown-menu" role="menu">
 								<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="backlog/all">All Projects</a></li>
-								<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="backlog/groups">My Groups</a></li>
+								<li class="{{ @filter == 'groups' && empty(@groupid) ? 'active' : '' }}"><a href="backlog/groups">My Groups</a></li>
 								<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="backlog/me">My Projects</a></li>
+								<li class="divider"></li>
+								<repeat group="{{ @groups }}" value="{{ @group }}">
+									<li class="{{ @groupid == @group.id ? 'active' : '' }}"><a href="backlog/groups/{{ @group.id }}">{{ @group.name }}</a></li>
+								</repeat>
 							</ul>
 						</div>
 						<div class="pull-right">

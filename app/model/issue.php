@@ -92,7 +92,7 @@ class Issue extends Base {
 						$repeat_issue->repeat_cycle == 'none';
 				}
 
-				// IF THE PROJECT WAS IN A SPRINT BEFORE, PUT IT IN A SPRINT AGAIN
+				// If the project was in a sprint before, put it in a sprint again.
 				if($this->get("sprint_id")) {
 					$sprint = new \Model\Sprint();
 					$sprint->load(array(" id > ? AND end_date > ? AND start_date < ?", $this->get("sprint_id"), $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));

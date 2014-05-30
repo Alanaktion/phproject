@@ -43,6 +43,10 @@
 							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/all">All Tasks</a></li>
 							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/groups">My Groups</a></li>
 							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/me">My Tasks</a></li>
+							<li class="divider"></li>
+							<repeat group="{{ @groups }}" value="{{ @group }}">
+								<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/{{ @group.id }}">{{ @group.name }}</a></li>
+							</repeat>
 						</ul>
 					</div>
 					<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
