@@ -86,7 +86,7 @@
 										<span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
 									</div>
 									<div class="title">{{ @task.name }}</div>
-									<div class="description">{{ @task.description }}</div>
+									<div class="description">{{ htmlentities(@task.description) | raw }}</div>
 									<check if="{{ strtotime(@task.due_date) > 0 }}">
 										<true>
 											<div class="dueDate">{{ date('n/j/Y', strtotime(@task.due_date)) }}</div>
