@@ -322,3 +322,9 @@ a:focus, button:focus, input:focus, .btn:focus {
 	text-overflow:ellipsis;
 	overflow:hidden;
 }
+
+/* Make huge dropdowns usable */
+.dropdown-menu {
+	max-height: 400px;
+	overflow-y: auto;
+}
