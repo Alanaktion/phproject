@@ -87,9 +87,9 @@ class Notification extends \Prefab {
 			$issue = new \Model\Issue\Detail();
 			$issue->load($issue_id);
 			$f3->set("issue", $issue);
-			// Get recipient list and remove current user
+			// Get recipient list and DON'T remove current user
 			$recipients = $this->_issue_watchers($issue_id);
-			$recipients = array_diff($recipients, array($issue->author_email));
+			//$recipients = array_diff($recipients, array($issue->author_email));
 
 			// Render message body
 			$f3->set("issue", $issue);
