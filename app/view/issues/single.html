@@ -206,10 +206,10 @@
 										<check if="{{ @comment.file_id }}">
 											<check if="{{ @comment.file_deleted_date }}">
 												<true>
-													<div><b>Attached file:</b> <span style="text-decoration: line-through;">{{@comment.file_filename}}</span></div>
+													<div><b>Attached file:</b> <span style="text-decoration: line-through;">{{@comment.file_filename}}</span> <span class="text-danger">[Deleted]</span></div>
 												</true>
 												<false>
-													<div><b>Attached file:</b> <a href="files/{{ @comment.file_id }}/{{ @comment.file_filename }}">{{@comment.file_filename}}</a></div>
+													<div><b>Attached file:</b> <a href="files/{{ @comment.file_id }}/{{ @comment.file_filename }}" target="_blank">{{@comment.file_filename}}</a></div>
 												</false>
 											</check>
 										</check>
