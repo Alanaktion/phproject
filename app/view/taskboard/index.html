@@ -43,6 +43,10 @@
 							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/all">All Tasks</a></li>
 							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/groups">My Groups</a></li>
 							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/me">My Tasks</a></li>
+							<li class="divider"></li>
+							<repeat group="{{ @groups }}" value="{{ @group }}">
+								<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/{{ @group.id }}">{{ @group.name }}</a></li>
+							</repeat>
 						</ul>
 					</div>
 					<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
@@ -82,7 +86,7 @@
 										<span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
 									</div>
 									<div class="title">{{ @task.name }}</div>
-									<div class="description">{{ @task.description }}</div>
+									<div class="description">{{ htmlentities(@task.description) }}</div>
 									<check if="{{ strtotime(@task.due_date) > 0 }}">
 										<true>
 											<div class="dueDate">{{ date('n/j/Y', strtotime(@task.due_date)) }}</div>

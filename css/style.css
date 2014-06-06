@@ -186,6 +186,7 @@ select[multiple] {
 }
 
 .file-list li {
+	position: relative;
 	text-align: center;
 	width: 106px;
 	overflow: hidden;
@@ -193,6 +194,15 @@ select[multiple] {
 }
 .file-list li img {
 	width: 96px;
+}
+.file-list li .delete {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	visibility: hidden;
+}
+.file-list li:hover .delete {
+	visibility: visible;
 }
 
 .issue-list tr.closed {
@@ -213,6 +223,12 @@ textarea.form-control {
 	position: fixed;
 	top: 65px;
 	right: 15px;
+	z-index: 20;
+}
+.alert-popup.alert-popup-center {
+	left: 50%;
+	width: 300px;
+	margin-left: -150px;
 }
 
 /* Dashboard Compact UI */
@@ -296,7 +312,19 @@ a:focus, button:focus, input:focus, .btn:focus {
 	padding: 2px 5px;
 	border: 1px solid #ccc;
 }
+.tex ul,
+.tex ol {
+	padding-left: 20px;
+	margin-bottom: 0px;
+}
+
 .popover-content {
 	text-overflow:ellipsis;
 	overflow:hidden;
+}
+
+/* Make huge dropdowns usable */
+.dropdown-menu {
+	max-height: 400px;
+	overflow-y: auto;
 }

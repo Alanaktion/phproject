@@ -28,9 +28,9 @@ class Issues extends Base {
 			if($i == "name") {
 				$filter_str .= "`$i` LIKE '%" . addslashes($val) . "%' AND ";
 			} elseif($i == "status" && $val == "open") {
-				$filter_str .= "closed_date IS NULL AND ";
+				$filter_str .= "status_closed = 0 AND ";
 			} elseif($i == "status" && $val == "closed") {
-				$filter_str .= "closed_date IS NOT NULL AND ";
+				$filter_str .= "status_closed = 1 AND ";
 			} else {
 				$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
 			}
@@ -294,7 +294,7 @@ class Issues extends Base {
 		$issue = new \Model\Issue\Detail();
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
 
-				if(!$issue->id) {
+		if(!$issue->id) {
 			$f3->error(404);
 			return;
 		}
@@ -365,8 +365,7 @@ class Issues extends Base {
 		$owner->load($issue->owner_id);
 
 		$files = new \Model\Issue\File\Detail();
-		$f3->set("files", $files->paginate(0, 16, array("issue_id = ?", $issue->id)));
-		// TODO: add All Files link/page to issues/single view
+		$f3->set("files", $files->find(array("issue_id = ? AND deleted_date IS NULL", $issue->id)));
 
 		if($issue->sprint_id) {
 			$sprint = new \Model\Sprint();
@@ -399,7 +398,7 @@ class Issues extends Base {
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$comments = new \Model\Issue\Comment\Detail;
-		$f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date ASC")));
+		$f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC")));
 
 		echo \Template::instance()->render("issues/single.html");
 
@@ -432,13 +431,22 @@ class Issues extends Base {
 		if($issue->id) {
 			$issues = new \Model\Issue\Detail();
 			if($f3->get("issue_type.project") == $issue->type_id) {
-				$f3->set("issues", $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id)));
+				$found_issues = $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id));
+				$f3->set("issues", $found_issues);
 				$f3->set("parent", $issue);
 			} else {
-				$f3->set("issues", $issues->find(array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id)));
+				//This may be causing a memory leak.
+				if($issue->parent_id > 0) {
+					$found_issues = $issues->find(array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id));
+					$f3->set("issues", $found_issues);
+				} else {
+					$f3->set("issues", array());
+				}
+
 				$parent = new \Model\Issue();
 				$parent->load($issue->parent_id);
 				$f3->set("parent", $parent);
+
 			}
 
 			print_json(array(
@@ -486,6 +494,21 @@ class Issues extends Base {
 		$issue->deleted_date = null;
 		$issue->save();
 		$f3->reroute("/issues/{$issue->id}");
+	}
+
+	public function file_delete($f3, $params) {
+		$file = new \Model\Issue\File();
+		$file->load($f3->get("POST.id"));
+		$file->delete();
+		print_json($file->cast());
+	}
+
+	public function file_undelete($f3, $params) {
+		$file = new \Model\Issue\File();
+		$file->load($f3->get("POST.id"));
+		$file->deleted_date = null;
+		$file->save();
+		print_json($file->cast());
 	}
 
 	public function search($f3, $params) {
@@ -575,6 +598,9 @@ class Issues extends Base {
 
 			$notification = \Helper\Notification::instance();
 			$notification->issue_comment($issue->id, $comment->id);
+		} else {
+			$notification = \Helper\Notification::instance();
+			$notification->issue_file($issue->id, $file->id);
 		}
 
 		$f3->reroute("/issues/" . $issue->id);

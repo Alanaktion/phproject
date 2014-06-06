@@ -72,33 +72,34 @@ class Issue extends Base {
 				$repeat_issue->created_date = now();
 
 
-				//Find a due date in the future
-				if($repeat_issue->repeat_cycle == 'daily') {
-					$repeat_issue->due_date = date("Y-m-d", strtotime("tomorrow"));
-
-				} else if($repeat_issue->repeat_cycle == 'weekly') {
-					$dow = date("l", strtotime($this->get("due_date")));
-					$repeat_issue->due_date = date("Y-m-d", strtotime("Next {$dow}"));
-
-				} else if($repeat_issue->repeat_cycle == 'monthly') {
-					$day = date("d", strtotime($this->get("due_date")));
-					$month = date("m");
-					$year = date("Y");
-					$repeat_issue->due_date = date("Y-m-d", mktime(0,0,0, $month +1, $day, $year));
-
-				} else if($repeat_issue->repeat_cycle == 'sprint') {
-					$sprint = new \Model\Sprint();
-					$sprint->load(array("start_date > NOW()"), array('order'=>'start_date'));
-					$repeat_issue->due_date =  $sprint->end_date;
-				} else {
-					//Not a valid repeat_cycle
-					$repeat_issue->repeat_cycle == 'none';
+				// Find a due date in the future
+				switch($repeat_issue->repeat_cycle) {
+					case 'daily':
+						$repeat_issue->due_date = date("Y-m-d", strtotime("tomorrow"));
+						break;
+					case 'weekly':
+						$dow = date("l", strtotime($this->get("due_date")));
+						$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 week" ));
+						break;
+					case 'monthly':
+						$day = date("d", strtotime($this->get("due_date")));
+						$month = date("m");
+						$year = date("Y");
+						$repeat_issue->due_date = date("Y-m-d", mktime(0, 0, 0, $month + 1, $day, $year));
+						break;
+					case 'sprint':
+						$sprint = new \Model\Sprint();
+						$sprint->load(array("start_date > NOW()"), array('order'=>'start_date'));
+						$repeat_issue->due_date =  $sprint->end_date;
+						break;
+					default:
+						$repeat_issue->repeat_cycle == 'none';
 				}
 
-				// IF THE PROJECT WAS IN A SPRINT BEFORE, PUT IT IN A SPRINT AGAIN
+				// If the project was in a sprint before, put it in a sprint again.
 				if($this->get("sprint_id")) {
 					$sprint = new \Model\Sprint();
-					$sprint->load(array("end_date < $repeat_issue->due_date"), array('order'=>'start_date'));
+					$sprint->load(array(" id > ? AND end_date > ? AND start_date < ?", $this->get("sprint_id"), $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
 					$repeat_issue->sprint_id = $sprint->id;
 				}
 
@@ -121,6 +122,8 @@ class Issue extends Base {
 				}
 			}
 
+			$issue = parent::save();
+
 			if($updated) {
 				// Send notifications
 				if($notify) {
@@ -140,7 +143,7 @@ class Issue extends Base {
 			return $issue;
 		}
 
-		return parent::save();
+		return empty($issue) ? parent::save() : $issue;
 	}
 
 	// Preload custom attributes

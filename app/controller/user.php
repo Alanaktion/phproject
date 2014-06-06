@@ -11,7 +11,7 @@ class User extends Base {
 	}
 
 	public function index($f3, $params) {
-		$f3->reroute("/user/account");
+		$f3->reroute("/user");
 	}
 
 	public function dashboard($f3, $params) {
@@ -26,8 +26,7 @@ class User extends Base {
 		$owner_ids = implode(",", $owner_ids);
 
 		$order = "priority DESC, has_due_date ASC, due_date ASC";
-		$f3->set("projects", $projects->paginate(
-			0, 50,
+		$f3->set("projects", $projects->find(
 			array(
 				"owner_id IN ($owner_ids) and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.project"),
@@ -37,8 +36,7 @@ class User extends Base {
 		));
 
 		$bugs = new \Model\Issue\Detail();
-		$f3->set("bugs", $bugs->paginate(
-			0, 50,
+		$f3->set("bugs", $bugs->find(
 			array(
 				"owner_id IN ($owner_ids) and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.bug"),
@@ -48,8 +46,7 @@ class User extends Base {
 		));
 
 		$tasks = new \Model\Issue\Detail();
-		$f3->set("tasks", $tasks->paginate(
-			0, 100,
+		$f3->set("tasks", $tasks->find(
 			array(
 				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.task"),
@@ -172,7 +169,7 @@ class User extends Base {
 		if(!is_dir($f3->get("UPLOADS"))) {
 			mkdir($f3->get("UPLOADS"), 0777, true);
 		}
-		$overwrite = false;
+		$overwrite = true;
 		$slug = true;
 
 		//Make a good name
@@ -201,7 +198,7 @@ class User extends Base {
 		$cache->clear($f3->hash("GET /avatar/128/{$user->id}.png") . ".url");
 
 
-		$f3->reroute("/user/account");
+		$f3->reroute("/user");
 	}
 
 

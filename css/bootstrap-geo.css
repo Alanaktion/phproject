@@ -5981,3 +5981,7 @@ body {
     opacity: 0;
   }
 }
+
+#taskboard .completed .card {
+  background-image: url('../img/geo/seamlessfire-web.gif');
+}

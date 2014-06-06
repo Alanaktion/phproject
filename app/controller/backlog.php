@@ -13,23 +13,38 @@ class Backlog extends Base {
 	public function index($f3, $params) {
 
 		if(empty($params["filter"])) {
-			$params["filter"] = "all";
+			$params["filter"] = "groups";
+		}
+
+		if(empty($params["groupid"])) {
+			$params["groupid"] = "";
 		}
 
 		// Get list of all users in the user's groups
 		if($params["filter"] == "groups") {
 			$group_model = new \Model\User\Group();
-			$groups_result = $group_model->find(array("user_id = ?", $this->_userId));
-			$filter_users = array($this->_userId);
-			foreach($groups_result as $g) {
-				$filter_users[] = $g["group_id"];
+			if(!empty($params["groupid"]) && is_numeric($params["groupid"])) {
+				//Get users list from a specific Group
+				$users_result = $group_model->find(array("group_id = ?", $params["groupid"]));
+
+			} else {
+				//Get users list from all groups that you are in
+				$groups_result = $group_model->find(array("user_id = ?", $this->_userId));
+				$filter_users = array($this->_userId);
+				foreach($groups_result as $g) {
+					$filter_users[] = $g["group_id"];
+				}
+				$groups = implode(",", $filter_users);
+				$users_result = $group_model->find("group_id IN ({$groups})");
 			}
-			$groups = implode(",", $filter_users);
-			$users_result = $group_model->find("group_id IN ({$groups})");
+
+
+
 			foreach($users_result as $u) {
 				$filter_users[] = $u["user_id"];
 			}
 		} elseif($params["filter"] == "me") {
+			//Just get your own id
 			$filter_users = array($this->_userId);
 		}
 
@@ -59,6 +74,9 @@ class Backlog extends Base {
 			$unset_projects = array();
 		}
 
+		$grouplist = \Helper\Groups::instance();
+		$f3->set("groups", $grouplist->getAll());
+		$f3->set("groupid", $params["groupid"]);
 		$f3->set("sprints", $sprint_details);
 		$f3->set("backlog", $unset_projects);
 
@@ -66,6 +84,8 @@ class Backlog extends Base {
 		$f3->set("menuitem", "backlog");
 		echo \Template::instance()->render("backlog/index.html");
 	}
+
+
 
 	public function edit($f3, $params) {
 		$post = $f3->get("POST");

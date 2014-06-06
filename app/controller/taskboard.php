@@ -29,6 +29,24 @@ class Taskboard extends Base {
 			}
 		} elseif($params["filter"] == "me") {
 			$filter_users = array($this->_userId);
+		} elseif(is_numeric($params["filter"])) {
+			//get a taskboard for a user or group
+			$user= new \Model\User();
+			$user->load($params["filter"]);
+			if ($user->role == 'group') {
+				$group_model = new \Model\User\Group();
+				$users_result = $group_model->find(array("group_id = ?", $user->id));
+				$filter_users = array();
+				foreach($users_result as $u) {
+					$filter_users[] = $u["user_id"];
+				}
+				if(empty($filter_users)) {
+					$filter_users = array($this->_userId);
+				}
+			} else {
+				$filter_users = array($this->_userId);
+			}
+
 		}
 
 		// Load the requested sprint
@@ -40,7 +58,7 @@ class Taskboard extends Base {
 		}
 
 		$f3->set("sprint", $sprint);
-		$f3->set("title", $sprint->name);
+		$f3->set("title", $sprint->name . " " . date('n/j', strtotime($sprint->start_date)) . "-" . date('n/j', strtotime($sprint->end_date)));
 		$f3->set("menuitem", "backlog");
 
 		// Load issue statuses
@@ -171,6 +189,10 @@ class Taskboard extends Base {
 				}
 			}
 		}
+		 //Visible tasks must have at least one key
+		if (empty($visible_tasks)) {
+			$visible_tasks = array(0);
+		}
 
 		// Get today's date
 		$today = date('Y-m-d');
@@ -292,6 +314,9 @@ class Taskboard extends Base {
 
 		$f3->set("taskboard", array_values($taskboard));
 		$f3->set("filter", $params["filter"]);
+
+		$grouplist = \Helper\Groups::instance();
+		$f3->set("groups", $grouplist->getAll());
 
 		// Get user list for select
 		$users = new \Model\User();
