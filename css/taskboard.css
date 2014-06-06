@@ -206,8 +206,11 @@ body {
 }
 #taskboard .completed .card {
 	text-decoration: line-through;
+	height: 60px;
+	overflow: hidden;
 }
-#taskboard .completed .hours {
+#taskboard .completed .hours,
+#taskboard .completed .owner {
 	display: none;
 }
 #taskboard .spinner {
