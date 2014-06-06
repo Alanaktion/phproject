@@ -32,7 +32,8 @@ var Taskboard = {
 						"top": ""
 					}).draggable({
 						revert: "invalid",
-						stack: ".card.task"
+						stack: ".card.task",
+						distance: 10
 					})
 				);
 				Taskboard.TaskboardReceive($(ui.draggable));
@@ -88,7 +89,8 @@ var Taskboard = {
 			},
 			stop: function() {
 				$(this).css("opacity", "1");
-			}
+			},
+			distance: 10
 		});
 	},
 	modalEdit: function(data) {
