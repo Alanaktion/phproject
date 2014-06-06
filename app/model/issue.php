@@ -40,6 +40,10 @@ class Issue extends Base {
 			$update->issue_id = $this->id;
 			$update->user_id = $f3->get("user.id");
 			$update->created_date = now();
+			if($this->get('update_comment'))
+			{
+				$update->comment_id = $this->get('update_comment');
+			}
 			$update->save();
 
 			$updated = 0;

@@ -200,7 +200,7 @@ class Issues extends Base {
 
 				// Diff contents and save what's changed.
 				foreach($post as $i=>$val) {
-					if($i != "notify" && $issue->$i != $val && $issue->exists($i)) {
+					if($issue->exists($i) && $i != "notify" && $issue->$i != $val) {
 						if(empty($val)) {
 							$issue->$i = null;
 						} else {
@@ -228,6 +228,16 @@ class Issues extends Base {
 							}
 						}
 					}
+				}
+
+				if(!empty($post["comment"])) {
+					$comment = new \Model\Issue\Comment();
+					$comment->user_id = $this->_userId;
+					$comment->issue_id = $issue->id;
+					$comment->text = $post["comment"];
+					$comment->created_date = now();
+					$comment->save();
+					$issue->update_comment = $comment->id;
 				}
 				// Save issue, send notifications (unless admin opts out)
 				$notify =  empty($post["notify"]) ? false : true;
@@ -398,7 +408,7 @@ class Issues extends Base {
 	public function single_history($f3, $params) {
 		// Build updates array
 		$updates_array = array();
-		$update_model = new \Model\Custom("issue_update_user");
+		$update_model = new \Model\Custom("issue_update_detail");
 		$updates = $update_model->find(array("issue_id = ?", $params["id"]), array("order" => "created_date DESC"));
 		foreach($updates as $update) {
 			$update_array = $update->cast();
