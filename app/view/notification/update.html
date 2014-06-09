@@ -40,7 +40,9 @@
 					</check>
 				</repeat>
 			</ul>
-
+			<check if="{{ @update.comment_id }}">
+				<div class="tex">{{@update.comment_text}}</div>
+			</check>
 		</div>
 		<div style="clear:both"></div>
 	</div>

@@ -46,7 +46,7 @@ class Notification extends \Prefab {
 			$issue = new \Model\Issue();
 			$issue->load($issue_id);
 			$f3->set("issue", $issue);
-			$update = new \Model\Custom("issue_update_user");
+			$update = new \Model\Custom("issue_update_detail");
 			$update->load($update_id);
 
 			// Avoid errors from bad calls
