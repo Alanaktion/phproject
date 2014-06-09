@@ -150,24 +150,22 @@
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">Comment</label>
 		<div class="col-md-10">
-			<textarea class="form-control input-sm" name="comment" rows="3">{{ empty(@comment) && is_string(@comment) ? "" : @comment }}</textarea>
+			<textarea class="form-control input-sm" name="comment" rows="3">{{ empty(@comment) && !is_string(@comment) ? "" : @comment }}</textarea>
 		</div>
 	</div>
 	<div class="form-group">
 		<div class="col-md-offset-2 col-md-10 text-right">
 			<div class="checkbox checkbox-inline">
 			<check if="{{ @user.role == 'admin' }}">
-					<true>
-						<label>
-							<input type="checkbox" name="notify" value="1" checked>
-							Send notifications
-						</label>
-					</true>
-					<false>
-						<input type="hidden" name="notify" value="1">
-					</false>
-
-
+				<true>
+					<label>
+						<input type="checkbox" name="notify" value="1" checked>
+						Send notifications
+					</label>
+				</true>
+				<false>
+					<input type="hidden" name="notify" value="1">
+				</false>
 			</check>
 			</div>
 			<check if="{{ !empty(@issue) }}">
