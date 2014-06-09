@@ -213,7 +213,7 @@ class User extends Base {
 			$f3->set("this_user", $user);
 
 			$issue = new \Model\Issue\Detail;
-			$issues = $issue->paginate(0, 100, array("closed_date IS NULL AND deleted_date IS NOT NULL (owner_id = ? OR author_id = ?)", $user->id, $user->id));
+			$issues = $issue->paginate(0, 100, array("closed_date IS NULL AND deleted_date IS NOT NULL AND (owner_id = ? OR author_id = ?)", $user->id, $user->id));
 			$f3->set("issues", $issues);
 
 			echo \Template::instance()->render("user/single.html");
