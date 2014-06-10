@@ -206,8 +206,11 @@ body {
 }
 #taskboard .completed .card {
 	text-decoration: line-through;
-	height: 60px;
+	height: 52px;
 	overflow: hidden;
+}
+#taskboard .completed .title {
+	font-size: 10px;
 }
 #taskboard .completed .hours,
 #taskboard .completed .owner {
