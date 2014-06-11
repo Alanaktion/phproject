@@ -53,7 +53,7 @@
 						<div class="panel-heading has-buttons">
 							<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
 							<div class="pull-right">
-								<a href="taskboard/{{ @sprint.id }}" class="btn btn-default btn-xs">
+								<a href="taskboard/{{ @sprint.id }}/{{ @filter }}" class="btn btn-default btn-xs">
 									<span class="glyphicon glyphicon-list"></span> Taskboard
 								</a>
 							</div>
