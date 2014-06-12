@@ -322,7 +322,7 @@ class Issues extends Base {
 							array(
 								"id" => $comment->id,
 								"text" => parseTextile($comment->text),
-								"date_formatted" => date("D, M j, Y \\a\\t g:ia"),
+								"date_formatted" => date("D, M j, Y \\a\\t g:ia", utc2local(time())),
 								"user_name" => $f3->get('user.name'),
 								"user_username" => $f3->get('user.username'),
 								"user_email" => $f3->get('user.email'),
