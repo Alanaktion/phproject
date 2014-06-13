@@ -305,6 +305,9 @@ a:focus, button:focus, input:focus, .btn:focus {
 }
 
 /* Textile processed styles */
+.tex {
+	word-wrap: break-word;
+}
 .tex table {
 	margin: 10px 0;
 }
