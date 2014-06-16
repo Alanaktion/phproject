@@ -144,3 +144,9 @@
 		{{ @success }}
 	</p>
 </check>
+<check if="{{ !empty(@site.demo) }}">
+	<p class="alert alert-info alert-dismissable">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		This site is running in demo mode. All content is public and may be reset at any time.
+	</p>
+</check>
