@@ -19,6 +19,8 @@ class Index extends Base {
 						$f3->set("SESSION.user_id", $user->id);
 						$f3->reroute("/");
 						return;
+					} else {
+						$f3->set("error", "Auto-login failed, demo user was not found.");
 					}
 				}
 				$f3->reroute("/login");
