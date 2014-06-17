@@ -1,6 +1,5 @@
 SET NAMES utf8;
 SET foreign_key_checks = 0;
-SET time_zone = '-07:00';
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 DROP TABLE IF EXISTS `user`;
