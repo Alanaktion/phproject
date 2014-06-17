@@ -437,7 +437,7 @@ class Issues extends Base {
 			} else {
 				//This may be causing a memory leak.
 				if($issue->parent_id > 0) {
-					$found_issues = $issues->find(array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id));
+					$found_issues = $issues->find(array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id));
 					$f3->set("issues", $found_issues);
 				} else {
 					$f3->set("issues", array());
