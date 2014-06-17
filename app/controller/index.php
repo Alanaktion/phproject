@@ -12,7 +12,7 @@ class Index extends Base {
 			if($f3->get("site.public")) {
 				echo \Template::instance()->render("index/index.html");
 			} else {
-				if($f3->exists("site.demo") && is_numeric($f3->get("site.demo"))) {
+				if($f3->get("site.demo") && is_numeric($f3->get("site.demo"))) {
 					$user = new \Model\User();
 					$user->load($f3->get("site.demo"));
 					if($user->id) {
