@@ -344,10 +344,10 @@ a:focus, button:focus, input:focus, .btn:focus {
 
 #history .DifferencesInline .ChangeReplace .Left,
 #history .DifferencesInline .ChangeDelete .Left {
-    background-colo: #fdd;
+    background-color: #fdd;
 }
 #history .DifferencesInline .ChangeReplace del {
-    background-colo: #e99;
+    background-color: #e99;
 }
 
 #history .DifferencesInline .ChangeReplace .Right,
