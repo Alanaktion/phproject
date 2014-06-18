@@ -331,3 +331,30 @@ a:focus, button:focus, input:focus, .btn:focus {
 	max-height: 400px;
 	overflow-y: auto;
 }
+
+/* Make diff beautiful :') */
+.Differences {
+	font-family: 'Consolas', 'Monaco', monospace;
+	font-size: 12px;
+}
+#history .DifferencesInline thead,
+#history .DifferencesInline tbody th {
+	display: none;
+}
+
+#history .DifferencesInline .ChangeReplace .Left,
+#history .DifferencesInline .ChangeDelete .Left {
+    background-colo: #fdd;
+}
+#history .DifferencesInline .ChangeReplace del {
+    background-colo: #e99;
+}
+
+#history .DifferencesInline .ChangeReplace .Right,
+#history .DifferencesInline .ChangeInsert .Right {
+    background-color: #dfd;
+}
+#history .DifferencesInline .ChangeReplace ins {
+    background-color: #9e9;
+}
+
