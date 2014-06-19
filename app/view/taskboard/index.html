@@ -63,7 +63,7 @@
 			<repeat group="{{ @taskboard }}" value="{{ @row }}">
 				<tr data-story-id="{{ @row.project.id }}" class="tb-row">
 					<td class="column column-1">
-						<div data-departement="I.T." class="card story" style="border-color:#{{ @row.project.owner_task_color }};">
+						<div class="card story {{ @row.project.closed_date ? 'completed' : '' }}" style="border-color:#{{ @row.project.owner_task_color }};">
 							<div class="top">
 								<i title="Add Task" class="add-task pull-right"></i>
 								<span class="owner">
@@ -81,7 +81,7 @@
 					<repeat group="{{ @row.columns }}" key="{{ @status_id }}" value="{{ @col }}" >
 						<td class="column column-{{ @status_id + 1 }} {{ @statuses[@status_id]['closed'] ? 'completed' : '' }} droppable" data-status="{{ @status_id }}">
 							<repeat group="{{ @col }}" value="{{ @task }}">
-								<div data-departement="" class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto top" data-content="
+								<div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto top" data-content="
 								<p><strong>Author: </strong>{{ @task.author_name }}</p>
 								<p><strong>Description: </strong> {{ strlen(@task.description) > 500 ? htmlentities(substr(@task.description, 0, 500)) . " [...]" : htmlentities(@task.description) }}</p>
 								" style="border-color:#{{ @task.owner_task_color }};">
