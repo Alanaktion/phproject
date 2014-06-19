@@ -16,7 +16,7 @@ class Index extends Base {
 					$user = new \Model\User();
 					$user->load($f3->get("site.demo"));
 					if($user->id) {
-						$f3->set("SESSION.user_id", $user->id);
+						$f3->set("SESSION.phproject_user_id", $user->id);
 						$f3->reroute("/");
 						return;
 					} else {
@@ -59,7 +59,7 @@ class Index extends Base {
 		// Verify password
 		$security = \Helper\Security::instance();
 		if($security->hash($f3->get("POST.password"), $user->salt) == $user->password) {
-			$f3->set("SESSION.user_id", $user->id);
+			$f3->set("SESSION.phproject_user_id", $user->id);
 			if(!$f3->get("POST.to")) {
 				$f3->reroute("/");
 			} else {
@@ -75,9 +75,7 @@ class Index extends Base {
 	}
 
 	public function logout($f3, $params) {
-		$f3->clear("SESSION.user_id");
-		// Remove session cookie
-		setcookie(session_name(), "", 0);
+		$f3->clear("SESSION.phproject_user_id");
 		$f3->reroute("/");
 	}
 
