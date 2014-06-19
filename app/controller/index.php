@@ -76,6 +76,8 @@ class Index extends Base {
 
 	public function logout($f3, $params) {
 		$f3->clear("SESSION.user_id");
+		// Remove session cookie
+		setcookie(session_name(), "", 0);
 		$f3->reroute("/");
 	}
 
