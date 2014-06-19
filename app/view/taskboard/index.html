@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 	<include href="blocks/head.html" />
-	<include href="blocks/taskboard-head.html" />
+	<link rel="stylesheet" href="minify/css/jquery-ui-1.10.3.css" type="text/css" media="all">
+	<link rel="stylesheet" href="minify/css/taskboard.css">
 	<check if="{{ !empty(@taskboard[0]) }}">
 		<style type="text/css">
 		/* Ensure optimal column widths */
@@ -205,6 +206,6 @@
 		    Burndown.init();
 		});
 	</script>
-	<script src="js/burndown.js"></script>
+	<script src="minify/js/burndown.js"></script>
 </body>
 </html>
