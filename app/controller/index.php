@@ -76,6 +76,7 @@ class Index extends Base {
 
 	public function logout($f3, $params) {
 		$f3->clear("SESSION.phproject_user_id");
+		session_destroy();
 		$f3->reroute("/");
 	}
 
