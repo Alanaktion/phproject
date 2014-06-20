@@ -345,16 +345,20 @@ a:focus, button:focus, input:focus, .btn:focus {
 #history .DifferencesInline .ChangeReplace .Left,
 #history .DifferencesInline .ChangeDelete .Left {
     background-color: #fdd;
+    background-color: rgba(255,0,0,0.1);
 }
 #history .DifferencesInline .ChangeReplace del {
     background-color: #e99;
+    background-color: rgba(255,0,0,0.2);
 }
 
 #history .DifferencesInline .ChangeReplace .Right,
 #history .DifferencesInline .ChangeInsert .Right {
     background-color: #dfd;
+    background-color: rgba(50,255,50,0.1);
 }
 #history .DifferencesInline .ChangeReplace ins {
     background-color: #9e9;
+    background-color: rgba(50,255,50,0.25);
 }
 
