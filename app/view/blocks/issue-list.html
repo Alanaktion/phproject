@@ -117,22 +117,23 @@
 				</tr>
 			</check>
 
-			<tr>
-				<th></th>
-				<repeat group="{{ @headings }}" value="{{ @heading }}">
-					<th class="nowrap"><a href="#" class="issue-sort nolink" id="{{ @heading }}">
-					<check if="{{ !empty(@GET.orderby) && @GET.orderby == @heading }}">
-						<true>
-							<check if="{{ !empty(@GET.ascdesc) && @GET.ascdesc == 'asc' }}">
-								<true><span class="glyphicon glyphicon-chevron-up"></span></true>
-								<false><span class="glyphicon glyphicon-chevron-down"></span></false>
-							</check>
-						</true>
-					</check>
-					{{ ucwords(str_replace("_"," ", @heading)) }}</a></th>
-				</repeat>
-
-			</tr>
+			<check if="{{ !empty(@headings) }}">
+				<tr>
+					<th></th>
+					<repeat group="{{ @headings }}" value="{{ @heading }}">
+						<th class="nowrap"><a href="#" class="issue-sort nolink" id="{{ @heading }}">
+						<check if="{{ !empty(@GET.orderby) && @GET.orderby == @heading }}">
+							<true>
+								<check if="{{ !empty(@GET.ascdesc) && @GET.ascdesc == 'asc' }}">
+									<true><span class="glyphicon glyphicon-chevron-up"></span></true>
+									<false><span class="glyphicon glyphicon-chevron-down"></span></false>
+								</check>
+							</true>
+						</check>
+						{{ ucwords(str_replace("_"," ", @heading)) }}</a></th>
+					</repeat>
+				</tr>
+			</check>
 
 		</thead>
 		<tbody>
