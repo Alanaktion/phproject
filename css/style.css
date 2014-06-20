@@ -328,3 +328,8 @@ a:focus, button:focus, input:focus, .btn:focus {
 	max-height: 400px;
 	overflow-y: auto;
 }
+
+.nowrap {
+	white-space: nowrap;
+
+}

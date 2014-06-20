@@ -43,4 +43,21 @@ $(document).ready(function(){
 		$(this).parents('form').submit();
 	});
 
+	$(".issue-sort").on("click",  function(e) {
+		e.preventDefault();
+
+		if($("#orderby").val() == $(this).attr('id')) {
+			if($("#ascdesc").val() == "desc") {
+				$("#ascdesc").val("asc");
+			} else {
+				$("#ascdesc").val("desc");
+			}
+
+		} else {
+			$("#orderby").val($(this).attr('id'));
+			$("#ascdesc").val("desc");
+		}
+		$(this).parents('form').submit();
+	});
+
 });

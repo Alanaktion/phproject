@@ -35,7 +35,40 @@ class Issues extends Base {
 				$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
 			}
 		}
-		$filter_str .= "deleted_date IS NULL";
+		$filter_str .= " deleted_date IS NULL ";
+
+		$orderby = !empty($_GET['orderby']) ? $_GET['orderby'] : "priority";
+		$ascdesc = !empty($_GET['ascdesc']) && $_GET['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		switch($orderby) {
+			case "id":
+				$filter_str .= " ORDER BY id {$ascdesc} ";
+				break;
+			case "title":
+				$filter_str .= " ORDER BY name {$ascdesc}";
+				break;
+			case "type":
+				$filter_str .= " ORDER BY type_id {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "status":
+				$filter_str .= " ORDER BY status {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "author":
+				$filter_str .= " ORDER BY author_name {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "assignee":
+				$filter_str .= " ORDER BY owner_name {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "created":
+				$filter_str .= " ORDER BY created_date {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "sprint":
+				$filter_str .= " ORDER BY sprint_start_date {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "priority":
+			default:
+				$filter_str .= " ORDER BY priority {$ascdesc}, due_date DESC ";
+				break;
+		}
 
 		// Load type if a type_id was passed
 		$type = new \Model\Issue\Type();
@@ -56,6 +89,9 @@ class Issues extends Base {
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
+
+		$sprint = new \Model\Sprint();
+		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -78,6 +114,21 @@ class Issues extends Base {
 
 		$f3->set("show_filters", true);
 		$f3->set("menuitem", "browse");
+		$headings = array(
+				"id",
+				"title",
+				"type",
+				"priority",
+				"status",
+				"author",
+				"assignee",
+				"sprint",
+				"created",
+				"due"
+			);
+		$f3->set("headings", $headings);
+		$f3->set("ascdesc", $ascdesc);
+
 		echo \Template::instance()->render("issues/index.html");
 	}
 
