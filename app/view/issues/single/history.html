@@ -12,7 +12,19 @@
 						<true>
 							<check if="{{ @change.new_value !== '' }}">
 								<true>
-									<li><b>{{ @human_readable.field }}</b> changed from <i>{{ @human_readable.old }}</i> to <i>{{ @human_readable.new }}</i></li>
+									<check if="{{ @change.field == 'description' }}">
+										<true>
+											<li>
+												<b>{{ @human_readable.field }}</b> changed:<br>
+												{~ @diff = new \Helper\Diff(explode("\n", @change.old_value), explode("\n", @change.new_value), array("ignoreWhitespace" => true)); ~}
+												{~ @diff_renderer = new \Helper\Diff\Renderer\Html\Inline ~}
+												{{ @diff->render(@diff_renderer) }}
+											</li>
+										</true>
+										<false>
+											<li><b>{{ @human_readable.field }}</b> changed from <i>{{ @human_readable.old }}</i> to <i>{{ @human_readable.new }}</i></li>
+										</false>
+									</check>
 								</true>
 								<false>
 									<li><b>{{ @human_readable.field }}</b> removed</li>

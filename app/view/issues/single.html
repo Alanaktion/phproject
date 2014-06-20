@@ -327,16 +327,16 @@ $(function() {
 		$("#form-edit").slideToggle("fast");
 		e.preventDefault();
 	});
-	if(!Modernizr.inputtypes.date) {
-		var nowTemp = new Date();
-		var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-		$('#due_date').datepicker({
-			format: 'yyyy-mm-dd',
-			/*onRender: function(date) {
-				return date.valueOf() < now.valueOf() ? 'disabled' : '';
-			}*/
-		});
-	}
+
+	// Due date picker
+	var nowTemp = new Date();
+	var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+	$('#due_date').datepicker({
+		format: 'yyyy-mm-dd',
+		/*onRender: function(date) {
+			return date.valueOf() < now.valueOf() ? 'disabled' : '';
+		}*/
+	});
 
 	// Handle file deletion
 	$(".file-list").on("click", ".delete", function(e) {

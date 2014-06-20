@@ -68,7 +68,7 @@ $f3->route("GET /minify/@type/@files", function($f3, $args) {
 }, $f3->get("cache_expire.minify"));
 
 // Set up session handler
-session_name("PHPROJSESS");
+// session_name("PHPROJSESS");
 // new Session();
 
 // Load user if session exists

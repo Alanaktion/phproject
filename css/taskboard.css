@@ -204,12 +204,18 @@ body {
 #taskboard .add-task:hover {
 	opacity: .8;
 }
-#taskboard .completed .card {
+#taskboard .completed .card.task,
+#taskboard .completed.card.task {
 	text-decoration: line-through;
 	height: 52px;
 	overflow: hidden;
 }
-#taskboard .completed .title {
+#taskboard .completed.card.story,
+#taskboard .completed.card.story a {
+	text-decoration: line-through;
+}
+#taskboard .completed .task .title,
+#taskboard .completed.task .title {
 	font-size: 10px;
 }
 #taskboard .completed .hours,

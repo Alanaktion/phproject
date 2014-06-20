@@ -373,7 +373,7 @@ class Issues extends Base {
 							array(
 								"id" => $comment->id,
 								"text" => parseTextile($comment->text),
-								"date_formatted" => date("D, M j, Y \\a\\t g:ia"),
+								"date_formatted" => date("D, M j, Y \\a\\t g:ia", utc2local(time())),
 								"user_name" => $f3->get('user.name'),
 								"user_username" => $f3->get('user.username'),
 								"user_email" => $f3->get('user.email'),
@@ -488,7 +488,7 @@ class Issues extends Base {
 			} else {
 				//This may be causing a memory leak.
 				if($issue->parent_id > 0) {
-					$found_issues = $issues->find(array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id));
+					$found_issues = $issues->find(array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id));
 					$f3->set("issues", $found_issues);
 				} else {
 					$f3->set("issues", array());
