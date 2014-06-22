@@ -38,8 +38,6 @@ class Backlog extends Base {
 				$users_result = $group_model->find("group_id IN ({$groups})");
 			}
 
-
-
 			foreach($users_result as $u) {
 				$filter_users[] = $u["user_id"];
 			}
@@ -96,4 +94,23 @@ class Backlog extends Base {
 		print_json($issue);
 	}
 
+	public function index_old($f3) {
+
+		$sprint_model = new \Model\Sprint();
+		$sprints = $sprint_model->find(array("end_date < ?", now(false)), array("order" => "start_date DESC"));
+
+		$issue = new \Model\Issue\Detail();
+
+		$sprint_details = array();
+		foreach($sprints as $sprint) {
+			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND type_id = ?", $sprint->id, $f3->get("issue_type.project")));
+			$sprint_details[] = $sprint->cast() + array("projects" => $projects);
+		}
+
+		$f3->set("sprints", $sprint_details);
+
+		$f3->set("title", "Backlog");
+		$f3->set("menuitem", "backlog");
+		echo \Template::instance()->render("backlog/old.html");
+	}
 }

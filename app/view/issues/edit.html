@@ -16,17 +16,14 @@
 <script src="minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(function() {
-	if(!Modernizr.inputtypes.date) {
-		//$('#due_date').popover();
-		var nowTemp = new Date();
-		var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-		$('#due_date').datepicker({
-			format: 'yyyy-mm-dd',
-			/*onRender: function(date) {
-				return date.valueOf() < now.valueOf() ? 'disabled' : '';
-			}*/
-		});
-	}
+	var nowTemp = new Date();
+	var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+	$('#due_date').datepicker({
+		format: 'yyyy-mm-dd',
+		/*onRender: function(date) {
+			return date.valueOf() < now.valueOf() ? 'disabled' : '';
+		}*/
+	});
 });
 </script>
 </body>

@@ -1,6 +1,5 @@
 SET NAMES utf8;
 SET foreign_key_checks = 0;
-SET time_zone = '-07:00';
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 DROP TABLE IF EXISTS `user`;
@@ -23,7 +22,7 @@ CREATE TABLE `user` (
 	UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `user` ( `id`, `username`, `email`, `name`, `password`, `salt`, `role`, `task_color`, `theme`, `avatar_filename`, `api_key`, `created_date`, `deleted_date`) VALUES (1,	 'admin', 'admin@local', 'Admin', '703983b055847560176a1e2e8508dd68d237ddfa', 'Qfv42OMfAS751Mn6hsKeTECDgyq5dVf7', 'admin', NULL, NULL, NULL, '', NOW(), NULL);
+INSERT INTO `user` (`username`, `email`, `name`, `password`, `salt`, `role`, `task_color`, `theme`, `avatar_filename`, `api_key`, `created_date`, `deleted_date`) VALUES ('admin', 'admin@local', 'Admin', '703983b055847560176a1e2e8508dd68d237ddfa', 'Qfv42OMfAS751Mn6hsKeTECDgyq5dVf7', 'admin', NULL, NULL, NULL, '', NOW(), NULL);
 
 DROP TABLE IF EXISTS `user_group`;
 CREATE TABLE `user_group` (
@@ -34,7 +33,7 @@ CREATE TABLE `user_group` (
 	PRIMARY KEY (`id`),
 	KEY `group_id` (`group_id`),
 	KEY `group_user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue`;
 CREATE TABLE `issue` (
@@ -87,7 +86,7 @@ CREATE TABLE `issue_comment` (
 	KEY `user` (`user_id`),
 	CONSTRAINT `comment_issue` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `comment_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_file`;
 CREATE TABLE `issue_file` (
@@ -115,7 +114,7 @@ CREATE TABLE `issue_priority` (
 	`value` int(10) NOT NULL,
 	`name` varchar(64) NOT NULL,
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `issue_priority` (`id`, `value`, `name`) VALUES
 (1, 0, 'Normal'),
@@ -161,7 +160,7 @@ CREATE TABLE `issue_update` (
 	KEY `issue` (`issue_id`),
 	KEY `user` (`user_id`),
 	CONSTRAINT `update_issue` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_update_field`;
 CREATE TABLE `issue_update_field` (
@@ -172,7 +171,7 @@ CREATE TABLE `issue_update_field` (
 	`new_value` text NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `issue_update_field_update_id` (`issue_update_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_watcher`;
 CREATE TABLE `issue_watcher` (
@@ -190,7 +189,7 @@ CREATE TABLE `sprint` (
 	`start_date` date NOT NULL,
 	`end_date` date NOT NULL,
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP VIEW IF EXISTS `user_group_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `user_group_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color`,`u`.`deleted_date` AS `deleted_date` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));
@@ -209,7 +208,7 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_file_detail` AS (sel
 
 DROP VIEW IF EXISTS `issue_update_user`;
 DROP VIEW IF EXISTS `issue_update_detail`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_update_detail` AS (select `i`.`id` AS `id`, `i`.`issue_id` AS `issue_id`, `i`.`user_id` AS `user_id`, `i`.`created_date` AS `created_date`, `u`.`username` AS `user_username`, `u`.`name` AS `user_name`, `u`.`email` AS `user_email`, `i`.`comment_id` AS `comment_id`, `c`.`text` AS `comment_text` from ((`issue_update` `i` join `user` `u` on ((`i`.`user_id` = `u`.`id`))) left join `issue_comment` `c` on ((`i`.`comment_id` = `c`.`id`))))
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_update_detail` AS (select `i`.`id` AS `id`, `i`.`issue_id` AS `issue_id`, `i`.`user_id` AS `user_id`, `i`.`created_date` AS `created_date`, `u`.`username` AS `user_username`, `u`.`name` AS `user_name`, `u`.`email` AS `user_email`, `i`.`comment_id` AS `comment_id`, `c`.`text` AS `comment_text` from ((`issue_update` `i` join `user` `u` on ((`i`.`user_id` = `u`.`id`))) left join `issue_comment` `c` on ((`i`.`comment_id` = `c`.`id`))));
 
 DROP VIEW IF EXISTS `issue_watcher_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_watcher_user` AS (select `w`.`id` AS `watcher_id`,`w`.`issue_id` AS `issue_id`,`u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`email` AS `email`,`u`.`name` AS `name`,`u`.`password` AS `password`,`u`.`role` AS `role`,`u`.`task_color` AS `task_color`,`u`.`created_date` AS `created_date`,`u`.`deleted_date` AS `deleted_date` from (`issue_watcher` `w` join `user` `u` on((`w`.`user_id` = `u`.`id`))));
@@ -224,7 +223,7 @@ CREATE TABLE `attribute` (
 	`type` enum('text','numeric','datetime','bool','list') NOT NULL DEFAULT 'text',
 	`default` text,
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `attribute_issue_type`;
 CREATE TABLE `attribute_issue_type` (
@@ -236,7 +235,7 @@ CREATE TABLE `attribute_issue_type` (
 	KEY `attribute_issue_type_attribute_id` (`attribute_id`),
 	CONSTRAINT `attribute_issue_type_attribute_id` FOREIGN KEY (`attribute_id`) REFERENCES `attribute` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `attribute_issue_type_issue_type_id` FOREIGN KEY (`issue_type_id`) REFERENCES `issue_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `attribute_value`;
 CREATE TABLE `attribute_value` (
@@ -247,7 +246,7 @@ CREATE TABLE `attribute_value` (
 	PRIMARY KEY (`id`),
 	KEY `object` (`attribute_id`,`issue_id`),
 	CONSTRAINT `attribute_value_attribute_id` FOREIGN KEY (`attribute_id`) REFERENCES `attribute` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP VIEW IF EXISTS `attribute_value_detail`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `attribute_value_detail` AS (select `v`.`id` AS `id`,`v`.`attribute_id` AS `attribute_id`,`v`.`issue_id` AS `issue_id`,`v`.`value` AS `value`,`a`.`name` AS `name`,`a`.`type` AS `type`,`a`.`default` AS `default` from (`attribute_value` `v` join `attribute` `a` on((`v`.`attribute_id` = `a`.`id`))));

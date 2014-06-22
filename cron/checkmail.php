@@ -12,7 +12,7 @@ require_once "base.php";
 
 	if($emails) {
 		// put the newest emails on top
-		//rsort($emails);
+		// rsort($emails);
 
 		// for every email...
 		$reg_email = "/([_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3}))/i";
@@ -31,7 +31,7 @@ require_once "base.php";
 			}
 
 			// is the sender a user?
-			$from = $header->from[0]->mailbox . "@" . $header->from[0]->host ;
+			$from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
 
 			$user = new \Model\User();
 			$user->load(array('email=? AND (deleted_date IS NULL OR deleted_date = ?)', $from, '0000-00-00 00:00:00'));
@@ -63,7 +63,7 @@ require_once "base.php";
 						$comment = new \Model\Issue\Comment();
 						$comment->user_id = $author;
 						$comment->issue_id = $issue->id;
-						$comment->text = strip_tags($message);
+						$comment->text = html_entity_decode(strip_tags($message));
 						$comment->created_date = now();
 						$comment->save();
 
@@ -81,7 +81,7 @@ require_once "base.php";
 						$comment = new \Model\Issue\Comment();
 						$comment->user_id = $author;
 						$comment->issue_id = $issue->id;
-						$comment->text = strip_tags($message);
+						$comment->text = html_entity_decode(strip_tags($message));
 						$comment->created_date = now();
 						$comment->save();
 
@@ -89,7 +89,7 @@ require_once "base.php";
 						$notification->issue_comment($issue->id, $comment->id);
 					} else {
 						$issue->name = $header->subject;
-						$issue->description = strip_tags($message);
+						$issue->description = html_entity_decode(strip_tags($message));
 						$issue->author_id = $author;
 						$issue->owner_id = $owner;
 						$issue->type_id = 1;
