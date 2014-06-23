@@ -38,7 +38,7 @@ class Issues extends Base {
 				if($user->role == 'group') {
 					$group_users = new \Model\User\Group();
 					$list = $group_users->find(array('group_id = ?', $val));
-					$garray = array();
+					$garray = array($val); //Include the group in the search
 					foreach ($list as $obj) {
 						$garray[] = $obj->user_id;
 					}
