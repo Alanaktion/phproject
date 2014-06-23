@@ -31,11 +31,28 @@ class Issues extends Base {
 				$filter_str .= "status_closed = 0 AND ";
 			} elseif($i == "status" && $val == "closed") {
 				$filter_str .= "status_closed = 1 AND ";
+			} elseif(($i == "author_id" || $i== "owner_id") && !empty($val) && is_numeric($val)) {
+				//Find all users in a group if necessary
+				$user = new \Model\User();
+				$user->load($val);
+				if($user->role == 'group') {
+					$group_users = new \Model\User\Group();
+					$list = $group_users->find(array('group_id = ?', $val));
+					$garray = array();
+					foreach ($list as $obj) {
+						$garray[] = $obj->user_id;
+					}
+					$filter_str .= "$i in (". implode(",",$garray) .") AND ";
+				} else {
+					//Just select by user
+					$filter_str .= "$i = '". addslashes($val) ."' AND ";
+				}
 			} else {
 				$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
 			}
 		}
 		$filter_str .= " deleted_date IS NULL ";
+
 
 		$orderby = !empty($_GET['orderby']) ? $_GET['orderby'] : "priority";
 		$ascdesc = !empty($_GET['ascdesc']) && $_GET['ascdesc'] == 'asc' ? "ASC" : "DESC";
