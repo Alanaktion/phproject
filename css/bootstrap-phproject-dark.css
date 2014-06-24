@@ -5157,3 +5157,7 @@ input, textarea {
 #taskboard td, #taskboard th {
 	border-color: #666 !important;
 }
+#taskboard #task-dialog,
+body .ui-widget-content {
+	background-color: #222 !important;
+}
