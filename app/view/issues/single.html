@@ -260,7 +260,7 @@ $(function() {
 			$('#comment_form')
 				.prop('disabled', false)
 				.after(
-'<div class="media">' +
+'<div class="media" id="c-' + data.id + '">' +
 	'<a class="pull-left" href="user/' + data.user_username + '">' +
 		'<img src="{{ h(@user_obj->avatar(48)) }}" class="media-object profile-picture img-rounded" alt>' +
 	'</a>' +
