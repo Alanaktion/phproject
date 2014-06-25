@@ -5161,3 +5161,6 @@ input, textarea {
 body .ui-widget-content {
 	background-color: #222 !important;
 }
+#taskboard .spinner {
+	background-image: url(/img/ajax-loader-dark.gif) !important;
+}
