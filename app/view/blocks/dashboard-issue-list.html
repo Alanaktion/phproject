@@ -15,7 +15,12 @@
 				<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
 			</check>
 			<check if="{{ @item.sprint_id }}">
-				<p class="list-group-item-text text-muted"><span class="has-tooltip" title="Sprint #{{ @item.sprint_id }}" data-placement="right">{{ @item.sprint_name }}</span></p>
+				<set sprint_date_range="{{ date('M j-', strtotime(@item.sprint_start_date)) }}" />
+				<check if="{{ date('Ym', strtotime(@item.sprint_start_date)) == date('Ym', strtotime(@item.sprint_end_date)) }}">
+					<true><set sprint_date_range="{{ @sprint_date_range . date('j', strtotime(@item.sprint_end_date)) }}" /></true>
+					<false><set sprint_date_range="{{ @sprint_date_range . date('M j', strtotime(@item.sprint_end_date)) }}" /></false>
+				</check>
+				<p class="list-group-item-text text-muted"><span class="has-tooltip" title="Sprint #{{ @item.sprint_id }}: {{ @sprint_date_range }}" data-placement="right">{{ @item.sprint_name }}</span></p>
 			</check>
 		</a>
 	</repeat>

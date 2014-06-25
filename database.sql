@@ -1,6 +1,5 @@
 SET NAMES utf8;
 SET foreign_key_checks = 0;
-SET time_zone = '-07:00';
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 DROP TABLE IF EXISTS `user`;
@@ -23,7 +22,7 @@ CREATE TABLE `user` (
 	UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `user` ( `id`, `username`, `email`, `name`, `password`, `salt`, `role`, `task_color`, `theme`, `avatar_filename`, `api_key`, `created_date`, `deleted_date`) VALUES (1,	 'admin', 'admin@local', 'Admin', '703983b055847560176a1e2e8508dd68d237ddfa', 'Qfv42OMfAS751Mn6hsKeTECDgyq5dVf7', 'admin', NULL, NULL, NULL, '', NOW(), NULL);
+INSERT INTO `user` (`username`, `email`, `name`, `password`, `salt`, `role`, `task_color`, `theme`, `avatar_filename`, `api_key`, `created_date`, `deleted_date`) VALUES ('admin', 'admin@local', 'Admin', '703983b055847560176a1e2e8508dd68d237ddfa', 'Qfv42OMfAS751Mn6hsKeTECDgyq5dVf7', 'admin', NULL, NULL, NULL, '', NOW(), NULL);
 
 DROP TABLE IF EXISTS `user_group`;
 CREATE TABLE `user_group` (
@@ -209,7 +208,7 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_file_detail` AS (sel
 
 DROP VIEW IF EXISTS `issue_update_user`;
 DROP VIEW IF EXISTS `issue_update_detail`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_update_detail` AS (select `i`.`id` AS `id`, `i`.`issue_id` AS `issue_id`, `i`.`user_id` AS `user_id`, `i`.`created_date` AS `created_date`, `u`.`username` AS `user_username`, `u`.`name` AS `user_name`, `u`.`email` AS `user_email`, `i`.`comment_id` AS `comment_id`, `c`.`text` AS `comment_text` from ((`issue_update` `i` join `user` `u` on ((`i`.`user_id` = `u`.`id`))) left join `issue_comment` `c` on ((`i`.`comment_id` = `c`.`id`))))
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_update_detail` AS (select `i`.`id` AS `id`, `i`.`issue_id` AS `issue_id`, `i`.`user_id` AS `user_id`, `i`.`created_date` AS `created_date`, `u`.`username` AS `user_username`, `u`.`name` AS `user_name`, `u`.`email` AS `user_email`, `i`.`comment_id` AS `comment_id`, `c`.`text` AS `comment_text` from ((`issue_update` `i` join `user` `u` on ((`i`.`user_id` = `u`.`id`))) left join `issue_comment` `c` on ((`i`.`comment_id` = `c`.`id`))));
 
 DROP VIEW IF EXISTS `issue_watcher_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_watcher_user` AS (select `w`.`id` AS `watcher_id`,`w`.`issue_id` AS `issue_id`,`u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`email` AS `email`,`u`.`name` AS `name`,`u`.`password` AS `password`,`u`.`role` AS `role`,`u`.`task_color` AS `task_color`,`u`.`created_date` AS `created_date`,`u`.`deleted_date` AS `deleted_date` from (`issue_watcher` `w` join `user` `u` on((`w`.`user_id` = `u`.`id`))));

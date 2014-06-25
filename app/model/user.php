@@ -9,7 +9,7 @@ class User extends Base {
 	// Load currently logged in user, if any
 	public function loadCurrent() {
 		$f3 = \Base::instance();
-		if($user_id = $f3->get("SESSION.user_id")) {
+		if($user_id = $f3->get("SESSION.phproject_user_id")) {
 			$this->load(array("id = ? AND deleted_date IS NULL", $user_id));
 			if($this->id) {
 				$f3->set("user", $this->cast());

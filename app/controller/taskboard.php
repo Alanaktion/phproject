@@ -44,7 +44,7 @@ class Taskboard extends Base {
 					$filter_users = array($this->_userId);
 				}
 			} else {
-				$filter_users = array($this->_userId);
+				$filter_users = array($params["filter"]);
 			}
 
 		}

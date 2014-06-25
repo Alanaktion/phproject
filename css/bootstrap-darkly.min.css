@@ -20,3 +20,6 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 	background-color: rgba(34,34,34,.8) !important;
 	color: white !important;
 }
+#taskboard .spinner {
+	background-image: url(/img/ajax-loader-dark.gif) !important;
+}
