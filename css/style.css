@@ -320,10 +320,15 @@ a:focus, button:focus, input:focus, .btn:focus {
 	padding-left: 20px;
 	margin-bottom: 0px;
 }
+.tex blockquote {
+	font-size: inherit;
+	padding: 0 0 0 5px;
+	margin-bottom: 5px;
+}
 
 .popover-content {
-	text-overflow:ellipsis;
-	overflow:hidden;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 /* Make huge dropdowns usable */
