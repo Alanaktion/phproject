@@ -581,6 +581,10 @@ class Issues extends Base {
 
 	public function search($f3, $params) {
 		$query = "%" . $f3->get("GET.q") . "%";
+		if(preg_match("/^#([0-9]+)$/", $f3->get("GET.q"), $matches)){
+			$f3->reroute("/issues/{$matches[1]}");
+		}
+
 		$issues = new \Model\Issue\Detail();
 
 		$args = $f3->get("GET");
