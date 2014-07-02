@@ -10,12 +10,12 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 
 .navbar-form .input-sm,
 .navbar-form .btn-sm {
-    margin-top: 4px;
+	margin-top: 4px;
 }
 #taskboard table.taskboard-head {
-    background-color: transparent;
+	background-color: transparent;
 }
 #taskboard table.taskboard-head th {
-    background-color: rgba(0,0,0,.7) !important;
-    color: white !important;
+	background-color: rgba(0,0,0,.7) !important;
+	color: white !important;
 }

@@ -26,7 +26,7 @@ class Notification extends \Prefab {
 			$f3->set("comment", $comment);
 			$body = \Template::instance()->render("notification/comment.html");
 
-			$subject =  "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
+			$subject = "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
 			// Send to recipients
 			foreach($recipients as $recipient) {
 				utf8mail($recipient, $subject, $body);

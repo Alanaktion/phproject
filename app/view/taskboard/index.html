@@ -21,13 +21,13 @@
 		</style>
 	</check>
 	<!--[if lte IE 9]>
-   		<style type="text/css">
-   			/*  Fix RGBA issues */
+		<style type="text/css">
+			/*  Fix RGBA issues */
 			#taskboard .card {
 				color: #000000;
 				background-color: #ffffff;
 			}
-   		</style>
+		</style>
 	<![endif]-->
 </head>
 <body>
@@ -51,7 +51,7 @@
 						</ul>
 					</div>
 					<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
-					  	<span class="glyphicon glyphicon-fire"></span> Burndown
+						<span class="glyphicon glyphicon-fire"></span> Burndown
 					</button>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
@@ -186,7 +186,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        					<h4 class="modal-title" id="myModalLabel">Burndown Chart</h4>
+					<h4 class="modal-title" id="myModalLabel">Burndown Chart</h4>
 				</div>
 				<div class="modal-body">
 					<div style="width:920px;margin:0 auto;">
@@ -203,7 +203,7 @@
 	<script>
 		BurndownData = {{ @burndown | raw }};
 		$(document).ready(function() {
-		    Burndown.init();
+			Burndown.init();
 		});
 	</script>
 	<script src="minify/js/burndown.js"></script>
