@@ -158,5 +158,47 @@ class Issue extends Base {
 		return $return;
 	}
 
-}
+	// Duplicate issue and all sub-issues, return the new top-level issue
+	function duplicate() {
+		if(!$this->get("id")) {
+			return false;
+		}
 
+		$this->copyto("duplicating_issue");
+
+		$new_issue = new Issue;
+		$new_issue->copyfrom("duplicating_issue");
+		$new_issue->clear("id");
+		$new_issue->save();
+
+		// Run the recursive function to duplicate the complete descendant tree
+		$this->_duplicateTree($this->get("id"), $new_issue->id);
+
+		return $new_issue;
+	}
+
+	// Duplicate a complete issue tree, starting from a duplicated issue created by duplicate()
+	protected function _duplicateTree($id, $new_id) {
+
+		// Find all child issues
+		$children = $this->find(array("parent_id = ?", $id));
+		if(count($children)) {
+			foreach($children as $child) {
+
+				// Duplicate issue
+				$child->copyto("duplicating_issue");
+				$new_child = new Issue;
+				$new_child->copyfrom("duplicating_issue");
+				$new_child->clear("id");
+				$new_child->set("parent_id", $new_id);
+				$new_child->save();
+
+				// Duplicate issue's children
+				$this->_duplicateTree($child->id, $new_child->id);
+
+			}
+		}
+
+	}
+
+}
