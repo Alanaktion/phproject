@@ -21,7 +21,10 @@ abstract class Base extends \DB\SQL\Mapper {
 		return $this;
 	}
 
-	// Set object created date if possible
+	/**
+	 * Set object created date if possible
+	 * @return mixed
+	 */
 	function save() {
 		if(array_key_exists("created_date", $this->fields) && !$this->query && !$this->get("created_date")) {
 			$this->set("created_date", now());
@@ -29,7 +32,10 @@ abstract class Base extends \DB\SQL\Mapper {
 		return parent::save();
 	}
 
-	// Safely delete object if possible, if not, erase the record.
+	/**
+	 * Safely delete object if possible, if not, erase the record.
+	 * @return mixed
+	 */
 	function delete() {
 		if(array_key_exists("deleted_date", $this->fields)) {
 			$this->deleted_date = now();
@@ -39,7 +45,13 @@ abstract class Base extends \DB\SQL\Mapper {
 		}
 	}
 
-	// Load by ID directly
+	/**
+	 * Load by ID directly if a string is passed
+	 * @param  string|array  $filter
+	 * @param  array         $options
+	 * @param  integer       $ttl
+	 * @return mixed
+	 */
 	function load($filter=NULL, array $options=NULL, $ttl=0) {
 		if(is_numeric($filter)) {
 			return parent::load(array("id = ?", $filter), $options, $ttl);
@@ -48,7 +60,11 @@ abstract class Base extends \DB\SQL\Mapper {
 		}
 	}
 
-	// Get most recent value of field
+	/**
+	 * Get most recent value of field
+	 * @param  string $key
+	 * @return mixed
+	 */
 	protected function get_prev($key) {
 		if(!$this->query) {
 			return null;

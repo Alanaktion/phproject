@@ -315,13 +315,10 @@ class Taskboard extends Base {
 		$f3->set("taskboard", array_values($taskboard));
 		$f3->set("filter", $params["filter"]);
 
-		$grouplist = \Helper\Groups::instance();
-		$f3->set("groups", $grouplist->getAll());
-
 		// Get user list for select
 		$users = new \Model\User();
-		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+		$f3->set("users", $users->getAllGroups());
+		$f3->set("groups", $users->getAll());
 
 		echo \Template::instance()->render("taskboard/index.html");
 

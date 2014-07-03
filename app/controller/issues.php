@@ -238,7 +238,7 @@ class Issues extends Base {
 		}
 	}
 
-	public function close($f3, $params){
+	public function close($f3, $params) {
 		$issue = new \Model\Issue();
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -254,6 +254,30 @@ class Issues extends Base {
 		$issue->save();
 
 		$f3->reroute("/issues/" . $issue->id);
+	}
+
+	public function copy($f3, $params) {
+		$issue = new \Model\Issue();
+		$issue->load($f3->get("PARAMS.id"));
+
+		if(!$issue->id) {
+			$f3->error(404, "Issue does not exist");
+			return;
+		}
+
+		try {
+			$new_issue = $issue->duplicate();
+		} catch(Exception $e) {
+			print_r($f3->get("db.instance")->log());
+			return;
+		}
+
+		if($new_issue->id) {
+			$f3->reroute("/issues/" . $new_issue->id);
+		} else {
+			$f3->error(500, "Failed to duplicate issue.");
+		}
+
 	}
 
 	public function save($f3, $params) {

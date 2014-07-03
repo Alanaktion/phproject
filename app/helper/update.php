@@ -4,6 +4,13 @@ namespace Helper;
 
 class Update extends \Prefab {
 
+	/**
+	 * Generate human-readable data for issue updates
+	 * @param  string $field
+	 * @param  string|int $old_val
+	 * @param  string|int $new_val
+	 * @return array
+	 */
 	function humanReadableValues($field, $old_val, $new_val) {
 		switch($field) {
 			case "owner_id":

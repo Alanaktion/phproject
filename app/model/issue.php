@@ -6,6 +6,10 @@ class Issue extends Base {
 
 	protected $_table_name = "issue";
 
+	/**
+	 * Get complete parent list for issue
+	 * @return array
+	 */
 	public function hierarchy() {
 		$issues = array();
 		$issues[] = $this;
@@ -20,17 +24,29 @@ class Issue extends Base {
 		return array_reverse($issues);
 	}
 
+	/**
+	 * Remove messy whitespace from a string
+	 * @param  string $string
+	 * @return string
+	 */
 	public static function clean($string) {
 		return preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n\n", str_replace("\r\n", "\n", $string));
 	}
 
-	// Delete without sending notification
+	/**
+	 * Delete without sending notification
+	 * @return mixed
+	 */
 	public function delete() {
 		$this->set("deleted_date", now());
 		return $this->save(false);
 	}
 
-	// Log issue update, send notifications
+	/**
+	 * Log issue update, send notifications
+	 * @param  boolean $notify
+	 * @return Issue
+	 */
 	public function save($notify = true) {
 		$f3 = \Base::instance();
 		if($this->query) {
@@ -145,7 +161,13 @@ class Issue extends Base {
 		return empty($issue) ? parent::save() : $issue;
 	}
 
-	// Preload custom attributes
+	/**
+	 * Preload custom attributes
+	 * @param  string|array $filter
+	 * @param  array        $options
+	 * @param  integer      $ttl
+	 * @return array|FALSE
+	 */
 	function load($filter=NULL, array $options=NULL, $ttl=0) {
 		// Load issue from
 		$return = parent::load($filter, $options, $ttl);
@@ -158,7 +180,10 @@ class Issue extends Base {
 		return $return;
 	}
 
-	// Duplicate issue and all sub-issues, return the new top-level issue
+	/**
+	 * Duplicate issue and all sub-issues
+	 * @return Issue
+	 */
 	function duplicate() {
 		if(!$this->get("id")) {
 			return false;
@@ -177,7 +202,11 @@ class Issue extends Base {
 		return $new_issue;
 	}
 
-	// Duplicate a complete issue tree, starting from a duplicated issue created by duplicate()
+	/**
+	 * Duplicate a complete issue tree, starting from a duplicated issue created by duplicate()
+	 * @param int $id
+	 * @param int $new_id
+	 */
 	protected function _duplicateTree($id, $new_id) {
 
 		// Find all child issues

@@ -1,8 +1,14 @@
 <?php
 /**
+ * ~SprintBreaker~
+ * Alanaktion's insane attempt at automated sprint management.
  *
- *  ~SprintBreaker~
- *  Moves tasks under projects into sprints by due date
+ * Moves tasks under projects into sprints by due date
+ *
+ * Tested, but still a bit scary. Also unnecessary now that
+ * sprint tasks are dynamically loaded by due date.
+ *
+ * Use with caution and pizza.
  *
  **/
 

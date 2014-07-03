@@ -2,9 +2,12 @@
 
 namespace Controller\Api;
 
-class Base extends \Controller\Base {
+abstract class Base extends \Controller\Base {
 
-	// Require an API key. Sends an HTTP 403 if one is not supplied.
+	/**
+	 * Require an API key. Sends an HTTP 403 if one is not supplied.
+	 * @return int|bool
+	 */
 	protected function _requireAuth() {
 		$f3 = \Base::instance();
 
@@ -39,6 +42,10 @@ class Base extends \Controller\Base {
 		}
 	}
 
+	/**
+	 * Output an error in a JSON object, stop execution
+	 * @param  integer $message
+	 */
 	protected function _error($message = 1) {
 		print_json(array(
 			"error" => $message

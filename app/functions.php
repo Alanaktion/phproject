@@ -1,6 +1,14 @@
-<?php // Global core functions
+<?php
+/**
+ * Global core functions
+ */
 
-// Get a Gravatar URL from email address and size, uses global Gravatar configuration
+/**
+ * Get a Gravatar URL from email address and size, uses global Gravatar configuration
+ * @param  string  $email
+ * @param  integer $size
+ * @return string
+ */
 function gravatar($email, $size = 80) {
 	$f3 = Base::instance();
 	$rating = $f3->get("gravatar.rating") ? $f3->get("gravatar.rating") : "pg";
@@ -11,17 +19,28 @@ function gravatar($email, $size = 80) {
 			"&r=" . urlencode($rating);
 }
 
-// HTML escape shortcode
+/**
+ * HTML escape shortcode
+ * @param  string $str
+ * @return string
+ */
 function h($str) {
 	return htmlspecialchars($str);
 }
 
-// Get current time and date in a MySQL NOW() format
+/**
+ * Get current time and date in a MySQL NOW() format
+ * @param  boolean $time  Determines whether to include the time in the string
+ * @return string
+ */
 function now($time = true) {
 	return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
 }
 
-// Output object as JSON and set appropriate headers
+/**
+ * Output object as JSON and set appropriate headers
+ * @param mixed $object
+ */
 function print_json($object) {
 	if(!headers_sent()) {
 		header("Content-type: application/json");
@@ -29,6 +48,11 @@ function print_json($object) {
 	echo json_encode($object);
 }
 
+/**
+ * Internal function used by make_clickable
+ * @param  array  $matches
+ * @return string
+ */
 function _make_url_clickable_cb($matches) {
 	$ret = '';
 	$url = $matches[2];
@@ -43,6 +67,11 @@ function _make_url_clickable_cb($matches) {
 	return $matches[1] . "<a href=\"$url\" rel=\"nofollow\" target=\"_blank\">$url</a>".$ret;
 }
 
+/**
+ * Internal function used by make_clickable
+ * @param  array $m
+ * @return string
+ */
 function _make_web_ftp_clickable_cb($m) {
 	$s = '';
 	$d = $m[2];
@@ -58,11 +87,21 @@ function _make_web_ftp_clickable_cb($m) {
 	return $m[1] . "<a href=\"http://$d\" rel=\"nofollow\" target=\"_blank\">$d</a>".$s;
 }
 
+/**
+ * Internal function used by make_clickable
+ * @param  array $m
+ * @return string
+ */
 function _make_email_clickable_cb($m) {
 	$email = $m[2].'@'.$m[3];
 	return $m[1]."<a href=\"mailto:$email\">$email</a>";
 }
 
+/**
+ * Converts recognized URLs and email addresses into HTML hyperlinks
+ * @param  string $s
+ * @return string
+ */
 function make_clickable($s) {
 	$s = ' '.$s;
 	// in testing, using arrays here was found to be faster
@@ -76,6 +115,13 @@ function make_clickable($s) {
 	return $s;
 }
 
+/**
+ * Send an email with the UTF-8 character set
+ * @param  string $to
+ * @param  string $subject
+ * @param  string $body
+ * @return bool
+ */
 function utf8mail($to, $subject, $body) {
 	$f3 = \Base::instance();
 
@@ -90,29 +136,36 @@ function utf8mail($to, $subject, $body) {
 	return mail($to, $subject, $body, $headers);
 }
 
+/**
+ * Takes two dates formatted as YYYY-MM-DD and creates an
+ * inclusive array of the dates between the from and to dates.
+ * @param  string $strDateFrom
+ * @param  string $strDateTo
+ * @return array
+ */
 function createDateRangeArray($strDateFrom, $strDateTo) {
-	// takes two dates formatted as YYYY-MM-DD and creates an
-	// inclusive array of the dates between the from and to dates.
+	$aryRange = array();
 
-	$aryRange=array();
+	$iDateFrom = mktime(1,0,0,substr($strDateFrom,5,2),substr($strDateFrom,8,2),substr($strDateFrom,0,4));
+	$iDateTo = mktime(1,0,0,substr($strDateTo,5,2),substr($strDateTo,8,2),substr($strDateTo,0,4));
 
-	$iDateFrom=mktime(1,0,0,substr($strDateFrom,5,2),substr($strDateFrom,8,2),substr($strDateFrom,0,4));
-	$iDateTo=mktime(1,0,0,substr($strDateTo,5,2),substr($strDateTo,8,2),substr($strDateTo,0,4));
-
-	if ($iDateTo>=$iDateFrom) {
-		array_push($aryRange,date('Y-m-d',$iDateFrom)); // first entry
-		while ($iDateFrom<$iDateTo) {
-			$iDateFrom+=86400; // add 24 hours
-			array_push($aryRange,date('Y-m-d',$iDateFrom));
+	if ($iDateTo >= $iDateFrom) {
+		$aryRange[] = date('Y-m-d', $iDateFrom); // first entry
+		while ($iDateFrom < $iDateTo) {
+			$iDateFrom += 86400; // add 24 hours
+			$aryRange[] = date('Y-m-d', $iDateFrom);
 		}
 	}
+
 	return $aryRange;
 }
 
-/* Passes a string through the Textile parser
- * Also converts issue IDs and usernames to links
- *
- * @param $ttl int|bool
+/**
+ * Passes a string through the Textile parser,
+ * also converts issue IDs and usernames to links
+ * @param  string   $str
+ * @param  int|bool $ttl
+ * @return string
  */
 function parseTextile($str, $ttl=false) {
 	if($ttl !== false) {
@@ -147,6 +200,11 @@ function parseTextile($str, $ttl=false) {
 	return $val;
 }
 
+/**
+ * Get a human-readable file size
+ * @param  int $filesize
+ * @return string
+ */
 function format_filesize($filesize) {
 	if($filesize > 1073741824) {
 		return round($filesize / 1073741824, 2) . " GB";
@@ -159,6 +217,11 @@ function format_filesize($filesize) {
 	}
 }
 
+/**
+ * Convert a UTC timestamp to local time
+ * @param  int $timestamp
+ * @return int
+ */
 function utc2local($timestamp) {
 	$f3 = Base::instance();
 	if($f3->exists("site.timeoffset")) {
