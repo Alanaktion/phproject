@@ -46,9 +46,9 @@
 						<span class="glyphicon glyphicon-check"></span>&ensp;Mark Complete
 					</a>
 				</check>
-				<!-- <a href="issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs" data-toggle="modal" data-target="#modal-copy">
+				<a id="btn-copy" href="issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
 					<span class="glyphicon glyphicon-file"></span>&ensp;Copy
-				</a> -->
+				</a>
 				<check if="{{ @watching }}">
 					<true>
 						<button class="btn btn-default btn-xs" onclick="unwatch_issue();" id="watch-btn">
@@ -128,24 +128,6 @@
 				<hr class="hidden-lg">
 			</div>
 
-			<!-- <div class="modal fade" id="modal-copy" tabindex="-1" role="dialog" aria-labelledby="modal-copy-label" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-							<h4 class="modal-title" id="modal-copy-label">Copy Issue</h4>
-						</div>
-						<div class="modal-body">
-							Copying this issue will duplicate it and all of its descendants. No comments, files, history, or watchers will be copied.
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-							<a class="btn btn-primary btn-sm" href="/issues/copy/{{ @issue.id }}">Copy Issue</a>
-						</div>
-					</div>
-				</div>
-			</div> -->
-
 			<div class="col-lg-7">
 				<h4>Files</h4>
 				<check if="{{ !empty(@files) }}">
@@ -165,27 +147,6 @@
 				<p>
 					<a class="btn btn-default btn-sm" data-toggle="modal" href="#" data-target="#upload">Upload</a>
 				</p>
-				<form class="modal fade in" id="upload" method="post" enctype="multipart/form-data" action="issues/upload">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-								<h4 class="modal-title">Upload A File</h4>
-							</div>
-							<div class="modal-body">
-								<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
-								<div class="form-group">
-									<input type="file" name="attachment" size="chars">
-								</div>
-								<textarea class="form-control input-sm" id="file_comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
-								<button type="submit" class="btn btn-sm btn-primary">Upload</button>
-							</div>
-						</div>
-					</div>
-				</form>
 				<br>
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#comments" data-toggle="tab">Comments&ensp;<span class="badge" id="comment_badge">{{ count(@comments) }}</span></a></li>
@@ -268,9 +229,61 @@
 	</div>
 	<include href="blocks/footer.html" />
 </div>
+
+<form class="modal fade in" id="upload" method="post" enctype="multipart/form-data" action="issues/upload">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Upload A File</h4>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
+				<div class="form-group">
+					<input type="file" name="attachment" size="chars">
+				</div>
+				<textarea class="form-control input-sm" id="file_comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
+				<button type="submit" class="btn btn-sm btn-primary">Upload</button>
+			</div>
+		</div>
+	</div>
+</form>
+
+<div class="modal fade" id="modal-copy" tabindex="-1" role="dialog" aria-labelledby="modal-copy-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="modal-copy-label">Copy Issue</h4>
+			</div>
+			<div class="modal-body">
+				<div id="pre-copy">Copying this issue will duplicate it and all of its descendants. No comments, files, history, or watchers will be copied.</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+				<a id="btn-copy-confirm" class="btn btn-primary btn-sm" href="/issues/copy/{{ @issue.id }}">Copy Issue</a>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script src="minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(function() {
+
+	// Handle copy modal
+	$("#btn-copy").click(function(e) {
+		$("#modal-copy").modal("show");
+		e.preventDefault();
+	});
+	$("#btn-copy-confirm").click(function(e) {
+		$(this).prop('disabled', true)
+			.addClass('disabled')
+			.html('Loading&hellip;');
+	});
 
 	// AJAX comment submission
 	$('#comment_form').submit(function(e) {

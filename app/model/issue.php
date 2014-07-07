@@ -189,11 +189,13 @@ class Issue extends Base {
 			return false;
 		}
 
+		$f3 = \Base::instance();
+
 		$this->copyto("duplicating_issue");
+		$f3->clear("duplicating_issue.id");
 
 		$new_issue = new Issue;
 		$new_issue->copyfrom("duplicating_issue");
-		$new_issue->clear("id");
 		$new_issue->save();
 
 		// Run the recursive function to duplicate the complete descendant tree
@@ -212,10 +214,13 @@ class Issue extends Base {
 		// Find all child issues
 		$children = $this->find(array("parent_id = ?", $id));
 		if(count($children)) {
+			$f3 = \Base::instance();
 			foreach($children as $child) {
 
 				// Duplicate issue
 				$child->copyto("duplicating_issue");
+				$f3->clear("duplicating_issue.id");
+
 				$new_child = new Issue;
 				$new_child->copyfrom("duplicating_issue");
 				$new_child->clear("id");
