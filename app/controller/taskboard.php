@@ -317,8 +317,8 @@ class Taskboard extends Base {
 
 		// Get user list for select
 		$users = new \Model\User();
-		$f3->set("users", $users->getAllGroups());
-		$f3->set("groups", $users->getAll());
+		$f3->set("users", $users->getAll());
+		$f3->set("groups", $users->getAllGroups());
 
 		echo \Template::instance()->render("taskboard/index.html");
 
