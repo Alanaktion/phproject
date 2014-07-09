@@ -32,19 +32,19 @@ class Issues extends Base {
 			} elseif($i == "status" && $val == "closed") {
 				$filter_str .= "status_closed = 1 AND ";
 			} elseif(($i == "author_id" || $i== "owner_id") && !empty($val) && is_numeric($val)) {
-				//Find all users in a group if necessary
+				// Find all users in a group if necessary
 				$user = new \Model\User();
 				$user->load($val);
 				if($user->role == 'group') {
 					$group_users = new \Model\User\Group();
 					$list = $group_users->find(array('group_id = ?', $val));
-					$garray = array($val); //Include the group in the search
+					$garray = array($val); // Include the group in the search
 					foreach ($list as $obj) {
 						$garray[] = $obj->user_id;
 					}
 					$filter_str .= "$i in (". implode(",",$garray) .") AND ";
 				} else {
-					//Just select by user
+					// Just select by user
 					$filter_str .= "$i = '". addslashes($val) ."' AND ";
 				}
 			} else {
@@ -315,7 +315,6 @@ class Issues extends Base {
 							if ($i=="due_date" && !empty($val)) {
 								$sprint = new \Model\Sprint();
 								$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
-								// $sprint->load("id=9");
 								$issue->sprint_id = $sprint->id;
 							}
 						}
@@ -527,7 +526,7 @@ class Issues extends Base {
 				$f3->set("issues", $found_issues);
 				$f3->set("parent", $issue);
 			} else {
-				//This may be causing a memory leak.
+				// This may be causing a memory leak. - rightbit
 				if($issue->parent_id > 0) {
 					$found_issues = $issues->find(array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id));
 					$f3->set("issues", $found_issues);
@@ -567,17 +566,6 @@ class Issues extends Base {
 		$issue->load($params["id"]);
 		$issue->delete();
 		$f3->reroute("/issues?deleted={$issue->id}");
-
-		/* Old delete with confirmation
-		$issue = new \Model\Issue();
-		$issue->load($params["id"]);
-		if($f3->get("POST.id")) {
-			$issue->delete();
-			$f3->reroute("/issues");
-		} else {
-			$f3->set("issue", $issue);
-			echo \Template::instance()->render("issues/delete.html");
-		}*/
 	}
 
 	public function single_undelete($f3, $params) {
@@ -640,7 +628,7 @@ class Issues extends Base {
 
 		$web = \Web::instance();
 
-		$f3->set("UPLOADS",'uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
+		$f3->set("UPLOADS", "uploads/".date("Y")."/".date("m")."/");
 		if(!is_dir($f3->get("UPLOADS"))) {
 			mkdir($f3->get("UPLOADS"), 0777, true);
 		}
@@ -701,6 +689,8 @@ class Issues extends Base {
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
+
+	public function
 
 	// Quick add button for adding tasks to projects
 	// TODO: Update code to work with frontend outside of taskboard
