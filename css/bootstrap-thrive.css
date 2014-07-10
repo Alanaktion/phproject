@@ -5115,6 +5115,10 @@ a{transition:color .25s;}
 .panel-body .nav-tabs > li.active > a:focus {
 	background-color: #eee;
 }
+.panel-body .nav > li:not(.active) > a:hover,
+.panel-body .nav > li:not(.active) > a:focus {
+	background-color: #efefef;
+}
 .panel-body .nav-tabs > li > a:hover,
 .panel-body .nav-tabs > li > a:focus {
 	background-color: #efefef;
