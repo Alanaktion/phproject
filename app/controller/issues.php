@@ -690,8 +690,6 @@ class Issues extends Base {
 		$f3->reroute("/issues/" . $issue->id);
 	}
 
-	public function
-
 	// Quick add button for adding tasks to projects
 	// TODO: Update code to work with frontend outside of taskboard
 	public function quickadd($f3, $params) {
