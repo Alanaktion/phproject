@@ -49,6 +49,8 @@ class Issue extends Base {
 	 */
 	public function save($notify = true) {
 		$f3 = \Base::instance();
+
+		// Check if updating or inserting
 		if($this->query) {
 
 			// Log update
@@ -114,7 +116,7 @@ class Issue extends Base {
 				// If the project was in a sprint before, put it in a sprint again.
 				if($this->get("sprint_id")) {
 					$sprint = new \Model\Sprint();
-					$sprint->load(array(" id > ? AND end_date > ? AND start_date < ?", $this->get("sprint_id"), $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
+					$sprint->load(array("id > ? AND end_date > ? AND start_date < ?", $this->get("sprint_id"), $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
 					$repeat_issue->sprint_id = $sprint->id;
 				}
 
@@ -122,6 +124,19 @@ class Issue extends Base {
 				$notification = \Helper\Notification::instance();
 				$notification->issue_create($repeat_issue->id);
 				$this->set("repeat_cycle", "none");
+			}
+
+			// Move all non-project children to same sprint
+			if($this->get("sprint_id")) {
+				$db = $f3->get("db.instance");
+				$db->exec(
+					"UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type",
+					array(
+						"sprint" => $this->get("sprint_id"),
+						"issue" => $this->get("id"),
+						"type" => $f3->get("issue_type.project")
+					)
+				);
 			}
 
 			// Log updated fields
