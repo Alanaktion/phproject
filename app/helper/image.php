@@ -7,12 +7,31 @@ class Image extends \Image {
 	protected $colors = array();
 	public $last_data;
 
+	/**
+	 * Create a new blank canvase
+	 * @param  int $width
+	 * @param  int $height
+	 * @return Image
+	 */
 	function create($width, $height) {
 		$this->data = imagecreatetruecolor($width, $height);
 		imagesavealpha($this->data, true);
 	}
 
-	// Render a line of text
+	/**
+	 * Render a line of text
+	 * @param  string  $text
+	 * @param  float   $size
+	 * @param  integer $angle
+	 * @param  integer $x
+	 * @param  integer $y
+	 * @param  hex     $color
+	 * @param  string  $font
+	 * @param  hex     $overlay_color
+	 * @param  float   $overlay_transparency
+	 * @param  integer $overlay_padding
+	 * @return Image
+	 */
 	function text($text, $size = 9.0, $angle = 0, $x = 0, $y = 0, $color = 0x000000, $font = "opensans-regular.ttf",
 		$overlay_color = null, $overlay_transparency = 0.5, $overlay_padding = 2
 	) {
@@ -49,7 +68,17 @@ class Image extends \Image {
 		return $this->save();
 	}
 
-	// Render fully justified and wrapped text
+	/**
+	 * Render fully justified and wrapped text
+	 * @param  string  $text
+	 * @param  float   $size
+	 * @param  integer $left
+	 * @param  integer $top
+	 * @param  hex     $color
+	 * @param  string  $font
+	 * @param  integer $max_width
+	 * @return Image
+	 */
 	function textwrap($text, $size = 9.0, $left = 0, $top = 0, $color = 0x000000, $font = "opensans-regular.ttf", $max_width = 0) {
 		$f3 = \Base::instance();
 
@@ -84,6 +113,11 @@ class Image extends \Image {
 		return $this->save();
 	}
 
+	/**
+	 * Fill image with a solid color
+	 * @param  hex $color
+	 * @return Image
+	 */
 	function fill($color = 0x000000) {
 		$color = $this->rgb($color);
 		$color_id = imagecolorallocate($this->data, $color[0], $color[1], $color[2]);

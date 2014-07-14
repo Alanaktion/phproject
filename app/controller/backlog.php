@@ -72,8 +72,8 @@ class Backlog extends Base {
 			$unset_projects = array();
 		}
 
-		$grouplist = \Helper\Groups::instance();
-		$f3->set("groups", $grouplist->getAll());
+		$groups = new \Model\User();
+		$f3->set("groups", $groups->getAllGroups());
 		$f3->set("groupid", $params["groupid"]);
 		$f3->set("sprints", $sprint_details);
 		$f3->set("backlog", $unset_projects);

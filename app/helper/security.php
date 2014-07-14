@@ -4,22 +4,12 @@ namespace Helper;
 
 class Security extends \Prefab {
 
-	// bcrypt is bundled with PHP 5.4 or later by default
-	public function bcrypt($string, $work = 13) {
-		$salt = strtr($this->base64_salt(22), "+", ".");
-		$salt = sprintf("$2y$%s$%s", $work, $salt);
-		$hash = crypt($string, $salt);
-		if(strlen($hash) > 13) {
-			return $hash;
-		} else {
-			return false;
-		}
-	}
-
-	public function bcrypt_verify($hash, $string) {
-		return (crypt($string,$hash) === $hash);
-	}
-
+	/**
+	 * Generate a salted SHA1 hash
+	 * @param  string $string
+	 * @param  string $salt
+	 * @return mixed
+	 */
 	public function hash($string, $salt = null) {
 		if(is_null($salt)) {
 			$salt = $this->salt();
@@ -32,19 +22,36 @@ class Security extends \Prefab {
 		}
 	}
 
+	/**
+	 * Generate a secure salt for hashing
+	 * @return string
+	 */
 	public function salt() {
-		return md5(microtime(true));
+		return md5($this->rand_bytes(64));
 	}
 
-	public function rand_hash() {
-		return sha1($this->salt());
+	/**
+	 * Generate a secure SHA1 salt for hasing
+	 * @return string
+	 */
+	public function salt_sha1() {
+		return sha1($this->rand_bytes(64));
 	}
 
+	/**
+	 * Encrypt a string with ROT13
+	 * @param  string $string
+	 * @return string
+	 */
 	public function rot13($string) {
 		return str_rot13($string);
 	}
 
-	// rot13 for hexadecimal
+	/**
+	 * ROT13 equivelant for hexadecimal
+	 * @param  string $hex
+	 * @return string
+	 */
 	public function rot8($hex) {
 		return strtr(
 			strtolower($hex),
@@ -69,6 +76,11 @@ class Security extends \Prefab {
 		);
 	}
 
+	/**
+	 * Generate secure random bytes
+	 * @param  integer $length
+	 * @return binary
+	 */
 	private function rand_bytes($length = 16) {
 
 		// Use OpenSSL cryptography extension if available
@@ -89,15 +101,6 @@ class Security extends \Prefab {
 		}
 
 		return (binary)$rnd;
-	}
-
-	private function base64_salt($length = 22) {
-		$character_list = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/";
-		$salt = "";
-		for($i = 0; $i < $length; $i++) {
-			$salt .= $character_list{mt_rand(0, (strlen($character_list) - 1))};
-		}
-		return $salt;
 	}
 
 }

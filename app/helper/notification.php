@@ -4,7 +4,11 @@ namespace Helper;
 
 class Notification extends \Prefab {
 
-	// Send an email to watchers with the comment body
+	/**
+	 * Send an email to watchers with the comment body
+	 * @param  int $issue_id
+	 * @param  int $comment_id
+	 */
 	public function issue_comment($issue_id, $comment_id) {
 		$f3 = \Base::instance();
 
@@ -26,7 +30,7 @@ class Notification extends \Prefab {
 			$f3->set("comment", $comment);
 			$body = \Template::instance()->render("notification/comment.html");
 
-			$subject =  "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
+			$subject = "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
 			// Send to recipients
 			foreach($recipients as $recipient) {
 				utf8mail($recipient, $subject, $body);
@@ -35,7 +39,11 @@ class Notification extends \Prefab {
 		}
 	}
 
-	// Send an email to watchers detailing the updated fields
+	/**
+	 * Send an email to watchers detailing the updated fields
+	 * @param  int $issue_id
+	 * @param  int $update_id
+	 */
 	public function issue_update($issue_id, $update_id) {
 		$f3 = \Base::instance();
 
@@ -75,7 +83,10 @@ class Notification extends \Prefab {
 		}
 	}
 
-	// Send an email to watchers detailing the updated fields
+	/**
+	 * Send an email to watchers detailing the updated fields
+	 * @param  int $issue_id
+	 */
 	public function issue_create($issue_id) {
 
 		$f3 = \Base::instance();
@@ -106,7 +117,11 @@ class Notification extends \Prefab {
 		}
 	}
 
-	// Send an email to watchers with the file info
+	/**
+	 * Send an email to watchers with the file info
+	 * @param  int $issue_id
+	 * @param  int $file_id
+	 */
 	public function issue_file($issue_id, $file_id) {
 		$f3 = \Base::instance();
 
@@ -137,7 +152,11 @@ class Notification extends \Prefab {
 		}
 	}
 
-	// Get array of email addresses of all watchers on an issue
+	/**
+	 * Get array of email addresses of all watchers on an issue
+	 * @param  int $issue_id
+	 * @return array
+	 */
 	protected function _issue_watchers($issue_id) {
 		$f3 = \Base::instance();
 		$log = new \Log("mail.log");

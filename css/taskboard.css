@@ -69,7 +69,6 @@ body {
 	border-left: 6px solid;
 	height: 85px;
 	border-radius:0;
-
 }
 #taskboard .card.task {
 	cursor: move;
@@ -208,7 +207,6 @@ body {
 #taskboard .completed.card.task {
 	text-decoration: line-through;
 	height: 52px;
-	overflow: hidden;
 }
 #taskboard .completed.card.story,
 #taskboard .completed.card.story a {
@@ -217,6 +215,7 @@ body {
 #taskboard .completed .task .title,
 #taskboard .completed.task .title {
 	font-size: 10px;
+	height: 28px;
 }
 #taskboard .completed .hours,
 #taskboard .completed .owner {

@@ -42,10 +42,13 @@
 			</check>
 			<div class="pull-right">
 				<check if="{{ !@issue.closed_date }}">
-				<a id="btn-Mark Complete" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
-					<span class="glyphicon glyphicon-check"></span>&ensp;Mark Complete
-				</a>
+					<a id="btn-Mark Complete" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
+						<span class="glyphicon glyphicon-check"></span>&ensp;Mark Complete
+					</a>
 				</check>
+				<a id="btn-copy" href="issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
+					<span class="glyphicon glyphicon-file"></span>&ensp;Copy
+				</a>
 				<check if="{{ @watching }}">
 					<true>
 						<button class="btn btn-default btn-xs" onclick="unwatch_issue();" id="watch-btn">
@@ -144,30 +147,9 @@
 				<p>
 					<a class="btn btn-default btn-sm" data-toggle="modal" href="#" data-target="#upload">Upload</a>
 				</p>
-				<form class="modal fade in" id="upload" method="post" enctype="multipart/form-data" action="issues/upload">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-								<h4 class="modal-title">Upload A File</h4>
-							</div>
-							<div class="modal-body">
-								<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
-								<div class="form-group">
-									<input type="file" name="attachment" size="chars">
-								</div>
-								<textarea class="form-control input-sm" id="file_comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
-								<button type="submit" class="btn btn-sm btn-primary">Upload</button>
-							</div>
-						</div>
-					</div>
-				</form>
 				<br>
 				<ul class="nav nav-tabs">
-					<li class="active"><a href="#comments" data-toggle="tab">Comments&ensp;<span class="badge">{{ count(@comments) }}</span></a></li>
+					<li class="active"><a href="#comments" data-toggle="tab">Comments&ensp;<span class="badge" id="comment_badge">{{ count(@comments) }}</span></a></li>
 					<li><a href="#history" data-toggle="tab" id="tab_history">History</a></li>
 					<li><a href="#watchers" data-toggle="tab" id="tab_watchers">Watchers</a></li>
 					<check if="{{ @issue_type.project == @type.id }}">
@@ -247,9 +229,61 @@
 	</div>
 	<include href="blocks/footer.html" />
 </div>
+
+<form class="modal fade in" id="upload" method="post" enctype="multipart/form-data" action="issues/upload">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Upload A File</h4>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" name="issue_id" value="{{ @issue.id }}" />
+				<div class="form-group">
+					<input type="file" name="attachment" size="chars">
+				</div>
+				<textarea class="form-control input-sm" id="file_comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
+				<button type="submit" class="btn btn-sm btn-primary">Upload</button>
+			</div>
+		</div>
+	</div>
+</form>
+
+<div class="modal fade" id="modal-copy" tabindex="-1" role="dialog" aria-labelledby="modal-copy-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="modal-copy-label">Copy Issue</h4>
+			</div>
+			<div class="modal-body">
+				<div id="pre-copy">Copying this issue will duplicate it and all of its descendants. No comments, files, history, or watchers will be copied.</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+				<a id="btn-copy-confirm" class="btn btn-primary btn-sm" href="/issues/copy/{{ @issue.id }}">Copy Issue</a>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script src="minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(function() {
+
+	// Handle copy modal
+	$("#btn-copy").click(function(e) {
+		$("#modal-copy").modal("show");
+		e.preventDefault();
+	});
+	$("#btn-copy-confirm").click(function(e) {
+		$(this).prop('disabled', true)
+			.addClass('disabled')
+			.html('Loading&hellip;');
+	});
 
 	// AJAX comment submission
 	$('#comment_form').submit(function(e) {
@@ -271,6 +305,7 @@ $(function() {
 	'</div>' +
 '</div>');
 			$('#comment_textarea').val('').html('');
+			$('#comment_badge').text(parseInt($('#comment_badge').text()) + 1);
 		}, 'json');
 
 		$this.prop('disabled', true);
@@ -287,7 +322,7 @@ $(function() {
 	});
 	$.get('issues/{{ @issue.id }}/watchers', {}, function(data) {
 		$('#watchers').empty().append(data.html);
-		$('#tab_watchers').html('Watchers&ensp;<span class="badge">' + data.total + '</span>');
+		$('#tab_watchers').html('Watchers&ensp;<span class="badge" id="watchers-badge">' + data.total + '</span>');
 
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
@@ -297,6 +332,9 @@ $(function() {
 				user_id: $li.data('user-id')
 			});
 			$li.remove();
+
+			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) - 1);
+
 			e.preventDefault();
 		});
 		$('#add-watcher').submit(function(e) {
@@ -308,6 +346,8 @@ $(function() {
 				.data('user-id', $select.val())
 				.html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $select.children('option:selected').text())
 				.appendTo('#watchers-list');
+
+			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) + 1);
 
 			e.preventDefault();
 		});
