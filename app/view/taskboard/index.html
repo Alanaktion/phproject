@@ -12,7 +12,7 @@
 			width: auto;
 		}
 
-		/* Show 3 columns when possible */
+		/* Show all columns when possible */
 		@media screen and (min-width: {{ 490 * count(@taskboard[0].columns) + 252 }}px) {
 			#taskboard table .column:not(.column-1) {
 				width: 490px;
@@ -201,11 +201,19 @@
 	<script src="minify/js/taskboard.js"></script>
 	<script src="js/chart.js"></script>
 	<script>
-		BurndownData = {{ @burndown | raw }};
+		var BurndownData;
 		$(document).ready(function() {
-			Burndown.init();
+			$.ajax({
+				url: "taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}",
+				success: function(data) {
+					BurndownData = data;
+					$.getScript("minify/js/burndown.js", function() {
+						Burndown.init();
+					});
+				},
+				dataType: "json"
+			});
 		});
 	</script>
-	<script src="minify/js/burndown.js"></script>
 </body>
 </html>

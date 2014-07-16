@@ -178,8 +178,6 @@ class Taskboard extends Base {
 			}
 		}
 
-
-
 		// Build an array of all visible task IDs (used by the burndown)
 		$visible_tasks = array();
 		foreach($taskboard as $p) {
@@ -189,7 +187,32 @@ class Taskboard extends Base {
 				}
 			}
 		}
-		 //Visible tasks must have at least one key
+
+		$f3->set("tasks", implode(",", $visible_tasks));
+
+		$f3->set("taskboard", array_values($taskboard));
+		$f3->set("filter", $params["filter"]);
+
+		// Get user list for select
+		$users = new \Model\User();
+		$f3->set("users", $users->getAll());
+		$f3->set("groups", $users->getAllGroups());
+
+		echo \Template::instance()->render("taskboard/index.html");
+	}
+
+	public function burndown($f3, $params) {
+		$sprint = new \Model\Sprint;
+		$sprint->load($params["id"]);
+
+		if(!$sprint->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$visible_tasks = explode(",", $params["tasks"]);
+
+		// Visible tasks must have at least one key
 		if (empty($visible_tasks)) {
 			$visible_tasks = array(0);
 		}
@@ -309,19 +332,7 @@ class Taskboard extends Base {
 		}
 
 		$burndown = array($burnDays);
-
-		$f3->set("burndown", json_encode($burndown));
-
-		$f3->set("taskboard", array_values($taskboard));
-		$f3->set("filter", $params["filter"]);
-
-		// Get user list for select
-		$users = new \Model\User();
-		$f3->set("users", $users->getAll());
-		$f3->set("groups", $users->getAllGroups());
-
-		echo \Template::instance()->render("taskboard/index.html");
-
+		print_json($burndown);
 	}
 
 	public function add($f3, $params) {
