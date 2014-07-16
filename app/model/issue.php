@@ -245,6 +245,7 @@ class Issue extends Base {
 	 * @return Issue
 	 */
 	public function resetChildren() {
+		$f3 = \Base::instance();
 		if($this->get("sprint_id")) {
 			$db = $f3->get("db.instance");
 			$db->exec(
