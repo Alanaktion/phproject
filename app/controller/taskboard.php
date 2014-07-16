@@ -10,6 +10,12 @@ class Taskboard extends Base {
 
 	public function index($f3, $params) {
 
+		// Require a valid numeric sprint ID
+		if(!intval($params["id"])) {
+			$f3->error(404);
+			return;
+		}
+
 		if(empty($params["filter"])) {
 			$params["filter"] = "groups";
 		}
