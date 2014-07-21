@@ -24,7 +24,7 @@
 				<set queries_log="{{ @db.instance->log(true) }}" />
 				<set cached="0" />
 				{~ foreach(@queries_log as @r) if(@r.cached) ++@cached; ~}
-				<span title="{{ count(@queries_log) }} total queries, {{ @cached }} cached">{{ count(@queries_log) - @cached }} queries</span> &middot;
+				<span title="{{ count(@queries_log) }} total queries, {{ intval(@cached) }} cached">{{ count(@queries_log) - @cached }} queries</span> &middot;
 			</check>
 			<check if="{{ !empty(@microtime) }}">
 				<set pagemtime="{{ microtime(true) - @microtime }}" />

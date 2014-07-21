@@ -56,7 +56,9 @@ class Backlog extends Base {
 
 		$sprint_details = array();
 		foreach($sprints as $sprint) {
-			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND type_id = ? $filter_string", $sprint->id, $f3->get("issue_type.project")));
+			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND type_id = ? $filter_string", $sprint->id, $f3->get("issue_type.project")),
+					array('order' => 'priority DESC, due_date')
+				);
 			$sprint_details[] = $sprint->cast() + array("projects" => $projects);
 		}
 
@@ -67,13 +69,15 @@ class Backlog extends Base {
 		}
 		if(!empty($large_project_ids)) {
 			$large_project_ids = implode(",", $large_project_ids);
-			$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids}) $filter_string", $f3->get("issue_type.project")));
+			$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids}) $filter_string", $f3->get("issue_type.project")),
+						array('order' => 'priority DESC, due_date')
+					);
 		} else {
 			$unset_projects = array();
 		}
 
-		$grouplist = \Helper\Groups::instance();
-		$f3->set("groups", $grouplist->getAll());
+		$groups = new \Model\User();
+		$f3->set("groups", $groups->getAllGroups());
 		$f3->set("groupid", $params["groupid"]);
 		$f3->set("sprints", $sprint_details);
 		$f3->set("backlog", $unset_projects);

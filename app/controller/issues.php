@@ -31,11 +31,61 @@ class Issues extends Base {
 				$filter_str .= "status_closed = 0 AND ";
 			} elseif($i == "status" && $val == "closed") {
 				$filter_str .= "status_closed = 1 AND ";
+			} elseif(($i == "author_id" || $i== "owner_id") && !empty($val) && is_numeric($val)) {
+				// Find all users in a group if necessary
+				$user = new \Model\User();
+				$user->load($val);
+				if($user->role == 'group') {
+					$group_users = new \Model\User\Group();
+					$list = $group_users->find(array('group_id = ?', $val));
+					$garray = array($val); // Include the group in the search
+					foreach ($list as $obj) {
+						$garray[] = $obj->user_id;
+					}
+					$filter_str .= "$i in (". implode(",",$garray) .") AND ";
+				} else {
+					// Just select by user
+					$filter_str .= "$i = '". addslashes($val) ."' AND ";
+				}
 			} else {
 				$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
 			}
 		}
-		$filter_str .= "deleted_date IS NULL";
+		$filter_str .= " deleted_date IS NULL ";
+
+
+		$orderby = !empty($_GET['orderby']) ? $_GET['orderby'] : "priority";
+		$ascdesc = !empty($_GET['ascdesc']) && $_GET['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		switch($orderby) {
+			case "id":
+				$filter_str .= " ORDER BY id {$ascdesc} ";
+				break;
+			case "title":
+				$filter_str .= " ORDER BY name {$ascdesc}";
+				break;
+			case "type":
+				$filter_str .= " ORDER BY type_id {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "status":
+				$filter_str .= " ORDER BY status {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "author":
+				$filter_str .= " ORDER BY author_name {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "assignee":
+				$filter_str .= " ORDER BY owner_name {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "created":
+				$filter_str .= " ORDER BY created_date {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "sprint":
+				$filter_str .= " ORDER BY sprint_start_date {$ascdesc}, priority DESC, due_date DESC ";
+				break;
+			case "priority":
+			default:
+				$filter_str .= " ORDER BY priority {$ascdesc}, due_date DESC ";
+				break;
+		}
 
 		// Load type if a type_id was passed
 		$type = new \Model\Issue\Type();
@@ -56,6 +106,9 @@ class Issues extends Base {
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
+
+		$sprint = new \Model\Sprint();
+		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -78,6 +131,21 @@ class Issues extends Base {
 
 		$f3->set("show_filters", true);
 		$f3->set("menuitem", "browse");
+		$headings = array(
+				"id",
+				"title",
+				"type",
+				"priority",
+				"status",
+				"author",
+				"assignee",
+				"sprint",
+				"created",
+				"due"
+			);
+		$f3->set("headings", $headings);
+		$f3->set("ascdesc", $ascdesc);
+
 		echo \Template::instance()->render("issues/index.html");
 	}
 
@@ -170,7 +238,7 @@ class Issues extends Base {
 		}
 	}
 
-	public function close($f3, $params){
+	public function close($f3, $params) {
 		$issue = new \Model\Issue();
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -186,6 +254,30 @@ class Issues extends Base {
 		$issue->save();
 
 		$f3->reroute("/issues/" . $issue->id);
+	}
+
+	public function copy($f3, $params) {
+		$issue = new \Model\Issue();
+		$issue->load($f3->get("PARAMS.id"));
+
+		if(!$issue->id) {
+			$f3->error(404, "Issue does not exist");
+			return;
+		}
+
+		try {
+			$new_issue = $issue->duplicate();
+		} catch(Exception $e) {
+			print_r($f3->get("db.instance")->log());
+			return;
+		}
+
+		if($new_issue->id) {
+			$f3->reroute("/issues/" . $new_issue->id);
+		} else {
+			$f3->error(500, "Failed to duplicate issue.");
+		}
+
 	}
 
 	public function save($f3, $params) {
@@ -223,7 +315,6 @@ class Issues extends Base {
 							if ($i=="due_date" && !empty($val)) {
 								$sprint = new \Model\Sprint();
 								$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
-								// $sprint->load("id=9");
 								$issue->sprint_id = $sprint->id;
 							}
 						}
@@ -435,9 +526,11 @@ class Issues extends Base {
 				$f3->set("issues", $found_issues);
 				$f3->set("parent", $issue);
 			} else {
-				//This may be causing a memory leak.
+				// This may be causing a memory leak. - rightbit
 				if($issue->parent_id > 0) {
-					$found_issues = $issues->find(array("parent_id = ? AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id));
+					$found_issues = $issues->find(array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id),
+									array('order' => "priority DESC, due_date")
+						);
 					$f3->set("issues", $found_issues);
 				} else {
 					$f3->set("issues", array());
@@ -475,17 +568,6 @@ class Issues extends Base {
 		$issue->load($params["id"]);
 		$issue->delete();
 		$f3->reroute("/issues?deleted={$issue->id}");
-
-		/* Old delete with confirmation
-		$issue = new \Model\Issue();
-		$issue->load($params["id"]);
-		if($f3->get("POST.id")) {
-			$issue->delete();
-			$f3->reroute("/issues");
-		} else {
-			$f3->set("issue", $issue);
-			echo \Template::instance()->render("issues/delete.html");
-		}*/
 	}
 
 	public function single_undelete($f3, $params) {
@@ -513,6 +595,10 @@ class Issues extends Base {
 
 	public function search($f3, $params) {
 		$query = "%" . $f3->get("GET.q") . "%";
+		if(preg_match("/^#([0-9]+)$/", $f3->get("GET.q"), $matches)){
+			$f3->reroute("/issues/{$matches[1]}");
+		}
+
 		$issues = new \Model\Issue\Detail();
 
 		$args = $f3->get("GET");
@@ -544,7 +630,7 @@ class Issues extends Base {
 
 		$web = \Web::instance();
 
-		$f3->set("UPLOADS",'uploads/'.date("Y")."/".date("m")."/"); // don't forget to set an Upload directory, and make it writable!
+		$f3->set("UPLOADS", "uploads/".date("Y")."/".date("m")."/");
 		if(!is_dir($f3->get("UPLOADS"))) {
 			mkdir($f3->get("UPLOADS"), 0777, true);
 		}

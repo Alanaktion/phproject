@@ -12,6 +12,17 @@ class Index extends Base {
 			if($f3->get("site.public")) {
 				echo \Template::instance()->render("index/index.html");
 			} else {
+				if($f3->get("site.demo") && is_numeric($f3->get("site.demo"))) {
+					$user = new \Model\User();
+					$user->load($f3->get("site.demo"));
+					if($user->id) {
+						$f3->set("SESSION.phproject_user_id", $user->id);
+						$f3->reroute("/");
+						return;
+					} else {
+						$f3->set("error", "Auto-login failed, demo user was not found.");
+					}
+				}
 				$f3->reroute("/login");
 			}
 		}
@@ -48,7 +59,7 @@ class Index extends Base {
 		// Verify password
 		$security = \Helper\Security::instance();
 		if($security->hash($f3->get("POST.password"), $user->salt) == $user->password) {
-			$f3->set("SESSION.user_id", $user->id);
+			$f3->set("SESSION.phproject_user_id", $user->id);
 			if(!$f3->get("POST.to")) {
 				$f3->reroute("/");
 			} else {
@@ -64,7 +75,8 @@ class Index extends Base {
 	}
 
 	public function logout($f3, $params) {
-		$f3->clear("SESSION.user_id");
+		$f3->clear("SESSION.phproject_user_id");
+		session_destroy();
 		$f3->reroute("/");
 	}
 

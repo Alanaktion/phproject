@@ -6,10 +6,13 @@ class User extends Base {
 
 	protected $_table_name = "user";
 
-	// Load currently logged in user, if any
+	/**
+	 * Load currently logged in user, if any
+	 * @return mixed
+	 */
 	public function loadCurrent() {
 		$f3 = \Base::instance();
-		if($user_id = $f3->get("SESSION.user_id")) {
+		if($user_id = $f3->get("SESSION.phproject_user_id")) {
 			$this->load(array("id = ? AND deleted_date IS NULL", $user_id));
 			if($this->id) {
 				$f3->set("user", $this->cast());
@@ -19,15 +22,11 @@ class User extends Base {
 		return $this;
 	}
 
-	public function verify_password($password) {
-		if($this->dry() || empty($this->password)) {
-			return false;
-		}
-		$security = \Helper\Security::instance();
-		return $security->bcrypt_verify($this->password, $password);
-	}
-
-	// Get path to user's avatar or gravatar
+	/**
+	 * Get path to user's avatar or gravatar
+	 * @param  integer $size
+	 * @return string|bool
+	 */
 	public function avatar($size = 80) {
 		$f3 = \Base::instance();
 		if(!$this->get("id")) {
@@ -37,6 +36,22 @@ class User extends Base {
 			return "/avatar/$size/" . $this->get("id") . ".png";
 		}
 		return gravatar($this->get("email"), $size);
+	}
+
+	/**
+	 * Load all active users
+	 * @return array
+	 */
+	public function getAll() {
+		return $this->find("deleted_date IS NULL AND role IN ('user', 'admin')", array("order" => "name ASC"));
+	}
+
+	/**
+	 * Load all active groups
+	 * @return array
+	 */
+	public function getAllGroups() {
+		return $this->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC"));
 	}
 
 }

@@ -320,10 +320,15 @@ a:focus, button:focus, input:focus, .btn:focus {
 	padding-left: 20px;
 	margin-bottom: 0px;
 }
+.tex blockquote {
+	font-size: inherit;
+	padding: 0 0 0 5px;
+	margin-bottom: 5px;
+}
 
 .popover-content {
-	text-overflow:ellipsis;
-	overflow:hidden;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 /* Make huge dropdowns usable */
@@ -331,3 +336,39 @@ a:focus, button:focus, input:focus, .btn:focus {
 	max-height: 400px;
 	overflow-y: auto;
 }
+
+.nowrap {
+	white-space: nowrap;
+
+}
+
+/* Make diff beautiful :') */
+.Differences {
+	font-family: 'Consolas', 'Monaco', monospace;
+	font-size: 12px;
+}
+#history .DifferencesInline thead,
+#history .DifferencesInline tbody th {
+	display: none;
+}
+
+#history .DifferencesInline .ChangeReplace .Left,
+#history .DifferencesInline .ChangeDelete .Left {
+	background-color: #fdd;
+	background-color: rgba(255,0,0,0.1);
+}
+#history .DifferencesInline .ChangeReplace del {
+	background-color: #e99;
+	background-color: rgba(255,0,0,0.2);
+}
+
+#history .DifferencesInline .ChangeReplace .Right,
+#history .DifferencesInline .ChangeInsert .Right {
+	background-color: #dfd;
+	background-color: rgba(50,255,50,0.1);
+}
+#history .DifferencesInline .ChangeReplace ins {
+	background-color: #9e9;
+	background-color: rgba(50,255,50,0.25);
+}
+

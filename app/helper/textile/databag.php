@@ -53,46 +53,46 @@ namespace Helper\Textile;
 
 class DataBag
 {
-    /**
-     * The data array stored in the bag.
-     *
-     * @var array
-     */
+	/**
+	 * The data array stored in the bag.
+	 *
+	 * @var array
+	 */
 
-    protected $data;
+	protected $data;
 
-    /**
-     * Constructor.
-     *
-     * @param array|null $data The initial data array stored in the bag
-     */
+	/**
+	 * Constructor.
+	 *
+	 * @param array|null $data The initial data array stored in the bag
+	 */
 
-    public function __construct(array $data = null)
-    {
-        $this->data = (array) $data;
-    }
+	public function __construct(array $data = null)
+	{
+		$this->data = (array) $data;
+	}
 
-    /**
-     * Adds a value to the bag.
-     *
-     * Empty values are rejected, unless the
-     * second argument is set TRUE.
-     *
-     * bc. use Netcarver\Textile\DataBag;
-     * $plant = new DataBag(array('key' => 'value'));
-     * $plant->flower('rose')->color('red')->emptyValue(false, true);
-     *
-     * @param   string $name   The name
-     * @param   array  $params Arguments
-     * @return  DataBag
-     */
+	/**
+	 * Adds a value to the bag.
+	 *
+	 * Empty values are rejected, unless the
+	 * second argument is set TRUE.
+	 *
+	 * bc. use Netcarver\Textile\DataBag;
+	 * $plant = new DataBag(array('key' => 'value'));
+	 * $plant->flower('rose')->color('red')->emptyValue(false, true);
+	 *
+	 * @param   string $name   The name
+	 * @param   array  $params Arguments
+	 * @return  DataBag
+	 */
 
-    public function __call($name, array $params)
-    {
-        if (!empty($params[1]) || !empty($params[0])) {
-            $this->data[$name] = $params[0];
-        }
+	public function __call($name, array $params)
+	{
+		if (!empty($params[1]) || !empty($params[0])) {
+			$this->data[$name] = $params[0];
+		}
 
-        return $this;
-    }
+		return $this;
+	}
 }

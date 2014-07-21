@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	// Initialize tooltips and popovers
 	$(".has-tooltip").tooltip();
-	$(".has-popover").popover();
+	$(".has-popover").popover({delay: {show: 500, hide: 100}});
 
 	// Handle custom nested input focusing
 	$(".form-control.has-child").click(function(e) {
@@ -40,6 +40,23 @@ $(document).ready(function(){
 
 	// Auto-submit filters when select box is changed
 	$('.issue-filters').on('change', 'select, input', function(e) {
+		$(this).parents('form').submit();
+	});
+
+	$(".issue-sort").on("click",  function(e) {
+		e.preventDefault();
+
+		if($("#orderby").val() == $(this).attr('id')) {
+			if($("#ascdesc").val() == "desc") {
+				$("#ascdesc").val("asc");
+			} else {
+				$("#ascdesc").val("desc");
+			}
+
+		} else {
+			$("#orderby").val($(this).attr('id'));
+			$("#ascdesc").val("desc");
+		}
 		$(this).parents('form').submit();
 	});
 

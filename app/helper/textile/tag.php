@@ -55,62 +55,62 @@ namespace Helper\Textile;
 
 class Tag extends DataBag
 {
-    /**
-     * The name of the tag.
-     *
-     * @var string
-     */
+	/**
+	 * The name of the tag.
+	 *
+	 * @var string
+	 */
 
-    protected $tag;
+	protected $tag;
 
-    /**
-     * Whether the tag is self-closing.
-     *
-     * @var bool
-     */
+	/**
+	 * Whether the tag is self-closing.
+	 *
+	 * @var bool
+	 */
 
-    protected $selfclose;
+	protected $selfclose;
 
-    /**
-     * Constructor.
-     *
-     * @param string $name        The tag name
-     * @param array  $attributes  An array of attributes
-     * @param bool   $selfclosing Whether the tag is self-closing
-     */
+	/**
+	 * Constructor.
+	 *
+	 * @param string $name        The tag name
+	 * @param array  $attributes  An array of attributes
+	 * @param bool   $selfclosing Whether the tag is self-closing
+	 */
 
-    public function __construct($name, array $attributes = null, $selfclosing = true)
-    {
-        parent::__construct($attributes);
-        $this->tag = $name;
-        $this->selfclose = $selfclosing;
-    }
+	public function __construct($name, array $attributes = null, $selfclosing = true)
+	{
+		parent::__construct($attributes);
+		$this->tag = $name;
+		$this->selfclose = $selfclosing;
+	}
 
-    /**
-     * Returns the tag as HTML.
-     *
-     * bc. $img = new Tag('img');
-     * $img->src('images/example.jpg')->alt('Example image');
-     * echo (string) $img;
-     *
-     * @return string A HTML element
-     */
+	/**
+	 * Returns the tag as HTML.
+	 *
+	 * bc. $img = new Tag('img');
+	 * $img->src('images/example.jpg')->alt('Example image');
+	 * echo (string) $img;
+	 *
+	 * @return string A HTML element
+	 */
 
-    public function __toString()
-    {
-        $attributes = '';
+	public function __toString()
+	{
+		$attributes = '';
 
-        if ($this->data) {
-            ksort($this->data);
-            foreach ($this->data as $name => $value) {
-                $attributes .= " $name=\"$value\"";
-            }
-        }
+		if ($this->data) {
+			ksort($this->data);
+			foreach ($this->data as $name => $value) {
+				$attributes .= " $name=\"$value\"";
+			}
+		}
 
-        if ($this->tag) {
-            return '<' . $this->tag . $attributes . (($this->selfclose) ? " />" : '>');
-        }
+		if ($this->tag) {
+			return '<' . $this->tag . $attributes . (($this->selfclose) ? " />" : '>');
+		}
 
-        return $attributes;
-    }
+		return $attributes;
+	}
 }

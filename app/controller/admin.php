@@ -94,7 +94,7 @@ class Admin extends Base {
 			$security = \Helper\Security::instance();
 			$user->salt = $security->salt();
 			$user->password = $security->hash($f3->get("POST.password"), $user->salt);
-			$user->api_key = $security->rand_hash();
+			$user->api_key = $security->salt_sha1();
 			$user->role = $f3->get("POST.role");
 			$user->task_color = ltrim($f3->get("POST.task_color"), "#");
 			$user->created_date = now();
