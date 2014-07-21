@@ -330,9 +330,53 @@ class Admin extends Base {
 			$sprint->end_date = date("Y-m-d", $end);
 			$sprint->save();
 			$f3->reroute("/admin/sprints");
+			return;
 		}
 
 		echo \Template::instance()->render("admin/sprints/new.html");
+	}
+
+	//new function here!!!
+
+
+	public function sprint_edit($f3, $params) {
+		$f3->set("title", "Edit Sprint");
+		$f3->set("menuitem", "admin");
+
+		$sprint = new \Model\Sprint;
+		$sprint->load($params["id"]);
+		if(!$sprint->id) {
+			$f3->error(404);
+			return;
+		}
+
+		if($post = $f3->get("POST")) {
+			if(empty($post["start_date"]) || empty($post["end_date"])) {
+				$f3->set("error", "Start and end date are required");
+				echo \Template::instance()->render("admin/sprints/edit.html");
+				return;
+			}
+
+			$start = strtotime($post["start_date"]);
+			$end = strtotime($post["end_date"]);
+
+			if($end <= $start) {
+				$f3->set("error", "End date must be after start date");
+				echo \Template::instance()->render("admin/sprints/edit.html");
+				return;
+			}
+
+			$sprint->name = trim($post["name"]);
+			$sprint->start_date = date("Y-m-d", $start);
+			$sprint->end_date = date("Y-m-d", $end);
+			$sprint->save();
+
+			$f3->reroute("/admin/sprints");
+			return;
+		}
+		$f3->set("sprint", $sprint);
+
+		echo \Template::instance()->render("admin/sprints/edit.html");
 	}
 
 	public function sprint_breaker($f3, $params) {
@@ -341,5 +385,4 @@ class Admin extends Base {
 
 		echo \Template::instance()->render("admin/sprints/breaker.html");
 	}
-
 }
