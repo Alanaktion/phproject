@@ -127,17 +127,7 @@ class Issue extends Base {
 			}
 
 			// Move all non-project children to same sprint
-			if($this->get("sprint_id")) {
-				$db = $f3->get("db.instance");
-				$db->exec(
-					"UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type",
-					array(
-						"sprint" => $this->get("sprint_id"),
-						"issue" => $this->get("id"),
-						"type" => $f3->get("issue_type.project")
-					)
-				);
-			}
+			$this->resetChildren();
 
 			// Log updated fields
 			foreach ($this->fields as $key=>$field) {
@@ -248,6 +238,26 @@ class Issue extends Base {
 			}
 		}
 
+	}
+
+	/**
+	 * Move all non-project children to same sprint
+	 * @return Issue
+	 */
+	public function resetChildren() {
+		$f3 = \Base::instance();
+		if($this->get("sprint_id")) {
+			$db = $f3->get("db.instance");
+			$db->exec(
+				"UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type",
+				array(
+					"sprint" => $this->get("sprint_id"),
+					"issue" => $this->get("id"),
+					"type" => $f3->get("issue_type.project")
+				)
+			);
+		}
+		return $this;
 	}
 
 }

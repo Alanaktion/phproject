@@ -12,9 +12,7 @@
  *
  **/
 
-echo "Initializing... ";
 require_once "base.php";
-echo "done.\n";
 
 $issue_type_project = $f3->get("issue_type.project");
 
