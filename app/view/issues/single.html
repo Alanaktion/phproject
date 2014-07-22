@@ -288,28 +288,31 @@ $(function() {
 	// AJAX comment submission
 	$('#comment_form').submit(function(e) {
 		var $this = $(this);
-
+if($this.children('textarea').val() != '') {
 		$.post($this.attr('action'), $this.serialize(), function(data) {
+			if(data.error) {
+				return;
+			}
 			// Append the new comment to the list
 			$('#comment_form')
 				.prop('disabled', false)
 				.after(
-'<div class="media" id="c-' + data.id + '">' +
-	'<a class="pull-left" href="user/' + data.user_username + '">' +
-		'<img src="{{ h(@user_obj->avatar(48)) }}" class="media-object profile-picture img-rounded" alt>' +
-	'</a>' +
-	'<div class="media-body">' +
-		'<p class="media-heading"><a href="user/' + data.user_username + '">' + data.user_name + '</a></p>' +
-		'<p class="tex">' + data.text + '</p>' +
-		'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
-	'</div>' +
-'</div>');
+					'<div class="media" id="c-' + data.id + '">' +
+						'<a class="pull-left" href="user/' + data.user_username + '">' +
+							'<img src="{{ h(@user_obj->avatar(48)) }}" class="media-object profile-picture img-rounded" alt>' +
+						'</a>' +
+						'<div class="media-body">' +
+							'<p class="media-heading"><a href="user/' + data.user_username + '">' + data.user_name + '</a></p>' +
+							'<p class="tex">' + data.text + '</p>' +
+							'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
+						'</div>' +
+					'</div>');
 			$('#comment_textarea').val('').html('');
 			$('#comment_badge').text(parseInt($('#comment_badge').text()) + 1);
 		}, 'json');
 
 		$this.prop('disabled', true);
-
+	}
 		e.preventDefault();
 	});
 
