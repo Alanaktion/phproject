@@ -53,6 +53,11 @@ class Issue extends Base {
 		// Check if updating or inserting
 		if($this->query) {
 
+			// Ensure issue is not tied to itself as a parent
+			if($this->get("id") == $this->get("parent_id")) {
+				$this->set("parent_id", $this->get_prev("parent_id"));
+			}
+
 			// Log update
 			$update = new \Model\Issue\Update();
 			$update->issue_id = $this->id;
