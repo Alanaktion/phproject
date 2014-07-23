@@ -34,7 +34,7 @@
 					<repeat group="{{ @sprints }}" value="{{ @sprint }}">
 						<tr data-sprint-id="{{ @sprint.id }}">
 							<td>{{ @sprint.id }}</td>
-							<td>{{ @sprint.name }}</td>
+							<td><a href="admin/sprints/{{ @sprint.id }}">{{ @sprint.name }}</a></td>
 							<td>{{ @sprint.start_date }}</td>
 							<td>{{ @sprint.end_date }}</td>
 						</tr>

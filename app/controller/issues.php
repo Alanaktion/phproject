@@ -417,6 +417,17 @@ class Issues extends Base {
 			switch($post["action"]) {
 				case "comment":
 					$comment = new \Model\Issue\Comment;
+					if(empty($post["text"])) {
+						if($f3->get("AJAX")) {
+							print_json(array("error" => 1));
+						}
+						else {
+								$f3->reroute("/issues/" . $issue->id);
+						}
+						return;
+					}
+
+					$comment = new \Model\Issue\Comment();
 					$comment->user_id = $this->_userId;
 					$comment->issue_id = $issue->id;
 					$comment->text = $post["text"];
