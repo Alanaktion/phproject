@@ -3810,7 +3810,7 @@ a.thumbnail:hover, a.thumbnail:focus, a.thumbnail.active {
 	color: #3d3d3d;
 }
 .alert {
-	padding: 15px;
+	padding: 10px 15px;
 	margin-bottom: 21px;
 	border: 1px solid transparent;
 	border-radius: 0px;
