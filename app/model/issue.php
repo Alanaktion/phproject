@@ -93,7 +93,6 @@ class Issue extends Base {
 				$repeat_issue->repeat_cycle = $this->get("repeat_cycle");
 				$repeat_issue->created_date = now();
 
-
 				// Find a due date in the future
 				switch($repeat_issue->repeat_cycle) {
 					case 'daily':
@@ -147,10 +146,9 @@ class Issue extends Base {
 				}
 			}
 
+			// Save issue and send notifications
 			$issue = parent::save();
-
 			if($updated) {
-				// Send notifications
 				if($notify) {
 					$notification = \Helper\Notification::instance();
 					$notification->issue_update($this->get("id"), $update->id);
@@ -160,11 +158,23 @@ class Issue extends Base {
 			}
 
 		} else {
+
+			// Move task to a sprint if the parent is in a sprint
+			if($this->get("parent_id")) {
+				$parent = new \Model\Issue;
+				$parent->load($this->get("parent_id"));
+				if($parent->sprint_id) {
+					$this->set("sprint_id", $parent->sprint_id);
+				}
+			}
+
+			// Save issue and send notifications
 			$issue = parent::save();
 			if($notify) {
 				$notification = \Helper\Notification::instance();
 				$notification->issue_create($issue->id);
 			}
+
 			return $issue;
 		}
 
