@@ -160,7 +160,7 @@ class Issue extends Base {
 		} else {
 
 			// Move task to a sprint if the parent is in a sprint
-			if($this->get("parent_id")) {
+			if($this->get("parent_id") && !$this->get("sprint_id")) {
 				$parent = new \Model\Issue;
 				$parent->load($this->get("parent_id"));
 				if($parent->sprint_id) {
