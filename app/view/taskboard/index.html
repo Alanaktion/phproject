@@ -53,6 +53,9 @@
 					<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
 						<span class="glyphicon glyphicon-fire"></span> Burndown
 					</button>
+					<a href="taskboard/{{ @PARAMS.id }}/{{ @filter }}" class="btn btn-default btn-xs has-tooltip" title="Reload taskboard">
+						<span class="glyphicon glyphicon-repeat"></span>
+					</a>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
 					<th class="column column-{{ @key + 2 }}">{{ @value.name }}</th>
