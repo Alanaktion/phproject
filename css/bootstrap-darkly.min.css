@@ -23,3 +23,6 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 #taskboard .spinner {
 	background-image: url(/img/ajax-loader-dark.gif) !important;
 }
+.datepicker {
+	color: #111;
+}
