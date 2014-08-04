@@ -180,6 +180,8 @@ function parseTextile($str, $ttl=false) {
 
 	// Value wasn't cached, run the parser
 	$tex = new \Helper\Textile\Parser();
+	$tex->setDocumentType('html5')
+		->setDimensionlessImages(true);
 	$val = $tex->parse($str);
 
 	// Find issue IDs and convert to links
