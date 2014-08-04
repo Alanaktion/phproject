@@ -372,3 +372,8 @@ a:focus, button:focus, input:focus, .btn:focus {
 	background-color: rgba(50,255,50,0.25);
 }
 
+.breadcrumb > li + li:before {
+	content: '\276d ';
+	padding: 0 7px 0 3px;
+}
+
