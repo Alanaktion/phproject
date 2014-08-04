@@ -6,7 +6,7 @@
 
 require_once "base.php";
 
-$issues = \Model\Issue;
+$issues = new \Model\Issue;
 $issues->find(array("type_id = ? AND deleted_date IS NULL", $f3->get("issue_type.project")));
 
 foreach($isses as $issue) {

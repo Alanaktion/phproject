@@ -13,6 +13,7 @@ $f3->mset(array(
 ));
 
 // Load local configuration
+$f3->config($homedir."config-base.ini");
 $f3->config($homedir."config.ini");
 
 // Connect to database
