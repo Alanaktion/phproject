@@ -16,9 +16,22 @@ class Taskboard extends Base {
 			return;
 		}
 
+		// Default to showing group tasks
 		if(empty($params["filter"])) {
 			$params["filter"] = "groups";
 		}
+
+		// Load the requested sprint
+		$sprint = new \Model\Sprint();
+		$sprint->load($params["id"]);
+		if(!$sprint->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$f3->set("sprint", $sprint);
+		$f3->set("title", $sprint->name . " " . date('n/j', strtotime($sprint->start_date)) . "-" . date('n/j', strtotime($sprint->end_date)));
+		$f3->set("menuitem", "backlog");
 
 		// Get list of all users in the user's groups
 		if($params["filter"] == "groups") {
@@ -36,36 +49,20 @@ class Taskboard extends Base {
 		} elseif($params["filter"] == "me") {
 			$filter_users = array($this->_userId);
 		} elseif(is_numeric($params["filter"])) {
-			//get a taskboard for a user or group
+			// Get a taskboard for a user or group
 			$user= new \Model\User();
 			$user->load($params["filter"]);
 			if ($user->role == 'group') {
 				$group_model = new \Model\User\Group();
 				$users_result = $group_model->find(array("group_id = ?", $user->id));
-				$filter_users = array();
+				$filter_users = array(intval($params["filter"]));
 				foreach($users_result as $u) {
 					$filter_users[] = $u["user_id"];
-				}
-				if(empty($filter_users)) {
-					$filter_users = array($this->_userId);
 				}
 			} else {
 				$filter_users = array($params["filter"]);
 			}
-
 		}
-
-		// Load the requested sprint
-		$sprint = new \Model\Sprint();
-		$sprint->load($params["id"]);
-		if(!$sprint->id) {
-			$f3->error(404);
-			return;
-		}
-
-		$f3->set("sprint", $sprint);
-		$f3->set("title", $sprint->name . " " . date('n/j', strtotime($sprint->start_date)) . "-" . date('n/j', strtotime($sprint->end_date)));
-		$f3->set("menuitem", "backlog");
 
 		// Load issue statuses
 		$status = new \Model\Issue\Status();
@@ -78,7 +75,6 @@ class Taskboard extends Base {
 		}
 
 		$visible_status_ids = implode(",", $visible_status_ids);
-
 		$f3->set("statuses", $mapped_statuses);
 
 		// Load issue priorities
@@ -88,15 +84,29 @@ class Taskboard extends Base {
 		// Load project list
 		$issue = new \Model\Issue\Detail();
 
-		//Add the default project for non assigned bugs or tasks (id=0)
-		//Add any projects where the project may not be due, but a task within the project is due this sprint (3rd OR)
+		// Find all visible tasks
+		$tasks = $issue->find(array(
+			"sprint_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN ($visible_status_ids)"
+				. (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
+			$sprint->id, $f3->get("issue_type.project")
+		));
+		$task_ids = array();
+		$parent_ids = array(0);
+		foreach($tasks as $task) {
+			$task_ids[] = $task->id;
+			if($task->parent_id) {
+				$parent_ids[] = $task->parent_id;
+			}
+		}
+		$task_ids_str = implode(",", $task_ids);
+		$parent_ids_str = implode(",", $parent_ids);
+		$f3->set("tasks", $task_ids_str);
+
+		// Find all visible projects
 		$projects = $issue->find(array(
-			"id = 0 OR ((sprint_id = ? AND deleted_date IS NULL AND type_id = ?) OR (id IN (SELECT parent_id FROM issue WHERE type_id != ? AND sprint_id = ?) AND IFNULL(sprint_id, 0) != ?)) AND status IN ($visible_status_ids)",
-			$sprint->id,
-			$f3->get("issue_type.project"),
-			$f3->get("issue_type.project"),
-			$sprint->id,
-			$sprint->id
+			"(id IN ($parent_ids_str) AND type_id = ?) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
+				. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
+			$f3->get("issue_type.project"), $sprint->id, $f3->get("issue_type.project")
 		), array("order" => "owner_id ASC"));
 
 		// Build multidimensional array of all tasks and projects
@@ -109,26 +119,11 @@ class Taskboard extends Base {
 				$columns[$status["id"]] = array();
 			}
 
-			if ($project["id"] == 0) {
-				// Orphaned sprint tasks - grab and attach here
-				$tasks = $issue->find(array(
-					"type_id != ? AND IFNULL(parent_id, '') = '' AND deleted_date IS NULL AND sprint_id = ? AND status IN ($visible_status_ids)",
-					$f3->get("issue_type.project"),
-					$sprint->id
-				), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
-				foreach ($tasks as $task) {
-					$task["parent_id"] = 0;
+			// Add current project's tasks
+			foreach ($tasks as $task) {
+				if($task->parent_id == $project->id || $project->id == 0 && !$task->parent_id) {
+					$columns[$task->status][] = $task;
 				}
-			} elseif ($project["sprint_id"] != $sprint->id) {
-				// Get tasks that are due during the sprint with a parent project not in the sprint
-				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND sprint_id = ? AND status IN ($visible_status_ids)", $project["id"], $f3->get("issue_type.project"), $sprint->id), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
-			} else {
-				// Get all non-projects (generally tasks) under the project, put them under their status
-				$tasks = $issue->find(array("parent_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN ($visible_status_ids)", $project["id"], $f3->get("issue_type.project")), array("order" => "priority DESC, has_due_date ASC, due_date ASC"));
-			}
-
-			foreach($tasks as $task) {
-				$columns[$task["status"]][] = $task;
 			}
 
 			// Add hierarchial structure to taskboard array
@@ -138,63 +133,6 @@ class Taskboard extends Base {
 			);
 
 		}
-
-		// Filter tasks and projects
-		if(!empty($filter_users)) {
-
-			// Determine which projects to keep and which to remove
-			$remove_project_indexes = array();
-			foreach ($taskboard as $pi=>&$p) {
-
-				$kept_task_count = 0;
-
-				// Only remove tasks if project isn't in the list of shown users
-				if(!in_array($p["project"]["owner_id"], $filter_users)) {
-					foreach($p["columns"] as &$c) {
-
-						// Determine which tasks to keep and which to remove
-						$remove_task_indexes = array();
-						foreach($c as $ci=>&$t) {
-							if(!in_array($t["owner_id"], $filter_users)) {
-								// Task is not in list of shown users, mark for removal
-								$remove_task_indexes[] = $ci;
-							} else {
-								// Task is in list of shown users, increment kept task counter
-								$kept_task_count ++;
-							}
-						}
-
-						// Remove marked tasks
-						foreach($remove_task_indexes as $r) {
-							unset($c[$r]);
-						}
-					}
-				}
-
-				// Project is empty and not in the list of shown users, mark for removal
-				if(!$kept_task_count && !in_array($p["project"]["owner_id"], $filter_users)) {
-					$remove_project_indexes[] = $pi;
-				}
-
-			}
-
-			// Remove marked projects
-			foreach($remove_project_indexes as $r) {
-				unset($taskboard[$r]);
-			}
-		}
-
-		// Build an array of all visible task IDs (used by the burndown)
-		$visible_tasks = array();
-		foreach($taskboard as $p) {
-			foreach($p["columns"] as $c) {
-				foreach($c as $t) {
-					$visible_tasks[] = $t["id"];
-				}
-			}
-		}
-
-		$f3->set("tasks", implode(",", $visible_tasks));
 
 		$f3->set("taskboard", array_values($taskboard));
 		$f3->set("filter", $params["filter"]);
