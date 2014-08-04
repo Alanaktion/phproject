@@ -55,6 +55,11 @@ class User extends Base {
 			)
 		));
 
+		// Get current sprint if there is one
+		$sprint = new \Model\Sprint;
+		$sprint->load("NOW() BETWEEN start_date AND end_date");
+		$f3->set("sprint", $sprint);
+
 		$f3->set("menuitem", "index");
 		echo \Template::instance()->render("user/dashboard.html");
 	}

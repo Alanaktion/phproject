@@ -21,9 +21,16 @@
 			<include href="blocks/dashboard-issue-list.html" />
 		</div>
 		<div class="col-sm-7">
-			<h3>My Tasks&ensp;<small>{{ count(@tasks) }}</small>&ensp;
-				<a class="btn btn-sm btn-default has-tooltip" href="issues/new/{{ @issue_type.task }}" title="Add Task"><span class="glyphicon glyphicon-plus"></span></a>
-			</h3>
+			<div class="clearfix">
+				<h3 class="pull-left">My Tasks&ensp;<small>{{ count(@tasks) }}</small>&ensp;
+					<a class="btn btn-sm btn-default has-tooltip" href="issues/new/{{ @issue_type.task }}" title="Add Task"><span class="glyphicon glyphicon-plus"></span></a>
+				</h3>
+				<check if="{{ @sprint && @sprint.id }}">
+					<div class="h3 pull-right text-right">
+						<a class="btn btn-default btn-sm" href="taskboard/{{ @sprint.id }}/me"><span class="glyphicon glyphicon-list"></span>&ensp;Taskboard</a>
+					</div>
+				</check>
+			</div>
 			<set issues="{{ @tasks }}" />
 			<include href="blocks/dashboard-issue-list.html" />
 		</div>
