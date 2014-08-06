@@ -13,12 +13,27 @@ class Issue extends Base {
 	public function hierarchy() {
 		$issues = array();
 		$issues[] = $this;
+		$issue_ids = array($this->get("id"));
 		$parent_id = $this->parent_id;
 		while($parent_id) {
+			// Catch infinite loops early on, in case server isn't running linux :)
+			if(in_array($parent_id, $issue_ids)) {
+				$f3 = \Base::instance();
+				$f3->set("error", "Issue ancestry contains an infinite loop.");
+				break;
+			}
 			$issue = new Issue();
 			$issue->load($parent_id);
-			$issues[] = $issue;
-			$parent_id = $issue->parent_id;
+			if($issue->id) {
+				$issues[] = $issue;
+				$parent_id = $issue->parent_id;
+				$issue_ids[] = $issue->id;
+			} else {
+				// Handle nonexistent issues
+				$f3 = \Base::instance();
+				$f3->set("error", "Issue ancestry contained an issue that doesn't exist.");
+				break;
+			}
 		}
 
 		return array_reverse($issues);
