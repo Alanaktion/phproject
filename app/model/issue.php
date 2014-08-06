@@ -19,7 +19,7 @@ class Issue extends Base {
 			// Catch infinite loops early on, in case server isn't running linux :)
 			if(in_array($parent_id, $issue_ids)) {
 				$f3 = \Base::instance();
-				$f3->set("error", "Issue ancestry contains an infinite loop.");
+				$f3->set("error", "Issue parent tree contains an infinite loop. Issue {$parent_id} ");
 				break;
 			}
 			$issue = new Issue();
@@ -31,7 +31,7 @@ class Issue extends Base {
 			} else {
 				// Handle nonexistent issues
 				$f3 = \Base::instance();
-				$f3->set("error", "Issue ancestry contained an issue that doesn't exist.");
+				$f3->set("error", "Issue #{$issue->id} has a parent issue #{$issue->parent_id} that doesn't exist.");
 				break;
 			}
 		}

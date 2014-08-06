@@ -540,7 +540,7 @@ class Issues extends Base {
 
 		print_json(array(
 			"total" => count($updates),
-			"html" => \Template::instance()->render("issues/single/history.html")
+			"html" => clean_json(\Template::instance()->render("issues/single/history.html"))
 		));
 	}
 
@@ -573,7 +573,7 @@ class Issues extends Base {
 
 			print_json(array(
 				"total" => count($f3->get("issues")),
-				"html" => \Template::instance()->render("issues/single/related.html")
+				"html" => clean_json(\Template::instance()->render("issues/single/related.html"))
 			));
 		} else {
 			$f3->error(404);
@@ -588,7 +588,7 @@ class Issues extends Base {
 
 		print_json(array(
 			"total" => count($f3->get("watchers")),
-			"html" => \Template::instance()->render("issues/single/watchers.html")
+			"html" => clean_json(\Template::instance()->render("issues/single/watchers.html"))
 		));
 	}
 
