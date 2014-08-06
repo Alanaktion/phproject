@@ -66,7 +66,7 @@
 			<repeat group="{{ @taskboard }}" value="{{ @row }}">
 				<tr data-story-id="{{ @row.project.id }}" class="tb-row">
 					<td class="column column-1">
-						<div class="card story {{ @row.project.closed_date ? 'completed' : '' }}" style="border-color:#{{ @row.project.owner_task_color }};">
+						<div id="project_{{  @row.project.id}}" class="card story {{ @row.project.closed_date ? 'completed' : '' }}" style="border-color:#{{ @row.project.owner_task_color }};">
 							<div class="top">
 								<i title="Add Task" class="add-task pull-right"></i>
 								<span class="owner">

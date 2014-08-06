@@ -42,8 +42,20 @@
 			</check>
 			<div class="pull-right">
 				<check if="{{ !@issue.closed_date }}">
-					<a id="btn-Mark Complete" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
-						<span class="glyphicon glyphicon-check"></span>&ensp;Mark Complete
+					<true>
+						<a id="btn-Mark Complete" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
+							<span class="glyphicon glyphicon-check"></span>&ensp;Mark Complete
+						</a>
+					</true>
+					<false>
+						<a id="btn-Mark Complete" href="issues/reopen/{{ @issue.id }}" class="btn btn-success btn-xs">
+							<span class="glyphicon glyphicon-repeat"></span>&ensp;Reopen
+						</a>
+					</false>
+				</check>
+				<check if="{{ @issue.sprint_id }}">
+					<a id="btn-Mark Complete" href="taskboard/{{ @issue.sprint_id }}/all#task_{{ @issue.id }}" target="_blank" class="btn btn-default btn-xs has-tooltip" title="Show on Taskboard">
+						<span class="glyphicon glyphicon-list"></span>
 					</a>
 				</check>
 				<a id="btn-copy" href="issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
