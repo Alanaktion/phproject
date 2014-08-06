@@ -256,7 +256,7 @@ class Issues extends Base {
 		$f3->reroute("/issues/" . $issue->id);
 	}
 
-	public function repoen($f3, $params) {
+	public function reopen($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($f3->get("PARAMS.id"));
 
