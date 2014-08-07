@@ -19,7 +19,7 @@ class Issue extends Base {
 			// Catch infinite loops early on, in case server isn't running linux :)
 			if(in_array($parent_id, $issue_ids)) {
 				$f3 = \Base::instance();
-				$f3->set("error", "Issue parent tree contains an infinite loop. Issue {$parent_id} ");
+				$f3->set("error", "Issue parent tree contains an infinite loop. Issue {$parent_id} is the first point of recursion.");
 				break;
 			}
 			$issue = new Issue();
