@@ -555,20 +555,16 @@ class Issues extends Base {
 				$f3->set("issues", $found_issues);
 				$f3->set("parent", $issue);
 			} else {
-				// This may be causing a memory leak. - rightbit
-				if($issue->parent_id > 0) {
-					$found_issues = $issues->find(array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id),
-									array('order' => "priority DESC, due_date")
-						);
+				if($issue->parent_id) {
+					$found_issues = $issues->find(array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id), array('order' => "priority DESC, due_date"));
 					$f3->set("issues", $found_issues);
+
+					$parent = new \Model\Issue;
+					$parent->load($issue->parent_id);
+					$f3->set("parent", $parent);
 				} else {
 					$f3->set("issues", array());
 				}
-
-				$parent = new \Model\Issue;
-				$parent->load($issue->parent_id);
-				$f3->set("parent", $parent);
-
 			}
 
 			print_json(array(
