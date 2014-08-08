@@ -551,7 +551,7 @@ class Issues extends Base {
 		if($issue->id) {
 			$f3->set("issue", $issue);
 			$issues = new \Model\Issue\Detail;
-			if($f3->get("issue_type.project") == $issue->type_id) {
+			if($f3->get("issue_type.project") == $issue->type_id || !$issue->parent_id) {
 				$found_issues = $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id));
 				$f3->set("issues", $found_issues);
 				$f3->set("parent", $issue);
