@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Phproject</title>
+	<meta name="description" content="Log in with demo/demo.">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="bootstrap-phproject.css">
+</head>
+<body>
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<a class="navbar-brand" href=".">Phproject</a>
+			<ul class="nav navbar-nav">
+				<li><a href="install.html">Installation</a></li>
+				<li><a href="customize.html">Customization</a></li>
+				<li><a href="contribute.html">Contributing</a></li>
+				<li class="active"><a href="plugins.html">Plugins</a></li>
+			</ul>
+			<div class="navbar-right">
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/master"><span class="glyphicon glyphicon-save"></span>&ensp; Download</a>
+				<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span>&ensp; Demo</a>
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span>&ensp; GitHub</a>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<h1 class="page-header">Plugins</h1>
+		<p class="lead">Phproject plugin support is still under development, but so far, here's how we think it will work:</p>
+		<p>A plugin can either be a single PHP file containing a single class, or a directory containing a <code>base.php</code> file, which includes the main class.</p>
+		<p>Plugins must have a <code>_load()</code> method in the main class, which returns the hooks the plugin will use, as well as it's metadata.</p>
+		<p>Plugins should have a comment block at the start of the file containing at least the plugin name and developer's name, in a standard, easily parsed format.</p>
+		<p>Plugins may have an <code>_installed()</code> method which returns a boolean value specifying whether the plugin has been installed correctly. This should include checks such as required database tables and server configuration options, and should cache a <code>TRUE</code> result using Fat Free's caching abstraction layer to improve performance on subsequent requests after installation has succeeded. <span class="text-muted">Or should the caching handled on the Phproject side? That seems like the better option to me now &mdash;<a class="nolink" href="https://github.com/Alanaktion" target="_blank">Alanaktion</a></span></p>
+		<p>Plugins may have a <code>routes.ini</code> file if they are in a directory, which will be automatically loaded if the plugin's <code>_installed()</code> method returns <code>TRUE</code>, which must route plugin-specific paths to the correct actions within the plugin's main class or sub-classes.</p>
+		<p>Plugins may have a <code>database.sql</code> file if they are in a directory, which will be automatically loaded if the plugin's <code>_installed()</code> method returns <code>FALSE</code>, which must include the SQL queries to add the required database tables and rows for the plugin to operate.</p>
+		<p>Plugins may have a <code>_install()</code> method, which will be called if <code>_installed()</code> returns false.</p>
+		<br>
+		<p><a class="btn btn-default btn-sm" href="https://github.com/Alanaktion/phproject/tree/master/app/plugin/README.md" target="_blank">View README&ensp;<span class="glyphicon glyphicon-chevron-right"></span></a></p>
+	</div>
+	<footer class="container text-muted">
+		<p class="pull-left">Developed and maintained by <a href="https://phpizza.com" target="_blank">Alan Hardman</a> and the IT team at <a href="https://www.thrivelife.com/" target="_blank" rel="nofollow">Thrive Life</a></p>
+		<p class="pull-right"><a href="https://github.com/Alanaktion/phproject" target="_blank">Github</a>&ensp;&middot;&ensp;<a href="https://github.com/Alanaktion/phproject/issues?state=open" target="_blank">Issues</a>&ensp;&middot;&ensp;<a href="http://demo.phproject.org" target="_blank">Demo</a>&emsp;&copy; 2013-2014</p>
+	</footer>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Phproject</title>
+	<meta name="description" content="Log in with demo/demo.">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="bootstrap-phproject.css">
+</head>
+<body>
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<a class="navbar-brand" href=".">Phproject</a>
+			<ul class="nav navbar-nav">
+				<li><a href="install.html">Installation</a></li>
+				<li><a href="customize.html">Customization</a></li>
+				<li class="active"><a href="contribute.html">Contributing</a></li>
+				<li><a href="plugins.html">Plugins</a></li>
+			</ul>
+			<div class="navbar-right">
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/master"><span class="glyphicon glyphicon-save"></span>&ensp; Download</a>
+				<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span>&ensp; Demo</a>
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span>&ensp; GitHub</a>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<h1 class="page-header">Contributing</h1>
+		<p class="lead">Phproject is maintained as an open source project for use by anyone around the world. If you find a bug or would like to see a new feature added, feel free to <a href="https://github.com/Alanaktion/phproject/issues/new" target="_blank">create an issue on Github</a> or <a href="https://github.com/Alanaktion/phproject/compare/" target="_blank">submit a pull request</a> with new code.</p>
+		<p>In order to ease debugging, change the <code>DEBUG</code> value to 3 in <code>config.ini</code>. In addition to giving more detail on error pages, level 3 enables displaying a query log in the page footer that includes query times and shows which queries were cached.</p>
+		<h2 class="code-standards">Code Standards</h2>
+		<p>In order to keep things simple and clean, we've set some simple standards on the Phproject source code. Indentation should use tab characters, not spaces. Opening braces are always on the same line as the statement declaration that they correspond with. In PHP code, double quotes should be preferred, unless the string needs to contain double quotes, then single should be preferred rather than escaping the double quotes. CSS and Javascript code should use single quotes when possible.</p>
+<pre><code><span class="text-info">class</span> Issue {
+
+	<span class="text-info">function</span> <span class="text-success">getId</span>() {
+		<span class="text-danger">if</span>($this->exists(<span class="text-warning">"id"</span>)) {
+			<span class="text-danger">return</span> $this->get(<span class="text-warning">"id"</span>);
+		}
+		<span class="text-danger">return</span> false;
+	}
+
+}</code></pre>
+		<p>Be sure to keep indentation clean and consistent with the rest of the project as well, as it makes finding a particular block of code much easier. These standards should be used whenever contributing to the main project or when writing a plugin for Phproject.</p>
+	</div>
+	<footer class="container text-muted">
+		<p class="pull-left">Developed and maintained by <a href="https://phpizza.com" target="_blank">Alan Hardman</a> and the IT team at <a href="https://www.thrivelife.com/" target="_blank" rel="nofollow">Thrive Life</a></p>
+		<p class="pull-right"><a href="https://github.com/Alanaktion/phproject" target="_blank">Github</a>&ensp;&middot;&ensp;<a href="https://github.com/Alanaktion/phproject/issues?state=open" target="_blank">Issues</a>&ensp;&middot;&ensp;<a href="http://demo.phproject.org" target="_blank">Demo</a>&emsp;&copy; 2013-2014</p>
+	</footer>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>
+</html>

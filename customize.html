@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Phproject</title>
+	<meta name="description" content="Log in with demo/demo.">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="bootstrap-phproject.css">
+</head>
+<body>
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<a class="navbar-brand" href=".">Phproject</a>
+			<ul class="nav navbar-nav">
+				<li><a href="install.html">Installation</a></li>
+				<li class="active"><a href="customize.html">Customization</a></li>
+				<li><a href="contribute.html">Contributing</a></li>
+				<li><a href="plugins.html">Plugins</a></li>
+			</ul>
+			<div class="navbar-right">
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/master"><span class="glyphicon glyphicon-save"></span>&ensp; Download</a>
+				<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span>&ensp; Demo</a>
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span>&ensp; GitHub</a>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<h1 class="page-header">Customization</h1>
+		<p>Phproject's UI is built around <a href="http://getbootstrap.com">Twitter Bootstrap 3</a>, and is compatible with customized Bootstrap styles including Bootswatch. Simply change the <code>site.theme</code> entry in <code>config.ini</code> to the web path of a Bootstrap CSS file and it will replace the main CSS. Phproject already includes all of the themes from Bootswatch as well as a few custom ones we've built ourselves based on Bootswatch's Flatly. Phproject's additions to the Bootstrap core are designed to add features without breaking any existing components, so unless your customized Bootstrap is very heavily modified, everything should continue to work consistently. Dark themes are known to have a few issues, if you need to use a dark theme, include <a href="#dark-css">the CSS below</a> to ensure everything looks right.</p>
+		<p>To give your site a custom title and meta description, update the <code>site.name</code> and <code>site.description</code> entries in <code>config.ini</code>.</p>
+		<p>You can also customize the default user image that is shown when a user does not have a Gravatar (Phproject uses <code>mm</code> by default) as well as the maximum content rating of Gravatars to show (<code>pg</code> by default). The <code>gravatar.default</code> and <code>gravatar.rating</code> entries in config.ini can be updated to change these.</p>
+
+		<h2 class="h3" id="dark-css">CSS for dark themes</h2>
+<pre><code><small>/* This CSS fixes some display issues when using a dark Bootstrap theme */
+#taskboard table.taskboard-head {
+	background-color: transparent;
+}
+#taskboard table.taskboard-head th {
+	background-color: #222;
+	background-color: rgba(34,34,34,.8) !important;
+	color: white !important;
+}
+#taskboard td, #taskboard th {
+	border-color: #666 !important;
+}
+#taskboard #task-dialog,
+body .ui-widget-content {
+	background-color: #222 !important;
+}
+#taskboard .spinner {
+	background-image: url(/img/ajax-loader-dark.gif) !important;
+}
+.datepicker {
+	color: #111;
+}</small></code></pre>
+	</div>
+	<footer class="container text-muted">
+		<p class="pull-left">Developed and maintained by <a href="https://phpizza.com" target="_blank">Alan Hardman</a> and the IT team at <a href="https://www.thrivelife.com/" target="_blank" rel="nofollow">Thrive Life</a></p>
+		<p class="pull-right"><a href="https://github.com/Alanaktion/phproject" target="_blank">Github</a>&ensp;&middot;&ensp;<a href="https://github.com/Alanaktion/phproject/issues?state=open" target="_blank">Issues</a>&ensp;&middot;&ensp;<a href="http://demo.phproject.org" target="_blank">Demo</a>&emsp;&copy; 2013-2014</p>
+	</footer>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>
+</html>

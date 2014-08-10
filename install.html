@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Phproject</title>
+	<meta name="description" content="Log in with demo/demo.">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="bootstrap-phproject.css">
+</head>
+<body>
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<a class="navbar-brand" href=".">Phproject</a>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="install.html">Installation</a></li>
+				<li><a href="customize.html">Customization</a></li>
+				<li><a href="contribute.html">Contributing</a></li>
+				<li><a href="plugins.html">Plugins</a></li>
+			</ul>
+			<div class="navbar-right">
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/master"><span class="glyphicon glyphicon-save"></span>&ensp; Download</a>
+				<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span>&ensp; Demo</a>
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span>&ensp; GitHub</a>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<h1 class="page-header">Installation</h1>
+
+		<h2 id="requirements">Requirements</h2>
+		<ul>
+			<li>PHP 5.3.3 or later
+				<ul>
+					<li>bcrypt extension</li>
+					<li>MySQL PDO extension</li>
+					<li>GD extension</li>
+				</ul>
+			</li>
+			<li>MySQL 5 server</li>
+			<li>Web server with support for URL rewrites (Apache .htaccess file and nginx sample configuration included)</li>
+		</ul>
+
+		<h2 id="installation">Installation</h2>
+		<p>The installation process for Phproject should be reasonably simple compared with Redmine or other project management systems.</p>
+		<ol>
+			<li>Clone the Phproject repository in a web-accessible directory</li>
+			<li>Optionally, checkout the <code>release</code> branch, as it is generally more stable than master</li>
+			<li>Create a database on your MySQL server</li>
+			<li>Import the <code>database.sql</code> file into your new database</li>
+			<li>Copy <code>config-base.ini</code> to <code>config.ini</code></li>
+			<li>Update <code>config.ini</code> with your database connection details</li>
+			<li>Ensure <code>tmp/</code>, <code>tmp/cache/</code>, and <code>log/</code> directories exist and are writable by the web server</li>
+		</ol>
+
+		<h2 id="setup">Additional Setup</h2>
+    	<p><code>DEBUG</code> in <code>config.ini</code> supports levels 0-3, with 3 being the most verbose. <span class="text-danger">You should always use 0 in a production environment!</span></p>
+		<p>Phproject is designed to be fast, but you can still increase performance by installing an op-code caching layer like APC. Using APC also greatly increases the speed of temporary cached data, including minified code and heavy, cacheable database queries.</p>
+
+		<h2 id="updating">Updating</h2>
+		<p>Simply pulling the repo again will usually work for updates. If <code>database.sql</code> has been modified, you will need to manually merge the changes into your database. If something breaks after updating, clearing the APC cache or the <code>tmp/</code> and <code>tmp/cache/</code> directories of everything except <code>.gitignore</code> will usually solve the problem.</p>
+	</div>
+	<footer class="container text-muted">
+		<p class="pull-left">Developed and maintained by <a href="https://phpizza.com" target="_blank">Alan Hardman</a> and the IT team at <a href="https://www.thrivelife.com/" target="_blank" rel="nofollow">Thrive Life</a></p>
+		<p class="pull-right"><a href="https://github.com/Alanaktion/phproject" target="_blank">Github</a>&ensp;&middot;&ensp;<a href="https://github.com/Alanaktion/phproject/issues?state=open" target="_blank">Issues</a>&ensp;&middot;&ensp;<a href="http://demo.phproject.org" target="_blank">Demo</a>&emsp;&copy; 2013-2014</p>
+	</footer>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>
+</html>

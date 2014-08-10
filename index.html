@@ -1,95 +1,91 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-	<head>
-		<meta charset='utf-8'>
-		<meta http-equiv="X-UA-Compatible" content="chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-		<link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-		<link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-		<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-
-		<!--[if lt IE 9]>
-		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-
-		<title>Phproject</title>
-	</head>
-
-	<body>
-		<header>
-			<div class="inner">
-				<h1>Phproject</h1>
-				<h2>A high performance full-featured project management system</h2>
-				<a href="https://github.com/Alanaktion/phproject" class="button"><small>View project on</small>GitHub</a>
-			</div>
-		</header>
-
-		<div id="content-wrapper">
-			<div class="inner clearfix">
-				<section id="main-content">
-<h1><a name="phproject" class="anchor" href="#phproject"><span class="octicon octicon-link"></span></a>Phproject</h1>
-
-<p><em>A lightweight project management system in PHP</em></p>
-
-<h3><a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h3>
-<ul>
-	<li>PHP 5.3.3 or later (5.4/5.5 recommended)</li>
-	<li>bcrypt extension</li>
-	<li>PDO extension</li>
-	<li>GD extension</li>
-	<li>MySQL/MariaDB server</li>
-	<li>Web server with support for URL rewrites (Apache .htaccess file and nginx sample configuration included)</li>
-</ul>
-
-<h3><a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h3>
-<ol>
-	<li>Create a database on your MySQL server</li>
-	<li>Import the database.sql file into your new database</li>
-	<li>Copy config-base.ini to config.ini</li>
-	<li>Update config.ini with your database connection details</li>
-	<li>Ensure tmp/, tmp/cache/, and log/ directories exist and are writable by the web server</li>
-</ol>
-
-<h3><a name="additional-setup" class="anchor" href="#additional-setup"><span class="octicon octicon-link"></span></a>Additional setup</h3>
-<ul>
-	<li>DEBUG in config.ini supports levels 0-3, with 3 being the most verbose. You should always use 0 in a production environment!</li>
-	<li>Phproject is fast, but you can significantly increase performance by installing an op code caching layer like APC. Using APC also greatly increases the speed of temporary cached data, including minified code and common database queries.</li>
-</ul>
-
-<h3><a name="updating" class="anchor" href="#updating"><span class="octicon octicon-link"></span></a>Updating</h3>
-<p>Simply pulling the repo again should be safe for updates. If database.sql has been modified, you will need to merge the changes into your database. If something breaks after updating, clearing the APC cache or the tmp/ and tmp/cache/ directories of everything except .gitignore will usually solve the problem.</p>
-
-<h3><a name="customization" class="anchor" href="#customization"><span class="octicon octicon-link"></span></a>Customization</h3>
-<p>Phproject's UI is built around <a href="http://getbootstrap.com">Twitter Bootstrap 3</a>, and is compatible with customized Bootstrap styles including Bootswatch. Simply change the site.theme entry in config.ini to the web path of a Bootstrap CSS file and it will replace the main CSS. Phproject's additions to the Bootstrap core are designed to add features without breaking any existing components, so unless your customized Bootstrap is very heavily modified, everything should continue to work consistently.</p>
-<p>To give your site a custom title and meta description, update the <code>site.name</code> and <code>site.description</code> entries in config.ini.</p>
-<p>You can also customize the default user image that is shown when a user does not have a Gravatar (Phproject uses <code>mm</code> by default) as well as the maximum content rating of Gravatars to show (<code>pg</code> by default). The <code>gravatar.default</code> and <code>gravatar.rating</code> entries in config.ini can be updated to change these.</p>
-
-<h3><a name="internal-details" class="anchor" href="#internal-details"><span class="octicon octicon-link"></span></a>Internal details</h3>
-<p>Phproject uses the <a href="http://fatfreeframework.com/home">Fat Free Framework</a> as it's base, allowing it to have a simple but powerful feature set without compromising performance. Every template file is compiled at run time, and only needs to be recompiled when the code is changed. Phproject includes internal caching that prevents duplicate or bulk database queries from being used, greatly improving performance on large pages with lots of data. This caching will only work if the tmp/ directory is writeable or APC is installed and configured on the server.</p>
-
-<h3><a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h3>
-<p>Phproject is maintained as an open source project for use by anyone around the world. If you find a bug or would like to see a new feature added, feel free to <a href="https://github.com/Alanaktion/phproject/issues/new" target="_blank">create an issue on Github</a> or <a href="https://github.com/Alanaktion/phproject/compare/" target="_blank">submit a pull request</a> with new code.</p>
-				</section>
-
-				<aside id="sidebar">
-					<a href="http://demo.phproject.org/" class="button demo">
-						<small>Try it out</small>
-						Demo site
-					</a>
-					<a href="https://github.com/Alanaktion/phproject/zipball/master" class="button">
-						<small>Download</small>
-						.zip file
-					</a>
-					<a href="https://github.com/Alanaktion/phproject/tarball/master" class="button">
-						<small>Download</small>
-						.tar.gz file
-					</a>
-
-					<p class="repo-owner"><a href="https://github.com/Alanaktion/phproject">Phproject</a> is maintained by <a href="https://github.com/Alanaktion">Alan Hardman</a> and the software development team at <a href="http://www.thrivelife.com/">Thrive Life</a>.</p>
-
-					<p>Proudly hosted by <a href="https://github.com/" target="_blank">GitHub</a> and <a href="https://www.digitalocean.com/?refcode=0ffb8d8a9dd9" target="_blank">DigitalOcean</a>.</p>
-				</aside>
+<head>
+	<meta charset="utf-8">
+	<title>Phproject</title>
+	<meta name="description" content="Log in with demo/demo.">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="bootstrap-phproject.css">
+</head>
+<body>
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<a class="navbar-brand" href=".">Phproject</a>
+			<ul class="nav navbar-nav">
+				<li><a href="install.html">Installation</a></li>
+				<li><a href="customize.html">Customization</a></li>
+				<li><a href="contribute.html">Contributing</a></li>
+				<li><a href="plugins.html">Plugins</a></li>
+			</ul>
+			<div class="navbar-right">
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/master"><span class="glyphicon glyphicon-save"></span>&ensp; Download</a>
+				<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span>&ensp; Demo</a>
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span>&ensp; GitHub</a>
 			</div>
 		</div>
-	</body>
+	</div>
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Phproject</h1>
+			<p>A high performance full-featured project management system</p>
+			<br>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row row-spaced">
+			<div class="col-md-7 col-padded text-center">
+				<h2 id="dashboard">Dashboard</h2>
+				<p>The dashboard is the main page for logged in users. It provides a quick way to access all assigned projects, tasks, and bugs, as well as create new ones. In future updates, the dashboard will allow grouping issues by projects, sprints, and by the group that created the issue.</p>
+			</div>
+			<div class="col-md-5">
+				<img class="img-responsive" src="img/dashboard.png" alt>
+			</div>
+		</div>
+		<div class="row row-spaced">
+			<div class="col-md-7 col-md-push-5 col-padded text-center">
+				<h2 id="issues">Issues</h2>
+				<p>Every issue has a dedicated page with everything about it right there. Users can leave comments on issues, and the history tab shows a log of everything that's happened with the issue. You can add users as a watcher so they'll be notified when the issue is updated or commented on. You can also view and add related issues.</p>
+			</div>
+			<div class="col-md-5 col-md-pull-7">
+				<img class="img-responsive" src="img/issue.png" alt>
+			</div>
+		</div>
+		<div class="row row-spaced">
+			<div class="col-md-7 col-padded text-center">
+				<h2 id="backlog">Backlog</h2>
+				<p>Projects can be sorted and moved into customizable sprints from a simple drag-and-drop interface. The backlog also keeps a history of all previous sprints and their projects. The backlog can be filtered to only show projects related to a specific group of users.</p>
+			</div>
+			<div class="col-md-5">
+				<img class="img-responsive" src="img/backlog.png" alt>
+			</div>
+		</div>
+		<div class="row row-spaced">
+			<div class="col-md-7 col-md-push-5 col-padded text-center">
+				<h2 id="taskboard">Taskboard</h2>
+				<p>The taskboard displays the projects and tasks in a sprint with a scrum board interface. Tasks can be moved between projects, and users can update them with priorities, due dates, and hours spent working on the task. Like the backlog, the taskboard can be filtered to only show tasks and projects related to a specific group of users to prevent it from being excessively large when several departments have tasks in a single sprint.</p>
+			</div>
+			<div class="col-md-5 col-md-pull-7">
+				<img class="img-responsive" src="img/taskboard.png" alt>
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="jumbotron jumbotron-inverse">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<h2 id="performance">Performance</h2>
+					<p><small>Phproject uses the <a href="http://fatfreeframework.com/" target="_blank">Fat Free Framework</a> as it's base, allowing it to have a simple but powerful feature set without compromising performance. Every template file is compiled at run time, and only needs to be recompiled when the code is changed. Phproject also includes internal caching that prevents slow duplicate database queries from being used, such as table schema lookups, which greatly increases performance on large pages with lots of data.</small></p>
+					<br>
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer class="container text-muted">
+		<p class="pull-left">Developed and maintained by <a href="https://phpizza.com" target="_blank">Alan Hardman</a> and the IT team at <a href="https://www.thrivelife.com/" target="_blank" rel="nofollow">Thrive Life</a></p>
+		<p class="pull-right"><a href="https://github.com/Alanaktion/phproject" target="_blank">Github</a>&ensp;&middot;&ensp;<a href="https://github.com/Alanaktion/phproject/issues?state=open" target="_blank">Issues</a>&ensp;&middot;&ensp;<a href="http://demo.phproject.org" target="_blank">Demo</a>&emsp;&copy; 2013-2014</p>
+	</footer>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>
 </html>
