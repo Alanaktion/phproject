@@ -29,6 +29,7 @@
 		<h1 class="page-header">Contributing</h1>
 		<p class="lead">Phproject is maintained as an open source project for use by anyone around the world. If you find a bug or would like to see a new feature added, feel free to <a href="https://github.com/Alanaktion/phproject/issues/new" target="_blank">create an issue on Github</a> or <a href="https://github.com/Alanaktion/phproject/compare/" target="_blank">submit a pull request</a> with new code.</p>
 		<p>In order to ease debugging, change the <code>DEBUG</code> value to 3 in <code>config.ini</code>. In addition to giving more detail on error pages, level 3 enables displaying a query log in the page footer that includes query times and shows which queries were cached.</p>
+
 		<h2 class="code-standards">Code Standards</h2>
 		<p>In order to keep things simple and clean, we've set some simple standards on the Phproject source code. Indentation should use tab characters, not spaces. Opening braces are always on the same line as the statement declaration that they correspond with. In PHP code, double quotes should be preferred, unless the string needs to contain double quotes, then single should be preferred rather than escaping the double quotes. CSS and Javascript code should use single quotes when possible.</p>
 <pre><code><span class="text-info">class</span> Issue {
@@ -42,11 +43,16 @@
 
 }</code></pre>
 		<p>Be sure to keep indentation clean and consistent with the rest of the project as well, as it makes finding a particular block of code much easier. These standards should be used whenever contributing to the main project or when writing a plugin for Phproject.</p>
+
+		<h2 class="current-contributions">Current Contributions</h2>
+		<iframe src="http://meta.phproject.org/" width="100%" scrolling="no"></iframe>
 	</div>
 	<footer class="container text-muted">
 		<p class="pull-left">Developed and maintained by <a href="https://phpizza.com" target="_blank">Alan Hardman</a> and the IT team at <a href="https://www.thrivelife.com/" target="_blank" rel="nofollow">Thrive Life</a></p>
 		<p class="pull-right"><a href="https://github.com/Alanaktion/phproject" target="_blank">Github</a>&ensp;&middot;&ensp;<a href="https://github.com/Alanaktion/phproject/issues?state=open" target="_blank">Issues</a>&ensp;&middot;&ensp;<a href="http://demo.phproject.org" target="_blank">Demo</a>&emsp;&copy; 2013-2014</p>
 	</footer>
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="js/jquery-iframeresizer.js"></script>
+	<script>$(document).ready(function() {$('iframe').iFrameResize();});</script>
 </body>
 </html>
