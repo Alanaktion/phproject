@@ -145,8 +145,22 @@
 					<td>{{ @item.type_name }}</td>
 					<td>{{ @item.priority_name }}</td>
 					<td>{{ @item.status_name }}</td>
-					<td><a href="user/{{ @item.author_username }}" rel="author">{{ @item.author_name }}</a></td>
-					<td><a href="user/{{ @item.owner_username }}">{{ @item.owner_name }}</a></td>
+					<check if="{{ @item.author_username }}">
+						<true>
+							<td><a href="user/{{ @item.author_username }}" rel="author">{{ @item.author_name }}</a></td>
+						</true>
+						<false>
+							<td>{{ @item.author_name }}</td>
+						</false>
+					</check>
+					<check if="{{ @item.owner_username }}">
+						<true>
+							<td><a href="user/{{ @item.owner_username }}">{{ @item.owner_name }}</a></td>
+						</true>
+						<false>
+							<td>{{ @item.owner_name }}</td>
+						</false>
+					</check>
 					<td>{{ !empty(@item.sprint_start_date) ? date("n/j/y", strtotime(@item.sprint_start_date)) : "" }}</td>
 					<td>{{ date("n/j/y", strtotime(@item.created_date)) }}</td>
 					<td>{{ !empty(@item.due_date) ? date("n/j/y", strtotime(@item.due_date)) : "" }}</td>
