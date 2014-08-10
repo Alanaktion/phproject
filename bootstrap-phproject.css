@@ -3202,7 +3202,7 @@ textarea.input-group-sm > .form-control, textarea.input-group-sm > .input-group-
 	padding: 19.5px 15px;
 	font-size: 19px;
 	line-height: 21px;
-	height: 21px;
+	height: 60px;
 }
 .navbar-brand:hover, .navbar-brand:focus {
 	text-decoration: none;
