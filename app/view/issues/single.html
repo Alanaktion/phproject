@@ -90,8 +90,15 @@
 				<div class="issue-head clearfix">
 					<img src="{{ h(@author->avatar(48)) }}" class="profile-picture img-rounded" alt>
 					<p class="pull-left">
-						<a href="user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a><br>
-						{{ date("M j, Y \\a\\t g:ia", utc2local(strtotime(@issue.created_date))) }}
+						<check if="{{ @author.username }}">
+							<true>
+								<a href="user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a>
+							</true>
+							<false>
+								<span class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</span>
+							</false>
+						</check>
+						<br>{{ date("M j, Y \\a\\t g:ia", utc2local(strtotime(@issue.created_date))) }}
 					</p>
 				</div>
 
@@ -111,7 +118,16 @@
 					<dd>{{ @issue.status_name }}</dd>
 
 					<dt>Assigned to</dt>
-					<dd><a href="user/{{ @owner.username }}">{{ @owner.name }}</a></dd>
+					<dd>
+						<check if="{{ @owner.username }}">
+							<true>
+								<a href="user/{{ @owner.username }}">{{ @owner.name }}</a>
+							</true>
+							<false>
+								{{ @owner.name }}
+							</false>
+						</check>
+					</dd>
 
 					<check if="{{ @issue.repeat_cycle != 'none' }}">
 						<dt>Repeat Cycle</dt>

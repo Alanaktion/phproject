@@ -4,10 +4,20 @@
 			<img src="avatar/48/{{ @update.user_id }}.png" class="media-object profile-picture img-rounded" alt>
 		</a>
 		<div class="media-body">
-			<p class="media-heading"><a href="user/{{ @update.user_username }}">{{ @update.user_name }}</a> on {{ date("D, M j, Y \\a\\t g:ia", utc2local(strtotime(@update.created_date))) }}</p>
+			<p class="media-heading">
+				<check if="{{ @update.user_username }}">
+					<true>
+						<a href="user/{{ @update.user_username }}">{{ @update.user_name }}</a>
+					</true>
+					<false>
+						{{ @update.user_name }}
+					</false>
+				</check>
+				on {{ date("D, M j, Y \\a\\t g:ia", utc2local(strtotime(@update.created_date))) }}
+			</p>
 			<ul>
 				<repeat group="{{ @update.changes }}" value="{{ @change }}">
-					<set human_readable="{{ \Helper\Update::instance()->humanReadableValues(@change.field, @change.old_value, @change.new_value) }}" />
+					<set humanreadable="{{ \Helper\Update::instance()->humanReadableValues(@change.field, @change.old_value, @change.new_value) }}" />
 					<check if="{{ @change.old_value }}">
 						<true>
 							<check if="{{ @change.new_value !== '' }}">
@@ -15,24 +25,24 @@
 									<check if="{{ @change.field == 'description' }}">
 										<true>
 											<li>
-												<b>{{ @human_readable.field }}</b> changed:<br>
+												<b>{{ @humanreadable.field }}</b> changed:<br>
 												{~ @diff = new \Helper\Diff(explode("\n", @change.old_value), explode("\n", @change.new_value), array("ignoreWhitespace" => true)); ~}
 												{~ @diff_renderer = new \Helper\Diff\Renderer\Html\Inline ~}
 												{{ @diff->render(@diff_renderer) }}
 											</li>
 										</true>
 										<false>
-											<li><b>{{ @human_readable.field }}</b> changed from <i>{{ @human_readable.old }}</i> to <i>{{ @human_readable.new }}</i></li>
+											<li><b>{{ @humanreadable.field }}</b> changed from <i>{{ @humanreadable.old }}</i> to <i>{{ @humanreadable.new }}</i></li>
 										</false>
 									</check>
 								</true>
 								<false>
-									<li><b>{{ @human_readable.field }}</b> removed</li>
+									<li><b>{{ @humanreadable.field }}</b> removed</li>
 								</false>
 							</check>
 						</true>
 						<false>
-							<li><b>{{ @human_readable.field }}</b> set to <i>{{ @human_readable.new }}</i></li>
+							<li><b>{{ @humanreadable.field }}</b> set to <i>{{ @humanreadable.new }}</i></li>
 						</false>
 					</check>
 				</repeat>
