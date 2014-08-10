@@ -11,14 +11,30 @@
 <body>
 	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
 		<div class="container">
-			<a class="navbar-brand" href=".">Phproject</a>
-			<ul class="nav navbar-nav">
-				<li><a href="install.html">Installation</a></li>
-				<li><a href="customize.html">Customization</a></li>
-				<li><a href="contribute.html">Contributing</a></li>
-				<li class="active"><a href="plugins.html">Plugins</a></li>
-			</ul>
-			<div class="navbar-right">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nb">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<div class="pull-right visible-xs visible-sm">
+					<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/master"><span class="glyphicon glyphicon-save"></span></a>
+					<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span></a>
+					<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span></a>
+					&ensp;
+				</div>
+				<a class="navbar-brand" href=".">Phproject</a>
+			</div>
+			<div class="collapse navbar-collapse navbar-left" id="nb">
+				<ul class="nav navbar-nav">
+					<li><a href="install.html">Installation</a></li>
+					<li><a href="customize.html">Customization</a></li>
+					<li><a href="contribute.html">Contributing</a></li>
+					<li class="active"><a href="plugins.html">Plugins</a></li>
+				</ul>
+			</div>
+			<div class="navbar-right hidden-xs hidden-sm">
 				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/master"><span class="glyphicon glyphicon-save"></span>&ensp; Download</a>
 				<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span>&ensp; Demo</a>
 				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span>&ensp; GitHub</a>
@@ -42,5 +58,7 @@
 		<p class="pull-left">Developed and maintained by <a href="https://phpizza.com" target="_blank">Alan Hardman</a> and the IT team at <a href="https://www.thrivelife.com/" target="_blank" rel="nofollow">Thrive Life</a></p>
 		<p class="pull-right"><a href="https://github.com/Alanaktion/phproject" target="_blank">Github</a>&ensp;&middot;&ensp;<a href="https://github.com/Alanaktion/phproject/issues?state=open" target="_blank">Issues</a>&ensp;&middot;&ensp;<a href="http://demo.phproject.org" target="_blank">Demo</a>&emsp;&copy; 2013-2014</p>
 	</footer>
+	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
 </html>
