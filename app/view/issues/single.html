@@ -141,12 +141,11 @@
 
 					<check if="{{ !empty(@issue.hours_total) }}">
 						<dt>Planned Hours</dt>
-						<dd>{{ @issue.hours_total }}</dd>
+						<dd>{{ @issue.hours_total ?: 0 }}</dd>
 
 						<dt>Remaining Hours</dt>
-						<dd>{{ @issue.hours_remaining }}</dd>
+						<dd>{{ @issue.hours_remaining ?: 0 }}</dd>
 					</check>
-
 
 					<check if="{{ strtotime(@issue.due_date) }}">
 						<dt>Due Date</dt>
