@@ -49,6 +49,16 @@ function print_json($object) {
 }
 
 /**
+ * Clean a string for encoding in JSON
+ * Collapses whitespace, then trims
+ * @param  string $string
+ * @return string
+ */
+function clean_json($string) {
+	return trim(preg_replace('/\s+/', ' ', $string));
+}
+
+/**
  * Internal function used by make_clickable
  * @param  array  $matches
  * @return string
@@ -180,6 +190,8 @@ function parseTextile($str, $ttl=false) {
 
 	// Value wasn't cached, run the parser
 	$tex = new \Helper\Textile\Parser();
+	$tex->setDocumentType('html5')
+		->setDimensionlessImages(true);
 	$val = $tex->parse($str);
 
 	// Find issue IDs and convert to links

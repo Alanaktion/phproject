@@ -1,3 +1,18 @@
+<check if="{{ empty(@parent) }}">
+	<true>
+		<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.task }}/{{ @issue.id }}">New Sub-Task</a>
+	</true>
+	<false>
+		<check if="{{ !@parent.closed_date }}">
+			<check if="{{ @parent.type_id == @issue_type.project }}">
+				<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.project }}/{{ @parent.id }}">New Sub-Project</a>
+			</check>
+			<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.task }}/{{ @parent.id }}">New Task</a>
+			<!-- <a class="btn btn-default btn-sm" href="issues/quickadd{{ @issue_type.task }}/{{ @parent.id }}">Quick Add</a> -->
+			<span class="hidden-xs">&ensp;Under <a href="issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a></span>
+		</check>
+	</false>
+</check>
 <check if="{{ !empty(@issues) }}">
 	<true>
 		<table class="table table-striped table-responsive table-condensed issue-list">
@@ -32,12 +47,4 @@
 	<false>
 		<p class="text-center text-muted">No related issues</p>
 	</false>
-</check>
-<check if="{{ !@parent.closed_date }}">
-	<check if="{{ @parent.type_id == @issue_type.project }}">
-		<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.project }}/{{ @parent.id }}">New Sub-Project</a>
-	</check>
-	<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.task }}/{{ @parent.id }}">New Task</a>
-	<!-- <a class="btn btn-default btn-sm" href="issues/quickadd{{ @issue_type.task }}/{{ @parent.id }}">Quick Add</a> -->
-	<span class="hidden-xs">&ensp;Under <a href="issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a></span>
 </check>

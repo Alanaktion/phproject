@@ -256,7 +256,7 @@ class Issues extends Base {
 		$f3->reroute("/issues/" . $issue->id);
 	}
 
-	public function repoen($f3, $params) {
+	public function reopen($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -540,7 +540,7 @@ class Issues extends Base {
 
 		print_json(array(
 			"total" => count($updates),
-			"html" => \Template::instance()->render("issues/single/history.html")
+			"html" => clean_json(\Template::instance()->render("issues/single/history.html"))
 		));
 	}
 
@@ -549,31 +549,28 @@ class Issues extends Base {
 		$issue->load($params["id"]);
 
 		if($issue->id) {
+			$f3->set("issue", $issue);
 			$issues = new \Model\Issue\Detail;
-			if($f3->get("issue_type.project") == $issue->type_id) {
+			if($f3->get("issue_type.project") == $issue->type_id || !$issue->parent_id) {
 				$found_issues = $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id));
 				$f3->set("issues", $found_issues);
 				$f3->set("parent", $issue);
 			} else {
-				// This may be causing a memory leak. - rightbit
-				if($issue->parent_id > 0) {
-					$found_issues = $issues->find(array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id),
-									array('order' => "priority DESC, due_date")
-						);
+				if($issue->parent_id) {
+					$found_issues = $issues->find(array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id), array('order' => "priority DESC, due_date"));
 					$f3->set("issues", $found_issues);
+
+					$parent = new \Model\Issue;
+					$parent->load($issue->parent_id);
+					$f3->set("parent", $parent);
 				} else {
 					$f3->set("issues", array());
 				}
-
-				$parent = new \Model\Issue;
-				$parent->load($issue->parent_id);
-				$f3->set("parent", $parent);
-
 			}
 
 			print_json(array(
 				"total" => count($f3->get("issues")),
-				"html" => \Template::instance()->render("issues/single/related.html")
+				"html" => clean_json(\Template::instance()->render("issues/single/related.html"))
 			));
 		} else {
 			$f3->error(404);
@@ -588,7 +585,7 @@ class Issues extends Base {
 
 		print_json(array(
 			"total" => count($f3->get("watchers")),
-			"html" => \Template::instance()->render("issues/single/watchers.html")
+			"html" => clean_json(\Template::instance()->render("issues/single/watchers.html"))
 		));
 	}
 

@@ -1,7 +1,17 @@
-$(document).ready(function(){
+$(document).ready(function() {
+
 	// Initialize tooltips and popovers
 	$(".has-tooltip").tooltip();
 	$(".has-popover").popover({delay: {show: 500, hide: 100}});
+
+	// Correctly scroll to a given ID, accounting for fixed navigation
+	if(window.location.hash) {
+		var hashElement = $(window.location.hash);
+		if(hashElement.length) {
+			$(window).scrollTop(hashElement.offset().top - 100);
+			hashElement.fadeTo(400, 0.5).fadeTo(400, 1).fadeTo(400, 0.5).fadeTo(400, 1);
+		}
+	}
 
 	// Handle custom nested input focusing
 	$(".form-control.has-child").click(function(e) {
@@ -43,6 +53,7 @@ $(document).ready(function(){
 		$(this).parents('form').submit();
 	});
 
+	// Submit issue
 	$(".issue-sort").on("click",  function(e) {
 		e.preventDefault();
 
