@@ -84,7 +84,15 @@
 
 	<check if="{{ !empty(@issue) }}">
 		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">Total Hours</label>
+			<label class="col-md-2 control-label label-sm">Total Spent Hours</label>
+			<div class="col-md-6">
+				<input class="form-control input-sm" type="text" name="hours_spent" value="{{ @issue.hours_spent }}">
+			</div>
+		</div>
+	</check>
+	<check if="{{ !empty(@issue) }}">
+		<div class="form-group">
+			<label class="col-md-2 control-label label-sm">Planned Hours</label>
 			<div class="col-md-6">
 				<input class="form-control input-sm" type="text" name="hours_total" value="{{ @issue.hours_total }}">
 			</div>

@@ -153,15 +153,33 @@
 								</optgroup>
 							</select>
 							<label for="hours">Remaining (Hours)</label>
-							<input type="textbox" name="hours" id="hours" class="form-control">
-							<label for="password">Due Date</label>
-							<input type="textbox" name="dueDate" id="dueDate" value="" class="dueDate form-control">
+							<input type="text" name="hours" id="hours" class="form-control">
+							<label for="dueDate">Due Date</label>
+							<input type="text" name="dueDate" id="dueDate" value="" class="dueDate form-control">
 							<label for="priority">Priority</label>
 							<select id="priority" name="priority" class="form-control" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
 								<repeat group="{{ @priorities }}" value="{{ @priority }}">
 									<option value="{{ @priority.value }}">{{ @priority.name }}</option>
 								</repeat>
 							</select>
+						</div>
+						<div class="col-md-12">
+							Hours and Comments
+						</div>
+						<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-6">
+								<input type="text" name="comment" id="comment" class="form-control" placeholder="Comment" />
+							</div>
+							<div class="col-md-2">
+								<input type="text" name="hours_spent" id="hours_spent" class="form-control" placeholder="Hours" />
+							</div>
+
+							<div class="col-md-3">
+								<input type="checkbox" name="burndown" checked /> Burndown?
+							</div>
+						</div>
+						</div>
 						</div>
 					</fieldset>
 				</form>

@@ -51,7 +51,7 @@ var Taskboard = {
 		//initialize modal window
 		$("#task-dialog").dialog({
 			autoOpen: false,
-			height: 430,
+			height: 460,
 			width: 550,
 			modal: true,
 			buttons: {
@@ -110,6 +110,8 @@ var Taskboard = {
 		$("#task-dialog input#title").val(title);
 		$("#task-dialog textarea#description").val(description);
 		$("#task-dialog input#hours").val(hours);
+		$("#task-dialog input#hours_spent").val('');
+		$("#task-dialog input#comment").val('');
 		$("#task-dialog input#dueDate").val(date);
 		$("#task-dialog").find("#dueDate").datepicker();
 		Taskboard.setOptionByVal("#task-dialog", user);
@@ -205,7 +207,10 @@ var Taskboard = {
 	updateCard: function(card, data) {
 		$(card).find(".title").text(data.title);
 
-		if (isNumber(data.hours) && data.hours > 0) {
+		if (isNumber(data.hours_spent) && data.burndown && data.hours > 0) {
+			$(card).find(".hours").text(parseFloat(data.hours).toFixed(1) - parseFloat(data.hours_spent));
+			$(card).find(".hours").show();
+		} else if (isNumber(data.hours) && data.hours > 0) {
 			$(card).find(".hours").text(parseFloat(data.hours).toFixed(1));
 			$(card).find(".hours").show();
 		} else {

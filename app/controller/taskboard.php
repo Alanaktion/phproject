@@ -321,6 +321,10 @@ class Taskboard extends Base {
 			$issue->description = $post["description"];
 			$issue->owner_id = $post["assigned"];
 			$issue->hours_remaining = $post["hours"];
+			$issue->hours_spent += $post["hours_spent"];
+			if(!empty($post["hours_spent"]) && $issue->hours_remaining > 0 &&  !empty($post["hours_spent"])) {
+				$issue->hours_remaining -=  $post["hours_spent"];
+			}
 			if(!empty($post["dueDate"])) {
 				$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
 			} else {
@@ -332,6 +336,17 @@ class Taskboard extends Base {
 			}
 			$issue->title = $post["title"];
 		}
+
+		if(!empty($post["comment"])) {
+			$comment = new \Model\Issue\Comment;
+			$comment->user_id = $this->_userId;
+			$comment->issue_id = $issue->id;
+			$comment->text = $post["comment"];
+			$comment->created_date = now();
+			$comment->save();
+			$issue->update_comment = $comment->id;
+		}
+
 		$issue->save();
 
 		print_json($issue->cast() + array("taskId" => $issue->id));

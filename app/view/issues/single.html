@@ -106,13 +106,19 @@
 						<dd>{{ ucfirst(@issue.repeat_cycle) }}</dd>
 					</check>
 
+					<check if="{{ !empty(@issue.hours_spent) }}">
+						<dt>Spent Hours</dt>
+						<dd>{{ @issue.hours_spent}}</dd>
+					</check>
+
 					<check if="{{ !empty(@issue.hours_total) }}">
-						<dt>Total Hours</dt>
+						<dt>Planned Hours</dt>
 						<dd>{{ @issue.hours_total }}</dd>
 
 						<dt>Remaining Hours</dt>
 						<dd>{{ @issue.hours_remaining }}</dd>
 					</check>
+
 
 					<check if="{{ strtotime(@issue.due_date) }}">
 						<dt>Due Date</dt>
