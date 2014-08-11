@@ -1458,7 +1458,7 @@ output {
 }
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
 	cursor: not-allowed;
-	background-color: #fff;
+	background-color: #f0f0f0;
 	opacity: 1;
 }
 textarea.form-control {
@@ -3838,8 +3838,8 @@ a.thumbnail:hover, a.thumbnail:focus, a.thumbnail.active {
 	color: inherit;
 }
 .alert-success {
-	background-color: #d74300;
-	border-color: #d74300;
+	background-color: #4CCC14;
+	border-color: #4CCC14;
 	color: #fff;
 }
 .alert-success hr {

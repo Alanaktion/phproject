@@ -36,9 +36,6 @@ class Index extends Base {
 				$f3->reroute($f3->get("GET.to"));
 			}
 		} else {
-			if($f3->exists("GET.demo")) {
-				$f3->set("login.error", 'Log in with username and password "demo".');
-			}
 			if($f3->get("GET.to")) {
 				$f3->set("to", $f3->get("GET.to"));
 			}
@@ -71,6 +68,58 @@ class Index extends Base {
 			}
 			$f3->set("login.error", "Invalid login information, try again.");
 			echo \Template::instance()->render("index/login.html");
+		}
+	}
+
+	public function reset($f3, $params) {
+		if($f3->get("user.id")) {
+			$f3->reroute("/");
+		} else {
+			if($f3->get("POST.email")) {
+				$user = new \Model\User;
+				$user->load(array("email = ?", $f3->get("POST.email")));
+				if($user->id && !$user->deleted_date) {
+					$notification = \Helper\Notification::instance();
+					$notification->user_reset($user->id);
+					$f3->set("reset.success", "We've sent an email to " . $f3->get("POST.email") . " with a link to reset your password.");
+				} else {
+					$f3->set("reset.error", "No user exists with the email address " . $f3->get("POST.email") . ".");
+				}
+			}
+			unset($user);
+			echo \Template::instance()->render("index/reset.html");
+		}
+	}
+
+	public function reset_complete($f3, $params) {
+		if($f3->get("user.id")) {
+			$f3->reroute("/");
+		} else {
+			$user = new \Model\User;
+			$user->load(array("CONCAT(password, salt) = ?", $params["hash"]));
+			if(!$user->id || !$params["hash"]) {
+				$f3->set("reset.error", "Invalid reset URL.");
+				echo \Template::instance()->render("index/reset.html");
+				return;
+			}
+			if($f3->get("POST.password1")) {
+				// Validate new password
+				if($f3->get("POST.password1") != $f3->get("POST.password2")) {
+					$f3->set("reset.error", "The given passwords don't match.");
+				} elseif(strlen($f3->get("POST.password1")) < 6) {
+					$f3->set("reset.error", "The given password is too short. Passwords must be at least 6 characters.");
+				} else {
+					// Save new password and redirect to login
+					$security = \Helper\Security::instance();
+					$user->salt = $security->salt();
+					$user->password = $security->hash($f3->get("POST.password1"), $user->salt);
+					$user->save();
+					$f3->reroute("/login");
+					return;
+				}
+			}
+			$f3->set("resetuser", $user);
+			echo \Template::instance()->render("index/reset_complete.html");
 		}
 	}
 

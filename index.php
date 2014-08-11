@@ -83,4 +83,6 @@ if($f3->get("user")) {
 
 // Run the application
 $f3->set("menuitem", false);
+xdebug_start_trace();
 $f3->run();
+xdebug_stop_trace();
