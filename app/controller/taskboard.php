@@ -343,7 +343,7 @@ class Taskboard extends Base {
 			$comment->issue_id = $issue->id;
 			$comment->text = $post["comment"];
 			if(!empty( $post["hours_spent"])) {
-				$comment->text = $comment->text  . " - " . $post["hours_spent"] . " hour(s) spent";
+				$comment->text = $comment->text  . " : " . $post["hours_spent"] . " hour(s) spent";
 			}
 			$comment->created_date = now();
 			$comment->save();
