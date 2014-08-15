@@ -120,17 +120,17 @@ class User extends Base {
 			if(!empty($post["name"])) {
 				$user->name = filter_var($post["name"], FILTER_SANITIZE_STRING);
 			} else {
-				$error = "Please enter a name.";
+				$error = "Please enter your name.";
 			}
-			if(filter_var($post["email"], FILTER_VALIDATE_EMAIL)) {
+			if(preg_match("/^([\p{L}\.\-\d]+)@([\p{L}\-\.\d]+)((\.(\p{L})+)+)$/im", $post["email"])) {
 				$user->email = $post["email"];
 			} else {
-				$error = "Please enter a valid email address.";
+				$error = $post["email"] . " is not a valid email address.";
 			}
 			if(empty($error) && ctype_xdigit(ltrim($post["task_color"], "#"))) {
 				$user->task_color = ltrim($post["task_color"], "#");
-			} else {
-				$error = "Please enter a valid 6-hexit color code.";
+			} elseif(empty($error)) {
+				$error = $post["task_color"] . " is not a valid color code.";
 			}
 
 			if(empty($post["theme"])) {
