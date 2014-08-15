@@ -89,7 +89,7 @@ class Taskboard extends Base {
 			"sprint_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN ($visible_status_ids)"
 				. (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
 			$sprint->id, $f3->get("issue_type.project")
-		));
+		), array("order" => "priority DESC"));
 		$task_ids = array();
 		$parent_ids = array(0);
 		foreach($tasks as $task) {
