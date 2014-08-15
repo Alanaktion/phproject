@@ -234,8 +234,13 @@ function format_filesize($filesize) {
  * @param  int $timestamp
  * @return int
  */
-function utc2local($timestamp) {
+function utc2local($timestamp = null) {
+	if(!$timestamp) {
+		$timestamp = time();
+	}
+
 	$f3 = Base::instance();
+
 	if($f3->exists("site.timeoffset")) {
 		$offset = $f3->get("site.timeoffset");
 	} else {
@@ -244,5 +249,6 @@ function utc2local($timestamp) {
 		$dtLocal = new DateTime("now", $dtzLocal);
 		$offset = $dtzLocal->getOffset($dtLocal);
 	}
+
 	return $timestamp + $offset;
 }

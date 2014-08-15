@@ -18,13 +18,13 @@
 						<div class="form-group">
 							<label for="opass" class="col-sm-2 control-label label-sm">Name</label>
 							<div class="col-sm-10">
-								<input class="form-control input-sm" id="name" name="name" type="text" value="{{ @user.name }}">
+								<input class="form-control input-sm" id="name" name="name" type="text" value="{{ @user.name }}" maxlength="32">
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="npass" class="col-sm-2 control-label label-sm">Email Address</label>
 							<div class="col-sm-10">
-								<input class="form-control input-sm" id="email" name="email" type="email" value="{{ @user.email }}">
+								<input class="form-control input-sm" id="email" name="email" type="email" value="{{ @user.email }}" maxlength="64">
 							</div>
 						</div>
 						<div class="form-group">
@@ -41,7 +41,7 @@
 						<div class="form-group">
 							<label for="npass" class="col-sm-2 control-label label-sm">Task Color</label>
 							<div class="col-sm-4 col-md-2 col-lg-2">
-								<input class="form-control input-sm" id="color" name="task_color" type="color" value="#{{ @user.task_color }}" maxlength="7">
+								<input class="form-control input-sm" id="color" name="task_color" type="color" value="{{ @user.task_color ? '#' . @user.task_color : '' }}">
 							</div>
 						</div>
 						<div class="form-group">

@@ -11,7 +11,6 @@ class Notification extends \Prefab {
 	 */
 	public function issue_comment($issue_id, $comment_id) {
 		$f3 = \Base::instance();
-
 		if($f3->get("mail.from")) {
 			$log = new \Log("mail.log");
 
@@ -46,7 +45,6 @@ class Notification extends \Prefab {
 	 */
 	public function issue_update($issue_id, $update_id) {
 		$f3 = \Base::instance();
-
 		if($f3->get("mail.from")) {
 			$log = new \Log("mail.log");
 
@@ -88,7 +86,6 @@ class Notification extends \Prefab {
 	 * @param  int $issue_id
 	 */
 	public function issue_create($issue_id) {
-
 		$f3 = \Base::instance();
 		$log = new \Log("mail.log");
 		if($f3->get("mail.from")) {
@@ -124,7 +121,6 @@ class Notification extends \Prefab {
 	 */
 	public function issue_file($issue_id, $file_id) {
 		$f3 = \Base::instance();
-
 		if($f3->get("mail.from")) {
 			$log = new \Log("mail.log");
 
@@ -149,6 +145,30 @@ class Notification extends \Prefab {
 				utf8mail($recipient, $subject, $body);
 				$log->write("Sent file notification to: " . $recipient);
 			}
+		}
+	}
+
+	/**
+	 * Send a user a password reset email
+	 * @param  int $user_id
+	 */
+	public function user_reset($user_id) {
+		$f3 = \Base::instance();
+		if($f3->get("mail.from")) {
+			$user = new \Model\User;
+			$user->load($user_id);
+
+			if(!$user->id) {
+				throw new Exception("User does not exist.");
+			}
+
+			// Render message body
+			$f3->set("user", $user);
+			$body = \Template::instance()->render("notification/user_reset.html");
+
+			// Send email to user
+			$subject = "Reset your password";
+			utf8mail($user->email, $subject, $body);
 		}
 	}
 

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<style type="text/css">
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+			font-size: 14px;
+			line-height: 16px;
+			color: #000;
+		}
+	</style>
+</head>
+<body>
+	<div style="padding: 0 10px;">
+		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @site.url }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
+		<p>Someone requested to reset your password on <i>{{ date("F jS", utc2local()) }}</i> from IP address <i>{{ @SERVER.REMOTE_ADDR }}</i>. If this was you, click the button below to reset your password. Otherwise, you can ignore this email.</p>
+		<br>
+		<p><a href="{{ @site.url }}reset/{{ @user.password . @user.salt }}" style="display: inline-block; background: #375A7F; padding: 6px; border-radius: 4px; color: #fff; text-decoration: none;">Reset Password</a></p>
+	</div>
+</body>
+</html>

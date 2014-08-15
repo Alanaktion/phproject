@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body class="login">
+<div class="hidden-xs" style="padding-top: 160px;"></div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-4 col-sm-offset-4">
+			<form action="reset/{{ @PARAMS.hash }}" method="post" class="form-horizontal">
+				<fieldset>
+					<legend>Reset Password</legend>
+					<check if="{{ !empty(@reset.success) }}">
+						<p class="alert alert-success">{{ @reset.success }}</p>
+					</check>
+					<check if="{{ !empty(@reset.error) }}">
+						<p class="alert alert-danger">{{ @reset.error }}</p>
+					</check>
+					<div class="form-group">
+						<label for="inputPassword" class="col-md-4 control-label">Username</label>
+						<div class="col-md-8">
+							<input class="form-control disabled" value="{{ @resetuser.username }}" disabled>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputPassword" class="col-md-4 control-label">New Password</label>
+						<div class="col-md-8">
+							<input class="form-control" name="password1" type="password" required autofocus>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputPassword" class="col-md-4 control-label">Confirm Password</label>
+						<div class="col-md-8">
+							<input class="form-control" name="password2" type="password" required>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-8 col-lg-offset-4">
+							<button type="submit" class="btn btn-primary">Reset Password</button>
+							<a href="login" class="btn btn-link">Cancel</a>
+						</div>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>
