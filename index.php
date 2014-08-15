@@ -9,6 +9,8 @@ $f3->mset(array(
 	"UI" => "app/view/",
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
+	"LOCALES" => "app/dict/",
+	"FALLBACK" => "en",
 	"CACHE" => true,
 	"AUTOLOAD" => "app/",
 	"PACKAGE" => "Phproject",

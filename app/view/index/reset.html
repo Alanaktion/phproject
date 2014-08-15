@@ -10,7 +10,7 @@
 		<div class="col-sm-4 col-sm-offset-4">
 			<form action="reset" method="post" class="form-horizontal">
 				<fieldset>
-					<legend>Reset Password</legend>
+					<legend>{{ @dict.reset_password }}</legend>
 					<check if="{{ !empty(@reset.success) }}">
 						<p class="alert alert-success">{{ @reset.success }}</p>
 					</check>
@@ -18,15 +18,15 @@
 						<p class="alert alert-danger">{{ @reset.error }}</p>
 					</check>
 					<div class="form-group">
-						<label for="inputPassword" class="col-md-4 control-label">Email address</label>
+						<label for="inputPassword" class="col-md-4 control-label">{{ @dict.email_address }}</label>
 						<div class="col-md-8">
-							<input class="form-control" placeholder="Email" name="email" type="email" required>
+							<input class="form-control" placeholder="{{ @dict.email }}" name="email" type="email" required>
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="col-lg-8 col-lg-offset-4">
-							<button type="submit" class="btn btn-primary">Reset Password</button>
-							<a href="login" class="btn btn-link">Cancel</a>
+							<button type="submit" class="btn btn-primary">{{ @dict.reset_password }}</button>
+							<a href="login" class="btn btn-link">{{ @dict.cancel }}</a>
 						</div>
 					</div>
 				</fieldset>
