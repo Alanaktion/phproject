@@ -552,12 +552,12 @@ class Issues extends Base {
 			$f3->set("issue", $issue);
 			$issues = new \Model\Issue\Detail;
 			if($f3->get("issue_type.project") == $issue->type_id || !$issue->parent_id) {
-				$found_issues = $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id));
+				$found_issues = $issues->find(array("parent_id = ? AND deleted_date IS NULL", $issue->id), array('order' => "status_closed, priority DESC, due_date"));
 				$f3->set("issues", $found_issues);
 				$f3->set("parent", $issue);
 			} else {
 				if($issue->parent_id) {
-					$found_issues = $issues->find(array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id), array('order' => "priority DESC, due_date"));
+					$found_issues = $issues->find(array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id), array('order' => "status_closed, priority DESC, due_date"));
 					$f3->set("issues", $found_issues);
 
 					$parent = new \Model\Issue;
