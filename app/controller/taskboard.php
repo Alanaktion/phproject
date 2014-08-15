@@ -322,8 +322,11 @@ class Taskboard extends Base {
 			$issue->owner_id = $post["assigned"];
 			$issue->hours_remaining = $post["hours"];
 			$issue->hours_spent += $post["hours_spent"];
-			if(!empty($post["hours_spent"]) && $issue->hours_remaining > 0 &&  !empty($post["hours_spent"])) {
+			if(!empty($post["hours_spent"]) && !empty($post["burndown"])) {
 				$issue->hours_remaining -=  $post["hours_spent"];
+			}
+			if($issue->hours_remaining > 0) {
+				$issue->hours_remaining = 0;
 			}
 			if(!empty($post["dueDate"])) {
 				$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
