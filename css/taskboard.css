@@ -148,7 +148,6 @@ body {
 	z-index: 10;
 	background-color: #008000;
 	border-radius: 10px;
-	color: #FFF;
 	text-align: center;
 }
 #taskboard .card .priority.normal {
@@ -156,9 +155,11 @@ body {
 }
 #taskboard .card .priority.low {
 	background-color: #c5c5c5;
+	color: #444;
 }
 #taskboard .card .priority.high {
 	background-color: #D63300;
+	color: #fff;
 }
 #taskboard .card .hours,
 #taskboard .card .priority {
