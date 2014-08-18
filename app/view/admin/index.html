@@ -57,7 +57,7 @@
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="db-config">
-							<b>Host:</b> {{ @db.host }}<br>
+							<b>Host:</b> {{ @db.host }}:{{ @db.port }}<br>
 							<b>Schema:</b> {{ @db.name }}<br>
 							<b>Username:</b> {{ @db.user }}<br>
 							<b>Password:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
