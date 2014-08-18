@@ -52,7 +52,7 @@ $f3->set("ONERROR", function($f3) {
 
 // Connect to database
 $f3->set("db.instance", new DB\SQL(
-	"mysql:host=" . $f3->get("db.host") . ";port=3306;dbname=" . $f3->get("db.name"),
+	"mysql:host=" . $f3->get("db.host") . ";port=" . $f3->get("db.port") . ";dbname=" . $f3->get("db.name"),
 	$f3->get("db.user"),
 	$f3->get("db.pass")
 ));
