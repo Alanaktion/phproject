@@ -325,7 +325,7 @@ class Taskboard extends Base {
 			if(!empty($post["hours_spent"]) && !empty($post["burndown"])) {
 				$issue->hours_remaining -=  $post["hours_spent"];
 			}
-			if($issue->hours_remaining > 0) {
+			if($issue->hours_remaining < 0) {
 				$issue->hours_remaining = 0;
 			}
 			if(!empty($post["dueDate"])) {
