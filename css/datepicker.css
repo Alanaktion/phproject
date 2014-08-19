@@ -4,7 +4,6 @@
  * Copyright 2012 Stefan Petre
  * Licensed under the Apache License v2.0
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  */
 .datepicker {
 	top: 0;
@@ -14,10 +13,7 @@
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	border-radius: 4px;
-	/*.dow {
-		border-top: 1px solid #ddd !important;
-	}*/
-
+	z-index: 1051;
 }
 .datepicker:before {
 	content: '';

@@ -139,20 +139,43 @@
 				</tr>
 			</repeat>
 		</table>
-		<div id="task-dialog" class="dialog" title="Edit Task" style="display: none;">
-			<div class="row">
-				<form id="task-dialog">
-					<fieldset>
-						<input type="hidden" name="taskId" id="taskId" value="">
-						<div class="col-md-7">
+	</section>
+	<div class="card task cloneable" id="new_task">
+		<div class="hours"></div><div class="top">
+			<span class="task-id"></span>
+		</div>
+		<div class="title"></div>
+		<div class="description"></div>
+		<div class="dueDate"></div>
+		<div class="priority normal">Normal Priority</div><div class="owner"></div>
+	</div>
+	<div class="container-fluid">
+		<include href="blocks/footer.html" />
+	</div>
+
+	<div class="modal" id="task-dialog" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="#task-dialog-title" method="post">
+		<div class="modal-dialog">
+			<form class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title" id="task-dialog-title">Edit Task</h4>
+				</div>
+				<fieldset class="modal-body">
+					<input type="hidden" name="taskId" id="taskId" value="">
+					<div class="col-md-7">
+						<div class="form-group">
 							<label for="title">Title</label>
-							<input type="text" name="title" id="title" class="form-control" />
-							<label for="Description">Description</label>
-							<textarea name="description" id="description" class="form-control"  rows="6"></textarea>
+							<input type="text" name="title" id="title" class="form-control input-sm">
 						</div>
-						<div class="col-md-5">
+						<div class="form-group">
+							<label for="Description">Description</label>
+							<textarea name="description" id="description" class="form-control input-sm"  rows="8"></textarea>
+						</div>
+					</div>
+					<div class="col-md-5">
+						<div class="form-group">
 							<label for="assigned">Assigned To</label>
-							<select id="assigned" name="assigned" class="form-control" onchange="Taskboard.changeUser(this)">
+							<select id="assigned" name="assigned" class="form-control input-sm" onchange="Taskboard.changeUser(this)">
 								<option value="0" data-color="#AAAAAA">Not Assigned</option>
 								<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" selected>{{ @user.name }}</option>
 								<optgroup label="Groups">
@@ -166,48 +189,53 @@
 									</repeat>
 								</optgroup>
 							</select>
+						</div>
+						<div class="form-group">
 							<label for="hours">Remaining (Hours)</label>
-							<input type="text" name="hours" id="hours" class="form-control">
+							<input type="text" name="hours" id="hours" class="form-control input-sm">
+						</div>
+						<div class="form-group">
 							<label for="dueDate">Due Date</label>
-							<input type="text" name="dueDate" id="dueDate" value="" class="dueDate form-control">
+							<input type="text" name="dueDate" id="dueDate" value="" class="dueDate form-control input-sm">
+						</div>
+						<div class="form-group">
 							<label for="priority">Priority</label>
-							<select id="priority" name="priority" class="form-control" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
+							<select id="priority" name="priority" class="form-control input-sm" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
 								<repeat group="{{ @priorities }}" value="{{ @priority }}">
 									<option value="{{ @priority.value }}">{{ @priority.name }}</option>
 								</repeat>
 							</select>
 						</div>
-						<div class="col-md-12">
-							Hours and Comments<br>
-							<div class="row">
-								<div class="col-md-6">
-									<input type="text" name="comment" id="comment" class="form-control" placeholder="Comment" />
-								</div>
-								<div class="col-md-2">
-									<input type="text" name="hours_spent" id="hours_spent" class="form-control" placeholder="Hours" />
-								</div>
-								<div class="col-md-3">
-									<input type="hidden" name="burndown" value="0">
-									<label class="checkbox"><input type="checkbox" name="burndown" value="1" checked /> Burn hours</label>
-								</div>
+					</div>
+					<div class="col-md-12">
+						<hr>
+						<div class="form-inline">
+							<label>Track Time Spent</label><br>
+							<div class="form-group form-group-wide">
+								<label class="sr-only" for="comment">Comment</label>
+								<input type="text" name="comment" id="comment" class="form-control input-sm" placeholder="Comment">
+							</div>
+							<div class="form-group form-group-narrow">
+								<label class="sr-only" for="hours_spent">Hours</label>
+								<input type="text" name="hours_spent" id="hours_spent" class="form-control input-sm" placeholder="Hours">
+							</div>
+							<div class="checkbox">
+								&nbsp;
+								<label class="sr-only" for="input-burndown">Burn hours</label>
+								<input type="hidden" name="burndown" value="0">
+								<label>
+									<input type="checkbox" name="burndown" id="input-burndown" value="1" checked> Burn hours
+								</label>
 							</div>
 						</div>
-					</fieldset>
-				</form>
-			</div>
+					</div>
+				</fieldset>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
+					<button type="submit" class="btn btn-sm btn-primary">Save</button>
+				</div>
+			</form>
 		</div>
-	</section>
-	<div data-departement="" class="card task cloneable" id="new_task">
-		<div class="hours"></div><div class="top">
-			<span class="task-id"></span>
-		</div>
-		<div class="title"></div>
-		<div class="description"></div>
-		<div class="dueDate"></div>
-		<div class="priority normal">Normal Priority</div><div class="owner"></div>
-	</div>
-	<div class="container-fluid">
-		<include href="blocks/footer.html" />
 	</div>
 
 	<div class="modal fade" id="burndown-modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -215,7 +243,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">Burndown Chart</h4>
+					<h4 class="modal-title">Burndown Chart</h4>
 				</div>
 				<div class="modal-body">
 					<div style="width:920px;margin:0 auto;">
@@ -226,8 +254,8 @@
 		</div>
 	</div>
 
-	<script src="minify/js/jquery-ui-1.10.3.min.js,jquery.ui.touch-punch.min.js"></script>
-	<script src="minify/js/taskboard.js"></script>
+	<script src="minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js,bootstrap-datepicker.js"></script>
+	<script src="js/taskboard.js"></script>
 	<script src="js/chart.js"></script>
 	<script>
 		var BurndownData;

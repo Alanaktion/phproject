@@ -48,25 +48,6 @@ var Taskboard = {
 			Taskboard.modalEdit($(this));
 		});
 
-		//initialize modal window
-		$("#task-dialog").dialog({
-			autoOpen: false,
-			height: 460,
-			width: 550,
-			modal: true,
-			buttons: {
-				Cancel: function() {
-					$(this).dialog("close");
-				},
-				"Save": function() {
-
-				}
-			},
-			close: function() {
-
-			}
-		});
-
 		//temporary fix until moving to bootstrap modal
 		$('.ui-dialog .ui-dialog-buttonset button:last').attr("class", "btn btn-danger btn-xs");
 		$('.ui-dialog .ui-dialog-buttonset button:first').attr("class", "btn btn-default btn-sm");
@@ -74,6 +55,28 @@ var Taskboard = {
 		//initialize add buttons on stories
 		$(".add-task").click(function() {
 			Taskboard.modalAdd($(this));
+		});
+
+		// Handle add/edit form submission
+		$('#task-dialog form').submit(function(e) {
+			e.preventDefault();
+			var $this = $(this),
+				data = $('#task-dialog form').serializeObject();
+			if($this.find('#taskId').val()) {
+				$('.ui-error').remove();
+				$(".input-error").removeClass('.input-error');
+				if ($('#hours').val() === '' || isNumber($('#hours').val())) {
+					Taskboard.updateCard($("#task_" + data.taskId), data);
+					$("#task-dialog").modal('hide');
+				} else {
+					$("#hours").before('<label style="color:red;display:block;"" class="ui-error">Value must be a number!</label>');
+					$("#hours").addClass("input-error");
+				}
+			} else {
+				Taskboard.addCard($("#project_" + $this.data("story-id")), data, $this.data("story-id"));
+				$("#task-dialog").modal('hide');
+			}
+			return false;
 		});
 
 	},
@@ -113,57 +116,27 @@ var Taskboard = {
 		$("#task-dialog input#hours_spent").val('');
 		$("#task-dialog input#comment").val('');
 		$("#task-dialog input#dueDate").val(date);
-		$("#task-dialog").find("#dueDate").datepicker();
+		$("#task-dialog").find("#dueDate").datepicker({
+			format: 'dd/mm/yyyy'
+		});
 		Taskboard.setOptionByVal("#task-dialog", user);
 		Taskboard.setOptionByVal("#priority", priority);
 
-		$("#task-dialog").dialog({
-			title: "Edit Task"
-		});
-		$("#task-dialog").dialog("open");
-		$("#task-dialog").dialog({
-			buttons: {
-				Cancel: function() {
-					$(this).dialog("close");
-				},
-				"Save": function() {
-					$('.ui-error').remove();
-					$(".input-error").removeClass(".input-error");
-					if ($('#hours').val() === '' || isNumber($('#hours').val())) {
-						Taskboard.updateCard(data, $("form#task-dialog").serializeObject());
-						$("#task-dialog").dialog("close");
-					} else {
-						$("#hours").before('<label style="color:red;display:block;"" class="ui-error">Value must be a number!</label>');
-						$("#hours").addClass("input-error");
-					}
-				}
-			}
-		});
+		$("#task-dialog .modal-title").text("Edit Task");
+		$("#task-dialog").modal("show");
 		Taskboard.changeModalColor(userColor);
 	},
 	modalAdd: function(data) {
 		var storyId = data.parents('.tb-row').attr("data-story-id");
-		// Taskboard.changeModalPriority("normal");
 		$("#task-dialog input").val("");
 		$("#task-dialog textarea").val("");
 		$("#task-dialog #priority").val($("#task-dialog #priority option:first").val());
 		Taskboard.setOptionByText("#task-dialog", "");
 		Taskboard.changeModalColor("#E7E7E7");
-		$("#task-dialog").dialog({
-			title: "Add Task"
-		});
-		$("#task-dialog").dialog("open");
-		$("#task-dialog").find("#dueDate").datepicker();
-		$("#task-dialog").dialog({
-			buttons: {
-				Cancel: function() {
-					$(this).dialog("close");
-				},
-				"Save": function() {
-					Taskboard.addCard(data, $("form#task-dialog").serializeObject(), storyId);
-					$("#task-dialog").dialog("close");
-				}
-			}
+		$("#task-dialog .modal-title").text("Add Task");
+		$("#task-dialog").data("story-id", storyId).modal("show");
+		$("#task-dialog").find("#dueDate").datepicker({
+			format: 'dd/mm/yyyy'
 		});
 	},
 	changeModalColor: function(userColor) {
