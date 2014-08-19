@@ -344,9 +344,10 @@ class Taskboard extends Base {
 			$comment = new \Model\Issue\Comment;
 			$comment->user_id = $this->_userId;
 			$comment->issue_id = $issue->id;
-			$comment->text = $post["comment"];
-			if(!empty( $post["hours_spent"])) {
-				$comment->text = $comment->text  . " (" . $post["hours_spent"] . " hour(s) spent)";
+			if(!empty($post["hours_spent"])) {
+				$comment->text = trim($post["comment"]) . sprintf(" (%s %s spent)", $post["hours_spent"], $post["hours_spent"] == 1 ? " hour" : " hours");
+			} else {
+				$comment->text = $post["comment"];
 			}
 			$comment->created_date = now();
 			$comment->save();
