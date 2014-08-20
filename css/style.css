@@ -67,9 +67,9 @@ footer p {
 	overflow: hidden;
 }
 
-legend, label {
+/*legend, label {
 	font-weight: 300;
-}
+}*/
 
 a.nolink {
 	color: inherit;
@@ -339,7 +339,6 @@ a:focus, button:focus, input:focus, .btn:focus {
 
 .nowrap {
 	white-space: nowrap;
-
 }
 
 /* Make diff beautiful :') */
@@ -372,8 +371,12 @@ a:focus, button:focus, input:focus, .btn:focus {
 	background-color: rgba(50,255,50,0.25);
 }
 
-.breadcrumb > li + li:before {
-	content: '\276d ';
-	padding: 0 7px 0 3px;
+/* Add wider and narrower form-inline groups */
+@media (min-width: 768px) {
+	.form-inline .form-group-wide .form-control {
+		width: 260px;
+	}
+	.form-inline .form-group-narrow .form-control {
+		width: 100px;
+	}
 }
-

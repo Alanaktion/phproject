@@ -5179,13 +5179,17 @@ input, textarea {
 #taskboard td, #taskboard th {
 	border-color: #666 !important;
 }
-#taskboard #task-dialog,
-body .ui-widget-content {
-	background-color: #222 !important;
-}
 #taskboard .spinner {
 	background-image: url(/img/ajax-loader-dark.gif) !important;
 }
 .datepicker {
 	color: #111;
+}
+.datepicker td.active,
+.datepicker td span.active {
+	background-color: #375A7F !important;
+}
+.datepicker td.active:hover,
+.datepicker td span.active:hover {
+	background-color: #2B4663 !important;
 }

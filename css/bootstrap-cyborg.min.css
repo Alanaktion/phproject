@@ -22,3 +22,13 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 .datepicker {
 	color: #111;
 }
+.datepicker td.day:hover,
+.datepicker td span:hover,
+.datepicker thead tr:first-child th:hover {
+	background-color: #444 !important;
+}
+.datepicker td.active,
+.datepicker td.active:hover,
+.datepicker td span.active {
+	background-color: #2A9FD6 !important;
+}

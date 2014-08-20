@@ -345,7 +345,7 @@ class Taskboard extends Base {
 			$comment->user_id = $this->_userId;
 			$comment->issue_id = $issue->id;
 			if(!empty($post["hours_spent"])) {
-				$comment->text = trim($post["comment"]) . sprintf(" (%s %s spent)", $post["hours_spent"], $post["hours_spent"] == 1 ? " hour" : " hours");
+				$comment->text = trim($post["comment"]) . sprintf(" (%s %s spent)", $post["hours_spent"], $post["hours_spent"] == 1 ? "hour" : "hours");
 			} else {
 				$comment->text = $post["comment"];
 			}
