@@ -17,29 +17,24 @@
 		<button type="button" class="close">&times;</button>
 	</div>
 
+	<check if="{{ count(@hierarchy) > 1 }}">
+		<ol class="breadcrumb pull-left">
+			<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
+				<check if="{{ @crumb.id != @issue.id }}">
+					<li class="active">
+						<a href="issues/{{ @crumb.id }}">
+							{{ @crumb.name }} <small>#{{ @crumb.id }}</small>
+						</a>
+					</li>
+				</check>
+			</repeat>
+		</ol>
+	</check>
 	<div class="row">
 		<div class="col-lg-12">
-			<check if="{{ count(@hierarchy) > 1 }}">
-				<true>
-					<ol class="breadcrumb pull-left issue-heading">
-						<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
-							<check if="{{ @crumb.id == @issue.id }}">
-								<true>
-									<li class="active">{{ @crumb.name }} <small>#{{ @crumb.id }}</small></li>
-								</true>
-								<false>
-									<li><a href="issues/{{ @crumb.id }}">{{ @crumb.name }}</a></li>
-								</false>
-							</check>
-						</repeat>
-					</ol>
-				</true>
-				<false>
-					<h3 class="pull-left issue-heading">
-						{{ @issue.name }} <small>#{{ @issue.id }}</small>
-					</h3>
-				</false>
-			</check>
+			<h3 class="pull-left issue-heading">
+				{{ @issue.name }} <small>#{{ @issue.id }}</small>
+			</h3>
 			<div class="pull-right">
 				<check if="{{ !@issue.closed_date }}">
 					<true>
