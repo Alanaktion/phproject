@@ -8,6 +8,7 @@ function oSize(obj) {
 }
 
 Burndown = {
+	initialized: false,
 	data: {
 		labels: [],
 		datasets: []
@@ -44,6 +45,7 @@ Burndown = {
 		Burndown.data.datasets.push(Burndown. hoursDay);
 		var ctx = document.getElementById(Burndown.canvasId).getContext("2d");
 		var burndown = new Chart(ctx).Line(Burndown.data, Burndown.options);
+		Burndown.initialized = true;
 	},
 	createData: function() {
 

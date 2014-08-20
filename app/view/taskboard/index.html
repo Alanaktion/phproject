@@ -50,7 +50,7 @@
 							</repeat>
 						</ul>
 					</div>
-					<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
+					<button id="btn-burndown" class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
 						<span class="glyphicon glyphicon-fire"></span> Burndown
 					</button>
 					<a href="taskboard/{{ @PARAMS.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Reload taskboard">
@@ -153,6 +153,7 @@
 		<include href="blocks/footer.html" />
 	</div>
 
+	<!-- Add/Edit Task Modal -->
 	<div class="modal" id="task-dialog" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="#task-dialog-title" method="post">
 		<div class="modal-dialog">
 			<form class="modal-content">
@@ -165,11 +166,11 @@
 					<div class="col-md-7">
 						<div class="form-group">
 							<label for="title">Title</label>
-							<input type="text" name="title" id="title" class="form-control input-sm">
+							<input type="text" name="title" id="title" class="form-control input-sm" required>
 						</div>
 						<div class="form-group">
 							<label for="Description">Description</label>
-							<textarea name="description" id="description" class="form-control input-sm"  rows="8"></textarea>
+							<textarea name="description" id="description" class="form-control input-sm" rows="8"></textarea>
 						</div>
 					</div>
 					<div class="col-md-5">
@@ -192,7 +193,7 @@
 						</div>
 						<div class="form-group">
 							<label for="hours">Remaining (Hours)</label>
-							<input type="text" name="hours" id="hours" class="form-control input-sm">
+							<input type="number" name="hours" id="hours" class="form-control input-sm" min="0" step=".5">
 						</div>
 						<div class="form-group">
 							<label for="dueDate">Due Date</label>
@@ -238,18 +239,15 @@
 		</div>
 	</div>
 
+	<!-- Burndown Modal -->
 	<div class="modal fade" id="burndown-modal" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="modal-dialog" style="min-width:970px;width:80%;max-width:1000px;">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h4 class="modal-title">Burndown Chart</h4>
 				</div>
-				<div class="modal-body">
-					<div style="width:920px;margin:0 auto;">
-						<canvas width="920" height="400" id="burndown"></canvas>
-					</div>
-				</div>
+				<div class="modal-body"></div>
 			</div>
 		</div>
 	</div>
@@ -258,18 +256,41 @@
 	<script src="js/taskboard.js"></script>
 	<script src="js/chart.js"></script>
 	<script>
-		var BurndownData;
+		var BurndownData,
+			BurndownReady = false;
+
 		$(document).ready(function() {
+
+			// Preload burndown data and core JS
 			$.ajax({
 				url: "taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}",
 				success: function(data) {
 					BurndownData = data;
 					$.getScript("minify/js/burndown.js", function() {
-						Burndown.init();
+						BurndownReady = true; // All good, we can render the chart on demand now.
 					});
 				},
 				dataType: "json"
 			});
+
+			// Initialize burndown when requested
+			$("#btn-burndown").click(function(e) {
+				if(BurndownReady) {
+					$("#burndown-modal").on("shown.bs.modal", function(e) {
+						if(Burndown.initialized === false) {
+							var width = $("#burndown-modal .modal-body").width();
+							$("#burndown-modal .modal-body").append('<canvas id="burndown" width="' + width + '" height="400" />');
+							Burndown.init();
+							Burndown.initialized = true;
+						}
+					});
+				} else {
+					alert("Burndown data is not ready yet, click again in a few seconds.");
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			});
+
 		});
 	</script>
 </body>
