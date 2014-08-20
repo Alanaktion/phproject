@@ -5137,7 +5137,7 @@ a{transition:color .25s;}
 
 #taskboard .card{
 	color: #000;
-	background-color: #fff;
+	background-color: #fff !important;
 }
 
 .datepicker td.active,
