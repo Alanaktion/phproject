@@ -275,11 +275,15 @@
 				url: "taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}",
 				success: function(data) {
 					BurndownData = data;
+					$.ajaxSetup({
+						cache: true
+					});
 					$.getScript("minify/js/burndown.js", function() {
 						BurndownReady = true; // All good, we can render the chart on demand now.
 					});
 				},
-				dataType: "json"
+				dataType: "json",
+				cache: false
 			});
 
 			// Initialize burndown when requested
