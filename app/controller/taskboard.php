@@ -165,13 +165,12 @@ class Taskboard extends Base {
 		$today = date('Y-m-d');
 		$today = $today . " 23:59:59";
 
-		//Check to see  if the sprint is completed
-		if ($today < strtotime($sprint->end_date . ' + 1 day')){
+		// Check to see if the sprint is completed
+		if ($today < strtotime($sprint->end_date . ' + 1 day')) {
 			$burnComplete = 0;
 			$burnDates = createDateRangeArray($sprint->start_date, $today);
 			$remainingDays = createDateRangeArray($today, $sprint->end_date);
-		}
-		else{
+		} else {
 			$burnComplete = 1;
 			$burnDates = createDateRangeArray($sprint->start_date, $sprint->end_date);
 			$remainingDays = array();
@@ -183,23 +182,22 @@ class Taskboard extends Base {
 
 		$db = $f3->get("db.instance");
 
-		foreach($burnDates as $date){
+		foreach($burnDates as $date) {
 
-			//Get total_hours, which is the initial amount entered on each task, and cache this query
-			if($i == 1){
-				$burnDays[$date] =
-					$db->exec("
-						SELECT i.hours_total AS remaining
-						FROM issue i
-						WHERE i.id IN (". implode(",", $visible_tasks) .")
-						AND i.created_date < '" . $sprint->start_date  . " 00:00:00'", // Only count tasks added before sprint
-						NULL,
-						2678400 // 31 days
-					);
+			// Get total_hours, which is the initial amount entered on each task, and cache this query
+			if($i == 1) {
+				$burnDays[$date] = $db->exec("
+					SELECT i.hours_total AS remaining
+					FROM issue i
+					WHERE i.id IN (". implode(",", $visible_tasks) .")
+					AND i.created_date < '" . $sprint->start_date  . " 00:00:00'", // Only count tasks added before sprint
+					NULL,
+					2678400 // 31 days
+				);
 			}
 
-			//Get between day values and cache them... this also will get the last day of completed sprints so they will be cached
-			else if($i < ($burnDatesCount - 1) || $burnComplete ){
+			// Get between day values and cache them... this also will get the last day of completed sprints so they will be cached
+			elseif ($i < ($burnDatesCount - 1) || $burnComplete) {
 				$burnDays[$date] = $db->exec("
 					SELECT IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value) AS remaining
 					FROM issue_update_field f
@@ -221,32 +219,32 @@ class Taskboard extends Base {
 				);
 			}
 
-			//Get the today's info and don't cache it
-			else{
-				$burnDays[$date] =
-					$db->exec("
-						SELECT IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value) AS remaining
-						FROM issue_update_field f
-						JOIN issue_update u ON u.id = f.issue_update_id
-						JOIN (
-							SELECT MAX(u.id) AS max_id
-							FROM issue_update u
-							JOIN issue_update_field f ON f.issue_update_id = u.id
-							WHERE f.field = 'hours_remaining'
-							AND u.created_date < '" . $date . " 23:59:59'
-							GROUP BY u.issue_id
-						) a ON a.max_id = u.id
-						RIGHT JOIN issue i ON i.id = u.issue_id
-						WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
-						AND i.created_date < '". $date . " 23:59:59'
-						AND i.id IN (". implode(",", $visible_tasks) . ")"
+			// Get the today's info and don't cache it
+			else {
+				$burnDays[$date] = $db->exec("
+					SELECT IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value) AS remaining
+					FROM issue_update_field f
+					JOIN issue_update u ON u.id = f.issue_update_id
+					JOIN (
+						SELECT MAX(u.id) AS max_id
+						FROM issue_update u
+						JOIN issue_update_field f ON f.issue_update_id = u.id
+						WHERE f.field = 'hours_remaining'
+						AND u.created_date < '" . $date . " 23:59:59'
+						GROUP BY u.issue_id
+					) a ON a.max_id = u.id
+					RIGHT JOIN issue i ON i.id = u.issue_id
+					WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
+					AND i.created_date < '". $date . " 23:59:59'
+					AND i.id IN (". implode(",", $visible_tasks) . ")"
 				);
 			}
 
 			$i++;
 		}
 
-		if(!$burnComplete){//add in empty days
+		// Add in empty days
+		if(!$burnComplete) {
 			$i = 0;
 			foreach($remainingDays as $day) {
 				if($i != 0){
@@ -256,19 +254,18 @@ class Taskboard extends Base {
 			}
 		}
 
-		//reformat the date and remove weekends
+		// Reformat the date and remove weekends
 		$i = 0;
-		foreach($burnDays as $burnKey => $burnDay){
+		foreach($burnDays as $burnKey => $burnDay) {
 
 			$weekday = date("D", strtotime($burnKey));
 			$weekendDays = array("Sat","Sun");
 
-			if( !in_array($weekday, $weekendDays) ){
+			if(!in_array($weekday, $weekendDays)) {
 				$newDate = date("M j", strtotime($burnKey));
 				$burnDays[$newDate] = $burnDays[$burnKey];
 				unset($burnDays[$burnKey]);
-			}
-			else{//remove weekend days
+			} else { // Remove weekend days
 				unset($burnDays[$burnKey]);
 			}
 

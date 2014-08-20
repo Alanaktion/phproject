@@ -185,7 +185,7 @@
 					<div class="col-md-5">
 						<div class="form-group">
 							<label for="assigned">Assigned To</label>
-							<select id="assigned" name="assigned" class="form-control input-sm" onchange="Taskboard.changeUser(this)">
+							<select id="assigned" name="assigned" class="form-control input-sm" onchange="Taskboard.changeUser(this)" data-default-value="{{ @user.id }}" data-default-color="#{{ @user.task_color }}">
 								<option value="0" data-color="#AAAAAA">Not Assigned</option>
 								<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" selected>{{ @user.name }}</option>
 								<optgroup label="Groups">

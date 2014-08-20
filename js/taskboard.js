@@ -44,14 +44,12 @@ var Taskboard = {
 		$(".card.task").click(function(e) {
 			if(!$(e.target).is("a")) {
 				Taskboard.modalEdit($(this));
-			} else {
-				console.log(e);
 			}
 		});
 
 		// Initialize add buttons on stories
 		$(".add-task").click(function(e) {
-			Taskboard.modalAdd($(this));
+			Taskboard.modalAdd($(this).parents('.tb-row').data("story-id"));
 			e.preventDefault();
 		});
 
@@ -102,8 +100,6 @@ var Taskboard = {
 			date = $(data).find('.dueDate').text().trim(),
 			priority = $(data).find('.priority').data('val');
 
-		Window.testData = data;
-
 		$("#task-dialog input#taskId").val(taskId);
 		$("#task-dialog input#title").val(title);
 		$("#task-dialog textarea#description").val(description);
@@ -121,13 +117,11 @@ var Taskboard = {
 		$("#task-dialog").modal("show");
 		Taskboard.changeModalColor(userColor);
 	},
-	modalAdd: function(data) {
-		var storyId = data.parents('.tb-row').attr("data-story-id");
-		$("#task-dialog input").val("");
-		$("#task-dialog textarea").val("");
-		$("#task-dialog #priority").val($("#task-dialog #priority option:first").val());
-		Taskboard.setOptionByText("#task-dialog", "");
-		Taskboard.changeModalColor("#E7E7E7");
+	modalAdd: function(storyId) {
+		$("#task-dialog input, #task-dialog textarea").val("");
+		$("#task-dialog #priority").val(0);
+		$("#task-dialog #assigned").val($("#task-dialog #assigned").data("default-value"));
+		Taskboard.changeModalColor($("#task-dialog #assigned").data("default-color"));
 		$("#task-dialog .modal-title").text("Add Task");
 		$("#task-dialog form").data("story-id", storyId);
 		$("#task-dialog").modal("show");
