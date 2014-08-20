@@ -14,9 +14,10 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 	margin-top: 5px;
 }
 
-.datepicker td:hover,
-.datepicker td span:hover {
-	background-color: #95A5A6 !important;
+.datepicker td.day:hover,
+.datepicker td span:hover,
+.datepicker thead tr:first-child th:hover {
+	background-color: #DCE4EC !important;
 }
 .datepicker td.active,
 .datepicker td span.active {

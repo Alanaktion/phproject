@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 	<include href="blocks/head.html" />
-	<link rel="stylesheet" href="minify/css/jquery-ui-1.10.3.css" type="text/css" media="all">
 	<link rel="stylesheet" href="minify/css/taskboard.css">
 	<check if="{{ !empty(@taskboard[0]) }}">
 		<style type="text/css">
@@ -17,6 +16,14 @@
 			#taskboard table .column:not(.column-1) {
 				width: 490px;
 			}
+		}
+
+		/* Reference images within <base> context */
+		#taskboard .completed .spinner {
+			background-image: url(img/taskboard/burn.gif);
+		}
+		#taskboard .spinner {
+			background-image: url(img/ajax-loader.gif);
 		}
 		</style>
 	</check>
@@ -68,7 +75,9 @@
 					<td class="column column-1">
 						<div id="project_{{  @row.project.id}}" class="card story {{ @row.project.closed_date ? 'completed' : '' }}" style="border-color:#{{ @row.project.owner_task_color }};">
 							<div class="top">
-								<i title="Add Task" class="add-task pull-right"></i>
+								<a href="issues/new/{{ @issue_type.task }}" title="Add Task" class="add-task has-tooltip pull-right" data-placement="right">
+									<span class="glyphicon glyphicon-plus"></span>
+								</a>
 								<span class="owner">
 									<check if="{{ @row.project.owner_username }}">
 										<true>
@@ -91,7 +100,7 @@
 					<repeat group="{{ @row.columns }}" key="{{ @status_id }}" value="{{ @col }}" >
 						<td class="column column-{{ @status_id + 1 }} {{ @statuses[@status_id]['closed'] ? 'completed' : '' }} droppable" data-status="{{ @status_id }}">
 							<repeat group="{{ @col }}" value="{{ @task }}">
-								<div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto top" data-content="<strong>Author: </strong>{{ @task.author_name }}<br><strong>Description: </strong> {{ strlen(@task.description) > 500 ? htmlentities(substr(@task.description, 0, 500)) . ' [...]' : htmlentities(@task.description) }}" style="border-color:#{{ @task.owner_task_color }};">
+								<div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto bottom" data-container="body" data-content="<strong>Author: </strong>{{ @task.author_name }}<br><strong>Description: </strong> {{ strlen(@task.description) > 500 ? htmlentities(substr(@task.description, 0, 500)) . ' [...]' : htmlentities(@task.description) }}" style="border-color:#{{ @task.owner_task_color }};">
 									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
 										<span class="task-id"><a href="issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>

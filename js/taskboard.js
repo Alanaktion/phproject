@@ -41,16 +41,18 @@ var Taskboard = {
 		});
 
 		// Initialize issue editing handler
-		$("#taskboard").on("click", ".card a", function(e) {
-			e.stopPropagation();
-		});
 		$(".card.task").click(function(e) {
-			Taskboard.modalEdit($(this));
+			if(!$(e.target).is("a")) {
+				Taskboard.modalEdit($(this));
+			} else {
+				console.log(e);
+			}
 		});
 
 		// Initialize add buttons on stories
-		$(".add-task").click(function() {
+		$(".add-task").click(function(e) {
 			Taskboard.modalAdd($(this));
+			e.preventDefault();
 		});
 
 		// Handle add/edit form submission
@@ -58,15 +60,13 @@ var Taskboard = {
 			e.preventDefault();
 			var $this = $(this),
 				data = $('#task-dialog form').serializeObject();
+			$this.find(".has-error").removeClass("has-error");
 			if($this.find('#taskId').val()) {
-				$('.ui-error').remove();
-				$(".input-error").removeClass('.input-error');
 				if ($('#hours').val() === '' || isNumber($('#hours').val())) {
 					Taskboard.updateCard($("#task_" + data.taskId), data);
 					$("#task-dialog").modal('hide');
 				} else {
-					$("#hours").before('<label style="color:red;display:block;"" class="ui-error">Value must be a number!</label>');
-					$("#hours").addClass("input-error");
+					$("#hours").parents(".form-group").addClass("has-error");
 				}
 			} else {
 				Taskboard.addCard($("#project_" + $this.data("story-id")), data, $this.data("story-id"));
@@ -293,7 +293,7 @@ var Taskboard = {
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				Taskboard.newUnBlock(taskId);
-				Taskboard.newShowError(taskId);
+				Taskboard.showError(taskId);
 				$(card).draggable("option", "disabled", true);
 			}
 		});
@@ -311,14 +311,9 @@ var Taskboard = {
 		$('#new_task_' + taskId).find('.spinner').remove();
 	},
 	showError: function(taskId) {
-		$('#task_' + taskId).css({
+		$('#task_' + taskId + ', #new_task_' + taskId).css({
 			"opacity": ".8"
-		}).append('<div class="error" title="An error occured while saving the task!"></div>');
-	},
-	newShowError: function(taskId) {
-		$('#new_task_' + taskId).css({
-			"opacity": ".8"
-		}).append('<div class="error" title="An error occured while saving the task!"></div>');
+		}).append('<div class="error text-danger" title="An error occured while saving the task."><span class="glyphicon glyphicon-floppy-remove"></span></div>');
 	}
 };
 
