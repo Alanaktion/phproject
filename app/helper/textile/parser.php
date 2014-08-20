@@ -4154,6 +4154,7 @@ class Parser
         }
 
         $img = $this->newTag('img', $this->parseAttribsToArray($atts, '', 1, $extras))
+            ->class("img-responsive")
             ->align($align)
             ->alt($title, true)
             ->src($this->shelveURL($url), true)

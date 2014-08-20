@@ -89,7 +89,7 @@ class Taskboard extends Base {
 			"sprint_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN ($visible_status_ids)"
 				. (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
 			$sprint->id, $f3->get("issue_type.project")
-		));
+		), array("order" => "priority DESC"));
 		$task_ids = array();
 		$parent_ids = array(0);
 		foreach($tasks as $task) {
@@ -322,8 +322,11 @@ class Taskboard extends Base {
 			$issue->owner_id = $post["assigned"];
 			$issue->hours_remaining = $post["hours"];
 			$issue->hours_spent += $post["hours_spent"];
-			if(!empty($post["hours_spent"]) && $issue->hours_remaining > 0 &&  !empty($post["hours_spent"])) {
+			if(!empty($post["hours_spent"]) && !empty($post["burndown"])) {
 				$issue->hours_remaining -=  $post["hours_spent"];
+			}
+			if($issue->hours_remaining < 0) {
+				$issue->hours_remaining = 0;
 			}
 			if(!empty($post["dueDate"])) {
 				$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
@@ -341,9 +344,10 @@ class Taskboard extends Base {
 			$comment = new \Model\Issue\Comment;
 			$comment->user_id = $this->_userId;
 			$comment->issue_id = $issue->id;
-			$comment->text = $post["comment"];
-			if(!empty( $post["hours_spent"])) {
-				$comment->text = $comment->text  . " (" . $post["hours_spent"] . " hour(s) spent)";
+			if(!empty($post["hours_spent"])) {
+				$comment->text = trim($post["comment"]) . sprintf(" (%s %s spent)", $post["hours_spent"], $post["hours_spent"] == 1 ? " hour" : " hours");
+			} else {
+				$comment->text = $post["comment"];
 			}
 			$comment->created_date = now();
 			$comment->save();

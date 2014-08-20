@@ -50,7 +50,7 @@
 	cursor: pointer;
 	color: #1E2A36;
 }
-#backlog .panel-heading > a {
+#backlog .panel-heading > a:first-child {
 	cursor: pointer;
 	font-weight: bold;
 }
