@@ -33,7 +33,7 @@ class User extends Base {
 			return false;
 		}
 		if($this->get("avatar_filename") && is_file($f3->get("ROOT") . "/uploads/avatars/" . $this->get("avatar_filename"))) {
-			return "/avatar/$size/" . $this->get("id") . ".png";
+			return "/avatar/$size-" . $this->get("id") . ".png";
 		}
 		return gravatar($this->get("email"), $size);
 	}
