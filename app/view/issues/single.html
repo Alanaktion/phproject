@@ -168,7 +168,7 @@
 						<repeat group="{{ @files }}" value="{{ @file }}">
 							<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y \a\t g:ia', utc2local(strtotime(@file.created_date))) }}<br>{{ format_filesize(@file.filesize) }}">
 								<a href="files/{{ @file.id }}/{{ @file.filename }}" target="_blank">
-									<img class src="files/thumb/96/{{ @file.id }}.png" /><br />
+									<img class src="files/thumb/96-{{ @file.id }}.png" /><br />
 									{{ @file.filename }}
 								</a>
 								<button class="btn btn-xs btn-danger delete" title="Delete File">&times;</button>
@@ -213,7 +213,7 @@
 							<repeat group="{{ @comments }}" value="{{ @comment }}">
 								<div class="media" id="c-{{ @comment.id }}">
 									<a class="pull-left" href="user/{{ @comment.user_username }}">
-										<img class="profile-picture media-object img-rounded" src="avatar/48/{{ @comment.user_id }}.png" alt>
+										<img class="profile-picture media-object img-rounded" src="avatar/48-{{ @comment.user_id }}.png" alt>
 									</a>
 									<div class="media-body">
 										<p class="media-heading"><a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
