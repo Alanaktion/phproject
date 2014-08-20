@@ -43,7 +43,7 @@ class User extends Base {
 	 * @return array
 	 */
 	public function getAll() {
-		return $this->find("deleted_date IS NULL AND role IN ('user', 'admin')", array("order" => "name ASC"));
+		return $this->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC"));
 	}
 
 	/**
