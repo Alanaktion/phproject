@@ -12,3 +12,21 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 .navbar-form .btn-sm {
 	margin-top: 4px;
 }
+.datepicker td,
+.datepicker td span {
+	border: 1px solid transparent !important;
+}
+.datepicker td.active,
+.datepicker td span.active {
+	background-color: #446E9B !important;
+	background-image: linear-gradient(#6D94BF, #446E9B 50%, #3E648D);
+	background-repeat: no-repeat;
+	border: 1px solid #345578;
+	border-radius: 3px;
+}
+.datepicker td.active:hover,
+.datepicker td span.active:hover {
+	background-color: #345578 !important;
+	background-image: linear-gradient(#5F8AB9, #3E648D 50%, #385A7F) !important;
+	border-color: #2E4B69;
+}

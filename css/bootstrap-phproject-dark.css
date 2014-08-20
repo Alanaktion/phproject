@@ -5185,3 +5185,11 @@ input, textarea {
 .datepicker {
 	color: #111;
 }
+.datepicker td.active,
+.datepicker td span.active {
+	background-color: #375A7F !important;
+}
+.datepicker td.active:hover,
+.datepicker td span.active:hover {
+	background-color: #2B4663 !important;
+}

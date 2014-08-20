@@ -16,3 +16,26 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 	height: 30px;
 	padding: 4px 14px;
 }
+.datepicker,
+.datepicker * {
+	border-radius: 0 !important;
+}
+.datepicker td,
+.datepicker td span {
+	border: 1px solid transparent !important;
+}
+.datepicker td.day:hover,
+.datepicker td span:hover,
+.datepicker thead tr:first-child th:hover {
+	background-color: #E7E7E7 !important;
+}
+.datepicker td.active,
+.datepicker td span.active {
+	background-color: #008CBA !important;
+	border: 1px solid #0079A1 !important;
+}
+.datepicker td.active:hover,
+.datepicker td span.active:hover {
+	background-color: #006687 !important;
+	border-color: #004B63 !important;
+}
