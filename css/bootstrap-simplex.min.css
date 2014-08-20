@@ -11,3 +11,11 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 .navbar-form .btn-sm {
 	margin-top: 4px;
 }
+.datepicker td.active,
+.datepicker td.active:hover,
+.datepicker td span.active,
+.datepicker td span.active:hover {
+	background-color: #D9230F !important;
+	background-image: linear-gradient(#E72510, #D9230F 6%, #CB210E) !important;
+	background-repeat: no-repeat;
+}

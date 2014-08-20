@@ -13,3 +13,20 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 .navbar-form .btn-sm {
 	margin-top: 4px;
 }
+.datepicker,
+.datepicker * {
+	border-radius: 0 !important;
+}
+.datepicker td.day:hover,
+.datepicker td span:hover,
+.datepicker thead tr:first-child th:hover {
+	background-color: #fff !important;
+}
+.datepicker td.active,
+.datepicker td span.active {
+	background-color: #F0569F !important;
+}
+.datepicker td.active:hover,
+.datepicker td span.active:hover {
+	background-color: #ED318A !important;
+}

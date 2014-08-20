@@ -12,3 +12,15 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 .navbar-form .btn-sm {
 	margin-top: 6px;
 }
+.datepicker,
+.datepicker * {
+	border-radius: 0 !important;
+}
+.datepicker td.active,
+.datepicker td span.active {
+	background-color: #007FFF !important;
+}
+.datepicker td.active:hover,
+.datepicker td span.active:hover {
+	background-color: #06C !important;
+}
