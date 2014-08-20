@@ -37,18 +37,6 @@ body {
 #taskboard th {
 	border-bottom: 0px;
 }
-/*#taskboard ul {
-	width: 100%;
-	display: block;
-	z-index: 25;
-	min-height: 120px;
-}
-#taskboard ul, #taskboard li {
-	padding: 0;
-	margin: 0;
-	list-style: none;
-	display: block;
-}*/
 #taskboard .table {
 	width: auto;
 }
@@ -161,10 +149,6 @@ body {
 	height: 20px;
 	overflow: hidden;
 }
-/*#taskboard .card .top a {
-	color: #969696;
-	text-decoration: none;
-}*/
 #taskboard .card .top a:hover {
 	text-decoration: underline;
 }
@@ -176,20 +160,6 @@ body {
 }
 #taskboard .card .dueDate, #taskboard .card .description {
 	display: none;
-}
-#taskboard .add-task {
-	display: inline-block;
-	font-size: 14px;
-	cursor: pointer;
-	color: #4EC528;
-	transition: opacity .25s;
-	width: 12px;
-	height: 12px;
-	background-image: url(/img/taskboard/add-icon.png);
-	margin-top: 1px;
-}
-#taskboard .add-task:hover {
-	opacity: .8;
 }
 #taskboard .completed .card.task,
 #taskboard .completed.card.task {
@@ -216,23 +186,18 @@ body {
 	top: 0;
 	bottom: 0;
 	z-index: 50;
-	background-image: url(/img/ajax-loader.gif);
 	background-position: center center;
 	background-repeat: no-repeat
-}
-#taskboard .completed .spinner {
-	background-image: url(/img/taskboard/burn.gif);
 }
 #taskboard .error {
 	position: absolute;
 	left: 0;
 	right: 0;
-	top: 0;
-	bottom: 0;
+	text-align: center;
+	bottom: 20%;
 	z-index: 50;
-	background-image: url(/img/taskboard/warning.png);
-	background-position: right bottom;
-	background-repeat: no-repeat
+	font-size: 4em;
+	line-height: 1;
 }
 .cloneable {
 	display: none;

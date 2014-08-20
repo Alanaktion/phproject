@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 	<include href="blocks/head.html" />
-	<link rel="stylesheet" href="minify/css/jquery-ui-1.10.3.css" type="text/css" media="all">
 	<link rel="stylesheet" href="minify/css/taskboard.css">
 	<check if="{{ !empty(@taskboard[0]) }}">
 		<style type="text/css">
@@ -17,6 +16,14 @@
 			#taskboard table .column:not(.column-1) {
 				width: 490px;
 			}
+		}
+
+		/* Reference images within <base> context */
+		#taskboard .completed .spinner {
+			background-image: url(img/taskboard/burn.gif);
+		}
+		#taskboard .spinner {
+			background-image: url(img/ajax-loader.gif);
 		}
 		</style>
 	</check>
@@ -50,7 +57,7 @@
 							</repeat>
 						</ul>
 					</div>
-					<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
+					<button id="btn-burndown" class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
 						<span class="glyphicon glyphicon-fire"></span> Burndown
 					</button>
 					<a href="taskboard/{{ @PARAMS.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Reload taskboard">
@@ -68,7 +75,9 @@
 					<td class="column column-1">
 						<div id="project_{{  @row.project.id}}" class="card story {{ @row.project.closed_date ? 'completed' : '' }}" style="border-color:#{{ @row.project.owner_task_color }};">
 							<div class="top">
-								<i title="Add Task" class="add-task pull-right"></i>
+								<a href="issues/new/{{ @issue_type.task }}" title="Add Task" class="add-task has-tooltip pull-right" data-placement="right">
+									<span class="glyphicon glyphicon-plus"></span>
+								</a>
 								<span class="owner">
 									<check if="{{ @row.project.owner_username }}">
 										<true>
@@ -91,7 +100,7 @@
 					<repeat group="{{ @row.columns }}" key="{{ @status_id }}" value="{{ @col }}" >
 						<td class="column column-{{ @status_id + 1 }} {{ @statuses[@status_id]['closed'] ? 'completed' : '' }} droppable" data-status="{{ @status_id }}">
 							<repeat group="{{ @col }}" value="{{ @task }}">
-								<div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto top" data-content="<strong>Author: </strong>{{ @task.author_name }}<br><strong>Description: </strong> {{ strlen(@task.description) > 500 ? htmlentities(substr(@task.description, 0, 500)) . ' [...]' : htmlentities(@task.description) }}" style="border-color:#{{ @task.owner_task_color }};">
+								<div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto bottom" data-container="body" data-content="<strong>Author: </strong>{{ @task.author_name }}<br><strong>Description: </strong> {{ strlen(@task.description) > 500 ? htmlentities(substr(@task.description, 0, 500)) . ' [...]' : htmlentities(@task.description) }}" style="border-color:#{{ @task.owner_task_color }};">
 									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
 										<span class="task-id"><a href="issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
@@ -153,6 +162,7 @@
 		<include href="blocks/footer.html" />
 	</div>
 
+	<!-- Add/Edit Task Modal -->
 	<div class="modal" id="task-dialog" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="#task-dialog-title" method="post">
 		<div class="modal-dialog">
 			<form class="modal-content">
@@ -165,11 +175,11 @@
 					<div class="col-md-7">
 						<div class="form-group">
 							<label for="title">Title</label>
-							<input type="text" name="title" id="title" class="form-control input-sm">
+							<input type="text" name="title" id="title" class="form-control input-sm" required>
 						</div>
 						<div class="form-group">
 							<label for="Description">Description</label>
-							<textarea name="description" id="description" class="form-control input-sm"  rows="8"></textarea>
+							<textarea name="description" id="description" class="form-control input-sm" rows="8"></textarea>
 						</div>
 					</div>
 					<div class="col-md-5">
@@ -192,7 +202,7 @@
 						</div>
 						<div class="form-group">
 							<label for="hours">Remaining (Hours)</label>
-							<input type="text" name="hours" id="hours" class="form-control input-sm">
+							<input type="number" name="hours" id="hours" class="form-control input-sm" min="0" step=".5">
 						</div>
 						<div class="form-group">
 							<label for="dueDate">Due Date</label>
@@ -238,18 +248,15 @@
 		</div>
 	</div>
 
+	<!-- Burndown Modal -->
 	<div class="modal fade" id="burndown-modal" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="modal-dialog" style="min-width:970px;width:80%;max-width:1000px;">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h4 class="modal-title">Burndown Chart</h4>
 				</div>
-				<div class="modal-body">
-					<div style="width:920px;margin:0 auto;">
-						<canvas width="920" height="400" id="burndown"></canvas>
-					</div>
-				</div>
+				<div class="modal-body"></div>
 			</div>
 		</div>
 	</div>
@@ -258,18 +265,41 @@
 	<script src="js/taskboard.js"></script>
 	<script src="js/chart.js"></script>
 	<script>
-		var BurndownData;
+		var BurndownData,
+			BurndownReady = false;
+
 		$(document).ready(function() {
+
+			// Preload burndown data and core JS
 			$.ajax({
 				url: "taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}",
 				success: function(data) {
 					BurndownData = data;
 					$.getScript("minify/js/burndown.js", function() {
-						Burndown.init();
+						BurndownReady = true; // All good, we can render the chart on demand now.
 					});
 				},
 				dataType: "json"
 			});
+
+			// Initialize burndown when requested
+			$("#btn-burndown").click(function(e) {
+				if(BurndownReady) {
+					$("#burndown-modal").on("shown.bs.modal", function(e) {
+						if(Burndown.initialized === false) {
+							var width = $("#burndown-modal .modal-body").width();
+							$("#burndown-modal .modal-body").append('<canvas id="burndown" width="' + width + '" height="400" />');
+							Burndown.init();
+							Burndown.initialized = true;
+						}
+					});
+				} else {
+					alert("Burndown data is not ready yet, click again in a few seconds.");
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			});
+
 		});
 	</script>
 </body>
