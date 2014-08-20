@@ -129,7 +129,7 @@ var Taskboard = {
 		Taskboard.setOptionByText("#task-dialog", "");
 		Taskboard.changeModalColor("#E7E7E7");
 		$("#task-dialog .modal-title").text("Add Task");
-		$("#task-dialog").data("story-id", storyId).modal("show");
+		$("#task-dialog form").data("story-id", storyId).modal("show");
 		$("#task-dialog").find("#dueDate").datepicker({
 			format: 'mm/dd/yyyy'
 		});
