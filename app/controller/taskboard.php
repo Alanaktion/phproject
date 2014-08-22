@@ -79,7 +79,7 @@ class Taskboard extends Base {
 
 		// Load issue priorities
 		$priority = new \Model\Issue\Priority();
-		$f3->set("priorities", $priority->find(null, null, $f3->get("cache_expire.db")));
+		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		// Load project list
 		$issue = new \Model\Issue\Detail();
