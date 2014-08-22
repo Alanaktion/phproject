@@ -281,6 +281,10 @@ a:focus, button:focus, input:focus, .btn:focus {
 	outline: thin none;
 }
 
+table a.btn {
+	text-decoration: none;
+}
+
 .form-horizontal .checkbox-left {
 	float: left;
 	margin-right: 1em;
