@@ -202,3 +202,18 @@ body {
 .cloneable {
 	display: none;
 }
+
+#burndown-legend .line-legend {
+	list-style: none;
+	line-height: 1.5;
+	padding-left: 0;
+}
+#burndown-legend .line-legend li span {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	border: 1px solid #444;
+	border-radius: 2px;
+	margin-right: .5em;
+	margin-bottom: -2px;
+}

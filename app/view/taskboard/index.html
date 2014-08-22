@@ -256,31 +256,41 @@
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h4 class="modal-title">Burndown Chart</h4>
 				</div>
-				<div class="modal-body"></div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-9">
+							<canvas id="burndown" width="666" height="320" />
+						</div>
+						<div class="col-md-3">
+							<div id="burndown-legend" class="hidden-xs hidden-sm"></div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 
 	<script src="minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js,bootstrap-datepicker.js"></script>
-	<script src="js/taskboard.js"></script>
 	<script src="js/chart.js"></script>
+	<script src="js/taskboard.js"></script>
+	<script src="js/burndown.js"></script>
 	<script>
 		var BurndownData,
-			BurndownReady = false;
+			BurndownReady = false,
+			BurndownLegendDict = {
+				hours_remaining: '{{ @dict.hours_remaining }}',
+				target_velocity: '{{ @dict.ideal_hours_remaining }}',
+				actual_velocity: '{{ @dict.daily_hours_remaining }}',
+			};
 
 		$(document).ready(function() {
 
-			// Preload burndown data and core JS
+			// Preload burndown data
 			$.ajax({
 				url: "taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}",
 				success: function(data) {
 					BurndownData = data;
-					$.ajaxSetup({
-						cache: true
-					});
-					$.getScript("minify/js/burndown.js", function() {
-						BurndownReady = true; // All good, we can render the chart on demand now.
-					});
+					BurndownReady = true;
 				},
 				dataType: "json",
 				cache: false
@@ -291,10 +301,8 @@
 				if(BurndownReady) {
 					$("#burndown-modal").on("shown.bs.modal", function(e) {
 						if(Burndown.initialized === false) {
-							var width = $("#burndown-modal .modal-body").width();
-							$("#burndown-modal .modal-body").append('<canvas id="burndown" width="' + width + '" height="400" />');
-							Burndown.init();
-							Burndown.initialized = true;
+							Burndown.init(BurndownData);
+							$("#burndown-legend").html(Burndown.chart.generateLegend());
 						}
 					});
 				} else {

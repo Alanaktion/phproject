@@ -186,20 +186,21 @@ class Taskboard extends Base {
 
 			// Get total_hours, which is the initial amount entered on each task, and cache this query
 			if($i == 1) {
-				$burnDays[$date] = $db->exec("
-					SELECT i.hours_total AS remaining
+				$result = $db->exec("
+					SELECT SUM(i.hours_total) AS remaining
 					FROM issue i
 					WHERE i.id IN (". implode(",", $visible_tasks) .")
 					AND i.created_date < '" . $sprint->start_date  . " 00:00:00'", // Only count tasks added before sprint
 					NULL,
 					2678400 // 31 days
 				);
+				$burnDays[$date] = $result[0];
 			}
 
 			// Get between day values and cache them... this also will get the last day of completed sprints so they will be cached
 			elseif ($i < ($burnDatesCount - 1) || $burnComplete) {
-				$burnDays[$date] = $db->exec("
-					SELECT IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value) AS remaining
+				$result = $db->exec("
+					SELECT SUM(IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value)) AS remaining
 					FROM issue_update_field f
 					JOIN issue_update u ON u.id = f.issue_update_id
 					JOIN (
@@ -217,12 +218,13 @@ class Taskboard extends Base {
 					NULL,
 					2678400 // 31 days
 				);
+				$burnDays[$date] = $result[0];
 			}
 
 			// Get the today's info and don't cache it
 			else {
-				$burnDays[$date] = $db->exec("
-					SELECT IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value) AS remaining
+				$result = $db->exec("
+					SELECT SUM(IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value)) AS remaining
 					FROM issue_update_field f
 					JOIN issue_update u ON u.id = f.issue_update_id
 					JOIN (
@@ -238,6 +240,7 @@ class Taskboard extends Base {
 					AND i.created_date < '". $date . " 23:59:59'
 					AND i.id IN (". implode(",", $visible_tasks) . ")"
 				);
+				$burnDays[$date] = $result[0];
 			}
 
 			$i++;
@@ -272,8 +275,7 @@ class Taskboard extends Base {
 			$i++;
 		}
 
-		$burndown = array($burnDays);
-		print_json($burndown);
+		print_json($burnDays);
 	}
 
 	public function add($f3, $params) {
