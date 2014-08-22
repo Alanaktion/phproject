@@ -11,40 +11,40 @@
 			<form action="login" method="post" class="form-horizontal">
 				<input type="hidden" name="to" value="{{ empty(@to) ? '/' : @to }}">
 				<fieldset>
-					<legend class="text-center"><strong>Log In</strong>&ensp;<a href="" class="nolink">{{ @site.name }}</a></legend>
+					<legend class="text-center"><strong>{{ @dict.log_in }}</strong>&ensp;<a href="" class="nolink">{{ @site.name }}</a></legend>
 					<check if="{{ !empty(@login.error) }}">
 						<p class="alert alert-danger">{{ @login.error }}</p>
 					</check>
 					<div class="form-group">
-						<label for="inputEmail" class="col-md-4 control-label">Username</label>
+						<label for="inputEmail" class="col-md-4 control-label">{{ @dict.username }}</label>
 						<div class="col-md-8">
 							<check if="{{ !empty(@POST.username) }}">
 								<true>
-									<input class="form-control" placeholder="Username" name="username" type="text" value="{{ @POST.username }}" required>
+									<input class="form-control" placeholder="{{ @dict.username }}" name="username" type="text" value="{{ @POST.username }}" required>
 								</true>
 								<false>
-									<input class="form-control" placeholder="Username" name="username" type="text" required autofocus>
+									<input class="form-control" placeholder="{{ @dict.username }}" name="username" type="text" required autofocus>
 								</false>
 							</check>
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="inputPassword" class="col-md-4 control-label">Password</label>
+						<label for="inputPassword" class="col-md-4 control-label">{{ @dict.password }}</label>
 						<div class="col-md-8">
 							<check if="{{ !empty(@POST.username) }}">
 								<true>
-									<input class="form-control" placeholder="Password" name="password" type="password" required autofocus>
+									<input class="form-control" placeholder="{{ @dict.password }}" name="password" type="password" required autofocus>
 								</true>
 								<false>
-									<input class="form-control" placeholder="Password" name="password" type="password" required>
+									<input class="form-control" placeholder="{{ @dict.password }}" name="password" type="password" required>
 								</false>
 							</check>
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="col-lg-8 col-lg-offset-4">
-							<button type="submit" class="btn btn-primary">Log In</button>
-							<a href="reset" class="btn btn-link">Reset Password</a>
+							<button type="submit" class="btn btn-primary">{{ @dict.log_in }}</button>
+							<a href="reset" class="btn btn-link">{{ @dict.reset_password }}</a>
 						</div>
 					</div>
 				</fieldset>

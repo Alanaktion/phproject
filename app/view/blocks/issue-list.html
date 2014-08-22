@@ -5,8 +5,7 @@
 		<thead>
 			<check if="{{ !empty(@show_filters) }}">
 				<tr class="issue-filters">
-					<td colspan="2">
-					</td>
+					<td colspan="2"></td>
 					<td>
 						<input type="text" class="form-control input-sm" name="name" value="{{ !empty(@GET.name) ? @GET.name : '' }}">
 					</td>
@@ -35,17 +34,17 @@
 					<td>
 						<select class="form-control input-sm" name="status">
 							<option></option>
-							<optgroup label="General">
+							<optgroup label="{{ @dict.general }}">
 								<check if="{{ !empty(@GET.status) && @GET.status == 'open' }}">
-									<true><option value="open" selected>Open</option></true>
-									<false><option value="open">Open</option></false>
+									<true><option value="open" selected>{{ @dict.open }}</option></true>
+									<false><option value="open">{{ @dict.open }}</option></false>
 								</check>
 								<check if="{{ !empty(@GET.status) && @GET.status == 'closed' }}">
-									<true><option value="closed" selected>Closed</option></true>
-									<false><option value="closed">Closed</option></false>
+									<true><option value="closed" selected>{{ @dict.closed }}</option></true>
+									<false><option value="closed">{{ @dict.closed }}</option></false>
 								</check>
 							</optgroup>
-							<optgroup label="Exact Match">
+							<optgroup label="{{ @dict.exact_match }}">
 								<repeat group="{{ @statuses }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.status) && @GET.status == @item.id }}">
 										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
@@ -59,7 +58,7 @@
 						<select class="form-control input-sm" name="author_id">
 							<option></option>
 							<option value="{{ @user.id }}">{{ @user.name }}</option>
-							<optgroup label="Groups">
+							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
 										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
@@ -67,7 +66,7 @@
 									</check>
 								</repeat>
 							</optgroup>
-							<optgroup label="Users">
+							<optgroup label="{{ @dict.users }}">
 								<repeat group="{{ @users }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
 										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
@@ -81,7 +80,7 @@
 						<select class="form-control input-sm" name="owner_id">
 							<option></option>
 							<option value="{{ @user.id }}">{{ @user.name }}</option>
-							<optgroup label="Groups">
+							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
 										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
@@ -89,7 +88,7 @@
 									</check>
 								</repeat>
 							</optgroup>
-							<optgroup label="Users">
+							<optgroup label="{{ @dict.users }}">
 								<repeat group="{{ @users }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
 										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
@@ -112,7 +111,9 @@
 					</td>
 					<td></td>
 					<td class="text-right">
-						<button type="submit" class="btn btn-xs btn-primary">Submit</button>
+						<noscript>
+							<button type="submit" class="btn btn-xs btn-primary">{{ @dict.submit }}</button>
+						</noscript>
 					</td>
 				</tr>
 			</check>
@@ -122,15 +123,16 @@
 					<th></th>
 					<repeat group="{{ @headings }}" value="{{ @heading }}">
 						<th class="nowrap"><a href="#" class="issue-sort nolink" id="{{ @heading }}">
-						<check if="{{ !empty(@GET.orderby) && @GET.orderby == @heading }}">
-							<true>
-								<check if="{{ !empty(@GET.ascdesc) && @GET.ascdesc == 'asc' }}">
-									<true><span class="glyphicon glyphicon-chevron-up"></span></true>
-									<false><span class="glyphicon glyphicon-chevron-down"></span></false>
-								</check>
-							</true>
-						</check>
-						{{ ucwords(str_replace("_"," ", @heading)) }}</a></th>
+							<check if="{{ !empty(@GET.orderby) && @GET.orderby == @heading }}">
+								<true>
+									<check if="{{ !empty(@GET.ascdesc) && @GET.ascdesc == 'asc' }}">
+										<true><span class="glyphicon glyphicon-chevron-up"></span></true>
+										<false><span class="glyphicon glyphicon-chevron-down"></span></false>
+									</check>
+								</true>
+							</check>
+							{{ !empty(@dict.cols[@heading]) ? @dict.cols[@heading] : ucwords(str_replace(array('_', 'id'), array(' ', 'ID'), @heading)) }}
+						</a></th>
 					</repeat>
 				</tr>
 			</check>
