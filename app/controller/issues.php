@@ -10,7 +10,12 @@ class Issues extends Base {
 		$this->_userId = $this->_requireLogin();
 	}
 
-	public function index($f3, $params) {
+	/**
+	 * Build a WHERE clause for issue listings based on the current filters and sort options
+	 * @return array
+	 */
+	public function _build_filter() {
+		$f3 = \Base::instance();
 		$issues = new \Model\Issue\Detail;
 
 		// Filter issue listing by URL parameters
@@ -87,6 +92,21 @@ class Issues extends Base {
 				break;
 		}
 
+		return array($filter, $filter_str, $ascdesc);
+
+	}
+
+	/**
+	 * Display a sortable, filterable issue list
+	 * @param  Base  $f3
+	 * @param  array $params
+	 */
+	public function index($f3, $params) {
+		$issues = new \Model\Issue\Detail;
+
+		// Get filter
+		list($filter, $filter_str, $ascdesc) = $this->_build_filter();
+
 		// Load type if a type_id was passed
 		$type = new \Model\Issue\Type;
 		if(!empty($args["type_id"])) {
@@ -129,7 +149,6 @@ class Issues extends Base {
 			$f3->set("prev", "?page=" . ($issue_page["pos"] - 1) . "&" . $filter_get);
 		}
 
-		$f3->set("show_filters", true);
 		$f3->set("menuitem", "browse");
 		$headings = array(
 				"id",
@@ -146,9 +165,76 @@ class Issues extends Base {
 		$f3->set("headings", $headings);
 		$f3->set("ascdesc", $ascdesc);
 
+		$f3->set("show_filters", true);
+		$f3->set("show_export", true);
+
 		echo \Template::instance()->render("issues/index.html");
 	}
 
+	/**
+	 * Export a list of issues
+	 * @param  Base  $f3
+	 * @param  array $params
+	 */
+	public function export($f3, $params) {
+		$issue = new \Model\Issue\Detail;
+
+		// Get filter data and load issues
+		list($filter, $filter_str, $ascdesc) = $this->_build_filter();
+		$issues = $issue->find($filter_str);
+
+		// Configure visible fields
+		$fields = array(
+			"id" => $f3->get("dict.cols.id"),
+			"name" => $f3->get("dict.cols.title"),
+			"type_name" => $f3->get("dict.cols.type"),
+			"priority_name" => $f3->get("dict.cols.priority"),
+			"status_name" => $f3->get("dict.cols.status"),
+			"author_name" => $f3->get("dict.cols.author"),
+			"owner_name" => $f3->get("dict.cols.assignee"),
+			"sprint_name" => $f3->get("dict.cols.sprint"),
+			"created_date" => $f3->get("dict.cols.created"),
+			"due_date" => $f3->get("dict.cols.due_date"),
+		);
+
+		// Notify browser that file is a CSV, send as attachment (force download)
+		header("Content-type: text/csv");
+		header("Content-Disposition: attachment; filename=issues-" . time() . ".csv");
+		header("Pragma: no-cache");
+ 		header("Expires: 0");
+
+		// Output data directly
+		$fh = fopen("php://output", "w");
+
+		// Add column headings
+		fwrite($fh, '"' . implode('","', array_values($fields)) . "\"\n");
+
+		// Add rows
+		foreach($issues as $row) {
+			$cols = array();
+			foreach(array_keys($fields) as $field) {
+				$cols[] = $row->get($field);
+			}
+			fputcsv($fh, $cols);
+		}
+
+		fclose($fh);
+	}
+
+	/**
+	 * Export a single issue
+	 * @param  Base  $f3
+	 * @param  array $params
+	 */
+	public function export_single($f3, $params) {
+
+	}
+
+	/**
+	 * Create a new issue
+	 * @param  Base  $f3
+	 * @param  array $params
+	 */
 	public function add($f3, $params) {
 		if($f3->get("PARAMS.type")) {
 			$type_id = $f3->get("PARAMS.type");

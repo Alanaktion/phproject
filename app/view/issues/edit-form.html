@@ -1,25 +1,32 @@
 <form class="form-horizontal well" role="form" action="issues/save" method="post">
 	<check if="{{ !empty(@issue) }}">
-		<a href="issues/{{ @issue.id }}" class="close">&times;</a>
+		<a href="issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
 		<input type="hidden" name="id" value="{{ @issue.id }}">
 	</check>
-	<legend>{{ empty(@issue) ? "New" : "Edit" }} {{ @type.name }}</legend>
+	<check if="{{ empty(@issue) }}">
+		<true>
+			<legend>{{ @dict.new_n,@type.name | format }}</legend>
+		</true>
+		<false>
+			<legend>{{ @dict.edit_n,@type.name | format }}</legend>
+		</false>
+	</check>
 	<input type="hidden" name="type_id" value="{{ @type.id }}">
 	<div class="form-group">
-		<label class="col-md-2 control-label">Title</label>
+		<label class="col-md-2 control-label">{{ @dict.cols.title }}</label>
 		<div class="col-md-10">
 			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : @issue.name }}" required>
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">Description</label>
+		<label class="col-md-2 control-label label-sm">{{ @dict.cols.description }}</label>
 		<div class="col-md-10">
 			<textarea class="form-control input-sm" name="description" rows="7">{{ empty(@issue) ? "" : @issue.description }}</textarea>
 		</div>
 	</div>
 	<check if="{{ !empty(@issue) }}">
 		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">Type</label>
+			<label class="col-md-2 control-label label-sm">{{ @dict.cols.type }}</label>
 			<div class="col-md-10">
 				<select class="form-control input-sm" name="type_id">
 					<repeat group="{{ @issue_types }}" value="{{ @item }}">
@@ -30,7 +37,7 @@
 		</div>
 	</check>
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">Priority</label>
+		<label class="col-md-2 control-label label-sm">{{ @dict.cols.priority }}</label>
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="priority">
 				<repeat group="{{ @priorities }}" value="{{ @item }}">
@@ -47,7 +54,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">Status</label>
+		<label class="col-md-2 control-label label-sm">{{ @dict.cols.status }}</label>
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="status">
 				<repeat group="{{ @statuses }}" value="{{ @item }}">
@@ -57,10 +64,10 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">Assigned To</label>
+		<label class="col-md-2 control-label label-sm">{{ @dict.cols.assignee }}</label>
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="owner_id">
-				<option value="0">Not Assigned</option>
+				<option value="0">{{ @dict.not_assigned }}</option>
 				<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
 				<optgroup label="Groups">
 					<repeat group="{{ @groups }}" value="{{ @group }}">
@@ -84,7 +91,7 @@
 
 	<check if="{{ !empty(@issue) }}">
 		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">Total Spent Hours</label>
+			<label class="col-md-2 control-label label-sm">{{ @dict.cols.total_spent_hours }}</label>
 			<div class="col-md-6">
 				<input class="form-control input-sm" type="text" name="hours_spent" value="{{ @issue.hours_spent }}">
 			</div>
@@ -92,39 +99,39 @@
 	</check>
 	<check if="{{ !empty(@issue) }}">
 		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">Planned Hours</label>
+			<label class="col-md-2 control-label label-sm">{{ @dict.cols.planned_hours }}</label>
 			<div class="col-md-6">
 				<input class="form-control input-sm" type="text" name="hours_total" value="{{ @issue.hours_total }}">
 			</div>
 		</div>
 	</check>
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">Remaining Hours</label>
+		<label class="col-md-2 control-label label-sm">{{ @dict.cols.remaining_hours }}</label>
 		<div class="col-md-6">
 			<input class="form-control input-sm" type="text" name="hours_remaining" value="{{ empty(@issue) ? "" : @issue.hours_remaining }}">
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">Due Date</label>
+		<label class="col-md-2 control-label label-sm">{{ @dict.cols.due_date }}</label>
 		<div class="col-md-6">
 			<input class="form-control input-sm" id="due_date" type="text" name="due_date"  value="{{ empty(@issue) ? "" : @issue.due_date }}">
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">Repeat Cycle</label>
+		<label class="col-md-2 control-label label-sm">{{ @dict.cols.repeat_cycle }}</label>
 		<div class="col-md-6">
 			<select class="form-control input-sm" name="repeat_cycle">
-				<option value="none">Not Repeating</option>
-				<option value="daily" {{ !empty(@issue) && @issue.repeat_cycle == 'daily' ? "selected" : "" }}>Daily</option>
-				<option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>Weekly</option>
-				<option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>Monthly</option>
-				<option value="sprint" {{ !empty(@issue) && @issue.repeat_cycle == 'sprint' ? "selected" : "" }}>Sprint</option>
+				<option value="none">{{ @dict.not_repeating }}</option>
+				<option value="daily" {{ !empty(@issue) && @issue.repeat_cycle == 'daily' ? "selected" : "" }}>{{ @dict.daily }}</option>
+				<option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>{{ @dict.weekly }}</option>
+				<option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>{{ @dict.monthly }}</option>
+				<option value="sprint" {{ !empty(@issue) && @issue.repeat_cycle == 'sprint' ? "selected" : "" }}>{{ @dict.sprint }}</option>
 			</select>
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">Parent ID</label>
+		<label class="col-md-2 control-label label-sm">{{ @dict.cols.parent_id }}</label>
 		<div class="col-md-6">
 			<check if="{{ !empty(@issue) }}">
 				<true>
@@ -137,10 +144,10 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">Sprint</label>
+		<label class="col-md-2 control-label label-sm">{{ @dict.cols.sprint }}</label>
 		<div class="col-md-6">
 			<select class="form-control input-sm" name="sprint_id">
-				<option value="">No Sprint</option>
+				<option value="">{{ @dict.no_sprint }}</option>
 				<repeat group="{{ @sprints }}" value="{{ @item }}">
 					<check if="{{ !empty(@issue) && @issue.sprint_id == @item.id }}">
 						<true>
@@ -156,7 +163,7 @@
 	</div>
 	<hr>
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">Comment</label>
+		<label class="col-md-2 control-label label-sm">{{ @dict.comment }}</label>
 		<div class="col-md-10">
 			<textarea class="form-control input-sm" name="comment" rows="3">{{ empty(@comment) ? "" : is_string(@comment) ? @comment : "" }}</textarea>
 		</div>
@@ -168,7 +175,7 @@
 				<true>
 					<label>
 						<input type="checkbox" name="notify" value="1" checked>
-						Send notifications
+						{{ @dict.send_notifications }}
 					</label>
 				</true>
 				<false>
@@ -177,10 +184,17 @@
 			</check>
 			</div>
 			<check if="{{ !empty(@issue) }}">
-				<a href="issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">Cancel</a>
-				<button type="reset" class="btn btn-default btn-sm">Reset</button>
+				<a href="issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
+				<button type="reset" class="btn btn-default btn-sm">{{ @dict.reset }}</button>
 			</check>
-			<button type="submit" class="btn btn-primary btn-sm">{{ empty(@issue) ? "Create" : "Save" }} {{ @type.name }}</button>
+			<check if="{{ empty(@issue) }}">
+				<true>
+					<button type="submit" class="btn btn-primary btn-sm">{{ @dict.create_n,@type.name | format }}</button>
+				</true>
+				<false>
+					<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_n,@type.name | format }}</button>
+				</false>
+			</check>
 		</div>
 	</div>
 </form>

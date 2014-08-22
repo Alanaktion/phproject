@@ -5,7 +5,13 @@
 		<thead>
 			<check if="{{ !empty(@show_filters) }}">
 				<tr class="issue-filters">
-					<td colspan="2"></td>
+					<td colspan="2">
+						<check if="{{ !empty(@show_export) }}">
+							<a class="btn btn-default btn-xs" href="issues/export?{{ http_build_query($_GET) }}">
+								<span class="glyphicon glyphicon-save"></span>&ensp;{{ @dict.export }}
+							</a>
+						</check>
+					</td>
 					<td>
 						<input type="text" class="form-control input-sm" name="name" value="{{ !empty(@GET.name) ? @GET.name : '' }}">
 					</td>
