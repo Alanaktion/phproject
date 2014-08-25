@@ -1,8 +1,5 @@
 <?php
 
-if ((float)PCRE_VERSION < 7.9)
-	trigger_error('PCRE version is out of date');
-
 // Initialize core
 $f3=require("lib/base.php");
 $f3->mset(array(
@@ -17,6 +14,12 @@ $f3->mset(array(
 	"microtime" => microtime(true),
 	"site.url" => $f3->get("SCHEME") . "://" . $f3->get("HOST") . $f3->get("BASE") . "/"
 ));
+
+// Redirect to installer if no config file is found
+if(!is_file("config.ini")) {
+	header("Location: install.php");
+	exit();
+}
 
 // Get current Git revision
 if(is_file(".git/refs/heads/master")) {
