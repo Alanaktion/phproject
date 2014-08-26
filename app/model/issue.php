@@ -228,9 +228,11 @@ class Issue extends Base {
 
 		$this->copyto("duplicating_issue");
 		$f3->clear("duplicating_issue.id");
+		$f3->clear("duplicating_issue.due_date");
 
 		$new_issue = new Issue;
 		$new_issue->copyfrom("duplicating_issue");
+		$new_issue->clear("due_date");
 		$new_issue->save();
 
 		// Run the recursive function to duplicate the complete descendant tree
@@ -255,10 +257,12 @@ class Issue extends Base {
 				// Duplicate issue
 				$child->copyto("duplicating_issue");
 				$f3->clear("duplicating_issue.id");
+				$f3->clear("duplicating_issue.due_date");
 
 				$new_child = new Issue;
 				$new_child->copyfrom("duplicating_issue");
 				$new_child->clear("id");
+				$new_child->clear("due_date");
 				$new_child->set("parent_id", $new_id);
 				$new_child->save();
 
