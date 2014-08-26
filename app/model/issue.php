@@ -278,12 +278,12 @@ class Issue extends Base {
 	 * Move all non-project children to same sprint
 	 * @return Issue
 	 */
-	public function resetChildren() {
+	public function resetChildren($replace_existing = true) {
 		$f3 = \Base::instance();
 		if($this->get("sprint_id")) {
 			$db = $f3->get("db.instance");
 			$db->exec(
-				"UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type",
+				"UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type" . $replace_existing ? '' : ' AND sprint_id IS NULL',
 				array(
 					"sprint" => $this->get("sprint_id"),
 					"issue" => $this->get("id"),
