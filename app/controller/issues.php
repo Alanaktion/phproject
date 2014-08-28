@@ -499,7 +499,11 @@ class Issues extends Base {
 
 	public function single($f3, $params) {
 		$issue = new \Model\Issue\Detail;
-		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
+		if($f3->get("user.role") == "admin") {
+			$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		} else {
+			$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
+		}
 
 		if(!$issue->id) {
 			$f3->error(404);

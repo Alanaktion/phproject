@@ -17,6 +17,13 @@
 		<button type="button" class="close">&times;</button>
 	</div>
 
+	<check if="{{ @issue.deleted_date }}">
+		<p id="alert" class="alert alert-danger">
+			{{ @dict.deleted_notice }}&ensp;
+			<a href="issues/undelete/{{ @issue.id }}" class="btn btn-default btn-xs">{{ @dict.restore_issue }}</a>
+		</p>
+	</check>
+
 	<check if="{{ count(@hierarchy) > 1 }}">
 		<ol class="breadcrumb pull-left">
 			<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
