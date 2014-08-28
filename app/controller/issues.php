@@ -425,6 +425,17 @@ class Issues extends Base {
 					}
 				}
 
+				// If it's a child issue and the parent is in a sprint,
+				// use that sprint if another has not been set already
+				if(!$issue->sprint_id && $issue->parent_id) {
+					$parent = new \Model\Issue;
+					$parent->load($issue->parent_id);
+					if($parent->sprint_id) {
+						$issue->sprint_id = $parent->sprint_id;
+					}
+				}
+
+				// Save comment if given
 				if(!empty($post["comment"])) {
 					$comment = new \Model\Issue\Comment;
 					$comment->user_id = $this->_userId;
@@ -434,8 +445,9 @@ class Issues extends Base {
 					$comment->save();
 					$issue->update_comment = $comment->id;
 				}
-				// Save issue, send notifications (unless admin opts out)
-				$notify =  empty($post["notify"]) ? false : true;
+
+				// Save issue, optionally send notifications
+				$notify = !empty($post["notify"]);
 				$issue->save($notify);
 
 				$f3->reroute("/issues/" . $issue->id);
@@ -676,6 +688,7 @@ class Issues extends Base {
 	}
 
 	public function single_delete($f3, $params) {
+		$this->_requireAdmin();
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$issue->delete();
@@ -683,6 +696,7 @@ class Issues extends Base {
 	}
 
 	public function single_undelete($f3, $params) {
+		$this->_requireAdmin();
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$issue->deleted_date = null;
