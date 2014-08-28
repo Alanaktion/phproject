@@ -94,7 +94,8 @@ site.name={$post['site-name']}
 site.timezone={$post['site-timezone']}
 
 ; Email
-site.timezone={$post['mail-from']}");
+mail.from={$post['mail-from']}
+");
 
 	$f3->set("success", "Installation complete.");
 }
