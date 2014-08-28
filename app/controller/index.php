@@ -129,4 +129,12 @@ class Index extends Base {
 		$f3->reroute("/");
 	}
 
+	public function ping($f3, $params) {
+		if($f3->get("user.id")) {
+			print_json(array("user_id" => $f3->get("user.id"), "is_logged_in" => true));
+		} else {
+			print_json(array("user_id" => null, "is_logged_in" => false));
+		}
+	}
+
 }

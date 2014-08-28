@@ -53,7 +53,7 @@ $(document).ready(function() {
 		$(this).parents('form').submit();
 	});
 
-	// Submit issue
+	// Submit issue sorting options
 	$(".issue-sort").on("click",  function(e) {
 		e.preventDefault();
 

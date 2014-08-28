@@ -40,3 +40,35 @@
 <script>var site_url = '{{ @site.url }}';</script>
 <script src="minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,global.js"></script>
 <script src="js/respond.min.js"></script>
+<check if="{{ @user.id }}">
+	<div class="modal" id="modal-loggedout" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">{{ @dict.logged_out }}</h4>
+				</div>
+				<div class="modal-body">
+					{{ @dict.session_ended_message }}
+				</div>
+				<div class="modal-footer">
+					<a href="login" class="btn btn-primary btn-sm">{{ @dict.log_in }}</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+	var session_ping = function() {
+		$.get("ping", function(data) {
+			if(data.is_logged_in) {
+				window.setTimeout(session_ping, 5000);
+			} else {
+				$(".modal.in").modal("hide");
+				$("#modal-loggedout").modal("show");
+			}
+		});
+	};
+	$(document).ready(function() {
+		window.setTimeout(session_ping, 5000);
+	});
+	</script>
+</check>
