@@ -466,8 +466,8 @@ class Issues extends Base {
 			$issue->priority = $post["priority"];
 			$issue->status = $post["status"];
 			$issue->owner_id = $post["owner_id"];
-			$issue->hours_total = $post["hours_remaining"];
-			$issue->hours_remaining = $post["hours_remaining"];
+			$issue->hours_total = $post["hours_remaining"] ?: null;
+			$issue->hours_remaining = $post["hours_remaining"] ?: null;
 			$issue->repeat_cycle = $post["repeat_cycle"];
 
 			if(!empty($post["due_date"])) {
