@@ -46,7 +46,7 @@
 				<check if="{{ !@issue.closed_date }}">
 					<true>
 						<a id="btn-Mark Complete" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
-							<span class="glyphicon glyphicon-check"></span>&ensp;{{ @dict.mark_complete }}
+							<span class="glyphicon glyphicon-check"></span>&ensp;<span class="hidden-xs">{{ @dict.mark_complete }}</span><span class="visible-xs">{{ @dict.complete }}</span>
 						</a>
 					</true>
 					<false>
