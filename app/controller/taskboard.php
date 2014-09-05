@@ -69,13 +69,16 @@ class Taskboard extends Base {
 		$statuses = $status->find(array('taskboard > 0'), null, $f3->get("cache_expire.db"));
 		$mapped_statuses = array();
 		$visible_status_ids = array();
+		$column_count = 0;
 		foreach($statuses as $s) {
 			$visible_status_ids[] = $s->id;
 			$mapped_statuses[$s->id] = $s;
+			$column_count += $s->taskboard;
 		}
 
 		$visible_status_ids = implode(",", $visible_status_ids);
 		$f3->set("statuses", $mapped_statuses);
+		$f3->set("column_count", $column_count);
 
 		// Load issue priorities
 		$priority = new \Model\Issue\Priority();
