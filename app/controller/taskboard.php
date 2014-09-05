@@ -66,7 +66,7 @@ class Taskboard extends Base {
 
 		// Load issue statuses
 		$status = new \Model\Issue\Status();
-		$statuses = $status->find(array('taskboard = 1'), null, $f3->get("cache_expire.db"));
+		$statuses = $status->find(array('taskboard > 0'), null, $f3->get("cache_expire.db"));
 		$mapped_statuses = array();
 		$visible_status_ids = array();
 		foreach($statuses as $s) {
