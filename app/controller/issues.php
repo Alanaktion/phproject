@@ -307,7 +307,7 @@ class Issues extends Base {
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", now(false), $issue->sprint_id), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -616,7 +616,7 @@ class Issues extends Base {
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", now(false), $issue->sprint_id), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
