@@ -54,5 +54,30 @@ class User extends Base {
 		return $this->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC"));
 	}
 
+	/**
+	 * Send an email alert with issues due on the given date
+	 * @param  string $date
+	 * @return bool
+	 */
+	public function sendDueAlert($date = '') {
+		if(!$this->get("id")) {
+			return false;
+		}
+
+		if(!$date) {
+			$date = now(false, false);
+		}
+
+		$issue = new \Model\Issue;
+		$issues = $issue->find(array("due_date = ? AND owner_id = ? AND closed_date IS NULL AND deleted_date IS NULL", $date, $this->get("id")), array("order" => "priority DESC"));
+
+		if($issues) {
+			$notif = new \Helper\Notification;
+			return $notif->user_due_issues($this, $issues);
+		} else {
+			return false;
+		}
+	}
+
 }
 
