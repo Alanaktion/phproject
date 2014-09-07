@@ -14,7 +14,7 @@ class Issues extends Base {
 	 * Build a WHERE clause for issue listings based on the current filters and sort options
 	 * @return array
 	 */
-	public function _build_filter() {
+	protected function _build_filter() {
 		$f3 = \Base::instance();
 		$issues = new \Model\Issue\Detail;
 
