@@ -132,11 +132,10 @@ CREATE TABLE `issue_status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `issue_status` (`id`, `name`, `closed`, `taskboard`) VALUES
-(1, 'New', 0, 1),
-(2, 'Active', 0, 1),
-(3, 'Completed', 1, 1),
-(4, 'On Hold', 0, 1),
-(5, 'Canceled', 0, 0);
+(1, 'New', 0, 2),
+(2, 'Active', 0, 2),
+(3, 'Completed', 1, 2),
+(4, 'On Hold', 0, 1);
 
 DROP TABLE IF EXISTS `issue_type`;
 CREATE TABLE `issue_type` (

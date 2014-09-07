@@ -105,6 +105,7 @@ class Issues extends Base {
 		$issues = new \Model\Issue\Detail;
 
 		// Get filter
+		$args = $f3->get("GET");
 		list($filter, $filter_str, $ascdesc) = $this->_build_filter();
 
 		// Load type if a type_id was passed
