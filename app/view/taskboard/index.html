@@ -311,6 +311,12 @@
 				}
 			});
 
+			// Taskboard header horizontal scrolling
+			$(window).scroll(function(e) {
+				var left = $(this).scrollLeft();
+				$(".taskboard-head").css("left", (0 - left) + 'px');
+			});
+
 		});
 	</script>
 </body>
