@@ -50,24 +50,30 @@
 				<ul>
 					<li>bcrypt extension</li>
 					<li>MySQL PDO extension</li>
-					<li>GD extension</li>
+					<li>GD extension (recommended)</li>
 				</ul>
 			</li>
 			<li>MySQL 5 server</li>
-			<li>Web server with support for URL rewrites (Apache .htaccess file and nginx sample configuration included)</li>
+			<li>Web server with support for URL rewrites
+				<ul>
+					<li>Apache .htaccess file and nginx sample configuration included</li>
+					<li>Lighttpd and IIS 7+ should work, but will require custom configuration</li>
+				</ul>
+			</li>
 		</ul>
 
 		<h2 id="installation">Installation</h2>
 		<p>The installation process for Phproject should be reasonably simple compared with Redmine or other project management systems.</p>
 		<ol>
-			<li>Clone the Phproject repository in a web-accessible directory</li>
-			<li>Optionally, checkout the <code>release</code> branch, as it is generally more stable than master</li>
+			<li>Download the <a href="https://github.com/Alanaktion/phproject/zipball/release">latest stable release</a> or clone the git repository and optionally checkout the release branch</li>
+			<li>Extract the zip archive to a web-accessible directory with write access</li>
 			<li>Create a database on your MySQL server</li>
-			<li>Navigate to the application and complete the installation.</li>
+			<li>Navigate to the application and complete the installation</li>
 		</ol>
 
 		<h2 id="setup">Additional Setup</h2>
-    	<p><code>DEBUG</code> in <code>config.ini</code> supports levels 0-3, with 3 being the most verbose. <span class="text-danger">You should always use 0 in a production environment!</span></p>
+		<p>Additional configuation options not available from the installer can be found in <code>config-base.ini</code>. These options can be copied to <code>config.ini</code> and edited. You should avoid changing the <code>config-base.ini</code> file to make updating easier.</p>
+    	<p>To see performance information and additional details about errors, change <code>DEBUG</code> in <code>config.ini</code>. This option supports levels 0-3, with 3 being the most verbose. <span class="text-danger">You should always use 0 in a production environment!</span></p>
 		<p>Phproject is designed to be fast, but you can still increase performance by installing an op-code caching layer like APC. Using APC also greatly increases the speed of temporary cached data, including minified code and heavy, cacheable database queries.</p>
 
 		<h2 id="updating">Updating</h2>
