@@ -65,6 +65,13 @@ class Issue extends Base {
 	public function save($notify = true) {
 		$f3 = \Base::instance();
 
+		// Censor credit card numbers if enabled
+		if($f3->get("security.block_ccs")) {
+			if(preg_match("/[0-9-]{9,15}[0-9]{4}/", $this->get("description"))) {
+				$this->set("description", preg_replace("/[0-9-]{9,15}([0-9]{4})/", "************$1", $this->get("description")));
+			}
+		}
+
 		// Check if updating or inserting
 		if($this->query) {
 
@@ -129,7 +136,7 @@ class Issue extends Base {
 						$repeat_issue->due_date =  $sprint->end_date;
 						break;
 					default:
-						$repeat_issue->repeat_cycle == 'none';
+						$repeat_issue->repeat_cycle = 'none';
 				}
 
 				// If the project was in a sprint before, put it in a sprint again.
