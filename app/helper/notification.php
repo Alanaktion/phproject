@@ -174,9 +174,9 @@ class Notification extends \Prefab {
 
 	/**
 	 * Send a user an email listing the issues due today
-	 * @param  ModelUser $user   [description]
-	 * @param  array     $issues [description]
-	 * @return [type]            [description]
+	 * @param  ModelUser $user
+	 * @param  array     $issues
+	 * @return bool
 	 */
 	public function user_due_issues(\Model\User $user, array $issues) {
 		$f3 = \Base::instance();
