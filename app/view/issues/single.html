@@ -121,12 +121,19 @@
 
 					<dt>Assigned to</dt>
 					<dd>
-						<check if="{{ @owner.username }}">
+						<check if="{{ @owner.id }}">
 							<true>
-								<a href="user/{{ @owner.username }}">{{ @owner.name }}</a>
+								<check if="{{ @owner.username }}">
+									<true>
+										<a href="user/{{ @owner.username }}">{{ @owner.name }}</a>
+									</true>
+									<false>
+										{{ @owner.name }}
+									</false>
+								</check>
 							</true>
 							<false>
-								{{ @owner.name }}
+								{{ @dict.not_assigned }}
 							</false>
 						</check>
 					</dd>

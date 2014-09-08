@@ -585,7 +585,9 @@ class Issues extends Base {
 		$author = new \Model\User();
 		$author->load($issue->author_id);
 		$owner = new \Model\User();
-		$owner->load($issue->owner_id);
+		if($issue->owner_id) {
+			$owner->load($issue->owner_id);
+		}
 
 		$files = new \Model\Issue\File\Detail;
 		$f3->set("files", $files->find(array("issue_id = ? AND deleted_date IS NULL", $issue->id)));
