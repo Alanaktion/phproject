@@ -223,7 +223,7 @@ CREATE TABLE `attribute` (
 	`type` enum('text','numeric','datetime','bool','list') NOT NULL DEFAULT 'text',
 	`default` text,
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `attribute_issue_type`;
 CREATE TABLE `attribute_issue_type` (
