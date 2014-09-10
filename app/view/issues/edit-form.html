@@ -68,7 +68,7 @@
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="owner_id">
 				<option value="0">{{ @dict.not_assigned }}</option>
-				<option value="{{ @user.id }}" selected>{{ @user.name }}</option>
+				<option value="{{ @user.id }}" {{ empty(@issue) ? 'selected' : '' }}>{{ @user.name }}</option>
 				<optgroup label="Groups">
 					<repeat group="{{ @groups }}" value="{{ @group }}">
 						<check if="{{ !empty(@issue) && @issue.owner_id == @group.id }}">

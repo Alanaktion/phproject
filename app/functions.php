@@ -31,10 +31,12 @@ function h($str) {
 /**
  * Get current time and date in a MySQL NOW() format
  * @param  boolean $time  Determines whether to include the time in the string
+ * @param  boolean $utc   Whether to use UTC or local time
  * @return string
  */
-function now($time = true) {
-	return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
+function now($time = true, $utc = true) {
+	$now = $utc ? time() : utc2local();
+	return $time ? date("Y-m-d H:i:s", $now) : date("Y-m-d", $now);
 }
 
 /**

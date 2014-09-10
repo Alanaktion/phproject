@@ -14,7 +14,7 @@ class Issues extends Base {
 	 * Build a WHERE clause for issue listings based on the current filters and sort options
 	 * @return array
 	 */
-	public function _build_filter() {
+	protected function _build_filter() {
 		$f3 = \Base::instance();
 		$issues = new \Model\Issue\Detail;
 
@@ -105,6 +105,7 @@ class Issues extends Base {
 		$issues = new \Model\Issue\Detail;
 
 		// Get filter
+		$args = $f3->get("GET");
 		list($filter, $filter_str, $ascdesc) = $this->_build_filter();
 
 		// Load type if a type_id was passed
@@ -307,7 +308,7 @@ class Issues extends Base {
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", now(false), $issue->sprint_id), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -425,6 +426,17 @@ class Issues extends Base {
 					}
 				}
 
+				// If it's a child issue and the parent is in a sprint,
+				// use that sprint if another has not been set already
+				if(!$issue->sprint_id && $issue->parent_id) {
+					$parent = new \Model\Issue;
+					$parent->load($issue->parent_id);
+					if($parent->sprint_id) {
+						$issue->sprint_id = $parent->sprint_id;
+					}
+				}
+
+				// Save comment if given
 				if(!empty($post["comment"])) {
 					$comment = new \Model\Issue\Comment;
 					$comment->user_id = $this->_userId;
@@ -434,8 +446,9 @@ class Issues extends Base {
 					$comment->save();
 					$issue->update_comment = $comment->id;
 				}
-				// Save issue, send notifications (unless admin opts out)
-				$notify =  empty($post["notify"]) ? false : true;
+
+				// Save issue, optionally send notifications
+				$notify = !empty($post["notify"]);
 				$issue->save($notify);
 
 				$f3->reroute("/issues/" . $issue->id);
@@ -454,8 +467,8 @@ class Issues extends Base {
 			$issue->priority = $post["priority"];
 			$issue->status = $post["status"];
 			$issue->owner_id = $post["owner_id"];
-			$issue->hours_total = $post["hours_remaining"];
-			$issue->hours_remaining = $post["hours_remaining"];
+			$issue->hours_total = $post["hours_remaining"] ?: null;
+			$issue->hours_remaining = $post["hours_remaining"] ?: null;
 			$issue->repeat_cycle = $post["repeat_cycle"];
 
 			if(!empty($post["due_date"])) {
@@ -487,7 +500,11 @@ class Issues extends Base {
 
 	public function single($f3, $params) {
 		$issue = new \Model\Issue\Detail;
-		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
+		if($f3->get("user.role") == "admin") {
+			$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		} else {
+			$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
+		}
 
 		if(!$issue->id) {
 			$f3->error(404);
@@ -568,7 +585,9 @@ class Issues extends Base {
 		$author = new \Model\User();
 		$author->load($issue->author_id);
 		$owner = new \Model\User();
-		$owner->load($issue->owner_id);
+		if($issue->owner_id) {
+			$owner->load($issue->owner_id);
+		}
 
 		$files = new \Model\Issue\File\Detail;
 		$f3->set("files", $files->find(array("issue_id = ? AND deleted_date IS NULL", $issue->id)));
@@ -600,7 +619,7 @@ class Issues extends Base {
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", now(false), $issue->sprint_id), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -676,6 +695,7 @@ class Issues extends Base {
 	}
 
 	public function single_delete($f3, $params) {
+		$this->_requireAdmin();
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$issue->delete();
@@ -683,6 +703,7 @@ class Issues extends Base {
 	}
 
 	public function single_undelete($f3, $params) {
+		$this->_requireAdmin();
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$issue->deleted_date = null;

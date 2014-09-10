@@ -7,7 +7,7 @@
 <div class="container-fluid">
 	<include href="blocks/navbar.html" />
 	<check if="{{ !empty(@GET.deleted) }}">
-		<p class="alert alert-success">{{ @dict.deleted_success,@GET.deleted | format }}&ensp;<a href="issues/undelete/{{ @GET.deleted }}">{{ @dict.undo }}</a></p>
+		<p class="alert alert-success">{{ @dict.deleted_success,@GET.deleted | format }}&ensp;<a href="issues/undelete/{{ @GET.deleted }}">{{ @dict.restore_issue }}</a></p>
 	</check>
 	<include href="blocks/issue-list.html" />
 	<ul class="pager">

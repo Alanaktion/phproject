@@ -65,6 +65,13 @@ class Issue extends Base {
 	public function save($notify = true) {
 		$f3 = \Base::instance();
 
+		// Censor credit card numbers if enabled
+		if($f3->get("security.block_ccs")) {
+			if(preg_match("/[0-9-]{9,15}[0-9]{4}/", $this->get("description"))) {
+				$this->set("description", preg_replace("/[0-9-]{9,15}([0-9]{4})/", "************$1", $this->get("description")));
+			}
+		}
+
 		// Check if updating or inserting
 		if($this->query) {
 
@@ -129,7 +136,7 @@ class Issue extends Base {
 						$repeat_issue->due_date =  $sprint->end_date;
 						break;
 					default:
-						$repeat_issue->repeat_cycle == 'none';
+						$repeat_issue->repeat_cycle = 'none';
 				}
 
 				// If the project was in a sprint before, put it in a sprint again.
@@ -228,9 +235,11 @@ class Issue extends Base {
 
 		$this->copyto("duplicating_issue");
 		$f3->clear("duplicating_issue.id");
+		$f3->clear("duplicating_issue.due_date");
 
 		$new_issue = new Issue;
 		$new_issue->copyfrom("duplicating_issue");
+		$new_issue->clear("due_date");
 		$new_issue->save();
 
 		// Run the recursive function to duplicate the complete descendant tree
@@ -255,10 +264,12 @@ class Issue extends Base {
 				// Duplicate issue
 				$child->copyto("duplicating_issue");
 				$f3->clear("duplicating_issue.id");
+				$f3->clear("duplicating_issue.due_date");
 
 				$new_child = new Issue;
 				$new_child->copyfrom("duplicating_issue");
 				$new_child->clear("id");
+				$new_child->clear("due_date");
 				$new_child->set("parent_id", $new_id);
 				$new_child->save();
 
@@ -274,12 +285,12 @@ class Issue extends Base {
 	 * Move all non-project children to same sprint
 	 * @return Issue
 	 */
-	public function resetChildren() {
+	public function resetChildren($replace_existing = true) {
 		$f3 = \Base::instance();
 		if($this->get("sprint_id")) {
 			$db = $f3->get("db.instance");
 			$db->exec(
-				"UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type",
+				"UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type" . $replace_existing ? '' : ' AND sprint_id IS NULL',
 				array(
 					"sprint" => $this->get("sprint_id"),
 					"issue" => $this->get("id"),

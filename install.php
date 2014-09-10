@@ -13,6 +13,8 @@ $f3->mset(array(
 	"PACKAGE" => "Phproject",
 ));
 
+require_once "app/functions.php";
+
 // Check if already installed
 if(is_file("config.ini")) {
 	$f3->set("success", "Phproject is already installed.");
@@ -57,7 +59,7 @@ function run_install() {
 			$f3->set("db.instance", $db);
 			$security = \Helper\Security::instance();
 			$user = new \Model\User;
-			$user->load(array("username = ?" => "admin"));
+			$user->load(array("username = ?", "admin"));
 			$user->salt = $security->salt();
 			$user->password = $security->hash($post["user-password"], $user->salt);
 			$user->save();
@@ -92,7 +94,8 @@ site.name={$post['site-name']}
 site.timezone={$post['site-timezone']}
 
 ; Email
-site.timezone={$post['mail-from']}");
+mail.from={$post['mail-from']}
+");
 
 	$f3->set("success", "Installation complete.");
 }

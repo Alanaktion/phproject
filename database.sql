@@ -132,11 +132,10 @@ CREATE TABLE `issue_status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `issue_status` (`id`, `name`, `closed`, `taskboard`) VALUES
-(1, 'New', 0, 1),
-(2, 'Active', 0, 1),
-(3, 'Completed', 1, 1),
-(4, 'On Hold', 0, 1),
-(5, 'Canceled', 0, 0);
+(1, 'New', 0, 2),
+(2, 'Active', 0, 2),
+(3, 'Completed', 1, 2),
+(4, 'On Hold', 0, 1);
 
 DROP TABLE IF EXISTS `issue_type`;
 CREATE TABLE `issue_type` (
@@ -193,7 +192,7 @@ CREATE TABLE `sprint` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP VIEW IF EXISTS `user_group_user`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `user_group_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color`,`u`.`deleted_date` AS `deleted_date` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `user_group_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color`,`u`.`deleted_date` AS `deleted_date`,`g`.`manager` AS `manager` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));
 
 DROP VIEW IF EXISTS `issue_comment_user`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `issue_comment_user` AS (select `c`.`id` AS `id`,`c`.`issue_id` AS `issue_id`,`c`.`user_id` AS `user_id`,`c`.`text` AS `text`, `c`.`file_id` as `file_id`, `c`.`created_date` AS `created_date`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`issue_comment` `c` join `user` `u` on((`c`.`user_id` = `u`.`id`))));
@@ -224,7 +223,7 @@ CREATE TABLE `attribute` (
 	`type` enum('text','numeric','datetime','bool','list') NOT NULL DEFAULT 'text',
 	`default` text,
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `attribute_issue_type`;
 CREATE TABLE `attribute_issue_type` (

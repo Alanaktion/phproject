@@ -173,6 +173,23 @@ class Notification extends \Prefab {
 	}
 
 	/**
+	 * Send a user an email listing the issues due today
+	 * @param  ModelUser $user
+	 * @param  array     $issues
+	 * @return bool
+	 */
+	public function user_due_issues(\Model\User $user, array $issues) {
+		$f3 = \Base::instance();
+		if($f3->get("mail.from")) {
+			$f3->set("issues", $issues);
+			$subject = "Due Today - " . $f3->get("site.name");
+			$body = \Template::instance()->render("notification/user_due_issues.html");
+			return utf8mail($user->email, $subject, $body);
+		}
+		return false;
+	}
+
+	/**
 	 * Get array of email addresses of all watchers on an issue
 	 * @param  int $issue_id
 	 * @return array

@@ -20,7 +20,7 @@
 		<p style="margin: 0 0 10px;"><strong><a href="{{ @site.url }}user/{{ @file.user_username }}">{{ @file.user_name }}</a> attached a file to <a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>:</strong></p>
 		<img src="{{ @site.url }}avatar/48-{{ @file.user_id }}.png" alt style="float: left; margin-right: 10px;">
 
-		<a href="files/{{ @file.id }}/{{ @file.filename }}" target="_blank">{{ @file.filename }}</a>
+		<a href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" target="_blank">{{ @file.filename }}</a>
 		({{ format_filesize(@file.filesize) }})
 
 		<div style="clear:both"></div>

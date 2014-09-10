@@ -11,7 +11,7 @@ var Taskboard = {
 	newTaskId: 0, //keep track of new tasks in case there are a few error tasks
 	init: function() {
 
-		//initialize drag / drop
+		// Initialize drag / drop
 		Taskboard.makeDraggable($(".card.task"));
 
 		$(".droppable").droppable({
@@ -41,8 +41,17 @@ var Taskboard = {
 		});
 
 		// Initialize issue editing handler
-		$(".card.task").click(function(e) {
+		$("#task-table").on("click", ".card.task", function(e) {
 			if(!$(e.target).is("a")) {
+				Taskboard.modalEdit($(this));
+			}
+		}).on("touchstart", ".card.task", function(e) {
+			if(!$(e.target).is("a")) {
+				$(this).popover("show");
+			}
+		}).on("touchend", ".card.task", function(e) {
+			if(!$(e.target).is("a")) {
+				$(this).popover("hide");
 				Taskboard.modalEdit($(this));
 			}
 		});
@@ -280,10 +289,6 @@ var Taskboard = {
 				Taskboard.newUnBlock(taskId);
 				$(card).find(".task-id").html('<a href="/issues/' + data.taskId + '" target="_blank">' + data.taskId + '</a>');
 				$(card).attr("id", "task_" + data.taskId);
-				$(card).click(function() {
-					// Add binding for click on new card only if the id is set
-					Taskboard.modalEdit($(this));
-				});
 				Taskboard.makeDraggable(card);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
