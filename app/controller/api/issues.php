@@ -177,13 +177,26 @@ class Issues extends \Controller\Api\Base {
 			}
 		}
 
+		//Due Date
+		if(!empty($post["due_date"])))
+		{
+
+		}
+		else
+		{
+
+		}
+
 		// Create a new issue based on the data
 		$issue = new \Model\Issue();
+
+		$NewDate=Date('y:m:d', strtotime("+1 day"));
 
 		$issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $this->_userId;
 		$issue->name = trim($post["name"]);
 		$issue->type_id = empty($post["type_id"]) ? 1 : $post["type_id"];
 		$issue->priority_id = empty($post["priority_id"]) ? 0 : $post["priority_id"];
+		$issue->due_date = !empty($post["due_date"]) ? $post["due_date"] : ;
 		if(!empty($post["description"])) {
 			$issue->description = $post["description"];
 		}
