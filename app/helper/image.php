@@ -4,8 +4,15 @@ namespace Helper;
 
 class Image extends \Image {
 
-	protected $colors = array();
-	public $last_data;
+	protected $last_data;
+
+	/**
+	 * Get the last GD return value, generally from imagettftext
+	 * @return mixed last_data
+	 */
+	function getLastData() {
+		return $this->last_data;
+	}
 
 	/**
 	 * Create a new blank canvase
