@@ -249,7 +249,18 @@ CREATE TABLE `attribute_value` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP VIEW IF EXISTS `attribute_value_detail`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `attribute_value_detail` AS (select `v`.`id` AS `id`,`v`.`attribute_id` AS `attribute_id`,`v`.`issue_id` AS `issue_id`,`v`.`value` AS `value`,`a`.`name` AS `name`,`a`.`type` AS `type`,`a`.`default` AS `default` from (`attribute_value` `v` join `attribute` `a` on((`v`.`attribute_id` = `a`.`id`))));
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `attribute_value_detail` AS (select `v`.`id` AS `id`,`v`.`attribute_id` AS `attribute_id`,`v`.`issue_id` AS `issue_id`,`v`.`value` AS `value`,`a`.`name` AS `name`,`a`.`type` AS `type`,`a`.`default` AS `default` from (`attribute_value` `v` join `attribute` `a` on((`v`.`attribute_id` = `a`.`id`))));
+
+DROP TABLE IF EXISTS `session`;
+CREATE TABLE `session` (
+	`session_id` varchar(40),
+	`data` text,
+	`csrf` text,
+	`ip` varchar(40),
+	`agent` varchar(255),
+	`stamp` integer,
+	PRIMARY KEY(`session_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `wiki_page`;
 CREATE TABLE `wiki_page` (
