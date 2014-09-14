@@ -397,7 +397,12 @@ class Issues extends Base {
 
 				// Diff contents and save what's changed.
 				foreach($post as $i=>$val) {
-					if($issue->exists($i) && $i != "notify" && $issue->$i != $val) {
+					if(
+						$issue->exists($i)
+						&& $i != "id"
+						&& $issue->$i != $val
+						&& (md5($val) != $post["hash_" . $i] || !isset($post["hash_" . $i]))
+					) {
 						if(empty($val)) {
 							$issue->$i = null;
 						} else {
