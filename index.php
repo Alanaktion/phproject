@@ -73,8 +73,9 @@ $f3->route("GET /minify/@type/@files", function($f3, $args) {
 }, $f3->get("cache_expire.minify"));
 
 // Set up session handler
-// session_name("PHPROJSESS");
-// new Session();
+if($f3->get("site.db_sessions")) {
+	new \DB\SQL\Session($f3->get("db.instance"), "session", false);
+}
 
 // Load user if session exists
 $user = new Model\User();
