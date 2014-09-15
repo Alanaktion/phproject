@@ -6399,7 +6399,6 @@ textarea:focus {
 	background-color: #464545;
 }
 
-
 .navbar-form .input-sm, .navbar-form .btn-sm {
 	margin-top: 5px;
 }
@@ -6410,9 +6409,6 @@ textarea:focus {
 	background-color: #222;
 	background-color: rgba(34,34,34,.8) !important;
 	color: white !important;
-}
-#taskboard td, #taskboard th {
-	border-color: #666 !important;
 }
 #taskboard .spinner {
 	background-image: url(/img/ajax-loader-dark.gif) !important;

@@ -16,7 +16,7 @@ body {
 	vertical-align: bottom;
 	background-color: #fff;
 	background-color: rgba(255, 255, 255, 0.7);
-	border-bottom: 1px dotted #e7e7e7;
+	border-bottom: 1px solid rgba(127,127,127,0.5);
 }
 #taskboard table {
 	border-collapse: collapse;
@@ -25,8 +25,7 @@ body {
 #taskboard td, #taskboard th {
 	width: 20%;
 	padding: 4px;
-	border: 1px dotted #cecece;
-	border-top: 1px dotted #e7e7e7;
+	border: 1px solid rgba(127,127,127,0.5);
 }
 #task-table td, #task-table th {
 	vertical-align: top;
@@ -35,7 +34,7 @@ body {
 	width: 15%;
 }
 #taskboard th {
-	border-bottom: 0px;
+	border-bottom: none;
 }
 #taskboard .table {
 	width: auto;
@@ -53,10 +52,10 @@ body {
 	margin: 8px 2px;
 	background-color: rgba(255,255,255,.1);
 	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.11);
-	border:0px;
-	border-left: 6px solid;
+	border: none;
+	border-left: 6px solid #777;
 	height: 85px;
-	border-radius:0;
+	border-radius: 0;
 }
 #taskboard .card.task {
 	cursor: move;
@@ -143,7 +142,7 @@ body {
 }
 #taskboard .card .top {
 	position: relative;
-	border-bottom: 1px dotted #E2E2E2;
+	border-bottom: 1px solid rgba(127,127,127,0.7);
 	text-align: left;
 	top: -4px;
 	height: 20px;
