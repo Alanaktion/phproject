@@ -4,7 +4,31 @@ namespace Controller;
 
 class Files extends Base {
 
+	/**
+	 * Forces the framework to use the local filesystem cache method if possible
+	 */
+	protected function _useFileCache() {
+		$f3 = \Base::instance();
+		$f3->set("CACHE", "folder=" . $f3->get("TEMP") . "cache/");
+	}
+
 	public function thumb($f3, $params) {
+		$this->_useFileCache();
+		$cache = \Cache::instance();
+
+		// Ensure proper content-type for JPEG images
+		if($params["format"] == "jpg") {
+			$params["format"] = "jpeg";
+		}
+
+		// Output cached image if one exists
+		$hash = $f3->hash($f3->get('VERB') . " " . $f3->get('URI')) . ".thm";
+		if($cache->exists($hash, $data)) {
+			header("Content-type: image/" . $params["format"]);
+			echo $data;
+			return;
+		}
+
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);
 
@@ -30,11 +54,6 @@ class Files extends Base {
 
 			$fg = 0xFFFFFF;
 			$bg = 0x000000;
-
-			// Ensure proper content-type for JPEG images
-			if($params["format"] == "jpg") {
-				$params["format"] = "jpeg";
-			}
 		}
 
 		// Generate thumbnail of text contents
@@ -73,10 +92,33 @@ class Files extends Base {
 			$img->text($ext, 12, 0, 4, 4, $fg);
 		}
 
-		$img->render($params["format"]);
+		// Render and cache image
+		$data = $img->dump($params["format"]);
+		$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
+
+		// Output image
+		header("Content-type: image/" . $params["format"]);
+		echo $data;
+
 	}
 
 	public function avatar($f3, $params) {
+		$this->_useFileCache();
+		$cache = \Cache::instance();
+
+		// Ensure proper content-type for JPEG images
+		if($params["format"] == "jpg") {
+			$params["format"] = "jpeg";
+		}
+
+		// Output cached image if one exists
+		$hash = $f3->hash($f3->get('VERB') . " " . $f3->get('URI')) . ".thm";
+		if($cache->exists($hash, $data)) {
+			header("Content-type: image/" . $params["format"]);
+			echo $data;
+			return;
+		}
+
 		$user = new \Model\User();
 		$user->load($params["id"]);
 
@@ -86,19 +128,26 @@ class Files extends Base {
 			$img = new \Image($user->avatar_filename, null, $f3->get("ROOT") . "/uploads/avatars/");
 			$img->resize($params["size"], $params["size"]);
 
-			// Ensure proper content-type for JPEG images
-			if($params["format"] == "jpg") {
-				$params["format"] = "jpeg";
-			}
-			$img->render($params["format"]);
+			// Render and cache image
+			$data = $img->dump($params["format"]);
+			$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
+
+			// Output image
+			header("Content-type: image/" . $params["format"]);
+			echo $data;
 
 		} else {
 
-			// Remove avatar from user if needed and load from Gravatar
-			if($user->avatar_filename) {
+			// Remove avatar from user if site is not in debug mode
+			if($user->avatar_filename && !$f3->get("DEBUG")) {
 				$user->avatar_filename = null;
 				$user->save();
 			}
+
+			// Load image from Gravatar
+			header("Content-type: image/" . $params["format"]);
+			$data = $img->dump($params["format"]);
+			$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
 
 			header("Content-type: image/png");
 			$file = file_get_contents("http:" . gravatar($user->email, $params["size"]));
