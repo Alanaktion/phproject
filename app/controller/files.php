@@ -145,13 +145,9 @@ class Files extends Base {
 			}
 
 			// Load image from Gravatar
-			header("Content-type: image/" . $params["format"]);
-			$data = $img->dump($params["format"]);
-			$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
-
 			header("Content-type: image/png");
-			$file = file_get_contents("http:" . gravatar($user->email, $params["size"]));
-			echo $file;
+			$data = file_get_contents("http:" . gravatar($user->email, $params["size"]));
+			$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
 
 		}
 	}
