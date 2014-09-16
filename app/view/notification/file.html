@@ -17,7 +17,13 @@
 <span style="font-size:0px;"> --- --- </span>
 
 	<div style="padding: 10px;">
-		<p style="margin: 0 0 10px;"><strong><a href="{{ @site.url }}user/{{ @file.user_username }}">{{ @file.user_name }}</a> attached a file to <a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>:</strong></p>
+		<p style="margin: 0 0 10px;"><strong>
+			<a href="{{ @site.url }}user/{{ @file.user_username }}">{{ @file.user_name }}</a> attached a file to
+			<check if="{{ @issue.parent_id }}">
+				<a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a>
+			</check>
+			<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>
+		:</strong></p>
 		<img src="{{ @site.url }}avatar/48-{{ @file.user_id }}.png" alt style="float: left; margin-right: 10px;">
 
 		<a href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" target="_blank">{{ @file.filename }}</a>

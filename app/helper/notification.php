@@ -20,6 +20,13 @@ class Notification extends \Prefab {
 			$comment = new \Model\Issue\Comment\Detail;
 			$comment->load($comment_id);
 
+			// Get issue parent if set
+			if($issue->parent_id) {
+				$parent = new \Model\Issue;
+				$parent->load($issue->parent_id);
+				$f3->set("parent", $parent);
+			}
+
 			// Get recipient list and remove current user
 			$recipients = $this->_issue_watchers($issue_id);
 			$recipients = array_diff($recipients, array($comment->user_email));
@@ -30,6 +37,7 @@ class Notification extends \Prefab {
 			$body = \Template::instance()->render("notification/comment.html");
 
 			$subject = "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
+
 			// Send to recipients
 			foreach($recipients as $recipient) {
 				utf8mail($recipient, $subject, $body);
@@ -55,6 +63,13 @@ class Notification extends \Prefab {
 			$update = new \Model\Custom("issue_update_detail");
 			$update->load($update_id);
 
+			// Get issue parent if set
+			if($issue->parent_id) {
+				$parent = new \Model\Issue;
+				$parent->load($issue->parent_id);
+				$f3->set("parent", $parent);
+			}
+
 			// Avoid errors from bad calls
 			if(!$issue->id || !$update->id) {
 				return false;
@@ -73,6 +88,7 @@ class Notification extends \Prefab {
 			$body = \Template::instance()->render("notification/update.html");
 
 			$subject =  "[#" . $issue->id . "] - ".$update->user_name . " updated  " . $issue->name;
+
 			// Send to recipients
 			foreach($recipients as $recipient) {
 				utf8mail($recipient, $subject, $body);
@@ -95,17 +111,24 @@ class Notification extends \Prefab {
 			$issue = new \Model\Issue\Detail();
 			$issue->load($issue_id);
 			$f3->set("issue", $issue);
-			// Get recipient list and DON'T remove current user
+
+			// Get issue parent if set
+			if($issue->parent_id) {
+				$parent = new \Model\Issue;
+				$parent->load($issue->parent_id);
+				$f3->set("parent", $parent);
+			}
+
+			// Get recipient list, keeping current user
 			$recipients = $this->_issue_watchers($issue_id);
-			//$recipients = array_diff($recipients, array($issue->author_email));
 
 			// Render message body
 			$f3->set("issue", $issue);
 
 			$body = \Template::instance()->render("notification/new.html");
 
-			// Send to recipients
 			$subject =  "[#" . $issue->id . "] - ".$issue->author_name . " created " . $issue->name;
+
 			// Send to recipients
 			foreach($recipients as $recipient) {
 				utf8mail($recipient, $subject, $body);
@@ -130,6 +153,13 @@ class Notification extends \Prefab {
 			$file = new \Model\Issue\File\Detail;
 			$file->load($file_id);
 
+			// Get issue parent if set
+			if($issue->parent_id) {
+				$parent = new \Model\Issue;
+				$parent->load($issue->parent_id);
+				$f3->set("parent", $parent);
+			}
+
 			// Get recipient list and remove current user
 			$recipients = $this->_issue_watchers($issue_id);
 			$recipients = array_diff($recipients, array($file->user_email));
@@ -140,6 +170,7 @@ class Notification extends \Prefab {
 			$body = \Template::instance()->render("notification/file.html");
 
 			$subject =  "[#" . $issue->id . "] - ".$file->user_name . " attached a file to " . $issue->name;
+
 			// Send to recipients
 			foreach($recipients as $recipient) {
 				utf8mail($recipient, $subject, $body);
