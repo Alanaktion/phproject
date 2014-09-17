@@ -124,12 +124,6 @@ class Files extends Base {
 
 		} else {
 
-			// Remove avatar from user if site is not in debug mode
-			if($user->avatar_filename && !$f3->get("DEBUG")) {
-				$user->avatar_filename = null;
-				$user->save();
-			}
-
 			// Send user to Gravatar
 			$f3->reroute($f3->get("SCHEME") . ":" . gravatar($user->email, $params["size"]), true);
 
