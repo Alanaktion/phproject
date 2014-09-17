@@ -103,20 +103,10 @@ class Files extends Base {
 	}
 
 	public function avatar($f3, $params) {
-		$this->_useFileCache();
-		$cache = \Cache::instance();
 
 		// Ensure proper content-type for JPEG images
 		if($params["format"] == "jpg") {
 			$params["format"] = "jpeg";
-		}
-
-		// Output cached image if one exists
-		$hash = $f3->hash($f3->get('VERB') . " " . $f3->get('URI')) . ".thm";
-		if($cache->exists($hash, $data)) {
-			header("Content-type: image/" . $params["format"]);
-			echo $data;
-			return;
 		}
 
 		$user = new \Model\User();
@@ -128,13 +118,9 @@ class Files extends Base {
 			$img = new \Image($user->avatar_filename, null, $f3->get("ROOT") . "/uploads/avatars/");
 			$img->resize($params["size"], $params["size"]);
 
-			// Render and cache image
-			$data = $img->dump($params["format"]);
-			$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
-
-			// Output image
+			// Render and output image
 			header("Content-type: image/" . $params["format"]);
-			echo $data;
+			$data = $img->render($params["format"]);
 
 		} else {
 
@@ -144,10 +130,8 @@ class Files extends Base {
 				$user->save();
 			}
 
-			// Load image from Gravatar
-			header("Content-type: image/png");
-			$data = file_get_contents("http:" . gravatar($user->email, $params["size"]));
-			$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
+			// Send user to Gravatar
+			$f3->reroute($f3->get("SCHEME") . ":" . gravatar($user->email, $params["size"]), true);
 
 		}
 	}
