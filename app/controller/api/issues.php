@@ -99,7 +99,7 @@ class Issues extends \Controller\Api\Base {
 			//$logger->write($_POST);
 		} else {
 
-			
+
 			// For Redmine compatibility, also accept a JSON object
 			try {
 				$post = json_decode(file_get_contents('php://input'), true);
@@ -180,12 +180,11 @@ class Issues extends \Controller\Api\Base {
 		// Create a new issue based on the data
 		$issue = new \Model\Issue();
 
-
 		$issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $this->_userId;
 		$issue->name = trim($post["name"]);
 		$issue->type_id = empty($post["type_id"]) ? 1 : $post["type_id"];
 		$issue->priority_id = empty($post["priority_id"]) ? 0 : $post["priority_id"];
-		$issue->due_date = !empty($post["due_date"]) ? $post["due_date"] : $NewDate=Date('Y-m-d', strtotime("+1 day"));
+		$issue->due_date = !empty($post["due_date"]) ? $post["due_date"] : date('Y-m-d', strtotime("+1 day"));
 		if(!empty($post["description"])) {
 			$issue->description = $post["description"];
 		}
