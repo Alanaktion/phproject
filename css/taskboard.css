@@ -30,9 +30,6 @@ body {
 #task-table td, #task-table th {
 	vertical-align: top;
 }
-#taskboard td:first-child, #taskboard th:first-child {
-	width: 15%;
-}
 #taskboard th {
 	border-bottom: none;
 }
