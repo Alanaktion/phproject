@@ -8,10 +8,14 @@
 		<style type="text/css">
 		/* Size columns at multiples of @columnwidth ({{ @columnwidth }}px) */
 {~ foreach(@statuses as @key=>@value): ~}
-		#taskboard .table .column-{{ @key + 2 }} {
+		#taskboard table .column-{{ @key + 1 }} {
 			width: {{ @value.taskboard * @columnwidth }}px;
 		}
 {~ endforeach; ~}
+
+		#taskboard table {
+			width: {{ @column_count * $columnwidth + 252 }}px;
+		}
 
 		/* Reference images within <base> context */
 		#taskboard .completed .spinner {
@@ -35,7 +39,7 @@
 <body>
 	<include href="blocks/navbar.html" />
 	<section id="taskboard">
-		<table class="table taskboard-head">
+		<table class="taskboard-head">
 			<tr class="tb-row">
 				<th class="column column-1">
 					<div class="btn-group">
@@ -60,11 +64,11 @@
 					</a>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
-					<th class="column column-{{ @key + 2 }}">{{ @value.name }}</th>
+					<th class="column column-{{ @key + 1 }}">{{ @value.name }}</th>
 				</repeat>
 			</tr>
 		</table>
-		<table id="task-table" class="table">
+		<table id="task-table">
 			<repeat group="{{ @taskboard }}" value="{{ @row }}">
 				<tr data-story-id="{{ @row.project.id }}" class="tb-row">
 					<td class="column column-1">
