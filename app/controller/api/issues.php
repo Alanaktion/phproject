@@ -184,7 +184,14 @@ class Issues extends \Controller\Api\Base {
 		$issue->name = trim($post["name"]);
 		$issue->type_id = empty($post["type_id"]) ? 1 : $post["type_id"];
 		$issue->priority_id = empty($post["priority_id"]) ? 0 : $post["priority_id"];
-		$issue->due_date = !empty($post["due_date"]) ? $post["due_date"] : date('Y-m-d', strtotime("+1 day"));
+
+		// Set due date if valid
+		if(!empty($post["due_date"]) && preg_match("/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}( [0-9:]{8})?$/", $post["due_date"])) {
+			$issue->due_date = $post["due_date"];
+		} elseif(!empty($post["due_date"]) && $due_date = strtotime($post["due_date"])) {
+			$issue->due_date = date("Y-m-d", $due_date);
+		}
+
 		if(!empty($post["description"])) {
 			$issue->description = $post["description"];
 		}
