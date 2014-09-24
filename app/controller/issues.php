@@ -475,14 +475,17 @@ class Issues extends Base {
 			$issue->hours_total = $post["hours_remaining"] ?: null;
 			$issue->hours_remaining = $post["hours_remaining"] ?: null;
 			$issue->repeat_cycle = $post["repeat_cycle"];
+			$issue->sprint_id = $post["sprint_id"];
 
 			if(!empty($post["due_date"])) {
 				$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
 
-				//Save to the sprint of the due date
-				$sprint = new \Model\Sprint();
-				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
-				$issue->sprint_id = $sprint->id;
+				// Save to the sprint of the due date if a sprint was not specified
+				if(!$issue->sprint_id) {
+					$sprint = new \Model\Sprint();
+					$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
+					$issue->sprint_id = $sprint->id;
+				}
 			}
 			if(!empty($post["parent_id"])) {
 				$issue->parent_id = $post["parent_id"];
