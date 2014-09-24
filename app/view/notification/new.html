@@ -18,11 +18,16 @@
 
 	<div style="padding: 10px;">
 		<p style="margin: 0 0 10px;"><strong>
-			<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> created by <a href="{{ @site.url  . '/' }}user/{{ @issue.author_username }}">{{ @issue.author_name }}</a>
+			<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> created by
 			<check if="{{ @issue.parent_id }}">
-				under <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a>
+				<true>
+					<a href="{{ @site.url  . '/' }}user/{{ @issue.author_username }}">{{ @issue.author_name }}</a> under <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a>:
+				</true>
+				<false>
+					<a href="{{ @site.url  . '/' }}user/{{ @issue.author_username }}">{{ @issue.author_name }}</a>:
+				</false>
 			</check>
-		:</strong></p>
+		</strong></p>
 		<img src="{{ @site.url }}avatar/48-{{ @issue.author_id }}.png" alt="" style="float: left; margin-right: 10px;">
 		<div style="float: left">
 			{{ nl2br(@issue.description) }}
