@@ -290,8 +290,10 @@ class Taskboard extends Base {
 		$issue->author_id = $this->_userId;
 		$issue->owner_id = $post["assigned"];
 		$issue->created_date = now();
-		$issue->hours_total = $post["hours"];
-		$issue->hours_remaining = $post["hours"];
+		if(!empty($post["hours"])) {
+			$issue->hours_total = $post["hours"];
+			$issue->hours_remaining = $post["hours"];
+		}
 		if(!empty($post["dueDate"])) {
 			$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
 		}
