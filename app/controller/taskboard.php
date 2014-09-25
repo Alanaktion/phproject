@@ -8,6 +8,45 @@ class Taskboard extends Base {
 		$this->_userId = $this->_requireLogin();
 	}
 
+	/**
+	 * Get a list of users from a filter
+	 * @param  string $params URL Parameters
+	 * @return array
+	 */
+	protected function _filterUsers($params) {
+		if($params["filter"] == "groups") {
+			$group_model = new \Model\User\Group();
+			$groups_result = $group_model->find(array("user_id = ?", $this->_userId));
+			$filter_users = array($this->_userId);
+			foreach($groups_result as $g) {
+				$filter_users[] = $g["group_id"];
+			}
+			$groups = implode(",", $filter_users);
+			$users_result = $group_model->find("group_id IN ({$groups})");
+			foreach($users_result as $u) {
+				$filter_users[] = $u["user_id"];
+			}
+		} elseif($params["filter"] == "me") {
+			$filter_users = array($this->_userId);
+		} elseif(is_numeric($params["filter"])) {
+			$user = new \Model\User();
+			$user->load($params["filter"]);
+			if ($user->role == 'group') {
+				$group_model = new \Model\User\Group();
+				$users_result = $group_model->find(array("group_id = ?", $user->id));
+				$filter_users = array(intval($params["filter"]));
+				foreach($users_result as $u) {
+					$filter_users[] = $u["user_id"];
+				}
+			} else {
+				$filter_users = array($params["filter"]);
+			}
+		} else {
+			return array($this->_userId);
+		}
+		return $filter_users;
+	}
+
 	public function index($f3, $params) {
 
 		// Require a valid numeric sprint ID
@@ -34,35 +73,7 @@ class Taskboard extends Base {
 		$f3->set("menuitem", "backlog");
 
 		// Get list of all users in the user's groups
-		if($params["filter"] == "groups") {
-			$group_model = new \Model\User\Group();
-			$groups_result = $group_model->find(array("user_id = ?", $this->_userId));
-			$filter_users = array($this->_userId);
-			foreach($groups_result as $g) {
-				$filter_users[] = $g["group_id"];
-			}
-			$groups = implode(",", $filter_users);
-			$users_result = $group_model->find("group_id IN ({$groups})");
-			foreach($users_result as $u) {
-				$filter_users[] = $u["user_id"];
-			}
-		} elseif($params["filter"] == "me") {
-			$filter_users = array($this->_userId);
-		} elseif(is_numeric($params["filter"])) {
-			// Get a taskboard for a user or group
-			$user= new \Model\User();
-			$user->load($params["filter"]);
-			if ($user->role == 'group') {
-				$group_model = new \Model\User\Group();
-				$users_result = $group_model->find(array("group_id = ?", $user->id));
-				$filter_users = array(intval($params["filter"]));
-				foreach($users_result as $u) {
-					$filter_users[] = $u["user_id"];
-				}
-			} else {
-				$filter_users = array($params["filter"]);
-			}
-		}
+		$filter_users = $this->_filterUsers($params);
 
 		// Load issue statuses
 		$status = new \Model\Issue\Status();
