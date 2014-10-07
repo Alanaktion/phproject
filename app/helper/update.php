@@ -89,6 +89,15 @@ class Update extends \Prefab {
 					$new_val = $type->name;
 				}
 				break;
+			case "hours_total":
+				$name = "Planned Hours";
+				break;
+			case "hours_remaining":
+				$name = "Remaining Hours";
+				break;
+			case "hours_spent":
+				$name = "Spent Hours";
+				break;
 		}
 
 		// Generate human readable field name if not already specified
