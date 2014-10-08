@@ -41,6 +41,8 @@ class Taskboard extends Base {
 			} else {
 				$filter_users = array($params["filter"]);
 			}
+		} elseif($params["filter"] == "all") {
+			return array();
 		} else {
 			return array($this->_userId);
 		}
