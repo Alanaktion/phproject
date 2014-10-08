@@ -45,7 +45,7 @@ class Image extends \Image {
 
 		$f3 = \Base::instance();
 
-		$font = $f3->get("ROOT") . "/fonts/" . $font;
+		$font = "fonts/" . $font;
 		if(!is_file($font)) {
 			$f3->error(500, "Font file not found");
 			return false;
@@ -96,7 +96,7 @@ class Image extends \Image {
 			$max_width = $this->width();
 		}
 
-		$font = $f3->get("ROOT") . "/fonts/" . $font;
+		$font = "fonts/" . $font;
 		if(!is_file($font)) {
 			$f3->error(500, "Font file {$font} not found");
 			return false;
