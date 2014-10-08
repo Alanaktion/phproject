@@ -5,8 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{ @dict.install_phproject }}</title>
-	<!-- <link rel="stylesheet" type="text/css" href="css/bootstrap-phproject.css"> -->
-	<link rel="stylesheet" type="text/css" href="css/bootstrap-phproject-dark.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-phproject.css">
 	<style type="text/css">
 		body {
 			margin: 15px 0;
@@ -52,6 +51,15 @@
 												<label for="mail-from" class="col-sm-3 control-label">From Address</label>
 												<div class="col-sm-9">
 													<input type="text" class="form-control" id="mail-from" name="mail-from" placeholder="Optional">
+												</div>
+											</div>
+											<div class="form-group form-group-sm">
+												<label for="site-public_registration" class="col-sm-3 control-label">Registration</label>
+												<div class="col-sm-9">
+													<select class="form-control" name="site-public_registration" id="site-public_registration">
+														<option value="0">Not Allowed</option>
+														<option value="1">Open to Public</option>
+													</select>
 												</div>
 											</div>
 											<div class="col-sm-9 col-sm-offset-3">
