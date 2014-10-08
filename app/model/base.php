@@ -13,11 +13,13 @@ abstract class Base extends \DB\SQL\Mapper {
 			if(empty($table_name)) {
 				$f3->error(500, "Model instance does not have a table name specified.");
 			} else {
-				$this->table_name = $table_name;
+				$this->_table_name = $table_name;
 			}
 		}
 
-		parent::__construct($f3->get("db.instance"), $this->_table_name, null, $f3->get("cache_expire.db"));
+		$table = $f3->get("db.prefix") ? $f3->get("db.prefix") . $this->_table_name : $this->_table_name;
+
+		parent::__construct($f3->get("db.instance"), $table, null, $f3->get("cache_expire.db"));
 		return $this;
 	}
 

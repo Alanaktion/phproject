@@ -50,8 +50,19 @@ function run_install() {
 			$post["db-pass"]
 		);
 
-		// Run installation scripts
 		$install_db = file_get_contents("database.sql");
+
+		// Rewrite database import script with table prefixes
+		if(!empty($post["db-prefix"])) {
+			$install_db = preg_replace_callback("/((CREATE|DROP) (VIEW|TABLE)( IF EXISTS)?|INSERT INTO|JOIN|REFERENCES|FROM) \(*`?([a-z_]+)`?/im", function ($matches) use($post) {
+				$table = $matches[count($matches) - 1];
+				return str_replace($table, $post["db-prefix"] . $table, $matches[0]);
+			}, $install_db);
+		}
+
+		file_put_contents("database-prefixed.sql", $install_db);
+
+		// Run database installation script
 		$db->exec(explode(";", $install_db));
 
 		// Update admin user if necessary
@@ -88,6 +99,7 @@ db.port={$post['db-port']}
 db.user={$post['db-user']}
 db.pass={$post['db-pass']}
 db.name={$post['db-name']}
+db.prefix={$post['db-prefix']}
 
 ; Global site configuration
 site.name={$post['site-name']}
@@ -101,7 +113,7 @@ mail.from={$post['mail-from']}
 }
 
 // Attempt installation if POST data received
-if($f3->get("POST")) {
+if($f3->get("POST") && !is_file("config.ini")) {
 	run_install();
 }
 
