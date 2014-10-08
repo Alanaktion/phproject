@@ -92,6 +92,7 @@ db.name={$post['db-name']}
 ; Global site configuration
 site.name={$post['site-name']}
 site.timezone={$post['site-timezone']}
+site.public_registration={$post['site-public_registration']}
 
 ; Email
 mail.from={$post['mail-from']}

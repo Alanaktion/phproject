@@ -71,6 +71,61 @@ class Index extends Base {
 		}
 	}
 
+	public function registerpost($f3, $params) {
+
+		// Exit immediately if public registrations are disabled
+		if(!$f3->get("site.public_registration")) {
+			$f3->error(400);
+			die();
+		}
+
+		$errors = array();
+		$user = new \Model\User;
+
+		// Check for existing users
+		$user->load(array("email=?", $f3->get("POST.register-email")));
+		if($user->id) {
+			$errors[] = "A user already exists with this email address.";
+		}
+		$user->load(array("username=?", $f3->get("POST.register-username")));
+		if($user->id) {
+			$errors[] = "A user already exists with this username.";
+		}
+
+		// Validate user data
+		if(!$f3->get("POST.register-name")) {
+			$errors[] = "Name is required";
+		}
+		if(!preg_match("/^[0-9a-z]{4,}$/i", $f3->get("POST.register-username"))) {
+			$errors[] = "Usernames must be at least 4 characters and can only contain letters and numbers.";
+		}
+		if(!filter_var($f3->get("POST.register-email"), FILTER_VALIDATE_EMAIL)) {
+			$errors[] = "A valid email address is required.";
+		}
+		if(strlen($f3->get("POST.register-password")) < 6) {
+			$errors[] = "Password must be at least 6 characters.";
+		}
+
+		// Show errors or create new user
+		if($errors) {
+			$f3->set("register.error", implode("<br>", $errors));
+			echo \Template::instance()->render("index/login.html");
+		} else {
+			$user->reset();
+			$user->username = trim($f3->get("POST.register-username"));
+			$user->email = trim($f3->get("POST.register-email"));
+			$user->name = trim($f3->get("POST.register-name"));
+			$security = \Helper\Security::instance();
+			extract($security->hash($f3->get("POST.register-password")));
+			$user->password = $hash;
+			$user->salt = $salt;
+			$user->task_color = sprintf("%06X", mt_rand(0, 0xFFFFFF));
+			$user->save();
+			$f3->set("SESSION.phproject_user_id", $user->id);
+			$f3->reroute("/");
+		}
+	}
+
 	public function reset($f3, $params) {
 		if($f3->get("user.id")) {
 			$f3->reroute("/");
