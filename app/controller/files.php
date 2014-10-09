@@ -140,8 +140,9 @@ class Files extends Base {
 		}
 
 		$force = true;
-		if(substr($file->content_type, 0, 5) == "image") {
-			// Don't force download on image files
+		if(substr($file->content_type, 0, 5) == "image" || $file->content_type == "text/plain") {
+			// Don't force download on image and plain text files
+			// Eventually I'd like to have previews of files some way (more than the existing thumbnails), but for now this is how we do it - Alan
 			$force = false;
 		}
 
