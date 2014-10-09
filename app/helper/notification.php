@@ -87,8 +87,8 @@ class Notification extends \Prefab {
 			$f3->set("update", $update);
 			$body = \Template::instance()->render("notification/update.html");
 
-			$closed = $changes->load(array("issue_update_id = ? AND `field` = 'closed_date' AND old_value = '' and new_value != ''", $update->id));
-			if($closed->id) {
+			$changes->load(array("issue_update_id = ? AND `field` = 'closed_date' AND old_value = '' and new_value != ''", $update->id));
+			if($changes && $changes->id) {
 				$subject = "[#{$issue->id}] - {$issue->name} closed";
 			} else {
 				$subject =  "[#{$issue->id}] - {$issue->name} updated";
