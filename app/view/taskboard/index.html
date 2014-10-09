@@ -320,6 +320,9 @@
 				$(".taskboard-head").css("left", (0 - left) + 'px');
 			});
 
+			// Trigger scroll handler on ready (in case user refreshed after scrolling)
+			$(window).scroll();
+
 		});
 	</script>
 </body>
