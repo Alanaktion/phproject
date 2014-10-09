@@ -36,7 +36,7 @@ class Notification extends \Prefab {
 			$f3->set("comment", $comment);
 			$body = \Template::instance()->render("notification/comment.html");
 
-			$subject = "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
+			$subject = "[#{$issue->id}] - New comment on {$issue->name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
@@ -87,7 +87,7 @@ class Notification extends \Prefab {
 			$f3->set("update", $update);
 			$body = \Template::instance()->render("notification/update.html");
 
-			$subject =  "[#" . $issue->id . "] - ".$update->user_name . " updated  " . $issue->name;
+			$subject =  "[#{$issue->id}] - {$issue->name} updated";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
@@ -127,7 +127,7 @@ class Notification extends \Prefab {
 
 			$body = \Template::instance()->render("notification/new.html");
 
-			$subject =  "[#" . $issue->id . "] - ".$issue->author_name . " created " . $issue->name;
+			$subject =  "[#{$issue->id}] - {$issue->name} created by {$issue->author_name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
@@ -169,7 +169,7 @@ class Notification extends \Prefab {
 			$f3->set("file", $file);
 			$body = \Template::instance()->render("notification/file.html");
 
-			$subject =  "[#" . $issue->id . "] - ".$file->user_name . " attached a file to " . $issue->name;
+			$subject =  "[#{$issue->id}] - {$file->user_name} attached a file to {$issue->name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
@@ -198,7 +198,7 @@ class Notification extends \Prefab {
 			$body = \Template::instance()->render("notification/user_reset.html");
 
 			// Send email to user
-			$subject = "Reset your password";
+			$subject = "Reset your password - " . $f3->get("site.name");
 			utf8mail($user->email, $subject, $body);
 		}
 	}

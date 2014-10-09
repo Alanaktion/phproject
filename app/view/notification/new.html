@@ -6,7 +6,7 @@
 		body {
 			margin: 0;
 			padding: 0;
-			font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+			font-family: 'Open Sans','Helvetica Neue',Arial,sans-serif;
 			font-size: 14px;
 			line-height: 16px;
 			color: #000;
@@ -28,11 +28,23 @@
 				</false>
 			</check>
 		</strong></p>
-		<img src="{{ @site.url }}avatar/48-{{ @issue.author_id }}.png" alt="" style="float: left; margin-right: 10px;">
-		<div style="float: left">
-			{{ nl2br(@issue.description) }}
-		</div>
-		<div style="clear:both"></div>
+
+		<ul>
+			<li><b>Assigned to:</b> {{ @issue.owner_name }}</li>
+			<li><b>Priority:</b> {{ @issue.priority_name }}</li>
+			<li><b>Status:</b> {{ @issue.status_name }}</li>
+			<check if="{{ strtotime(@issue.hours_total) }}">
+				<li><b>Planned Hours:</b> {{ @issue.hours_total }}</li>
+			</check>
+			<check if="{{ strtotime(@issue.due_date) }}">
+				<li><b>Due Date:</b> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</li>
+			</check>
+		</ul>
+
+		<br>
+
+		<b>Description:</b><br>
+		{{ nl2br(@issue.description) }}
 
 	</div>
 	<div style="padding: 0 10px;">
