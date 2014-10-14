@@ -32,7 +32,7 @@ class Files extends Base {
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);
 
-		if(!$file->id) {
+		if(!$file->id || !is_file($file->disk_filename)) {
 			$f3->error(404);
 			return;
 		}
@@ -41,7 +41,7 @@ class Files extends Base {
 		$bg = 0xFFFFFF;
 
 		// Generate thumbnail of image file
-		if(substr($file->content_type, 0, 5) == "image") {
+		if(substr($file->content_type, 0, 6) == "image/") {
 			if(is_file($file->disk_filename)) {
 				$img = new \Helper\Image($file->disk_filename);
 				$hide_ext = true;
@@ -57,7 +57,7 @@ class Files extends Base {
 		}
 
 		// Generate thumbnail of text contents
-		elseif(substr($file->content_type, 0, 4) == "text") {
+		elseif(substr($file->content_type, 0, 5) == "text/") {
 
 			// Get first 2KB of file
 			$fh = fopen($file->disk_filename, "r");
@@ -130,6 +130,34 @@ class Files extends Base {
 		}
 	}
 
+	public function preview($f3, $params) {
+		$file = new \Model\Issue\File();
+		$file->load($params["id"]);
+
+		if(!$file->id || !is_file($file->disk_filename)) {
+			$f3->error(404);
+			return;
+		}
+
+		if(substr($file->content_type, 0, 5) == "image" || $file->content_type == "text/plain") {
+			sendfile($file->disk_filename, $file->content_type, null, false);
+			return;
+		}
+
+		if($file->content_type == "text/csv" || $file->content_type == "text/tsv") {
+			$delimiter = ",";
+			if($file->content_type == "text/tsv") {
+				$delimiter = "\t";
+			}
+			$f3->set("file", $file);
+			$f3->set("delimiter", $delimiter);
+			echo \Template::instance()->render("issues/file/preview/table.html");
+			return;
+		}
+
+		$f3->reroute("/files/{$file->id}/{$file->filename}");
+	}
+
 	public function file($f3, $params) {
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);
@@ -146,7 +174,7 @@ class Files extends Base {
 			$force = false;
 		}
 
-		if(!\Web::instance()->send($file->disk_filename, null, 0, $force)) {
+		if(!sendfile($file->disk_filename, $file->content_type, $file->filename, $force)) {
 			$f3->error(404);
 		}
 	}

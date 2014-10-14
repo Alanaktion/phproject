@@ -254,3 +254,38 @@ function utc2local($timestamp = null) {
 
 	return $timestamp + $offset;
 }
+
+/**
+ * Send a file to the browser
+ * @param  string $file
+ * @param  string $mime
+ * @param  string $filename
+ * @param  bool   $force
+ * @return int|bool
+ */
+function sendfile($file, $mime = "", $filename = "", $force = true) {
+	if (!is_file($file)) {
+		return FALSE;
+	}
+
+	$size = filesize($file);
+
+	if(!$mime) {
+		$mime = \Web::instance()->mime($file);
+	}
+	header("Content-Type: $mime");
+
+	if ($force) {
+		if(!$filename) {
+			$filename = basename($file);
+		}
+		header("Content-Disposition: attachment; filename=$filename");
+	}
+
+	header("Accept-Ranges: bytes");
+	header("Content-Length: $size");
+	header("X-Powered-By: " . \Base::instance()->get("PACKAGE"));
+
+	readfile($file);
+	return $size;
+}
