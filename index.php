@@ -62,7 +62,8 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.pass")
 ));
 
-// Define global core functions
+// Define global core classes and functions
+require_once "app/core.php";
 require_once "app/functions.php";
 
 // Minify static resources

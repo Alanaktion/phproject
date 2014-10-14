@@ -2,7 +2,7 @@
 
 namespace Controller\Api;
 
-abstract class Base extends \Controller\Base {
+abstract class Base extends \Controller {
 
 	/**
 	 * Require an API key. Sends an HTTP 403 if one is not supplied.

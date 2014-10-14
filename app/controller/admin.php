@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class Admin extends Base {
+class Admin extends \Controller {
 
 	protected $_userId;
 

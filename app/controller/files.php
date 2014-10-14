@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class Files extends Base {
+class Files extends \Controller {
 
 	/**
 	 * Forces the framework to use the local filesystem cache method if possible
