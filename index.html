@@ -1,108 +1,60 @@
-<!doctype html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>Phproject</title>
-	<meta name="description" content="Log in with demo/demo.">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="bootstrap-phproject-docs.min.css">
-</head>
-<body>
-	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nb">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<div class="pull-right visible-xs visible-sm">
-					<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/release"><span class="glyphicon glyphicon-save"></span></a>
-					<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span></a>
-					<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span></a>
-					&ensp;
-				</div>
-				<a class="navbar-brand" href=".">Phproject</a>
-			</div>
-			<div class="collapse navbar-collapse navbar-left" id="nb">
-				<ul class="nav navbar-nav">
-					<li><a href="install.html">Installation</a></li>
-					<li><a href="customize.html">Customization</a></li>
-					<li><a href="contribute.html">Contributing</a></li>
-					<li><a href="plugins.html">Plugins</a></li>
-				</ul>
-			</div>
-			<div class="navbar-right hidden-xs hidden-sm">
-				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/release"><span class="glyphicon glyphicon-save"></span>&ensp; Download</a>
-				<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span>&ensp; Demo</a>
-				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span>&ensp; GitHub</a>
-			</div>
-		</div>
-	</div>
-	<div class="jumbotron">
-		<div class="container">
-			<h1>Phproject</h1>
-			<p>A high performance full-featured project management system</p>
-			<br>
-		</div>
-	</div>
+---
+layout: default
+---
+<div class="jumbotron">
 	<div class="container">
-		<div class="row row-spaced">
-			<div class="col-md-7 col-padded text-center">
-				<h2 id="dashboard">Dashboard</h2>
-				<p>The dashboard is the main page for logged in users. It provides a quick way to access all assigned projects, tasks, and bugs, as well as create new ones. In future updates, the dashboard will allow grouping issues by projects, sprints, and issue authors, as well as bulk editing of issues.</p>
-			</div>
-			<div class="col-md-5">
-				<img class="img-responsive" src="img/dashboard.png" alt>
-			</div>
+		<h1>{{ site.title }}</h1>
+		<p>{{ site.description }}</p>
+		<br>
+	</div>
+</div>
+<div class="container">
+	<div class="row row-spaced">
+		<div class="col-md-7 col-padded text-center">
+			<h2 id="dashboard">Dashboard</h2>
+			<p>The dashboard is the main page for logged in users. It provides a quick way to access all assigned projects, tasks, and bugs, as well as create new ones. In future updates, the dashboard will allow grouping issues by projects, sprints, and issue authors, as well as bulk editing of issues.</p>
 		</div>
-		<div class="row row-spaced">
-			<div class="col-md-7 col-md-push-5 col-padded text-center">
-				<h2 id="issues">Issues</h2>
-				<p>Every issue has a dedicated page with everything about it right there. Users can leave comments on issues, and the history tab shows a log of everything that's happened with the issue. You can add users as a watcher so they'll be notified when the issue is updated or commented on. You can also view and add related issues.</p>
-			</div>
-			<div class="col-md-5 col-md-pull-7">
-				<img class="img-responsive" src="img/issue.png" alt>
-			</div>
+		<div class="col-md-5">
+			<img class="img-responsive" src="{{ '/img/dashboard.png' | prepend: site.assetsurl }}" alt>
 		</div>
-		<div class="row row-spaced">
-			<div class="col-md-7 col-padded text-center">
-				<h2 id="backlog">Backlog</h2>
-				<p>Projects can be sorted and moved into customizable sprints from a simple drag-and-drop interface. The backlog also keeps a history of all previous sprints and their projects. The backlog can be filtered to only show projects related to a specific group of users.</p>
-			</div>
-			<div class="col-md-5">
-				<img class="img-responsive" src="img/backlog.png" alt>
-			</div>
+	</div>
+	<div class="row row-spaced">
+		<div class="col-md-7 col-md-push-5 col-padded text-center">
+			<h2 id="issues">Issues</h2>
+			<p>Every issue has a dedicated page with everything about it right there. Users can leave comments on issues, and the history tab shows a log of everything that's happened with the issue. You can add users as a watcher so they'll be notified when the issue is updated or commented on. You can also view and add related issues.</p>
 		</div>
-		<div class="row row-spaced">
-			<div class="col-md-7 col-md-push-5 col-padded text-center">
-				<h2 id="taskboard">Taskboard</h2>
-				<p>The taskboard displays the projects and tasks in a sprint with a scrum board interface. Tasks can be moved between projects, and users can update them with priorities, due dates, and hours spent working on the task. Like the backlog, the taskboard can be filtered to only show tasks and projects related to a specific group of users to prevent it from being excessively large when several departments have tasks in a single sprint.</p>
-			</div>
-			<div class="col-md-5 col-md-pull-7">
-				<img class="img-responsive" src="img/taskboard.png" alt>
+		<div class="col-md-5 col-md-pull-7">
+			<img class="img-responsive" src="{{ '/img/issue.png' | prepend: site.assetsurl }}" alt>
+		</div>
+	</div>
+	<div class="row row-spaced">
+		<div class="col-md-7 col-padded text-center">
+			<h2 id="backlog">Backlog</h2>
+			<p>Projects can be sorted and moved into customizable sprints from a simple drag-and-drop interface. The backlog also keeps a history of all previous sprints and their projects. The backlog can be filtered to only show projects related to a specific group of users.</p>
+		</div>
+		<div class="col-md-5">
+			<img class="img-responsive" src="{{ '/img/backlog.png' | prepend: site.assetsurl }}" alt>
+		</div>
+	</div>
+	<div class="row row-spaced">
+		<div class="col-md-7 col-md-push-5 col-padded text-center">
+			<h2 id="taskboard">Taskboard</h2>
+			<p>The taskboard displays the projects and tasks in a sprint with a scrum board interface. Tasks can be moved between projects, and users can update them with priorities, due dates, and hours spent working on the task. Like the backlog, the taskboard can be filtered to only show tasks and projects related to a specific group of users to prevent it from being excessively large when several departments have tasks in a single sprint.</p>
+		</div>
+		<div class="col-md-5 col-md-pull-7">
+			<img class="img-responsive" src="{{ '/img/taskboard.png' | prepend: site.assetsurl }}" alt>
+		</div>
+	</div>
+</div>
+<br>
+<div class="jumbotron jumbotron-inverse">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h2 id="performance">Performance</h2>
+				<p><small>Phproject has been designed from the beginning to be fast. Database queries run are kept very simple and consistent, and we've made every effort to keep the number of queries needed to generate each page at an absolute minimum. It uses the <a href="http://fatfreeframework.com/" target="_blank">Fat Free Framework</a> as it's base, allowing it to have a simple but powerful feature set without compromising performance. Every template file is compiled at run time, and only needs to be recompiled when the code is changed. Phproject also includes internal caching that prevents slow duplicate database queries from being used, such as table schema lookups, which greatly increases performance on large pages with lots of data.</small></p>
+				<br>
 			</div>
 		</div>
 	</div>
-	<br>
-	<div class="jumbotron jumbotron-inverse">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<h2 id="performance">Performance</h2>
-					<p><small>Phproject has been designed from the beginning to be fast. Database queries run are kept very simple and consistent, and we've made every effort to keep the number of queries needed to generate each page at an absolute minimum. It uses the <a href="http://fatfreeframework.com/" target="_blank">Fat Free Framework</a> as it's base, allowing it to have a simple but powerful feature set without compromising performance. Every template file is compiled at run time, and only needs to be recompiled when the code is changed. Phproject also includes internal caching that prevents slow duplicate database queries from being used, such as table schema lookups, which greatly increases performance on large pages with lots of data.</small></p>
-					<br>
-				</div>
-			</div>
-		</div>
-	</div>
-	<footer class="container text-muted">
-		<p class="pull-left">Developed and maintained by <a href="https://phpizza.com" target="_blank">Alan Hardman</a> and the IT team at <a href="https://www.thrivelife.com/" target="_blank" rel="nofollow">Thrive Life</a></p>
-		<p class="pull-right"><a href="https://github.com/Alanaktion/phproject" target="_blank">Github</a>&ensp;&middot;&ensp;<a href="https://github.com/Alanaktion/phproject/issues?state=open" target="_blank">Issues</a>&ensp;&middot;&ensp;<a href="http://demo.phproject.org" target="_blank">Demo</a>&emsp;&copy; 2013-2014</p>
-	</footer>
-	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-</body>
-</html>
+</div>

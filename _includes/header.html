@@ -1,0 +1,32 @@
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nb">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<div class="pull-right visible-xs visible-sm">
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/release"><span class="glyphicon glyphicon-save"></span></a>
+				<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span></a>
+				<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span></a>
+				&ensp;
+			</div>
+			<a class="navbar-brand" href="{{ site.baseurl | prepend: site.url }}">{{ site.title }}</a>
+		</div>
+		<div class="collapse navbar-collapse navbar-left" id="nb">
+			<ul class="nav navbar-nav">
+				<li class="{% if page.url == '/install.html' %}active{% endif %}"><a href="install.html">Installation</a></li>
+				<li class="{% if page.url == '/customize.html' %}active{% endif %}"><a href="customize.html">Customization</a></li>
+				<li class="{% if page.url == '/contribute.html' %}active{% endif %}"><a href="contribute.html">Contributing</a></li>
+				<li class="{% if page.url == '/plugins.html' %}active{% endif %}"><a href="plugins.html">Plugins</a></li>
+			</ul>
+		</div>
+		<div class="navbar-right hidden-xs hidden-sm">
+			<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject/zipball/release"><span class="glyphicon glyphicon-save"></span>&ensp; Download</a>
+			<a class="btn btn-default navbar-btn" href="http://demo.phproject.org" target="_blank"><span class="glyphicon glyphicon-globe"></span>&ensp; Demo</a>
+			<a class="btn btn-default navbar-btn" href="https://github.com/Alanaktion/phproject" target="_blank"><span class="glyphicon glyphicon-heart"></span>&ensp; GitHub</a>
+		</div>
+	</div>
+</div>
