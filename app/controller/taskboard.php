@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class Taskboard extends Base {
+class Taskboard extends \Controller {
 
 	public function __construct() {
 		$this->_userId = $this->_requireLogin();

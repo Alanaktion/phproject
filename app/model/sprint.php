@@ -2,7 +2,7 @@
 
 namespace Model;
 
-class Sprint extends Base {
+class Sprint extends \Model {
 
 	protected $_table_name = "sprint";
 

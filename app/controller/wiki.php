@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class Wiki extends Base {
+class Wiki extends \Controller {
 
 	protected $_userId;
 

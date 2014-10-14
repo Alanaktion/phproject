@@ -2,7 +2,7 @@
 
 namespace Model;
 
-class User extends Base {
+class User extends \Model {
 
 	protected $_table_name = "user";
 

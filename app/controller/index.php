@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class Index extends Base {
+class Index extends \Controller {
 
 	public function index($f3, $params) {
 		if($f3->get("user.id")) {
