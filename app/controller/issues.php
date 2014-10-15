@@ -21,8 +21,8 @@ class Issues extends \Controller {
 		// Filter issue listing by URL parameters
 		$filter = array();
 		$args = $f3->get("GET");
-		foreach($args as $key=>$val) {
-			if(!empty($val) && $issues->exists($key)) {
+		foreach($args as $key => $val) {
+			if(!empty($val) && !is_array($val) && $issues->exists($key)) {
 				$filter[$key] = $val;
 			}
 		}
