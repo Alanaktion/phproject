@@ -60,7 +60,7 @@ class Issues extends \Controller {
 		unset($val);
 		$filter_str .= " deleted_date IS NULL ";
 
-
+		// Build SQL ORDER BY string
 		$orderby = !empty($_GET['orderby']) ? $_GET['orderby'] : "priority";
 		$ascdesc = !empty($_GET['ascdesc']) && $_GET['ascdesc'] == 'asc' ? "ASC" : "DESC";
 		switch($orderby) {
