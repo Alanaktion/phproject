@@ -26,6 +26,7 @@ class Issues extends \Controller {
 				$filter[$key] = $val;
 			}
 		}
+		unset($val);
 
 		// Build SQL string to use for filtering
 		$filter_str = "";
@@ -56,6 +57,7 @@ class Issues extends \Controller {
 				$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
 			}
 		}
+		unset($val);
 		$filter_str .= " deleted_date IS NULL ";
 
 
