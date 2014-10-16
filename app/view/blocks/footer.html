@@ -95,7 +95,7 @@
 	$(document).ready(function() {
 		$(document).on('keyup', function(e) {
 			// Only handle hotkeys when not in a form context
-			if(e.target.type != 'textarea' && e.target.tagName != 'INPUT' && e.target.type != 'select') {
+			if(e.target.type != 'textarea' && e.target.tagName != 'INPUT' && e.target.tagName != 'SELECT') {
 				switch (e.which) {
 					case 191: // Hotkey modal
 						if(e.shiftKey) {
