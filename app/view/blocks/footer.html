@@ -99,7 +99,7 @@
 				switch (e.which) {
 					case 191: // Hotkey modal
 						if(e.shiftKey) {
-							$('.modal.in').modal('hide');
+							$('.modal.in').not('#modal-hotkeys').modal('hide');
 							$('#modal-hotkeys').modal('toggle');
 						}
 						break;
