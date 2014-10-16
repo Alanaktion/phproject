@@ -45,12 +45,12 @@
 			<div class="pull-right">
 				<check if="{{ !@issue.closed_date }}">
 					<true>
-						<a id="btn-Mark Complete" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
+						<a id="btn-issue-close" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
 							<span class="glyphicon glyphicon-check"></span>&ensp;{{ @dict.complete }}
 						</a>
 					</true>
 					<false>
-						<a id="btn-Mark Complete" href="issues/reopen/{{ @issue.id }}" class="btn btn-warning btn-xs">
+						<a id="btn-issue-reopen" href="issues/reopen/{{ @issue.id }}" class="btn btn-warning btn-xs">
 							<span class="glyphicon glyphicon-repeat"></span>&ensp;{{ @dict.reopen }}
 						</a>
 					</false>
