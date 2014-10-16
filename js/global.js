@@ -25,7 +25,7 @@ $(document).ready(function() {
 	});
 	$('.issue-list tbody tr').click(function(e) {
 		var $checkbox = $(this).find('input');
-		if (e.ctrlKey) {
+		if (e.ctrlKey || e.metaKey) {
 			$checkbox.prop('checked', !$checkbox.prop('checked'));
 		} else {
 			var checked = $checkbox.prop('checked');
@@ -40,9 +40,9 @@ $(document).ready(function() {
 		self.location = 'issues/' + $(this).data('id');
 	});
 
-	// Submit from textarea if Ctrl+Enter is pressed
+	// Submit from textarea if Ctrl+Enter or Cmd+Enter is pressed
 	$('body').on('keypress', 'textarea', function(e) {
-		if(e.keyCode == 13 && (e.target.type != 'textarea' || (e.target.type == 'textarea' && e.ctrlKey))) {
+		if(e.keyCode == 13 && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.metaKey)))) {
 			$(this).parents('form')[0].submit();
 			e.preventDefault();
 		}
