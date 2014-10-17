@@ -67,8 +67,8 @@ class Issue extends \Model {
 
 		// Censor credit card numbers if enabled
 		if($f3->get("security.block_ccs")) {
-			if(preg_match("/[0-9-]{9,15}[0-9]{4}/", $this->get("description"))) {
-				$this->set("description", preg_replace("/[0-9-]{9,15}([0-9]{4})/", "************$1", $this->get("description")));
+			if(preg_match("/([0-9]{3,4}-){3}[0-9]{3,4}/", $this->get("description"))) {
+				$this->set("description", preg_replace("/([0-9]{3,4}-){3}([0-9]{3,4})/", "************$2", $this->get("description")));
 			}
 		}
 
