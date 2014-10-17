@@ -17,10 +17,10 @@
 		</div>
 		<div class="collapse navbar-collapse navbar-left" id="nb">
 			<ul class="nav navbar-nav">
-				<li class="{% if page.url == '/install.html' %}active{% endif %}"><a href="install.html">Installation</a></li>
-				<li class="{% if page.url == '/customize.html' %}active{% endif %}"><a href="customize.html">Customization</a></li>
-				<li class="{% if page.url == '/contribute.html' %}active{% endif %}"><a href="contribute.html">Contributing</a></li>
-				<li class="{% if page.url == '/plugins.html' %}active{% endif %}"><a href="plugins.html">Plugins</a></li>
+				<li{% if page.url == '/install.html' %} class="active"{% endif %}><a href="install.html">Installation</a></li>
+				<li{% if page.url == '/customize.html' %} class="active"{% endif %}><a href="customize.html">Customization</a></li>
+				<li{% if page.url == '/contribute.html' %} class="active"{% endif %}><a href="contribute.html">Contributing</a></li>
+				<li{% if page.url == '/plugins.html' %} class="active"{% endif %}><a href="plugins.html">Plugins</a></li>
 			</ul>
 		</div>
 		<div class="navbar-right hidden-xs hidden-sm">
