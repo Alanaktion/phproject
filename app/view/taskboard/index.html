@@ -100,6 +100,7 @@
 						<td class="column column-{{ @status_id + 1 }} {{ @statuses[@status_id]['closed'] ? 'completed' : '' }} droppable" data-status="{{ @status_id }}">
 							<repeat group="{{ @col }}" value="{{ @task }}">
 								<div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto bottom" data-container="body" data-content="<strong>Author: </strong>{{ @task.author_name }}<br><strong>Description: </strong> {{ strlen(@task.description) > 500 ? htmlentities(substr(@task.description, 0, 500)) . ' [...]' : htmlentities(@task.description) }}" style="border-color:#{{ @task.owner_task_color }};">
+									<div class="hidden repeat_cycle">{{@task.repeat_cycle}}</div>
 									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
 										<span class="task-id"><a href="issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
@@ -149,6 +150,7 @@
 		</table>
 	</section>
 	<div class="card task cloneable" id="new_task">
+		<div class="hidden repeat_cycle"></div>
 		<div class="hours"></div><div class="top">
 			<span class="task-id"></span>
 		</div>
@@ -207,6 +209,18 @@
 						<div class="form-group">
 							<label for="dueDate">Due Date</label>
 							<input type="text" name="dueDate" id="dueDate" value="" class="dueDate form-control input-sm">
+						</div>
+						<div class="form-group">
+							<label for="repeat_cycle">{{ @dict.cols.repeat_cycle }}</label>
+							<div>
+								<select class="form-control input-sm" id="repeat_cycle" name="repeat_cycle">
+									<option value="none">{{ @dict.not_repeating }}</option>
+									<option value="daily" {{ !empty(@issue) && @issue.repeat_cycle == 'daily' ? "selected" : "" }}>{{ @dict.daily }}</option>
+									<option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>{{ @dict.weekly }}</option>
+									<option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>{{ @dict.monthly }}</option>
+									<option value="sprint" {{ !empty(@issue) && @issue.repeat_cycle == 'sprint' ? "selected" : "" }}>{{ @dict.sprint }}</option>
+								</select>
+							</div>
 						</div>
 						<div class="form-group">
 							<label for="priority">Priority</label>
