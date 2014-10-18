@@ -5,7 +5,7 @@ namespace Controller\Api;
 abstract class Base extends \Controller {
 
 	/**
-	 * Require an API key. Sends an HTTP 403 if one is not supplied.
+	 * Require an API key. Sends an HTTP 401 if one is not supplied.
 	 * @return int|bool
 	 */
 	protected function _requireAuth() {
