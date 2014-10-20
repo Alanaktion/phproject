@@ -120,7 +120,7 @@ class Files extends \Controller {
 
 			// Render and output image
 			header("Content-type: image/" . $params["format"]);
-			$data = $img->render($params["format"]);
+			$img->render($params["format"]);
 
 		} else {
 

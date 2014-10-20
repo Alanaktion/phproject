@@ -96,7 +96,6 @@ class Issues extends \Controller\Api\Base {
 		if($_REQUEST) {
 			// By default, use standard HTTP POST fields
 			$post = $_REQUEST;
-			//$logger->write($_POST);
 		} else {
 
 

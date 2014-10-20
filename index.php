@@ -23,7 +23,7 @@ if(!is_file("config.ini")) {
 
 // Get current Git revision
 if(is_file(".git/refs/heads/master")) {
-	$f3->set("revision", @file_get_contents(".git/refs/heads/master"));
+	$f3->set("revision", file_get_contents(".git/refs/heads/master"));
 } else {
 	$f3->set("revision", "");
 }
@@ -36,7 +36,7 @@ $f3->config("config.ini");
 $f3->config("app/routes.ini");
 
 // Set up error handling
-$f3->set("ONERROR", function($f3) {
+$f3->set("ONERROR", function(Base $f3) {
 	switch($f3->get("ERROR.code")) {
 		case 404:
 			$f3->set("title", "Not Found");
@@ -68,7 +68,7 @@ require_once "app/functions.php";
 
 // Minify static resources
 // Cache for 1 week
-$f3->route("GET /minify/@type/@files", function($f3, $args) {
+$f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
 	$f3->set("UI", $args["type"] . "/");
 	echo Web::instance()->minify($args["files"]);
 }, $f3->get("cache_expire.minify"));

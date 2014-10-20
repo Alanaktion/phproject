@@ -160,7 +160,6 @@ class User extends \Controller {
 
 	public function avatar($f3, $params) {
 		$f3 = \Base::instance();
-		$post = array_map("trim", $f3->get("POST"));
 
 		$user = new \Model\User();
 		$user->load($this->_userId);
@@ -183,7 +182,7 @@ class User extends \Controller {
 		$_FILES['avatar']['name'] = $user->id . "-" . substr(sha1($user->id), 0, 4)  . "." . $parts["extension"];
 		$f3->set("avatar_filename", $_FILES['avatar']['name']);
 
-		$files = $web->receive(
+		$web->receive(
 			function($file) use($f3, $user) {
 				if($file['size'] > $f3->get("files.maxsize")) {
 					return false;
@@ -202,7 +201,6 @@ class User extends \Controller {
 		$cache->clear($f3->hash("GET /avatar/48/{$user->id}.png") . ".url");
 		$cache->clear($f3->hash("GET /avatar/96/{$user->id}.png") . ".url");
 		$cache->clear($f3->hash("GET /avatar/128/{$user->id}.png") . ".url");
-
 
 		$f3->reroute("/user");
 	}
