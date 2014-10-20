@@ -100,7 +100,7 @@
 						<td class="column column-{{ @status_id + 1 }} {{ @statuses[@status_id]['closed'] ? 'completed' : '' }} droppable" data-status="{{ @status_id }}">
 							<repeat group="{{ @col }}" value="{{ @task }}">
 								<div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto bottom" data-container="body" data-content="<strong>Author: </strong>{{ @task.author_name }}<br><strong>Description: </strong> {{ strlen(@task.description) > 500 ? htmlentities(substr(@task.description, 0, 500)) . ' [...]' : htmlentities(@task.description) }}" style="border-color:#{{ @task.owner_task_color }};">
-									<div class="hidden repeat_cycle">{{@task.repeat_cycle}}</div>
+									<div class="hidden repeat_cycle">{{ @task.repeat_cycle }}</div>
 									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
 										<span class="task-id"><a href="issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
