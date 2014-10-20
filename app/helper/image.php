@@ -76,51 +76,6 @@ class Image extends \Image {
 	}
 
 	/**
-	 * Render fully justified and wrapped text
-	 * @param  string  $text
-	 * @param  float   $size
-	 * @param  integer $left
-	 * @param  integer $top
-	 * @param  hex     $color
-	 * @param  string  $font
-	 * @param  integer $max_width
-	 * @return Image
-	 */
-	function textwrap($text, $size = 9.0, $left = 0, $top = 0, $color = 0x000000, $font = "opensans-regular.ttf", $max_width = 0) {
-		$f3 = \Base::instance();
-
-		$color = $this->rgb($color);
-		$color_id = imagecolorallocate($this->data, $color[0], $color[1], $color[2]);
-
-		if(!$max_width) {
-			$max_width = $this->width();
-		}
-
-		$font = "fonts/" . $font;
-		if(!is_file($font)) {
-			$f3->error(500, "Font file {$font} not found");
-			return false;
-		}
-
-		$words = explode(" ", $text);
-		$wnum = count($words);
-		$text = "";
-		foreach($words as $w) {
-			$line_width = 0;
-			$bbox = imagettfbbox($size, 0, $font, $line);
-			$word_width = $bbox[2] - $bbox[0];
-			if($line_width < $max_width) {
-				$text .= $w . " ";
-			} else {
-				$text .= PHP_EOL . $w . " ";
-			}
-		}
-
-		$this->last_data = imagettftext($this->data, $size, 0, $x, $y, $color_id, $font, $text);
-		return $this->save();
-	}
-
-	/**
 	 * Fill image with a solid color
 	 * @param  hex $color
 	 * @return Image

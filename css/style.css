@@ -384,3 +384,7 @@ table a.btn {
 		width: 100px;
 	}
 }
+
+th[data-sort] {
+	cursor: pointer;
+}

@@ -94,7 +94,7 @@ class Issues extends \Controller {
 				break;
 		}
 
-		return array($filter, $filter_str, $ascdesc);
+		return $filter_str;
 
 	}
 
@@ -183,7 +183,7 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue\Detail;
 
 		// Get filter data and load issues
-		list($filter, $filter_str, $ascdesc) = $this->_build_filter();
+		$filter_str = $this->_build_filter();
 		$issues = $issue->find($filter_str);
 
 		// Configure visible fields
@@ -372,12 +372,7 @@ class Issues extends \Controller {
 			return;
 		}
 
-		try {
-			$new_issue = $issue->duplicate();
-		} catch(Exception $e) {
-			print_r($f3->get("db.instance")->log());
-			return;
-		}
+		$new_issue = $issue->duplicate();
 
 		if($new_issue->id) {
 			$f3->reroute("/issues/" . $new_issue->id);
@@ -791,7 +786,7 @@ class Issues extends \Controller {
 			$_FILES['attachment']['name'] = $parts["filename"] . "-" . $i . "." . $parts["extension"];
 		}
 
-		$files = $web->receive(
+		$web->receive(
 			function($file) use($f3, $orig_name, $user_id, $issue) {
 
 				if($file['size'] > $f3->get("files.maxsize"))
@@ -835,25 +830,4 @@ class Issues extends \Controller {
 		$f3->reroute("/issues/" . $issue->id);
 	}
 
-	// Quick add button for adding tasks to projects
-	// TODO: Update code to work with frontend outside of taskboard
-	public function quickadd($f3, $params) {
-		$post = $f3->get("POST");
-
-		$issue = new \Model\Issue;
-		$issue->name = $post["title"];
-		$issue->description = $post["description"];
-		$issue->author_id = $this->_userId;
-		$issue->owner_id = $post["assigned"];
-		$issue->created_date = now();
-		$issue->hours_total = $post["hours"];
-		if(!empty($post["dueDate"])) {
-			$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
-		}
-		$issue->priority = $post["priority"];
-		$issue->parent_id = $post["storyId"];
-		$issue->save();
-
-		print_json($issue->cast() + array("taskId" => $issue->id));
-	}
 }

@@ -233,9 +233,7 @@ class Notification extends \Prefab {
 	 * @return array
 	 */
 	protected function _issue_watchers($issue_id) {
-		$f3 = \Base::instance();
-		$log = new \Log("mail.log");
-		$db = $f3->get("db.instance");
+		$db = \Base::instance()->get("db.instance");
 		$recipients = array();
 
 		// Add issue author and owner

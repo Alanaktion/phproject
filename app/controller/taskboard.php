@@ -311,7 +311,7 @@ class Taskboard extends \Controller {
 			$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
 		}
 		if(!empty($post["repeat_cycle"])) {
-				$issue->repeat_cycle = $post["repeat_cycle"];
+			$issue->repeat_cycle = $post["repeat_cycle"];
 		}
 		$issue->priority = $post["priority"];
 		$issue->parent_id = $post["storyId"];
@@ -356,7 +356,7 @@ class Taskboard extends \Controller {
 				$issue->due_date = null;
 			}
 			if(!empty($post["repeat_cycle"])) {
-					$issue->repeat_cycle = $post["repeat_cycle"];
+				$issue->repeat_cycle = $post["repeat_cycle"];
 			}
 			$issue->priority = $post["priority"];
 			if(!empty($post["storyId"])) {

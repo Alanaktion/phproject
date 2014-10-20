@@ -28,7 +28,6 @@ class User extends \Model {
 	 * @return string|bool
 	 */
 	public function avatar($size = 80) {
-		$f3 = \Base::instance();
 		if(!$this->get("id")) {
 			return false;
 		}

@@ -90,8 +90,6 @@ class Issue extends \Model {
 			}
 			$update->save();
 
-			$updated = 0;
-
 			// Set hours_total to the hours_remaining value if it's 0 or null
 			if($this->get("hours_remaining") && !$this->get("hours_total")) {
 				$this->set("hours_total", $this->get("hours_remaining"));
@@ -121,14 +119,10 @@ class Issue extends \Model {
 						$repeat_issue->due_date = date("Y-m-d", strtotime("tomorrow"));
 						break;
 					case 'weekly':
-						$dow = date("l", strtotime($this->get("due_date")));
-						$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 week" ));
+						$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 week"));
 						break;
 					case 'monthly':
-						$day = date("d", strtotime($this->get("due_date")));
-						$month = date("m");
-						$year = date("Y");
-						$repeat_issue->due_date = date("Y-m-d", mktime(0, 0, 0, $month + 1, $day, $year));
+						$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 month"));
 						break;
 					case 'sprint':
 						$sprint = new \Model\Sprint();
@@ -156,6 +150,7 @@ class Issue extends \Model {
 			$this->resetChildren();
 
 			// Log updated fields
+			$updated = 0;
 			foreach ($this->fields as $key=>$field) {
 				if ($field["changed"] && $field["value"] != $this->get_prev($key)) {
 					$update_field = new \Model\Issue\Update\Field();
@@ -201,25 +196,6 @@ class Issue extends \Model {
 		}
 
 		return empty($issue) ? parent::save() : $issue;
-	}
-
-	/**
-	 * Preload custom attributes
-	 * @param  string|array $filter
-	 * @param  array        $options
-	 * @param  integer      $ttl
-	 * @return array|FALSE
-	 */
-	function load($filter=NULL, array $options=NULL, $ttl=0) {
-		// Load issue from
-		$return = parent::load($filter, $options, $ttl);
-
-		if($this->get("id")) {
-			$attr = new \Model\Custom("attribute_value_detail");
-			$attrs = $attr->find(array("issue_id = ?", $this->get("id")));
-		}
-
-		return $return;
 	}
 
 	/**
