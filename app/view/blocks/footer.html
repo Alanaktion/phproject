@@ -30,7 +30,7 @@
 				<set pagemtime="{{ microtime(true) - @microtime }}" />
 				<span title="{{ @dict.page_generated_in_n_seconds,round(@pagemtime, 10) | format }}">{{ round(@pagemtime * 1000, 0) }}ms</span> &middot;
 			</check>
-			<span title="Real usage: {{ memory_get_peak_usage(true) }} bytes">{{ format_filesize(memory_get_peak_usage()) }}</span>
+			<span title="Real usage: {{ memory_get_peak_usage(true) }} bytes">{{ \Helper\View::instance()->formatFilesize(memory_get_peak_usage()) }}</span>
 			<check if="{{ @revision }}">
 				 &middot; <a class="nolink" title="{{ @dict.current_commit_n,@revision | format }}" href="https://github.com/Alanaktion/phproject/commit/{{ @revision }}" target="_blank">{{ substr(@revision, 0, 7) }}</a>
 			</check>

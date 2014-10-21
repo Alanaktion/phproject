@@ -90,7 +90,7 @@
 		<div class="col-lg-12">
 			<div class="col-lg-5">
 				<div class="issue-head clearfix">
-					<img src="{{ h(@author->avatar(48)) }}" class="profile-picture img-rounded" alt>
+					<img src="{{ @author->avatar(48) }}" class="profile-picture img-rounded" alt>
 					<p class="pull-left">
 						<check if="{{ @author.username }}">
 							<true>
@@ -100,7 +100,7 @@
 								<span class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</span>
 							</false>
 						</check>
-						<br>{{ date("M j, Y \\a\\t g:ia", utc2local(strtotime(@issue.created_date))) }}
+						<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@issue.created_date))) }}
 					</p>
 				</div>
 
@@ -164,7 +164,7 @@
 
 				<dl>
 					<dt>Description:</dt>
-					<dd class="tex">{{ parseTextile(@issue.description) | raw }}</dd>
+					<dd class="tex">{{ $this->parseTextile(@issue.description) | raw }}</dd>
 				</dl>
 
 				<hr class="hidden-lg">
@@ -175,7 +175,7 @@
 				<check if="{{ !empty(@files) }}">
 					<ul class="list-inline file-list">
 						<repeat group="{{ @files }}" value="{{ @file }}">
-							<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y \a\t g:ia', utc2local(strtotime(@file.created_date))) }}<br>{{ format_filesize(@file.filesize) }}">
+							<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ \Helper\View::instance()->formatFilesize(@file.filesize) }}">
 								<a class="file-attachment" href="files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">
 									<img class src="files/thumb/96-{{ @file.id }}.png" /><br />
 									{{ @file.filename }}
@@ -226,7 +226,7 @@
 									</a>
 									<div class="media-body">
 										<p class="media-heading"><a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
-										<div class="tex">{{ parseTextile(@comment.text) | raw }}</div>
+										<div class="tex">{{ $this->parseTextile(@comment.text) | raw }}</div>
 										<check if="{{ @comment.file_id }}">
 											<check if="{{ @comment.file_deleted_date }}">
 												<true>
@@ -237,7 +237,7 @@
 												</false>
 											</check>
 										</check>
-										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", utc2local(strtotime(@comment.created_date))) }}</small></p>
+										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@comment.created_date))) }}</small></p>
 									</div>
 								</div>
 							</repeat>
@@ -357,7 +357,7 @@ $(function() {
 					.after(
 						'<div class="media" id="c-' + data.id + '">' +
 							'<a class="pull-left" href="user/' + data.user_username + '">' +
-								'<img src="{{ h(@user_obj->avatar(48)) }}" class="media-object profile-picture img-rounded" alt>' +
+								'<img src="{{ @user_obj->avatar(48) }}" class="media-object profile-picture img-rounded" alt>' +
 							'</a>' +
 							'<div class="media-body">' +
 								'<p class="media-heading"><a href="user/' + data.user_username + '">' + data.user_name + '</a></p>' +

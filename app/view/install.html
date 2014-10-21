@@ -99,15 +99,21 @@
 												<h4>Administrator User</h4>
 											</div>
 											<div class="form-group form-group-sm">
-												<label for="mail-from" class="col-sm-3 control-label">Username</label>
+												<label for="user-username" class="col-sm-3 control-label">Username</label>
 												<div class="col-sm-9">
-													<p class="form-control-static">admin</p>
+													<input type="text" class="form-control" id="user-username" name="user-username" required value="admin">
+												</div>
+											</div>
+											<div class="form-group form-group-sm">
+												<label for="user-email" class="col-sm-3 control-label">Email</label>
+												<div class="col-sm-9">
+													<input type="email" class="form-control" id="user-email" name="user-email" required>
 												</div>
 											</div>
 											<div class="form-group form-group-sm">
 												<label for="user-password" class="col-sm-3 control-label">Password</label>
 												<div class="col-sm-9">
-													<input type="text" class="form-control" id="user-password" name="user-password" value="admin">
+													<input type="password" class="form-control" id="user-password" name="user-password" required placeholder="admin">
 												</div>
 											</div>
 											<div class="text-right">

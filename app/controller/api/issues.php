@@ -2,16 +2,14 @@
 
 namespace Controller\Api;
 
-class Issues extends \Controller\Api\Base {
+class Issues extends \Controller\Api {
 
-	protected $_userId;
-
-	public function __construct() {
-		$this->_userId = $this->_requireAuth();
-	}
-
-	// Converts an issue into a Redmine API-style multidimensional array
-	// This isn't pretty.
+	/**
+	 * Converts an issue into a Redmine API-style multidimensional array
+	 * This isn't pretty.
+	 * @param  Detail $issue
+	 * @return array
+	 */
 	protected function issue_multiarray(\Model\Issue\Detail $issue) {
 		$casted = $issue->cast();
 
@@ -83,7 +81,7 @@ class Issues extends \Controller\Api\Base {
 			$issues[] = $this->issue_multiarray($iss);
 		}
 
-		print_json(array(
+		$this->_printJson(array(
 			"total_count" => $result["total"],
 			"limit" => $result["limit"],
 			"issues" => $issues,
@@ -98,15 +96,11 @@ class Issues extends \Controller\Api\Base {
 			$post = $_REQUEST;
 		} else {
 
-
 			// For Redmine compatibility, also accept a JSON object
 			try {
 				$post = json_decode(file_get_contents('php://input'), true);
 			} catch (Exception $e) {
-				print_json(array(
-					"error" => "Unable to parse input"
-				));
-				return false;
+				throw new Exception("Unable to parse input");
 			}
 
 			if(!empty($post["issue"])) {
@@ -143,7 +137,8 @@ class Issues extends \Controller\Api\Base {
 
 		// Verify the required "name" field is passed
 		if(empty($post["name"])) {
-			$this->_error("The 'name' value is required.");
+			$f3->error("The 'name' value is required.");
+			return;
 		}
 
 		// Verify given values are valid (types, statueses, priorities)
@@ -151,28 +146,32 @@ class Issues extends \Controller\Api\Base {
 			$type = new \Model\Issue\Type;
 			$type->load($post["type_id"]);
 			if(!$type->id) {
-				$this->_error("The 'type_id' field is not valid.");
+				$f3->error("The 'type_id' field is not valid.");
+				return;
 			}
 		}
 		if(!empty($post["parent_id"])) {
 			$parent = new \Model\Issue;
 			$parent->load($post["parent_id"]);
 			if(!$parent->id) {
-				$this->_error("The 'type_id' field is not valid.");
+				$f3->error("The 'type_id' field is not valid.");
+				return;
 			}
 		}
 		if(!empty($post["status"])) {
 			$status = new \Model\Issue\Status;
 			$status->load($post["status"]);
 			if(!$status->id) {
-				$this->_error("The 'status' field is not valid.");
+				$f3->error("The 'status' field is not valid.");
+				return;
 			}
 		}
 		if(!empty($post["priority_id"])) {
 			$priority = new \Model\Issue\Priority;
 			$priority->load(array("value" => $post["priority_id"]));
 			if(!$priority->id) {
-				$this->_error("The 'priority_id' field is not valid.");
+				$f3->error("The 'priority_id' field is not valid.");
+				return;
 			}
 		}
 
@@ -202,7 +201,7 @@ class Issues extends \Controller\Api\Base {
 		}
 
 		$issue->save();
-		print_json(array(
+		$this->_printJson(array(
 			"issue" => $issue->cast()
 		));
 	}
@@ -212,16 +211,10 @@ class Issues extends \Controller\Api\Base {
 		$issue = new \Model\Issue\Detail();
 		$issue->load($params["id"]);
 		if($issue->id) {
-			print_json(array("issue" => $this->issue_multiarray($issue)));
+			$this->_printJson(array("issue" => $this->issue_multiarray($issue)));
 		} else {
 			$f3->error(404);
 		}
-	}
-
-	// Update a single issue
-	public function single_put($f3, $params) {
-		// TODO: Implement dis.
-		$f3->error(501);
 	}
 
 	// Delete a single issue
@@ -230,7 +223,7 @@ class Issues extends \Controller\Api\Base {
 		$issue->load($params["id"]);
 		$issue->delete();
 
-		print_json(array(
+		$this->_printJson(array(
 			"deleted" => $params["id"]
 		));
 	}

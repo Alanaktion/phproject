@@ -12,6 +12,41 @@ class Files extends \Controller {
 		$f3->set("CACHE", "folder=" . $f3->get("TEMP") . "cache/");
 	}
 
+	/**
+	 * Send a file to the browser
+	 * @param  string $file
+	 * @param  string $mime
+	 * @param  string $filename
+	 * @param  bool   $force
+	 * @return int|bool
+	 */
+	protected function _sendFile($file, $mime = "", $filename = "", $force = true) {
+		if (!is_file($file)) {
+			return FALSE;
+		}
+
+		$size = filesize($file);
+
+		if(!$mime) {
+			$mime = \Web::instance()->mime($file);
+		}
+		header("Content-Type: $mime");
+
+		if ($force) {
+			if(!$filename) {
+				$filename = basename($file);
+			}
+			header("Content-Disposition: attachment; filename=$filename");
+		}
+
+		header("Accept-Ranges: bytes");
+		header("Content-Length: $size");
+		header("X-Powered-By: " . \Base::instance()->get("PACKAGE"));
+
+		readfile($file);
+		return $size;
+	}
+
 	public function thumb($f3, $params) {
 		$this->_useFileCache();
 		$cache = \Cache::instance();
@@ -125,7 +160,7 @@ class Files extends \Controller {
 		} else {
 
 			// Send user to Gravatar
-			$f3->reroute($f3->get("SCHEME") . ":" . gravatar($user->email, $params["size"]), true);
+			$f3->reroute($f3->get("SCHEME") . ":" . \Helper\View::instance()->gravatar($user->email, $params["size"]), true);
 
 		}
 	}
@@ -140,7 +175,7 @@ class Files extends \Controller {
 		}
 
 		if(substr($file->content_type, 0, 5) == "image" || $file->content_type == "text/plain") {
-			sendfile($file->disk_filename, $file->content_type, null, false);
+			$this->_sendFile($file->disk_filename, $file->content_type, null, false);
 			return;
 		}
 
@@ -151,7 +186,7 @@ class Files extends \Controller {
 			}
 			$f3->set("file", $file);
 			$f3->set("delimiter", $delimiter);
-			echo \Template::instance()->render("issues/file/preview/table.html");
+			$this->_render("issues/file/preview/table.html");
 			return;
 		}
 
@@ -174,7 +209,7 @@ class Files extends \Controller {
 			$force = false;
 		}
 
-		if(!sendfile($file->disk_filename, $file->content_type, $file->filename, $force)) {
+		if(!$this->_sendFile($file->disk_filename, $file->content_type, $file->filename, $force)) {
 			$f3->error(404);
 		}
 	}

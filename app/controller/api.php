@@ -1,8 +1,24 @@
 <?php
 
-namespace Controller\Api;
+namespace Controller;
 
-abstract class Base extends \Controller {
+abstract class Api extends \Controller {
+
+	protected $_userId;
+
+	function __construct() {
+		\Base::instance()->set("ONERROR", function($f3) {
+			if(!headers_sent()) {
+				header("Content-type: application/json");
+			}
+			echo json_encode(array(
+				"status" => $f3->get("ERROR.code"),
+				"error" => $f3->get("ERROR.text")
+			));
+		});
+
+		$this->_userId = $this->_requireAuth();
+	}
 
 	/**
 	 * Require an API key. Sends an HTTP 401 if one is not supplied.
@@ -27,6 +43,8 @@ abstract class Base extends \Controller {
 			$key = $f3->get("HEADERS.X-Redmine-API-Key");
 		} elseif($f3->get("HEADERS.X-API-Key")) {
 			$key = $f3->get("HEADERS.X-API-Key");
+		} elseif($f3->get("HEADERS.X-Api-Key")) {
+			$key = $f3->get("HEADERS.X-Api-Key");
 		}
 
 		$user->load(array("api_key", $key));
@@ -37,20 +55,8 @@ abstract class Base extends \Controller {
 			return $user->id;
 		} else {
 			$f3->error(401);
-			$f3->unload();
 			return false;
 		}
-	}
-
-	/**
-	 * Output an error in a JSON object, stop execution
-	 * @param  integer $message
-	 */
-	protected function _error($message = 1) {
-		print_json(array(
-			"error" => $message
-		));
-		exit();
 	}
 
 }

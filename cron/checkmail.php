@@ -64,7 +64,7 @@ if($emails) {
 					$comment->user_id = $author;
 					$comment->issue_id = $issue->id;
 					$comment->text = html_entity_decode(strip_tags($message));
-					$comment->created_date = now();
+					$comment->created_date = date("Y-m-d H:i:s");
 					$comment->save();
 
 					$notification = \Helper\Notification::instance();
@@ -82,7 +82,7 @@ if($emails) {
 					$comment->user_id = $author;
 					$comment->issue_id = $issue->id;
 					$comment->text = html_entity_decode(strip_tags($message));
-					$comment->created_date = now();
+					$comment->created_date = date("Y-m-d H:i:s");
 					$comment->save();
 
 					$notification = \Helper\Notification::instance();
@@ -217,7 +217,7 @@ if($emails) {
 						$newfile->filesize = $file['size'];
 						$newfile->content_type = $file['type'];
 						$newfile->digest = md5_file($filename);
-						$newfile->created_date = now();
+						$newfile->created_date = date("Y-m-d H:i:s");
 						$newfile->save();
 
 						$fp = fopen($f3->get("UPLOADS")  . $filename, "w+");

@@ -9,6 +9,30 @@ class Taskboard extends \Controller {
 	}
 
 	/**
+	 * Takes two dates formatted as YYYY-MM-DD and creates an
+	 * inclusive array of the dates between the from and to dates.
+	 * @param  string $strDateFrom
+	 * @param  string $strDateTo
+	 * @return array
+	 */
+	protected function _createDateRangeArray($strDateFrom, $strDateTo) {
+		$aryRange = array();
+
+		$iDateFrom = mktime(1,0,0,substr($strDateFrom,5,2),substr($strDateFrom,8,2),substr($strDateFrom,0,4));
+		$iDateTo = mktime(1,0,0,substr($strDateTo,5,2),substr($strDateTo,8,2),substr($strDateTo,0,4));
+
+		if ($iDateTo >= $iDateFrom) {
+			$aryRange[] = date('Y-m-d', $iDateFrom); // first entry
+			while ($iDateFrom < $iDateTo) {
+				$iDateFrom += 86400; // add 24 hours
+				$aryRange[] = date('Y-m-d', $iDateFrom);
+			}
+		}
+
+		return $aryRange;
+	}
+
+	/**
 	 * Get a list of users from a filter
 	 * @param  string $params URL Parameters
 	 * @return array
@@ -158,7 +182,7 @@ class Taskboard extends \Controller {
 		$f3->set("users", $users->getAll());
 		$f3->set("groups", $users->getAllGroups());
 
-		echo \Template::instance()->render("taskboard/index.html");
+		$this->_render("taskboard/index.html");
 	}
 
 	public function burndown($f3, $params) {
@@ -184,11 +208,11 @@ class Taskboard extends \Controller {
 		// Check to see if the sprint is completed
 		if ($today < strtotime($sprint->end_date . ' + 1 day')) {
 			$burnComplete = 0;
-			$burnDates = createDateRangeArray($sprint->start_date, $today);
-			$remainingDays = createDateRangeArray($today, $sprint->end_date);
+			$burnDates = $this->_createDateRangeArray($sprint->start_date, $today);
+			$remainingDays = $this->_createDateRangeArray($today, $sprint->end_date);
 		} else {
 			$burnComplete = 1;
-			$burnDates = createDateRangeArray($sprint->start_date, $sprint->end_date);
+			$burnDates = $this->_createDateRangeArray($sprint->start_date, $sprint->end_date);
 			$remainingDays = array();
 		}
 
@@ -205,9 +229,9 @@ class Taskboard extends \Controller {
 				$result = $db->exec("
 					SELECT SUM(i.hours_total) AS remaining
 					FROM issue i
-					WHERE i.id IN (". implode(",", $visible_tasks) .")
-					AND i.created_date < '" . $sprint->start_date  . " 00:00:00'", // Only count tasks added before sprint
-					NULL,
+					WHERE i.id IN (" . implode(",", $visible_tasks) . ")
+					AND i.created_date < :date", // Only count tasks added before sprint
+					array("date" => $sprint->start_date),
 					2678400 // 31 days
 				);
 				$burnDays[$date] = $result[0];
@@ -229,7 +253,7 @@ class Taskboard extends \Controller {
 					) a ON a.max_id = u.id
 					RIGHT JOIN issue i ON i.id = u.issue_id
 					WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
-					AND i.id IN (". implode(",", $visible_tasks) . ")
+					AND i.id IN (" . implode(",", $visible_tasks) . ")
 					AND i.created_date < '". $date . " 23:59:59'",
 					NULL,
 					2678400 // 31 days
@@ -248,13 +272,14 @@ class Taskboard extends \Controller {
 						FROM issue_update u
 						JOIN issue_update_field f ON f.issue_update_id = u.id
 						WHERE f.field = 'hours_remaining'
-						AND u.created_date < '" . $date . " 23:59:59'
+						AND u.created_date < :date
 						GROUP BY u.issue_id
 					) a ON a.max_id = u.id
 					RIGHT JOIN issue i ON i.id = u.issue_id
 					WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
-					AND i.created_date < '". $date . " 23:59:59'
-					AND i.id IN (". implode(",", $visible_tasks) . ")"
+					AND i.created_date < :date
+					AND i.id IN (" . implode(",", $visible_tasks) . ")",
+					array("date" => $date . " 23:59:59")
 				);
 				$burnDays[$date] = $result[0];
 			}
@@ -291,7 +316,7 @@ class Taskboard extends \Controller {
 			$i++;
 		}
 
-		print_json($burnDays);
+		$this->_printJson($burnDays);
 	}
 
 	public function add($f3, $params) {
@@ -302,7 +327,7 @@ class Taskboard extends \Controller {
 		$issue->description = $post["description"];
 		$issue->author_id = $this->_userId;
 		$issue->owner_id = $post["assigned"];
-		$issue->created_date = now();
+		$issue->created_date = $this->now();
 		if(!empty($post["hours"])) {
 			$issue->hours_total = $post["hours"];
 			$issue->hours_remaining = $post["hours"];
@@ -319,7 +344,7 @@ class Taskboard extends \Controller {
 
 		$issue->save();
 
-		print_json($issue->cast() + array("taskId" => $issue->id));
+		$this->_printJson($issue->cast() + array("taskId" => $issue->id));
 	}
 
 	public function edit($f3, $params) {
@@ -333,7 +358,7 @@ class Taskboard extends \Controller {
 			$status->load($issue->status);
 			if($status->closed) {
 				if(!$issue->closed_date) {
-					$issue->closed_date = now();
+					$issue->closed_date = $this->now();
 				}
 			} else {
 				$issue->closed_date = null;
@@ -374,14 +399,14 @@ class Taskboard extends \Controller {
 			} else {
 				$comment->text = $post["comment"];
 			}
-			$comment->created_date = now();
+			$comment->created_date = $this->now();
 			$comment->save();
 			$issue->update_comment = $comment->id;
 		}
 
 		$issue->save();
 
-		print_json($issue->cast() + array("taskId" => $issue->id));
+		$this->_printJson($issue->cast() + array("taskId" => $issue->id));
 	}
 
 }

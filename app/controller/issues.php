@@ -11,10 +11,20 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * Clean a string for encoding in JSON
+	 * Collapses whitespace, then trims
+	 * @param  string $string
+	 * @return string
+	 */
+	protected function _cleanJson($string) {
+		return trim(preg_replace('/\s+/', ' ', $string));
+	}
+
+	/**
 	 * Build a WHERE clause for issue listings based on the current filters and sort options
 	 * @return array
 	 */
-	protected function _build_filter() {
+	protected function _buildFilter() {
 		$f3 = \Base::instance();
 		$issues = new \Model\Issue\Detail;
 
@@ -94,7 +104,7 @@ class Issues extends \Controller {
 				break;
 		}
 
-		return $filter_str;
+		return array($filter, $filter_str, $ascdesc);
 
 	}
 
@@ -108,7 +118,7 @@ class Issues extends \Controller {
 
 		// Get filter
 		$args = $f3->get("GET");
-		list($filter, $filter_str, $ascdesc) = $this->_build_filter();
+		list($filter, $filter_str, $ascdesc) = $this->_buildFilter();
 
 		// Load type if a type_id was passed
 		$type = new \Model\Issue\Type;
@@ -131,7 +141,7 @@ class Issues extends \Controller {
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -171,7 +181,7 @@ class Issues extends \Controller {
 		$f3->set("show_filters", true);
 		$f3->set("show_export", true);
 
-		echo \Template::instance()->render("issues/index.html");
+		$this->_render("issues/index.html");
 	}
 
 	/**
@@ -183,7 +193,7 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue\Detail;
 
 		// Get filter data and load issues
-		$filter_str = $this->_build_filter();
+		list($filter, $filter_str, $ascdesc) = $this->_buildFilter();
 		$issues = $issue->find($filter_str);
 
 		// Configure visible fields
@@ -269,7 +279,7 @@ class Issues extends \Controller {
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -279,7 +289,7 @@ class Issues extends \Controller {
 		$f3->set("menuitem", "new");
 		$f3->set("type", $type);
 
-		echo \Template::instance()->render("issues/edit.html");
+		$this->_render("issues/edit.html");
 	}
 
 	public function add_selecttype($f3, $params) {
@@ -288,7 +298,7 @@ class Issues extends \Controller {
 
 		$f3->set("title", "New Issue");
 		$f3->set("menuitem", "new");
-		echo \Template::instance()->render("issues/new.html");
+		$this->_render("issues/new.html");
 	}
 
 	public function edit($f3, $params) {
@@ -310,7 +320,7 @@ class Issues extends \Controller {
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", now(false), $issue->sprint_id), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", $this->now(false), $issue->sprint_id), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -321,9 +331,9 @@ class Issues extends \Controller {
 		$f3->set("type", $type);
 
 		if($f3->get("AJAX")) {
-			echo \Template::instance()->render("issues/edit-form.html");
+			$this->_render("issues/edit-form.html");
 		} else {
-			echo \Template::instance()->render("issues/edit.html");
+			$this->_render("issues/edit.html");
 		}
 	}
 
@@ -339,7 +349,7 @@ class Issues extends \Controller {
 		$status = new \Model\Issue\Status;
 		$status->load(array("closed = ?", 1));
 		$issue->status = $status->id;
-		$issue->closed_date = now();
+		$issue->closed_date = $this->now();
 		$issue->save();
 
 		$f3->reroute("/issues/" . $issue->id);
@@ -411,7 +421,7 @@ class Issues extends \Controller {
 								// Toggle closed_date if issue has been closed/restored
 								if($status->closed) {
 									if(!$issue->closed_date) {
-										$issue->closed_date = now();
+										$issue->closed_date = $this->now();
 									}
 								} else {
 									$issue->closed_date = null;
@@ -444,7 +454,7 @@ class Issues extends \Controller {
 					$comment->user_id = $this->_userId;
 					$comment->issue_id = $issue->id;
 					$comment->text = $post["comment"];
-					$comment->created_date = now();
+					$comment->created_date = $this->now();
 					$comment->save();
 					$issue->update_comment = $comment->id;
 				}
@@ -463,7 +473,7 @@ class Issues extends \Controller {
 			// Creating new issue.
 			$issue->author_id = $f3->get("user.id");
 			$issue->type_id = $post["type_id"];
-			$issue->created_date = now();
+			$issue->created_date = $this->now();
 			$issue->name = $post["name"];
 			$issue->description = $post["description"];
 			$issue->priority = $post["priority"];
@@ -527,7 +537,7 @@ class Issues extends \Controller {
 					$comment = new \Model\Issue\Comment;
 					if(empty($post["text"])) {
 						if($f3->get("AJAX")) {
-							print_json(array("error" => 1));
+							$this->_printJson(array("error" => 1));
 						}
 						else {
 								$f3->reroute("/issues/" . $issue->id);
@@ -539,14 +549,14 @@ class Issues extends \Controller {
 					$comment->user_id = $this->_userId;
 					$comment->issue_id = $issue->id;
 					$comment->text = $post["text"];
-					$comment->created_date = now();
+					$comment->created_date = $this->now();
 					$comment->save();
 
 					$notification = \Helper\Notification::instance();
 					$notification->issue_comment($issue->id, $comment->id);
 
 					if($f3->get("AJAX")) {
-						print_json(
+						$this->_printJson(
 							array(
 								"id" => $comment->id,
 								"text" => parseTextile($comment->text),
@@ -624,13 +634,13 @@ class Issues extends \Controller {
 		$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", now(false), $issue->sprint_id), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", $this->now(false), $issue->sprint_id), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
-		echo \Template::instance()->render("issues/single.html");
+		$this->_render("issues/single.html");
 
 	}
 
@@ -648,9 +658,9 @@ class Issues extends \Controller {
 
 		$f3->set("updates", $updates_array);
 
-		print_json(array(
+		$this->_printJson(array(
 			"total" => count($updates),
-			"html" => clean_json(\Template::instance()->render("issues/single/history.html"))
+			"html" => $this->_cleanJson(\Template::instance()->render("issues/single/history.html"))
 		));
 	}
 
@@ -678,9 +688,9 @@ class Issues extends \Controller {
 				}
 			}
 
-			print_json(array(
+			$this->_printJson(array(
 				"total" => count($f3->get("issues")),
-				"html" => clean_json(\Template::instance()->render("issues/single/related.html"))
+				"html" => $this->_cleanJson(\Template::instance()->render("issues/single/related.html"))
 			));
 		} else {
 			$f3->error(404);
@@ -693,9 +703,9 @@ class Issues extends \Controller {
 		$users = new \Model\User;
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 
-		print_json(array(
+		$this->_printJson(array(
 			"total" => count($f3->get("watchers")),
-			"html" => clean_json(\Template::instance()->render("issues/single/watchers.html"))
+			"html" => $this->_cleanJson(\Template::instance()->render("issues/single/watchers.html"))
 		));
 	}
 
@@ -720,7 +730,7 @@ class Issues extends \Controller {
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
 		$file->delete();
-		print_json($file->cast());
+		$this->_printJson($file->cast());
 	}
 
 	public function file_undelete($f3, $params) {
@@ -728,7 +738,7 @@ class Issues extends \Controller {
 		$file->load($f3->get("POST.id"));
 		$file->deleted_date = null;
 		$file->save();
-		print_json($file->cast());
+		$this->_printJson($file->cast());
 	}
 
 	public function search($f3, $params) {
@@ -753,7 +763,7 @@ class Issues extends \Controller {
 		$f3->set("issues", $issue_page);
 
 		$f3->set("show_filters", false);
-		echo \Template::instance()->render("issues/search.html");
+		$this->_render("issues/search.html");
 	}
 
 	public function upload($f3, $params) {
@@ -801,7 +811,7 @@ class Issues extends \Controller {
 				$newfile->filesize = $file['size'];
 				$newfile->content_type = $file['type'];
 				$newfile->digest = md5_file($file['tmp_name']);
-				$newfile->created_date = now();
+				$newfile->created_date = $this->now();
 				$newfile->save();
 				$f3->set('file_id', $newfile->id);
 
@@ -816,7 +826,7 @@ class Issues extends \Controller {
 			$comment->user_id = $this->_userId;
 			$comment->issue_id = $issue->id;
 			$comment->text = $f3->get("POST.text");
-			$comment->created_date = now();
+			$comment->created_date = $this->now();
 			$comment->file_id = $f3->get('file_id');
 			$comment->save();
 

@@ -5,6 +5,27 @@ namespace Helper;
 class Notification extends \Prefab {
 
 	/**
+	 * Send an email with the UTF-8 character set
+	 * @param  string $to
+	 * @param  string $subject
+	 * @param  string $body
+	 * @return bool
+	 */
+	protected function _utf8mail($to, $subject, $body) {
+		$f3 = \Base::instance();
+
+		// Set content-type with UTF charset
+		$headers  = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+
+		// Add sender and recipient information
+		$headers .= 'To: '. $to . "\r\n";
+		$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
+
+		return mail($to, $subject, $body, $headers);
+	}
+
+	/**
 	 * Send an email to watchers with the comment body
 	 * @param  int $issue_id
 	 * @param  int $comment_id
@@ -34,13 +55,13 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("comment", $comment);
-			$body = \Template::instance()->render("notification/comment.html");
+			$body = $this->_render("notification/comment.html");
 
 			$subject = "[#{$issue->id}] - New comment on {$issue->name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent comment notification to: " . $recipient);
 			}
 		}
@@ -85,7 +106,7 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("update", $update);
-			$body = \Template::instance()->render("notification/update.html");
+			$body = $this->_render("notification/update.html");
 
 			$changes->load(array("issue_update_id = ? AND `field` = 'closed_date' AND old_value = '' and new_value != ''", $update->id));
 			if($changes && $changes->id) {
@@ -98,7 +119,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent update notification to: " . $recipient);
 			}
 		}
@@ -132,13 +153,13 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 
-			$body = \Template::instance()->render("notification/new.html");
+			$body = $this->_render("notification/new.html");
 
 			$subject =  "[#{$issue->id}] - {$issue->name} created by {$issue->author_name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent create notification to: " . $recipient);
 			}
 		}
@@ -174,13 +195,13 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("file", $file);
-			$body = \Template::instance()->render("notification/file.html");
+			$body = $this->_render("notification/file.html");
 
 			$subject =  "[#{$issue->id}] - {$file->user_name} attached a file to {$issue->name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent file notification to: " . $recipient);
 			}
 		}
@@ -202,11 +223,11 @@ class Notification extends \Prefab {
 
 			// Render message body
 			$f3->set("user", $user);
-			$body = \Template::instance()->render("notification/user_reset.html");
+			$body = $this->_render("notification/user_reset.html");
 
 			// Send email to user
 			$subject = "Reset your password - " . $f3->get("site.name");
-			utf8mail($user->email, $subject, $body);
+			$this->_utf8mail($user->email, $subject, $body);
 		}
 	}
 
@@ -221,8 +242,8 @@ class Notification extends \Prefab {
 		if($f3->get("mail.from")) {
 			$f3->set("issues", $issues);
 			$subject = "Due Today - " . $f3->get("site.name");
-			$body = \Template::instance()->render("notification/user_due_issues.html");
-			return utf8mail($user->email, $subject, $body);
+			$body = $this->_render("notification/user_due_issues.html");
+			return $this->_utf8mail($user->email, $subject, $body);
 		}
 		return false;
 	}
@@ -267,6 +288,18 @@ class Notification extends \Prefab {
 
 		// Remove duplicate users
 		return array_unique($recipients);
+	}
+
+	/**
+	 * Render a view and return the result
+	 * @param  string  $file
+	 * @param  string  $mime
+	 * @param  array   $hive
+	 * @param  integer $ttl
+	 * @return string
+	 */
+	protected function _render($file, $mime = "text/html", array $hive = null, $ttl = 0) {
+		return \Helper\View::instance()->render($file, $mime, $hive, $ttl);
 	}
 
 }

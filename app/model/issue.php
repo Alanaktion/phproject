@@ -53,7 +53,7 @@ class Issue extends \Model {
 	 * @return mixed
 	 */
 	public function delete() {
-		$this->set("deleted_date", now());
+		$this->set("deleted_date", date("Y-m-d H:i:s"));
 		return $this->save(false);
 	}
 
@@ -84,7 +84,7 @@ class Issue extends \Model {
 			$update = new \Model\Issue\Update();
 			$update->issue_id = $this->id;
 			$update->user_id = $f3->get("user.id");
-			$update->created_date = now();
+			$update->created_date = date("Y-m-d H:i:s");
 			if($this->exists('update_comment')) {
 				$update->comment_id = $this->get('update_comment');
 			}
@@ -111,7 +111,7 @@ class Issue extends \Model {
 				$repeat_issue->owner_id = $this->get("owner_id");
 				$repeat_issue->description = $this->get("description");
 				$repeat_issue->repeat_cycle = $this->get("repeat_cycle");
-				$repeat_issue->created_date = now();
+				$repeat_issue->created_date = date("Y-m-d H:i:s");
 
 				// Find a due date in the future
 				switch($repeat_issue->repeat_cycle) {

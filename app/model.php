@@ -1,45 +1,5 @@
 <?php
 
-abstract class Controller {
-
-	/**
-	 * Require a user to be logged in. Redirects to /login if a session is not found.
-	 * @return int|bool
-	 */
-	protected function _requireLogin() {
-		$f3 = \Base::instance();
-		if($id = $f3->get("user.id")) {
-			return $id;
-		} else {
-			if(empty($_GET)) {
-				$f3->reroute("/login?to=" . urlencode($f3->get("PATH")));
-			} else {
-				$f3->reroute("/login?to=" . urlencode($f3->get("PATH")) . urlencode("?" . http_build_query($_GET)));
-			}
-			$f3->unload();
-			return false;
-		}
-	}
-
-	/**
-	 * Require a user to be an administrator. Throws HTTP 403 if logged in, but not an admin.
-	 * @return int|bool
-	 */
-	protected function _requireAdmin() {
-		$id = $this->_requireLogin();
-
-		$f3 = \Base::instance();
-		if($f3->get("user.role") == "admin") {
-			return $id;
-		} else {
-			$f3->error(403);
-			$f3->unload();
-			return false;
-		}
-	}
-
-}
-
 abstract class Model extends \DB\SQL\Mapper {
 
 	protected $fields = array();
@@ -65,7 +25,7 @@ abstract class Model extends \DB\SQL\Mapper {
 	 */
 	function save() {
 		if(array_key_exists("created_date", $this->fields) && !$this->query && !$this->get("created_date")) {
-			$this->set("created_date", now());
+			$this->set("created_date", date("Y-m-d H:i:s"));
 		}
 		return parent::save();
 	}
@@ -76,7 +36,7 @@ abstract class Model extends \DB\SQL\Mapper {
 	 */
 	function delete() {
 		if(array_key_exists("deleted_date", $this->fields)) {
-			$this->deleted_date = now();
+			$this->deleted_date = date("Y-m-d H:i:s");
 			return $this->save();
 		} else {
 			return $this->erase();

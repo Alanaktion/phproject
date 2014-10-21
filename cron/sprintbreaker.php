@@ -18,7 +18,7 @@ $issue_type_project = $f3->get("issue_type.project");
 
 // Get all current and future sprints
 $sprint = new \Model\Sprint();
-$sprints = $sprint->find(array("start_date >= :now OR end_date <= :now", ":now" => now(false)));
+$sprints = $sprint->find(array("start_date >= :now OR end_date <= :now", ":now" => date("Y-m-d")));
 echo "Using " . count($sprints) . " sprints.\n";
 
 // Get all top level projects
@@ -35,7 +35,7 @@ if($projects && $sprints) {
 		$tasks = $due_date_tasks->find(array(
 			"parent_id = :project AND due_date >= :now AND type_id != :type",
 			":project" => $project->id,
-			":now" => now(false),
+			":now" => date("Y-m-d"),
 			":type" => $issue_type_project
 		));
 
@@ -74,7 +74,7 @@ if($projects && $sprints) {
 						$sprint_project->name = $project->name . " - " . date("n/j", strtotime($sprint->start_date)) . "-" . date("n/j", strtotime($sprint->start_date));
 					}
 					$sprint_project->description = "This is an automatically generated project for breaking large projects into sprints.";
-					$sprint_project->created_date = now();
+					$sprint_project->created_date = date("Y-m-d H:i:s");
 					$sprint_project->save();
 
 					// Move tasks into sprint project

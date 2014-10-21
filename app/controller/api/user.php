@@ -2,13 +2,7 @@
 
 namespace Controller\Api;
 
-class User extends \Controller\Api\Base {
-
-	protected $_userID;
-
-	public function __construct() {
-		$this->_userID = $this->_requireAuth();
-	}
+class User extends \Controller\Api {
 
 	protected function user_array(\Model\User $user) {
 
@@ -38,7 +32,7 @@ class User extends \Controller\Api\Base {
 		$user = new \Model\User();
 		$user->load($params["username"]);
 		if($user->id) {
-			print_json($this->user_array($user));
+			$this->_printJson($this->user_array($user));
 		} else {
 			$f3->error(404);
 		}
@@ -48,7 +42,7 @@ class User extends \Controller\Api\Base {
 		$user = new \Model\User();
 		$user->load(array("email = ? AND deleted_date IS NULL", $params["email"]));
 		if($user->id) {
-			print_json($this->user_array($user));
+			$this->_printJson($this->user_array($user));
 		} else {
 			$f3->error(404);
 		}
@@ -76,7 +70,7 @@ class User extends \Controller\Api\Base {
 		 	$users[] = $this->user_array($user);
 		}
 
-		print_json(array(
+		$this->_printJson(array(
 				"total_count" => $result["total"],
 				"limit" => $result["limit"],
 				"users" => $users,
@@ -108,7 +102,7 @@ class User extends \Controller\Api\Base {
 		 	$groups[] = $this->user_array($user);
 		}
 
-		print_json(array(
+		$this->_printJson(array(
 				"total_count" => $result["total"],
 				"limit" => $result["limit"],
 				"groups" => $groups,
