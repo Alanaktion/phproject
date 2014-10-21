@@ -811,7 +811,7 @@ class Issues extends \Controller {
 				$newfile->filesize = $file['size'];
 				$newfile->content_type = $file['type'];
 				$newfile->digest = md5_file($file['tmp_name']);
-				$newfile->created_date = $this->now();
+				$newfile->created_date = date("Y-m-d H:i:s");
 				$newfile->save();
 				$f3->set('file_id', $newfile->id);
 
