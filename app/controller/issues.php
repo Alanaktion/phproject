@@ -660,7 +660,7 @@ class Issues extends \Controller {
 
 		$this->_printJson(array(
 			"total" => count($updates),
-			"html" => $this->_cleanJson(\Template::instance()->render("issues/single/history.html"))
+			"html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/history.html"))
 		));
 	}
 
@@ -690,7 +690,7 @@ class Issues extends \Controller {
 
 			$this->_printJson(array(
 				"total" => count($f3->get("issues")),
-				"html" => $this->_cleanJson(\Template::instance()->render("issues/single/related.html"))
+				"html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/related.html"))
 			));
 		} else {
 			$f3->error(404);
@@ -705,7 +705,7 @@ class Issues extends \Controller {
 
 		$this->_printJson(array(
 			"total" => count($f3->get("watchers")),
-			"html" => $this->_cleanJson(\Template::instance()->render("issues/single/watchers.html"))
+			"html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/watchers.html"))
 		));
 	}
 

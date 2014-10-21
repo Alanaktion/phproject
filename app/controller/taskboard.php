@@ -248,14 +248,14 @@ class Taskboard extends \Controller {
 						FROM issue_update u
 						JOIN issue_update_field f ON f.issue_update_id = u.id
 						WHERE f.field = 'hours_remaining'
-						AND u.created_date < '". $date . " 23:59:59'
+						AND u.created_date < :date
 						GROUP BY u.issue_id
 					) a ON a.max_id = u.id
 					RIGHT JOIN issue i ON i.id = u.issue_id
 					WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
 					AND i.id IN (" . implode(",", $visible_tasks) . ")
-					AND i.created_date < '". $date . " 23:59:59'",
-					NULL,
+					AND i.created_date < :date",
+					array("date" => $date . " 23:59:59"),
 					2678400 // 31 days
 				);
 				$burnDays[$date] = $result[0];
