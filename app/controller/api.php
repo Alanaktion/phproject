@@ -7,14 +7,19 @@ abstract class Api extends \Controller {
 	protected $_userId;
 
 	function __construct() {
-		\Base::instance()->set("ONERROR", function($f3) {
+		$f3 = \Base::instance();
+		$f3->set("ONERROR", function($f3) {
 			if(!headers_sent()) {
 				header("Content-type: application/json");
 			}
-			echo json_encode(array(
+			$out = array(
 				"status" => $f3->get("ERROR.code"),
 				"error" => $f3->get("ERROR.text")
-			));
+			);
+			if($f3->get("DEBUG") >= 2) {
+				$out["trace"] = $f3->get("ERROR.trace");
+			}
+			echo json_encode($out);
 		});
 
 		$this->_userId = $this->_requireAuth();
