@@ -1,6 +1,7 @@
 <?php
-if (!defined('STDIN'))
-	die("Cron jobs must be run from the command line.");
+if (!defined('STDIN')) {
+	throw new Exception("Cron jobs must be run from the command line.");
+}
 
 $homedir = dirname(dirname(__FILE__)) . "/";
 set_include_path($homedir);

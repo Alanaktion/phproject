@@ -8,7 +8,7 @@ $password = $f3->get("imap.password");
 
 $inbox = imap_open($hostname,$username,$password);
 if($inbox === false) {
-	die('Cannot connect to IMAP: ' . imap_last_error());
+	throw new Exception('Cannot connect to IMAP: ' . imap_last_error());
 }
 
 $emails = imap_search($inbox,'ALL UNSEEN');

@@ -18,7 +18,7 @@ $f3->mset(array(
 // Redirect to installer if no config file is found
 if(!is_file("config.ini")) {
 	header("Location: install.php");
-	exit();
+	return;
 }
 
 // Get current Git revision
