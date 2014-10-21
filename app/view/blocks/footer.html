@@ -62,7 +62,7 @@
 								<dd>Reload page</dd>
 								<repeat group="{{ @issue_types }}" value="{{ @type }}">
 									<check if="{{ @type.id > 0 && @type.id < 10 }}">
-										<dt>{{ @type.id }}</dt>
+										<dt>alt+{{ @type.id }}</dt>
 										<dd>Create new {{ @type.name }}</dd>
 									</check>
 								</repeat>
@@ -90,42 +90,50 @@
 	</div>
 	<script type="text/javascript">
 	$(document).ready(function() {
+
+		// Show Mac hotkeys on Macs
+		if(navigator.platform.indexOf('Mac') >= 0) {
+			var $modalBody = $("#modal-hotkeys .modal-body");
+			$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8984').replace(/shift\+/g, '&#8679;'));
+		}
+
+		// Bind keyup to hotkey handler
 		$(document).on('keyup', function(e) {
 			// Only handle hotkeys when not in a form context
 			if(e.target.type != 'textarea' && e.target.tagName != 'INPUT' && e.target.tagName != 'SELECT' && (e.target.className != 'modal in' || e.which == 191)) {
 				switch (e.which) {
 					case 191: // Hotkey modal
-						if(e.shiftKey && !e.metaKey && !e.ctrlKey) {
+						if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
 							$('.modal.in').not('#modal-hotkeys').modal('hide');
 							$('#modal-hotkeys').modal('toggle');
 						}
 						break;
 					case 66: // Browse
-						if(!e.shiftKey && !e.metaKey && !e.ctrlKey) {
+						if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
 							window.location = site_url + 'issues?status=open';
 						}
 						break;
 					case 87: // Watch/unwatch issue
-						if(!e.shiftKey && !e.metaKey && !e.ctrlKey) {
+						if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
 							$("#watch-btn").click();
 						}
 						break;
 					case 69: // Edit issue
-						if(!e.shiftKey && !e.metaKey && !e.ctrlKey) {
+						if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
 							$("#btn-edit").click();
 						}
 						break;
 					case 67:
-						if(e.shiftKey && !e.metaKey && !e.ctrlKey) { // Close issue
+						if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Close issue
 							window.location = $("#btn-issue-close").attr("href");
-						} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey) { // Comment on issue
+						} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Comment on issue
 							$("#comment_textarea").focus();
 						}
 						break;
 					case 82:
-						if(e.shiftKey && !e.metaKey && !e.ctrlKey) { // Reopen issue
+						if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Reopen issue
 							window.location = $("#btn-issue-reopen").attr("href");
-						} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey) { // Reload
+						} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Reload
 							window.location.reload();
 						}
 						break;
@@ -133,7 +141,7 @@
 // {~ if(@type.id > 0 && @type.id < 10): ~}
 
 					case parseInt('{{ 48 + @type.id }}'): // New {{ @type.name }} ({{ @type.id }})
-						if(!e.shiftKey && !e.metaKey && !e.ctrlKey) {
+						if(!e.shiftKey && !e.ctrlKey && (e.altKey || e.metaKey)) {
 							window.location = site_url + 'issues/new/{{ @type.id }}';
 						}
 						break;
@@ -143,6 +151,7 @@
 				}
 			}
 		});
+
 	});
 	</script>
 
