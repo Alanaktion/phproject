@@ -95,31 +95,37 @@
 			if(e.target.type != 'textarea' && e.target.tagName != 'INPUT' && e.target.tagName != 'SELECT' && (e.target.className != 'modal in' || e.which == 191)) {
 				switch (e.which) {
 					case 191: // Hotkey modal
-						if(e.shiftKey) {
+						if(e.shiftKey && !e.metaKey && !e.ctrlKey) {
 							$('.modal.in').not('#modal-hotkeys').modal('hide');
 							$('#modal-hotkeys').modal('toggle');
 						}
 						break;
 					case 66: // Browse
-						window.location = site_url + 'issues?status=open';
+						if(!e.shiftKey && !e.metaKey && !e.ctrlKey) {
+							window.location = site_url + 'issues?status=open';
+						}
 						break;
 					case 87: // Watch/unwatch issue
-						$("#watch-btn").click();
+						if(!e.shiftKey && !e.metaKey && !e.ctrlKey) {
+							$("#watch-btn").click();
+						}
 						break;
 					case 69: // Edit issue
-						$("#btn-edit").click();
+						if(!e.shiftKey && !e.metaKey && !e.ctrlKey) {
+							$("#btn-edit").click();
+						}
 						break;
 					case 67:
-						if(e.shiftKey) { // Close issue
+						if(e.shiftKey && !e.metaKey && !e.ctrlKey) { // Close issue
 							window.location = $("#btn-issue-close").attr("href");
-						} else { // Comment on issue
+						} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey) { // Comment on issue
 							$("#comment_textarea").focus();
 						}
 						break;
 					case 82:
-						if(e.shiftKey) { // Reopen issue
+						if(e.shiftKey && !e.metaKey && !e.ctrlKey) { // Reopen issue
 							window.location = $("#btn-issue-reopen").attr("href");
-						} else { // Reload
+						} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey) { { // Reload
 							window.location.reload();
 						}
 						break;
@@ -127,7 +133,9 @@
 // {~ if(@type.id > 0 && @type.id < 10): ~}
 
 					case parseInt('{{ 48 + @type.id }}'): // New {{ @type.name }} ({{ @type.id }})
-						window.location = site_url + 'issues/new/{{ @type.id }}';
+						if(!e.shiftKey && !e.metaKey && !e.ctrlKey) {
+							window.location = site_url + 'issues/new/{{ @type.id }}';
+						}
 						break;
 // {~ endif ~}
 // {~ endforeach; ~}
