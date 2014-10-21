@@ -8,7 +8,7 @@ abstract class Api extends \Controller {
 
 	function __construct() {
 		$f3 = \Base::instance();
-		$f3->set("ONERROR", function($f3) {
+		$f3->set("ONERROR", function(\Base $f3) {
 			if(!headers_sent()) {
 				header("Content-type: application/json");
 			}
