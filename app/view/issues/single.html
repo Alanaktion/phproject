@@ -418,7 +418,7 @@ $(function() {
 	});
 	$.get('issues/{{ @issue.id }}/related', {}, function(data) {
 		$('#related').empty().append(data.html);
-		$('#tab_related').html($('#tab_related').text() + '&ensp;<span class="badge">' + data.total + '</span>');
+		$('#tab_related').html($('#tab_related').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 		$('#related table').stupidtable();
 	}, 'json').error(function() {
 		$('#related').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_related_issues }}'));
