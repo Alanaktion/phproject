@@ -19,7 +19,7 @@
 	<div class="form-group">
 		<label class="col-md-2 control-label">{{ @dict.cols.title }}</label>
 		<div class="col-md-10">
-			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : @issue.name }}" required>
+			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : htmlentities(@issue.name) | raw }}" required>
 		</div>
 	</div>
 	<div class="form-group">
