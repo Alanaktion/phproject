@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class Taskboard extends Base {
+class Taskboard extends \Controller {
 
 	public function __construct() {
 		$this->_userId = $this->_requireLogin();
@@ -312,6 +312,7 @@ class Taskboard extends Base {
 		}
 		$issue->priority = $post["priority"];
 		$issue->parent_id = $post["storyId"];
+		$issue->sprint_id = $post["sprintId"];
 		$issue->save();
 
 		print_json($issue->cast() + array("taskId" => $issue->id));

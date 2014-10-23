@@ -23,4 +23,5 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.pass")
 ));
 
+require_once $homedir . "app/core.php";
 require_once $homedir . "app/functions.php";

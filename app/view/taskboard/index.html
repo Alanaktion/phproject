@@ -170,6 +170,7 @@
 					<h4 class="modal-title" id="task-dialog-title">Edit Task</h4>
 				</div>
 				<fieldset class="modal-body">
+					<input type="hidden" name="sprintId" id="sprintId" value="{{ @PARAMS.id }}">
 					<input type="hidden" name="taskId" id="taskId" value="">
 					<div class="col-md-7">
 						<div class="form-group">
@@ -318,6 +319,9 @@
 				var left = $(this).scrollLeft();
 				$(".taskboard-head").css("left", (0 - left) + 'px');
 			});
+
+			// Trigger scroll handler on ready (in case user refreshed after scrolling)
+			$(window).scroll();
 
 		});
 	</script>

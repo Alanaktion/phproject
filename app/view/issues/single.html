@@ -176,7 +176,7 @@
 					<ul class="list-inline file-list">
 						<repeat group="{{ @files }}" value="{{ @file }}">
 							<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y \a\t g:ia', utc2local(strtotime(@file.created_date))) }}<br>{{ format_filesize(@file.filesize) }}">
-								<a href="files/{{ @file.id }}/{{ @file.filename }}" target="_blank">
+								<a class="file-attachment" href="files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">
 									<img class src="files/thumb/96-{{ @file.id }}.png" /><br />
 									{{ @file.filename }}
 								</a>
@@ -204,7 +204,7 @@
 					</check>
 				</ul>
 				<div class="tab-content">
-					<div class="tab-pane active" id="comments">
+					<div class="tab-pane fade in active" id="comments">
 						<div class="comments" id="comments">
 							<form action="issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
 								<input type="hidden" name="action" value="comment">
@@ -233,7 +233,7 @@
 													<div><b>{{ @dict.attached_file }}:</b> <span style="text-decoration: line-through;">{{@comment.file_filename}}</span> <span class="text-danger">[{{ @dict.deleted }}]</span></div>
 												</true>
 												<false>
-													<div><b>{{ @dict.attached_file }}:</b> <a href="files/{{ @comment.file_id }}/{{ @comment.file_filename }}" target="_blank">{{@comment.file_filename}}</a></div>
+													<div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="files/{{ @comment.file_id }}/{{ @comment.file_filename }}" target="_blank">{{@comment.file_filename}}</a></div>
 												</false>
 											</check>
 										</check>
@@ -243,21 +243,21 @@
 							</repeat>
 						</div>
 					</div>
-					<div class="tab-pane" id="history">
+					<div class="tab-pane fade" id="history">
 						<div class="col-md-4 col-md-offset-4">
 							<div class="progress progress-striped active">
 								<div class="progress-bar" style="width: 100%"></div>
 							</div>
 						</div>
 					</div>
-					<div class="tab-pane" id="watchers">
+					<div class="tab-pane fade" id="watchers">
 						<div class="col-md-4 col-md-offset-4">
 							<div class="progress progress-striped active">
 								<div class="progress-bar" style="width: 100%"></div>
 							</div>
 						</div>
 					</div>
-					<div class="tab-pane" id="related">
+					<div class="tab-pane fade" id="related">
 						<div class="col-md-4 col-md-offset-4">
 							<div class="progress progress-striped active">
 								<div class="progress-bar" style="width: 100%"></div>
@@ -311,6 +311,22 @@
 		</div>
 	</div>
 </div>
+
+<!-- <div class="modal fade" id="modal-file" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
+				<h4 class="modal-title"></h4>
+			</div>
+			<div class="modal-body"></div>
+			<div class="modal-footer">
+				<a class="btn btn-default btn-sm" href="#" target="_blank">Download</a>
+				<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">{{ @dict.close }}</button>
+			</div>
+		</div>
+	</div>
+</div> -->
 
 <script src="minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
@@ -439,6 +455,26 @@ $(function() {
 		$("#alert span").empty();
 		$("#alert").hide();
 	});
+
+	// Trigger modal on plain text attachments
+	/*$(".file-attachment").click(function(e) {
+		$this = $(this);
+		if($this.data("mime") == "text/plain") {
+			console.log($this[0]);
+			$.get($this.attr("href"), function(data) {
+				$("#modal-file .modal-body").empty();
+				$("<pre />").text(data).appendTo("#modal-file .modal-body");
+			});
+			$("#modal-file .modal-body").html("{{ @dict.loading }}");
+			$("#modal-file .modal-title").text($this.text());
+			$("#modal-file .modal-footer a").attr("href", $this.attr("href"));
+			$("#modal-file").modal("show");
+			e.preventDefault();
+		}
+	});
+	$("#modal-file .modal-footer a").click(function(e) {
+		$(this).parents(".modal").modal("hide");
+	});*/
 
 });
 

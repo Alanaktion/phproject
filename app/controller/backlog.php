@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class Backlog extends Base {
+class Backlog extends \Controller {
 
 	protected $_userId;
 

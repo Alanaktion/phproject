@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class Issues extends Base {
+class Issues extends \Controller {
 
 	protected $_userId;
 
@@ -21,11 +21,12 @@ class Issues extends Base {
 		// Filter issue listing by URL parameters
 		$filter = array();
 		$args = $f3->get("GET");
-		foreach($args as $key=>$val) {
-			if(!empty($val) && $issues->exists($key)) {
+		foreach($args as $key => $val) {
+			if(!empty($val) && !is_array($val) && $issues->exists($key)) {
 				$filter[$key] = $val;
 			}
 		}
+		unset($val);
 
 		// Build SQL string to use for filtering
 		$filter_str = "";
@@ -56,9 +57,10 @@ class Issues extends Base {
 				$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
 			}
 		}
+		unset($val);
 		$filter_str .= " deleted_date IS NULL ";
 
-
+		// Build SQL ORDER BY string
 		$orderby = !empty($_GET['orderby']) ? $_GET['orderby'] : "priority";
 		$ascdesc = !empty($_GET['ascdesc']) && $_GET['ascdesc'] == 'asc' ? "ASC" : "DESC";
 		switch($orderby) {

@@ -127,7 +127,7 @@ var Taskboard = {
 		Taskboard.changeModalColor(userColor);
 	},
 	modalAdd: function(storyId) {
-		$("#task-dialog input, #task-dialog textarea").val("");
+		$("#task-dialog input, #task-dialog textarea").not("#sprintId").val("");
 		$("#task-dialog #priority").val(0);
 		$("#task-dialog #assigned").val($("#task-dialog #assigned").data("default-value"));
 		Taskboard.changeModalColor($("#task-dialog #assigned").data("default-color"));
