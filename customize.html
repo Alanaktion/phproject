@@ -3,13 +3,20 @@ layout: default
 title: Customization
 ---
 <div class="container">
-	<h1 class="page-header">Customization</h1>
-	<p>Phproject's UI is built around <a href="http://getbootstrap.com" target="_blank">Twitter Bootstrap 3</a>, and is compatible with customized Bootstrap styles including Bootswatch. Simply change the <code>site.theme</code> entry in <code>config.ini</code> to the web path of a Bootstrap CSS file and it will replace the main CSS. Phproject already includes all of the themes from Bootswatch as well as a few custom ones we've built ourselves based on Bootswatch's Flatly. Phproject's additions to the Bootstrap core are designed to add features without breaking any existing components, so unless your customized Bootstrap is very heavily modified, everything should continue to work consistently. Dark themes are known to have a few issues, if you need to use a dark theme, include <a href="#dark-css">the CSS below</a> to ensure everything looks right.</p>
-	<p>To give your site a custom title and meta description, update the <code>site.name</code> and <code>site.description</code> entries in <code>config.ini</code>.</p>
+	<h1 class="page-header">Customize</h1>
+
+	<h2 id="issues">Issues</h2>
+	<p>Phproject has three issue types that are included by default, Tasks, Projects, and Bugs. These issue types can be modified and new ones can be added by in the <code>issue_type</code> database table. If you're updating the existing issues, or would like to change which issue types are used for Tasks and Projects on the Taskboard, add/update the <code>issue_type.task</code> and <code>issue_type.project</code> options in your <code>config.ini</code> file with the <code>id</code> values of the <code>issue_type</code>s you want to use.</p>
+	<p>Issues also have a Status and Priority value, which uses options from the <code>issue_status</code> and <code>issue_priority</code> tables, respectively. These tables can also be modified with the statuses and priorities needed. No changes outside of the database tables are required for these options. Note that priorities are designed to default to <code>0</code>, though this is not required.</p>
+
+	<h2 id="appearance">Appearance</h2>
+	<p>Phproject's UI is built around <a href="http://getbootstrap.com" target="_blank">Twitter Bootstrap 3</a>, and is compatible with customized Bootstrap styles including Bootswatch. Adding a <code>site.theme</code> entry in <code>config.ini</code> set to the web path of a Bootstrap CSS file will replace the main CSS. Phproject already includes all of the themes from Bootswatch as well as a few custom ones we've built ourselves based on Bootswatch's Flatly. Phproject's additions to the Bootstrap core are designed to add features without breaking any existing components, so unless your customized Bootstrap is very heavily modified, everything should continue to work consistently. Dark themes are known to have a few issues, if you need to use a dark theme, include <a href="#dark-css">the CSS below</a> to ensure everything looks right.</p>
+	<p>To give your site a custom title and meta description, update the <code>site.name</code> and <code>site.description</code> entries in <code>config.ini</code>. Phproject also allows using an image for the logo in the top navigation. Adding <code>site.logo</code> to an image URL.</p>
 	<p>You can also customize the default user image that is shown when a user does not have a Gravatar (Phproject uses <code>mm</code> by default) as well as the maximum content rating of Gravatars to show (<code>pg</code> by default). The <code>gravatar.default</code> and <code>gravatar.rating</code> entries in config.ini can be updated to change these.</p>
 
-	<h2 class="h3" id="dark-css">CSS for dark themes</h2>
-<pre><code><small>/* This CSS fixes some display issues when using a dark Bootstrap theme */
+	<h3 class="h4" id="dark-css">CSS for dark themes</h3>
+	<p>If you want to use a custom Bootstrap theme that uses light text on a dark background, you'll find that some of the custom componants don't look great. Use the CSS below to make the components display properly, making adjustments where necessary to match your design.</p>
+<pre><code><small>/* This CSS fixes display issues when using a dark Bootstrap theme */
 #taskboard table.taskboard-head {
 	background-color: transparent;
 }
@@ -21,14 +28,13 @@ title: Customization
 #taskboard td, #taskboard th {
 	border-color: #666 !important;
 }
-#taskboard #task-dialog,
-body .ui-widget-content {
-	background-color: #222 !important;
-}
 #taskboard .spinner {
 	background-image: url(/img/ajax-loader-dark.gif) !important;
 }
 .datepicker {
 	color: #111;
 }</small></code></pre>
+
+	<h2 id="demo-mode">Demo Mode</h2>
+	<p>While not a necessary feature for most installations, Phproject includes a demo mode which causes the site to automatically log in as a specific user, as well as display a demo alert at the top of each page. This can be enabled by setting <code>site.demo</code> in <code>config.ini</code> to the ID of the user you want to auto-login as.</p>
 </div>
