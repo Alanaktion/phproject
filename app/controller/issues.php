@@ -153,14 +153,25 @@ class Issues extends \Controller {
 		$issue_page = $issues->paginate($args["page"], 50, $filter_str);
 		$f3->set("issues", $issue_page);
 
-		// Set up pagination
+		// Pass filter string for pagination
 		$filter_get = http_build_query($filter);
-		if($issue_page["pos"] < $issue_page["count"] - 1) {
-			$f3->set("next", "?page=" . ($issue_page["pos"] + 1) . "&" . $filter_get);
+		if($issue_page["count"] > 7) {
+			if($issue_page["pos"] <= 3) {
+				$min = 0;
+			} else {
+				$min = $issue_page["pos"] - 3;
+			}
+			if($issue_page["pos"] < $issue_page["count"] - 3) {
+				$max = $issue_page["pos"] + 3;
+			} else {
+				$max = $issue_page["count"] - 1;
+			}
+		} else {
+			$min = 0;
+			$max = $issue_page["count"] - 1;
 		}
-		if($issue_page["pos"] > 0) {
-			$f3->set("prev", "?page=" . ($issue_page["pos"] - 1) . "&" . $filter_get);
-		}
+		$f3->set("pages", range($min, $max));
+		$f3->set("filter_get", $filter_get);
 
 		$f3->set("menuitem", "browse");
 		$headings = array(
