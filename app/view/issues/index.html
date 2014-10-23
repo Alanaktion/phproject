@@ -10,8 +10,11 @@
 		<p class="alert alert-success">{{ @dict.deleted_success,@GET.deleted | format }}&ensp;<a href="issues/undelete/{{ @GET.deleted }}">{{ @dict.restore_issue }}</a></p>
 	</check>
 	<include href="blocks/issue-list.html" />
-	<div class="text-center clearfix">
-		<ul class="pagination pagination-sm">
+	<p class="pull-right hidden-xs">
+		<span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
+	</p>
+	<div class="text-center">
+		<ul class="pagination pagination-sm" style="margin: 15px 0;">
 			<li {~ if(@issues.pos == 0) echo 'class="disabled"' ~}><a href="issues?page={{ @issues.pos ? @issues.pos - 1 : 0 }}&amp;{{ @filter_get }}">&laquo;</a></li>
 			<repeat group="{{ @pages }}" value="{{ @page }}">
 				<li {~ if(@page == @issues.pos) echo 'class="active"' ~}><a href="issues?page={{ @page }}&amp;{{ @filter_get }}">{{ @page + 1 }}</a></li>
