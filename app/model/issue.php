@@ -72,6 +72,11 @@ class Issue extends \Model {
 			}
 		}
 
+		//Make due dates correct
+		if($this->due_date) {
+			$this->due_date = date("Y-m-d", strtotime($this->due_date));
+		}
+
 		// Check if updating or inserting
 		if($this->query) {
 

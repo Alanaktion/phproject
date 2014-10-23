@@ -187,6 +187,85 @@ class Issues extends \Controller {
 	/**
 	 * Export a list of issues
 	 * @param  Base  $f3
+	 * @param  array $params from form
+	 */
+	public function bulk_update($f3, $params) {
+		$post = $f3->get("POST");
+
+		$issue = new \Model\Issue;
+		if( !empty($post["id"] ) && is_array($post["id"] )) {
+			foreach($post["id"] as $id) {
+				// Updating existing issue.
+				$issue->load($id);
+				if($issue->id) {
+
+					// Diff contents and save what's changed.
+					foreach($post as $i=>$val) {
+						if(
+							$issue->exists($i)
+							&& $i != "id"
+							&& $issue->$i != $val
+							&& !empty($val)
+						) {
+							$issue->$i = $val;
+							if($i == "status") {
+								$status = new \Model\Issue\Status;
+								$status->load($val);
+
+								// Toggle closed_date if issue has been closed/restored
+								if($status->closed) {
+									if(!$issue->closed_date) {
+										$issue->closed_date = $this->now();
+									}
+								} else {
+									$issue->closed_date = null;
+								}
+							}
+						}
+					}
+
+					// Save to the sprint of the due date if no sprint selected
+					if (!empty($post['due_date']) && empty($post['sprint_id'])) {
+						$sprint = new \Model\Sprint;
+						$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
+						$issue->sprint_id = $sprint->id;
+					}
+
+					// If it's a child issue and the parent is in a sprint, assign to that sprint
+					if(!empty($post['bulk']['parent_id']) && !$issue->sprint_id) {
+						$parent = new \Model\Issue;
+						$parent->load($issue->parent_id);
+						if($parent->sprint_id) {
+							$issue->sprint_id = $parent->sprint_id;
+						}
+					}
+
+
+
+
+					$issue->save();
+
+
+				} else {
+					$f3->error(500, "Failed to update all the issues, starting with: $id.");
+					return;
+				}
+			}
+
+		} else {
+			$f3->reroute($post["url_path"] . "?" . $post["url_query"]);
+		}
+
+		if (!empty($post["url_path"]))	{
+			$f3->reroute($post["url_path"] . "?" . $post["url_query"]);
+		} else {
+			$f3->reroute("/issues?" . $post["url_query"]);
+		}
+	}
+
+	/**
+	 * Export a list of issues
+	 * @param  Base  $f3
 	 * @param  array $params
 	 */
 	public function export($f3, $params) {
@@ -414,6 +493,7 @@ class Issues extends \Controller {
 							$issue->$i = null;
 						} else {
 							$issue->$i = $val;
+
 							if($i == "status") {
 								$status = new \Model\Issue\Status;
 								$status->load($val);
