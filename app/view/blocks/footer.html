@@ -94,7 +94,7 @@
 		// Show Mac hotkeys on Macs
 		if(navigator.platform.indexOf('Mac') >= 0) {
 			var $modalBody = $("#modal-hotkeys .modal-body");
-			$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8984;').replace(/shift\+/g, '&#8679;'));
+			$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8997;').replace(/shift\+/g, '&#8679;'));
 		}
 
 		// Bind keyup to hotkey handler
@@ -141,7 +141,7 @@
 // {~ if(@type.id > 0 && @type.id < 10): ~}
 
 					case parseInt('{{ 48 + @type.id }}'): // New {{ @type.name }} ({{ @type.id }})
-						if(!e.shiftKey && !e.ctrlKey && (e.altKey || e.metaKey)) {
+						if(!e.shiftKey && !e.ctrlKey && e.altKey) {
 							window.location = site_url + 'issues/new/{{ @type.id }}';
 						}
 						break;
