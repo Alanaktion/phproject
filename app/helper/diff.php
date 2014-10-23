@@ -173,7 +173,6 @@ class Diff
 			return $this->groupedCodes;
 		}
 
-		// require_once dirname(__FILE__).'/Diff/SequenceMatcher.php';
 		$sequenceMatcher = new \Helper\Diff\Sequencematcher($this->a, $this->b, null, $this->options);
 		$this->groupedCodes = $sequenceMatcher->getGroupedOpcodes($this->options['context']);
 		return $this->groupedCodes;

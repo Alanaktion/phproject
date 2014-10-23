@@ -1,11 +1,32 @@
 <?php
 
-namespace Controller\Api;
+namespace Controller;
 
-abstract class Base extends \Controller {
+abstract class Api extends \Controller {
+
+	protected $_userId;
+
+	function __construct() {
+		$f3 = \Base::instance();
+		$f3->set("ONERROR", function(\Base $f3) {
+			if(!headers_sent()) {
+				header("Content-type: application/json");
+			}
+			$out = array(
+				"status" => $f3->get("ERROR.code"),
+				"error" => $f3->get("ERROR.text")
+			);
+			if($f3->get("DEBUG") >= 2) {
+				$out["trace"] = $f3->get("ERROR.trace");
+			}
+			echo json_encode($out);
+		});
+
+		$this->_userId = $this->_requireAuth();
+	}
 
 	/**
-	 * Require an API key. Sends an HTTP 403 if one is not supplied.
+	 * Require an API key. Sends an HTTP 401 if one is not supplied.
 	 * @return int|bool
 	 */
 	protected function _requireAuth() {
@@ -27,6 +48,8 @@ abstract class Base extends \Controller {
 			$key = $f3->get("HEADERS.X-Redmine-API-Key");
 		} elseif($f3->get("HEADERS.X-API-Key")) {
 			$key = $f3->get("HEADERS.X-API-Key");
+		} elseif($f3->get("HEADERS.X-Api-Key")) {
+			$key = $f3->get("HEADERS.X-Api-Key");
 		}
 
 		$user->load(array("api_key", $key));
@@ -37,20 +60,8 @@ abstract class Base extends \Controller {
 			return $user->id;
 		} else {
 			$f3->error(401);
-			$f3->unload();
 			return false;
 		}
-	}
-
-	/**
-	 * Output an error in a JSON object, stop execution
-	 * @param  integer $message
-	 */
-	protected function _error($message = 1) {
-		print_json(array(
-			"error" => $message
-		));
-		exit();
 	}
 
 }

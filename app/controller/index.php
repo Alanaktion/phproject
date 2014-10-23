@@ -10,7 +10,7 @@ class Index extends \Controller {
 			return $user_controller->dashboard($f3, $params);
 		} else {
 			if($f3->get("site.public")) {
-				echo \Template::instance()->render("index/index.html");
+				$this->_render("index/index.html");
 			} else {
 				if($f3->get("site.demo") && is_numeric($f3->get("site.demo"))) {
 					$user = new \Model\User();
@@ -39,7 +39,7 @@ class Index extends \Controller {
 			if($f3->get("GET.to")) {
 				$f3->set("to", $f3->get("GET.to"));
 			}
-			echo \Template::instance()->render("index/login.html");
+			$this->_render("index/login.html");
 		}
 	}
 
@@ -67,7 +67,7 @@ class Index extends \Controller {
 				$f3->set("to", $f3->get("POST.to"));
 			}
 			$f3->set("login.error", "Invalid login information, try again.");
-			echo \Template::instance()->render("index/login.html");
+			$this->_render("index/login.html");
 		}
 	}
 
@@ -76,7 +76,7 @@ class Index extends \Controller {
 		// Exit immediately if public registrations are disabled
 		if(!$f3->get("site.public_registration")) {
 			$f3->error(400);
-			die();
+			return;
 		}
 
 		$errors = array();
@@ -109,7 +109,7 @@ class Index extends \Controller {
 		// Show errors or create new user
 		if($errors) {
 			$f3->set("register.error", implode("<br>", $errors));
-			echo \Template::instance()->render("index/login.html");
+			$this->_render("index/login.html");
 		} else {
 			$user->reset();
 			$user->username = trim($f3->get("POST.register-username"));
@@ -142,7 +142,7 @@ class Index extends \Controller {
 				}
 			}
 			unset($user);
-			echo \Template::instance()->render("index/reset.html");
+			$this->_render("index/reset.html");
 		}
 	}
 
@@ -154,7 +154,7 @@ class Index extends \Controller {
 			$user->load(array("CONCAT(password, salt) = ?", $params["hash"]));
 			if(!$user->id || !$params["hash"]) {
 				$f3->set("reset.error", "Invalid reset URL.");
-				echo \Template::instance()->render("index/reset.html");
+				$this->_render("index/reset.html");
 				return;
 			}
 			if($f3->get("POST.password1")) {
@@ -174,7 +174,7 @@ class Index extends \Controller {
 				}
 			}
 			$f3->set("resetuser", $user);
-			echo \Template::instance()->render("index/reset_complete.html");
+			$this->_render("index/reset_complete.html");
 		}
 	}
 
@@ -186,9 +186,9 @@ class Index extends \Controller {
 
 	public function ping($f3, $params) {
 		if($f3->get("user.id")) {
-			print_json(array("user_id" => $f3->get("user.id"), "is_logged_in" => true));
+			$this->_printJson(array("user_id" => $f3->get("user.id"), "is_logged_in" => true));
 		} else {
-			print_json(array("user_id" => null, "is_logged_in" => false));
+			$this->_printJson(array("user_id" => null, "is_logged_in" => false));
 		}
 	}
 

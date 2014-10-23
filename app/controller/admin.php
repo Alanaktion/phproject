@@ -37,7 +37,7 @@ class Admin extends \Controller {
 
 		$f3->set("db_stats", $db->exec("SHOW STATUS WHERE Variable_name LIKE 'Delayed_%' OR Variable_name LIKE 'Table_lock%' OR Variable_name = 'Uptime'"));
 
-		echo \Template::instance()->render("admin/index.html");
+		$this->_render("admin/index.html");
 	}
 
 	public function users($f3, $params) {
@@ -47,7 +47,7 @@ class Admin extends \Controller {
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'"));
 
-		echo \Template::instance()->render("admin/users.html");
+		$this->_render("admin/users.html");
 	}
 
 	public function user_edit($f3, $params) {
@@ -75,7 +75,7 @@ class Admin extends \Controller {
 				}
 			}
 			$f3->set("this_user", $user);
-			echo \Template::instance()->render("admin/users/edit.html");
+			$this->_render("admin/users/edit.html");
 		} else {
 			$f3->error(404, "User does not exist.");
 		}
@@ -97,7 +97,7 @@ class Admin extends \Controller {
 			$user->api_key = $security->salt_sha1();
 			$user->role = $f3->get("POST.role");
 			$user->task_color = ltrim($f3->get("POST.task_color"), "#");
-			$user->created_date = now();
+			$user->created_date = $this->now();
 			$user->save();
 			if($user->id) {
 				$f3->reroute("/admin/users#" . $user->id);
@@ -107,7 +107,7 @@ class Admin extends \Controller {
 		} else {
 			$f3->set("title", "Add User");
 			$f3->set("rand_color", sprintf("#%06X", mt_rand(0, 0xFFFFFF)));
-			echo \Template::instance()->render("admin/users/new.html");
+			$this->_render("admin/users/new.html");
 		}
 	}
 
@@ -117,7 +117,7 @@ class Admin extends \Controller {
 		$user->delete();
 
 		if($f3->get("AJAX")) {
-			print_json(array("deleted" => 1));
+			$this->_printJson(array("deleted" => 1));
 		} else {
 			$f3->reroute("/admin/users");
 		}
@@ -144,7 +144,7 @@ class Admin extends \Controller {
 		}
 		$f3->set("groups", $group_array);
 
-		echo \Template::instance()->render("admin/groups.html");
+		$this->_render("admin/groups.html");
 	}
 
 	public function group_new($f3, $params) {
@@ -156,7 +156,7 @@ class Admin extends \Controller {
 			$group->name = $f3->get("POST.name");
 			$group->role = "group";
 			$group->task_color = sprintf("%06X", mt_rand(0, 0xFFFFFF));
-			$group->created_date = now();
+			$group->created_date = $this->now();
 			$group->save();
 			$f3->reroute("/admin/groups");
 		} else {
@@ -178,7 +178,7 @@ class Admin extends \Controller {
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 
-		echo \Template::instance()->render("admin/groups/edit.html");
+		$this->_render("admin/groups/edit.html");
 	}
 
 	public function group_delete($f3, $params) {
@@ -186,7 +186,7 @@ class Admin extends \Controller {
 		$group->load($params["id"]);
 		$group->delete();
 		if($f3->get("AJAX")) {
-			print_json(array("deleted" => 1));
+			$this->_printJson(array("deleted" => 1));
 		} else {
 			$f3->reroute("/admin/groups");
 		}
@@ -223,12 +223,12 @@ class Admin extends \Controller {
 				$user_group = new \Model\User\Group();
 				$user_group->load(array("user_id = ? AND group_id = ?", $f3->get("POST.user_id"), $f3->get("POST.group_id")));
 				$user_group->delete();
-				print_json(array("deleted" => 1));
+				$this->_printJson(array("deleted" => 1));
 				break;
 			case "change_title":
 				$group->name = trim($f3->get("POST.name"));
 				$group->save();
-				print_json(array("changed" => 1));
+				$this->_printJson(array("changed" => 1));
 				break;
 		}
 	}
@@ -258,7 +258,7 @@ class Admin extends \Controller {
 		$attributes = new \Model\Attribute();
 		$f3->set("attributes", $attributes->find());
 
-		echo \Template::instance()->render("admin/attributes.html");
+		$this->_render("admin/attributes.html");
 	}
 
 	public function attribute_new($f3, $params) {
@@ -279,7 +279,7 @@ class Admin extends \Controller {
 			}
 		}
 
-		echo \Template::instance()->render("admin/attributes/edit.html");
+		$this->_render("admin/attributes/edit.html");
 	}
 
 	public function attribute_edit($f3, $params) {
@@ -291,7 +291,7 @@ class Admin extends \Controller {
 		$attr->load($params["id"]);
 		$f3->set("attribute", $attr);
 
-		echo \Template::instance()->render("admin/attributes/edit.html");
+		$this->_render("admin/attributes/edit.html");
 	}
 
 	public function sprints($f3, $params) {
@@ -301,7 +301,7 @@ class Admin extends \Controller {
 		$sprints = new \Model\Sprint();
 		$f3->set("sprints", $sprints->find());
 
-		echo \Template::instance()->render("admin/sprints.html");
+		$this->_render("admin/sprints.html");
 	}
 
 	public function sprint_new($f3, $params) {
@@ -311,7 +311,7 @@ class Admin extends \Controller {
 		if($post = $f3->get("POST")) {
 			if(empty($post["start_date"]) || empty($post["end_date"])) {
 				$f3->set("error", "Start and end date are required");
-				echo \Template::instance()->render("admin/sprints/new.html");
+				$this->_render("admin/sprints/new.html");
 				return;
 			}
 
@@ -320,7 +320,7 @@ class Admin extends \Controller {
 
 			if($end <= $start) {
 				$f3->set("error", "End date must be after start date");
-				echo \Template::instance()->render("admin/sprints/new.html");
+				$this->_render("admin/sprints/new.html");
 				return;
 			}
 
@@ -333,7 +333,7 @@ class Admin extends \Controller {
 			return;
 		}
 
-		echo \Template::instance()->render("admin/sprints/new.html");
+		$this->_render("admin/sprints/new.html");
 	}
 
 	//new function here!!!
@@ -353,7 +353,7 @@ class Admin extends \Controller {
 		if($post = $f3->get("POST")) {
 			if(empty($post["start_date"]) || empty($post["end_date"])) {
 				$f3->set("error", "Start and end date are required");
-				echo \Template::instance()->render("admin/sprints/edit.html");
+				$this->_render("admin/sprints/edit.html");
 				return;
 			}
 
@@ -362,7 +362,7 @@ class Admin extends \Controller {
 
 			if($end <= $start) {
 				$f3->set("error", "End date must be after start date");
-				echo \Template::instance()->render("admin/sprints/edit.html");
+				$this->_render("admin/sprints/edit.html");
 				return;
 			}
 
@@ -376,13 +376,13 @@ class Admin extends \Controller {
 		}
 		$f3->set("sprint", $sprint);
 
-		echo \Template::instance()->render("admin/sprints/edit.html");
+		$this->_render("admin/sprints/edit.html");
 	}
 
 	public function sprint_breaker($f3, $params) {
 		$f3->set("title", "SprintBreaker");
 		$f3->set("menuitem", "admin");
 
-		echo \Template::instance()->render("admin/sprints/breaker.html");
+		$this->_render("admin/sprints/breaker.html");
 	}
 }

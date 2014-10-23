@@ -53,7 +53,7 @@ class Issue extends \Model {
 	 * @return mixed
 	 */
 	public function delete() {
-		$this->set("deleted_date", now());
+		$this->set("deleted_date", date("Y-m-d H:i:s"));
 		return $this->save(false);
 	}
 
@@ -67,8 +67,8 @@ class Issue extends \Model {
 
 		// Censor credit card numbers if enabled
 		if($f3->get("security.block_ccs")) {
-			if(preg_match("/[0-9-]{9,15}[0-9]{4}/", $this->get("description"))) {
-				$this->set("description", preg_replace("/[0-9-]{9,15}([0-9]{4})/", "************$1", $this->get("description")));
+			if(preg_match("/([0-9]{3,4}-){3}[0-9]{3,4}/", $this->get("description"))) {
+				$this->set("description", preg_replace("/([0-9]{3,4}-){3}([0-9]{3,4})/", "************$2", $this->get("description")));
 			}
 		}
 
@@ -84,13 +84,11 @@ class Issue extends \Model {
 			$update = new \Model\Issue\Update();
 			$update->issue_id = $this->id;
 			$update->user_id = $f3->get("user.id");
-			$update->created_date = now();
+			$update->created_date = date("Y-m-d H:i:s");
 			if($this->exists('update_comment')) {
 				$update->comment_id = $this->get('update_comment');
 			}
 			$update->save();
-
-			$updated = 0;
 
 			// Set hours_total to the hours_remaining value if it's 0 or null
 			if($this->get("hours_remaining") && !$this->get("hours_total")) {
@@ -113,7 +111,7 @@ class Issue extends \Model {
 				$repeat_issue->owner_id = $this->get("owner_id");
 				$repeat_issue->description = $this->get("description");
 				$repeat_issue->repeat_cycle = $this->get("repeat_cycle");
-				$repeat_issue->created_date = now();
+				$repeat_issue->created_date = date("Y-m-d H:i:s");
 
 				// Find a due date in the future
 				switch($repeat_issue->repeat_cycle) {
@@ -121,14 +119,10 @@ class Issue extends \Model {
 						$repeat_issue->due_date = date("Y-m-d", strtotime("tomorrow"));
 						break;
 					case 'weekly':
-						$dow = date("l", strtotime($this->get("due_date")));
-						$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 week" ));
+						$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 week"));
 						break;
 					case 'monthly':
-						$day = date("d", strtotime($this->get("due_date")));
-						$month = date("m");
-						$year = date("Y");
-						$repeat_issue->due_date = date("Y-m-d", mktime(0, 0, 0, $month + 1, $day, $year));
+						$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 month"));
 						break;
 					case 'sprint':
 						$sprint = new \Model\Sprint();
@@ -156,6 +150,7 @@ class Issue extends \Model {
 			$this->resetChildren();
 
 			// Log updated fields
+			$updated = 0;
 			foreach ($this->fields as $key=>$field) {
 				if ($field["changed"] && $field["value"] != $this->get_prev($key)) {
 					$update_field = new \Model\Issue\Update\Field();
@@ -201,25 +196,6 @@ class Issue extends \Model {
 		}
 
 		return empty($issue) ? parent::save() : $issue;
-	}
-
-	/**
-	 * Preload custom attributes
-	 * @param  string|array $filter
-	 * @param  array        $options
-	 * @param  integer      $ttl
-	 * @return array|FALSE
-	 */
-	function load($filter=NULL, array $options=NULL, $ttl=0) {
-		// Load issue from
-		$return = parent::load($filter, $options, $ttl);
-
-		if($this->get("id")) {
-			$attr = new \Model\Custom("attribute_value_detail");
-			$attrs = $attr->find(array("issue_id = ?", $this->get("id")));
-		}
-
-		return $return;
 	}
 
 	/**
@@ -288,9 +264,13 @@ class Issue extends \Model {
 	public function resetChildren($replace_existing = true) {
 		$f3 = \Base::instance();
 		if($this->get("sprint_id")) {
+			$query = "UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type";
+			if($replace_existing) {
+				$query .= " AND sprint_id IS NULL";
+			}
 			$db = $f3->get("db.instance");
 			$db->exec(
-				"UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type" . $replace_existing ? '' : ' AND sprint_id IS NULL',
+				$query,
 				array(
 					"sprint" => $this->get("sprint_id"),
 					"issue" => $this->get("id"),

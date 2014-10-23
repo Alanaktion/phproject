@@ -6,13 +6,14 @@ $hostname = $f3->get("imap.hostname");
 $username = $f3->get("imap.username");
 $password = $f3->get("imap.password");
 
-$inbox = imap_open($hostname,$username,$password) or die('Cannot connect to IMAP: ' . imap_last_error());
+$inbox = imap_open($hostname,$username,$password);
+if($inbox === false) {
+	throw new Exception('Cannot connect to IMAP: ' . imap_last_error());
+}
 
 $emails = imap_search($inbox,'ALL UNSEEN');
 
 if($emails) {
-	// put the newest emails on top
-	// rsort($emails);
 
 	// for every email...
 	$reg_email = "/([_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3}))/i";
@@ -63,7 +64,7 @@ if($emails) {
 					$comment->user_id = $author;
 					$comment->issue_id = $issue->id;
 					$comment->text = html_entity_decode(strip_tags($message));
-					$comment->created_date = now();
+					$comment->created_date = date("Y-m-d H:i:s");
 					$comment->save();
 
 					$notification = \Helper\Notification::instance();
@@ -81,7 +82,7 @@ if($emails) {
 					$comment->user_id = $author;
 					$comment->issue_id = $issue->id;
 					$comment->text = html_entity_decode(strip_tags($message));
-					$comment->created_date = now();
+					$comment->created_date = date("Y-m-d H:i:s");
 					$comment->save();
 
 					$notification = \Helper\Notification::instance();
@@ -132,7 +133,8 @@ if($emails) {
 
 				/* if any attachments found... */
 				if(isset($structure->parts) && count($structure->parts)) {
-					for($i = 0; $i < count($structure->parts); $i++) {
+					$count = count($structure->parts);
+					for($i = 0; $i < $count; $i++) {
 						$attachments[$i] = array(
 							'is_attachment' => false,
 							'filename' => '',
@@ -215,7 +217,7 @@ if($emails) {
 						$newfile->filesize = $file['size'];
 						$newfile->content_type = $file['type'];
 						$newfile->digest = md5_file($filename);
-						$newfile->created_date = now();
+						$newfile->created_date = date("Y-m-d H:i:s");
 						$newfile->save();
 
 						$fp = fopen($f3->get("UPLOADS")  . $filename, "w+");

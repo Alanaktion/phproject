@@ -28,14 +28,13 @@ class User extends \Model {
 	 * @return string|bool
 	 */
 	public function avatar($size = 80) {
-		$f3 = \Base::instance();
 		if(!$this->get("id")) {
 			return false;
 		}
 		if($this->get("avatar_filename") && is_file("uploads/avatars/" . $this->get("avatar_filename"))) {
 			return "/avatar/$size-" . $this->get("id") . ".png";
 		}
-		return gravatar($this->get("email"), $size);
+		return \Helper\View::instance()->gravatar($this->get("email"), $size);
 	}
 
 	/**
@@ -65,7 +64,7 @@ class User extends \Model {
 		}
 
 		if(!$date) {
-			$date = now(false, false);
+			$date = date("Y-m-d", \Helper\View::instance()->utc2local());
 		}
 
 		$issue = new \Model\Issue;

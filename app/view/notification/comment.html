@@ -25,7 +25,7 @@
 		</check>
 		<img src="{{ @site.url }}avatar/48-{{ @comment.user_id }}.png" alt style="float: left; margin-right: 10px;">
 		<div style="float: left" class="tex">
-			{{ parseTextile(@comment.text) | raw }}
+			{{ $this->parseTextile(@comment.text) | raw }}
 		</div>
 		<check if="{{ @comment.file_id }}">
 			<div><i>Attached file:</i> <a href="{{ @site.url }}files/{{ @comment.file_id }}/{{ @comment.file_filename }}">{{@comment.file_filename}}</a></div>
@@ -34,7 +34,7 @@
 	</div>
 	<div style="padding: 0 10px;">
 		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @site.url }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
-		<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", utc2local(strtotime(@comment.created_date))) }}</small></span>
+		<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@comment.created_date))) }}</small></span>
 	</div>
 
 </body>
