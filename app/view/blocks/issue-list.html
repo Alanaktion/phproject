@@ -227,14 +227,17 @@
 				</div>
 				<div class="form-group">
 					<div class="row">
-						<label class="col-xs-3 control-label label-sm">{{ @dict.cols.sprint }}</label>
+						<label class="col-xs-3 control-label label-sm">{{ @dict.cols.due_date }}</label>
 						<div class="col-xs-9">
-							<select class="form-control input-sm bulk-input" name="sprint_id">
-								<option value="">{{ @dict.choose_option }}</option>
-								<repeat group="{{ @sprints }}" value="{{ @item }}">
-									<option value="{{ @item.id }}" >{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
-								</repeat>
-							</select>
+							<input class="form-control input-sm bulk-input" id="due_date" type="text" name="due_date"  value="">
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="row">
+						<label class="col-xs-3 control-label label-sm">{{ @dict.cols.parent_id }}</label>
+						<div class="col-xs-9">
+							<input class="form-control input-sm bulk-input" type="text" name="parent_id" value="">
 						</div>
 					</div>
 				</div>
@@ -253,17 +256,14 @@
 				</div>
 				<div class="form-group">
 					<div class="row">
-						<label class="col-xs-3 control-label label-sm">{{ @dict.cols.due_date }}</label>
+						<label class="col-xs-3 control-label label-sm">{{ @dict.cols.sprint }}</label>
 						<div class="col-xs-9">
-							<input class="form-control input-sm bulk-input" id="due_date" type="text" name="due_date"  value="">
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="row">
-						<label class="col-xs-3 control-label label-sm">{{ @dict.cols.parent_id }}</label>
-						<div class="col-xs-9">
-							<input class="form-control input-sm bulk-input" type="text" name="parent_id" value="">
+							<select class="form-control input-sm bulk-input" name="sprint_id">
+								<option value="">{{ @dict.choose_option }}</option>
+								<repeat group="{{ @sprints }}" value="{{ @item }}">
+									<option value="{{ @item.id }}" >{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+								</repeat>
+							</select>
 						</div>
 					</div>
 				</div>
