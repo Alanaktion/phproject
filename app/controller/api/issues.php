@@ -193,7 +193,7 @@ class Issues extends \Controller\Api {
 		}
 
 		$issue->save();
-		$f3->status(201);
+		// $f3->status(201);
 		$this->_printJson(array(
 			"issue" => $issue->cast()
 		));
