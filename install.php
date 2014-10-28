@@ -75,9 +75,14 @@ if($f3->get("POST")) {
 		mkdir("log", 0777, true);
 	}
 
+	$config = "[globals]";
+	if(!empty($post["language"])) {
+		$config .= "\nLANGUAGE={$post['language']}";
+	}
+
 	// Write configuration file
 	file_put_contents("config.ini",
-"[globals]
+"$config
 
 ; Database
 db.host={$post['db-host']}
