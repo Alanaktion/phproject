@@ -1,5 +1,5 @@
 <?php
-if (!defined('STDIN')) {
+if (PHP_SAPI != 'cli') {
 	throw new Exception("Cron jobs must be run from the command line.");
 }
 
