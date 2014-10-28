@@ -9,11 +9,11 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<ul class="nav nav-tabs">
-				<li><a href="admin/">Overview</a></li>
-				<li><a href="admin/users">Users</a></li>
-				<li><a href="admin/groups">Groups</a></li>
-				<!-- <li><a href="admin/attributes">Attributes</a></li> -->
-				<li class="active"><a href="admin/sprints">Sprints</a></li>
+                <li><a href="admin/">Overview</a></li>
+                <li><a href="admin/users">{{ @dict.users }}</a></li>
+                <li><a href="admin/groups">{{ @dict.groups }}</a></li>
+                <!-- <li><a href="admin/attributes">Attributes</a></li> -->
+                <li class="active"><a href="admin/sprints">{{ @dict.sprints }}</a></li>
 			</ul>
 			<form action="admin/sprints/new" method="post" role="form" class="form-horizontal" autocomplete="off">
 				<legend>New Sprint</legend>
@@ -38,7 +38,7 @@
 				<div class="form-group">
 					<div class="col-md-10 col-md-offset-2">
 						<button type="submit" class="btn btn-primary btn-sm">Save Sprint</button>
-						<a href="admin/sprints" class="btn btn-default btn-sm">Cancel</a>
+						<a href="admin/sprints" class="btn btn-default btn-sm">{{ @dict.cancel }}</a>
 					</div>
 				</div>
 			</form>

@@ -1,15 +1,14 @@
 <check if="{{ empty(@parent) }}">
 	<true>
-		<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.task }}/{{ @issue.id }}">New Sub-Task</a>
+		<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.new_task }}</a>
 	</true>
 	<false>
 		<check if="{{ !@parent.closed_date }}">
 			<check if="{{ @parent.type_id == @issue_type.project }}">
-				<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.project }}/{{ @parent.id }}">New Sub-Project</a>
+				<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.project }}/{{ @parent.id }}">{{ @dict.new_sub_project }}</a>
 			</check>
-			<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.task }}/{{ @parent.id }}">New Task</a>
-			<!-- <a class="btn btn-default btn-sm" href="issues/quickadd{{ @issue_type.task }}/{{ @parent.id }}">Quick Add</a> -->
-			<span class="hidden-xs">&ensp;Under <a href="issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a></span>
+			<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
+			<span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="issues/' . @parent.id . '">#' . @parent.id . ' ' . @parent.name . '</a>' | format }}</span>
 		</check>
 	</false>
 </check>
@@ -18,14 +17,14 @@
 		<table class="table table-striped table-responsive table-condensed issue-list">
 		<thead>
 			<tr>
-				<th data-sort="int">ID</th>
-				<th data-sort="string">Title</th>
-				<th data-sort="string">Author</th>
-				<th data-sort="string">Assignee</th>
-				<th data-sort="int">Created</th>
-				<th data-sort="int">Priority</th>
-				<th data-sort="int">Due</th>
-				<th data-sort="int">Status</th>
+				<th data-sort="int">{{ @dict.cols.id }}</th>
+				<th data-sort="string">{{ @dict.cols.title }}</th>
+				<th data-sort="string">{{ @dict.cols.author }}</th>
+				<th data-sort="string">{{ @dict.cols.assignee }}</th>
+				<th data-sort="int">{{ @dict.cols.created }}</th>
+				<th data-sort="int">{{ @dict.cols.priority }}</th>
+				<th data-sort="int">{{ @dict.cols.due }}</th>
+				<th data-sort="int">{{ @dict.cols.status }}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -45,6 +44,6 @@
 		</table>
 	</true>
 	<false>
-		<p class="text-center text-muted">No related issues</p>
+		<p class="text-center text-muted">{{ @dict.no_related_issues }}</p>
 	</false>
 </check>

@@ -76,11 +76,11 @@
 					</false>
 				</check>
 				<a id="btn-edit" href="issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
-					<span class="glyphicon glyphicon-pencil"></span>&ensp;Edit
+					<span class="glyphicon glyphicon-pencil"></span>&ensp;{{ @dict.edit }}
 				</a>
 				<check if="{{ @user.role == 'admin' }}">
 					<a href="issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
-						<span class="glyphicon glyphicon-remove"></span>&ensp;Delete
+						<span class="glyphicon glyphicon-remove"></span>&ensp;{{ @dict.delete }}
 					</a>
 				</check>
 			</div>
@@ -94,10 +94,10 @@
 					<p class="pull-left">
 						<check if="{{ @author.username }}">
 							<true>
-								<a href="user/{{ @author.username }}" class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</a>
+								<a href="user/{{ @author.username }}" class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name }}</a>
 							</true>
 							<false>
-								<span class="has-tooltip" title="Author" data-placement="right">{{ @author.name }}</span>
+								<span class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name }}</span>
 							</false>
 						</check>
 						<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@issue.created_date))) }}
@@ -106,20 +106,20 @@
 
 				<dl class="dl-inline">
 					<check if="{{ @issue.sprint_id }}">
-						<dt>Sprint</dt>
+						<dt>{{ @dict.cols.sprint }}</dt>
 						<dd><a href="taskboard/{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
 					</check>
 
-					<dt>Type</dt>
+					<dt>{{ @dict.cols.type }}</dt>
 					<dd>{{ @issue.type_name }}</dd>
 
-					<dt>Priority</dt>
+					<dt>{{ @dict.cols.priority }}</dt>
 					<dd>{{ @issue.priority_name }}</dd>
 
-					<dt>Status</dt>
+					<dt>{{ @dict.cols.status }}</dt>
 					<dd>{{ @issue.status_name }}</dd>
 
-					<dt>Assigned to</dt>
+					<dt>{{ @dict.cols.assignee }}</dt>
 					<dd>
 						<check if="{{ @owner.id }}">
 							<true>
@@ -139,31 +139,31 @@
 					</dd>
 
 					<check if="{{ @issue.repeat_cycle != 'none' }}">
-						<dt>Repeat Cycle</dt>
+						<dt>{{ @dict.repeat_cycle }}</dt>
 						<dd>{{ ucfirst(@issue.repeat_cycle) }}</dd>
 					</check>
 
 					<check if="{{ !empty(@issue.hours_spent) }}">
-						<dt>Spent Hours</dt>
+						<dt>{{ @dict.total_spent_hours }}</dt>
 						<dd>{{ @issue.hours_spent}}</dd>
 					</check>
 
 					<check if="{{ !empty(@issue.hours_total) }}">
-						<dt>Planned Hours</dt>
+						<dt>{{ @dict.cols.planned_hours }}</dt>
 						<dd>{{ @issue.hours_total ?: 0 }}</dd>
 
-						<dt>Remaining Hours</dt>
+						<dt>{{ @dict.cols.remaining_hours }}</dt>
 						<dd>{{ @issue.hours_remaining ?: 0 }}</dd>
 					</check>
 
 					<check if="{{ strtotime(@issue.due_date) }}">
-						<dt>Due Date</dt>
+						<dt>{{ @dict.cols.due_date }}</dt>
 						<dd>{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</dd>
 					</check>
 				</dl>
 
 				<dl>
-					<dt>Description:</dt>
+					<dt>{{ @dict.cols.description }}:</dt>
 					<dd class="tex">{{ $this->parseTextile(@issue.description) | raw }}</dd>
 				</dl>
 
@@ -171,7 +171,7 @@
 			</div>
 
 			<div class="col-lg-7">
-				<h4>Files</h4>
+				<h4>{{ @dict.files }}</h4>
 				<check if="{{ !empty(@files) }}">
 					<ul class="list-inline file-list">
 						<repeat group="{{ @files }}" value="{{ @file }}">
@@ -180,14 +180,14 @@
 									<img class src="files/thumb/96-{{ @file.id }}.png" /><br />
 									{{ @file.filename }}
 								</a>
-								<button class="btn btn-xs btn-danger delete" title="Delete File">&times;</button>
+								<button class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
 							</li>
 						</repeat>
 					</ul>
 					<p class="clear"></p>
 				</check>
 				<p>
-					<a class="btn btn-default btn-sm" data-toggle="modal" href="#" data-target="#upload">Upload</a>
+					<a class="btn btn-default btn-sm" data-toggle="modal" href="#" data-target="#upload">{{ @dict.upload }}</a>
 				</p>
 				<br>
 				<ul class="nav nav-tabs">
@@ -284,7 +284,7 @@
 				<div class="form-group">
 					<input type="file" name="attachment" size="chars">
 				</div>
-				<textarea class="form-control input-sm" id="file_comment_textarea" name="text" type="text" placeholder="Write a comment&hellip;"></textarea>
+				<textarea class="form-control input-sm" id="file_comment_textarea" name="text" type="text" placeholder="{{ @dict.write_a_comment }}"></textarea>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ @dict.cancel }}</button>

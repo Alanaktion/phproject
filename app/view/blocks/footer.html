@@ -57,30 +57,30 @@
 								<dt>?</dt>
 								<dd>Show hotkeys</dd>
 								<dt>b</dt>
-								<dd>Browse issues</dd>
+								<dd>{{ @dict.browse }}</dd>
 								<dt>r</dt>
 								<dd>Reload page</dd>
 								<repeat group="{{ @issue_types }}" value="{{ @type }}">
 									<check if="{{ @type.id > 0 && @type.id < 10 }}">
 										<dt>alt+{{ @type.id }}</dt>
-										<dd>Create new {{ @type.name }}</dd>
+										<dd>{{ @dict.new_n,@type.name | format }}</dd>
 									</check>
 								</repeat>
 							</dl>
 						</div>
 						<div class="col-sm-6">
-							<p><b>Issues</b></p>
+							<p><b>{{ @dict.issues }}</b></p>
 							<dl class="dl-inline">
 								<dt>w</dt>
-								<dd>Watch/unwatch issue</dd>
+								<dd>{{ @dict.watch }}/{{ @dict.unwatch }}</dd>
 								<dt>e</dt>
-								<dd>Edit issue</dd>
+								<dd>{{ @dict.edit }}</dd>
 								<dt>c</dt>
-								<dd>Comment on issue</dd>
+								<dd>{{ @dict.write_a_comment }}</dd>
 								<dt>shift+c</dt>
-								<dd>Close issue</dd>
+								<dd>{{ @dict.mark_complete }}</dd>
 								<dt>shift+r</dt>
-								<dd>Reopen issue</dd>
+								<dd>{{ @dict.reopen }}</dd>
 							</dl>
 						</div>
 					</div>

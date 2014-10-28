@@ -179,7 +179,8 @@
 	</table>
 </form>
 
-<a  class="btn btn-default btn-sm" data-toggle="modal" href="javascript:void(0)" data-target="#bulk-actions">{{ @dict.bulk_actions }}</a>
+<check if="{{ isset(@statuses) }}">
+<a class="btn btn-default btn-sm" data-toggle="modal" href="javascript:void(0)" data-target="#bulk-actions">{{ @dict.bulk_actions }}</a>
 <div class="contatiner modal fade in" id="bulk-actions">
 <form action="issues/bulk_update" method="post" id="bulk-form">
 	<div class="modal-dialog">
@@ -291,3 +292,4 @@
 	<input type="hidden" id="url_path" name="url_path" value="{{ @PATH }}" />
 </form>
 </div>
+</check>

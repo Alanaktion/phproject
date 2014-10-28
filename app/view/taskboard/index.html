@@ -49,11 +49,13 @@
 						<ul class="dropdown-menu" role="menu">
 							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/all">All Tasks</a></li>
 							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/groups">My Groups</a></li>
-							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/me">My Tasks</a></li>
-							<li class="divider"></li>
-							<repeat group="{{ @groups }}" value="{{ @group }}">
-								<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/{{ @group.id }}">{{ @group.name }}</a></li>
-							</repeat>
+							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/me">{{ @dict.my_tasks }}</a></li>
+							<check if="{{ count(@groups) }}">
+								<li class="divider"></li>
+								<repeat group="{{ @groups }}" value="{{ @group }}">
+									<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="taskboard/{{ @PARAMS.id }}/{{ @group.id }}">{{ @group.name }}</a></li>
+								</repeat>
+							</check>
 						</ul>
 					</div>
 					<button id="btn-burndown" class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
@@ -96,10 +98,10 @@
 							<div class="title">{{ @row.project.name }}</div>
 						</div>
 					</td>
-					<repeat group="{{ @row.columns }}" key="{{ @status_id }}" value="{{ @col }}" >
+					<repeat group="{{ @row.columns }}" key="{{ @status_id }}" value="{{ @col }}">
 						<td class="column column-{{ @status_id + 1 }} {{ @statuses[@status_id]['closed'] ? 'completed' : '' }} droppable" data-status="{{ @status_id }}">
 							<repeat group="{{ @col }}" value="{{ @task }}">
-								<div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto bottom" data-container="body" data-content="<strong>Author: </strong>{{ @task.author_name }}<br><strong>Description: </strong> {{ strlen(@task.description) > 500 ? htmlentities(substr(@task.description, 0, 500)) . ' [...]' : htmlentities(@task.description) }}" style="border-color:#{{ @task.owner_task_color }};">
+								<div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto bottom" data-container="body" data-content="<strong>{{ @dict.cols.author }}: </strong>{{ @task.author_name }}<br><strong>{{ @dict.cols.description }}: </strong> {{ strlen(@task.description) > 500 ? htmlentities(substr(@task.description, 0, 500)) . ' [...]' : htmlentities(@task.description) }}" style="border-color:#{{ @task.owner_task_color }};">
 									<div class="hidden repeat_cycle">{{ @task.repeat_cycle }}</div>
 									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
@@ -157,7 +159,8 @@
 		<div class="title"></div>
 		<div class="description"></div>
 		<div class="dueDate"></div>
-		<div class="priority normal">Normal Priority</div><div class="owner"></div>
+		<div class="priority normal"></div>
+		<div class="owner"></div>
 	</div>
 	<div class="container-fluid">
 		<include href="blocks/footer.html" />
@@ -176,19 +179,19 @@
 					<input type="hidden" name="taskId" id="taskId" value="">
 					<div class="col-md-7">
 						<div class="form-group">
-							<label for="title">Title</label>
+							<label for="title">{{ @dict.cols.title }}</label>
 							<input type="text" name="title" id="title" class="form-control input-sm" required>
 						</div>
 						<div class="form-group">
-							<label for="Description">Description</label>
+							<label for="Description">{{ @dict.cols.description }}</label>
 							<textarea name="description" id="description" class="form-control input-sm" rows="8"></textarea>
 						</div>
 					</div>
 					<div class="col-md-5">
 						<div class="form-group">
-							<label for="assigned">Assigned To</label>
+							<label for="assigned">{{ @dict.cols.assignee }}</label>
 							<select id="assigned" name="assigned" class="form-control input-sm" onchange="Taskboard.changeUser(this)" data-default-value="{{ @user.id }}" data-default-color="#{{ @user.task_color }}">
-								<option value="0" data-color="#AAAAAA">Not Assigned</option>
+								<option value="0" data-color="#AAAAAA">{{ @dict.not_assigned }}</option>
 								<option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" selected>{{ @user.name }}</option>
 								<optgroup label="Groups">
 									<repeat group="{{ @groups }}" value="{{ @group }}">
@@ -203,11 +206,11 @@
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="hours">Remaining (Hours)</label>
+							<label for="hours">{{ @dict.cols.remaining_hours }}</label>
 							<input type="number" name="hours" id="hours" class="form-control input-sm" min="0" step=".5">
 						</div>
 						<div class="form-group">
-							<label for="dueDate">Due Date</label>
+							<label for="dueDate">{{ @dict.cols.due_date }}</label>
 							<input type="text" name="dueDate" id="dueDate" value="" class="dueDate form-control input-sm">
 						</div>
 						<div class="form-group">
@@ -223,7 +226,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="priority">Priority</label>
+							<label for="priority">{{ @dict.cols.priority }}</label>
 							<select id="priority" name="priority" class="form-control input-sm" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
 								<repeat group="{{ @priorities }}" value="{{ @priority }}">
 									<option value="{{ @priority.value }}">{{ @priority.name }}</option>
@@ -236,8 +239,8 @@
 						<div class="form-inline">
 							<label>Track Time Spent</label><br>
 							<div class="form-group form-group-wide">
-								<label class="sr-only" for="comment">Comment</label>
-								<input type="text" name="comment" id="comment" class="form-control input-sm" placeholder="Comment">
+								<label class="sr-only" for="comment">{{ @dict.comment }}</label>
+								<input type="text" name="comment" id="comment" class="form-control input-sm" placeholder="{{ @dict.comment }}">
 							</div>
 							<div class="form-group form-group-narrow">
 								<label class="sr-only" for="hours_spent">Hours</label>
@@ -245,7 +248,6 @@
 							</div>
 							<div class="checkbox">
 								&nbsp;
-								<label class="sr-only" for="input-burndown">Burn hours</label>
 								<input type="hidden" name="burndown" value="0">
 								<label>
 									<input type="checkbox" name="burndown" id="input-burndown" value="1" checked> Burn hours
@@ -255,8 +257,8 @@
 					</div>
 				</fieldset>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
-					<button type="submit" class="btn btn-sm btn-primary">Save</button>
+					<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ @dict.cancel }}</button>
+					<button type="submit" class="btn btn-sm btn-primary">{{ @dict.save }}</button>
 				</div>
 			</form>
 		</div>
