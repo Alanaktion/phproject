@@ -161,7 +161,7 @@ class Taskboard extends \Controller {
 
 			// Add current project's tasks
 			foreach ($tasks as $task) {
-				if($task->parent_id == $project->id || $project->id == 0 && !$task->parent_id) {
+				if($task->parent_id == $project->id || $project->id == 0 && (!$task->parent_id || !in_array($task->parent_id, $parent_ids))) {
 					$columns[$task->status][] = $task;
 				}
 			}
