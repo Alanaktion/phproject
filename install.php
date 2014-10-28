@@ -13,8 +13,6 @@ $f3->mset(array(
 	"PACKAGE" => "Phproject",
 ));
 
-require_once "app/functions.php";
-
 // Check if already installed
 if(is_file("config.ini")) {
 	$f3->set("success", "Phproject is already installed.");
@@ -56,6 +54,7 @@ if($f3->get("POST")) {
 		$f3->set("db.instance", $db);
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
+		$user->role = "admin";
 		$user->username = $post["user-username"];
 		$user->email = $post["user-email"];
 		$user->salt = $security->salt();
