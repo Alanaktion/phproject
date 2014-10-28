@@ -352,7 +352,9 @@ class Taskboard extends \Controller {
 		$issue = new \Model\Issue();
 		$issue->load($post["taskId"]);
 		if(!empty($post["receiver"])) {
-			$issue->parent_id = $post["receiver"]["story"];
+			if($post["receiver"]["story"]) {
+				$issue->parent_id = $post["receiver"]["story"];
+			}
 			$issue->status = $post["receiver"]["status"];
 			$status = new \Model\Issue\Status();
 			$status->load($issue->status);
