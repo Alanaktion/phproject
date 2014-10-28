@@ -196,7 +196,7 @@ class Issues extends \Controller {
 	}
 
 	/**
-	 * Export a list of issues
+	 * Update a list of issues
 	 * @param  Base  $f3
 	 * @param  array $params from form
 	 */
