@@ -67,7 +67,7 @@ class Files extends \Controller {
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);
 
-		if(!$file->id || !is_file($file->disk_filename)) {
+		if(!$file->id) {
 			$f3->error(404);
 			return;
 		}

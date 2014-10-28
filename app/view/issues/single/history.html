@@ -48,11 +48,11 @@
 				</repeat>
 			</ul>
 			<check if="{{ @update.comment_id }}">
-				<div class="tex">{{ $this->parseTextile(@update.comment_text) | raw }}</div>
+				<div class="tex">{{ $this->parseTextile(@update.comment_text) }}</div>
 			</check>
 		</div>
 	</div>
 </repeat>
 <check if="{{ empty(@updates) }}">
-	<p class="text-center text-muted">No history available</p>
+	<p class="text-center text-muted">{{ @dict.no_history_available }}</p>
 </check>

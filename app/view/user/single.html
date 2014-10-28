@@ -13,8 +13,8 @@
 			</div>
 			<div class="pull-left">
 				<h3>{{ @this_user.name }}</h3>
-				<p>Username: {{ @this_user.username }}</p>
-				<p>Email: {{ @this_user.email }}</p>
+				<p>{{ @dict.username }}: {{ @this_user.username }}</p>
+				<p>{{ @dict.email }}: {{ @this_user.email }}</p>
 			</div>
 		</div>
 	</div>
@@ -22,9 +22,9 @@
 	<div class="row">
 		<div class="col-md-12">
 			<p>
-				Browse all:&nbsp;
-				<a href="issues?status=open&amp;author_id={{ @this_user.id }}">Created Issues</a>&nbsp;
-				<a href="issues?status=open&amp;owner_id={{ @this_user.id }}">Assigned Issues</a>
+				{{ @dict.browse }}:&nbsp;
+				<a href="issues?status=open&amp;author_id={{ @this_user.id }}">{{ @dict.created_issues }}</a>&nbsp;
+				<a href="issues?status=open&amp;owner_id={{ @this_user.id }}">{{ @dict.assigned_issues }}</a>
 			</p>
 			<include href="blocks/issue-list.html" />
 		</div>

@@ -153,14 +153,25 @@ class Issues extends \Controller {
 		$issue_page = $issues->paginate($args["page"], 50, $filter_str);
 		$f3->set("issues", $issue_page);
 
-		// Set up pagination
+		// Pass filter string for pagination
 		$filter_get = http_build_query($filter);
-		if($issue_page["pos"] < $issue_page["count"] - 1) {
-			$f3->set("next", "?page=" . ($issue_page["pos"] + 1) . "&" . $filter_get);
+		if($issue_page["count"] > 7) {
+			if($issue_page["pos"] <= 3) {
+				$min = 0;
+			} else {
+				$min = $issue_page["pos"] - 3;
+			}
+			if($issue_page["pos"] < $issue_page["count"] - 3) {
+				$max = $issue_page["pos"] + 3;
+			} else {
+				$max = $issue_page["count"] - 1;
+			}
+		} else {
+			$min = 0;
+			$max = $issue_page["count"] - 1;
 		}
-		if($issue_page["pos"] > 0) {
-			$f3->set("prev", "?page=" . ($issue_page["pos"] - 1) . "&" . $filter_get);
-		}
+		$f3->set("pages", range($min, $max));
+		$f3->set("filter_get", $filter_get);
 
 		$f3->set("menuitem", "browse");
 		$headings = array(
@@ -185,7 +196,7 @@ class Issues extends \Controller {
 	}
 
 	/**
-	 * Export a list of issues
+	 * Update a list of issues
 	 * @param  Base  $f3
 	 * @param  array $params from form
 	 */
@@ -471,78 +482,136 @@ class Issues extends \Controller {
 
 	}
 
-	public function save($f3, $params) {
+	/**
+	 * Save an updated issue
+	 * @return Issue
+	 */
+	protected function _saveUpdate() {
+		$f3 = \Base::instance();
 		$post = array_map("trim", $f3->get("POST"));
-
 		$issue = new \Model\Issue;
-		if(!empty($post["id"])) {
 
-			// Updating existing issue.
-			$issue->load($post["id"]);
-			if($issue->id) {
+		// Load issue and return if not set
+		$issue->load($post["id"]);
+		if(!$issue->id) {
+			return $issue;
+		}
 
-				// Diff contents and save what's changed.
-				foreach($post as $i=>$val) {
-					if(
-						$issue->exists($i)
-						&& $i != "id"
-						&& $issue->$i != $val
-						&& (md5($val) != $post["hash_" . $i] || !isset($post["hash_" . $i]))
-					) {
-						if(empty($val)) {
-							$issue->$i = null;
+		// Diff contents and save what's changed.
+		foreach($post as $i=>$val) {
+			if(
+				$issue->exists($i)
+				&& $i != "id"
+				&& $issue->$i != $val
+				&& (md5($val) != $post["hash_" . $i] || !isset($post["hash_" . $i]))
+			) {
+				if(empty($val)) {
+					$issue->$i = null;
+				} else {
+					$issue->$i = $val;
+
+					if($i == "status") {
+						$status = new \Model\Issue\Status;
+						$status->load($val);
+
+						// Toggle closed_date if issue has been closed/restored
+						if($status->closed) {
+							if(!$issue->closed_date) {
+								$issue->closed_date = $this->now();
+							}
 						} else {
-							$issue->$i = $val;
-
-							if($i == "status") {
-								$status = new \Model\Issue\Status;
-								$status->load($val);
-
-								// Toggle closed_date if issue has been closed/restored
-								if($status->closed) {
-									if(!$issue->closed_date) {
-										$issue->closed_date = $this->now();
-									}
-								} else {
-									$issue->closed_date = null;
-								}
-							}
-
-							// Save to the sprint of the due date
-							if ($i=="due_date" && !empty($val)) {
-								$sprint = new \Model\Sprint;
-								$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
-								$issue->sprint_id = $sprint->id;
-							}
+							$issue->closed_date = null;
 						}
 					}
-				}
 
-				// If it's a child issue and the parent is in a sprint,
-				// use that sprint if another has not been set already
-				if(!$issue->sprint_id && $issue->parent_id) {
-					$parent = new \Model\Issue;
-					$parent->load($issue->parent_id);
-					if($parent->sprint_id) {
-						$issue->sprint_id = $parent->sprint_id;
+					// Save to the sprint of the due date
+					if ($i=="due_date" && !empty($val)) {
+						$sprint = new \Model\Sprint;
+						$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
+						$issue->sprint_id = $sprint->id;
 					}
 				}
+			}
+		}
 
-				// Save comment if given
-				if(!empty($post["comment"])) {
-					$comment = new \Model\Issue\Comment;
-					$comment->user_id = $this->_userId;
-					$comment->issue_id = $issue->id;
-					$comment->text = $post["comment"];
-					$comment->created_date = $this->now();
-					$comment->save();
-					$issue->update_comment = $comment->id;
-				}
+		// If it's a child issue and the parent is in a sprint,
+		// use that sprint if another has not been set already
+		if(!$issue->sprint_id && $issue->parent_id) {
+			$parent = new \Model\Issue;
+			$parent->load($issue->parent_id);
+			if($parent->sprint_id) {
+				$issue->sprint_id = $parent->sprint_id;
+			}
+		}
 
-				// Save issue, optionally send notifications
-				$notify = !empty($post["notify"]);
-				$issue->save($notify);
+		// Save comment if given
+		if(!empty($post["comment"])) {
+			$comment = new \Model\Issue\Comment;
+			$comment->user_id = $this->_userId;
+			$comment->issue_id = $issue->id;
+			$comment->text = $post["comment"];
+			$comment->created_date = $this->now();
+			$comment->save();
+			$issue->update_comment = $comment->id;
+		}
 
+		// Save issue, optionally send notifications
+		$notify = !empty($post["notify"]);
+		$issue->save($notify);
+
+		return $issue;
+	}
+
+	/**
+	 * Save a newly created issue
+	 * @return Issue
+	 */
+	protected function _saveNew() {
+		$f3 = \Base::instance();
+		$post = array_map("trim", $f3->get("POST"));
+		$issue = new \Model\Issue;
+
+		// Set all supported issue fields
+		$issue->author_id = $f3->get("user.id");
+		$issue->type_id = $post["type_id"];
+		$issue->created_date = $this->now();
+		$issue->name = $post["name"];
+		$issue->description = $post["description"];
+		$issue->priority = $post["priority"];
+		$issue->status = $post["status"];
+		$issue->owner_id = $post["owner_id"];
+		$issue->hours_total = $post["hours_remaining"] ?: null;
+		$issue->hours_remaining = $post["hours_remaining"] ?: null;
+		$issue->repeat_cycle = $post["repeat_cycle"];
+		$issue->sprint_id = $post["sprint_id"];
+
+		if(!empty($post["due_date"])) {
+			$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
+
+			// Save to the sprint of the due date if a sprint was not specified
+			if(!$issue->sprint_id) {
+				$sprint = new \Model\Sprint();
+				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
+				$issue->sprint_id = $sprint->id;
+			}
+		}
+		if(!empty($post["parent_id"])) {
+			$issue->parent_id = $post["parent_id"];
+		}
+
+		// Save issue, optionally send notifications
+		$notify = !empty($post["notify"]);
+		$issue->save($notify);
+
+		return $issue;
+	}
+
+	public function save($f3, $params) {
+		if($f3->get("POST.id")) {
+
+			// Updating existing issue.
+			$issue = $this->_saveUpdate();
+			if($issue->id) {
 				$f3->reroute("/issues/" . $issue->id);
 			} else {
 				$f3->error(404, "This issue does not exist.");
@@ -551,37 +620,7 @@ class Issues extends \Controller {
 		} elseif($f3->get("POST.name")) {
 
 			// Creating new issue.
-			$issue->author_id = $f3->get("user.id");
-			$issue->type_id = $post["type_id"];
-			$issue->created_date = $this->now();
-			$issue->name = $post["name"];
-			$issue->description = $post["description"];
-			$issue->priority = $post["priority"];
-			$issue->status = $post["status"];
-			$issue->owner_id = $post["owner_id"];
-			$issue->hours_total = $post["hours_remaining"] ?: null;
-			$issue->hours_remaining = $post["hours_remaining"] ?: null;
-			$issue->repeat_cycle = $post["repeat_cycle"];
-			$issue->sprint_id = $post["sprint_id"];
-
-			if(!empty($post["due_date"])) {
-				$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
-
-				// Save to the sprint of the due date if a sprint was not specified
-				if(!$issue->sprint_id) {
-					$sprint = new \Model\Sprint();
-					$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
-					$issue->sprint_id = $sprint->id;
-				}
-			}
-			if(!empty($post["parent_id"])) {
-				$issue->parent_id = $post["parent_id"];
-			}
-
-			// Save issue, send notifications (unless admin opts out)
-			$notify =  empty($post["notify"]) ? false : true;
-			$issue->save($notify);
-
+			$issue = $this->_saveNew();
 			if($issue->id) {
 				$f3->reroute("/issues/" . $issue->id);
 			} else {

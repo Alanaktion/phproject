@@ -10,28 +10,28 @@
 		<div class="col-lg-12">
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="admin/">Overview</a></li>
-				<li><a href="admin/users">Users</a></li>
-				<li><a href="admin/groups">Groups</a></li>
+				<li><a href="admin/users">{{ @dict.users }}</a></li>
+				<li><a href="admin/groups">{{ @dict.groups }}</a></li>
 				<!-- <li><a href="admin/attributes">Attributes</a></li> -->
-				<li><a href="admin/sprints">Sprints</a></li>
+				<li><a href="admin/sprints">{{ @dict.sprints }}</a></li>
 			</ul>
 
 			<div class="row">
 				<div class="col-md-3 col-sm-6">
 					<div class="well well-sm text-center">
-						<h4>Users</h4>
+						<h4>{{ @dict.users }}</h4>
 						<h2>{{ @count_user }}</h2>
 					</div>
 				</div>
 				<div class="col-md-3 col-sm-6">
 					<div class="well well-sm text-center">
-						<h4>Issues</h4>
+						<h4>{{ @dict.issues }}</h4>
 						<h2>{{ @count_issue }}</h2>
 					</div>
 				</div>
 				<div class="col-md-3 col-sm-6">
 					<div class="well well-sm text-center">
-						<h4>Comments</h4>
+						<h4>{{ @dict.comments }}</h4>
 						<h2>{{ @count_issue_comment }}</h2>
 					</div>
 				</div>
@@ -47,7 +47,7 @@
 				<div class="col-lg-2 col-md-4 col-sm-6">
 					<h4>{{ @site.name }}</h4>
 					<h6>{{ @site.description }}</h6>
-					<b>Theme:</b> {{ @site.theme }}<br>
+					<b>{{ @dict.theme }}:</b> {{ @site.theme }}<br>
 					<b>Logo:</b> {{ @site.logo }}<br>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
@@ -59,8 +59,8 @@
 						<div class="tab-pane active" id="db-config">
 							<b>Host:</b> {{ @db.host }}:{{ @db.port }}<br>
 							<b>Schema:</b> {{ @db.name }}<br>
-							<b>Username:</b> {{ @db.user }}<br>
-							<b>Password:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
+							<b>{{ @dict.username }}:</b> {{ @db.user }}<br>
+							<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
 						</div>
 						<div class="tab-pane" id="db-stats">
 							<repeat group="{{ @db_stats }}" value="{{ @val }}">
@@ -114,8 +114,8 @@
 					<p><b>From:</b> {{ @mail.from }}</p>
 					<h4>IMAP <small>(Incoming mail)</small></h4>
 					<b>Hostname:</b> {{ @imap.hostname }}<br>
-					<b>Username:</b> {{ @imap.username }}<br>
-					<b>Password:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
+					<b>{{ @dict.username }}:</b> {{ @imap.username }}<br>
+					<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
 				</div>
 				<div class="col-lg-2 col-md-4 col-sm-6">
 					<h4>Gravatar</h4>

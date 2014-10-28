@@ -14,7 +14,7 @@
 	<ul class="nav navbar-nav">
 		<li class="dropdown {{ @menuitem == 'new' ? 'active':'' }}">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				New <b class="caret"></b>
+				{{ @dict.new }} <b class="caret"></b>
 			</a>
 			<ul class="dropdown-menu">
 				<check if="{{ @user.role == 'admin' }}">
