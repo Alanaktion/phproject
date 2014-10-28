@@ -218,69 +218,48 @@ class Taskboard extends \Controller {
 
 		$burnDays = array();
 		$burnDatesCount = count($burnDates);
-		$i = 1;
 
 		$db = $f3->get("db.instance");
+		$query_initial =
+				"SELECT SUM(i.hours_total) AS remaining
+				FROM issue i
+				WHERE i.created_date < :date
+				AND i.id IN (" . implode(",", $visible_tasks) . ")";
+		$query_daily =
+				"SELECT SUM(IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value)) AS remaining
+				FROM issue_update_field f
+				JOIN issue_update u ON u.id = f.issue_update_id
+				JOIN (
+					SELECT MAX(u.id) AS max_id
+					FROM issue_update u
+					JOIN issue_update_field f ON f.issue_update_id = u.id
+					WHERE f.field = 'hours_remaining'
+					AND u.created_date < :date
+					GROUP BY u.issue_id
+				) a ON a.max_id = u.id
+				RIGHT JOIN issue i ON i.id = u.issue_id
+				WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
+				AND i.created_date < :date
+				AND i.id IN (" . implode(",", $visible_tasks) . ")";
 
+		$i = 1;
 		foreach($burnDates as $date) {
 
 			// Get total_hours, which is the initial amount entered on each task, and cache this query
 			if($i == 1) {
-				$result = $db->exec("
-					SELECT SUM(i.hours_total) AS remaining
-					FROM issue i
-					WHERE i.id IN (" . implode(",", $visible_tasks) . ")
-					AND i.created_date < :date", // Only count tasks added before sprint
-					array("date" => $sprint->start_date),
-					2678400 // 31 days
-				);
+				$result = $db->exec($query_initial, array("date" => $sprint->start_date), 2592000);
 				$burnDays[$date] = $result[0];
 			}
 
 			// Get between day values and cache them... this also will get the last day of completed sprints so they will be cached
 			elseif ($i < ($burnDatesCount - 1) || $burnComplete) {
-				$result = $db->exec("
-					SELECT SUM(IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value)) AS remaining
-					FROM issue_update_field f
-					JOIN issue_update u ON u.id = f.issue_update_id
-					JOIN (
-						SELECT MAX(u.id) AS max_id
-						FROM issue_update u
-						JOIN issue_update_field f ON f.issue_update_id = u.id
-						WHERE f.field = 'hours_remaining'
-						AND u.created_date < :date
-						GROUP BY u.issue_id
-					) a ON a.max_id = u.id
-					RIGHT JOIN issue i ON i.id = u.issue_id
-					WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
-					AND i.id IN (" . implode(",", $visible_tasks) . ")
-					AND i.created_date < :date",
-					array("date" => $date . " 23:59:59"),
-					2678400 // 31 days
-				);
+				$result = $db->exec($query_daily, array("date" => $date . " 23:59:59"), 2592000);
 				$burnDays[$date] = $result[0];
 			}
 
 			// Get the today's info and don't cache it
 			else {
-				$result = $db->exec("
-					SELECT SUM(IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value)) AS remaining
-					FROM issue_update_field f
-					JOIN issue_update u ON u.id = f.issue_update_id
-					JOIN (
-						SELECT MAX(u.id) AS max_id
-						FROM issue_update u
-						JOIN issue_update_field f ON f.issue_update_id = u.id
-						WHERE f.field = 'hours_remaining'
-						AND u.created_date < :date
-						GROUP BY u.issue_id
-					) a ON a.max_id = u.id
-					RIGHT JOIN issue i ON i.id = u.issue_id
-					WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
-					AND i.created_date < :date
-					AND i.id IN (" . implode(",", $visible_tasks) . ")",
-					array("date" => $date . " 23:59:59")
-				);
+				$result = $db->exec($query_daily, array("date" => $date . " 23:59:59"));
 				$burnDays[$date] = $result[0];
 			}
 
