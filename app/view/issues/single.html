@@ -164,7 +164,7 @@
 
 				<dl>
 					<dt>{{ @dict.cols.description }}:</dt>
-					<dd class="tex">{{ $this->parseTextile(@issue.description) | raw }}</dd>
+					<dd class="tex">{{ $this->parseTextile(@issue.description) }}</dd>
 				</dl>
 
 				<hr class="hidden-lg">
@@ -226,7 +226,7 @@
 									</a>
 									<div class="media-body">
 										<p class="media-heading"><a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
-										<div class="tex">{{ $this->parseTextile(@comment.text) | raw }}</div>
+										<div class="tex">{{ $this->parseTextile(@comment.text) }}</div>
 										<check if="{{ @comment.file_id }}">
 											<check if="{{ @comment.file_deleted_date }}">
 												<true>
