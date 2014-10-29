@@ -13,8 +13,6 @@ $f3->mset(array(
 	"PACKAGE" => "Phproject",
 ));
 
-require_once "app/functions.php";
-
 // Check if already installed
 if(is_file("config.ini")) {
 	$f3->set("success", "Phproject is already installed.");
@@ -56,10 +54,11 @@ if($f3->get("POST")) {
 		$f3->set("db.instance", $db);
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
-		$user->username = $post["user-username"];
+		$user->role = "admin";
+		$user->username = $post["user-username"] ?: "admin";
 		$user->email = $post["user-email"];
 		$user->salt = $security->salt();
-		$user->password = $security->hash($post["user-password"], $user->salt);
+		$user->password = $security->hash($post["user-password"] ?: "admin", $user->salt);
 		$user->save();
 
 	} catch(PDOException $e) {
@@ -75,9 +74,14 @@ if($f3->get("POST")) {
 		mkdir("log", 0777, true);
 	}
 
+	$config = "[globals]";
+	if(!empty($post["language"])) {
+		$config .= "\nLANGUAGE={$post['language']}";
+	}
+
 	// Write configuration file
 	file_put_contents("config.ini",
-"[globals]
+"$config
 
 ; Database
 db.host={$post['db-host']}
