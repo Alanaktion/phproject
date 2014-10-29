@@ -210,7 +210,7 @@ if($emails) {
 
 						$newfile = new \Model\Issue\File();
 						$newfile->issue_id = $issue->id;
-						$newfile->user_id = $user_id;
+						$newfile->user_id = $user->id;
 						$newfile->filename = $orig_name;
 						$newfile->disk_filename =$f3->get("UPLOADS").$filename;
 						$newfile->disk_directory = $f3->get("UPLOADS");
