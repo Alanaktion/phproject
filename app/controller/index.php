@@ -192,4 +192,49 @@ class Index extends \Controller {
 		}
 	}
 
+	public function atom($f3, $params) {
+		// Authenticate user
+		if($f3->get("GET.key")) {
+			$user = new \Model\User;
+			$user->load(array("api_key = ?", $f3->get("GET.key")));
+			if(!$user->id) {
+				$f3->error(403);
+				return;
+			}
+		} else {
+			$f3->error(403);
+			return;
+		}
+
+		// Get requested array substituting defaults
+		$get = $f3->get("GET") + array("type" => "assigned", "user" => $user->username);
+		unset($user);
+
+		// Load target user
+		$user = new \Model\User;
+		$user->load(array("username = ?", $get["user"]));
+		if(!$user->id) {
+			$f3->error(404);
+			return;
+		}
+
+		// Load issues
+		$issue = new \Model\Issue\Detail;
+		$options = array("order" => "created_date DESC");
+		if($get["type"] == "assigned") {
+			$issues = $issue->find(array("author_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
+		} elseif($get["type"] == "created") {
+			$issues = $issue->find(array("owner = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
+		} else {
+			$f3->error(400, "Invalid feed type");
+			return;
+		}
+
+		// Render feed
+		$f3->set("get", $get);
+		$f3->set("feed_user", $user);
+		$f3->set("issues", $issues);
+		$this->_render("index/atom.xml", "application/atom+xml");
+	}
+
 }

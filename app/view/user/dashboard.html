@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 	<include href="blocks/head.html" />
+	<check if="{{ @user.api_key }}">
+		<link rel="alternate" type="application/atom+xml" title="{{ @dict.assigned_issues }}" href="{{ @site.url }}atom.xml?type=assigned&amp;user={{ @user.username }}&amp;key={{ @user.api_key }}" />
+		<link rel="alternate" type="application/atom+xml" title="{{ @dict.created_issues }}" href="{{ @site.url }}atom.xml?type=created&amp;user={{ @user.username }}&amp;key={{ @user.api_key }}" />
+	</check>
 </head>
 <body class="dashboard">
 <div class="container-fluid">
