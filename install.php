@@ -55,10 +55,10 @@ if($f3->get("POST")) {
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
 		$user->role = "admin";
-		$user->username = $post["user-username"];
+		$user->username = $post["user-username"] ?: "admin";
 		$user->email = $post["user-email"];
 		$user->salt = $security->salt();
-		$user->password = $security->hash($post["user-password"], $user->salt);
+		$user->password = $security->hash($post["user-password"] ?: "admin", $user->salt);
 		$user->save();
 
 	} catch(PDOException $e) {
