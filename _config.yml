@@ -1,0 +1,11 @@
+# Site settings
+title: Phproject
+email: alan@phpizza.com
+description: A high performance full-featured project management system
+baseurl: ""
+assetsurl: "/assets" # Used in place of base URL
+url: "http://www.phproject.org"
+github_username:  Alanaktion
+
+# Build settings
+markdown: kramdown
