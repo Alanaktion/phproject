@@ -59,27 +59,41 @@
 	</div>
 	<script src="js/chart.js"></script>
 	<script>
-	var charts = {
+	var jsonData = {
+		labels: '{{ json_encode(array_values(@stats.labels)) }}',
+		spent: '{{ json_encode(array_values(@stats.spent)) }}',
+		closed: '{{ json_encode(array_values(@stats.closed)) }}',
+		created: '{{ json_encode(array_values(@stats.created)) }}'
+	}, charts = {
 		data: {
-			labels: {{ json_encode(array_values(@stats.labels)) }},
+			labels: $.parseJSON(jsonData.labels),
 			datasets: [{
-				data: {{ json_encode(array_values(@stats.spent)) }},
+				data: $.parseJSON(jsonData.spent),
 				label: "{{ @dict.cols.total_spent_hours }}",
 				fillColor: "rgba(42,204,113,0.1)",
 				strokeColor: "#2ecc71",
-				pointStrokeColor: "#2ecc71"
+				pointColor: "#2ecc71",
+				pointStrokeColor: "#2ecc71",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "#2ecc71"
 			},{
-				data: {{ json_encode(array_values(@stats.closed)) }},
+				data: $.parseJSON(jsonData.closed),
 				label: "{{ @dict.closed }}",
 				fillColor: "rgba(52,152,219,0.1)",
 				strokeColor: "#3498db",
+				pointColor: "#3498db",
 				pointStrokeColor: "#3498db",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "#3498db",
 			},{
-				data: {{ json_encode(array_values(@stats.created)) }},
+				data: $.parseJSON(jsonData.created),
 				label: "{{ @dict.cols.created }}",
 				fillColor: "rgba(155,89,152,0.1)",
 				strokeColor: "#9b59b6",
+				pointColor: "#9b59b6",
 				pointStrokeColor: "#9b59b6",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "#9b59b6",
 			}]
 		},
 		options: {
