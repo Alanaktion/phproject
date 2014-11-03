@@ -78,5 +78,75 @@ class User extends \Model {
 		}
 	}
 
+	/**
+	 * Get user statistics
+	 * @param  int $time  The lower limit on timestamps for stats collection
+	 * @return array
+	 */
+	public function stats($time = 0) {
+		$db = \Base::instance()->get("db.instance");
+		if(!$time) {
+			$time = strtotime("-2 weeks");
+		}
+
+		$result = array();
+		$result["spent"] = $db->exec(
+			"SELECT DATE(u.created_date) AS `date`, SUM(f.new_value - f.old_value) AS `val`
+			FROM issue_update u
+			JOIN issue_update_field f ON u.id = f.issue_update_id AND f.field = 'hours_spent'
+			WHERE u.user_id = :user AND u.created_date > :date
+			GROUP BY DATE(u.created_date)",
+			array("user" => $this->get("id"), "date" => date("Y-m-d H:i:s", $time))
+		);
+		$result["closed"] = $db->exec(
+			"SELECT DATE(i.closed_date) AS `date`, COUNT(*) AS `val`
+			FROM issue i
+			WHERE i.owner_id = :user AND i.closed_date > :date
+			GROUP BY DATE(i.closed_date)",
+			array("user" => $this->get("id"), "date" => date("Y-m-d H:i:s", $time))
+		);
+		$result["created"] = $db->exec(
+			"SELECT DATE(i.created_date) AS `date`, COUNT(*) AS `val`
+			FROM issue i
+			WHERE i.author_id = :user AND i.created_date > :date
+			GROUP BY DATE(i.created_date)",
+			array("user" => $this->get("id"), "date" => date("Y-m-d H:i:s", $time))
+		);
+
+		$dates = $this->_createDateRangeArray(date("Y-m-d", $time), date("Y-m-d"));
+		$return = array(
+			"labels" => array(),
+			"spent" => array(),
+			"closed" => array(),
+			"created" => array()
+		);
+		foreach($dates as $date) {
+			$return["labels"][] = date("M j", strtotime($date));
+			foreach($result["spent"] as $r) {
+				if($r["date"] == $date) {
+					$return["spent"][$date] = floatval($r["val"]);
+				} elseif(!isset($return["spent"][$date])) {
+					$return["spent"][$date] = 0;
+				}
+			}
+			foreach($result["closed"] as $r) {
+				if($r["date"] == $date) {
+					$return["closed"][$date] = intval($r["val"]);
+				} elseif(!isset($return["closed"][$date])) {
+					$return["closed"][$date] = 0;
+				}
+			}
+			foreach($result["created"] as $r) {
+				if($r["date"] == $date) {
+					$return["created"][$date] = intval($r["val"]);
+				} elseif(!isset($return["created"][$date])) {
+					$return["created"][$date] = 0;
+				}
+			}
+		}
+
+		return $return;
+	}
+
 }
 
