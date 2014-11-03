@@ -120,29 +120,32 @@ class User extends \Model {
 			"closed" => array(),
 			"created" => array()
 		);
+
+		foreach($result["spent"] as $r) {
+			$return["spent"][$r["date"]] = floatval($r["val"]);
+		}
+		foreach($result["closed"] as $r) {
+			$return["closed"][$r["date"]] = intval($r["val"]);
+		}
+		foreach($result["created"] as $r) {
+			$return["created"][$r["date"]] = intval($r["val"]);
+		}
+
 		foreach($dates as $date) {
-			$return["labels"][] = date("M j", strtotime($date));
-			foreach($result["spent"] as $r) {
-				if($r["date"] == $date) {
-					$return["spent"][$date] = floatval($r["val"]);
-				} elseif(!isset($return["spent"][$date])) {
-					$return["spent"][$date] = 0;
-				}
+			$return["labels"][$date] = date("M j", strtotime($date));
+			if(!isset($return["spent"][$date])) {
+				$return["spent"][$date] = 0;
 			}
-			foreach($result["closed"] as $r) {
-				if($r["date"] == $date) {
-					$return["closed"][$date] = intval($r["val"]);
-				} elseif(!isset($return["closed"][$date])) {
-					$return["closed"][$date] = 0;
-				}
+			if(!isset($return["closed"][$date])) {
+				$return["closed"][$date] = 0;
 			}
-			foreach($result["created"] as $r) {
-				if($r["date"] == $date) {
-					$return["created"][$date] = intval($r["val"]);
-				} elseif(!isset($return["created"][$date])) {
-					$return["created"][$date] = 0;
-				}
+			if(!isset($return["created"][$date])) {
+				$return["created"][$date] = 0;
 			}
+		}
+
+		foreach($return as &$r) {
+			ksort($r);
 		}
 
 		return $return;
