@@ -10,7 +10,7 @@ class Issues extends \Controller\Api {
 	 * @param  Detail $issue
 	 * @return array
 	 */
-	protected function issue_multiarray(\Model\Issue\Detail $issue) {
+	protected function _issueMultiArray(\Model\Issue\Detail $issue) {
 		$casted = $issue->cast();
 
 		// Convert ALL the fields!
@@ -70,7 +70,7 @@ class Issues extends \Controller\Api {
 
 		$issues = array();
 		foreach($result["subset"] as $iss) {
-			$issues[] = $this->issue_multiarray($iss);
+			$issues[] = $this->_issueMultiArray($iss);
 		}
 
 		$this->_printJson(array(
@@ -199,12 +199,37 @@ class Issues extends \Controller\Api {
 		));
 	}
 
+	// Update an existing issue
+	public function single_put($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load($params["id"]);
+
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$updated = array();
+		foreach($f3->get("REQUEST") as $key => $val) {
+			if(is_scalar($val) && $issue->exists($key)) {
+				$updated[] = $key;
+				$issue->set($key, $val);
+			}
+		}
+
+		if($updated) {
+			$issue->save();
+		}
+
+		$this->printJson(array("updated_fields" => $updated, "issue" => $this->_issueMultiArray($issue)));
+	}
+
 	// Get a single issue's details
 	public function single_get($f3, $params) {
-		$issue = new \Model\Issue\Detail();
+		$issue = new \Model\Issue\Detail;
 		$issue->load($params["id"]);
 		if($issue->id) {
-			$this->_printJson(array("issue" => $this->issue_multiarray($issue)));
+			$this->_printJson(array("issue" => $this->_issueMultiArray($issue)));
 		} else {
 			$f3->error(404);
 		}
@@ -215,6 +240,11 @@ class Issues extends \Controller\Api {
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$issue->delete();
+
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
 
 		$this->_printJson(array(
 			"deleted" => $params["id"]
