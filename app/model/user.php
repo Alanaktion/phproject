@@ -89,28 +89,31 @@ class User extends \Model {
 			$time = strtotime("-2 weeks");
 		}
 
+		\Helper\View::instance()->utc2local();
+		$offset = \Base::instance()->get("site.timeoffset");
+
 		$result = array();
 		$result["spent"] = $db->exec(
-			"SELECT DATE(u.created_date) AS `date`, SUM(f.new_value - f.old_value) AS `val`
+			"SELECT DATE(DATE_ADD(u.created_date, INTERVAL :offset SECOND)) AS `date`, SUM(f.new_value - f.old_value) AS `val`
 			FROM issue_update u
 			JOIN issue_update_field f ON u.id = f.issue_update_id AND f.field = 'hours_spent'
 			WHERE u.user_id = :user AND u.created_date > :date
-			GROUP BY DATE(u.created_date)",
-			array("user" => $this->get("id"), "date" => date("Y-m-d H:i:s", $time))
+			GROUP BY DATE(DATE_ADD(u.created_date, INTERVAL :offset2 SECOND))",
+			array(":user" => $this->get("id"), ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
 		);
 		$result["closed"] = $db->exec(
-			"SELECT DATE(i.closed_date) AS `date`, COUNT(*) AS `val`
+			"SELECT DATE(DATE_ADD(i.closed_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
 			FROM issue i
 			WHERE i.owner_id = :user AND i.closed_date > :date
-			GROUP BY DATE(i.closed_date)",
-			array("user" => $this->get("id"), "date" => date("Y-m-d H:i:s", $time))
+			GROUP BY DATE(DATE_ADD(i.closed_date, INTERVAL :offset2 SECOND))",
+			array(":user" => $this->get("id"), ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
 		);
 		$result["created"] = $db->exec(
-			"SELECT DATE(i.created_date) AS `date`, COUNT(*) AS `val`
+			"SELECT DATE(DATE_ADD(i.created_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
 			FROM issue i
 			WHERE i.author_id = :user AND i.created_date > :date
-			GROUP BY DATE(i.created_date)",
-			array("user" => $this->get("id"), "date" => date("Y-m-d H:i:s", $time))
+			GROUP BY DATE(DATE_ADD(i.created_date, INTERVAL :offset2 SECOND))",
+			array(":user" => $this->get("id"), ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
 		);
 
 		$dates = $this->_createDateRangeArray(date("Y-m-d", $time), date("Y-m-d"));
