@@ -15,24 +15,30 @@ Burndown = {
 		datasets: []
 	},
 	targetVelocity: {
-		fillColor: "rgba(105,9,255,0.1)",
-		strokeColor: "rgba(105,9,255,.5)",
-		pointColor: "rgba(105,9,255,0)",
-		pointStrokeColor: "rgba(105,9,255,0)",
+		fillColor: "rgba(0,0,0,0)",
+		strokeColor: "#9b59b6",
+		pointColor: "#9b59b6",
+		pointStrokeColor: "#9b59b6",
+		pointHighlightFill: "#fff",
+		pointHighlightStroke: "#9b59b6",
 		data: []
 	},
 	actualVelocity: {
-		fillColor: "rgba(255,132,0,0.0)",
-		strokeColor: "rgba(255,132,0,1)",
-		pointColor: "rgba(220,220,220,1)",
-		pointStrokeColor: "#B96000",
+		fillColor: "rgba(42,204,113,0.1)",
+		strokeColor: "#2ecc71",
+		pointColor: "#2ecc71",
+		pointStrokeColor: "#2ecc71",
+		pointHighlightFill: "#fff",
+		pointHighlightStroke: "#2ecc71",
 		data: []
 	},
 	hoursDay: {
-		fillColor: "rgba(60,185,145,0.2)",
-		strokeColor: "rgba(60,185,145,1)",
-		pointColor: "rgba(220,220,220,1)",
-		pointStrokeColor: "rgba(60,185,145,1)",
+		fillColor: "rgba(52,152,219,0.1)",
+		strokeColor: "#3498db",
+		pointColor: "#3498db",
+		pointStrokeColor: "#3498db",
+		pointHighlightFill: "#fff",
+		pointHighlightStroke: "#3498db",
 		data: []
 	},
 	days: 0,
@@ -44,9 +50,9 @@ Burndown = {
 		}
 
 		// Apply labels to datasets
-		Burndown.actualVelocity.label = BurndownLegendDict.actual_velocity;
+		Burndown.actualVelocity.label = BurndownLegendDict.hours_remaining;
 		Burndown.targetVelocity.label = BurndownLegendDict.target_velocity;
-		Burndown.hoursDay.label = BurndownLegendDict.hours_remaining;
+		Burndown.hoursDay.label = BurndownLegendDict.actual_velocity;
 
 		// Populate datsets
 		Burndown.createData(data);

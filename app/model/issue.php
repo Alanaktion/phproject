@@ -67,7 +67,7 @@ class Issue extends \Model {
 
 		// Ensure issue is not tied to itself as a parent
 		if($this->get("id") == $this->get("parent_id")) {
-			$this->set("parent_id", $this->get_prev("parent_id"));
+			$this->set("parent_id", $this->_getPrev("parent_id"));
 		}
 
 		// Log update
@@ -142,11 +142,11 @@ class Issue extends \Model {
 		// Log updated fields
 		$updated = 0;
 		foreach ($this->fields as $key=>$field) {
-			if ($field["changed"] && $field["value"] != $this->get_prev($key)) {
+			if ($field["changed"] && $field["value"] != $this->_getPrev($key)) {
 				$update_field = new \Model\Issue\Update\Field();
 				$update_field->issue_update_id = $update->id;
 				$update_field->field = $key;
-				$update_field->old_value = $this->get_prev($key);
+				$update_field->old_value = $this->_getPrev($key);
 				$update_field->new_value = $field["value"];
 				$update_field->save();
 				$updated ++;

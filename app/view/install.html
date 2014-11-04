@@ -44,13 +44,22 @@
 													<a href="http://php.net/manual/en/timezones.php" target="_blank" class="badge">?</a>&ensp;Timezone
 												</label>
 												<div class="col-sm-9">
-													<input type="text" class="form-control" id="site-timezone" name="site-timezone" value="America/Denver">
+													<input type="text" class="form-control" id="site-timezone" name="site-timezone" value="Etc/UTC">
 												</div>
 											</div>
 											<div class="form-group form-group-sm">
 												<label for="mail-from" class="col-sm-3 control-label">From Address</label>
 												<div class="col-sm-9">
 													<input type="text" class="form-control" id="mail-from" name="mail-from" placeholder="Optional">
+												</div>
+											</div>
+											<div class="form-group form-group-sm">
+												<label for="language" class="col-sm-3 control-label">Language</label>
+												<div class="col-sm-9">
+													<select class="form-control" name="language" id="language">
+														<option value="">Default (English)</option>
+														<option value="es">Spanish (Español)</option>
+													</select>
 												</div>
 											</div>
 											<div class="form-group form-group-sm">
@@ -117,7 +126,7 @@
 												</div>
 											</div>
 											<div class="text-right">
-												<button type="submit" class="btn btn-primary">Install</button>
+												<button type="submit" class="btn btn-primary btn-sm">Install</button>
 											</div>
 										</form>
 									</true>
