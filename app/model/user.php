@@ -85,12 +85,13 @@ class User extends \Model {
 	 */
 	public function stats($time = 0) {
 		$db = \Base::instance()->get("db.instance");
-		if(!$time) {
-			$time = strtotime("-2 weeks");
-		}
 
 		\Helper\View::instance()->utc2local();
 		$offset = \Base::instance()->get("site.timeoffset");
+
+		if(!$time) {
+			$time = strtotime("-2 weeks", time() + $offset);
+		}
 
 		$result = array();
 		$result["spent"] = $db->exec(
@@ -116,7 +117,7 @@ class User extends \Model {
 			array(":user" => $this->get("id"), ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
 		);
 
-		$dates = $this->_createDateRangeArray(date("Y-m-d", $time), date("Y-m-d"));
+		$dates = $this->_createDateRangeArray(date("Y-m-d", $time), date("Y-m-d", time() + $offset));
 		$return = array(
 			"labels" => array(),
 			"spent" => array(),
