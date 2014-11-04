@@ -94,6 +94,7 @@ db.name={$post['db-name']}
 site.name={$post['site-name']}
 site.timezone={$post['site-timezone']}
 site.public_registration={$post['site-public_registration']}
+site.db_sessions=1
 
 ; Email
 mail.from={$post['mail-from']}
