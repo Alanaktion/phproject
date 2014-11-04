@@ -136,8 +136,9 @@ class Session extends Mapper {
 	*	@param $db object
 	*	@param $table string
 	*	@param $force bool
+	*	@param $verify bool
 	**/
-	function __construct(\DB\SQL $db,$table='sessions',$force=TRUE) {
+	function __construct(\DB\SQL $db,$table='sessions',$force=TRUE,$verify=FALSE) {
 		if ($force)
 			$db->exec(
 				(preg_match('/mssql|sqlsrv|sybase/',$db->driver())?
@@ -169,10 +170,11 @@ class Session extends Mapper {
 		@session_start();
 		$fw=\Base::instance();
 		$headers=$fw->get('HEADERS');
-		if (($ip=$this->ip()) && $ip!=$fw->get('IP') ||
+		if ($verify && (
+			($ip=$this->ip()) && $ip!=$fw->get('IP') ||
 			($agent=$this->agent()) &&
 			(!isset($headers['User-Agent']) ||
-				$agent!=$headers['User-Agent'])) {
+				$agent!=$headers['User-Agent']))) {
 			session_destroy();
 			$fw->error(403);
 		}
