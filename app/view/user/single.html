@@ -36,7 +36,9 @@
 			</div>
 			<div class="col-md-8">
 				<set stats="{{ @this_user->stats() }}" />
-				<canvas id="stats" width="600" height="100" style="max-width: 100%;"></canvas>
+				<div>
+					<canvas id="stats" width="600" height="100"></canvas>
+				</div>
 				<div class="chart-legend clearfix">
 					<div><span style="background-color: #2ecc71;"></span>{{ @dict.cols.total_spent_hours }}</div>
 					<div><span style="background-color: #3498db;"></span>{{ @dict.closed }}</div>
