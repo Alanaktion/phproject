@@ -107,7 +107,7 @@ var Taskboard = {
 			description = $(data).find('.description').text().trim(),
 			hours = $(data).find('.hours').text().trim(),
 			date = $(data).find('.dueDate').text().trim(),
-			priority = $(data).find('.priority').data('val')
+			priority = $(data).find('.priority').data('val'),
 			repeat_cycle = $(data).find('.repeat_cycle').text();
 
 		$("#task-dialog input#taskId").val(taskId);
