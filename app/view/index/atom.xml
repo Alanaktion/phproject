@@ -1,0 +1,22 @@
+{{ '<?xml version="1.0" encoding="utf-8" ?>' }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+    	<title>{{ @get.type == 'all' ? 'All Issues' : htmlentities(@feed_user.name) }}</title>
+    	<set url="{{ @site.url . 'atom.xml?' . htmlentities(http_build_query(@get)) }}" />
+    	<link>{{ @url }}</link>
+        <generator>{{ @PACKAGE }}</generator>
+        <atom:link href="{{ @url }}" rel="self" type="application/rss+xml"/>
+        <repeat group="{{ @issues }}" value="{{ @issue }}">
+			<item>
+	            <title>{{ htmlentities(@issue.name) }}</title>
+	            <link>{{ @site.url . 'issues/' . @issue.id }}</link>
+	            <description><![CDATA[{{ htmlentities(@issue.description) }}]]></description>
+	            <guid isPermaLink="true">{{ @site.url . 'issues/' . @issue.id }}</guid>
+	            <pubDate>{{ date(DATE_RSS, strtotime(@issue.created_date)) }}</pubDate>
+	            <dc:creator>{{ htmlentities(@issue.author_name) }}</dc:creator>
+	            <assignee>{{ htmlentities(@issue.owner_name) }}</assignee>
+	            <type>{{ htmlentities(@issue.type_name) }}</type>
+	        </item>
+	    </repeat>
+    </channel>
+</rss>
