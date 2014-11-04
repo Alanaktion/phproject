@@ -223,7 +223,7 @@ if($emails) {
 						$fp = fopen($f3->get("UPLOADS")  . $filename, "w+");
 						fwrite($fp, $attachment['attachment']);
 						fclose($fp);
-			    	}
+			    		}
 				}
 			}
 		}
