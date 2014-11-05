@@ -55,6 +55,7 @@ if($f3->get("POST")) {
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
 		$user->role = "admin";
+		$user->name = "Admin";
 		$user->username = $post["user-username"] ?: "admin";
 		$user->email = $post["user-email"];
 		$user->salt = $security->salt();
