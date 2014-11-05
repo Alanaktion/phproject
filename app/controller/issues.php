@@ -524,11 +524,13 @@ class Issues extends \Controller {
 						}
 					}
 
-					// Save to the sprint of the due date
+					// Save to the sprint of the due date unless one already set
 					if ($i=="due_date" && !empty($val)) {
-						$sprint = new \Model\Sprint;
-						$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
-						$issue->sprint_id = $sprint->id;
+						if(empty($post['sprint_id'])) {
+							$sprint = new \Model\Sprint;
+							$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
+							$issue->sprint_id = $sprint->id;
+						}
 					}
 				}
 			}
