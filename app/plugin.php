@@ -1,10 +1,9 @@
 <?php
 
-abstract class Plugin {
+abstract class Plugin extends \Prefab {
 
 	/**
 	 * Initialize the plugin including any hooks
-	 * @return array Required app hooks
 	 */
 	abstract public function _load();
 
