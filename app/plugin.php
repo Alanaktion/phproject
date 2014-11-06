@@ -64,4 +64,13 @@ abstract class Plugin {
 		return $this;
 	}
 
+	/**
+	 * Get current time and date in a MySQL NOW() format
+	 * @param  boolean $time  Whether to include the time in the string
+	 * @return string
+	 */
+	final public function now($time = true) {
+		return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
+	}
+
 }
