@@ -26,31 +26,42 @@ abstract class Plugin {
 	/**
 	 * Hook into a core feature
 	 * This is the primary way for plugins to add functionality
+	 * @see    http://www.phproject.org/plugins.html
 	 * @param  string   $hook
 	 * @param  callable $action
-	 * @see    http://www.phproject.org/plugins.html
+	 * @return Plugin
 	 */
 	final protected function _hook($hook, callable $action) {
-		\Base::instance()->set("_hooks.$hook", $action);
+		\Helper\Plugin::instance()->addHook($hook, $action);
+		return $this;
 	}
 
 	/**
 	 * Add a link to the navigation bar
 	 * @param string $href
+	 * @param string $title
 	 * @param string $match Optional regex, will highlight if the URL matches
+	 * @return Plugin
 	 */
-	final protected function _addNav($href, $match = null) {
-
+	final protected function _addNav($href, $title, $match = null) {
+		\Helper\Plugin::instance()->addNavItem($href, $title, $match);
+		return $this;
 	}
 
 	/**
-	 * [_addJs description]
+	 * Include JavaScript code or file
 	 * @param string $value Code or file path
-	 * @param string $type  Whether to include as "code" or a "path"
+	 * @param string $type  Whether to include as "code" or a "file"
 	 * @param string $match Optional regex, will include if the URL matches
+	 * @return Plugin
 	 */
 	final protected function _addJs($value, $type = "code", $match = null) {
-
+		if($type == "file") {
+			\Helper\Plugin::instance()->addJsFile($value, $match);
+		} else {
+			\Helper\Plugin::instance()->addJsCode($value, $match);
+		}
+		return $this;
 	}
 
 }
