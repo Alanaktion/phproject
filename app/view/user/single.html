@@ -72,21 +72,40 @@
 			datasets: [{
 				data: $.parseJSON(jsonData.spent),
 				label: "{{ @dict.cols.total_spent_hours }}",
-				fillColor: "#2ecc71",
+				fillColor: "rgba(42,204,113,0.1)",
+				strokeColor: "#2ecc71",
+				pointColor: "#2ecc71",
+				pointStrokeColor: "#2ecc71",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "#2ecc71"
 			},{
 				data: $.parseJSON(jsonData.closed),
 				label: "{{ @dict.closed }}",
-				fillColor: "#3498db",
+				fillColor: "rgba(52,152,219,0.1)",
+				strokeColor: "#3498db",
+				pointColor: "#3498db",
+				pointStrokeColor: "#3498db",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "#3498db",
 			},{
 				data: $.parseJSON(jsonData.created),
 				label: "{{ @dict.cols.created }}",
-				fillColor: "#9b59b6",
+				fillColor: "rgba(155,89,152,0.1)",
+				strokeColor: "#9b59b6",
+				pointColor: "#9b59b6",
+				pointStrokeColor: "#9b59b6",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "#9b59b6",
 			}]
 		},
 		options: {
 			scaleBeginAtZero: true,
 			bezierCurve: false,
-			datasetStroke: false,
+			pointDot: true,
+			pointDotRadius: 2,
+			pointDotStrokeWidth: 1,
+			datasetStroke: true,
+			datasetStrokeWidth: 2,
 			datasetFill: true,
 			animation: false,
 			responsive: true,
@@ -94,7 +113,7 @@
 	};
 	$(document).ready(function() {
 		var ctx = document.getElementById("stats").getContext("2d");
-		charts.chart = new Chart(ctx).Bar(charts.data, charts.options);
+		charts.chart = new Chart(ctx).Line(charts.data, charts.options);
 	});
 	</script>
 </body>
