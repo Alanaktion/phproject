@@ -28,7 +28,7 @@ footer {
 	background-color: #2C3E50;
 	color: white;
 }
-code {
+:not(.alert) > code {
 	color: inherit;
 }
 pre code {
