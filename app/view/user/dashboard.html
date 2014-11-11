@@ -24,6 +24,9 @@
 			</h3>
 			<set issues="{{ @bugs }}" />
 			<include href="blocks/dashboard-issue-list.html" />
+			<h3>{{ @dict.my_watchlist }}&ensp;<small>{{ count(@watchlist) }}</small>&ensp;</h3>
+			<set issues="{{ @watchlist }}" />
+			<include href="blocks/dashboard-issue-list.html" />
 		</div>
 		<div class="col-sm-7">
 			<div class="clearfix">

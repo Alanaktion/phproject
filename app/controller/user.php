@@ -25,6 +25,8 @@ class User extends \Controller {
 		}
 		$owner_ids = implode(",", $owner_ids);
 
+
+
 		$order = "priority DESC, has_due_date ASC, due_date ASC";
 		$f3->set("projects", $projects->find(
 			array(
@@ -44,6 +46,10 @@ class User extends \Controller {
 				"order" => $order
 			)
 		));
+
+		$watchlist = new \Model\Issue\Watcher();
+		$f3->set("watchlist", $watchlist->findby_watcher($f3, $this->_userId, $order));
+
 
 		$tasks = new \Model\Issue\Detail();
 		$f3->set("tasks", $tasks->find(
