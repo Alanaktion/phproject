@@ -45,9 +45,9 @@ Plugins are made up of one or more PHP classes installed the `app/plugin` direct
 
 ### Routes
 
-If your plugin adds additional routes, they should point to a separate class outside of `base.php`, which should extend `\Controller`. Routes can be added in your `Base->_call()` method by getting the F3 Base class and calling the [`route()`](http://fatfreeframework.com/base#route) method on it:
+If your plugin adds additional routes, they should point to a separate class outside of `base.php`, which should extend `\Controller`. Routes can be added in your `Base->_load()` method by getting the F3 Base class and calling the [`route()`](http://fatfreeframework.com/base#route) method on it:
 
-    public function _call() {
+    public function _load() {
         $f3 = \Base::instance();
         $f3->route("GET /yourplugin/action", "Plugin\Yourplugin\Controller->action");
     }
@@ -55,7 +55,7 @@ If your plugin adds additional routes, they should point to a separate class out
 
 ### Hooks
 
-Hooks are not currently implemented in Phproject, but will be initialized from your `Base->_call()` method with calls to `$this->_hook()` in future releases.
+Hooks are not currently implemented in Phproject, but will be initialized from your `Base->_load()` method with calls to `$this->_hook()` in future releases.
 
 
 ### Example Base Class
@@ -71,7 +71,7 @@ Hooks are not currently implemented in Phproject, but will be initialized from y
 
     class Base extends \Plugin {
 
-        public function _call() {
+        public function _load() {
             $this->_hook( ... );
         }
 
