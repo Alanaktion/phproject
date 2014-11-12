@@ -856,6 +856,14 @@ class Issues extends \Controller {
 		$f3->reroute("/issues/{$issue->id}");
 	}
 
+	public function comment_delete($f3, $params) {
+		$this->_requireAdmin();
+		$comment = new \Model\Issue\Comment;
+		$comment->load($f3->get("POST.id"));
+		$comment->delete();
+		$this->_printJson(array("id" => $f3->get("POST.id")) + $comment->cast());
+	}
+
 	public function file_delete($f3, $params) {
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));

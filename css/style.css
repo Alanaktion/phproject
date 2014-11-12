@@ -388,3 +388,15 @@ table a.btn {
 th[data-sort] {
 	cursor: pointer;
 }
+
+.comment-delete {
+	visibility: hidden;
+}
+.media:hover .comment-delete {
+	visibility: visible;
+}
+@media only screen and (max-width: 768px) {
+	.comment-delete {
+		visibility: visible;
+	}
+}

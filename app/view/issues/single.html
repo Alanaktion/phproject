@@ -220,12 +220,17 @@
 								</div>
 							</form>
 							<repeat group="{{ @comments }}" value="{{ @comment }}">
-								<div class="media" id="c-{{ @comment.id }}">
+								<div class="media" id="c-{{ @comment.id }}" data-id="{{ @comment.id }}">
 									<a class="pull-left" href="user/{{ @comment.user_username }}">
 										<img class="profile-picture media-object img-rounded" src="avatar/48-{{ @comment.user_id }}.png" alt>
 									</a>
 									<div class="media-body">
-										<p class="media-heading"><a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a></p>
+										<p class="media-heading clearfix">
+											<a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
+											<check if="{{ @user.role == 'admin' }}">
+												<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
+											</check>
+										</p>
 										<div class="tex">{{ $this->parseTextile(@comment.text) }}</div>
 										<check if="{{ @comment.file_id }}">
 											<check if="{{ @comment.file_deleted_date }}">
@@ -237,7 +242,9 @@
 												</false>
 											</check>
 										</check>
-										<p class="text-muted"><small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@comment.created_date))) }}</small></p>
+										<p class="text-muted">
+											<small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@comment.created_date))) }}</small>
+										</p>
 									</div>
 								</div>
 							</repeat>
@@ -355,7 +362,7 @@ $(function() {
 				$('#comment_form')
 					.prop('disabled', false)
 					.after(
-						'<div class="media" id="c-' + data.id + '">' +
+						'<div class="media" id="c-' + data.id + '" data-id="' + data.id + '">' +
 							'<a class="pull-left" href="user/' + data.user_username + '">' +
 								'<img src="{{ @user_obj->avatar(48) }}" class="media-object profile-picture img-rounded" alt>' +
 							'</a>' +
@@ -452,6 +459,17 @@ $(function() {
 	$("#alert .close").click(function(e) {
 		$("#alert span").empty();
 		$("#alert").hide();
+	});
+
+	// Handle comment deletion
+	$(".comments").on("click", ".comment-delete", function(e) {
+		if(confirm("{{ @dict.comment_delete_confirm }}")) {
+			var $comment = $(this).parents(".media");
+			$comment.css("text-decoration", "line-through");
+			jQuery.post("issues/comment/delete", {id: $comment.data("id")}, function(data) {
+				$comment.remove();
+			});
+		}
 	});
 
 	// Trigger modal on plain text attachments
