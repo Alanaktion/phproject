@@ -2,17 +2,15 @@
 
 namespace Controller\Api;
 
-class Issues extends \Controller\Api\Base {
+class Issues extends \Controller\Api {
 
-	protected $_userId;
-
-	public function __construct() {
-		$this->_userId = $this->_requireAuth();
-	}
-
-	// Converts an issue into a Redmine API-style multidimensional array
-	// This isn't pretty.
-	protected function issue_multiarray(\Model\Issue\Detail $issue) {
+	/**
+	 * Converts an issue into a Redmine API-style multidimensional array
+	 * This isn't pretty.
+	 * @param  Detail $issue
+	 * @return array
+	 */
+	protected function _issueMultiArray(\Model\Issue\Detail $issue) {
 		$casted = $issue->cast();
 
 		// Convert ALL the fields!
@@ -54,15 +52,7 @@ class Issues extends \Controller\Api\Base {
 
 		// Remove redundant fields
 		foreach($issue->schema() as $i=>$val) {
-			if(
-				substr_count($i, "type_") ||
-				substr_count($i, "status_") ||
-				substr_count($i, "priority_") ||
-				substr_count($i, "author_") ||
-				substr_count($i, "owner_") ||
-				substr_count($i, "sprint_") ||
-				$i == "has_due_date"
-			) {
+			if(preg_match("/(type|status|priority|author|owner|sprint)_.+|has_due_date/", $i)) {
 				unset($casted[$i]);
 			}
 		}
@@ -80,10 +70,10 @@ class Issues extends \Controller\Api\Base {
 
 		$issues = array();
 		foreach($result["subset"] as $iss) {
-			$issues[] = $this->issue_multiarray($iss);
+			$issues[] = $this->_issueMultiArray($iss);
 		}
 
-		print_json(array(
+		$this->_printJson(array(
 			"total_count" => $result["total"],
 			"limit" => $result["limit"],
 			"issues" => $issues,
@@ -96,18 +86,13 @@ class Issues extends \Controller\Api\Base {
 		if($_REQUEST) {
 			// By default, use standard HTTP POST fields
 			$post = $_REQUEST;
-			//$logger->write($_POST);
 		} else {
 
-			
 			// For Redmine compatibility, also accept a JSON object
 			try {
 				$post = json_decode(file_get_contents('php://input'), true);
 			} catch (Exception $e) {
-				print_json(array(
-					"error" => "Unable to parse input"
-				));
-				return false;
+				throw new Exception("Unable to parse input");
 			}
 
 			if(!empty($post["issue"])) {
@@ -144,7 +129,8 @@ class Issues extends \Controller\Api\Base {
 
 		// Verify the required "name" field is passed
 		if(empty($post["name"])) {
-			$this->_error("The 'name' value is required.");
+			$f3->error("The 'name' value is required.");
+			return;
 		}
 
 		// Verify given values are valid (types, statueses, priorities)
@@ -152,28 +138,32 @@ class Issues extends \Controller\Api\Base {
 			$type = new \Model\Issue\Type;
 			$type->load($post["type_id"]);
 			if(!$type->id) {
-				$this->_error("The 'type_id' field is not valid.");
+				$f3->error("The 'type_id' field is not valid.");
+				return;
 			}
 		}
 		if(!empty($post["parent_id"])) {
 			$parent = new \Model\Issue;
 			$parent->load($post["parent_id"]);
 			if(!$parent->id) {
-				$this->_error("The 'type_id' field is not valid.");
+				$f3->error("The 'type_id' field is not valid.");
+				return;
 			}
 		}
 		if(!empty($post["status"])) {
 			$status = new \Model\Issue\Status;
 			$status->load($post["status"]);
 			if(!$status->id) {
-				$this->_error("The 'status' field is not valid.");
+				$f3->error("The 'status' field is not valid.");
+				return;
 			}
 		}
 		if(!empty($post["priority_id"])) {
 			$priority = new \Model\Issue\Priority;
 			$priority->load(array("value" => $post["priority_id"]));
 			if(!$priority->id) {
-				$this->_error("The 'priority_id' field is not valid.");
+				$f3->error("The 'priority_id' field is not valid.");
+				return;
 			}
 		}
 
@@ -184,6 +174,14 @@ class Issues extends \Controller\Api\Base {
 		$issue->name = trim($post["name"]);
 		$issue->type_id = empty($post["type_id"]) ? 1 : $post["type_id"];
 		$issue->priority_id = empty($post["priority_id"]) ? 0 : $post["priority_id"];
+
+		// Set due date if valid
+		if(!empty($post["due_date"]) && preg_match("/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}( [0-9:]{8})?$/", $post["due_date"])) {
+			$issue->due_date = $post["due_date"];
+		} elseif(!empty($post["due_date"]) && $due_date = strtotime($post["due_date"])) {
+			$issue->due_date = date("Y-m-d", $due_date);
+		}
+
 		if(!empty($post["description"])) {
 			$issue->description = $post["description"];
 		}
@@ -195,26 +193,46 @@ class Issues extends \Controller\Api\Base {
 		}
 
 		$issue->save();
-		print_json(array(
+		// $f3->status(201);
+		$this->_printJson(array(
 			"issue" => $issue->cast()
 		));
 	}
 
+	// Update an existing issue
+	public function single_put($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load($params["id"]);
+
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$updated = array();
+		foreach($f3->get("REQUEST") as $key => $val) {
+			if(is_scalar($val) && $issue->exists($key)) {
+				$updated[] = $key;
+				$issue->set($key, $val);
+			}
+		}
+
+		if($updated) {
+			$issue->save();
+		}
+
+		$this->printJson(array("updated_fields" => $updated, "issue" => $this->_issueMultiArray($issue)));
+	}
+
 	// Get a single issue's details
 	public function single_get($f3, $params) {
-		$issue = new \Model\Issue\Detail();
+		$issue = new \Model\Issue\Detail;
 		$issue->load($params["id"]);
 		if($issue->id) {
-			print_json(array("issue" => $this->issue_multiarray($issue)));
+			$this->_printJson(array("issue" => $this->_issueMultiArray($issue)));
 		} else {
 			$f3->error(404);
 		}
-	}
-
-	// Update a single issue
-	public function single_put($f3, $params) {
-		// TODO: Implement dis.
-		$f3->error(501);
 	}
 
 	// Delete a single issue
@@ -223,7 +241,12 @@ class Issues extends \Controller\Api\Base {
 		$issue->load($params["id"]);
 		$issue->delete();
 
-		print_json(array(
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$this->_printJson(array(
 			"deleted" => $params["id"]
 		));
 	}

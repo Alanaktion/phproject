@@ -12,3 +12,9 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 .navbar-form .btn-sm {
 	margin-top: 10px;
 }
+.datepicker td.active,
+.datepicker td.active:hover,
+.datepicker td span.active,
+.datepicker td span.active:hover {
+	background-color: #4582EC !important;
+}

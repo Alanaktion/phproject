@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
 <head>
 	<include href="blocks/head.html" />
@@ -11,20 +11,20 @@
 			<div class="clearfix">
 				<ul class="nav nav-tabs pull-left">
 					<li><a href="admin/">Overview</a></li>
-					<li><a href="admin/users">Users</a></li>
-					<li><a href="admin/groups">Groups</a></li>
-					<li><a href="admin/attributes">Attributes</a></li>
-					<li class="active"><a href="admin/sprints">Sprints</a></li>
+					<li><a href="admin/users">{{ @dict.users }}</a></li>
+					<li><a href="admin/groups">{{ @dict.groups }}</a></li>
+					<!-- <li><a href="admin/attributes">Attributes</a></li> -->
+					<li class="active"><a href="admin/sprints">{{ @dict.sprints }}</a></li>
 				</ul>
 				<div class="pull-right">
 					<a href="admin/sprints/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;New Sprint</a>
 				</div>
 			</div>
-			<table class="table table-striped">
+			<table class="table table-striped table-condensed">
 				<thead>
 					<tr>
 						<th>ID</th>
-						<th>Name</th>
+						<th>{{ @dict.name }}</th>
 						<th>Start Date</th>
 						<th>End Date</th>
 					</tr>

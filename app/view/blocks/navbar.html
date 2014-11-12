@@ -14,11 +14,11 @@
 	<ul class="nav navbar-nav">
 		<li class="dropdown {{ @menuitem == 'new' ? 'active':'' }}">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				New <b class="caret"></b>
+				{{ @dict.new }} <b class="caret"></b>
 			</a>
 			<ul class="dropdown-menu">
 				<check if="{{ @user.role == 'admin' }}">
-					<li><a href="admin/sprints/new">Sprint</a></li>
+					<li><a href="admin/sprints/new">{{ @dict.sprint }}</a></li>
 					<li role="presentation" class="divider"></li>
 				</check>
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
@@ -45,14 +45,14 @@
 		</li>
 		<li class="dropdown {{ @menuitem == 'browse' ? 'active':'' }}">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				Browse <b class="caret"></b>
+				{{ @dict.browse }} <b class="caret"></b>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="issues/?status=open">Open</a></li>
-				<li><a href="issues/?status=closed">Closed</a></li>
+				<li><a href="issues/?status=open">{{ @dict.open }}</a></li>
+				<li><a href="issues/?status=closed">{{ @dict.closed }}</a></li>
 				<li role="presentation" class="divider"></li>
-				<li><a href="issues/?status=open&amp;author_id={{ @user.id }}">Created by Me</a></li>
-				<li><a href="issues/?status=open&amp;owner_id={{ @user.id }}">Assigned to Me</a></li>
+				<li><a href="issues/?status=open&amp;author_id={{ @user.id }}">{{ @dict.created_by_me }}</a></li>
+				<li><a href="issues/?status=open&amp;owner_id={{ @user.id }}">{{ @dict.assigned_to_me }}</a></li>
 				<li role="presentation" class="divider"></li>
 				<set inflector="{{ \Helper\Inflector::instance() }}" />
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
@@ -61,14 +61,14 @@
 			</ul>
 		</li>
 		<li class="{{ @menuitem == 'backlog' ? 'active':'' }}">
-			<a href="backlog">Sprints</a>
+			<a href="backlog">{{ @dict.sprints }}</a>
 		</li>
 	</ul>
 	<ul class="nav navbar-nav navbar-right">
 		<check if="{{ @user.role=='admin' }}">
 			<li class="{{ @menuitem == 'admin' ? 'active':'' }}">
 				<a href="admin">
-					<span class="hidden-sm">Administration</span>
+					<span class="hidden-sm">{{ @dict.administration }}</span>
 					<span class="glyphicon glyphicon-wrench visible-sm"></span>
 				</a>
 			</li>
@@ -79,11 +79,11 @@
 				<span class="glyphicon glyphicon-user visible-sm"></span>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="">Dashboard</a></li>
-				<li><a href="user/{{ @user.username }}">My Issues</a></li>
-				<li><a href="user">My Account</a></li>
+				<li><a href="">{{ @dict.dashboard }}</a></li>
+				<li><a href="user/{{ @user.username }}">{{ @dict.my_issues }}</a></li>
+				<li><a href="user">{{ @dict.my_account }}</a></li>
 				<li class="divider"></li>
-				<li><a href="logout">Log Out</a></li>
+				<li><a href="logout">{{ @dict.log_out }}</a></li>
 			</ul>
 		</li>
 	</ul>
@@ -91,15 +91,15 @@
 		<div class="form-group">
 			<check if="{{ empty(@GET.q) }}">
 				<true>
-					<input type="search" name="q" class="form-control input-sm" placeholder="Quickly find an issue">
+					<input type="search" name="q" class="form-control input-sm" placeholder="{{ @dict.issue_search }}">
 				</true>
 				<false>
-					<input type="search" name="q" class="form-control input-sm" placeholder="Quickly find an issue" value="{{ @GET.q }}">
+					<input type="search" name="q" class="form-control input-sm" placeholder="{{ @dict.issue_search }}" value="{{ @GET.q }}">
 				</false>
 			</check>
 		</div>
 		<button type="submit" class="btn btn-default btn-sm">
-			<span class="sr-only">Search</span>
+			<span class="sr-only">{{ @dict.submit }}</span>
 			<span class="glyphicon glyphicon-search"></span>
 		</button>
 	</form>
@@ -147,6 +147,6 @@
 <check if="{{ !empty(@site.demo) && empty(@COOKIE.demo_dismiss) }}">
 	<p class="alert alert-info alert-dismissable">
 		<button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="document.cookie='demo_dismiss=1';">&times;</button>
-		This site is running in demo mode. All content is public and may be reset at any time.
+		{{ @dict.demo_notice }}
 	</p>
 </check>

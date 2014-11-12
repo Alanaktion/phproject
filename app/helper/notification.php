@@ -5,6 +5,27 @@ namespace Helper;
 class Notification extends \Prefab {
 
 	/**
+	 * Send an email with the UTF-8 character set
+	 * @param  string $to
+	 * @param  string $subject
+	 * @param  string $body
+	 * @return bool
+	 */
+	protected function _utf8mail($to, $subject, $body) {
+		$f3 = \Base::instance();
+
+		// Set content-type with UTF charset
+		$headers  = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+
+		// Add sender and recipient information
+		$headers .= 'To: '. $to . "\r\n";
+		$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
+
+		return mail($to, $subject, $body, $headers);
+	}
+
+	/**
 	 * Send an email to watchers with the comment body
 	 * @param  int $issue_id
 	 * @param  int $comment_id
@@ -20,6 +41,13 @@ class Notification extends \Prefab {
 			$comment = new \Model\Issue\Comment\Detail;
 			$comment->load($comment_id);
 
+			// Get issue parent if set
+			if($issue->parent_id) {
+				$parent = new \Model\Issue;
+				$parent->load($issue->parent_id);
+				$f3->set("parent", $parent);
+			}
+
 			// Get recipient list and remove current user
 			$recipients = $this->_issue_watchers($issue_id);
 			$recipients = array_diff($recipients, array($comment->user_email));
@@ -27,12 +55,13 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("comment", $comment);
-			$body = \Template::instance()->render("notification/comment.html");
+			$body = $this->_render("notification/comment.html");
 
-			$subject = "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
+			$subject = "[#{$issue->id}] - New comment on {$issue->name}";
+
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent comment notification to: " . $recipient);
 			}
 		}
@@ -55,6 +84,13 @@ class Notification extends \Prefab {
 			$update = new \Model\Custom("issue_update_detail");
 			$update->load($update_id);
 
+			// Get issue parent if set
+			if($issue->parent_id) {
+				$parent = new \Model\Issue;
+				$parent->load($issue->parent_id);
+				$f3->set("parent", $parent);
+			}
+
 			// Avoid errors from bad calls
 			if(!$issue->id || !$update->id) {
 				return false;
@@ -70,12 +106,20 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("update", $update);
-			$body = \Template::instance()->render("notification/update.html");
+			$body = $this->_render("notification/update.html");
 
-			$subject =  "[#" . $issue->id . "] - ".$update->user_name . " updated  " . $issue->name;
+			$changes->load(array("issue_update_id = ? AND `field` = 'closed_date' AND old_value = '' and new_value != ''", $update->id));
+			if($changes && $changes->id) {
+				$subject = "[#{$issue->id}] - {$issue->name} closed";
+			} else {
+				$subject =  "[#{$issue->id}] - {$issue->name} updated";
+			}
+
+
+
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent update notification to: " . $recipient);
 			}
 		}
@@ -95,20 +139,27 @@ class Notification extends \Prefab {
 			$issue = new \Model\Issue\Detail();
 			$issue->load($issue_id);
 			$f3->set("issue", $issue);
-			// Get recipient list and DON'T remove current user
+
+			// Get issue parent if set
+			if($issue->parent_id) {
+				$parent = new \Model\Issue;
+				$parent->load($issue->parent_id);
+				$f3->set("parent", $parent);
+			}
+
+			// Get recipient list, keeping current user
 			$recipients = $this->_issue_watchers($issue_id);
-			//$recipients = array_diff($recipients, array($issue->author_email));
 
 			// Render message body
 			$f3->set("issue", $issue);
 
-			$body = \Template::instance()->render("notification/new.html");
+			$body = $this->_render("notification/new.html");
+
+			$subject =  "[#{$issue->id}] - {$issue->name} created by {$issue->author_name}";
 
 			// Send to recipients
-			$subject =  "[#" . $issue->id . "] - ".$issue->author_name . " created " . $issue->name;
-			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent create notification to: " . $recipient);
 			}
 		}
@@ -130,6 +181,13 @@ class Notification extends \Prefab {
 			$file = new \Model\Issue\File\Detail;
 			$file->load($file_id);
 
+			// Get issue parent if set
+			if($issue->parent_id) {
+				$parent = new \Model\Issue;
+				$parent->load($issue->parent_id);
+				$f3->set("parent", $parent);
+			}
+
 			// Get recipient list and remove current user
 			$recipients = $this->_issue_watchers($issue_id);
 			$recipients = array_diff($recipients, array($file->user_email));
@@ -137,12 +195,13 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("file", $file);
-			$body = \Template::instance()->render("notification/file.html");
+			$body = $this->_render("notification/file.html");
 
-			$subject =  "[#" . $issue->id . "] - ".$file->user_name . " attached a file to " . $issue->name;
+			$subject =  "[#{$issue->id}] - {$file->user_name} attached a file to {$issue->name}";
+
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent file notification to: " . $recipient);
 			}
 		}
@@ -164,12 +223,29 @@ class Notification extends \Prefab {
 
 			// Render message body
 			$f3->set("user", $user);
-			$body = \Template::instance()->render("notification/user_reset.html");
+			$body = $this->_render("notification/user_reset.html");
 
 			// Send email to user
-			$subject = "Reset your password";
-			utf8mail($user->email, $subject, $body);
+			$subject = "Reset your password - " . $f3->get("site.name");
+			$this->_utf8mail($user->email, $subject, $body);
 		}
+	}
+
+	/**
+	 * Send a user an email listing the issues due today
+	 * @param  ModelUser $user
+	 * @param  array     $issues
+	 * @return bool
+	 */
+	public function user_due_issues(\Model\User $user, array $issues) {
+		$f3 = \Base::instance();
+		if($f3->get("mail.from")) {
+			$f3->set("issues", $issues);
+			$subject = "Due Today - " . $f3->get("site.name");
+			$body = $this->_render("notification/user_due_issues.html");
+			return $this->_utf8mail($user->email, $subject, $body);
+		}
+		return false;
 	}
 
 	/**
@@ -178,9 +254,7 @@ class Notification extends \Prefab {
 	 * @return array
 	 */
 	protected function _issue_watchers($issue_id) {
-		$f3 = \Base::instance();
-		$log = new \Log("mail.log");
-		$db = $f3->get("db.instance");
+		$db = \Base::instance()->get("db.instance");
 		$recipients = array();
 
 		// Add issue author and owner
@@ -214,6 +288,18 @@ class Notification extends \Prefab {
 
 		// Remove duplicate users
 		return array_unique($recipients);
+	}
+
+	/**
+	 * Render a view and return the result
+	 * @param  string  $file
+	 * @param  string  $mime
+	 * @param  array   $hive
+	 * @param  integer $ttl
+	 * @return string
+	 */
+	protected function _render($file, $mime = "text/html", array $hive = null, $ttl = 0) {
+		return \Helper\View::instance()->render($file, $mime, $hive, $ttl);
 	}
 
 }

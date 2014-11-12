@@ -7,28 +7,23 @@
 <div class="container-fluid">
 	<include href="blocks/navbar.html" />
 	<check if="{{ !empty(@GET.deleted) }}">
-		<p class="alert alert-success">Issue #{{ @GET.deleted }} successfully deleted.&ensp;<a href="issues/undelete/{{ @GET.deleted }}">Undo</a></p>
+		<p class="alert alert-success">{{ @dict.deleted_success,@GET.deleted | format }}&ensp;<a href="issues/undelete/{{ @GET.deleted }}">{{ @dict.restore_issue }}</a></p>
 	</check>
 	<include href="blocks/issue-list.html" />
-	<ul class="pager">
-		<check if="{{ !empty(@prev) }}">
-			<true>
-				<li class="previous"><a href="issues{{ @prev }}" rel="prev">&larr; Previous</a></li>
-			</true>
-			<false>
-				<li class="previous disabled"><a href="javascript:void(0)">&larr; Previous</a></li>
-			</false>
-		</check>
-		<check if="{{ !empty(@next) }}">
-			<true>
-				<li class="next"><a href="issues{{ @next }}" rel="next">Next &rarr;</a></li>
-			</true>
-			<false>
-				<li class="next disabled"><a href="javascript:void(0)">Next &rarr;</a></li>
-			</false>
-		</check>
-	</ul>
+	<p class="pull-right hidden-xs">
+		<span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
+	</p>
+	<div class="text-center">
+		<ul class="pagination pagination-sm" style="margin: 15px 0;">
+			<li {~ if(@issues.pos == 0) echo 'class="disabled"' ~}><a href="issues?page={{ @issues.pos ? @issues.pos - 1 : 0 }}&amp;{{ @filter_get }}">&laquo;</a></li>
+			<repeat group="{{ @pages }}" value="{{ @page }}">
+				<li {~ if(@page == @issues.pos) echo 'class="active"' ~}><a href="issues?page={{ @page }}&amp;{{ @filter_get }}">{{ @page + 1 }}</a></li>
+			</repeat>
+			<li {~ if(@issues.pos == @issues.count - 1) echo 'class="disabled"' ~}><a href="issues?page={{ (@issues.pos < @issues.count - 1) ? @issues.pos + 1 : @issues.count - 1 }}&amp;{{ @filter_get }}">&raquo;</a></li>
+		</ul>
+	</div>
 	<include href="blocks/footer.html" />
 </div>
+<script src="minify/js/bootstrap-datepicker.js,bulkissues.js"></script>
 </body>
 </html>

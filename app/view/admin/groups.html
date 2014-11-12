@@ -11,14 +11,14 @@
 			<div class="clearfix">
 				<ul class="nav nav-tabs pull-left">
 					<li><a href="admin/">Overview</a></li>
-					<li><a href="admin/users">Users</a></li>
-					<li class="active"><a href="admin/groups">Groups</a></li>
-					<li><a href="admin/attributes">Attributes</a></li>
-					<li><a href="admin/sprints">Sprints</a></li>
+					<li><a href="admin/users">{{ @dict.users }}</a></li>
+					<li class="active"><a href="admin/groups">{{ @dict.groups }}</a></li>
+					<!-- <li><a href="admin/attributes">Attributes</a></li> -->
+					<li><a href="admin/sprints">{{ @dict.sprints }}</a></li>
 				</ul>
 				<div class="pull-right">
 					<a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#new" onclick="window.setTimeout('$(\'#input_name\').focus()',10);">
-						<span class="glyphicon glyphicon-plus"></span>&ensp;New
+						<span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new }}
 					</a>
 				</div>
 			</div>
@@ -26,15 +26,15 @@
 				<thead>
 					<tr>
 						<th>ID</th>
-						<th>Name</th>
+						<th>{{ @dict.name }}</th>
 						<th>Members</th>
-						<th>Task Color</th>
+						<th>{{ @dict.task_color }}</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<repeat group="{{ @groups }}" value="{{ @group }}">
-						<tr onclick="self.location='/admin/groups/{{ @group.id }}'" style="cursor: pointer">
+						<tr onclick="self.location='admin/groups/{{ @group.id }}'" style="cursor: pointer">
 							<td><a href="admin/groups/{{ @group.id }}">{{ @group.id }}</a></td>
 							<td>{{ @group.name }}</td>
 							<td>{{ @group.count }}</td>
@@ -62,7 +62,7 @@
 				<input type="text" class="form-control" id="input_name" name="name" placeholder="Group Name">
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#input_name').val('');">Cancel</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#input_name').val('');">{{ @dict.cancel }}</button>
 				<button type="submit" class="btn btn-primary">Add Group</button>
 			</div>
 		</form>

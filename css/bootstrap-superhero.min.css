@@ -12,3 +12,26 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 .navbar-form .btn-sm {
 	margin-top: 3px;
 }
+#taskboard table.taskboard-head {
+	background-color: transparent;
+}
+#taskboard table.taskboard-head th {
+	background-color: #4E5D6C !important;
+	color: white !important;
+}
+.datepicker {
+	background-color: #2B3E50 !important;
+}
+.datepicker td.day:hover,
+.datepicker td span:hover,
+.datepicker thead tr:first-child th:hover {
+	background-color: #4E5D6C !important;
+	border-radius: 0 !important;
+}
+.datepicker td.active,
+.datepicker td.active:hover,
+.datepicker td span.active,
+.datepicker td span.active:hover {
+	background-color: #DF691A !important;
+	border-radius: 0 !important;
+}

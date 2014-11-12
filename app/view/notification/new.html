@@ -6,7 +6,7 @@
 		body {
 			margin: 0;
 			padding: 0;
-			font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+			font-family: 'Open Sans','Helvetica Neue',Arial,sans-serif;
 			font-size: 14px;
 			line-height: 16px;
 			color: #000;
@@ -17,17 +17,34 @@
 <!-- --- --- -->
 
 	<div style="padding: 10px;">
-		<p style="margin: 0 0 10px;"><strong><a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> created by <a href="{{ @site.url  . '/' }}user/{{ @issue.author_username }}">{{ @issue.author_name }}</a>:</strong></p>
-		<img src="{{ @site.url }}avatar/48/{{ @issue.author_id }}.png" alt="" style="float: left; margin-right: 10px;">
-		<div style="float: left">
-			{{ nl2br(@issue.description) }}
-		</div>
-		<div style="clear:both"></div>
+		<p style="margin: 0 0 10px;"><strong>
+			<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a> created by <a href="{{ @site.url  . '/' }}user/{{ @issue.author_username }}">{{ @issue.author_name }}</a>:
+		</strong></p>
+		<check if="{{ @issue.parent_id }}">
+			<p><small>Under: <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a></small></p>
+		</check>
+
+		<ul>
+			<li><b>Assigned to:</b> {{ @issue.owner_name }}</li>
+			<li><b>Priority:</b> {{ @issue.priority_name }}</li>
+			<li><b>Status:</b> {{ @issue.status_name }}</li>
+			<check if="{{ strtotime(@issue.hours_total) }}">
+				<li><b>Planned Hours:</b> {{ @issue.hours_total }}</li>
+			</check>
+			<check if="{{ strtotime(@issue.due_date) }}">
+				<li><b>Due Date:</b> {{ date("D, M j, Y", strtotime(@issue.due_date)) }}</li>
+			</check>
+		</ul>
+
+		<br>
+
+		<b>Description:</b><br>
+		{{ nl2br(@issue.description) }}
 
 	</div>
 	<div style="padding: 0 10px;">
 		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @site.url }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
-		<div style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", utc2local(strtotime(@issue.created_date))) }}</small></div>
+		<div style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@issue.created_date))) }}</small></div>
 	</div>
 </body>
 </html>

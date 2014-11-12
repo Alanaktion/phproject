@@ -1,14 +1,13 @@
 <?php
 
-if ((float)PCRE_VERSION < 7.9)
-	trigger_error('PCRE version is out of date');
-
 // Initialize core
 $f3=require("lib/base.php");
 $f3->mset(array(
 	"UI" => "app/view/",
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
+	"LOCALES" => "app/dict/",
+	"FALLBACK" => "en",
 	"CACHE" => true,
 	"AUTOLOAD" => "app/",
 	"PACKAGE" => "Phproject",
@@ -16,9 +15,15 @@ $f3->mset(array(
 	"site.url" => $f3->get("SCHEME") . "://" . $f3->get("HOST") . $f3->get("BASE") . "/"
 ));
 
+// Redirect to installer if no config file is found
+if(!is_file("config.ini")) {
+	header("Location: install.php");
+	return;
+}
+
 // Get current Git revision
 if(is_file(".git/refs/heads/master")) {
-	$f3->set("revision", @file_get_contents(".git/refs/heads/master"));
+	$f3->set("revision", file_get_contents(".git/refs/heads/master"));
 } else {
 	$f3->set("revision", "");
 }
@@ -31,7 +36,7 @@ $f3->config("config.ini");
 $f3->config("app/routes.ini");
 
 // Set up error handling
-$f3->set("ONERROR", function($f3) {
+$f3->set("ONERROR", function(Base $f3) {
 	switch($f3->get("ERROR.code")) {
 		case 404:
 			$f3->set("title", "Not Found");
@@ -57,19 +62,32 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.pass")
 ));
 
-// Define global core functions
-require_once "app/functions.php";
-
 // Minify static resources
 // Cache for 1 week
-$f3->route("GET /minify/@type/@files", function($f3, $args) {
+$f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
 	$f3->set("UI", $args["type"] . "/");
 	echo Web::instance()->minify($args["files"]);
 }, $f3->get("cache_expire.minify"));
 
+// Initialize plugins
+$plugins = scandir("app/plugin");
+foreach($plugins as &$plugin) {
+	if($plugin != "." && $plugin != ".." && is_file("app/plugin/$plugin/base.php")) {
+		$plugin = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $plugin))) . "\\Base";
+		$plugin = $plugin::instance();
+		if(!$plugin->_installed()) {
+			$plugin->_install();
+		}
+		$plugin->_load();
+	} else {
+		unset($plugin);
+	}
+}
+
 // Set up session handler
-// session_name("PHPROJSESS");
-// new Session();
+if($f3->get("site.db_sessions")) {
+	new \DB\SQL\Session($f3->get("db.instance"), "session", false);
+}
 
 // Load user if session exists
 $user = new Model\User();

@@ -19,18 +19,18 @@
 							<ul class="dropdown-menu" role="menu">
 								<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="backlog/all">All Projects</a></li>
 								<li class="{{ @filter == 'groups' && empty(@groupid) ? 'active' : '' }}"><a href="backlog/groups">My Groups</a></li>
-								<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="backlog/me">My Projects</a></li>
-								<li class="divider"></li>
-								<repeat group="{{ @groups }}" value="{{ @group }}">
-									<li class="{{ @groupid == @group.id ? 'active' : '' }}"><a href="backlog/groups/{{ @group.id }}">{{ @group.name }}</a></li>
-								</repeat>
+								<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="backlog/me">{{ @dict.my_projects }}</a></li>
+								<check if="{{ count(@groups) }}">
+									<li class="divider"></li>
+									<repeat group="{{ @groups }}" value="{{ @group }}">
+										<li class="{{ @groupid == @group.id ? 'active' : '' }}"><a href="backlog/groups/{{ @group.id }}">{{ @group.name }}</a></li>
+									</repeat>
+								</check>
 							</ul>
 						</div>
-						<div class="pull-right">
-							<a href="issues/new/{{ @issue_type.project }}" class="btn btn-default btn-xs">
-								<span class="glyphicon glyphicon-plus"></span> Add Project
-							</a>
-						</div>
+						<a href="issues/new/{{ @issue_type.project }}" class="btn btn-default btn-xs pull-right">
+							<span class="glyphicon glyphicon-plus"></span> {{ @dict.add_project }}
+						</a>
 					</div>
 					<div class="panel-body in" id="panel-0">
 						<ul class="list-group sortable" data-list-id="0">
@@ -52,11 +52,9 @@
 					<div class="panel panel-default">
 						<div class="panel-heading has-buttons">
 							<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
-							<div class="pull-right">
-								<a href="taskboard/{{ @sprint.id }}/{{ @filter }}" class="btn btn-default btn-xs">
-									<span class="glyphicon glyphicon-list"></span> Taskboard
-								</a>
-							</div>
+							<a href="taskboard/{{ @sprint.id }}/{{ @filter }}" class="btn btn-default btn-xs pull-right">
+								<span class="glyphicon glyphicon-list"></span> {{ @dict.taskboard }}
+							</a>
 						</div>
 						<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
 							<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
@@ -79,7 +77,7 @@
 			</div>
 		</div>
 		<include href="blocks/footer.html" />
-		<script src="minify/js/jquery-ui-1.10.3.min.js,jquery.ui.touch-punch.min.js"></script>
+		<script src="minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
 		<script src="minify/js/backlog.js"></script>
 	</div>
 </body>

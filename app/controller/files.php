@@ -2,9 +2,68 @@
 
 namespace Controller;
 
-class Files extends Base {
+class Files extends \Controller {
+
+	/**
+	 * Forces the framework to use the local filesystem cache method if possible
+	 */
+	protected function _useFileCache() {
+		$f3 = \Base::instance();
+		$f3->set("CACHE", "folder=" . $f3->get("TEMP") . "cache/");
+	}
+
+	/**
+	 * Send a file to the browser
+	 * @param  string $file
+	 * @param  string $mime
+	 * @param  string $filename
+	 * @param  bool   $force
+	 * @return int|bool
+	 */
+	protected function _sendFile($file, $mime = "", $filename = "", $force = true) {
+		if (!is_file($file)) {
+			return FALSE;
+		}
+
+		$size = filesize($file);
+
+		if(!$mime) {
+			$mime = \Web::instance()->mime($file);
+		}
+		header("Content-Type: $mime");
+
+		if ($force) {
+			if(!$filename) {
+				$filename = basename($file);
+			}
+			header("Content-Disposition: attachment; filename=\"$filename\"");
+		}
+
+		header("Accept-Ranges: bytes");
+		header("Content-Length: $size");
+		header("X-Powered-By: " . \Base::instance()->get("PACKAGE"));
+
+		readfile($file);
+		return $size;
+	}
 
 	public function thumb($f3, $params) {
+		$this->_useFileCache();
+		$cache = \Cache::instance();
+
+		// Ensure proper content-type for JPEG images
+		if($params["format"] == "jpg") {
+			$params["format"] = "jpeg";
+		}
+
+		// Output cached image if one exists
+		$hash = $f3->hash($f3->get('VERB') . " " . $f3->get('URI')) . ".thm";
+		if($cache->exists($hash, $data)) {
+			header("Content-type: image/" . $params["format"]);
+			echo $data;
+			return;
+		}
+
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);
 
@@ -17,31 +76,26 @@ class Files extends Base {
 		$bg = 0xFFFFFF;
 
 		// Generate thumbnail of image file
-		if(substr($file->content_type, 0, 5) == "image") {
-			if(is_file($f3->get("ROOT") . "/" . $file->disk_filename)) {
-				$img = new \Helper\Image($file->disk_filename, null, $f3->get("ROOT") . "/");
+		if(substr($file->content_type, 0, 6) == "image/") {
+			if(is_file($file->disk_filename)) {
+				$img = new \Helper\Image($file->disk_filename);
 				$hide_ext = true;
 			} else {
 				$protocol = isset($_SERVER["SERVER_PROTOCOL"]) ? $_SERVER["SERVER_PROTOCOL"] : "HTTP/1.0";
 				header($protocol . " 404 Not Found");
-				$img = new \Helper\Image("img/404.png", null, $f3->get("ROOT") . "/");
+				$img = new \Helper\Image("img/404.png");
 			}
 			$img->resize($params["size"], $params["size"]);
 
 			$fg = 0xFFFFFF;
 			$bg = 0x000000;
-
-			// Ensure proper content-type for JPEG images
-			if($params["format"] == "jpg") {
-				$params["format"] = "jpeg";
-			}
 		}
 
 		// Generate thumbnail of text contents
-		elseif(substr($file->content_type, 0, 4) == "text") {
+		elseif(substr($file->content_type, 0, 5) == "text/") {
 
 			// Get first 2KB of file
-			$fh = fopen($f3->get("ROOT") . "/" . $file->disk_filename, "r");
+			$fh = fopen($file->disk_filename, "r");
 			$str = fread($fh, 2048);
 			fclose($fh);
 
@@ -55,14 +109,33 @@ class Files extends Base {
 
 			// Show file type icon if available
 			if($file->content_type == "text/csv" || $file->content_type == "text/tsv") {
-				$icon = new \Image("img/mime/table.png", null, $f3->get("ROOT") . "/");
+				$icon = new \Image("img/mime/table.png");
 				$img->overlay($icon);
 			}
 		}
 
+		// Generate thumbnail of MS Office document
+		elseif(extension_loaded("zip")
+			&& $file->content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+			$zip = zip_open($file->disk_filename);
+			while(($entry = zip_read($zip)) !== false) {
+				if(preg_match("/word\/media\/image[0-9]+\.(png|jpe?g|gif|bmp|dib)/i", zip_entry_name($entry))) {
+					$idata = zip_entry_read($entry, zip_entry_filesize($entry));
+					$img = new \Helper\Image();
+					$img->load($idata);
+					break;
+				}
+			}
+
+			if(!isset($img)) {
+				$img = new \Helper\Image("img/mime/base.png");
+			}
+			$img->resize($params["size"], $params["size"]);
+		}
+
 		// Use generic file icon if type is not supported
 		else {
-			$img = new \Helper\Image("img/mime/base.png", null, $f3->get("ROOT") . "/");
+			$img = new \Helper\Image("img/mime/base.png");
 			$img->resize($params["size"], $params["size"]);
 		}
 
@@ -73,38 +146,70 @@ class Files extends Base {
 			$img->text($ext, 12, 0, 4, 4, $fg);
 		}
 
-		$img->render($params["format"]);
+		// Render and cache image
+		$data = $img->dump($params["format"]);
+		$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
+
+		// Output image
+		header("Content-type: image/" . $params["format"]);
+		echo $data;
+
 	}
 
 	public function avatar($f3, $params) {
+
+		// Ensure proper content-type for JPEG images
+		if($params["format"] == "jpg") {
+			$params["format"] = "jpeg";
+		}
+
 		$user = new \Model\User();
 		$user->load($params["id"]);
 
-		if($user->avatar_filename && is_file($f3->get("ROOT") . "/uploads/avatars/" . $user->avatar_filename)) {
+		if($user->avatar_filename && is_file("uploads/avatars/" . $user->avatar_filename)) {
 
 			// Use local file
-			$img = new \Image($user->avatar_filename, null, $f3->get("ROOT") . "/uploads/avatars/");
+			$img = new \Image($user->avatar_filename, null, "uploads/avatars/");
 			$img->resize($params["size"], $params["size"]);
 
-			// Ensure proper content-type for JPEG images
-			if($params["format"] == "jpg") {
-				$params["format"] = "jpeg";
-			}
+			// Render and output image
+			header("Content-type: image/" . $params["format"]);
 			$img->render($params["format"]);
 
 		} else {
 
-			// Remove avatar from user if needed and load from Gravatar
-			if($user->avatar_filename) {
-				$user->avatar_filename = null;
-				$user->save();
-			}
-
-			header("Content-type: image/png");
-			$file = file_get_contents("http:" . gravatar($user->email, $params["size"]));
-			echo $file;
+			// Send user to Gravatar
+			$f3->reroute($f3->get("SCHEME") . ":" . \Helper\View::instance()->gravatar($user->email, $params["size"]), true);
 
 		}
+	}
+
+	public function preview($f3, $params) {
+		$file = new \Model\Issue\File();
+		$file->load($params["id"]);
+
+		if(!$file->id || !is_file($file->disk_filename)) {
+			$f3->error(404);
+			return;
+		}
+
+		if(substr($file->content_type, 0, 5) == "image" || $file->content_type == "text/plain") {
+			$this->_sendFile($file->disk_filename, $file->content_type, null, false);
+			return;
+		}
+
+		if($file->content_type == "text/csv" || $file->content_type == "text/tsv") {
+			$delimiter = ",";
+			if($file->content_type == "text/tsv") {
+				$delimiter = "\t";
+			}
+			$f3->set("file", $file);
+			$f3->set("delimiter", $delimiter);
+			$this->_render("issues/file/preview/table.html");
+			return;
+		}
+
+		$f3->reroute("/files/{$file->id}/{$file->filename}");
 	}
 
 	public function file($f3, $params) {
@@ -117,12 +222,13 @@ class Files extends Base {
 		}
 
 		$force = true;
-		if(substr($file->content_type, 0, 5) == "image") {
-			// Don't force download on image files
+		if(substr($file->content_type, 0, 5) == "image" || $file->content_type == "text/plain") {
+			// Don't force download on image and plain text files
+			// Eventually I'd like to have previews of files some way (more than the existing thumbnails), but for now this is how we do it - Alan
 			$force = false;
 		}
 
-		if(!\Web::instance()->send($f3->get("ROOT") . "/" . $file->disk_filename, null, 0, $force)) {
+		if(!$this->_sendFile($file->disk_filename, $file->content_type, $file->filename, $force)) {
 			$f3->error(404);
 		}
 	}

@@ -1748,12 +1748,12 @@ class Parser
         $this->glyph_replace[] = '$1'.$this->symbols['dimension'].'$2';
 
         // Apostrophe
-        $this->glyph_search[] = '/('.$this->regex_snippets['wrd'].'|\))\''.
+        /*$this->glyph_search[] = '/('.$this->regex_snippets['wrd'].'|\))\''.
             '('.$this->regex_snippets['wrd'].')/'.$this->regex_snippets['mod'];
-        $this->glyph_replace[] = '$1'.$this->symbols['apostrophe'].'$2';
+        $this->glyph_replace[] = '$1'.$this->symbols['apostrophe'].'$2';*/
 
         // Back in '88/the '90s but not in his '90s', '1', '1.' '10m' or '5.png'
-        $this->glyph_search[] = '/('.$this->regex_snippets['space'].')\''.
+        /*$this->glyph_search[] = '/('.$this->regex_snippets['space'].')\''.
             '(\d+'.$this->regex_snippets['wrd'].'?)\b(?![.]?['.$this->regex_snippets['wrd'].']*?\')/'.
             $this->regex_snippets['mod'];
         $this->glyph_replace[] = '$1'.$this->symbols['apostrophe'].'$2';
@@ -1799,7 +1799,7 @@ class Parser
             '(['.$this->regex_snippets['abr'].']{3,})'.
             '(['.$this->regex_snippets['nab'].']*)(?='.$this->regex_snippets['space'].'|'.$pnc.'|<|$)'.
             '(?=[^">]*?(<|$))/'.$this->regex_snippets['mod'];
-        $this->glyph_replace[] = '$1<span class="caps">'.$this->uid.':glyph:$2</span>$3';
+        $this->glyph_replace[] = '$1<span class="caps">'.$this->uid.':glyph:$2</span>$3';*/
 
         // Ellipsis
         $this->glyph_search[] = '/([^.]?)\.{3}/';

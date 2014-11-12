@@ -2,7 +2,7 @@
 
 namespace Model;
 
-class Attribute extends Base {
+class Attribute extends \Model {
 
 	protected $_table_name = "attribute";
 

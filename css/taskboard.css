@@ -16,41 +16,22 @@ body {
 	vertical-align: bottom;
 	background-color: #fff;
 	background-color: rgba(255, 255, 255, 0.7);
-	border-bottom: 1px dotted #e7e7e7;
+	border-bottom: 1px solid rgba(160,160,160,0.4);
 }
-#taskboard table {
+#taskboard .table {
 	border-collapse: collapse;
-	min-width: 650px;
+	width: auto;
+	max-width: none;
 }
 #taskboard td, #taskboard th {
-	width: 20%;
 	padding: 4px;
-	border: 1px dotted #cecece;
-	border-top: 1px dotted #e7e7e7;
+	border: 1px solid rgba(160,160,160,0.4);
 }
 #task-table td, #task-table th {
 	vertical-align: top;
 }
-#taskboard td:first-child, #taskboard th:first-child {
-	width: 15%;
-}
 #taskboard th {
-	border-bottom: 0px;
-}
-/*#taskboard ul {
-	width: 100%;
-	display: block;
-	z-index: 25;
-	min-height: 120px;
-}
-#taskboard ul, #taskboard li {
-	padding: 0;
-	margin: 0;
-	list-style: none;
-	display: block;
-}*/
-#taskboard .table {
-	width: auto;
+	border-bottom: none;
 }
 #taskboard .table .column {
 	width: 320px;
@@ -62,37 +43,24 @@ body {
 	position: relative;
 	font-size: 14px;
 	padding: 6px;
-	margin: 8px 2px;
+	margin: 4px;
 	background-color: rgba(255,255,255,.1);
 	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.11);
-	border:0px;
-	border-left: 6px solid;
+	border: none;
+	border-left: 6px solid #777;
 	height: 85px;
-	border-radius:0;
+	border-radius: 0;
 }
 #taskboard .card.task {
 	cursor: move;
 	width: 145px;
 	height: 120px;
 	float: left;
-	margin-right: 8px;
 }
-/*#taskboard .card.task:after {
-	content: '';
-	width: 111px;
-	height: 94px;
-	background-color: #FFF;
-	position: absolute;
-	top: -1px;
-	left: -6px;
-	z-index: 1;
-	opacity: .01;
-}*/
 #taskboard .card.task.placeholder {
 	background-color: #fff;
 	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
 	opacity: .1;
-	/*border: 0;*/
 }
 #taskboard .card.story {
 	height: 92px;
@@ -120,7 +88,6 @@ body {
 	position: absolute;
 	bottom: 2px;
 	left: 0;
-	/*width: 106px;*/
 	height: 18px;
 	text-align: left;
 	overflow: hidden;
@@ -168,16 +135,12 @@ body {
 }
 #taskboard .card .top {
 	position: relative;
-	border-bottom: 1px dotted #E2E2E2;
+	border-bottom: 1px dotted rgba(160,160,160,0.7);
 	text-align: left;
 	top: -4px;
 	height: 20px;
 	overflow: hidden;
 }
-/*#taskboard .card .top a {
-	color: #969696;
-	text-decoration: none;
-}*/
 #taskboard .card .top a:hover {
 	text-decoration: underline;
 }
@@ -189,20 +152,6 @@ body {
 }
 #taskboard .card .dueDate, #taskboard .card .description {
 	display: none;
-}
-#taskboard .add-task {
-	display: inline-block;
-	font-size: 14px;
-	cursor: pointer;
-	color: #4EC528;
-	transition: opacity .25s;
-	width: 12px;
-	height: 12px;
-	background-image: url(/img/taskboard/add-icon.png);
-	margin-top: 1px;
-}
-#taskboard .add-task:hover {
-	opacity: .8;
 }
 #taskboard .completed .card.task,
 #taskboard .completed.card.task {
@@ -229,99 +178,34 @@ body {
 	top: 0;
 	bottom: 0;
 	z-index: 50;
-	background-image: url(/img/ajax-loader.gif);
 	background-position: center center;
 	background-repeat: no-repeat
-}
-#taskboard .completed .spinner {
-	background-image: url(/img/taskboard/burn.gif);
 }
 #taskboard .error {
 	position: absolute;
 	left: 0;
 	right: 0;
-	top: 0;
-	bottom: 0;
+	text-align: center;
+	bottom: 20%;
 	z-index: 50;
-	background-image: url(/img/taskboard/warning.png);
-	background-position: right bottom;
-	background-repeat: no-repeat
+	font-size: 4em;
+	line-height: 1;
 }
 .cloneable {
 	display: none;
 }
-.ui-dialog label {
-	margin-top: 5px;
-	margin-bottom: 2px;
-}
-.ui-dialog .ui-dialog-content {
-	overflow: hidden;
-}
-.ui-dialog .form-control {
-	padding: 5px;
-	height: 36px;
-}
-.ui-dialog textarea.form-control {
-	height: auto;
-}
-.input-error {
-	border: 1px dashed #F00;
-}
-/* Jquery UI issues */
- .ui-widget-overlay, .ui-dialog {
-	z-index: 1000;
-}
-.ui-dialog-titlebar-close {
-	display: none;
-}
-.ui-dialog-titlebar.ui-widget-header {
-	border: 0px solid #333;
-	background: #999;
-	color: #fff;
-	background-color: #3D3D3D;
-	border-radius: 0px;
-}
-.ui-dialog.ui-widget input, .ui-dialog.ui-widget select, .ui-dialog.ui-widget textarea, .ui-dialog.ui-widget label {
-	font-size: 14px;
-}
-body .ui-dialog {
-	padding: 0;
-	z-index: 10000;
-}
-body .ui-widget-content {
-	background: #fff;
-}
-body .ui-corner-all {
-	border-radius: 0px;
-}
-body .ui-state-default, body .ui-widget-content .ui-state-default {
-	border: 0px;
-	background: inherit;
-	font-weight: inherit;
-	color: inherit;
-	outline: inherit;
-	color: #FFF;
-	background-color: #909090;
-	padding: 1px 5px;
-	font-size: 13px;
+
+#burndown-legend .line-legend {
+	list-style: none;
 	line-height: 1.5;
-	border-radius: 3px;
-	transition: background-color .25s;
+	padding-left: 0;
 }
-body .ui-state-default:last-child, body .ui-widget-content .ui-state-default:last-child {
-	background-color: #7EC500;
-	border-color: #7EC500;
-}
-body .ui-state-default:hover, body .ui-widget-content .ui-state-default:hover {
-	background-color: #ADADAD;
-}
-body .ui-state-default:last-child:hover, body .ui-widget-content .ui-state-default:last-child:hover {
-	background-color: #9CF301;
-}
-/* Bootstrap Issues */
-table.table {
-	margin: 0;
-}
-.task-dueDate {
-	margin-left: 30px;
+#burndown-legend .line-legend li span {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	border: 1px solid #444;
+	border-radius: 2px;
+	margin: 0 .5em;
+	margin-bottom: -2px;
 }

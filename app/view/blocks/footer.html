@@ -16,28 +16,174 @@
 </check>
 <footer class="row">
 	<div class="col-xs-4">
-		<p class="visible-sm visible-xs"><a href="logout" class="btn btn-default btn-xs">Log Out</a></p>
+		<p class="visible-sm visible-xs"><a href="logout" class="btn btn-default btn-xs">{{ @dict.log_out }}</a></p>
 	</div>
 	<div class="col-xs-8">
 		<p class="text-right text-muted">
 			<check if="{{ @db.instance->log() }}">
-				<set queries_log="{{ @db.instance->log(true) }}" />
+				<set querylog="{{ @db.instance->log(true) }}" />
 				<set cached="0" />
-				{~ foreach(@queries_log as @r) if(@r.cached) ++@cached; ~}
-				<span title="{{ count(@queries_log) }} total queries, {{ intval(@cached) }} cached">{{ count(@queries_log) - @cached }} queries</span> &middot;
+				{~ foreach(@querylog as @r) if(@r.cached) ++@cached; ~}
+				<span title="{{ @dict.n_total_queries_n_cached,count(@querylog),intval(@cached) | format }}">{{ @dict.n_queries,(count(@querylog) - @cached) | format }}</span> &middot;
 			</check>
 			<check if="{{ !empty(@microtime) }}">
 				<set pagemtime="{{ microtime(true) - @microtime }}" />
-				<span title="Page generated in {{ round(@pagemtime, 10) }} seconds">{{ round(@pagemtime * 1000, 0) }}ms</span> &middot;
+				<span title="{{ @dict.page_generated_in_n_seconds,round(@pagemtime, 10) | format }}">{{ round(@pagemtime * 1000, 0) }}ms</span> &middot;
 			</check>
-			<span title="Real usage: {{ memory_get_peak_usage(true) }} bytes">{{ format_filesize(memory_get_peak_usage()) }}</span> &middot;
+			<span title="Real usage: {{ memory_get_peak_usage(true) }} bytes">{{ \Helper\View::instance()->formatFilesize(memory_get_peak_usage()) }}</span>
 			<check if="{{ @revision }}">
-				<a class="nolink" title="Current commit: {{ @revision }}" href="https://github.com/Alanaktion/phproject/commit/{{ @revision }}" target="_blank">{{ substr(@revision, 0, 7) }}</a> &middot;
+				 &middot; <a class="nolink" title="{{ @dict.current_commit_n,@revision | format }}" href="https://github.com/Alanaktion/phproject/commit/{{ @revision }}" target="_blank">{{ substr(@revision, 0, 7) }}</a>
 			</check>
-			&copy; {{ date("Y") }}
 		</p>
 	</div>
 </footer>
 <script>var site_url = '{{ @site.url }}';</script>
 <script src="minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,global.js"></script>
 <script src="js/respond.min.js"></script>
+<check if="{{ @user.id }}">
+	<!-- Hotkeys -->
+	<div class="modal" id="modal-hotkeys" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
+					<h4 class="modal-title">Hotkeys</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<p><b>Global</b></p>
+							<dl class="dl-inline">
+								<dt>?</dt>
+								<dd>Show hotkeys</dd>
+								<dt>b</dt>
+								<dd>{{ @dict.browse }}</dd>
+								<dt>r</dt>
+								<dd>Reload page</dd>
+								<repeat group="{{ @issue_types }}" value="{{ @type }}">
+									<check if="{{ @type.id > 0 && @type.id < 10 }}">
+										<dt>alt+{{ @type.id }}</dt>
+										<dd>{{ @dict.new_n,@type.name | format }}</dd>
+									</check>
+								</repeat>
+							</dl>
+						</div>
+						<div class="col-sm-6">
+							<p><b>{{ @dict.issues }}</b></p>
+							<dl class="dl-inline">
+								<dt>w</dt>
+								<dd>{{ @dict.watch }}/{{ @dict.unwatch }}</dd>
+								<dt>e</dt>
+								<dd>{{ @dict.edit }}</dd>
+								<dt>c</dt>
+								<dd>{{ @dict.write_a_comment }}</dd>
+								<dt>shift+c</dt>
+								<dd>{{ @dict.mark_complete }}</dd>
+								<dt>shift+r</dt>
+								<dd>{{ @dict.reopen }}</dd>
+							</dl>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	$(document).ready(function() {
+
+		// Show Mac hotkeys on Macs
+		if(navigator.platform.indexOf('Mac') >= 0) {
+			var $modalBody = $("#modal-hotkeys .modal-body");
+			$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8997;').replace(/shift\+/g, '&#8679;'));
+		}
+
+		// Bind keyup to hotkey handler
+		$(document).on('keyup', function(e) {
+			// Only handle hotkeys when not in a form context
+			if(e.target.type != 'textarea' && e.target.tagName != 'INPUT' && e.target.tagName != 'SELECT' && (e.target.className != 'modal in' || e.which == 191)) {
+				switch (e.which) {
+					case 191: // Hotkey modal
+						if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
+							$('.modal.in').not('#modal-hotkeys').modal('hide');
+							$('#modal-hotkeys').modal('toggle');
+						}
+						break;
+					case 66: // Browse
+						if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
+							window.location = site_url + 'issues?status=open';
+						}
+						break;
+					case 87: // Watch/unwatch issue
+						if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
+							$("#watch-btn").click();
+						}
+						break;
+					case 69: // Edit issue
+						if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
+							$("#btn-edit").click();
+						}
+						break;
+					case 67:
+						if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Close issue
+							window.location = $("#btn-issue-close").attr("href");
+						} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Comment on issue
+							$("#comment_textarea").focus();
+						}
+						break;
+					case 82:
+						if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Reopen issue
+							window.location = $("#btn-issue-reopen").attr("href");
+						} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Reload
+							window.location.reload();
+						}
+						break;
+// {~ foreach(@issue_types as @type): ~}
+// {~ if(@type.id > 0 && @type.id < 10): ~}
+
+					case parseInt('{{ 48 + @type.id }}'): // New {{ @type.name }} ({{ @type.id }})
+						if(!e.shiftKey && !e.ctrlKey && e.altKey) {
+							window.location = site_url + 'issues/new/{{ @type.id }}';
+						}
+						break;
+// {~ endif ~}
+// {~ endforeach; ~}
+
+				}
+			}
+		});
+
+	});
+	</script>
+
+	<!-- Session -->
+	<div class="modal" id="modal-loggedout" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">{{ @dict.logged_out }}</h4>
+				</div>
+				<div class="modal-body">
+					{{ @dict.session_ended_message }}
+				</div>
+				<div class="modal-footer">
+					<button onclick="window.location=window.location" class="btn btn-primary btn-sm">{{ @dict.log_in }}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+	var session_ping = function() {
+		$.get('ping', function(data) {
+			if(data.is_logged_in) {
+				window.setTimeout(session_ping, 5000);
+			} else {
+				$('.modal.in').modal('hide');
+				$('#modal-loggedout').modal('show');
+			}
+		});
+	};
+	$(document).ready(function() {
+		window.setTimeout(session_ping, 5000);
+	});
+	</script>
+</check>

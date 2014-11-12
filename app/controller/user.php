@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class User extends Base {
+class User extends \Controller {
 
 	protected $_userId;
 
@@ -25,6 +25,8 @@ class User extends Base {
 		}
 		$owner_ids = implode(",", $owner_ids);
 
+
+
 		$order = "priority DESC, has_due_date ASC, due_date ASC";
 		$f3->set("projects", $projects->find(
 			array(
@@ -45,6 +47,10 @@ class User extends Base {
 			)
 		));
 
+		$watchlist = new \Model\Issue\Watcher();
+		$f3->set("watchlist", $watchlist->findby_watcher($f3, $this->_userId, $order));
+
+
 		$tasks = new \Model\Issue\Detail();
 		$f3->set("tasks", $tasks->find(
 			array(
@@ -61,7 +67,7 @@ class User extends Base {
 		$f3->set("sprint", $sprint);
 
 		$f3->set("menuitem", "index");
-		echo \Template::instance()->render("user/dashboard.html");
+		$this->_render("user/dashboard.html");
 	}
 
 	private function _loadThemes() {
@@ -87,7 +93,7 @@ class User extends Base {
 
 		$this->_loadThemes();
 
-		echo \Template::instance()->render("user/account.html");
+		$this->_render("user/account.html");
 	}
 
 	public function save($f3, $params) {
@@ -155,12 +161,11 @@ class User extends Base {
 		$user->loadCurrent();
 		$this->_loadThemes();
 
-		echo \Template::instance()->render("user/account.html");
+		$this->_render("user/account.html");
 	}
 
 	public function avatar($f3, $params) {
 		$f3 = \Base::instance();
-		$post = array_map("trim", $f3->get("POST"));
 
 		$user = new \Model\User();
 		$user->load($this->_userId);
@@ -183,7 +188,7 @@ class User extends Base {
 		$_FILES['avatar']['name'] = $user->id . "-" . substr(sha1($user->id), 0, 4)  . "." . $parts["extension"];
 		$f3->set("avatar_filename", $_FILES['avatar']['name']);
 
-		$files = $web->receive(
+		$web->receive(
 			function($file) use($f3, $user) {
 				if($file['size'] > $f3->get("files.maxsize")) {
 					return false;
@@ -203,7 +208,6 @@ class User extends Base {
 		$cache->clear($f3->hash("GET /avatar/96/{$user->id}.png") . ".url");
 		$cache->clear($f3->hash("GET /avatar/128/{$user->id}.png") . ".url");
 
-
 		$f3->reroute("/user");
 	}
 
@@ -222,7 +226,7 @@ class User extends Base {
 			$issues = $issue->paginate(0, 100, array("closed_date IS NULL AND deleted_date IS NULL AND (owner_id = ? OR author_id = ?)", $user->id, $user->id));
 			$f3->set("issues", $issues);
 
-			echo \Template::instance()->render("user/single.html");
+			$this->_render("user/single.html");
 		} else {
 			$f3->error(404);
 		}

@@ -10,3 +10,29 @@
 .navbar-form .btn-sm {
 	margin-top: 4px;
 }
+.datepicker td.day:hover,
+.datepicker td span:hover,
+.datepicker thead tr:first-child th:hover {
+	background-color: #E6E6E6 !important;
+	background-image: linear-gradient(#FFF, #FFF 60%, #F5F5F5);
+	background-repeat: no-repeat;
+}
+.datepicker td,
+.datepicker td span {
+	border: 1px solid transparent !important;
+}
+.datepicker td.active,
+.datepicker td span.active {
+	background-color: #2FA4E7 !important;
+	background-image: linear-gradient(#54B4EB, #2FA4E7 60%, #1D9CE5);
+	background-repeat: no-repeat;
+	border: 1px solid #2FA4E7;
+	border-bottom-color: #178ACC;
+	border-radius: 3px;
+}
+.datepicker td.active:hover,
+.datepicker td span.active:hover {
+	background-color: #178ACC !important;
+	background-image: linear-gradient(#54B4EB, #2FA4E7 60%, #1D9CE5) !important;
+	border-color: #1684C2;
+}
