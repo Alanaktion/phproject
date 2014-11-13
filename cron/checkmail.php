@@ -21,8 +21,24 @@ if($emails) {
 
 		// get the to and from and strip stuff from the body
 		$header = imap_headerinfo($inbox, $email_number);
-		$message = quoted_printable_decode(imap_fetchbody($inbox,$email_number,2,FT_INTERNAL));
+		$text = imap_fetchbody($inbox,$email_number,2,FT_INTERNAL);
+
+		// Ensure we get a message body on weird senders
+		if(!trim($text)) {
+			$text = imap_fetchbody($inbox,$email_number,1,FT_INTERNAL);
+		}
+
+		$structure = imap_fetchstructure($inbox, $email_number);
+
+		if($structure->encoding == 3) {
+			$message = imap_base64($text);
+		} elseif($structure->encoding == 4) {
+			$message = imap_qprint($text);
+		} else {
+			$message = $text;
+		}
 		$message = str_replace(array("<br>","<br />"), "\r\n", $message);
+
 
 		$truncate = $f3->get("mail.truncate_lines");
 		foreach ($truncate as $truncator) {
@@ -153,26 +169,26 @@ if($emails) {
 						}
 
 						if($structure->parts[$i]->ifparameters)   {
-						    foreach($structure->parts[$i]->parameters as $object)  {
-						        if(strtolower($object->attribute) == 'name')  {
-						            $attachments[$i]['is_attachment'] = true;
-						            $attachments[$i]['name'] = $object->value;
-						        }
-						    }
+							foreach($structure->parts[$i]->parameters as $object)  {
+								if(strtolower($object->attribute) == 'name')  {
+									$attachments[$i]['is_attachment'] = true;
+									$attachments[$i]['name'] = $object->value;
+								}
+							}
 						}
 
 						if($attachments[$i]['is_attachment'])  {
-						    $attachments[$i]['attachment'] = imap_fetchbody($inbox, $email_number, $i+1);
+							$attachments[$i]['attachment'] = imap_fetchbody($inbox, $email_number, $i+1);
 
-						    /* 4 = QUOTED-PRINTABLE encoding */
-						    if($structure->parts[$i]->encoding == 3) {
+							/* 4 = QUOTED-PRINTABLE encoding */
+							if($structure->parts[$i]->encoding == 3) {
 
-						        $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
+								$attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
 
-						    /* 3 = BASE64 encoding */
-						    } elseif($structure->parts[$i]->encoding == 4)  {
-						        $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
-						    }
+							/* 3 = BASE64 encoding */
+							} elseif($structure->parts[$i]->encoding == 4)  {
+								$attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
+							}
 						}
 					}
 				}
@@ -223,7 +239,7 @@ if($emails) {
 						$fp = fopen($f3->get("UPLOADS")  . $filename, "w+");
 						fwrite($fp, $attachment['attachment']);
 						fclose($fp);
-			    		}
+						}
 				}
 			}
 		}
