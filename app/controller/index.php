@@ -55,12 +55,18 @@ class Index extends \Controller {
 
 		// Verify password
 		$security = \Helper\Security::instance();
-		if($security->hash($f3->get("POST.password"), $user->salt) == $user->password) {
-			$f3->set("SESSION.phproject_user_id", $user->id);
-			if(!$f3->get("POST.to")) {
-				$f3->reroute("/");
+		if($security->hash($f3->get("POST.password"), $user->salt ?: "") == $user->password) {
+			if($user->salt) {
+				$f3->set("SESSION.phproject_user_id", $user->id);
+				if(!$f3->get("POST.to")) {
+					$f3->reroute("/");
+				} else {
+					$f3->reroute($f3->get("POST.to"));
+				}
 			} else {
-				$f3->reroute($f3->get("POST.to"));
+				$f3->set("SESSION.phproject_temp_user_id", $user->id);
+				$f3->set("user", $user->cast());
+				$this->_render("index/reset_forced.html");
 			}
 		} else {
 			if($f3->get("POST.to")) {
@@ -119,7 +125,7 @@ class Index extends \Controller {
 			extract($security->hash($f3->get("POST.register-password")));
 			$user->password = $hash;
 			$user->salt = $salt;
-			$user->task_color = sprintf("%06X", mt_rand(0, 0xFFFFFF));
+			$user->task_color = sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
 			$user->save();
 			$f3->set("SESSION.phproject_user_id", $user->id);
 			$f3->reroute("/");
@@ -176,6 +182,31 @@ class Index extends \Controller {
 			$f3->set("resetuser", $user);
 			$this->_render("index/reset_complete.html");
 		}
+	}
+
+	public function reset_forced($f3, $params) {
+		if(!$f3->get("SESSION.phproject_temp_user_id")) {
+			$f3->error(403);
+			return;
+		}
+		$user = new \Model\User;
+		$user->load($f3->get("SESSION.phproject_temp_user_id"));
+		if($f3->get("POST.password1") != $f3->get("POST.password2")) {
+			$f3->set("reset.error", "The given passwords don't match.");
+		} elseif(strlen($f3->get("POST.password1")) < 6) {
+			$f3->set("reset.error", "The given password is too short. Passwords must be at least 6 characters.");
+		} else {
+			// Save new password and redirect to dashboard
+			$security = \Helper\Security::instance();
+			$user->salt = $security->salt();
+			$user->password = $security->hash($f3->get("POST.password1"), $user->salt);
+			$user->save();
+			$f3->set("SESSION.phproject_user_id", $user->id);
+			$f3->set("SESSION.phproject_temp_user_id", null);
+			$f3->reroute("/");
+			return;
+		}
+		$this->_render("index/reset_forced.html");
 	}
 
 	public function logout($f3, $params) {

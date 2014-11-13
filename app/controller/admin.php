@@ -59,21 +59,6 @@ class Admin extends \Controller {
 
 		if($user->id) {
 			$f3->set("title", "Edit User");
-			if($f3->get("POST")) {
-				foreach($f3->get("POST") as $i=>$val) {
-					if($i == "password" && !empty($val)) {
-						$security = \Helper\Security::instance();
-						$user->salt = $security->salt();
-						$user->password = $security->hash($val, $user->salt);
-					} elseif($i == "salt" || $i == "api_key") {
-						// don't change the salt or API key
-					} elseif($user->$i != $val && $i != "password"){
-						$user->$i = $val;
-					}
-					$user->save();
-					$f3->set("success", "User changes saved.");
-				}
-			}
 			$f3->set("this_user", $user);
 			$this->_render("admin/users/edit.html");
 		} else {
@@ -86,29 +71,84 @@ class Admin extends \Controller {
 		$f3->set("title", "New User");
 		$f3->set("menuitem", "admin");
 
-		if($f3->get("POST")) {
-			$user = new \Model\User();
-			$user->username = $f3->get("POST.username");
-			$user->email = $f3->get("POST.email");
-			$user->name = $f3->get("POST.name");
-			$security = \Helper\Security::instance();
-			$user->salt = $security->salt();
-			$user->password = $security->hash($f3->get("POST.password"), $user->salt);
-			$user->api_key = $security->salt_sha1();
-			$user->role = $f3->get("POST.role");
-			$user->task_color = ltrim($f3->get("POST.task_color"), "#");
-			$user->created_date = $this->now();
-			$user->save();
-			if($user->id) {
-				$f3->reroute("/admin/users#" . $user->id);
-			} else {
-				$f3->error(500, "Failed to save user.");
-			}
+		$f3->set("rand_color", sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF)));
+		$this->_render("admin/users/edit.html");
+	}
+
+	public function user_save($f3, $params) {
+		$f3->set("menuitem", "admin");
+
+		$security = \Helper\Security::instance();
+		$user = new \Model\User;
+
+		// Load current user if set, otherwise validate fields for new user
+		if($user_id = $f3->get("POST.user_id")) {
+			$f3->set("title", "Edit User");
+			$user->load($user_id);
+			$f3->set("this_user", $user);
 		} else {
-			$f3->set("title", "Add User");
-			$f3->set("rand_color", sprintf("#%06X", mt_rand(0, 0xFFFFFF)));
-			$this->_render("admin/users/new.html");
+			$f3->set("title", "New User");
+
+			// Verify a password is being set
+			if(!$f3->get("POST.password")) {
+				$f3->set("error", "User already exists with this username");
+				$this->_render("admin/users/edit.html");
+				return;
+			}
+
+			// Check for existing users with same info
+			$user->load(array("username = ?", $f3->get("POST.username")));
+			if($user->id) {
+				$f3->set("error", "User already exists with this username");
+				$this->_render("admin/users/edit.html");
+				return;
+			}
+
+			$user->load(array("email = ?", $f3->get("POST.email")));
+			if($user->id) {
+				$f3->set("error", "User already exists with this email address");
+				$this->_render("admin/users/edit.html");
+				return;
+			}
+
+			// Set new user fields
+			$user->api_key = $security->salt_sha1();
+			$user->created_date = $this->now();
 		}
+
+		// Validate password if being set
+		if($f3->get("POST.password")) {
+			if($f3->get("POST.password") != $f3->get("POST.password_confirm")) {
+				$f3->set("error", "Passwords do not match");
+				$this->_render("admin/users/edit.html");
+				return;
+			}
+			if(strlen($f3->get("POST.password")) < 6) {
+				$f3->set("error", "Passwords must be at least 6 characters");
+				$this->_render("admin/users/edit.html");
+				return;
+			}
+
+			// Check if giving user temporary or permanent password
+			if($f3->get("POST.temporary_password")) {
+				$user->salt = null;
+				$user->password = $security->hash($f3->get("POST.password"), "");
+			} else {
+				$user->salt = $security->salt();
+				$user->password = $security->hash($f3->get("POST.password"), $user->salt);
+			}
+		}
+
+		// Set basic fields
+		$user->username = $f3->get("POST.username");
+		$user->email = $f3->get("POST.email");
+		$user->name = $f3->get("POST.name");
+		$user->role = $f3->get("POST.role");
+		$user->task_color = ltrim($f3->get("POST.task_color"), "#");
+
+		// Save user
+		$user->save();
+		$f3->reroute("/admin/users#" . $user->id);
 	}
 
 	public function user_delete($f3, $params) {
@@ -156,7 +196,7 @@ class Admin extends \Controller {
 			$group->name = $f3->get("POST.name");
 			$group->username = \Web::instance()->slug($group->name);
 			$group->role = "group";
-			$group->task_color = sprintf("%06X", mt_rand(0, 0xFFFFFF));
+			$group->task_color = sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
 			$group->created_date = $this->now();
 			$group->save();
 			$f3->reroute("/admin/groups");

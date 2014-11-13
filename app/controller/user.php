@@ -110,9 +110,13 @@ class User extends \Controller {
 			// Update password
 			if($security->hash($post["old_pass"], $user->salt) == $user->password) {
 				if(strlen($post["new_pass"]) >= 6) {
-					$user->salt = $security->salt();
-					$user->password = $security->hash($post["new_pass"], $user->salt);
-					$f3->set("success", "Password updated successfully.");
+					if($post["new_pass"] == $post["new_pass_confirm"]) {
+						$user->salt = $security->salt();
+						$user->password = $security->hash($post["new_pass"], $user->salt);
+						$f3->set("success", "Password updated successfully.");
+					} else {
+						$f3->set("error", "New passwords do not match");
+					}
 				} else {
 					$f3->set("error", "New password must be at least 6 characters.");
 				}

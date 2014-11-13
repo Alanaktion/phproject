@@ -45,6 +45,12 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<div class="col-sm-2 control-label label-sm">API Key</div>
+							<div class="col-sm-4 col-md-2 col-lg-2">
+								<p class="form-control-static input-sm">{{ @user.api_key ?: 'No API Key' }}</p>
+							</div>
+						</div>
+						<div class="form-group">
 							<div class="col-sm-offset-2 col-sm-10">
 								<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save }}</button>
 							</div>
@@ -76,10 +82,17 @@
 								<input class="form-control input-sm" id="opass" name="old_pass" type="password">
 							</div>
 						</div>
+						<br>
 						<div class="form-group">
 							<label for="npass" class="col-sm-2 control-label label-sm">{{ @dict.new_password }}</label>
 							<div class="col-sm-10">
 								<input class="form-control input-sm" id="npass" name="new_pass" type="password">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="npass_confirm" class="col-sm-2 control-label label-sm">{{ @dict.confirm_password }}</label>
+							<div class="col-sm-10">
+								<input class="form-control input-sm" id="npass_confirm" name="new_pass_confirm" type="password">
 							</div>
 						</div>
 						<div class="form-group">
