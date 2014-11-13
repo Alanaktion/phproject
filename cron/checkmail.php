@@ -22,7 +22,14 @@ if($emails) {
 		// get the to and from and strip stuff from the body
 		$header = imap_headerinfo($inbox, $email_number);
 		$text = imap_fetchbody($inbox,$email_number,2,FT_INTERNAL);
+
+		// Ensure we get a message body on weird senders
+		if(!trim($text)) {
+			$text = imap_fetchbody($inbox,$email_number,1,FT_INTERNAL);
+		}
+
 		$structure = imap_fetchstructure($inbox, $email_number);
+
 		if($structure->encoding == 3) {
 			$message = imap_base64($text);
 		} elseif($structure->encoding == 4) {
@@ -31,6 +38,7 @@ if($emails) {
 			$message = $text;
 		}
 		$message = str_replace(array("<br>","<br />"), "\r\n", $message);
+
 
 		$truncate = $f3->get("mail.truncate_lines");
 		foreach ($truncate as $truncator) {
