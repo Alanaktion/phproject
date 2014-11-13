@@ -10,10 +10,9 @@
 		<div class="col-lg-12">
 			<div class="clearfix">
 				<ul class="nav nav-tabs pull-left">
-					<li><a href="admin/">Overview</a></li>
+					<li><a href="admin/">{{ @dict.overview }}</a></li>
 					<li><a href="admin/users">{{ @dict.users }}</a></li>
 					<li class="active"><a href="admin/groups">{{ @dict.groups }}</a></li>
-					<!-- <li><a href="admin/attributes">Attributes</a></li> -->
 					<li><a href="admin/sprints">{{ @dict.sprints }}</a></li>
 				</ul>
 				<div class="pull-right">
@@ -25,9 +24,9 @@
 			<table class="table table-striped" style="width: auto; min-width: 300px;">
 				<thead>
 					<tr>
-						<th>ID</th>
+						<th>{{ @dict.cols.id }}</th>
 						<th>{{ @dict.name }}</th>
-						<th>Members</th>
+						<th>{{ @dict.members }}</th>
 						<th>{{ @dict.task_color }}</th>
 						<th></th>
 					</tr>
@@ -45,7 +44,7 @@
 				</tbody>
 			</table>
 			<check if="{{ empty(@groups) }}">
-				<p class="text-center">No groups :(</p>
+				<p class="text-center">{{ @dict.no_groups_exist }}</p>
 			</check>
 		</div>
 	</div>
@@ -56,14 +55,14 @@
 		<form class="modal-content" action="admin/groups/new" method="post">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#input_name').val('');">&times;</button>
-				<h4 class="modal-title">Add Group</h4>
+				<h4 class="modal-title">{{ @dict.new }}</h4>
 			</div>
 			<div class="modal-body">
 				<input type="text" class="form-control" id="input_name" name="name" placeholder="Group Name">
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#input_name').val('');">{{ @dict.cancel }}</button>
-				<button type="submit" class="btn btn-primary">Add Group</button>
+				<button type="submit" class="btn btn-primary">{{ @dict.save }}</button>
 			</div>
 		</form>
 	</div>

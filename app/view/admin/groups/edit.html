@@ -9,31 +9,30 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<ul class="nav nav-tabs">
-				<li><a href="admin/">Overview</a></li>
+				<li><a href="admin/">{{ @dict.overview }}</a></li>
 				<li><a href="admin/users">{{ @dict.users }}</a></li>
 				<li class="active"><a href="admin/groups">{{ @dict.groups }}</a></li>
-				<!-- <li><a href="admin/attributes">Attributes</a></li> -->
 				<li><a href="admin/sprints">{{ @dict.sprints }}</a></li>
 			</ul>
 			<div class="row">
 				<div class="col-md-8">
-					<p class="alert alert-success alert-popup saved" style="display: none;">Title saved.</p>
+					<p class="alert alert-success alert-popup saved" style="display: none;">{{ @dict.group_name_saved }}</p>
 					<form role="form" onsubmit="return false;">
 						<div class="form-group">
-							<label class="sr-only" for="group-name">Group Name</label>
+							<label class="sr-only" for="group-name">{{ @dict.group_name }}</label>
 							<input type="text" class="form-control input-lg" id="group-name" name="name" value="{{ @group.name }}">
 						</div>
 					</form>
 					<ul id="members" class="list-unstyled">
 						<repeat group="{{ @members }}" value="{{ @val }}">
 							<li data-user-id="{{ @val.user_id }}">
-								<a href="#" class="delete text-danger has-tooltip" data-placement="right" title="Remove from Group"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+								<a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
 								<check if="{{ @val.manager }}">
 									<true>
-										<span class="manager text-warning has-tooltip" data-placement="right" title="Manager"><span class="glyphicon glyphicon-star"></span></span>&nbsp;
+										<span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="glyphicon glyphicon-star"></span></span>&nbsp;
 									</true>
 									<false>
-										<a href="admin/groups/{{ @group.id }}/setmanager/{{ @val.id }}" class="manager text-muted has-tooltip" data-placement="right" title="Set as Manager"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
+										<a href="admin/groups/{{ @group.id }}/setmanager/{{ @val.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
 									</false>
 								</check>
 								{{ @val.user_name }}
@@ -53,7 +52,7 @@
 							</select>
 						</div>
 						<div class="form-group">
-							<button type="submit" class="btn btn-sm btn-primary">Add to Group</button>
+							<button type="submit" class="btn btn-sm btn-primary">{{ @dict.add_to_group }}</button>
 						</div>
 					</form>
 				</div>
@@ -68,7 +67,7 @@ $(function(){
 		if($(this).val().length > 0) {
 			$.post('/admin/groups/ajax',{
 				action: 'change_title',
-				group_id: {{ @group.id }},
+				group_id: parseInt('{{ @group.id }}'),
 				name: $(this).val()
 			}, function(data) {
 				$('.saved').show();
@@ -83,7 +82,7 @@ $(function(){
 		if(confirm('Are you sure you want to remove this user?')) {
 			$.post('/admin/groups/ajax', {
 				action: 'remove_member',
-				group_id: {{ @group.id }},
+				group_id: parseInt('{{ @group.id }}'),
 				user_id: $li.data('user-id')
 			}, function(data) {
 				if(data.deleted) {
