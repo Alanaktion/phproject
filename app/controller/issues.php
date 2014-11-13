@@ -554,7 +554,7 @@ class Issues extends \Controller {
 			$comment->text = $post["comment"];
 			$comment->created_date = $this->now();
 			$comment->save();
-			$issue->update_comment = $comment->id;
+			$f3->set("update_comment", $comment);
 		}
 
 		// Save issue, optionally send notifications
@@ -854,6 +854,14 @@ class Issues extends \Controller {
 		$issue->deleted_date = null;
 		$issue->save();
 		$f3->reroute("/issues/{$issue->id}");
+	}
+
+	public function comment_delete($f3, $params) {
+		$this->_requireAdmin();
+		$comment = new \Model\Issue\Comment;
+		$comment->load($f3->get("POST.id"));
+		$comment->delete();
+		$this->_printJson(array("id" => $f3->get("POST.id")) + $comment->cast());
 	}
 
 	public function file_delete($f3, $params) {
