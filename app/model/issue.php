@@ -75,8 +75,8 @@ class Issue extends \Model {
 		$update->issue_id = $this->id;
 		$update->user_id = $f3->get("user.id");
 		$update->created_date = date("Y-m-d H:i:s");
-		if($this->exists('update_comment')) {
-			$update->comment_id = $this->get('update_comment');
+		if($f3->exists('update_comment')) {
+			$update->comment_id = $f3->get('update_comment')->id;
 		}
 		$update->save();
 

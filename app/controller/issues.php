@@ -554,7 +554,7 @@ class Issues extends \Controller {
 			$comment->text = $post["comment"];
 			$comment->created_date = $this->now();
 			$comment->save();
-			$issue->update_comment = $comment->id;
+			$f3->set("update_comment", $comment);
 		}
 
 		// Save issue, optionally send notifications
