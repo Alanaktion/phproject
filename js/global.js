@@ -21,19 +21,48 @@ $(document).ready(function() {
 
 	// Handle checkboxes on issue listings
 	$('.issue-list thead tr input').click(function(e) {
-		$('.issue-list tbody tr input').prop('checked', $(this).prop('checked'));
+		var checked = $(this).prop('checked');
+		$('.issue-list tbody tr input').prop('checked', checked);
+		if(checked) {
+			$('.issue-list tbody tr').addClass('active');
+		} else {
+			$('.issue-list tbody tr').removeClass('active');
+		}
 	});
-	$('.issue-list tbody tr input, .issue-list tbody tr td:first-child').click(function(e) {
+	$('.issue-list tbody tr input').click(function(e) {
+		var checked = $(this).prop('checked');
+		if(checked) {
+			$(this).parents('tr').addClass('active');
+		} else {
+			$(this).parents('tr').removeClass('active');
+		}
+		e.stopPropagation();
+	});
+	$('.issue-list tbody tr td:first-child').click(function(e) {
 		e.stopPropagation();
 	});
 	$('.issue-list tbody tr').click(function(e) {
-		var $checkbox = $(this).find('input');
+		var $checkbox = $(this).find('input'),
+			checked = $checkbox.prop('checked');
 		if (e.ctrlKey || e.metaKey) {
-			$checkbox.prop('checked', !$checkbox.prop('checked'));
-		} else {
-			var checked = $checkbox.prop('checked');
-			$('.issue-list tbody tr td input').prop('checked', false);
 			$checkbox.prop('checked', !checked);
+			if(!checked) {
+				$checkbox.parents('tr').addClass('active');
+			} else {
+				$checkbox.parents('tr').removeClass('active');
+			}
+		} else {
+			$('.issue-list tbody tr td input').prop('checked', false);
+			$('.issue-list tbody tr').removeClass('active');
+			$checkbox.prop('checked', !checked);
+			if(!checked) {
+				$checkbox.parents('tr').addClass('active');
+			}
+		}
+		if (document.selection) {
+			document.selection.empty();
+		} else if (window.getSelection) {
+			window.getSelection().removeAllRanges();
 		}
 	});
 
