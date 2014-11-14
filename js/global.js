@@ -20,7 +20,10 @@ $(document).ready(function() {
 	});
 
 	// Handle checkboxes on issue listings
-	$('.issue-list tbody tr input').click(function(e) {
+	$('.issue-list thead tr input').click(function(e) {
+		$('.issue-list tbody tr input').prop('checked', $(this).prop('checked'));
+	});
+	$('.issue-list tbody tr input, .issue-list tbody tr td:first-child').click(function(e) {
 		e.stopPropagation();
 	});
 	$('.issue-list tbody tr').click(function(e) {
@@ -30,7 +33,6 @@ $(document).ready(function() {
 		} else {
 			var checked = $checkbox.prop('checked');
 			$('.issue-list tbody tr td input').prop('checked', false);
-			//$checkbox.prop('checked', false);
 			$checkbox.prop('checked', !checked);
 		}
 	});

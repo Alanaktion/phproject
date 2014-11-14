@@ -126,7 +126,7 @@
 			</check>
 			<check if="{{ !empty(@headings) }}">
 				<tr>
-					<th></th>
+					<th><input type="checkbox" id="chk-toggle-all"></th>
 					<repeat group="{{ @headings }}" value="{{ @heading }}">
 						<th class="nowrap"><a href="#" class="issue-sort nolink" id="{{ @heading }}">
 							<check if="{{ !empty(@GET.orderby) && @GET.orderby == @heading }}">
