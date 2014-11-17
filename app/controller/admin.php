@@ -196,7 +196,7 @@ class Admin extends \Controller {
 			$group->name = $f3->get("POST.name");
 			$group->username = \Web::instance()->slug($group->name);
 			$group->role = "group";
-			$group->task_color = sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
+			$group->task_color = sprintf("%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
 			$group->created_date = $this->now();
 			$group->save();
 			$f3->reroute("/admin/groups");
