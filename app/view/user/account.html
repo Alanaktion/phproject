@@ -44,12 +44,14 @@
 								<input class="form-control input-sm" id="color" name="task_color" type="color" value="{{ @user.task_color ? '#' . @user.task_color : '' }}">
 							</div>
 						</div>
-						<div class="form-group">
-							<div class="col-sm-2 control-label label-sm">API Key</div>
-							<div class="col-sm-4 col-md-2 col-lg-2">
-								<p class="form-control-static input-sm">{{ @user.api_key ?: 'No API Key' }}</p>
+						<check if="{{ @user.role == 'admin' }}">
+							<div class="form-group">
+								<div class="col-sm-2 control-label label-sm">API Key</div>
+								<div class="col-sm-4 col-md-2 col-lg-2">
+									<p class="form-control-static input-sm">{{ @user.api_key ?: 'No API Key' }}</p>
+								</div>
 							</div>
-						</div>
+						</check>
 						<div class="form-group">
 							<div class="col-sm-offset-2 col-sm-10">
 								<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save }}</button>

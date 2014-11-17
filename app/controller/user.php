@@ -226,6 +226,24 @@ class User extends \Controller {
 			$f3->set("title", $user->name);
 			$f3->set("this_user", $user);
 
+
+			// Extra arrays required for bulk update
+			$status = new \Model\Issue\Status;
+			$f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
+
+			$f3->set("users", $user->getAll());
+			$f3->set("groups", $user->getAllGroups());
+
+			$priority = new \Model\Issue\Priority;
+			$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
+
+			$sprint = new \Model\Sprint;
+			$f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC")));
+
+			$type = new \Model\Issue\Type;
+			$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
+
+
 			$issue = new \Model\Issue\Detail;
 			$issues = $issue->paginate(0, 100, array("closed_date IS NULL AND deleted_date IS NULL AND (owner_id = ? OR author_id = ?)", $user->id, $user->id));
 			$f3->set("issues", $issues);
