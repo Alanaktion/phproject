@@ -1,4 +1,4 @@
-<set headings="{{ array('id', 'title', 'type', 'priority', 'status', 'author', 'assignee', 'sprint', 'created', 'due') }}" />
+<set headings="{{ array('id', 'title', 'type', 'priority', 'status', 'parent_id', 'author', 'assignee', 'sprint', 'created', 'due') }}" />
 <form action="issues" method="get" id="filter">
 	<table class="table table-striped table-hover table-responsive table-condensed issue-list">
 		<thead>
@@ -60,6 +60,9 @@
 								</repeat>
 							</optgroup>
 						</select>
+					</td>
+					<td>
+						<input class="form-control input-sm" name="parent_id" value="{{ !empty(@GET.parent_id) ? @GET.parent_id : '' }}" />
 					</td>
 					<td>
 						<select class="form-control input-sm" name="author_id">
@@ -159,6 +162,7 @@
 					<td>{{ @item.type_name }}</td>
 					<td>{{ @item.priority_name }}</td>
 					<td>{{ @item.status_name }}</td>
+					<td>{{ @item.parent_id ?: '' }}</td>
 					<check if="{{ @item.author_username }}">
 						<true>
 							<td><a href="user/{{ @item.author_username }}" rel="author">{{ @item.author_name }}</a></td>

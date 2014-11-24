@@ -86,6 +86,9 @@ class Issues extends \Controller {
 			case "status":
 				$filter_str .= " ORDER BY status {$ascdesc}, priority DESC, due_date DESC ";
 				break;
+			case "parent_id":
+				$filter_str .= " ORDER BY parent_id {$ascdesc}, priority DESC, due_date DESC ";
+				break;
 			case "author":
 				$filter_str .= " ORDER BY author_name {$ascdesc}, priority DESC, due_date DESC ";
 				break;
