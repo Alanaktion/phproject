@@ -28,15 +28,10 @@ if($emails) {
 			$text = imap_fetchbody($inbox,$email_number,1,FT_INTERNAL);
 		}
 
-		$structure = imap_fetchstructure($inbox, $email_number);
+		// Convert quoted-printable to 8-bit
+		$message = imap_qprint($text);
 
-		if($structure->encoding == 3) {
-			$message = imap_base64($text);
-		} elseif($structure->encoding == 4) {
-			$message = imap_qprint($text);
-		} else {
-			$message = $text;
-		}
+		// Clean up line breaks
 		$message = str_replace(array("<br>","<br />"), "\r\n", $message);
 
 
