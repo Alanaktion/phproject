@@ -9,19 +9,18 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<ul class="nav nav-tabs">
-				<li><a href="admin/">Overview</a></li>
+				<li><a href="admin/">{{ @dict.overview }}</a></li>
 				<li class="active"><a href="admin/users">{{ @dict.users }}</a></li>
 				<li><a href="admin/groups">{{ @dict.groups }}</a></li>
-				<!-- <li><a href="admin/attributes">Attributes</a></li> -->
 				<li><a href="admin/sprints">{{ @dict.sprints }}</a></li>
 			</ul>
 			<form action="admin/users/save" method="post" role="form" class="form-horizontal" autocomplete="off">
 				<check if="{{ empty(@this_user) }}">
 					<true>
-						<legend>New User</legend>
+						<legend>{{ @dict.new_user }}</legend>
 					</true>
 					<false>
-						<legend>Edit User {{ @this_user.id }}</legend>
+						<legend>{{ @dict.edit_user }}</legend>
 						<input type="hidden" name="user_id" value="{{ @this_user.id }}">
 					</false>
 				</check>
@@ -60,17 +59,17 @@
 					<div class="col-lg-10 col-lg-offset-2">
 						<div class="checkbox checkbox-sm">
 							<label>
-								<input type="checkbox" name="temporary_password" value="1"> Require new password on next login
+								<input type="checkbox" name="temporary_password" value="1"> {{ @dict.require_new_password }}
 							</label>
 						</div>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="role" class="col-lg-2 control-label label-sm">Role</label>
+					<label for="role" class="col-lg-2 control-label label-sm">{{ @dict.role }}</label>
 					<div class="col-lg-10">
 						<select class="form-control input-sm" id="role" name="role">
-							<option value="user">User</option>
-							<option value="admin" {{ @@this_user.role == "admin" ? "selected" : "" }}>Administrator</option>
+							<option value="user">{{ @dict.user }}</option>
+							<option value="admin" {{ @@this_user.role == "admin" ? "selected" : "" }}>{{ @dict.administrator }}</option>
 						</select>
 					</div>
 				</div>

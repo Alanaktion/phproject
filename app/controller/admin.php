@@ -194,8 +194,9 @@ class Admin extends \Controller {
 		if($f3->get("POST")) {
 			$group = new \Model\User();
 			$group->name = $f3->get("POST.name");
+			$group->username = \Web::instance()->slug($group->name);
 			$group->role = "group";
-			$group->task_color = sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
+			$group->task_color = sprintf("%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
 			$group->created_date = $this->now();
 			$group->save();
 			$f3->reroute("/admin/groups");
@@ -226,7 +227,7 @@ class Admin extends \Controller {
 		$group->load($params["id"]);
 		$group->delete();
 		if($f3->get("AJAX")) {
-			$this->_printJson(array("deleted" => 1));
+			$this->_printJson(array("deleted" => 1) + $group->cast());
 		} else {
 			$f3->reroute("/admin/groups");
 		}
@@ -267,6 +268,7 @@ class Admin extends \Controller {
 				break;
 			case "change_title":
 				$group->name = trim($f3->get("POST.name"));
+				$group->username = \Web::instance()->slug($group->name);
 				$group->save();
 				$this->_printJson(array("changed" => 1));
 				break;

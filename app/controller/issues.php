@@ -86,6 +86,9 @@ class Issues extends \Controller {
 			case "status":
 				$filter_str .= " ORDER BY status {$ascdesc}, priority DESC, due_date DESC ";
 				break;
+			case "parent_id":
+				$filter_str .= " ORDER BY parent_id {$ascdesc}, priority DESC, due_date DESC ";
+				break;
 			case "author":
 				$filter_str .= " ORDER BY author_name {$ascdesc}, priority DESC, due_date DESC ";
 				break;
@@ -144,8 +147,8 @@ class Issues extends \Controller {
 		$f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
-		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+		$f3->set("users", $users->getAll());
+		$f3->set("groups", $users->getAllGroups());
 
 		if(empty($args["page"])) {
 			$args["page"] = 0;
@@ -174,19 +177,7 @@ class Issues extends \Controller {
 		$f3->set("filter_get", $filter_get);
 
 		$f3->set("menuitem", "browse");
-		$headings = array(
-				"id",
-				"title",
-				"type",
-				"priority",
-				"status",
-				"author",
-				"assignee",
-				"sprint",
-				"created",
-				"due"
-			);
-		$f3->set("headings", $headings);
+		$f3->set("heading_links_enabled", true);
 		$f3->set("ascdesc", $ascdesc);
 
 		$f3->set("show_filters", true);

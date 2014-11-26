@@ -476,9 +476,9 @@ $(function() {
 
 	// Handle file deletion
 	$(".file-list").on("click", ".delete", function(e) {
-		var $li = $(this).parents("li");
-		$li.fadeTo(100, 0.5).popover("hide");
-		$.post("issues/file/delete", {id: $li.data("id")}, function(data) {
+		var $file = $(this).parents("li, tr");
+		$file.fadeTo(100, 0.5).popover("hide");
+		$.post("issues/file/delete", {id: $file.data("id")}, function(data) {
 			$("#alert span").html('File deleted. <a href="javascript:void(0);" onclick="restoreFile(' + data.id + ')">Undo</a>');
 			$("#alert").show();
 			$(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();

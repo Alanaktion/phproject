@@ -77,6 +77,8 @@
 								<dd>{{ @dict.edit }}</dd>
 								<dt>c</dt>
 								<dd>{{ @dict.write_a_comment }}</dd>
+								<dt>ctrl+enter</dt>
+								<dd>{{ @dict.save }}</dd>
 								<dt>shift+c</dt>
 								<dd>{{ @dict.mark_complete }}</dd>
 								<dt>shift+r</dt>
@@ -94,7 +96,7 @@
 		// Show Mac hotkeys on Macs
 		if(navigator.platform.indexOf('Mac') >= 0) {
 			var $modalBody = $("#modal-hotkeys .modal-body");
-			$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8997;').replace(/shift\+/g, '&#8679;'));
+			$modalBody.html($modalBody.html().replace(/(alt\+|ctrl)/g, '&#8997;').replace(/shift\+/g, '&#8679;'));
 		}
 
 		// Bind keyup to hotkey handler

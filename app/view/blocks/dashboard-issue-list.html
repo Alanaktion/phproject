@@ -3,7 +3,7 @@
 		<a class="list-group-item" href="issues/{{ @item.id }}">
 			<span class="badge status">{{ @item.status_name }}</span>
 			<check if="{{ @item.owner_id != @user.id }}">
-				<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="Assigned Group">{{ @item.owner_name }}</p>
+				<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="{{ @dict.cols.assignee }}">{{ @item.owner_name }}</p>
 			</check>
 			<p class="list-group-item-heading">
 				#{{ @item.id }} - {{ @item.name }}
@@ -20,7 +20,7 @@
 					<true><set sprint_date_range="{{ @sprint_date_range . date('j', strtotime(@item.sprint_end_date)) }}" /></true>
 					<false><set sprint_date_range="{{ @sprint_date_range . date('M j', strtotime(@item.sprint_end_date)) }}" /></false>
 				</check>
-				<p class="list-group-item-text text-muted"><span class="has-tooltip" title="Sprint #{{ @item.sprint_id }}: {{ @sprint_date_range }}" data-placement="right">{{ @item.sprint_name }}</span></p>
+				<p class="list-group-item-text text-muted"><span class="has-tooltip" title="{{ @dict.sprint }} #{{ @item.sprint_id }}: {{ @sprint_date_range }}" data-placement="right">{{ @item.sprint_name }}</span></p>
 			</check>
 		</a>
 	</repeat>
