@@ -181,8 +181,8 @@ class Session extends Mapper {
 		$csrf=$fw->hash($fw->get('ROOT').$fw->get('BASE')).'.'.
 			$fw->hash(mt_rand());
 		if ($this->load(array('session_id=?',$this->sid=session_id()))) {
-			$this->set('csrf',$csrf);
-			$this->save();
+			/*$this->set('csrf',$csrf);
+			$this->save();*/
 		}
 	}
 
