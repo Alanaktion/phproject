@@ -292,9 +292,9 @@ class Issue extends \Model {
 			$db->exec(
 				$query,
 				array(
-					"sprint" => $this->get("sprint_id"),
-					"issue" => $this->get("id"),
-					"type" => $f3->get("issue_type.project")
+					":sprint" => $this->get("sprint_id"),
+					":issue" => $this->get("id"),
+					":type" => $f3->get("issue_type.project")
 				)
 			);
 		}

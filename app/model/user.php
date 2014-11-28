@@ -4,7 +4,9 @@ namespace Model;
 
 class User extends \Model {
 
-	protected $_table_name = "user";
+	protected
+		$_table_name = "user",
+		$_groupUsers = null;
 
 	/**
 	 * Load currently logged in user, if any
@@ -28,11 +30,11 @@ class User extends \Model {
 	 * @return string|bool
 	 */
 	public function avatar($size = 80) {
-		if(!$this->get("id")) {
+		if(!$this->id) {
 			return false;
 		}
 		if($this->get("avatar_filename") && is_file("uploads/avatars/" . $this->get("avatar_filename"))) {
-			return "/avatar/$size-" . $this->get("id") . ".png";
+			return "/avatar/$size-" . $this->id . ".png";
 		}
 		return \Helper\View::instance()->gravatar($this->get("email"), $size);
 	}
@@ -54,12 +56,33 @@ class User extends \Model {
 	}
 
 	/**
+	 * Get all users within a group
+	 * @return array|NULL
+	 */
+	public function getGroupUsers() {
+		if($this->role == "group") {
+			if($this->_groupUsers !== null) {
+				return $this->_groupUsers;
+			}
+			$ug = new User\Group;
+			$users = $ug->find(array("group_id = ?", $this->id));
+			$user_ids = array();
+			foreach($users as $user) {
+				$user_ids[] = $user->user_id;
+			}
+			return $this->_groupUsers = $user_ids ? $this->find("id IN (" . implode(",", $user_ids) . ") AND deleted_date IS NULL") : array();
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * Send an email alert with issues due on the given date
 	 * @param  string $date
 	 * @return bool
 	 */
 	public function sendDueAlert($date = '') {
-		if(!$this->get("id")) {
+		if(!$this->id) {
 			return false;
 		}
 
@@ -68,7 +91,7 @@ class User extends \Model {
 		}
 
 		$issue = new \Model\Issue;
-		$issues = $issue->find(array("due_date = ? AND owner_id = ? AND closed_date IS NULL AND deleted_date IS NULL", $date, $this->get("id")), array("order" => "priority DESC"));
+		$issues = $issue->find(array("due_date = ? AND owner_id = ? AND closed_date IS NULL AND deleted_date IS NULL", $date, $this->id), array("order" => "priority DESC"));
 
 		if($issues) {
 			$notif = new \Helper\Notification;
@@ -100,21 +123,21 @@ class User extends \Model {
 			JOIN issue_update_field f ON u.id = f.issue_update_id AND f.field = 'hours_spent'
 			WHERE u.user_id = :user AND u.created_date > :date
 			GROUP BY DATE(DATE_ADD(u.created_date, INTERVAL :offset2 SECOND))",
-			array(":user" => $this->get("id"), ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
+			array(":user" => $this->id, ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
 		);
 		$result["closed"] = $db->exec(
 			"SELECT DATE(DATE_ADD(i.closed_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
 			FROM issue i
 			WHERE i.owner_id = :user AND i.closed_date > :date
 			GROUP BY DATE(DATE_ADD(i.closed_date, INTERVAL :offset2 SECOND))",
-			array(":user" => $this->get("id"), ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
+			array(":user" => $this->id, ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
 		);
 		$result["created"] = $db->exec(
 			"SELECT DATE(DATE_ADD(i.created_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
 			FROM issue i
 			WHERE i.author_id = :user AND i.created_date > :date
 			GROUP BY DATE(DATE_ADD(i.created_date, INTERVAL :offset2 SECOND))",
-			array(":user" => $this->get("id"), ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
+			array(":user" => $this->id, ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
 		);
 
 		$dates = $this->_createDateRangeArray(date("Y-m-d", $time), date("Y-m-d", time() + $offset));
