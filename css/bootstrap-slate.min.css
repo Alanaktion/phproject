@@ -19,6 +19,9 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 	background-color: rgba(46,51,56,.9) !important;
 	color: white !important;
 }
+#taskboard #task-table {
+	background: none;
+}
 .datepicker {
 	color: #eee;
 }
