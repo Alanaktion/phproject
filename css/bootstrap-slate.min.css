@@ -16,7 +16,7 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 	background-color: transparent;
 }
 #taskboard table.taskboard-head th {
-	background-color: rgba(0,0,0,.7) !important;
+	background-color: rgba(46,51,56,.9) !important;
 	color: white !important;
 }
 .datepicker {
