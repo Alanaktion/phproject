@@ -8,19 +8,45 @@ class Notification extends \Prefab {
 	 * Send an email with the UTF-8 character set
 	 * @param  string $to
 	 * @param  string $subject
-	 * @param  string $body
+	 * @param  string $body     The HTML body part
+	 * @param  string $text     The plaintext body part (optional)
 	 * @return bool
 	 */
-	protected function _utf8mail($to, $subject, $body) {
+	protected function _utf8mail($to, $subject, $body, $text = null) {
 		$f3 = \Base::instance();
 
-		// Set content-type with UTF charset
+		// Add basic headers
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
-		$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-
-		// Add sender and recipient information
 		$headers .= 'To: '. $to . "\r\n";
 		$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
+
+		// Build multipart message if necessary
+		if($text) {
+			// Generate message breaking hash
+			$hash = md5(date("r"));
+			$headers .= "Content-type: multipart/alternative; boundary=\"$hash\"\r\n";
+
+			// Normalize line endings
+			$body = str_replace("\r\n", "\n", $body);
+			$body = str_replace("\n", "\r\n", $body);
+			$text = str_replace("\r\n", "\n", $text);
+			$text = str_replace("\n", "\r\n", $text);
+
+			// Build final message
+			$msg = "--$hash\r\n";
+			$msg .= "Content-type: text/plain; charset=\"utf-8\"\r\n";
+			$msg .= "Content-Transfer-Encoding: \"QUOTED-PRINTABLE\"\r\n";
+			$msg .="\r\n" . quoted_printable_encode($text) . "\r\n";
+			$msg = "--$hash\r\n";
+			$msg .= "Content-type: text/html; charset=\"utf-8\"\r\n";
+			$msg .= "Content-Transfer-Encoding: \"QUOTED-PRINTABLE\"\r\n";
+			$msg .="\r\n" . quoted_printable_encode($body) . "\r\n";
+			$msg = "--$hash\r\n";
+
+			$body = $msg;
+		} else {
+			$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+		}
 
 		return mail($to, $subject, $body, $headers);
 	}
@@ -55,13 +81,14 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("comment", $comment);
+			$text = $this->_render("notification/comment.txt");
 			$body = $this->_render("notification/comment.html");
 
 			$subject = "[#{$issue->id}] - New comment on {$issue->name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent comment notification to: " . $recipient);
 			}
 		}
