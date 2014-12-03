@@ -144,7 +144,7 @@ class Issues extends \Controller {
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(null, array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->getAll());
