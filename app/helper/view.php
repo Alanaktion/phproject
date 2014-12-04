@@ -34,6 +34,46 @@ class View extends \Template {
 		// Convert URLs to links
 		$val = $this->make_clickable($val);
 
+		// Convert emoticons
+		$val = preg_replace_callback("/(\s|^):[)(PDOoSs|\/\\\](\s|$)/", function($matches) {
+			$i = "";
+			switch (trim($matches[0])) {
+				case ":)":
+					$i = "smiley";
+					break;
+				case ":(":
+					$i = "sad";
+					break;
+				case ":D":
+					$i = "happy";
+					break;
+				case ":P":
+					$i = "tongue";
+					break;
+				case ":o":
+				case ":O":
+					$i = "shocked";
+					break;
+				case ":s":
+				case ":S":
+					$i = "confused";
+					break;
+				case ":|":
+					$i = "neutral";
+					break;
+				case ":/":
+				case ":\\":
+					$i = "wondering";
+					break;
+			}
+			if($i) {
+				return $matches[1] . "<span class=\"emote emote-{$i}\"></span>" . $matches[2];
+			} else {
+				return $matches[0];
+			}
+		}, $val);
+
+
 		// Cache the value if $ttl was given
 		if($ttl !== false) {
 			$cache->set("$hash.tex", $val, $ttl);
