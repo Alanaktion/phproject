@@ -35,14 +35,28 @@ class View extends \Template {
 		$val = $this->make_clickable($val);
 
 		// Convert emoticons
-		$val = preg_replace_callback("/(\s|^):[)(PDOoSs|\/\\\](\s|$)/", function($matches) {
+		$val = preg_replace_callback("/(\s|^)(3|&gt;)?[:;8B][)(PDOoSs|\/\\\](\s|$)/", function($matches) {
 			$i = "";
 			switch (trim($matches[0])) {
 				case ":)":
 					$i = "smiley";
 					break;
+				case ";)":
+					$i = "wink";
+					break;
 				case ":(":
 					$i = "sad";
+					break;
+				case "&gt;:(":
+					$i = "angry";
+					break;
+				case "8)":
+				case "B)":
+					$i = "cool";
+					break;
+				case "3:)":
+				case "&gt;:)":
+					$i = "evil";
 					break;
 				case ":D":
 					$i = "happy";
@@ -67,7 +81,14 @@ class View extends \Template {
 					break;
 			}
 			if($i) {
-				return $matches[1] . "<span class=\"emote emote-{$i}\"></span>" . $matches[2];
+				$f3 = \Base::instance();
+				if($theme = $f3->get("user.theme")) {} else {
+					$theme = $f3->get("site.theme");
+				}
+				if(preg_match("/slate|geo|dark|cyborg/i", $theme)) {
+					$i .= "2";
+				}
+				return $matches[1] . "<span class=\"emote emote-{$i}\"></span>" . $matches[count($matches) - 1];
 			} else {
 				return $matches[0];
 			}
