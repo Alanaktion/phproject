@@ -34,20 +34,22 @@ class Notification extends \Prefab {
 
 			// Build final message
 			$msg = "--$hash\r\n";
-			$msg .= "Content-type: text/plain; charset=\"utf-8\"\r\n";
-			$msg .= "Content-Transfer-Encoding: \"QUOTED-PRINTABLE\"\r\n";
+			$msg .= "Content-type: text/plain; charset=utf-8\r\n";
+			$msg .= "Content-Transfer-Encoding: quoted-printable\r\n";
 			$msg .="\r\n" . quoted_printable_encode($text) . "\r\n";
-			$msg = "--$hash\r\n";
-			$msg .= "Content-type: text/html; charset=\"utf-8\"\r\n";
-			$msg .= "Content-Transfer-Encoding: \"QUOTED-PRINTABLE\"\r\n";
+			$msg .= "--$hash\r\n";
+			$msg .= "Content-type: text/html; charset=utf-8\r\n";
+			$msg .= "Content-Transfer-Encoding: quoted-printable\r\n";
 			$msg .="\r\n" . quoted_printable_encode($body) . "\r\n";
-			$msg = "--$hash\r\n";
+			$msg .= "--$hash\r\n";
 
 			$body = $msg;
 		} else {
-			$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+			$headers .= "Content-type: text/html; charset=utf-8\r\n";
 		}
 
+		$log = new \Log("debug.log");
+		$log->write($body);
 		return mail($to, $subject, $body, $headers);
 	}
 
@@ -133,6 +135,7 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("update", $update);
+			$text = $this->_render("notification/update.txt");
 			$body = $this->_render("notification/update.html");
 
 			$changes->load(array("issue_update_id = ? AND `field` = 'closed_date' AND old_value = '' and new_value != ''", $update->id));
@@ -146,7 +149,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent update notification to: " . $recipient);
 			}
 		}
