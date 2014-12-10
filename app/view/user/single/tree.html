@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body>
+	<div class="container-fluid">
+		<include href="blocks/navbar.html" />
+		<h2 style="margin-top: 0;">{{ @this_user.name }} <small>Assigned Issues Tree</small></h2>
+		{~
+			$recurDisplay = function($issue) use(&$recurDisplay) {
+				echo "<li>";
+				if(!empty($issue["id"])) {
+					echo '<a href="issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
+					echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+				}
+				if(!empty($issue["children"])) {
+					echo "<ul>";
+					foreach($issue["children"] as $iss) {
+						$recurDisplay($iss);
+					}
+					echo "</ul>";
+				}
+				echo "</li>";
+			}
+		~}
+		<ul>
+			<repeat group="{{ @issues }}" value="{{ @iss }}">
+				{~ @recurDisplay(@iss) ~}
+			</repeat>
+		</ul>
+		<include href="blocks/footer.html" />
+	</div>
+</body>
+</html>
