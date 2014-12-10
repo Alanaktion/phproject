@@ -254,4 +254,75 @@ class User extends \Controller {
 		}
 	}
 
+	protected function _buildTree($array) {
+		$tree = array();
+
+		// Create an associative array with each key being the ID of the item
+		foreach($array as $k => &$v) {
+			$tree[$v['id']] = &$v;
+		}
+
+		// Loop over the array and add each child to their parent
+		foreach($tree as $k => &$v) {
+			if(empty($v['parent_id'])) {
+				continue;
+			}
+			$tree[$v['parent_id']]['children'][] = &$v;
+		}
+
+		// Loop over the array again and remove any items that don't have a parent of 0;
+		foreach($tree as $k => &$v) {
+			if(empty($v['parent_id'])) {
+				continue;
+			}
+			unset($tree[$k]);
+		}
+
+		return $tree;
+	}
+
+	public function single_tree($f3, $params) {
+		$this->_requireLogin();
+
+		$user = new \Model\User;
+		$user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
+
+		if($user->id) {
+			$f3->set("title", $user->name);
+			$f3->set("this_user", $user);
+
+			// Load assigned issues
+			$issue = new \Model\Issue\Detail;
+			$assigned = $issue->find(array("closed_date IS NULL AND deleted_date IS NULL AND owner_id = ?", $user->id));
+
+			// Build issue list
+			$issues = array();
+			$assigned_ids = array();
+			$missing_ids = array();
+			foreach($assigned as $iss) {
+				$issues[] = $iss->cast();
+				$assigned_ids[] = $iss->id;
+			}
+			foreach($issues as $iss) {
+				if($iss["parent_id"] && !in_array($iss["parent_id"], $assigned_ids)) {
+					$missing_ids[] = $iss["parent_id"];
+				}
+			}
+			$parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
+			foreach($parents as $iss) {
+				$issues[] = $iss->cast();
+			}
+
+			// Convert list to tree
+			$tree = $this->_buildTree($issues);
+
+			// Render view
+			$f3->set("issues", $tree);
+			$this->_render("user/single/tree.html");
+
+		} else {
+			$f3->error(404);
+		}
+	}
+
 }
