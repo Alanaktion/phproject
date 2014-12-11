@@ -19,14 +19,25 @@
 			<set issues="{{ @projects }}" />
 			<include href="blocks/dashboard-issue-list.html" />
 
-			<h3>{{ @dict.my_bugs }}&ensp;<small>{{ count(@bugs) }}</small>&ensp;
-				<a class="btn btn-sm btn-default has-tooltip" href="issues/new/{{ @issue_type.bug }}" title="{{ @dict.add_bug }}"><span class="glyphicon glyphicon-plus"></span></a>
-			</h3>
-			<set issues="{{ @bugs }}" />
-			<include href="blocks/dashboard-issue-list.html" />
-			<h3>{{ @dict.my_watchlist }}&ensp;<small>{{ count(@watchlist) }}</small>&ensp;</h3>
-			<set issues="{{ @watchlist }}" />
-			<include href="blocks/dashboard-issue-list.html" />
+			<check if="{{ count(@bugs) }}">
+				<h3>{{ @dict.my_bugs }}&ensp;<small>{{ count(@bugs) }}</small>&ensp;
+					<a class="btn btn-sm btn-default has-tooltip" href="issues/new/{{ @issue_type.bug }}" title="{{ @dict.add_bug }}"><span class="glyphicon glyphicon-plus"></span></a>
+				</h3>
+				<set issues="{{ @bugs }}" />
+				<include href="blocks/dashboard-issue-list.html" />
+			</include>
+
+			<check if="{{ count(@repeat_issues) }}">
+				<h3>{{ @dict.repeat_work }}&ensp;<small>{{ count(@repeat_issues) }}</small>&ensp;</h3>
+				<set issues="{{ @repeat_issues }}" />
+				<include href="blocks/dashboard-issue-list.html" />
+			</check>
+
+			<check if="{{ count(@watchlist) }}">
+				<h3>{{ @dict.my_watchlist }}&ensp;<small>{{ count(@watchlist) }}</small>&ensp;</h3>
+				<set issues="{{ @watchlist }}" />
+				<include href="blocks/dashboard-issue-list.html" />
+			</check>
 		</div>
 		<div class="col-sm-7">
 			<div class="clearfix">

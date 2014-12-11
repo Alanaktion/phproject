@@ -15,7 +15,7 @@ class User extends \Controller {
 	}
 
 	public function dashboard($f3, $params) {
-		$projects = new \Model\Issue\Detail();
+		$issue = new \Model\Issue\Detail();
 
 		// Add user's group IDs to owner filter
 		$owner_ids = array($this->_userId);
@@ -26,21 +26,28 @@ class User extends \Controller {
 		$owner_ids = implode(",", $owner_ids);
 
 
-
 		$order = "priority DESC, has_due_date ASC, due_date ASC";
-		$f3->set("projects", $projects->find(
+		$f3->set("projects", $issue->find(
 			array(
-				"owner_id IN ($owner_ids) and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
+				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.project"),
 			),array(
 				"order" => $order
 			)
 		));
 
-		$bugs = new \Model\Issue\Detail();
-		$f3->set("bugs", $bugs->find(
+		$f3->set("bugs", $issue->find(
 			array(
-				"owner_id IN ($owner_ids) and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
+				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
+				":type" => $f3->get("issue_type.bug"),
+			),array(
+				"order" => $order
+			)
+		));
+
+		$f3->set("repeat_issues", $issue->find(
+			array(
+				"owner_id IN ($owner_ids) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0 AND repeat_cycle NOT IN ('none', '')",
 				":type" => $f3->get("issue_type.bug"),
 			),array(
 				"order" => $order
