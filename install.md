@@ -34,4 +34,8 @@ Phproject is designed to be fast, but you can still increase performance by inst
 
 
 ## Updating
-Simply pulling the repo again will usually work for updates. If `database.sql` has been modified, you will need to manually merge the changes into your database. If something breaks after updating, clearing the APC cache or the `tmp/` and `tmp/cache/` directories of everything except `.gitignore` will usually solve the problem.
+If you installed Phproject with git, simply run `git pull` to update. Otherwise, updates can be manually installed by [downloading the latest release](https://github.com/Alanaktion/phproject/zipball/release) and extracting it over your existing installation.
+
+If there is a change to the database needed after you've updated, you will see an alert in the Administration on your Phproject installation, and can update the database from there.
+
+If something breaks after updating, clearing the APC cache or emptying the `tmp/cache/` directory will usually solve the problem.
