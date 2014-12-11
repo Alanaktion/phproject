@@ -261,6 +261,12 @@ class User extends \Controller {
 		}
 	}
 
+	/**
+	 * Convert a flat issue array to a tree array. Child issues are added to
+	 * the 'children' key in each issue.
+	 * @param  array $array Flat array of issues, including all parents needed
+	 * @return array Tree array where each issue contains its child issues
+	 */
 	protected function _buildTree($array) {
 		$tree = array();
 
@@ -315,13 +321,40 @@ class User extends \Controller {
 					$missing_ids[] = $iss["parent_id"];
 				}
 			}
-			$parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
-			foreach($parents as $iss) {
-				$issues[] = $iss->cast();
-			}
+			do {
+				$parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
+				foreach($parents as $iss) {
+					if (($key = array_search($iss->id, $missing_ids)) !== false) {
+						unset($missing_ids[$key]);
+					}
+					$issues[] = $iss->cast();
+					$assigned_ids[] = $iss->id;
+					if($iss->parent_id && !in_array($iss->parent_id, $assigned_ids)) {
+						$missing_ids[] = $iss->parent_id;
+					}
+				}
+			} while(!empty($missing_ids));
 
 			// Convert list to tree
 			$tree = $this->_buildTree($issues);
+
+			// Helper function for recursive tree rendering
+			$recurDisplay = function($issue) use(&$recurDisplay) {
+				echo "<li>";
+				if(!empty($issue["id"])) {
+					echo '<a href="issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
+					echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+				}
+				if(!empty($issue["children"])) {
+					echo "<ul>";
+					foreach($issue["children"] as $iss) {
+						$recurDisplay($iss);
+					}
+					echo "</ul>";
+				}
+				echo "</li>";
+			};
+			$f3->set("recurDisplay", $recurDisplay);
 
 			// Render view
 			$f3->set("issues", $tree);

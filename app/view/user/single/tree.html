@@ -6,29 +6,41 @@
 <body>
 	<div class="container-fluid">
 		<include href="blocks/navbar.html" />
-		<h2 style="margin-top: 0;">{{ @this_user.name }} <small>Assigned Issues Tree</small></h2>
-		{~
-			$recurDisplay = function($issue) use(&$recurDisplay) {
-				echo "<li>";
-				if(!empty($issue["id"])) {
-					echo '<a href="issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
-					echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
-				}
-				if(!empty($issue["children"])) {
-					echo "<ul>";
-					foreach($issue["children"] as $iss) {
-						$recurDisplay($iss);
-					}
-					echo "</ul>";
-				}
-				echo "</li>";
-			}
-		~}
-		<ul>
-			<repeat group="{{ @issues }}" value="{{ @iss }}">
-				{~ @recurDisplay(@iss) ~}
-			</repeat>
-		</ul>
+
+		<div class="clearfix">
+			<div class="pull-left" style="margin-right: 15px;">
+				<img src="{{ @this_user->avatar(128) }}" class="img-rounded profile-picture" alt>
+			</div>
+			<div class="pull-left">
+				<h3>{{ @this_user.name }}</h3>
+				<p>{{ @dict.username }}: {{ @this_user.username }}</p>
+				<check if="{{ @this_user.role != 'group' }}">
+					<p>{{ @dict.email }}: {{ @this_user.email }}</p>
+				</check>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<h3>{{ @dict.assigned_issues }}</h3>
+				<ul>
+					<repeat group="{{ @issues }}" value="{{ @iss }}">
+						{~ @recurDisplay(@iss) ~}
+					</repeat>
+				</ul>
+			</div>
+			<exclude>
+				<div class="col-lg-6">
+					<h3>{{ @dict.created_issues }}</h3>
+					<ul>
+						<repeat group="{{ @issues }}" value="{{ @iss }}">
+							{~ @recurDisplay(@iss) ~}
+						</repeat>
+					</ul>
+				</div>
+			</exclude>
+		</div>
+
 		<include href="blocks/footer.html" />
 	</div>
 </body>
