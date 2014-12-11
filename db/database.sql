@@ -261,14 +261,3 @@ CREATE TABLE `session` (
 	`stamp` integer,
 	PRIMARY KEY(`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `config`;
-CREATE TABLE `config` (
-  `id` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `attribute` varchar(255) COLLATE 'utf8_general_ci' NULL,
-  `value` varchar(255) COLLATE 'utf8_general_ci' NULL,
-  UNIQUE KEY `attribute` (`attribute`)
-) ;
-
-
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '14.12.11');
