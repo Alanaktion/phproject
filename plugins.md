@@ -4,7 +4,7 @@ title: Plugins
 ---
 <h1 class="page-header">Plugins</h1>
 
-<p class="alert alert-info">Plugin support is currently avaible in the <code>master</code> branch only. The feature will be merged into <code>release</code> after the implementation has been completed and thoroughly tested.</p>
+<p class="alert alert-info">Plugin support is limited in the <code>release</code> branch. For the most up-to-date plugin support, use <code>master</code>.</p>
 
 ## Installing plugins
 Most plugins can be installed by simply cloning their repository in your `app/plugin` directory. To install without git, simply copy/move the plugin's folder to `app/plugin`. Note that the folder name *must* match the plugin's package name (@package in the plugin's `base.php` file).
