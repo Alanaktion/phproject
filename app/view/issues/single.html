@@ -151,6 +151,11 @@
 						<dd>{{ @issue.hours_remaining ?: 0 }}</dd>
 					</check>
 
+					<check if="{{ strtotime(@issue.start_date) }}">
+						<dt>{{ @dict.cols.start_date }}</dt>
+						<dd>{{ date("D, M j, Y", strtotime(@issue.start_date)) }}</dd>
+					</check>
+
 					<check if="{{ strtotime(@issue.due_date) }}">
 						<dt>{{ @dict.cols.due_date }}</dt>
 						<dd>{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</dd>
@@ -465,7 +470,7 @@ $(function() {
 	});
 
 	// Due date picker
-	$('#due_date').datepicker({
+	$('#due_date, #start_date').datepicker({
 		format: 'yyyy-mm-dd'
 	});
 
