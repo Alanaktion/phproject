@@ -176,12 +176,13 @@
 	<script>
 	var session_ping = function() {
 		$.get('ping', function(data) {
-			if(data.is_logged_in) {
-				window.setTimeout(session_ping, 5000);
-			} else {
+			if(data.is_logged_in && $('#modal-loggedout.in').length) {
+				$('#modal-loggedout').modal('hide');
+			} else if(!data.is_logged_in && !$('#modal-loggedout.in').length) {
 				$('.modal.in').modal('hide');
 				$('#modal-loggedout').modal('show');
 			}
+			window.setTimeout(session_ping, 5000);
 		});
 	};
 	$(document).ready(function() {
