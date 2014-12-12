@@ -19,9 +19,22 @@ class Admin extends \Controller {
 			$f3->set("success", "Cache cleared successfully.");
 		}
 
-		// Gather some stats
+
+
+
 		$db = $f3->get("db.instance");
 
+		if($f3->get("POST.action") == "updatedb") {
+			if(file_exists("db/".$f3->get("POST.version").".sql")) {
+				$update_db = file_get_contents("db/".$f3->get("POST.version").".sql");
+				$db->exec(explode(";", $update_db));
+				$f3->set("success", " Database updated to version: ". $f3->get("POST.version"));
+			} else {
+				$f3->set("error", " Database file not found for version: ". $f3->get("POST.version"));
+			}
+		}
+
+		// Gather some stats
 		$result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE deleted_date IS NULL AND role != 'group'");
 		$f3->set("count_user", $result[0]["count"]);
 		$result = $db->exec("SELECT COUNT(id) AS `count` FROM issue WHERE deleted_date IS NULL");
@@ -30,10 +43,27 @@ class Admin extends \Controller {
 		$f3->set("count_issue_update", $result[0]["count"]);
 		$result = $db->exec("SELECT COUNT(id) AS `count` FROM issue_comment");
 		$f3->set("count_issue_comment", $result[0]["count"]);
+		$result = @$db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
+		if(!empty($result)) {
+			$f3->set("version", $result[0]["version"]);
+		} else {
+			$f3->set("version", '1.0.0');
+		}
+		$db_files = scandir("db");
+		foreach ($db_files as $file) {
+			$file = substr($file, 0, -4);
+			if(version_compare($file, $f3->get('version')) >0) {
+				$f3->set("newer_version", $file);
+				break;
+			}
+		}
+
 
 		if($f3->get("CACHE") == "apc") {
 			$f3->set("apc_stats", apc_cache_info("user", true));
 		}
+
+
 
 		$f3->set("db_stats", $db->exec("SHOW STATUS WHERE Variable_name LIKE 'Delayed_%' OR Variable_name LIKE 'Table_lock%' OR Variable_name = 'Uptime'"));
 

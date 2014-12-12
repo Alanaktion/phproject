@@ -60,6 +60,17 @@
 							<b>Schema:</b> {{ @db.name }}<br>
 							<b>{{ @dict.username }}:</b> {{ @db.user }}<br>
 							<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
+							<b>{{ @dict.current_version }}:</b> {{@version}}<br>
+							<check if="{{ !empty(@newer_version) }}">
+							<div class="clearfix">
+								<b>{{ @dict.update_available }}:</b>
+								<form class="pull-right" action="admin" method="post">
+									<input type="hidden" name="action" value="updatedb">
+									<input type="hidden" name="version" value="{{@newer_version}}">
+									<button onclick="return confirm('{{ @dict.backup_db }}')" type="submit" class="btn btn-warning btn-xs">{{ @dict.update_to }} {{@newer_version}}</button>
+								</form>
+							</div>
+							</check>
 						</div>
 						<div class="tab-pane" id="db-stats">
 							<repeat group="{{ @db_stats }}" value="{{ @val }}">
