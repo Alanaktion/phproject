@@ -213,6 +213,10 @@ class Issues extends \Controller {
 							&& $issue->$i != $val
 							&& !empty($val)
 						) {
+							// Allow setting to Not Assigned
+							if($i == "owner_id" && $val == -1) {
+								$val = 0;
+							}
 							$issue->$i = $val;
 							if($i == "status") {
 								$status = new \Model\Issue\Status;

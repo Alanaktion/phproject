@@ -255,7 +255,8 @@
 								<div class="col-xs-9">
 									<select class="form-control input-sm bulk-input" name="owner_id">
 										<option value="">{{ @dict.choose_option }}</option>
-
+										<option value="-1">{{ @dict.not_assigned }}</option>
+										<option value="{{ @user.id }}">{{ @user.name }}</option>
 										<optgroup label="Groups">
 											<repeat group="{{ @groups }}" value="{{ @group }}">
 												<option value="{{ @group.id }}">{{ @group.name }}</option>
