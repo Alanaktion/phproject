@@ -108,4 +108,13 @@ abstract class Plugin extends \Prefab {
 		return $meta["package"];
 	}
 
+	/**
+	 * Get plugin's version number, if any
+	 * @return string
+	 */
+	final public function _version() {
+		$meta = $this->_meta();
+		return $meta["version"];
+	}
+
 }
