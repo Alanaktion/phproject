@@ -28,6 +28,10 @@ footer {
 	background-color: #2C3E50;
 	color: white;
 }
+.alert-inline {
+	margin: 0;
+	border-radius: 0;
+}
 :not(.alert) > code {
 	color: inherit;
 }
