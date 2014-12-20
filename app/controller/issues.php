@@ -47,6 +47,10 @@ class Issues extends \Controller {
 				$filter_str .= "status_closed = 0 AND ";
 			} elseif($i == "status" && $val == "closed") {
 				$filter_str .= "status_closed = 1 AND ";
+			} elseif($i == "repeat_cycle" && $val == "repeat") {
+				$filter_str .= "repeat_cycle NOT IN ('none', '') AND ";
+			} elseif($i == "repeat_cycle" && $val == "none") {
+				$filter_str .= "repeat_cycle IN ('none', '') AND ";
 			} elseif(($i == "author_id" || $i== "owner_id") && !empty($val) && is_numeric($val)) {
 				// Find all users in a group if necessary
 				$user = new \Model\User;
@@ -209,6 +213,10 @@ class Issues extends \Controller {
 							&& $issue->$i != $val
 							&& !empty($val)
 						) {
+							// Allow setting to Not Assigned
+							if($i == "owner_id" && $val == -1) {
+								$val = 0;
+							}
 							$issue->$i = $val;
 							if($i == "status") {
 								$status = new \Model\Issue\Status;
@@ -242,11 +250,7 @@ class Issues extends \Controller {
 						}
 					}
 
-
-
-
 					$issue->save();
-
 
 				} else {
 					$f3->error(500, "Failed to update all the issues, starting with: $id.");

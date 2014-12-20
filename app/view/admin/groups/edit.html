@@ -4,59 +4,55 @@
 	<include href="blocks/head.html" />
 </head>
 <body>
-<div class="container-fluid">
-	<include href="blocks/navbar.html" />
+<include href="blocks/navbar.html" />
+<div class="container">
+	<ul class="nav nav-tabs">
+		<li><a href="admin/">{{ @dict.overview }}</a></li>
+		<li><a href="admin/users">{{ @dict.users }}</a></li>
+		<li class="active"><a href="admin/groups">{{ @dict.groups }}</a></li>
+		<li><a href="admin/sprints">{{ @dict.sprints }}</a></li>
+	</ul>
 	<div class="row">
-		<div class="col-lg-12">
-			<ul class="nav nav-tabs">
-				<li><a href="admin/">{{ @dict.overview }}</a></li>
-				<li><a href="admin/users">{{ @dict.users }}</a></li>
-				<li class="active"><a href="admin/groups">{{ @dict.groups }}</a></li>
-				<li><a href="admin/sprints">{{ @dict.sprints }}</a></li>
+		<div class="col-md-8">
+			<p class="alert alert-success alert-popup saved" style="display: none;">{{ @dict.group_name_saved }}</p>
+			<form role="form" onsubmit="return false;">
+				<div class="form-group">
+					<label class="sr-only" for="group-name">{{ @dict.group_name }}</label>
+					<input type="text" class="form-control input-lg" id="group-name" name="name" value="{{ @group.name }}">
+				</div>
+			</form>
+			<ul id="members" class="list-unstyled">
+				<repeat group="{{ @members }}" value="{{ @val }}">
+					<li data-user-id="{{ @val.user_id }}">
+						<a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+						<check if="{{ @val.manager }}">
+							<true>
+								<span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="glyphicon glyphicon-star"></span></span>&nbsp;
+							</true>
+							<false>
+								<a href="admin/groups/{{ @group.id }}/setmanager/{{ @val.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
+							</false>
+						</check>
+						{{ @val.user_name }}
+					</li>
+				</repeat>
 			</ul>
-			<div class="row">
-				<div class="col-md-8">
-					<p class="alert alert-success alert-popup saved" style="display: none;">{{ @dict.group_name_saved }}</p>
-					<form role="form" onsubmit="return false;">
-						<div class="form-group">
-							<label class="sr-only" for="group-name">{{ @dict.group_name }}</label>
-							<input type="text" class="form-control input-lg" id="group-name" name="name" value="{{ @group.name }}">
-						</div>
-					</form>
-					<ul id="members" class="list-unstyled">
-						<repeat group="{{ @members }}" value="{{ @val }}">
-							<li data-user-id="{{ @val.user_id }}">
-								<a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
-								<check if="{{ @val.manager }}">
-									<true>
-										<span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="glyphicon glyphicon-star"></span></span>&nbsp;
-									</true>
-									<false>
-										<a href="admin/groups/{{ @group.id }}/setmanager/{{ @val.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
-									</false>
-								</check>
-								{{ @val.user_name }}
-							</li>
+		</div>
+		<div class="col-md-4">
+			<form role="form" id="adduser">
+				<input type="hidden" name="action" value="add_member">
+				<input type="hidden" name="group_id" value="{{ @group.id }}">
+				<div class="form-group">
+					<select name="user[]" style="height: 160px;" class="form-control" multiple>
+						<repeat group="{{ @users }}" value="{{ @val }}">
+							<option value="{{ @val.id }}">{{ @val.name }}</option>
 						</repeat>
-					</ul>
+					</select>
 				</div>
-				<div class="col-md-4">
-					<form role="form" id="adduser">
-						<input type="hidden" name="action" value="add_member">
-						<input type="hidden" name="group_id" value="{{ @group.id }}">
-						<div class="form-group">
-							<select name="user[]" style="height: 160px;" class="form-control" multiple>
-								<repeat group="{{ @users }}" value="{{ @val }}">
-									<option value="{{ @val.id }}">{{ @val.name }}</option>
-								</repeat>
-							</select>
-						</div>
-						<div class="form-group">
-							<button type="submit" class="btn btn-sm btn-primary">{{ @dict.add_to_group }}</button>
-						</div>
-					</form>
+				<div class="form-group">
+					<button type="submit" class="btn btn-sm btn-primary">{{ @dict.add_to_group }}</button>
 				</div>
-			</div>
+			</form>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />

@@ -15,7 +15,7 @@ class User extends \Controller {
 	}
 
 	public function dashboard($f3, $params) {
-		$projects = new \Model\Issue\Detail();
+		$issue = new \Model\Issue\Detail();
 
 		// Add user's group IDs to owner filter
 		$owner_ids = array($this->_userId);
@@ -26,21 +26,28 @@ class User extends \Controller {
 		$owner_ids = implode(",", $owner_ids);
 
 
-
 		$order = "priority DESC, has_due_date ASC, due_date ASC";
-		$f3->set("projects", $projects->find(
+		$f3->set("projects", $issue->find(
 			array(
-				"owner_id IN ($owner_ids) and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
+				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.project"),
 			),array(
 				"order" => $order
 			)
 		));
 
-		$bugs = new \Model\Issue\Detail();
-		$f3->set("bugs", $bugs->find(
+		$f3->set("bugs", $issue->find(
 			array(
-				"owner_id IN ($owner_ids) and type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
+				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
+				":type" => $f3->get("issue_type.bug"),
+			),array(
+				"order" => $order
+			)
+		));
+
+		$f3->set("repeat_issues", $issue->find(
+			array(
+				"owner_id IN ($owner_ids) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0 AND repeat_cycle NOT IN ('none', '')",
 				":type" => $f3->get("issue_type.bug"),
 			),array(
 				"order" => $order
@@ -74,7 +81,7 @@ class User extends \Controller {
 		$f3 = \Base::instance();
 
 		// Get theme list
-		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput");
+		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput", "emote");
 		$themes = array();
 		foreach (glob("css/*.css") as $file) {
 			$name = pathinfo($file, PATHINFO_FILENAME);
@@ -249,6 +256,110 @@ class User extends \Controller {
 			$f3->set("issues", $issues);
 
 			$this->_render("user/single.html");
+		} else {
+			$f3->error(404);
+		}
+	}
+
+	/**
+	 * Convert a flat issue array to a tree array. Child issues are added to
+	 * the 'children' key in each issue.
+	 * @param  array $array Flat array of issues, including all parents needed
+	 * @return array Tree array where each issue contains its child issues
+	 */
+	protected function _buildTree($array) {
+		$tree = array();
+
+		// Create an associative array with each key being the ID of the item
+		foreach($array as $k => &$v) {
+			$tree[$v['id']] = &$v;
+		}
+
+		// Loop over the array and add each child to their parent
+		foreach($tree as $k => &$v) {
+			if(empty($v['parent_id'])) {
+				continue;
+			}
+			$tree[$v['parent_id']]['children'][] = &$v;
+		}
+
+		// Loop over the array again and remove any items that don't have a parent of 0;
+		foreach($tree as $k => &$v) {
+			if(empty($v['parent_id'])) {
+				continue;
+			}
+			unset($tree[$k]);
+		}
+
+		return $tree;
+	}
+
+	public function single_tree($f3, $params) {
+		$this->_requireLogin();
+
+		$user = new \Model\User;
+		$user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
+
+		if($user->id) {
+			$f3->set("title", $user->name);
+			$f3->set("this_user", $user);
+
+			// Load assigned issues
+			$issue = new \Model\Issue\Detail;
+			$assigned = $issue->find(array("closed_date IS NULL AND deleted_date IS NULL AND owner_id = ?", $user->id));
+
+			// Build issue list
+			$issues = array();
+			$assigned_ids = array();
+			$missing_ids = array();
+			foreach($assigned as $iss) {
+				$issues[] = $iss->cast();
+				$assigned_ids[] = $iss->id;
+			}
+			foreach($issues as $iss) {
+				if($iss["parent_id"] && !in_array($iss["parent_id"], $assigned_ids)) {
+					$missing_ids[] = $iss["parent_id"];
+				}
+			}
+			do {
+				$parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
+				foreach($parents as $iss) {
+					if (($key = array_search($iss->id, $missing_ids)) !== false) {
+						unset($missing_ids[$key]);
+					}
+					$issues[] = $iss->cast();
+					$assigned_ids[] = $iss->id;
+					if($iss->parent_id && !in_array($iss->parent_id, $assigned_ids)) {
+						$missing_ids[] = $iss->parent_id;
+					}
+				}
+			} while(!empty($missing_ids));
+
+			// Convert list to tree
+			$tree = $this->_buildTree($issues);
+
+			// Helper function for recursive tree rendering
+			$recurDisplay = function($issue) use(&$recurDisplay) {
+				echo "<li>";
+				if(!empty($issue["id"])) {
+					echo '<a href="issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
+					echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+				}
+				if(!empty($issue["children"])) {
+					echo "<ul>";
+					foreach($issue["children"] as $iss) {
+						$recurDisplay($iss);
+					}
+					echo "</ul>";
+				}
+				echo "</li>";
+			};
+			$f3->set("recurDisplay", $recurDisplay);
+
+			// Render view
+			$f3->set("issues", $tree);
+			$this->_render("user/single/tree.html");
+
 		} else {
 			$f3->error(404);
 		}

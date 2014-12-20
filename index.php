@@ -76,9 +76,17 @@ foreach($plugins as &$plugin) {
 		$plugin = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $plugin))) . "\\Base";
 		$plugin = $plugin::instance();
 		if(!$plugin->_installed()) {
-			$plugin->_install();
+			try {
+				$plugin->_install();
+			} catch (Exception $e) {
+				$f3->set("error", "Failed to install plugin " . $plugin->_package() . ": " . $e->getMessage());
+			}
 		}
-		$plugin->_load();
+		try {
+			$plugin->_load();
+		} catch (Exception $e) {
+			$f3->set("error", "Failed to initialize plugin " . $plugin->_package() . ": " . $e->getMessage());
+		}
 	} else {
 		unset($plugin);
 	}

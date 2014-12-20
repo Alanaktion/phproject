@@ -1,4 +1,4 @@
-<set headings="{{ array('id', 'title', 'type', 'priority', 'status', 'parent_id', 'author', 'assignee', 'sprint', 'created', 'due') }}" />
+<set headings="{{ array('id', 'title', 'type', 'priority', 'status', 'parent_id', 'author', 'assignee', 'sprint', 'repeat_cycle', 'created', 'due') }}" />
 <form action="issues" method="get" id="filter">
 	<table class="table table-striped table-hover table-responsive table-condensed issue-list">
 		<thead>
@@ -119,6 +119,39 @@
 							</repeat>
 						</select>
 					</td>
+					<td>
+						<select class="form-control input-sm" name="repeat_cycle">
+							<option></option>
+							<optgroup label="{{ @dict.general }}">
+								<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'repeat' }}">
+									<true><option value="repeat" selected>{{ @dict.repeating }}</option></true>
+									<false><option value="repeat">{{ @dict.repeating }}</option></false>
+								</check>
+								<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'none' }}">
+									<true><option value="none" selected>{{ @dict.not_repeating }}</option></true>
+									<false><option value="none">{{ @dict.not_repeating }}</option></false>
+								</check>
+							</optgroup>
+							<optgroup label="{{ @dict.exact_match }}">
+								<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'daily' }}">
+									<true><option value="daily" selected>{{ @dict.daily }}</option></true>
+									<false><option value="daily">{{ @dict.daily }}</option></false>
+								</check>
+								<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'weekly' }}">
+									<true><option value="weekly" selected>{{ @dict.weekly }}</option></true>
+									<false><option value="weekly">{{ @dict.weekly }}</option></false>
+								</check>
+								<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'monthly' }}">
+									<true><option value="monthly" selected>{{ @dict.monthly }}</option></true>
+									<false><option value="monthly">{{ @dict.monthly }}</option></false>
+								</check>
+								<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'sprint' }}">
+									<true><option value="sprint" selected>{{ @dict.sprint }}</option></true>
+									<false><option value="sprint">{{ @dict.sprint }}</option></false>
+								</check>
+							</optgroup>
+						</select>
+					</td>
 					<td></td>
 					<td class="text-right">
 						<noscript>
@@ -180,6 +213,7 @@
 						</false>
 					</check>
 					<td>{{ !empty(@item.sprint_start_date) ? date("n/j/y", strtotime(@item.sprint_start_date)) : "" }}</td>
+					<td>{{ ucwords(@item.repeat_cycle) ?: 'None' }}</td>
 					<td>{{ date("n/j/y", strtotime(@item.created_date)) }}</td>
 					<td>{{ !empty(@item.due_date) ? date("n/j/y", strtotime(@item.due_date)) : "" }}</td>
 				</tr>
@@ -221,7 +255,8 @@
 								<div class="col-xs-9">
 									<select class="form-control input-sm bulk-input" name="owner_id">
 										<option value="">{{ @dict.choose_option }}</option>
-
+										<option value="-1">{{ @dict.not_assigned }}</option>
+										<option value="{{ @user.id }}">{{ @user.name }}</option>
 										<optgroup label="Groups">
 											<repeat group="{{ @groups }}" value="{{ @group }}">
 												<option value="{{ @group.id }}">{{ @group.name }}</option>
@@ -233,6 +268,14 @@
 											</repeat>
 										</optgroup>
 									</select>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<label class="col-xs-3 control-label label-sm">{{ @dict.cols.start_date }}</label>
+								<div class="col-xs-9">
+									<input class="form-control input-sm bulk-input" id="start_date" type="text" name="start_date"  value="">
 								</div>
 							</div>
 						</div>
