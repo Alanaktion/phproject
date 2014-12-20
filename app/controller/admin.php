@@ -19,9 +19,6 @@ class Admin extends \Controller {
 			$f3->set("success", "Cache cleared successfully.");
 		}
 
-
-
-
 		$db = $f3->get("db.instance");
 
 		if($f3->get("POST.action") == "updatedb") {
@@ -58,14 +55,9 @@ class Admin extends \Controller {
 			}
 		}
 
-
 		if($f3->get("CACHE") == "apc") {
 			$f3->set("apc_stats", apc_cache_info("user", true));
 		}
-
-
-
-		$f3->set("db_stats", $db->exec("SHOW STATUS WHERE Variable_name LIKE 'Delayed_%' OR Variable_name LIKE 'Table_lock%' OR Variable_name = 'Uptime'"));
 
 		$this->_render("admin/index.html");
 	}

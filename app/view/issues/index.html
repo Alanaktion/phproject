@@ -4,8 +4,9 @@
 	<include href="blocks/head.html" />
 </head>
 <body>
+<set fullwidth="{{ true }}" />
+<include href="blocks/navbar.html" />
 <div class="container-fluid">
-	<include href="blocks/navbar.html" />
 	<check if="{{ !empty(@GET.deleted) }}">
 		<p class="alert alert-success">{{ @dict.deleted_success,@GET.deleted | format }}&ensp;<a href="issues/undelete/{{ @GET.deleted }}">{{ @dict.restore_issue }}</a></p>
 	</check>
