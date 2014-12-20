@@ -95,7 +95,7 @@ abstract class Plugin extends \Prefab {
 			$meta[$match[1]] = trim($match[2]);
 		}
 
-		$this->_meta = $meta + array("package" => get_class($this), "author" => null, "version" => null);
+		$this->_meta = $meta + array("package" => str_replace(array("Plugin\\", "\\Base"), "", get_class($this)), "author" => null, "version" => null);
 		return $this->_meta;
 	}
 
