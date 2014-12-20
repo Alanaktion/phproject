@@ -1,0 +1,6 @@
+<ul class="nav nav-tabs">
+	<li class="{{ @PATH == '/admin' ? 'active':'' }}"><a href="admin/">{{ @dict.overview }}</a></li>
+	<li class="{{ strpos(@PATH, 'users') ? 'active':'' }}"><a href="admin/users">{{ @dict.users }}</a></li>
+	<li class="{{ strpos(@PATH, 'groups') ? 'active':'' }}"><a href="admin/groups">{{ @dict.groups }}</a></li>
+	<li class="{{ strpos(@PATH, 'sprints') ? 'active':'' }}"><a href="admin/sprints">{{ @dict.sprints }}</a></li>
+</ul>
