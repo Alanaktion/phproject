@@ -18,12 +18,12 @@ $f3->mset(array(
 // Redirect to installer if no config file is found
 if(!is_file("config.ini")) {
 	header("Location: install.php");
-	exit();
+	return;
 }
 
 // Get current Git revision
 if(is_file(".git/refs/heads/master")) {
-	$f3->set("revision", @file_get_contents(".git/refs/heads/master"));
+	$f3->set("revision", file_get_contents(".git/refs/heads/master"));
 } else {
 	$f3->set("revision", "");
 }
@@ -36,7 +36,7 @@ $f3->config("config.ini");
 $f3->config("app/routes.ini");
 
 // Set up error handling
-$f3->set("ONERROR", function($f3) {
+$f3->set("ONERROR", function(Base $f3) {
 	switch($f3->get("ERROR.code")) {
 		case 404:
 			$f3->set("title", "Not Found");
@@ -62,15 +62,35 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.pass")
 ));
 
-// Define global core functions
-require_once "app/functions.php";
-
 // Minify static resources
 // Cache for 1 week
-$f3->route("GET /minify/@type/@files", function($f3, $args) {
+$f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
 	$f3->set("UI", $args["type"] . "/");
 	echo Web::instance()->minify($args["files"]);
 }, $f3->get("cache_expire.minify"));
+
+// Initialize plugins
+$plugins = scandir("app/plugin");
+foreach($plugins as &$plugin) {
+	if($plugin != "." && $plugin != ".." && is_file("app/plugin/$plugin/base.php")) {
+		$plugin = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $plugin))) . "\\Base";
+		$plugin = $plugin::instance();
+		if(!$plugin->_installed()) {
+			try {
+				$plugin->_install();
+			} catch (Exception $e) {
+				$f3->set("error", "Failed to install plugin " . $plugin->_package() . ": " . $e->getMessage());
+			}
+		}
+		try {
+			$plugin->_load();
+		} catch (Exception $e) {
+			$f3->set("error", "Failed to initialize plugin " . $plugin->_package() . ": " . $e->getMessage());
+		}
+	} else {
+		unset($plugin);
+	}
+}
 
 // Set up session handler
 if($f3->get("site.db_sessions")) {

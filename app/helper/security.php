@@ -8,10 +8,10 @@ class Security extends \Prefab {
 	 * Generate a salted SHA1 hash
 	 * @param  string $string
 	 * @param  string $salt
-	 * @return mixed
+	 * @return array|string
 	 */
 	public function hash($string, $salt = null) {
-		if(is_null($salt)) {
+		if($salt === null) {
 			$salt = $this->salt();
 			return array(
 				"salt" => $salt,

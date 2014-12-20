@@ -1,8 +1,6 @@
 <?php
 
-namespace Model;
-
-abstract class Base extends \DB\SQL\Mapper {
+abstract class Model extends \DB\SQL\Mapper {
 
 	protected $fields = array();
 
@@ -23,13 +21,14 @@ abstract class Base extends \DB\SQL\Mapper {
 		return $this;
 	}
 
+
 	/**
 	 * Set object created date if possible
 	 * @return mixed
 	 */
 	function save() {
 		if(array_key_exists("created_date", $this->fields) && !$this->query && !$this->get("created_date")) {
-			$this->set("created_date", now());
+			$this->set("created_date", date("Y-m-d H:i:s"));
 		}
 		return parent::save();
 	}
@@ -40,7 +39,7 @@ abstract class Base extends \DB\SQL\Mapper {
 	 */
 	function delete() {
 		if(array_key_exists("deleted_date", $this->fields)) {
-			$this->deleted_date = now();
+			$this->deleted_date = date("Y-m-d H:i:s");
 			return $this->save();
 		} else {
 			return $this->erase();
@@ -63,11 +62,35 @@ abstract class Base extends \DB\SQL\Mapper {
 	}
 
 	/**
+	 * Takes two dates and creates an inclusive array of the dates between
+	 * the from and to dates in YYYY-MM-DD format.
+	 * @param  string $strDateFrom
+	 * @param  string $strDateTo
+	 * @return array
+	 */
+	protected function _createDateRangeArray($dateFrom, $dateTo) {
+		$range = array();
+
+		$from = strtotime($dateFrom);
+		$to = strtotime($dateTo);
+
+		if ($to >= $from) {
+			$range[] = date('Y-m-d', $from); // first entry
+			while ($from < $to) {
+				$from += 86400; // add 24 hours
+				$range[] = date('Y-m-d', $from);
+			}
+		}
+
+		return $range;
+	}
+
+	/**
 	 * Get most recent value of field
 	 * @param  string $key
 	 * @return mixed
 	 */
-	protected function get_prev($key) {
+	protected function _getPrev($key) {
 		if(!$this->query) {
 			return null;
 		}

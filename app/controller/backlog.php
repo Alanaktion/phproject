@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class Backlog extends Base {
+class Backlog extends \Controller {
 
 	protected $_userId;
 
@@ -50,7 +50,7 @@ class Backlog extends Base {
 		$f3->set("filter", $params["filter"]);
 
 		$sprint_model = new \Model\Sprint();
-		$sprints = $sprint_model->find(array("end_date >= ?", now(false)), array("order" => "start_date ASC"));
+		$sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
 
 		$issue = new \Model\Issue\Detail();
 
@@ -84,7 +84,7 @@ class Backlog extends Base {
 
 		$f3->set("title", "Backlog");
 		$f3->set("menuitem", "backlog");
-		echo \Template::instance()->render("backlog/index.html");
+		$this->_render("backlog/index.html");
 	}
 
 
@@ -95,13 +95,13 @@ class Backlog extends Base {
 		$issue->load($post["itemId"]);
 		$issue->sprint_id = empty($post["reciever"]["receiverId"]) ? null : $post["reciever"]["receiverId"];
 		$issue->save();
-		print_json($issue);
+		$this->_printJson($issue);
 	}
 
 	public function index_old($f3) {
 
 		$sprint_model = new \Model\Sprint();
-		$sprints = $sprint_model->find(array("end_date < ?", now(false)), array("order" => "start_date DESC"));
+		$sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date DESC"));
 
 		$issue = new \Model\Issue\Detail();
 
@@ -115,6 +115,6 @@ class Backlog extends Base {
 
 		$f3->set("title", "Backlog");
 		$f3->set("menuitem", "backlog");
-		echo \Template::instance()->render("backlog/old.html");
+		$this->_render("backlog/old.html");
 	}
 }

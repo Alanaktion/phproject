@@ -22,7 +22,7 @@ CREATE TABLE `user` (
 	UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `user` (`username`, `email`, `name`, `password`, `salt`, `role`, `task_color`, `theme`, `avatar_filename`, `api_key`, `created_date`, `deleted_date`) VALUES ('admin', 'admin@local', 'Admin', '703983b055847560176a1e2e8508dd68d237ddfa', 'Qfv42OMfAS751Mn6hsKeTECDgyq5dVf7', 'admin', NULL, NULL, NULL, '', NOW(), NULL);
+INSERT INTO `user` (`username`, `email`, `name`, `password`, `salt`, `role`, `api_key`, `created_date`) VALUES ('admin', 'admin@local', 'Admin', '703983b055847560176a1e2e8508dd68d237ddfa', 'Qfv42OMfAS751Mn6hsKeTECDgyq5dVf7', 'admin', '', NOW());
 
 DROP TABLE IF EXISTS `user_group`;
 CREATE TABLE `user_group` (
@@ -52,6 +52,7 @@ CREATE TABLE `issue` (
 	`created_date` datetime NOT NULL,
 	`closed_date` datetime DEFAULT NULL,
 	`deleted_date` datetime DEFAULT NULL,
+	`start_sate` date DEFAULT NULL,
 	`due_date` date DEFAULT NULL,
 	`repeat_cycle` varchar(10) NOT NULL DEFAULT 'none',
 	`sprint_id` int(10) unsigned DEFAULT NULL,
@@ -201,7 +202,7 @@ DROP VIEW IF EXISTS `issue_comment_detail`;
 CREATE VIEW `issue_comment_detail` AS (select `c`.`id` AS `id`, `c`.`issue_id` AS `issue_id`, `c`.`user_id` AS `user_id`, `c`.`text` AS `text`, `c`.`file_id` AS `file_id`, `c`.`created_date` AS `created_date`, `u`.`username` AS `user_username`, `u`.`email` AS `user_email`, `u`.`name` AS `user_name`, `u`.`role` AS `user_role`, `u`.`task_color` AS `user_task_color`, `f`.`filename` AS `file_filename`, `f`.`filesize` AS `file_filesize`, `f`.`content_type` AS `file_content_type`, `f`.`downloads` AS `file_downloads`, `f`.`created_date` AS `file_created_date`, `f`.`deleted_date` AS `file_deleted_date` from ((`issue_comment` `c` join `user` `u` on ((`c`.`user_id` = `u`.`id`))) left join `issue_file` `f` on ((`c`.`file_id` = `f`.`id`))));
 
 DROP VIEW IF EXISTS `issue_detail`;
-CREATE VIEW `issue_detail` AS select `issue`.`id` AS `id`,`issue`.`status` AS `status`,`issue`.`type_id` AS `type_id`,`issue`.`name` AS `name`,`issue`.`description` AS `description`,`issue`.`parent_id` AS `parent_id`,`issue`.`author_id` AS `author_id`,`issue`.`owner_id` AS `owner_id`,`issue`.`priority` AS `priority`,`issue`.`hours_total` AS `hours_total`,`issue`.`hours_remaining` AS `hours_remaining`,`issue`.`hours_spent` AS `hours_spent`,`issue`.`created_date` AS `created_date`,`issue`.`closed_date` AS `closed_date`,`issue`.`deleted_date` AS `deleted_date`,`issue`.`due_date` AS `due_date`,isnull(`issue`.`due_date`) AS `has_due_date`,`issue`.`repeat_cycle` AS `repeat_cycle`,`issue`.`sprint_id` AS `sprint_id`,`sprint`.`name` AS `sprint_name`,`sprint`.`start_date` AS `sprint_start_date`,`sprint`.`end_date` AS `sprint_end_date`,`type`.`name` AS `type_name`,`status`.`name` AS `status_name`,`status`.`closed` AS `status_closed`,`priority`.`id` AS `priority_id`,`priority`.`name` AS `priority_name`,`author`.`username` AS `author_username`,`author`.`name` AS `author_name`,`author`.`email` AS `author_email`,`author`.`task_color` AS `author_task_color`,`owner`.`username` AS `owner_username`,`owner`.`name` AS `owner_name`,`owner`.`email` AS `owner_email`,`owner`.`task_color` AS `owner_task_color` from ((((((`issue` left join `user` `author` on((`issue`.`author_id` = `author`.`id`))) left join `user` `owner` on((`issue`.`owner_id` = `owner`.`id`))) left join `issue_status` `status` on((`issue`.`status` = `status`.`id`))) left join `issue_priority` `priority` on((`issue`.`priority` = `priority`.`value`))) left join `issue_type` `type` on((`issue`.`type_id` = `type`.`id`))) left join `sprint` on((`issue`.`sprint_id` = `sprint`.`id`)));
+CREATE VIEW `issue_detail` AS select `issue`.`id` AS `id`,`issue`.`status` AS `status`,`issue`.`type_id` AS `type_id`,`issue`.`name` AS `name`,`issue`.`description` AS `description`,`issue`.`parent_id` AS `parent_id`,`issue`.`author_id` AS `author_id`,`issue`.`owner_id` AS `owner_id`,`issue`.`priority` AS `priority`,`issue`.`hours_total` AS `hours_total`,`issue`.`hours_remaining` AS `hours_remaining`,`issue`.`hours_spent` AS `hours_spent`,`issue`.`created_date` AS `created_date`,`issue`.`closed_date` AS `closed_date`,`issue`.`deleted_date` AS `deleted_date`,`issue`.`start_date` AS `start_date`,`issue`.`due_date` AS `due_date`,isnull(`issue`.`due_date`) AS `has_due_date`,`issue`.`repeat_cycle` AS `repeat_cycle`,`issue`.`sprint_id` AS `sprint_id`,`sprint`.`name` AS `sprint_name`,`sprint`.`start_date` AS `sprint_start_date`,`sprint`.`end_date` AS `sprint_end_date`,`type`.`name` AS `type_name`,`status`.`name` AS `status_name`,`status`.`closed` AS `status_closed`,`priority`.`id` AS `priority_id`,`priority`.`name` AS `priority_name`,`author`.`username` AS `author_username`,`author`.`name` AS `author_name`,`author`.`email` AS `author_email`,`author`.`task_color` AS `author_task_color`,`owner`.`username` AS `owner_username`,`owner`.`name` AS `owner_name`,`owner`.`email` AS `owner_email`,`owner`.`task_color` AS `owner_task_color` from ((((((`issue` left join `user` `author` on((`issue`.`author_id` = `author`.`id`))) left join `user` `owner` on((`issue`.`owner_id` = `owner`.`id`))) left join `issue_status` `status` on((`issue`.`status` = `status`.`id`))) left join `issue_priority` `priority` on((`issue`.`priority` = `priority`.`value`))) left join `issue_type` `type` on((`issue`.`type_id` = `type`.`id`))) left join `sprint` on((`issue`.`sprint_id` = `sprint`.`id`)));
 
 DROP VIEW IF EXISTS `issue_file_detail`;
 CREATE VIEW `issue_file_detail` AS (select `f`.`id` AS `id`, `f`.`issue_id` AS `issue_id`, `f`.`filename` AS `filename`, `f`.`disk_filename` AS `disk_filename`, `f`.`disk_directory` AS `disk_directory`, `f`.`filesize` AS `filesize`, `f`.`content_type` AS `content_type`, `f`.`digest` AS `digest`, `f`.`downloads` AS `downloads`, `f`.`user_id` AS `user_id`, `f`.`created_date` AS `created_date`, `f`.`deleted_date` AS `deleted_date`, `u`.`username` AS `user_username`, `u`.`email` AS `user_email`, `u`.`name` AS `user_name`, `u`.`task_color` AS `user_task_color` from (`issue_file` `f` join `user` `u` on ((`f`.`user_id` = `u`.`id`))));
@@ -261,27 +262,13 @@ CREATE TABLE `session` (
 	PRIMARY KEY(`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `wiki_page`;
-CREATE TABLE `wiki_page` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(64) NOT NULL,
-	`slug` varchar(64) NOT NULL,
-	`content` mediumtext NOT NULL,
-	`parent_id` int(10) unsigned DEFAULT NULL,
-	`created_date` datetime NOT NULL,
-	`deleted_date` datetime NOT NULL,
-	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `wiki_page_update`;
-CREATE TABLE `wiki_page_update` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`wiki_page_id` int(10) unsigned NOT NULL,
-	`user_id` int(10) unsigned NOT NULL,
-	`old_name` varchar(64) DEFAULT NULL,
-	`new_name` varchar(64) NOT NULL,
-	`old_content` mediumtext,
-	`new_content` mediumtext NOT NULL,
-	`created_date` datetime NOT NULL,
-	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `config`;
+CREATE TABLE `config` (
+  `id` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `attribute` varchar(255) COLLATE 'utf8_general_ci' NULL,
+  `value` varchar(255) COLLATE 'utf8_general_ci' NULL,
+  UNIQUE KEY `attribute` (`attribute`)
+) ;
+
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '14.12.11');

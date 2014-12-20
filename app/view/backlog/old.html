@@ -5,57 +5,57 @@
 	<link rel="stylesheet" href="css/backlog.css">
 </head>
 <body>
-	<div class="container-fluid">
-		<include href="blocks/navbar.html" />
-		<div class="row" id="backlog">
-			<div class="col-md-6">
-			<p>
-				<a href="backlog" class="btn btn-default btn-sm">
-				<span class="glyphicon glyphicon-chevron-left"></span>&ensp;Future Sprints
-				</a>
-			</p>
-				 <div class="panel panel-default">
-					<div class="panel-heading">
-						Backlog
-					</div>
-					<div class="panel-body in" id="panel-0">
-						<ul class="list-group sortable" data-list-id="0">
-						</ul>
-					</div>
-					<p style="text-align:center;" class="text-muted">
-						Drag projects here to remove from a sprint
-					</p>
+<include href="blocks/navbar.html" />
+<div class="container">
+	<div class="row" id="backlog">
+		<div class="col-md-6">
+		<p>
+			<a href="backlog" class="btn btn-default btn-sm">
+			<span class="glyphicon glyphicon-chevron-left"></span>&ensp;Future Sprints
+			</a>
+		</p>
+			 <div class="panel panel-default">
+				<div class="panel-heading">
+					Backlog
 				</div>
-			</div>
-			<div class="col-md-6">
-				<repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
-					<div class="panel panel-default">
-						<div class="panel-heading has-buttons">
-							<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
-							<a href="taskboard/{{ @sprint.id }}" class="btn btn-default btn-xs pull-right">
-								<span class="glyphicon glyphicon-list"></span> Taskboard
-							</a>
-						</div>
-						<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
-							<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
-								<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
-									<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
-										<span class="title">
-											<a href="issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-											{{ @project.name }}
-										</span>
-										<span class="badge">{{ @project.status_name }}</span>
-									</li>
-								</repeat>
-							</ul>
-						</div>
-					</div>
-				</repeat>
+				<div class="panel-body in" id="panel-0">
+					<ul class="list-group sortable" data-list-id="0">
+					</ul>
+				</div>
+				<p style="text-align:center;" class="text-muted">
+					Drag projects here to remove from a sprint
+				</p>
 			</div>
 		</div>
-		<include href="blocks/footer.html" />
-		<script src="minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
-		<script src="minify/js/backlog.js"></script>
+		<div class="col-md-6">
+			<repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
+				<div class="panel panel-default">
+					<div class="panel-heading has-buttons">
+						<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
+						<a href="taskboard/{{ @sprint.id }}" class="btn btn-default btn-xs pull-right">
+							<span class="glyphicon glyphicon-list"></span> {{ @dict.taskboard }}
+						</a>
+					</div>
+					<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
+						<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
+							<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
+								<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
+									<span class="title">
+										<a href="issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
+										{{ @project.name }}
+									</span>
+									<span class="badge">{{ @project.status_name }}</span>
+								</li>
+							</repeat>
+						</ul>
+					</div>
+				</div>
+			</repeat>
+		</div>
 	</div>
+	<include href="blocks/footer.html" />
+	<script src="minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
+	<script src="minify/js/backlog.js"></script>
+</div>
 </body>
 </html>

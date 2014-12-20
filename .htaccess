@@ -10,6 +10,10 @@ RewriteEngine On
 RewriteCond %{REQUEST_URI} \.ini$
 RewriteRule \.ini$ - [R=404]
 
+RewriteCond %{REQUEST_URI} log\/[a-zA-Z1-9]+\.log
+RewriteRule log\/[a-zA-Z1-9]+\.log - [R=404]
+
+
 RewriteCond %{REQUEST_FILENAME} !-l
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

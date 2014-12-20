@@ -21,7 +21,7 @@ body.login {
 .navbar-brand img {
 	height: 40px;
 	width: auto;
-	margin: -12px 0px;
+	margin: -12px 0;
 	vertical-align: baseline;
 }
 
@@ -30,7 +30,7 @@ body.login {
 }
 .navbar-form.navbar-right,
 .navbar-form.navbar-right:last-child {
-	margin-right: 0px;
+	margin-right: 0;
 }
 /*.navbar-form .input-group {
 	max-width: 206px;
@@ -107,8 +107,7 @@ textarea {
 	position: absolute;
 	width: 100%;
 	height: 100%;
-	/*box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.12) inset;*/
-	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.16) inset;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16) inset;
 }
 .img-border-rounded:before {
 	border-radius: 6px;
@@ -129,7 +128,7 @@ textarea {
 }
 
 .issue-heading {
-	margin: 0 10px 20px;
+	margin: 0 0 20px;
 }
 ol.issue-heading.breadcrumb {
 	padding: 0;
@@ -290,6 +289,10 @@ table a.btn {
 	margin-right: 1em;
 }
 
+.form-horizontal .checkbox-sm {
+	padding-top: 0;
+}
+
 .list-group-item .label {
 	margin: 0 0.3em;
 }
@@ -322,7 +325,7 @@ table a.btn {
 .tex ul,
 .tex ol {
 	padding-left: 20px;
-	margin-bottom: 0px;
+	margin-bottom: 0;
 }
 .tex blockquote {
 	font-size: inherit;
@@ -382,5 +385,21 @@ table a.btn {
 	}
 	.form-inline .form-group-narrow .form-control {
 		width: 100px;
+	}
+}
+
+th[data-sort] {
+	cursor: pointer;
+}
+
+.comment-delete {
+	visibility: hidden;
+}
+.media:hover .comment-delete {
+	visibility: visible;
+}
+@media only screen and (max-width: 768px) {
+	.comment-delete {
+		visibility: visible;
 	}
 }

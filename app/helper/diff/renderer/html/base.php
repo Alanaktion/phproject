@@ -219,6 +219,9 @@ class Base extends \Helper\Diff\Renderer\Base
 	 */
 	private function htmlSafe($string)
 	{
+		if(function_exists('mb_convert_encoding')) {
+			$string = mb_convert_encoding($string, 'UTF-8');
+		}
 		return htmlspecialchars($string, ENT_NOQUOTES, 'UTF-8');
 	}
 }

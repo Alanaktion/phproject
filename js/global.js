@@ -20,18 +20,49 @@ $(document).ready(function() {
 	});
 
 	// Handle checkboxes on issue listings
+	$('.issue-list thead tr input').click(function(e) {
+		var checked = $(this).prop('checked');
+		$('.issue-list tbody tr input').prop('checked', checked);
+		if(checked) {
+			$('.issue-list tbody tr').addClass('active');
+		} else {
+			$('.issue-list tbody tr').removeClass('active');
+		}
+	});
 	$('.issue-list tbody tr input').click(function(e) {
+		var checked = $(this).prop('checked');
+		if(checked) {
+			$(this).parents('tr').addClass('active');
+		} else {
+			$(this).parents('tr').removeClass('active');
+		}
+		e.stopPropagation();
+	});
+	$('.issue-list tbody tr td:first-child').click(function(e) {
 		e.stopPropagation();
 	});
 	$('.issue-list tbody tr').click(function(e) {
-		var $checkbox = $(this).find('input');
-		if (e.ctrlKey) {
-			$checkbox.prop('checked', !$checkbox.prop('checked'));
-		} else {
-			var checked = $checkbox.prop('checked');
-			$('.issue-list tbody tr td input').prop('checked', false);
-			//$checkbox.prop('checked', false);
+		var $checkbox = $(this).find('input'),
+			checked = $checkbox.prop('checked');
+		if (e.ctrlKey || e.metaKey) {
 			$checkbox.prop('checked', !checked);
+			if(!checked) {
+				$checkbox.parents('tr').addClass('active');
+			} else {
+				$checkbox.parents('tr').removeClass('active');
+			}
+		} else {
+			$('.issue-list tbody tr td input').prop('checked', false);
+			$('.issue-list tbody tr').removeClass('active');
+			$checkbox.prop('checked', !checked);
+			if(!checked) {
+				$checkbox.parents('tr').addClass('active');
+			}
+		}
+		if (document.selection) {
+			document.selection.empty();
+		} else if (window.getSelection) {
+			window.getSelection().removeAllRanges();
 		}
 	});
 
@@ -40,9 +71,9 @@ $(document).ready(function() {
 		self.location = 'issues/' + $(this).data('id');
 	});
 
-	// Submit from textarea if Ctrl+Enter is pressed
+	// Submit from textarea if Ctrl+Enter or Cmd+Enter is pressed
 	$('body').on('keypress', 'textarea', function(e) {
-		if(e.keyCode == 13 && (e.target.type != 'textarea' || (e.target.type == 'textarea' && e.ctrlKey))) {
+		if(e.keyCode == 13 && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.metaKey)))) {
 			$(this).parents('form')[0].submit();
 			e.preventDefault();
 		}

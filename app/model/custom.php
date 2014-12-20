@@ -2,7 +2,7 @@
 
 namespace Model;
 
-class Custom extends Base {
+class Custom extends \Model {
 
 	protected $_table_name;
 

@@ -2,7 +2,7 @@
 
 namespace Model\Issue;
 
-class Comment extends \Model\Base {
+class Comment extends \Model {
 
 	protected $_table_name = "issue_comment";
 

@@ -3568,7 +3568,7 @@ textarea.input-group-sm > .form-control, textarea.input-group-sm > .input-group-
 	line-height: 1.42857143;
 	text-decoration: none;
 	color: #fff;
-	background-color: #d74300;
+	background-color: #999;
 	border: 1px solid transparent;
 	margin-left: -1px;
 }
@@ -3583,19 +3583,19 @@ textarea.input-group-sm > .form-control, textarea.input-group-sm > .input-group-
 }
 .pagination > li > a:hover, .pagination > li > span:hover, .pagination > li > a:focus, .pagination > li > span:focus {
 	color: #fff;
-	background-color: #0f7864;
+	background-color: #777;
 	border-color: transparent;
 }
 .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
 	z-index: 2;
 	color: #fff;
-	background-color: #0f7864;
+	background-color: #D74300;
 	border-color: transparent;
 	cursor: default;
 }
 .pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {
 	color: #fff;
-	background-color: #3be6c4;
+	background-color: #aaa;
 	border-color: transparent;
 	cursor: not-allowed;
 }

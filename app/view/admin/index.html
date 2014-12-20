@@ -4,134 +4,94 @@
 	<include href="blocks/head.html" />
 </head>
 <body>
-<div class="container-fluid">
-	<include href="blocks/navbar.html" />
+<include href="blocks/navbar.html" />
+<div class="container">
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="admin/">{{ @dict.overview }}</a></li>
+		<li><a href="admin/users">{{ @dict.users }}</a></li>
+		<li><a href="admin/groups">{{ @dict.groups }}</a></li>
+		<li><a href="admin/sprints">{{ @dict.sprints }}</a></li>
+	</ul>
+
 	<div class="row">
-		<div class="col-lg-12">
-			<ul class="nav nav-tabs">
-				<li class="active"><a href="admin/">Overview</a></li>
-				<li><a href="admin/users">Users</a></li>
-				<li><a href="admin/groups">Groups</a></li>
-				<!-- <li><a href="admin/attributes">Attributes</a></li> -->
-				<li><a href="admin/sprints">Sprints</a></li>
-			</ul>
-
-			<div class="row">
-				<div class="col-md-3 col-sm-6">
-					<div class="well well-sm text-center">
-						<h4>Users</h4>
-						<h2>{{ @count_user }}</h2>
-					</div>
-				</div>
-				<div class="col-md-3 col-sm-6">
-					<div class="well well-sm text-center">
-						<h4>Issues</h4>
-						<h2>{{ @count_issue }}</h2>
-					</div>
-				</div>
-				<div class="col-md-3 col-sm-6">
-					<div class="well well-sm text-center">
-						<h4>Comments</h4>
-						<h2>{{ @count_issue_comment }}</h2>
-					</div>
-				</div>
-				<div class="col-md-3 col-sm-6">
-					<div class="well well-sm text-center">
-						<h4>Updates</h4>
-						<h2>{{ @count_issue_update }}</h2>
-					</div>
-				</div>
+		<div class="col-md-3 col-sm-6">
+			<div class="well well-sm text-center">
+				<h4>{{ @dict.users }}</h4>
+				<h2>{{ @count_user }}</h2>
 			</div>
-
-			<div class="row">
-				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>{{ @site.name }}</h4>
-					<h6>{{ @site.description }}</h6>
-					<b>Theme:</b> {{ @site.theme }}<br>
-					<b>Logo:</b> {{ @site.logo }}<br>
-				</div>
-				<div class="col-lg-2 col-md-4 col-sm-6">
-					<ul class="nav nav-tabs">
-						<li class="active"><a href="#db-config" data-toggle="tab">Database Config</a></li>
-						<li><a href="#db-stats" data-toggle="tab">Stats</a></li>
-					</ul>
-					<div class="tab-content">
-						<div class="tab-pane active" id="db-config">
-							<b>Host:</b> {{ @db.host }}:{{ @db.port }}<br>
-							<b>Schema:</b> {{ @db.name }}<br>
-							<b>Username:</b> {{ @db.user }}<br>
-							<b>Password:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
-						</div>
-						<div class="tab-pane" id="db-stats">
-							<repeat group="{{ @db_stats }}" value="{{ @val }}">
-								<check if="{{ @val.Variable_name == 'Uptime' }}">
-									<true>
-										<b>{{ @val.Variable_name }}:</b> {{ @val.Value < 86400 ? round(@val.Value / 3600) . ' hours' : round(@val.Value / 86400) . ' days' }}<br>
-									</true>
-									<false>
-										<b>{{ @val.Variable_name }}:</b> {{ @val.Value }}<br>
-									</false>
-								</check>
-							</repeat>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-2 col-md-4 col-sm-6">
-					<ul class="nav nav-tabs">
-						<li class="active"><a href="#cache-config" data-toggle="tab">Cache Config</a></li>
-						<li><a href="#cache-stats" data-toggle="tab">Stats</a></li>
-					</ul>
-					<div class="tab-content">
-						<div class="tab-pane active" id="cache-config">
-							<div class="clearfix">
-								<p class="pull-left"><b>Mode:</b> {{ @CACHE }}</p>
-								<form class="pull-right" action="admin" method="post">
-									<input type="hidden" name="action" value="clearcache">
-									<button type="submit" class="btn btn-warning btn-xs">Clear Cache</button>
-								</form>
-							</div>
-							<small>Timeouts</small><br>
-							<b>Queries:</b> {{ @cache_expire.db }}<br>
-							<b>Minify:</b> {{ @cache_expire.minify }}<br>
-							<b>Attachments:</b> {{ @cache_expire.attachments }}<br>
-						</div>
-						<div class="tab-pane" id="cache-stats">
-							<check if="{{ @CACHE == 'apc' }}">
-								<true>
-									<repeat group="{{ @apc_stats }}" key="{{ @key }}" value="{{ @val }}">
-										<b>{{ @key }}:</b> {{ @val }}<br>
-									</repeat>
-								</true>
-								<false>
-									No stats available for this cache mode.
-								</false>
-							</check>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>SMTP <small>(Outgoing mail)</small></h4>
-					<p><b>From:</b> {{ @mail.from }}</p>
-					<h4>IMAP <small>(Incoming mail)</small></h4>
-					<b>Hostname:</b> {{ @imap.hostname }}<br>
-					<b>Username:</b> {{ @imap.username }}<br>
-					<b>Password:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
-				</div>
-				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>Gravatar</h4>
-					<b>Max rating:</b> {{ @gravatar.rating }}<br>
-					<b>Default:</b> {{ @gravatar.default }}<br>
-				</div>
-				<div class="col-lg-2 col-md-4 col-sm-6">
-					<h4>Miscellaneous</h4>
-					<b>Debug level:</b> {{ @DEBUG }}<br>
-					<b>Session Lifetime:</b> {{ gmdate("z\\d G\\h", @JAR.expire) }}<br>
-					<b>Max upload:</b> {{ round(@files.maxsize/1024/1024, 2) }}MB<br>
-				</div>
+		</div>
+		<div class="col-md-3 col-sm-6">
+			<div class="well well-sm text-center">
+				<h4>{{ @dict.issues }}</h4>
+				<h2>{{ @count_issue }}</h2>
 			</div>
-
+		</div>
+		<div class="col-md-3 col-sm-6">
+			<div class="well well-sm text-center">
+				<h4>{{ @dict.comments }}</h4>
+				<h2>{{ @count_issue_comment }}</h2>
+			</div>
+		</div>
+		<div class="col-md-3 col-sm-6">
+			<div class="well well-sm text-center">
+				<h4>Updates</h4>
+				<h2>{{ @count_issue_update }}</h2>
+			</div>
 		</div>
 	</div>
+
+	<div class="row">
+		<div class="col-md-3 col-sm-6">
+			<h4>Database</h4>
+			<b>Host:</b> {{ @db.host }}:{{ @db.port }}<br>
+			<b>Schema:</b> {{ @db.name }}<br>
+			<b>{{ @dict.username }}:</b> {{ @db.user }}<br>
+			<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
+			<b>{{ @dict.current_version }}:</b> {{@version}}<br>
+			<check if="{{ !empty(@newer_version) }}">
+				<div class="clearfix">
+					<b>{{ @dict.update_available }}:</b>
+					<form class="pull-right" action="admin" method="post">
+						<input type="hidden" name="action" value="updatedb">
+						<input type="hidden" name="version" value="{{@newer_version}}">
+						<button onclick="return confirm('{{ @dict.backup_db }}')" type="submit" class="btn btn-warning btn-xs">{{ @dict.update_to_n,@newer_version | format }}</button>
+					</form>
+				</div>
+			</check>
+		</div>
+		<div class="col-md-3 col-sm-6">
+			<div class="clearfix">
+				<h4 class="pull-left">Cache</h4>
+				<form class="pull-right" action="admin" method="post" style="margin-top: 10px;">
+					<input type="hidden" name="action" value="clearcache">
+					<button type="submit" class="btn btn-warning btn-xs">Clear Cache</button>
+				</form>
+			</div>
+			<p><b>Mode:</b> {{ @CACHE }}</p>
+			<small>Timeouts</small><br>
+			<b>Queries:</b> {{ @cache_expire.db }}<br>
+			<b>Minify:</b> {{ @cache_expire.minify }}<br>
+			<b>Attachments:</b> {{ @cache_expire.attachments }}<br>
+		</div>
+		<div class="col-md-3 col-sm-6">
+			<h4>SMTP <small>(Outgoing mail)</small></h4>
+			<p><b>From:</b> {{ @mail.from }}</p>
+			<h4>IMAP <small>(Incoming mail)</small></h4>
+			<b>Hostname:</b> {{ @imap.hostname }}<br>
+			<b>{{ @dict.username }}:</b> {{ @imap.username }}<br>
+			<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
+		</div>
+		<div class="col-md-3 col-sm-6">
+			<h4>Miscellaneous</h4>
+			<b>Debug level:</b> {{ @DEBUG }}<br>
+			<b>Session Lifetime:</b> {{ gmdate("z\\d G\\h", @JAR.expire) }}<br>
+			<b>Max upload:</b> {{ round(@files.maxsize/1024/1024, 2) }}MB<br>
+			<small>Gravatar</small><br>
+			<b>Max rating:</b> {{ @gravatar.rating }}<br>
+			<b>Default:</b> {{ @gravatar.default }}<br>
+		</div>
+	</div>
+
 	<include href="blocks/footer.html" />
 </div>
 </body>

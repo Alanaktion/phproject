@@ -1,8 +1,6 @@
 <?php
 
-namespace Controller;
-
-abstract class Base {
+abstract class Controller {
 
 	/**
 	 * Require a user to be logged in. Redirects to /login if a session is not found.
@@ -38,6 +36,37 @@ abstract class Base {
 			$f3->unload();
 			return false;
 		}
+	}
+
+	/**
+	 * Render a view
+	 * @param string  $file
+	 * @param string  $mime
+	 * @param array   $hive
+	 * @param integer $ttl
+	 */
+	protected function _render($file, $mime = "text/html", array $hive = null, $ttl = 0) {
+		echo \Helper\View::instance()->render($file, $mime, $hive, $ttl);
+	}
+
+	/**
+	 * Output object as JSON and set appropriate headers
+	 * @param mixed $object
+	 */
+	protected function _printJson($object) {
+		if(!headers_sent()) {
+			header("Content-type: application/json");
+		}
+		echo json_encode($object);
+	}
+
+	/**
+	 * Get current time and date in a MySQL NOW() format
+	 * @param  boolean $time  Whether to include the time in the string
+	 * @return string
+	 */
+	function now($time = true) {
+		return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
 	}
 
 }

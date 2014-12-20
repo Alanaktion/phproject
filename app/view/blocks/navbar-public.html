@@ -1,25 +1,25 @@
-<!-- Desktop -->
-<div class="navbar navbar-default navbar-fixed-top hidden-xs" role="navigation">
-	<a class="navbar-brand" href="">{{ @site.name }}</a>
-	<form class="navbar-form navbar-right" method="post" action="login">
-		<div class="form-group">
-			<div class="input-group">
-				<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-				<input type="text" name="username" class="form-control" placeholder="Username">
-			</div>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="{{ empty(@fullwidth) ? 'container' : 'container-fluid' }}">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nb-collapse">
+				<span class="sr-only">Toggle Navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="">{{ @site.name }}</a>
 		</div>
-		<div class="form-group">
-			<div class="input-group">
-				<span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-				<input type="password" name="password" class="form-control" placeholder="Password">
-			</div>
-		</div>
-		<button type="submit" class="btn btn-default">Log In</button>
-	</form>
-</div>
 
-<!-- Mobile -->
-<div class="navbar navbar-default navbar-fixed-top visible-xs" role="navigation">
-	<a class="navbar-brand" href="">{{ @site.name }}</a>
-	<a href="login" class="btn btn-default navbar-btn">Sign in</a>
-</div>
+		<div class="collapse navbar-collapse" id="nb-collapse">
+			<form class="navbar-form navbar-right" method="post" action="/login">
+				<div class="form-group">
+					<input type="text" name="username" class="form-control" placeholder="{{ @dict.username }}">
+				</div>
+				<div class="form-group">
+					<input type="password" name="password" class="form-control" placeholder="{{ @dict.password }}">
+				</div>
+				<button type="submit" class="btn btn-default">{{ @dict.log_in }}</button>
+			</form>
+		</div>
+	</div>
+</nav>

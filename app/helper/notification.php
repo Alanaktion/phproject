@@ -5,6 +5,27 @@ namespace Helper;
 class Notification extends \Prefab {
 
 	/**
+	 * Send an email with the UTF-8 character set
+	 * @param  string $to
+	 * @param  string $subject
+	 * @param  string $body
+	 * @return bool
+	 */
+	protected function _utf8mail($to, $subject, $body) {
+		$f3 = \Base::instance();
+
+		// Set content-type with UTF charset
+		$headers  = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+
+		// Add sender and recipient information
+		$headers .= 'To: '. $to . "\r\n";
+		$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
+
+		return mail($to, $subject, $body, $headers);
+	}
+
+	/**
 	 * Send an email to watchers with the comment body
 	 * @param  int $issue_id
 	 * @param  int $comment_id
@@ -34,13 +55,13 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("comment", $comment);
-			$body = \Template::instance()->render("notification/comment.html");
+			$body = $this->_render("notification/comment.html");
 
-			$subject = "[#" . $issue->id . "] - ".$comment->user_name . " commented on  " . $issue->name;
+			$subject = "[#{$issue->id}] - New comment on {$issue->name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent comment notification to: " . $recipient);
 			}
 		}
@@ -85,13 +106,20 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("update", $update);
-			$body = \Template::instance()->render("notification/update.html");
+			$body = $this->_render("notification/update.html");
 
-			$subject =  "[#" . $issue->id . "] - ".$update->user_name . " updated  " . $issue->name;
+			$changes->load(array("issue_update_id = ? AND `field` = 'closed_date' AND old_value = '' and new_value != ''", $update->id));
+			if($changes && $changes->id) {
+				$subject = "[#{$issue->id}] - {$issue->name} closed";
+			} else {
+				$subject =  "[#{$issue->id}] - {$issue->name} updated";
+			}
+
+
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent update notification to: " . $recipient);
 			}
 		}
@@ -125,13 +153,13 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 
-			$body = \Template::instance()->render("notification/new.html");
+			$body = $this->_render("notification/new.html");
 
-			$subject =  "[#" . $issue->id . "] - ".$issue->author_name . " created " . $issue->name;
+			$subject =  "[#{$issue->id}] - {$issue->name} created by {$issue->author_name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent create notification to: " . $recipient);
 			}
 		}
@@ -167,13 +195,13 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("file", $file);
-			$body = \Template::instance()->render("notification/file.html");
+			$body = $this->_render("notification/file.html");
 
-			$subject =  "[#" . $issue->id . "] - ".$file->user_name . " attached a file to " . $issue->name;
+			$subject =  "[#{$issue->id}] - {$file->user_name} attached a file to {$issue->name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body);
 				$log->write("Sent file notification to: " . $recipient);
 			}
 		}
@@ -195,11 +223,11 @@ class Notification extends \Prefab {
 
 			// Render message body
 			$f3->set("user", $user);
-			$body = \Template::instance()->render("notification/user_reset.html");
+			$body = $this->_render("notification/user_reset.html");
 
 			// Send email to user
-			$subject = "Reset your password";
-			utf8mail($user->email, $subject, $body);
+			$subject = "Reset your password - " . $f3->get("site.name");
+			$this->_utf8mail($user->email, $subject, $body);
 		}
 	}
 
@@ -214,8 +242,8 @@ class Notification extends \Prefab {
 		if($f3->get("mail.from")) {
 			$f3->set("issues", $issues);
 			$subject = "Due Today - " . $f3->get("site.name");
-			$body = \Template::instance()->render("notification/user_due_issues.html");
-			return utf8mail($user->email, $subject, $body);
+			$body = $this->_render("notification/user_due_issues.html");
+			return $this->_utf8mail($user->email, $subject, $body);
 		}
 		return false;
 	}
@@ -226,27 +254,25 @@ class Notification extends \Prefab {
 	 * @return array
 	 */
 	protected function _issue_watchers($issue_id) {
-		$f3 = \Base::instance();
-		$log = new \Log("mail.log");
-		$db = $f3->get("db.instance");
+		$db = \Base::instance()->get("db.instance");
 		$recipients = array();
 
 		// Add issue author and owner
-		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.author_id = u.id WHERE i.id = :id", array("id" => $issue_id));
+		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.author_id = u.id WHERE i.id = ?", $issue_id);
 		if(!empty( $result[0]["email"])) {
 			$recipients[] = $result[0]["email"];
 		}
 
 
-		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.owner_id = u.id WHERE i.id = :id", array("id" => $issue_id));
+		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.owner_id = u.id WHERE i.id = ?", $issue_id);
 		if(!empty( $result[0]["email"])) {
 			$recipients[] = $result[0]["email"];
 		}
 
 		// Add whole group
-		$result = $db->exec("SELECT u.role, u.id FROM issue i INNER JOIN `user` u on i.owner_id = u.id  WHERE i.id = :id", array("id" => $issue_id));
+		$result = $db->exec("SELECT u.role, u.id FROM issue i INNER JOIN `user` u on i.owner_id = u.id  WHERE i.id = ?", $issue_id);
 		if($result && $result[0]["role"] == 'group') {
-			$group_users = $db->exec("SELECT g.user_email FROM user_group_user g  WHERE g.group_id = :id", array("id" => $result[0]["id"]));
+			$group_users = $db->exec("SELECT g.user_email FROM user_group_user g  WHERE g.group_id = ?", $result[0]["id"]);
 			foreach($group_users as $group_user) {
 				if(!empty( $group_user["user_email"])) {
 					$recipients[] = $group_user["user_email"];
@@ -255,13 +281,25 @@ class Notification extends \Prefab {
 		}
 
 		// Add watchers
-		$watchers = $db->exec("SELECT u.email FROM issue_watcher w INNER JOIN `user` u ON w.user_id = u.id WHERE issue_id = :id", array("id" => $issue_id));
+		$watchers = $db->exec("SELECT u.email FROM issue_watcher w INNER JOIN `user` u ON w.user_id = u.id WHERE issue_id = ?", $issue_id);
 		foreach($watchers as $watcher) {
 			$recipients[] = $watcher["email"];
 		}
 
 		// Remove duplicate users
 		return array_unique($recipients);
+	}
+
+	/**
+	 * Render a view and return the result
+	 * @param  string  $file
+	 * @param  string  $mime
+	 * @param  array   $hive
+	 * @param  integer $ttl
+	 * @return string
+	 */
+	protected function _render($file, $mime = "text/html", array $hive = null, $ttl = 0) {
+		return \Helper\View::instance()->render($file, $mime, $hive, $ttl);
 	}
 
 }

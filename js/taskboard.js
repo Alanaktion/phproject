@@ -107,7 +107,8 @@ var Taskboard = {
 			description = $(data).find('.description').text().trim(),
 			hours = $(data).find('.hours').text().trim(),
 			date = $(data).find('.dueDate').text().trim(),
-			priority = $(data).find('.priority').data('val');
+			priority = $(data).find('.priority').data('val'),
+			repeat_cycle = $(data).find('.repeat_cycle').text();
 
 		$("#task-dialog input#taskId").val(taskId);
 		$("#task-dialog input#title").val(title);
@@ -115,6 +116,7 @@ var Taskboard = {
 		$("#task-dialog input#hours").val(hours);
 		$("#task-dialog input#hours_spent").val('');
 		$("#task-dialog input#comment").val('');
+		$("#task-dialog select#repeat_cycle").val(repeat_cycle);
 		$("#task-dialog input#dueDate").val(date);
 		$("#task-dialog").find("#dueDate").datepicker({
 			format: 'mm/dd/yyyy'
@@ -127,7 +129,7 @@ var Taskboard = {
 		Taskboard.changeModalColor(userColor);
 	},
 	modalAdd: function(storyId) {
-		$("#task-dialog input, #task-dialog textarea").val("");
+		$("#task-dialog input, #task-dialog textarea").not("#sprintId").val("");
 		$("#task-dialog #priority").val(0);
 		$("#task-dialog #assigned").val($("#task-dialog #assigned").data("default-value"));
 		Taskboard.changeModalColor($("#task-dialog #assigned").data("default-color"));
@@ -194,6 +196,7 @@ var Taskboard = {
 		var card = cell.find(".cloneable:last");
 
 		$(card).find(".title").text(data.title);
+		$(card).find(".repeat_cycle").text(data.repeat_cycle);
 
 		if (isNumber(data.hours) && data.hours > 0) {
 			$(card).find(".hours").text(parseFloat(data.hours).toFixed(1));
