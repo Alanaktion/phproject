@@ -26,17 +26,19 @@
 	</check>
 
 	<check if="{{ count(@hierarchy) > 1 }}">
-		<ol class="breadcrumb pull-left">
-			<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
-				<check if="{{ @crumb.id != @issue.id }}">
-					<li class="active">
-						<a href="issues/{{ @crumb.id }}">
-							{{ @crumb.name }} <small>#{{ @crumb.id }}</small>
-						</a>
-					</li>
-				</check>
-			</repeat>
-		</ol>
+		<div class="clearfix">
+			<ol class="breadcrumb pull-left">
+				<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
+					<check if="{{ @crumb.id != @issue.id }}">
+						<li class="active">
+							<a href="issues/{{ @crumb.id }}">
+								{{ @crumb.name }} <small>#{{ @crumb.id }}</small>
+							</a>
+						</li>
+					</check>
+				</repeat>
+			</ol>
+		</div>
 	</check>
 	<div class="clearfix">
 		<h3 class="pull-left issue-heading">
