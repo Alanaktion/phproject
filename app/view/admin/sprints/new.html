@@ -41,5 +41,13 @@
 	</form>
 	<include href="blocks/footer.html" />
 </div>
+<script src='minify/js/bootstrap-datepicker.js'></script>
+<script>
+    $(function() {
+        $('#start_date, #end_date').datepicker({
+            format: 'yyyy-mm-dd'
+        });
+    });
+</script>
 </body>
 </html>
