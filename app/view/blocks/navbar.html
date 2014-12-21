@@ -74,6 +74,9 @@
 				<li class="{{ @menuitem == 'backlog' ? 'active':'' }}">
 					<a href="backlog">{{ @dict.sprints }}</a>
 				</li>
+				<repeat group="{{ \Helper\Plugin::instance()->getNav(@PATH) }}" value="{{ @navitem }}">
+					<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @navitem.href }}">{{ @navitem.title }}</a></li>
+				</repeat>
 			</ul>
 
 			<ul class="nav navbar-nav navbar-right">
