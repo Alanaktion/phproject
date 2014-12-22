@@ -26,6 +26,7 @@ class Admin extends \Controller {
 			if(file_exists("db/".$f3->get("POST.version").".sql")) {
 				$update_db = file_get_contents("db/".$f3->get("POST.version").".sql");
 				$db->exec(explode(";", $update_db));
+				\Cache::instance()->reset();
 				$f3->set("success", " Database updated to version: ". $f3->get("POST.version"));
 			} else {
 				$f3->set("error", " Database file not found for version: ". $f3->get("POST.version"));
