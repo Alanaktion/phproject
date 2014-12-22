@@ -20,8 +20,8 @@ class User extends \Model {
 				$f3->set("user", $this->cast());
 				$f3->set("user_obj", $this);
 				// Change default language if user has selected one
-				if($this->language) {
-					$f3->set("LANGUAGE", $f3->get("user.language"));
+				if($this->exists("language") && $this->language) {
+					$f3->set("LANGUAGE", $this->language);
 				}
 			}
 		}
