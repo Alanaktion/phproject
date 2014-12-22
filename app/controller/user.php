@@ -337,7 +337,7 @@ class User extends \Controller {
 					$missing_ids[] = $iss["parent_id"];
 				}
 			}
-			do {
+			while(!empty($missing_ids)) {
 				$parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
 				foreach($parents as $iss) {
 					if (($key = array_search($iss->id, $missing_ids)) !== false) {
@@ -349,7 +349,7 @@ class User extends \Controller {
 						$missing_ids[] = $iss->parent_id;
 					}
 				}
-			} while(!empty($missing_ids));
+			}
 
 			// Convert list to tree
 			$tree = $this->_buildTree($issues);
@@ -359,7 +359,9 @@ class User extends \Controller {
 				echo "<li>";
 				if(!empty($issue["id"])) {
 					echo '<a href="issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
-					echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+					if($issue["author_name"]) {
+						echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+					}
 				}
 				if(!empty($issue["children"])) {
 					echo "<ul>";
