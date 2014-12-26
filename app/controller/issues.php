@@ -1012,6 +1012,7 @@ class Issues extends \Controller {
 			$f3->error(400, "Issue is not a project.");
 			return;
 		}
+		$f3->set("title", $type->name . " #" . $issue->id  . ": " . $issue->name . " - Project Overview");
 
 		/**
 		 * Helper function to get a percentage of completed issues across the entire tree
