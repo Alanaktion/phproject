@@ -1002,7 +1002,7 @@ class Issues extends \Controller {
 	public function project_overview($f3, $params) {
 
 		// Load issue
-		$project = new \Model\Issue;
+		$project = new \Model\Issue\Detail;
 		$project->load($params["id"]);
 		if(!$project->id) {
 			$f3->error(404);
@@ -1012,7 +1012,6 @@ class Issues extends \Controller {
 			$f3->error(400, "Issue is not a project.");
 			return;
 		}
-		$f3->set("title", $type->name . " #" . $issue->id  . ": " . $issue->name . " - Project Overview");
 
 		/**
 		 * Helper function to get a percentage of completed issues across the entire tree
@@ -1020,7 +1019,7 @@ class Issues extends \Controller {
 		 * @var     callable $completeCount This function, required for recursive calls
 		 * @return  array
 		 */
-		$completeCount = function(&$issue) use(&$completeCount) {
+		$completeCount = function(\Model\Issue &$issue) use(&$completeCount) {
 			$total = 0;
 			$complete = 0;
 			if($issue->id) {
@@ -1046,7 +1045,7 @@ class Issues extends \Controller {
 		 * @param   Issue $issue
 		 * @var     callable $renderTree This function, required for recursive calls
 		 */
-		$renderTree = function(&$issue) use(&$renderTree) {
+		$renderTree = function(\Model\Issue &$issue) use(&$renderTree) {
 			if($issue->id) {
 				$children = $issue->getChildren();
 				$childCompleted = 0;
@@ -1074,6 +1073,7 @@ class Issues extends \Controller {
 
 		// Render view
 		$f3->set("project", $project);
+		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - Project Overview");
 		$this->_render("issues/project.html");
 
 	}

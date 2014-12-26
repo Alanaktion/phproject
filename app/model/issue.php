@@ -6,15 +6,15 @@ class Issue extends \Model {
 
 	protected
 		$_table_name = "issue",
-		$_heirarchy = array(),
-		$_children = array();
+		$_heirarchy = null,
+		$_children = null;
 
 	/**
 	 * Get complete parent list for issue
 	 * @return array
 	 */
 	public function hierarchy() {
-		if($this->_heirarchy) {
+		if($this->_heirarchy !== null) {
 			return $this->_heirarchy;
 		}
 
@@ -317,11 +317,11 @@ class Issue extends \Model {
 	 * @return array
 	 */
 	public function getChildren() {
-		if($this->_children) {
+		if($this->_children !== null) {
 			return $this->_children;
 		}
-		$this->_children = $this->find(array("parent_id = ?", $this->get("id")));
-		return $this->_children;
+
+		return $this->_children ?: $this->_children = $this->find(array("parent_id = ?", $this->get("id")));
 	}
 
 }
