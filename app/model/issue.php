@@ -4,13 +4,20 @@ namespace Model;
 
 class Issue extends \Model {
 
-	protected $_table_name = "issue";
+	protected
+		$_table_name = "issue",
+		$_heirarchy = array(),
+		$_children = array();
 
 	/**
 	 * Get complete parent list for issue
 	 * @return array
 	 */
 	public function hierarchy() {
+		if($this->_heirarchy) {
+			return $this->_heirarchy;
+		}
+
 		$issues = array();
 		$issues[] = $this;
 		$issue_ids = array($this->get("id"));
@@ -36,7 +43,8 @@ class Issue extends \Model {
 			}
 		}
 
-		return array_reverse($issues);
+		$this->_heirarchy = array_reverse($issues);
+		return $this->_heirarchy;
 	}
 
 	/**
@@ -50,7 +58,7 @@ class Issue extends \Model {
 
 	/**
 	 * Delete without sending notification
-	 * @return mixed
+	 * @return Issue
 	 */
 	public function delete() {
 		$this->set("deleted_date", date("Y-m-d H:i:s"));
@@ -126,7 +134,7 @@ class Issue extends \Model {
 			// If the project was in a sprint before, put it in a sprint again.
 			if($this->get("sprint_id")) {
 				$sprint = new \Model\Sprint();
-				$sprint->load(array("id > ? AND end_date > ? AND start_date < ?", $this->get("sprint_id"), $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
+				$sprint->load(array("end_date > ? AND start_date < ?", $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
 				$repeat_issue->sprint_id = $sprint->id;
 			}
 
@@ -246,8 +254,9 @@ class Issue extends \Model {
 
 	/**
 	 * Duplicate a complete issue tree, starting from a duplicated issue created by duplicate()
-	 * @param int $id
-	 * @param int $new_id
+	 * @param  int $id
+	 * @param  int $new_id
+	 * @return Issue $this
 	 */
 	protected function _duplicateTree($id, $new_id) {
 
@@ -275,11 +284,13 @@ class Issue extends \Model {
 			}
 		}
 
+		return $this;
+
 	}
 
 	/**
 	 * Move all non-project children to same sprint
-	 * @return Issue
+	 * @return Issue $this
 	 */
 	public function resetChildren($replace_existing = true) {
 		$f3 = \Base::instance();
@@ -299,6 +310,18 @@ class Issue extends \Model {
 			);
 		}
 		return $this;
+	}
+
+	/**
+	 * Get children of current issue
+	 * @return array
+	 */
+	public function getChildren() {
+		if($this->_children) {
+			return $this->_children;
+		}
+		$this->_children = $this->find(array("parent_id = ?", $this->get("id")));
+		return $this->_children;
 	}
 
 }
