@@ -4,6 +4,7 @@
 $f3=require("lib/base.php");
 $f3->mset(array(
 	"UI" => "app/view/",
+	"ESCAPE" => false,
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
 	"LOCALES" => "app/dict/",
