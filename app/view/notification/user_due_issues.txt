@@ -1,0 +1,7 @@
+{{ @site.name }}
+
+Issues due today:
+
+<repeat group="{{ @issues }}" value="{{ @issue }}">
+	#{{ @issue.id }}: {{ @issue.name }} - {{ @site.url }}issues/{{ @issue.id }}
+</repeat>
