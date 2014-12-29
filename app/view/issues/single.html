@@ -25,10 +25,10 @@
 		</p>
 	</check>
 
-	<check if="{{ count(@hierarchy) > 1 }}">
+	<check if="{{ count(@ancestors) > 1 }}">
 		<div class="clearfix">
 			<ol class="breadcrumb pull-left">
-				<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
+				<repeat group="{{ @ancestors }}" value="{{ @crumb }}">
 					<check if="{{ @crumb.id != @issue.id }}">
 						<li class="active">
 							<a href="issues/{{ @crumb.id }}">

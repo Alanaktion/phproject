@@ -5,7 +5,7 @@
 		<dl>
 			<?php foreach($f3->get("ERROR.trace") as $line) { ?>
 				<dt><?php echo $line["file"]; ?></dt>
-				<dd><?php echo $line["line"]; ?>: <?php echo $line["class"], $line["type"], $line["function"]; ?></dd>
+				<dd><?php echo $line["line"]; ?>: <?php echo $line["class"], $line["type"], $line["function"], "(", implode(", ", $line["args"]), ")"; ?></dd>
 			<?php } ?>
 		</dl>
 		<pre><?php echo $f3->get("db.instance")->log(); ?></pre>

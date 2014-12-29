@@ -13,7 +13,7 @@ class Issue extends \Model {
 	 * Get complete parent list for issue
 	 * @return array
 	 */
-	public function hierarchy() {
+	public function getAncestors() {
 		if($this->_heirarchy !== null) {
 			return $this->_heirarchy;
 		}

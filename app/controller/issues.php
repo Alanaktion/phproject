@@ -734,7 +734,7 @@ class Issues extends \Controller {
 		$f3->set("watching", !!$watching->id);
 
 		$f3->set("issue", $issue);
-		$f3->set("hierarchy", $issue->hierarchy());
+		$f3->set("ancestors", $issue->getAncestors());
 		$f3->set("type", $type);
 		$f3->set("author", $author);
 		$f3->set("owner", $owner);
