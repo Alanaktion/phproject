@@ -6,8 +6,17 @@ class User extends \Controller {
 
 	protected $_userId;
 
+	private $_languages;
+
 	public function __construct() {
 		$this->_userId = $this->_requireLogin();
+		$this->_languages = array(
+			"en" => \ISO::LC_en,
+			"en_GB" => \ISO::LC_en . " (Great Britain)",
+			"es" => \ISO::LC_es . " (Español)",
+			"pt" => \ISO::LC_pt . " (Português)",
+			"ru" => \ISO::LC_ru . " (Pу́сский Язы́к)",
+		);
 	}
 
 	public function index($f3, $params) {
@@ -97,9 +106,8 @@ class User extends \Controller {
 	public function account($f3, $params) {
 		$f3->set("title", "My Account");
 		$f3->set("menuitem", "user");
-
+		$f3->set("languages", $this->_languages);
 		$this->_loadThemes();
-
 		$this->_render("user/account.html");
 	}
 
@@ -156,6 +164,12 @@ class User extends \Controller {
 				$user->theme = $post["theme"];
 			}
 
+			if(empty($post["language"])) {
+				$user->language = null;
+			} else {
+				$user->language = $post["language"];
+			}
+
 			if(empty($error)) {
 				$f3->set("success", "Profile updated successfully.");
 			} else {
@@ -170,6 +184,8 @@ class User extends \Controller {
 
 		// Use new user values for page
 		$user->loadCurrent();
+
+		$f3->set("languages", $this->_languages);
 		$this->_loadThemes();
 
 		$this->_render("user/account.html");
@@ -321,7 +337,7 @@ class User extends \Controller {
 					$missing_ids[] = $iss["parent_id"];
 				}
 			}
-			do {
+			while(!empty($missing_ids)) {
 				$parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
 				foreach($parents as $iss) {
 					if (($key = array_search($iss->id, $missing_ids)) !== false) {
@@ -333,7 +349,7 @@ class User extends \Controller {
 						$missing_ids[] = $iss->parent_id;
 					}
 				}
-			} while(!empty($missing_ids));
+			}
 
 			// Convert list to tree
 			$tree = $this->_buildTree($issues);
@@ -343,7 +359,9 @@ class User extends \Controller {
 				echo "<li>";
 				if(!empty($issue["id"])) {
 					echo '<a href="issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
-					echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+					if($issue["author_name"]) {
+						echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+					}
 				}
 				if(!empty($issue["children"])) {
 					echo "<ul>";

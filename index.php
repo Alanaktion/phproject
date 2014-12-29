@@ -71,7 +71,7 @@ $f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
 
 // Initialize plugins
 $plugins = scandir("app/plugin");
-foreach($plugins as &$plugin) {
+foreach($plugins as $i=>&$plugin) {
 	if($plugin != "." && $plugin != ".." && is_file("app/plugin/$plugin/base.php")) {
 		$plugin = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $plugin))) . "\\Base";
 		$plugin = $plugin::instance();
@@ -88,9 +88,10 @@ foreach($plugins as &$plugin) {
 			$f3->set("error", "Failed to initialize plugin " . $plugin->_package() . ": " . $e->getMessage());
 		}
 	} else {
-		unset($plugin);
+		unset($plugins[$i]);
 	}
 }
+$f3->set("plugins", $plugins);
 
 // Set up session handler
 if($f3->get("site.db_sessions")) {

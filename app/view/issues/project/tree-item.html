@@ -1,0 +1,11 @@
+<check if="{{ @issue.closed_date }}">
+	<true>
+		<a href="{{ @issue.id }}" class="text-muted"><s>#{{ @issue.id }} &ndash; {{ @issue.name }}</s></a>
+	</true>
+	<false>
+		<a href="{{ @issue.id }}">#{{ @issue.id }} &ndash; {{ @issue.name }}</a>
+	</false>
+</check>
+<check if="{{ @children }}">
+	<span class="text-muted">&middot; {{ count(@children) }} child issues &middot; {{ round(@childrenCompleted / count(@children) * 100) }}% complete</span>
+</check>

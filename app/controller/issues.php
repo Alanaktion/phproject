@@ -973,4 +973,109 @@ class Issues extends \Controller {
 		$f3->reroute("/issues/" . $issue->id);
 	}
 
+	/**
+	 * Get a project's descendant tree
+	 * @param  int $parent_id
+	 * @return array
+	 */
+	/*protected function _projectTree($parent_id) {
+
+		// Find child issues
+		$model = new \Model\Issue;
+		$result = $model->find(array("parent_id = ?", $parent_id));
+
+		// Build array
+		$issues = array();
+		foreach($result as $issue) {
+			$issues[] = $issue->cast() + array("children" => $this->_projectTree($issue["id"]));
+		}
+
+		// Return array
+		return $issues;
+	}*/
+
+	/**
+	 * Project Overview action
+	 * @param  Base $f3
+	 * @param  array $params
+	 */
+	public function project_overview($f3, $params) {
+
+		// Load issue
+		$project = new \Model\Issue\Detail;
+		$project->load($params["id"]);
+		if(!$project->id) {
+			$f3->error(404);
+			return;
+		}
+		if($project->type_id != $f3->get("issue_type.project")) {
+			$f3->error(400, "Issue is not a project.");
+			return;
+		}
+
+		/**
+		 * Helper function to get a percentage of completed issues across the entire tree
+		 * @param   Issue $issue
+		 * @var     callable $completeCount This function, required for recursive calls
+		 * @return  array
+		 */
+		$completeCount = function(\Model\Issue &$issue) use(&$completeCount) {
+			$total = 0;
+			$complete = 0;
+			if($issue->id) {
+				$total ++;
+				if($issue->closed_date) {
+					$complete ++;
+				}
+				foreach($issue->getChildren() as $child) {
+					$result = $completeCount($child);
+					$total += $result["total"];
+					$complete += $result["complete"];
+				}
+			}
+			return array(
+				"total" => $total,
+				"complete" => $complete
+			);
+		};
+		$f3->set("stats", $completeCount($project));
+
+		/**
+		 * Helper function for recursive tree rendering
+		 * @param   Issue $issue
+		 * @var     callable $renderTree This function, required for recursive calls
+		 */
+		$renderTree = function(\Model\Issue &$issue) use(&$renderTree) {
+			if($issue->id) {
+				$children = $issue->getChildren();
+				$childCompleted = 0;
+				if($children) {
+					foreach($children as $item) {
+						if($item->closed_date) {
+							$childCompleted ++;
+						}
+					}
+				}
+				$hive = array("issue" => $issue, "children" => $children, "childrenCompleted" => $childCompleted);
+				echo "<li>";
+				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
+				if($children) {
+					echo "<ul>";
+					foreach($children as $item) {
+						$renderTree($item);
+					}
+					echo "</ul>";
+				}
+				echo "</li>";
+			}
+		};
+		$f3->set("renderTree", $renderTree);
+
+		// Render view
+		$f3->set("project", $project);
+		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - Project Overview");
+		$this->_render("issues/project.html");
+
+	}
+
 }

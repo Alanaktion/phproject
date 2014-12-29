@@ -39,6 +39,17 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label for="npass" class="col-sm-2 control-label label-sm">{{ @dict.language }}</label>
+							<div class="col-sm-4 col-md-2 col-lg-2">
+								<select name="language" class="form-control input-sm">
+									<option value="">[ Default ]</option>
+									<repeat group="{{ @languages }}" key="{{ @key }}" value="{{ @item }}">
+										<option value="{{ @key }}" {{ (@user.language == @key) ? 'selected' : '' }}>{{ @item }}</option>
+									</repeat>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
 							<label for="npass" class="col-sm-2 control-label label-sm">{{ @dict.task_color }}</label>
 							<div class="col-sm-4 col-md-2 col-lg-2">
 								<input class="form-control input-sm" id="color" name="task_color" type="color" value="{{ @user.task_color ? '#' . @user.task_color : '' }}">

@@ -6,12 +6,7 @@
 <body>
 <include href="blocks/navbar.html" />
 <div class="container">
-	<ul class="nav nav-tabs">
-        <li><a href="admin/">{{ @dict.overview }}</a></li>
-        <li><a href="admin/users">{{ @dict.users }}</a></li>
-        <li><a href="admin/groups">{{ @dict.groups }}</a></li>
-        <li class="active"><a href="admin/sprints">{{ @dict.sprints }}</a></li>
-	</ul>
+	<include href="blocks/admin/tabs.html" />
 	<form action="admin/sprints/new" method="post" role="form" class="form-horizontal" autocomplete="off">
 		<legend>{{ @dict.new_sprint }}</legend>
 		<div class="form-group">
@@ -43,11 +38,11 @@
 </div>
 <script src='minify/js/bootstrap-datepicker.js'></script>
 <script>
-    $(function() {
-        $('#start_date, #end_date').datepicker({
-            format: 'yyyy-mm-dd'
-        });
-    });
+	$(function() {
+		$('#start_date, #end_date').datepicker({
+			format: 'yyyy-mm-dd'
+		});
+	});
 </script>
 </body>
 </html>
