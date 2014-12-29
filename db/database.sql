@@ -61,7 +61,8 @@ CREATE TABLE `issue` (
 	KEY `sprint_id` (`sprint_id`),
 	KEY `repeat_cycle` (`repeat_cycle`),
 	KEY `due_date` (`due_date`),
-	KEY `type_id` (`type_id`)
+	KEY `type_id` (`type_id`),
+	KEY `parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_checklist`;
@@ -266,10 +267,10 @@ CREATE TABLE `session` (
 
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
-  `id` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `attribute` varchar(255) COLLATE 'utf8_general_ci' NULL,
-  `value` varchar(255) COLLATE 'utf8_general_ci' NULL,
-  UNIQUE KEY `attribute` (`attribute`)
+	`id` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`attribute` varchar(255) COLLATE 'utf8_general_ci' NULL,
+	`value` varchar(255) COLLATE 'utf8_general_ci' NULL,
+	UNIQUE KEY `attribute` (`attribute`)
 ) ;
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '14.12.21');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '14.12.29');
