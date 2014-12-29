@@ -7,5 +7,5 @@
 	</false>
 </check>
 <check if="{{ @children }}">
-	<span class="text-muted">&middot; {{ count(@children) }} child issues &middot; {{ round(@childrenCompleted / count(@children) * 100) }}% complete</span>
+	<span class="text-muted">&middot; {{ @dict.n_child_issues, count(@children) | format }} &middot; {{ @dict.n_complete, round(@childrenCompleted / count(@children) * 100).'%' | format }}</span>
 </check>

@@ -1056,7 +1056,7 @@ class Issues extends \Controller {
 						}
 					}
 				}
-				$hive = array("issue" => $issue, "children" => $children, "childrenCompleted" => $childCompleted);
+				$hive = array("issue" => $issue, "children" => $children, "childrenCompleted" => $childCompleted, "dict" => \Base::instance()->get("dict"));
 				echo "<li>";
 				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
 				if($children) {

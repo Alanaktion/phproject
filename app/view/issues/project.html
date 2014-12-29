@@ -7,18 +7,18 @@
 <include href="blocks/navbar.html" />
 <div class="container">
 	<h2>{{ @project.name }} <small>#{{ @project.id }}</small></h2>
-	<h3 class="h4"><i>Project Overview</i></h3>
+	<h3 class="h4"><i>{{ @dict.project_overview }}</i></h3>
 	<set percentComplete="{{ round(@stats.complete / @stats.total * 100) }}" />
 	<div class="progress" style="max-width: 400px; margin: 15px 0 0;">
 		<div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ @percentComplete }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ @percentComplete }}%;">
-			<span class="sr-only">{{ @percentComplete }}% complete</span>
+			<span class="sr-only">{{ @dict.n_complete, @percentComplete.'%' | format }}</span>
 		</div>
 	</div>
-	{{ @stats.complete }}/{{ @stats.total }} complete
+	{{ @dict.n_complete,@stats.complete.'/'.@stats.total | format }}
 
 	<hr>
 
-	<h4>Project Tree</h4>
+	<h4>{{ @dict.project_tree }}</h4>
 	{~ @renderTree(@project) ~}
 
 	<include href="blocks/footer.html" />

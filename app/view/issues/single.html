@@ -106,7 +106,12 @@
 				</check>
 
 				<dt>{{ @dict.cols.type }}</dt>
-				<dd>{{ @issue.type_name }}</dd>
+				<dd>
+					{{ @issue.type_name }}
+					<check if="{{ @issue.type_id == @issue_type.project }}">
+						&ndash; <a href="issues/project/{{ @issue.id }}">{{ @dict.project_overview }}</a>
+					</check>
+				</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
 				<dd>{{ @issue.priority_name }}</dd>
