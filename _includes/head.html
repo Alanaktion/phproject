@@ -1,9 +1,10 @@
 <head>
-    <meta charset="utf-8">
+	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% if page.title %}{{ page.title }} &middot; {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
-    <meta name="description" content="{{ site.description }}">
-    <link rel="stylesheet" href="{{ '/phproject-docs.min.css' | prepend: site.assetsurl }}">
-    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
+	<title>{% if page.title %}{{ page.title }} &middot; {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+	<meta name="description" content="{{ site.description }}">
+	<link rel="stylesheet" href="{{ '/phproject-docs.min.css' | prepend: site.assetsurl }}">
+	<link rel="stylesheet" href="{{ '/syntax.css' | prepend: site.assetsurl }}">
+	<link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
 </head>

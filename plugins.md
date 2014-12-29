@@ -47,10 +47,16 @@ Plugins are made up of one or more PHP classes installed the `app/plugin` direct
 
 If your plugin adds additional routes, they should point to a separate class outside of `base.php`, which should extend `\Controller`. Routes can be added in your `Base->_load()` method by getting the F3 Base class and calling the [`route()`](http://fatfreeframework.com/base#route) method on it:
 
-    public function _load() {
-        $f3 = \Base::instance();
-        $f3->route("GET /yourplugin/action", "Plugin\Yourplugin\Controller->action");
-    }
+{% highlight php %}
+<?php
+...
+public function _load() {
+    $f3 = \Base::instance();
+    $f3->route("GET /yourplugin/action", "Plugin\Yourplugin\Controller->action");
+}
+...
+?>
+{% endhighlight %}
 
 
 ### Hooks
@@ -60,27 +66,29 @@ Hooks are not currently implemented in Phproject, but will be initialized from y
 
 ### Example Base Class
 
-    <?php
-    /**
-     * @package YourPlugin
-     * @author  Phproject User <user@example.org>
-     * @version 1.0.0
-     */
+{% highlight php %}
+<?php
+/**
+ * @package YourPlugin
+ * @author  Phproject User <user@example.org>
+ * @version 1.0.0
+ */
 
-    namespace Plugin\YourPlugin;
+namespace Plugin\YourPlugin;
 
-    class Base extends \Plugin {
+class Base extends \Plugin {
 
-        public function _load() {
-            $this->_hook( ... );
-        }
-
-        public function _installed() {
-            return true;
-        }
-
+    public function _load() {
+        $this->_hook( ... );
     }
 
+    public function _installed() {
+        return true;
+    }
+
+}
+?>
+{% endhighlight %}
 
 ### Example folder structure
 
@@ -89,3 +97,4 @@ Hooks are not currently implemented in Phproject, but will be initialized from y
             yourplugin
                 base.php
                 ...
+
