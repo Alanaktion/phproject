@@ -31,9 +31,11 @@ To allow users to create issues and comment on existing issues via email, set up
 
 Example configuration for Gmail:
 
-    imap.hostname={imap.gmail.com:993/imap/ssl}INBOX
-    imap.username=phproject@example.com
-    imap.password=Passw0rd1
+{% highlight ini %}
+imap.hostname={imap.gmail.com:993/imap/ssl}INBOX
+imap.username=phproject@example.com
+imap.password=Passw0rd1
+{% endhighlight %}
 
 ### Atom Feeds
 Phproject generates Atom feeds for issues assigned to and created by each user. These feeds can be subscribed to from user pages or the Dashboard in browsers that support them.

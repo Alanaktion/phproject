@@ -1,7 +1,21 @@
-.cp, .p, .nc, .nv, .na {color: #2c3e50;}
-.sd {color: #7f8c8d;}
-.k, .o {color: #c0392b;}
-.nx, .nf {color: #16a085;}
-.nx {font-style: italic;}
-.k {color: #2980b9; font-style: italic;}
-.s2 {color: #8e44ad;}
+.cp,
+.p,
+.nc,
+.nv,
+.na {color: #2c3e50;} /* default */
+.sd {color: #7f8c8d;} /* grey */
+.o,
+.nt,
+.cp {color: #c0392b;} /* red */
+.nx,
+.nf,
+.nc {color: #16a085;} /* green */
+.nx {font-style: italic;} /* green italic */
+.s,
+.n,
+.k,
+.nb,
+.sx {color: #2980b9;} /* blue */
+.k  {font-style: italic;} /* blue italic */
+.s2,
+.m  {color: #8e44ad;} /* purple */

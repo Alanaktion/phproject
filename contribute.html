@@ -9,16 +9,22 @@ title: Contributing
 
 	<h2 id="code-standards">Code Standards</h2>
 	<p>In order to keep things clean and consistent, we've set some simple standards on the Phproject source code. Opening braces are always on the same line as the statement that they correspond with. In PHP code, double quotes should be preferred, unless the string needs to contain double quotes, then single should be preferred rather than escaping the double quotes. CSS and Javascript code should use single quotes when possible.</p>
-<pre><code><span class="text-info">class</span> Issue {
 
-	<span class="text-info">function</span> <span class="text-success">getId</span>() {
-		<span class="text-danger">if</span>($this->exists(<span class="text-warning">"id"</span>)) {
-			<span class="text-danger">return</span> $this->get(<span class="text-warning">"id"</span>);
+{% highlight php %}
+<?php
+class Issue {
+
+	function getId() {
+		if($this->exists("id")) {
+			return $this->get("id");
 		}
-		<span class="text-danger">return</span> false;
+		return null;
 	}
 
-}</code></pre>
+}
+?>
+{% endhighlight %}
+
 	<p>Be sure to keep indentation clean and consistent with the rest of the project as well, as it makes finding a particular block of code much easier. These standards should be used whenever contributing to the main project or when writing a plugin for Phproject.</p>
 
 	<h2 id="current-contributions">Current Contributions</h2>
