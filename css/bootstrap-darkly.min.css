@@ -22,7 +22,7 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 	color: white !important;
 }
 #taskboard .spinner {
-	background-image: url(/img/ajax-loader-dark.gif) !important;
+	background-image: url(../img/ajax-loader-dark.gif) !important;
 }
 
 .datepicker {
