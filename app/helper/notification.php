@@ -183,13 +183,14 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 
+			$text = $this->_render("notification/new.txt");
 			$body = $this->_render("notification/new.html");
 
 			$subject =  "[#{$issue->id}] - {$issue->name} created by {$issue->author_name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent create notification to: " . $recipient);
 			}
 		}
@@ -225,13 +226,14 @@ class Notification extends \Prefab {
 			// Render message body
 			$f3->set("issue", $issue);
 			$f3->set("file", $file);
+			$text = $this->_render("notification/file.txt");
 			$body = $this->_render("notification/file.html");
 
 			$subject =  "[#{$issue->id}] - {$file->user_name} attached a file to {$issue->name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body);
+				$this->_utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent file notification to: " . $recipient);
 			}
 		}
@@ -253,11 +255,12 @@ class Notification extends \Prefab {
 
 			// Render message body
 			$f3->set("user", $user);
+			$text = $this->_render("notification/user_reset.txt");
 			$body = $this->_render("notification/user_reset.html");
 
 			// Send email to user
 			$subject = "Reset your password - " . $f3->get("site.name");
-			$this->_utf8mail($user->email, $subject, $body);
+			$this->_utf8mail($user->email, $subject, $body, $text);
 		}
 	}
 
@@ -272,8 +275,9 @@ class Notification extends \Prefab {
 		if($f3->get("mail.from")) {
 			$f3->set("issues", $issues);
 			$subject = "Due Today - " . $f3->get("site.name");
+			$text = $this->_render("notification/user_due_issues.txt");
 			$body = $this->_render("notification/user_due_issues.html");
-			return $this->_utf8mail($user->email, $subject, $body);
+			return $this->_utf8mail($user->email, $subject, $body, $text);
 		}
 		return false;
 	}
