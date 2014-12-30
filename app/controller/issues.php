@@ -974,27 +974,6 @@ class Issues extends \Controller {
 	}
 
 	/**
-	 * Get a project's descendant tree
-	 * @param  int $parent_id
-	 * @return array
-	 */
-	/*protected function _projectTree($parent_id) {
-
-		// Find child issues
-		$model = new \Model\Issue;
-		$result = $model->find(array("parent_id = ?", $parent_id));
-
-		// Build array
-		$issues = array();
-		foreach($result as $issue) {
-			$issues[] = $issue->cast() + array("children" => $this->_projectTree($issue["id"]));
-		}
-
-		// Return array
-		return $issues;
-	}*/
-
-	/**
 	 * Project Overview action
 	 * @param  Base $f3
 	 * @param  array $params
