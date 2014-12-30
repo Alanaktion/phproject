@@ -45,17 +45,17 @@
 			{{ @issue.name }} <small>#{{ @issue.id }}</small>
 		</h3>
 		<div class="pull-right">
-			<check if="{{ !@issue.closed_date }}">
-				<true>
+			<check if="{{ @issue.status_closed }}">
+				<false>
 					<a id="btn-issue-close" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
 						<span class="glyphicon glyphicon-check"></span>&ensp;{{ @dict.complete }}
 					</a>
-				</true>
-				<false>
+				</false>
+				<true>
 					<a id="btn-issue-reopen" href="issues/reopen/{{ @issue.id }}" class="btn btn-warning btn-xs">
 						<span class="glyphicon glyphicon-repeat"></span>&ensp;{{ @dict.reopen }}
 					</a>
-				</false>
+				</true>
 			</check>
 			<a id="btn-copy" href="issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
 				<span class="glyphicon glyphicon-file"></span>&ensp;{{ @dict.copy }}
