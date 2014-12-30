@@ -65,18 +65,6 @@ CREATE TABLE `issue` (
 	KEY `parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `issue_checklist`;
-CREATE TABLE `issue_checklist` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`issue_id` int(10) unsigned NOT NULL,
-	`text` text NOT NULL,
-	`checked` tinyint(1) unsigned NOT NULL DEFAULT '0',
-	`created_date` datetime NOT NULL,
-	PRIMARY KEY (`id`),
-	KEY `issue_id` (`issue_id`),
-	CONSTRAINT `issue_checklist_issue_id` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `issue_comment`;
 CREATE TABLE `issue_comment` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
