@@ -48,8 +48,6 @@ class Notification extends \Prefab {
 			$headers .= "Content-type: text/html; charset=utf-8\r\n";
 		}
 
-		$log = new \Log("debug.log");
-		$log->write($body);
 		return mail($to, $subject, $body, $headers);
 	}
 
