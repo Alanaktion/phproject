@@ -69,6 +69,17 @@ class Admin extends \Controller {
 		$this->_render("admin/plugins.html");
 	}
 
+	public function plugin_single($f3, $params) {
+		$plugins = $f3->get("plugins");
+		if($plugin = $plugins[$params["id"]]) {
+			$f3->set("title", $plugin->_package());
+			$f3->set("plugin", $plugin);
+			$this->_render("admin/plugins/single.html");
+		} else {
+			$f3->error(404);
+		}
+	}
+
 	public function users($f3, $params) {
 		$f3->set("title", "Manage Users");
 

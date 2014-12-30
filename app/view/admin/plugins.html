@@ -16,12 +16,18 @@
 			</tr>
 		</thead>
 		<tbody>
-			<repeat group="{{ @plugins }}" value="{{ @plugin }}">
+			<repeat group="{{ @plugins }}" value="{{ @plugin }}" key="{{ @key }}">
 				<set meta="{{ @plugin->_meta() }}" />
+				{~ @method = array(@plugin, '_admin'); ~}
 				<tr>
 					<td>{{ @meta.package }}</td>
 					<td>{{ @meta.author | esc }}</td>
 					<td>{{ @meta.version }}</td>
+					<td>
+						<check if="{{ is_callable(@method) }}">
+							<a href="admin/plugins/{{ @key }}">Details</a>
+						</check>
+					</td>
 				</tr>
 			</repeat>
 		</tbody>
