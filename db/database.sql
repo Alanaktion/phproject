@@ -62,7 +62,11 @@ CREATE TABLE `issue` (
 	KEY `repeat_cycle` (`repeat_cycle`),
 	KEY `due_date` (`due_date`),
 	KEY `type_id` (`type_id`),
-	KEY `parent_id` (`parent_id`)
+	KEY `parent_id` (`parent_id`),
+	CONSTRAINT `issue_type_id` FOREIGN KEY (`type_id`) REFERENCES `issue_type`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT `issue_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `issue_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `issue_status` FOREIGN KEY (`status`) REFERENCES `issue_status`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_comment`;
@@ -77,7 +81,7 @@ CREATE TABLE `issue_comment` (
 	KEY `issue_id` (`issue_id`),
 	KEY `user` (`user_id`),
 	CONSTRAINT `comment_issue` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `comment_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT `comment_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_file`;
@@ -261,4 +265,4 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 ) ;
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '14.12.29');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '14.12.30');
