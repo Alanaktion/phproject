@@ -13,9 +13,11 @@ Most plugins can be installed by simply cloning their repository in your `app/pl
 
 Phproject includes several officially supported plugins that are maintained along with the core code.
 
-[Wiki](https://github.com/phproject-plugins/wiki) - A minimal but powerful Wiki for your projects
-
 [Bitbucket](https://github.com/phproject-plugins/bitbucket) - Integrate Bitbucket commits into your Phproject issues
+
+[Porter](https://github.com/phproject-plugins/porter) - Maintains your Phproject instance
+
+[Wiki](https://github.com/phproject-plugins/wiki) - A minimal but powerful Wiki for your projects
 
 [All Official Plugins &rsaquo;](https://github.com/phproject-plugins)
 
