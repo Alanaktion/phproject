@@ -179,6 +179,11 @@ class Issue extends \Model {
 	public function save($notify = true) {
 		$f3 = \Base::instance();
 
+		// Catch empty sprint at the lowest level here
+		if($this->get("sprint_id") === 0) {
+			$this->set("sprint_id", null);
+		}
+
 		// Censor credit card numbers if enabled
 		if($f3->get("security.block_ccs")) {
 			if(preg_match("/([0-9]{3,4}-){3}[0-9]{3,4}/", $this->get("description"))) {
