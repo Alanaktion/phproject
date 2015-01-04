@@ -355,22 +355,6 @@
 	</div>
 </div>
 
-<!-- <div class="modal fade" id="modal-file" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
-				<h4 class="modal-title"></h4>
-			</div>
-			<div class="modal-body"></div>
-			<div class="modal-footer">
-				<a class="btn btn-default btn-sm" href="#" target="_blank">Download</a>
-				<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">{{ @dict.close }}</button>
-			</div>
-		</div>
-	</div>
-</div> -->
-
 <script src="minify/js/bootstrap-datepicker.js,stupidtable.min.js"></script>
 <script type="text/javascript">
 $(function() {
@@ -505,26 +489,6 @@ $(function() {
 			});
 		}
 	});
-
-	// Trigger modal on plain text attachments
-	/*$(".file-attachment").click(function(e) {
-		$this = $(this);
-		if($this.data("mime") == "text/plain") {
-			console.log($this[0]);
-			$.get($this.attr("href"), function(data) {
-				$("#modal-file .modal-body").empty();
-				$("<pre />").text(data).appendTo("#modal-file .modal-body");
-			});
-			$("#modal-file .modal-body").html("{{ @dict.loading }}");
-			$("#modal-file .modal-title").text($this.text());
-			$("#modal-file .modal-footer a").attr("href", $this.attr("href"));
-			$("#modal-file").modal("show");
-			e.preventDefault();
-		}
-	});
-	$("#modal-file .modal-footer a").click(function(e) {
-		$(this).parents(".modal").modal("hide");
-	});*/
 
 });
 
