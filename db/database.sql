@@ -39,7 +39,7 @@ CREATE TABLE `user_group` (
 DROP TABLE IF EXISTS `issue`;
 CREATE TABLE `issue` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`status` int(11) NOT NULL DEFAULT '1',
+	`status` int(10) unsigned NOT NULL DEFAULT '1',
 	`type_id` int(11) unsigned NOT NULL DEFAULT '1',
 	`name` varchar(255) NOT NULL,
 	`description` text NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE `issue` (
 	`created_date` datetime NOT NULL,
 	`closed_date` datetime DEFAULT NULL,
 	`deleted_date` datetime DEFAULT NULL,
-	`start_sate` date DEFAULT NULL,
+	`start_date` date DEFAULT NULL,
 	`due_date` date DEFAULT NULL,
 	`repeat_cycle` varchar(10) NOT NULL DEFAULT 'none',
 	`sprint_id` int(10) unsigned DEFAULT NULL,
