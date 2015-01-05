@@ -36,28 +36,28 @@ $f3->set("db.instance", $db);
 function showResults(Test $test) {
 	if(PHP_SAPI == 'cli') {
 		foreach($test->results() as $result) {
-			echo $result['text'], ": ";
 			if ($result['status']) {
 				if(defined('PHP_WINDOWS_VERSION_MAJOR')) {
-					echo "PASS\r\n";
+					echo "PASS";
 				} else {
-					echo "\033[0;32m", 'PASS', "\033[0m\n";
+					echo "\033[0;32m", 'PASS', "\033[0m";
 				}
+				echo ": ", $result['text'], "\n";
 			} else {
 				if(defined('PHP_WINDOWS_VERSION_MAJOR')) {
-					echo "FAIL: {$result['source']}\r\n";
+					echo "FAIL";
 				} else {
-					echo "\033[0;31m", 'FAIL', "\033[0m", ': ', $result["source"], "\n";
+					echo "\033[0;31m", 'FAIL', "\033[0m";
 				}
+				echo ": ", $result['text'], " - ", $result['source'], "\n";
 			}
 		}
 	} else {
 		foreach($test->results() as $result) {
-			echo $result['text'], ":\n";
 			if ($result['status']) {
-				echo '<span style="color: darkgreen;">PASS</span>', "<br>\n";
+				echo '<code style="color: darkgreen;">PASS</code>: ', $result['text'], "<br>\n";
 			} else {
-				echo '<span style="color: red;">FAIL</span>: ', $result["source"], "<br>\n";
+				echo '<code style="color: red;">FAIL</code>: ', $result['text'], " - ", $result["source"], "<br>\n";
 			}
 		}
 	}
