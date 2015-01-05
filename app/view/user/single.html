@@ -3,8 +3,8 @@
 <head>
 	<include href="blocks/head.html" />
 	<check if="{{ @user.api_key }}">
-		<link rel="alternate" type="application/atom+xml" title="{{ @dict.assigned_issues }}" href="{{ @site.url }}atom.xml?type=assigned&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
-		<link rel="alternate" type="application/atom+xml" title="{{ @dict.created_issues }}" href="{{ @site.url }}atom.xml?type=created&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
+		<link rel="alternate" type="application/atom+xml" title="{{ @dict.assigned_issues }}" href="{{ @site.url }}{{ @site.url }}atom.xml?type=assigned&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
+		<link rel="alternate" type="application/atom+xml" title="{{ @dict.created_issues }}" href="{{ @site.url }}{{ @site.url }}atom.xml?type=created&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
 	</check>
 	<style type="text/css">
 	.chart-legend div {
@@ -71,9 +71,9 @@
 			<div class="col-md-12">
 				<p>
 					{{ @dict.browse }}:&nbsp;
-					<a href="issues?status=open&amp;author_id={{ @this_user.id }}">{{ @dict.created_issues }}</a>&nbsp;
-					<a href="issues?status=open&amp;owner_id={{ @this_user.id }}">{{ @dict.assigned_issues }}</a>&nbsp;
-					<a href="user/{{ @this_user.username }}/tree">{{ @dict.issue_tree }}</a>
+					<a href="{{ @site.url }}issues?status=open&amp;author_id={{ @this_user.id }}">{{ @dict.created_issues }}</a>&nbsp;
+					<a href="{{ @site.url }}issues?status=open&amp;owner_id={{ @this_user.id }}">{{ @dict.assigned_issues }}</a>&nbsp;
+					<a href="{{ @site.url }}user/{{ @this_user.username }}/tree">{{ @dict.issue_tree }}</a>
 				</p>
 				<include href="blocks/issue-list.html" />
 			</div>

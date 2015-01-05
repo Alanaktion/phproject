@@ -16,7 +16,7 @@
 </check>
 <footer class="row">
 	<div class="col-xs-4">
-		<p class="visible-sm visible-xs"><a href="logout" class="btn btn-default btn-xs">{{ @dict.log_out }}</a></p>
+		<p class="visible-sm visible-xs"><a href="{{ @site.url }}logout" class="btn btn-default btn-xs">{{ @dict.log_out }}</a></p>
 	</div>
 	<div class="col-xs-8">
 		<p class="text-right text-muted">
@@ -32,7 +32,7 @@
 			</check>
 			<span title="Real usage: {{ memory_get_peak_usage(true) }} bytes">{{ \Helper\View::instance()->formatFilesize(memory_get_peak_usage()) }}</span>
 			<check if="{{ @revision }}">
-				&middot; <a class="nolink" title="{{ @dict.current_commit_n,@revision | format }}" href="https://github.com/Alanaktion/phproject/commit/{{ @revision }}" target="_blank">{{ substr(@revision, 0, 7) }}</a>
+				&middot; <a class="nolink" title="{{ @dict.current_commit_n,@revision | format }}" href="{{ @site.url }}https://github.com/Alanaktion/phproject/commit/{{ @revision }}" target="_blank">{{ substr(@revision, 0, 7) }}</a>
 			</check>
 			<check if="{{ @plugins }}">
 				&middot; {{ count(@plugins) }} {{ @dict.plugins }}

@@ -579,7 +579,7 @@ class Issues extends \Controller {
 		$issue->owner_id = $post["owner_id"];
 		$issue->hours_total = $post["hours_remaining"] ?: null;
 		$issue->hours_remaining = $post["hours_remaining"] ?: null;
-		$issue->repeat_cycle = $post["repeat_cycle"];
+		$issue->repeat_cycle = $post["repeat_cycle"] != "none" ? $post["repeat_cycle"] : null;
 		$issue->sprint_id = $post["sprint_id"];
 
 		if(!empty($post["due_date"])) {

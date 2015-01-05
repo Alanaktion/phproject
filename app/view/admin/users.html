@@ -8,7 +8,7 @@
 <div class="container">
 	<div class="clearfix">
 		<div class="pull-right">
-			<a href="admin/users/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new_user }}</a>
+			<a href="{{ @site.url }}admin/users/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new_user }}</a>
 		</div>
 		<include href="blocks/admin/tabs.html" />
 	</div>
@@ -27,13 +27,13 @@
 		<tbody>
 			<repeat group="{{ @users }}" value="{{ @user }}">
 				<tr onclick="self.location='admin/users/{{ @user.id }}'" style="cursor: pointer">
-					<td><a href="admin/users/{{ @user.id }}">{{ @user.id }}</a></td>
+					<td><a href="{{ @site.url }}admin/users/{{ @user.id }}">{{ @user.id }}</a></td>
 					<td>{{ @user.username }}</td>
 					<td>{{ @user.email }}</td>
 					<td>{{ @user.name }}</td>
 					<td>{{ ucfirst(@user.role) }}</td>
 					<td><span class="badge" style="background-color: #{{ @user.task_color }};">&ensp;</span>&ensp;#{{ @user.task_color }}</td>
-					<td><a href="admin/users/{{ @user.id }}/delete" class="has-tooltip" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-trash"></span></a></td>
+					<td><a href="{{ @site.url }}admin/users/{{ @user.id }}/delete" class="has-tooltip" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-trash"></span></a></td>
 				</tr>
 			</repeat>
 		</tbody>

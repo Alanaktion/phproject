@@ -9,12 +9,12 @@
 	<div class="row">
 		<div class="col-md-12">
 			<ul class="nav nav-tabs">
-				<li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
-				<li><a href="#password" data-toggle="tab">{{ @dict.password }}</a></li>
+				<li class="active"><a href="{{ @site.url }}#profile" data-toggle="tab">Profile</a></li>
+				<li><a href="{{ @site.url }}#password" data-toggle="tab">{{ @dict.password }}</a></li>
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane fade in active" id="profile">
-					<form class="form-horizontal" role="form" action="user" method="post">
+					<form class="form-horizontal" role="form" action="{{ @site.url }}user" method="post">
 						<div class="form-group">
 							<label for="opass" class="col-sm-2 control-label label-sm">{{ @dict.name }}</label>
 							<div class="col-sm-10">
@@ -74,21 +74,21 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">{{ @dict.avatar }}</label>
 							<div class="col-sm-10">
-								<p><a href="https://www.gravatar.com/emails/" target="_blank" class="img-border img-border-rounded"><img src="{{ @user_obj->avatar(96) }}" class="img-rounded profile-picture" alt="Gravatar"></a></p>
+								<p><a href="{{ @site.url }}https://www.gravatar.com/emails/" target="_blank" class="img-border img-border-rounded"><img src="{{ @user_obj->avatar(96) }}" class="img-rounded profile-picture" alt="Gravatar"></a></p>
 								<form style="display: none;"></form>
-								<form class="clearfix" method="post" enctype="multipart/form-data" action="user/avatar">
+								<form class="clearfix" method="post" enctype="multipart/form-data" action="{{ @site.url }}user/avatar">
 									<input type="file" name="avatar" id="input_avatar" class="pull-left">
 									<button type="submit" class="btn btn-default btn-sm pull-left nojs">{{ @dict.upload }}</button>
 								</form>
 								<check if="{{ empty($user->avatar_filename) }}">
-									<p class="help-block"><a href="https://www.gravatar.com/emails/" target="_blank">{{ @dict.edit_on_gravatar }}</a></p>
+									<p class="help-block"><a href="{{ @site.url }}https://www.gravatar.com/emails/" target="_blank">{{ @dict.edit_on_gravatar }}</a></p>
 								</check>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="tab-pane fade" id="password">
-					<form class="form-horizontal" role="form" action="user" method="post">
+					<form class="form-horizontal" role="form" action="{{ @site.url }}user" method="post">
 						<div class="form-group">
 							<label for="opass" class="col-sm-2 control-label label-sm">{{ @dict.current_password }}</label>
 							<div class="col-sm-10">

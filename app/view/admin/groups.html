@@ -8,7 +8,7 @@
 <div class="container">
 	<div class="clearfix">
 		<div class="pull-right">
-			<a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#new" onclick="window.setTimeout('$(\'#input_name\').focus()',10);">
+			<a href="{{ @site.url }}#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#new" onclick="window.setTimeout('$(\'#input_name\').focus()',10);">
 				<span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new }}
 			</a>
 		</div>
@@ -27,11 +27,11 @@
 		<tbody>
 			<repeat group="{{ @groups }}" value="{{ @group }}">
 				<tr onclick="self.location='admin/groups/{{ @group.id }}'" style="cursor: pointer">
-					<td><a href="admin/groups/{{ @group.id }}">{{ @group.id }}</a></td>
+					<td><a href="{{ @site.url }}admin/groups/{{ @group.id }}">{{ @group.id }}</a></td>
 					<td>{{ @group.name }}</td>
 					<td>{{ @group.count }}</td>
 					<td><span class="badge" style="background-color: #{{ @group.task_color }};">&ensp;</span>&ensp;#{{ @group.task_color }}</td>
-					<td><a href="admin/groups/{{ @group.id }}/delete" class="has-tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></a></td>
+					<td><a href="{{ @site.url }}admin/groups/{{ @group.id }}/delete" class="has-tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></a></td>
 				</tr>
 			</repeat>
 		</tbody>
@@ -43,7 +43,7 @@
 </div>
 <div class="modal" id="new" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">
-		<form class="modal-content" action="admin/groups/new" method="post">
+		<form class="modal-content" action="{{ @site.url }}admin/groups/new" method="post">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#input_name').val('');">&times;</button>
 				<h4 class="modal-title">{{ @dict.new }}</h4>

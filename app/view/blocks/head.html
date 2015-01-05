@@ -1,24 +1,9 @@
 <meta charset="utf-8">
-<base href="{{ @site.url }}">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{{ @site.description }}">
 <meta name="generator" content="alanaktion/phproject">
-<check if="{{ !empty(@title) }}">
-	<true>
-		<title>{{ @title }} - {{ @site.name }}</title>
-	</true>
-	<false>
-		<title>{{ @site.name }}</title>
-	</false>
-</check>
-<check if="{{ empty(@user.theme) }}">
-	<true>
-		<link rel="stylesheet" href="{{ @site.theme }}">
-	</true>
-	<false>
-		<link rel="stylesheet" href="{{ @user.theme }}">
-	</false>
-</check>
-<link rel="stylesheet" href="minify/css/style.css,datepicker.css">
-<link rel="stylesheet" href="css/emote.css">
+<title>{{ empty(@title) ? @site.name : @title . ' - ' . @site.name }}</title>
+<link rel="stylesheet" href="{{ @site.url }}{{ @site.url }}{{ empty(@user.theme) ? @site.theme : @user.theme }}">
+<link rel="stylesheet" href="{{ @site.url }}{{ @site.url }}minify/css/style.css,datepicker.css">
+<link rel="stylesheet" href="{{ @site.url }}{{ @site.url }}css/emote.css">

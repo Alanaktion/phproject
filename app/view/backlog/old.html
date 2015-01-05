@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<include href="blocks/head.html" />
-	<link rel="stylesheet" href="css/backlog.css">
+	<link rel="stylesheet" href="{{ @site.url }}css/backlog.css">
 </head>
 <body>
 <include href="blocks/navbar.html" />
@@ -10,7 +10,7 @@
 	<div class="row" id="backlog">
 		<div class="col-md-6">
 		<p>
-			<a href="backlog" class="btn btn-default btn-sm">
+			<a href="{{ @site.url }}backlog" class="btn btn-default btn-sm">
 			<span class="glyphicon glyphicon-chevron-left"></span>&ensp;Future Sprints
 			</a>
 		</p>
@@ -31,8 +31,8 @@
 			<repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
 				<div class="panel panel-default">
 					<div class="panel-heading has-buttons">
-						<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
-						<a href="taskboard/{{ @sprint.id }}" class="btn btn-default btn-xs pull-right">
+						<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="{{ @site.url }}#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
+						<a href="{{ @site.url }}taskboard/{{ @sprint.id }}" class="btn btn-default btn-xs pull-right">
 							<span class="glyphicon glyphicon-list"></span> {{ @dict.taskboard }}
 						</a>
 					</div>
@@ -41,7 +41,7 @@
 							<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
 								<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 									<span class="title">
-										<a href="issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
+										<a href="{{ @site.url }}issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
 										{{ @project.name }}
 									</span>
 									<span class="badge">{{ @project.status_name }}</span>

@@ -19,13 +19,13 @@
 			<ul id="members" class="list-unstyled">
 				<repeat group="{{ @members }}" value="{{ @val }}">
 					<li data-user-id="{{ @val.user_id }}">
-						<a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+						<a href="{{ @site.url }}#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
 						<check if="{{ @val.manager }}">
 							<true>
 								<span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="glyphicon glyphicon-star"></span></span>&nbsp;
 							</true>
 							<false>
-								<a href="admin/groups/{{ @group.id }}/setmanager/{{ @val.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
+								<a href="{{ @site.url }}admin/groups/{{ @group.id }}/setmanager/{{ @val.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
 							</false>
 						</check>
 						{{ @val.user_name }}
@@ -87,7 +87,7 @@ $(function(){
 		$.post('/admin/groups/ajax', $(this).serialize());
 		$('#adduser select option:selected').each(function(i) {
 			$this = $(this);
-			$('<li />').data('user-id', $this.val()).html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $this.text()).appendTo('#members');
+			$('<li />').data('user-id', $this.val()).html('<a href="{{ @site.url }}#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $this.text()).appendTo('#members');
 		});
 		e.preventDefault();
 	});

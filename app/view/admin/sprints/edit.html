@@ -7,7 +7,7 @@
 <include href="blocks/navbar.html" />
 <div class="container">
 	<include href="blocks/admin/tabs.html" />
-	<form action="admin/sprints/{{@sprint.id}}" method="post" role="form" class="form-horizontal" autocomplete="off">
+	<form action="{{ @site.url }}admin/sprints/{{@sprint.id}}" method="post" role="form" class="form-horizontal" autocomplete="off">
 		<legend>{{ @dict.edit_sprint }}</legend>
 		<div class="form-group">
 			<label for="name" class="col-md-2 control-label label-sm">{{ @dict.name }}</label>
@@ -30,7 +30,7 @@
 		<div class="form-group">
 			<div class="col-md-10 col-md-offset-2">
 				<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save }}</button>
-				<a href="admin/sprints" class="btn btn-default btn-sm">{{ @dict.cancel }}</a>
+				<a href="{{ @site.url }}admin/sprints" class="btn btn-default btn-sm">{{ @dict.cancel }}</a>
 			</div>
 		</div>
 	</form>
