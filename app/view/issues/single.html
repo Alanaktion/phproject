@@ -140,7 +140,7 @@
 
 				<check if="{{ @issue.repeat_cycle && @issue.repeat_cycle != 'none' }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>
-					<dd>{{ ucfirst(@issue.repeat_cycle)' }}</dd>
+					<dd>{{ ucfirst(@issue.repeat_cycle) }}</dd>
 				</check>
 
 				<check if="{{ !empty(@issue.hours_spent) }}">
