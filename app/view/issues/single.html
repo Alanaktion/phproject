@@ -385,6 +385,7 @@ $(function() {
 	$('#comment_form').submit(function(e) {
 		var $this = $(this);
 		if($this.children('textarea').val() !== '') {
+			$('#comment_form').prop('disabled', true);
 			$.post($this.attr('action'), $this.serialize(), function(data) {
 				if(data.error) {
 					return;
