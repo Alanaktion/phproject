@@ -268,7 +268,7 @@ class User extends \Controller {
 
 
 			$issue = new \Model\Issue\Detail;
-			$issues = $issue->paginate(0, 100, array("closed_date IS NULL AND deleted_date IS NULL AND (owner_id = ? OR author_id = ?)", $user->id, $user->id));
+			$issues = $issue->paginate(0, 100, array("status_closed = '0' AND deleted_date IS NULL AND (owner_id = ? OR author_id = ?)", $user->id, $user->id));
 			$f3->set("issues", $issues);
 
 			$this->_render("user/single.html");

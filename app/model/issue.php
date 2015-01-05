@@ -6,15 +6,15 @@ class Issue extends \Model {
 
 	protected
 		$_table_name = "issue",
-		$_heirarchy = array(),
-		$_children = array();
+		$_heirarchy = null,
+		$_children = null;
 
 	/**
 	 * Get complete parent list for issue
 	 * @return array
 	 */
-	public function hierarchy() {
-		if($this->_heirarchy) {
+	public function getAncestors() {
+		if($this->_heirarchy !== null) {
 			return $this->_heirarchy;
 		}
 
@@ -179,6 +179,11 @@ class Issue extends \Model {
 	public function save($notify = true) {
 		$f3 = \Base::instance();
 
+		// Catch empty sprint at the lowest level here
+		if($this->get("sprint_id") === 0) {
+			$this->set("sprint_id", null);
+		}
+
 		// Censor credit card numbers if enabled
 		if($f3->get("security.block_ccs")) {
 			if(preg_match("/([0-9]{3,4}-){3}[0-9]{3,4}/", $this->get("description"))) {
@@ -317,11 +322,11 @@ class Issue extends \Model {
 	 * @return array
 	 */
 	public function getChildren() {
-		if($this->_children) {
+		if($this->_children !== null) {
 			return $this->_children;
 		}
-		$this->_children = $this->find(array("parent_id = ?", $this->get("id")));
-		return $this->_children;
+
+		return $this->_children ?: $this->_children = $this->find(array("parent_id = ? AND deleted_date IS NULL", $this->get("id")));
 	}
 
 }
