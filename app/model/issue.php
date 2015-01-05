@@ -99,7 +99,7 @@ class Issue extends \Model {
 		}
 
 		// Create a new task if repeating
-		if($this->get("closed_date") && $this->get("repeat_cycle") != "none") {
+		if($this->get("closed_date") && $this->get("repeat_cycle") && $this->get("repeat_cycle") != "none") {
 
 			$repeat_issue = new \Model\Issue();
 			$repeat_issue->name = $this->get("name");
@@ -141,7 +141,7 @@ class Issue extends \Model {
 			$repeat_issue->save();
 			$notification = \Helper\Notification::instance();
 			$notification->issue_create($repeat_issue->id);
-			$this->set("repeat_cycle", "none");
+			$this->set("repeat_cycle", null);
 		}
 
 		// Move all non-project children to same sprint
