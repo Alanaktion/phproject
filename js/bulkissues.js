@@ -1,7 +1,6 @@
 $("#bulk-submit").click(function() {
 	$('#form1 :input[isacopy]').remove();
 	$('#filter :checkbox:checked').not(':submit').clone().hide().attr('isacopy','y').appendTo('#bulk-form');
-
 });
 
 $(function() {

@@ -1,7 +1,7 @@
 <ul class="list-unstyled" id="watchers-list">
 	<repeat group="{{ @watchers }}" value="{{ @watcher }}">
 		<li data-user-id="{{ @watcher.id }}">
-			<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;{{ @watcher.name }}
+			<a href="{{ @site.url }}#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;{{ @watcher.name }}
 		</li>
 	</repeat>
 </ul>

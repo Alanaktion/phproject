@@ -25,7 +25,7 @@
 					<td>{{ @meta.version }}</td>
 					<td>
 						<check if="{{ is_callable(@method) }}">
-							<a href="admin/plugins/{{ @key }}">Details</a>
+							<a href="{{ @site.url }}admin/plugins/{{ @key }}">Details</a>
 						</check>
 					</td>
 				</tr>

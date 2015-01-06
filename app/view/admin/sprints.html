@@ -8,7 +8,7 @@
 <div class="container">
 	<div class="clearfix">
 		<div class="pull-right">
-			<a href="admin/sprints/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new }}</a>
+			<a href="{{ @site.url }}admin/sprints/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new }}</a>
 		</div>
 		<include href="blocks/admin/tabs.html" />
 	</div>
@@ -23,8 +23,8 @@
 		</thead>
 		<tbody>
 			<repeat group="{{ @sprints }}" value="{{ @sprint }}">
-				<tr data-sprint-id="{{ @sprint.id }}" onclick="self.location='admin/sprints/{{ @sprint.id }}'" style="cursor: pointer">
-					<td><a href="admin/sprints/{{ @sprint.id }}">{{ @sprint.id }}</a></td>
+				<tr data-sprint-id="{{ @sprint.id }}" onclick="self.location='{{ @site.url }}admin/sprints/{{ @sprint.id }}'" style="cursor: pointer">
+					<td><a href="{{ @site.url }}admin/sprints/{{ @sprint.id }}">{{ @sprint.id }}</a></td>
 					<td>{{ @sprint.name }}</td>
 					<td>{{ @sprint.start_date }}</td>
 					<td>{{ @sprint.end_date }}</td>
