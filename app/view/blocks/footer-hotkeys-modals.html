@@ -132,7 +132,7 @@ $(document).ready(function() {
 </div>
 <script>
 var session_ping = function() {
-	$.get('ping', function(data) {
+	$.get(site_url + 'ping', function(data) {
 		if(data.is_logged_in && $('#modal-loggedout.in').length) {
 			$('#modal-loggedout').modal('hide');
 		} else if(!data.is_logged_in && !$('#modal-loggedout.in').length) {

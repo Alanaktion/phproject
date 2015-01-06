@@ -188,7 +188,7 @@
 							<repeat group="{{ @files }}" value="{{ @file }}">
 								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @this->formatFilesize(@file.filesize) }}">
 									<a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">
-										<img class src="files/thumb/96-{{ @file.id }}.png" /><br />
+										<img class src="{{ @site.url }}files/thumb/96-{{ @file.id }}.png" /><br />
 										{{ @file.filename }}
 									</a>
 									<button class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
@@ -259,7 +259,7 @@
 						<repeat group="{{ @comments }}" value="{{ @comment }}">
 							<div class="media" id="c-{{ @comment.id }}" data-id="{{ @comment.id }}">
 								<a class="pull-left" href="{{ @site.url }}user/{{ @comment.user_username }}">
-									<img class="profile-picture media-object img-rounded" src="avatar/48-{{ @comment.user_id }}.png" alt>
+									<img class="profile-picture media-object img-rounded" src="{{ @site.url }}avatar/48-{{ @comment.user_id }}.png" alt>
 								</a>
 								<div class="media-body">
 									<p class="media-heading clearfix">
@@ -355,7 +355,7 @@
 	</div>
 </div>
 
-<script src="minify/js/bootstrap-datepicker.js,stupidtable.min.js"></script>
+<script src="{{ @site.url }}minify/js/bootstrap-datepicker.js,stupidtable.min.js"></script>
 <script type="text/javascript">
 $(function() {
 
@@ -403,13 +403,13 @@ $(function() {
 	});
 
 	// Load history, watchers, and related issues
-	$.get('issues/{{ @issue.id }}/history', {}, function(data) {
+	$.get(site_url + 'issues/{{ @issue.id }}/history', {}, function(data) {
 		$('#history').empty().append(data.html);
 		$('#tab_history').html('{{ @dict.history }}&ensp;<span class="badge">' + data.total + '</span>');
 	}, 'json').error(function() {
 		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_history }}'));
 	});
-	$.get('issues/{{ @issue.id }}/watchers', {}, function(data) {
+	$.get(site_url + 'issues/{{ @issue.id }}/watchers', {}, function(data) {
 		$('#watchers').empty().append(data.html);
 		$('#tab_watchers').html('{{ @dict.watchers }}&ensp;<span class="badge" id="watchers-badge">' + data.total + '</span>');
 
@@ -444,7 +444,7 @@ $(function() {
 	}, 'json').error(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
 	});
-	$.get('issues/{{ @issue.id }}/related', {}, function(data) {
+	$.get(site_url + 'issues/{{ @issue.id }}/related', {}, function(data) {
 		$('#related').empty().append(data.html);
 		$('#tab_related').html($('#tab_related').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 		$('#related table').stupidtable();
@@ -494,17 +494,17 @@ $(function() {
 });
 
 function restoreFile(file_id) {
-	$.post("issues/file/undelete", {id: file_id}, function(data) {
+	$.post(site_url + 'issues/file/undelete', {id: file_id}, function(data) {
 		window.location = window.location;
 	});
 }
 
 function watch_issue() {
-	$.post('issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
+	$.post(site_url + 'issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="glyphicon glyphicon-eye-close"></span>&ensp;{{ @dict.unwatch }}');
 }
 function unwatch_issue() {
-	$.post('issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
+	$.post(site_url + 'issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="glyphicon glyphicon-eye-open"></span>&ensp;{{ @dict.watch }}');
 }
 </script>

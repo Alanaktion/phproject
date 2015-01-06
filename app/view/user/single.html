@@ -3,8 +3,8 @@
 <head>
 	<include href="blocks/head.html" />
 	<check if="{{ @user.api_key }}">
-		<link rel="alternate" type="application/atom+xml" title="{{ @dict.assigned_issues }}" href="{{ @site.url }}{{ @site.url }}atom.xml?type=assigned&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
-		<link rel="alternate" type="application/atom+xml" title="{{ @dict.created_issues }}" href="{{ @site.url }}{{ @site.url }}atom.xml?type=created&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
+		<link rel="alternate" type="application/atom+xml" title="{{ @dict.assigned_issues }}" href="{{ @site.url }}atom.xml?type=assigned&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
+		<link rel="alternate" type="application/atom+xml" title="{{ @dict.created_issues }}" href="{{ @site.url }}atom.xml?type=created&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
 	</check>
 	<style type="text/css">
 	.chart-legend div {
@@ -80,7 +80,7 @@
 		</div>
 		<include href="blocks/footer.html" />
 	</div>
-	<script src="js/chart.js"></script>
+	<script src="{{ @site.url }}js/chart.js"></script>
 	<check if="{{ @this_user.role != 'group' }}">
 		<true>
 			<set stats="{{ @this_user->stats() }}" />
