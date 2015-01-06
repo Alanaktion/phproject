@@ -42,7 +42,7 @@
 	</check>
 	<div class="clearfix">
 		<h3 class="pull-left issue-heading">
-			{{ @issue.name }} <small>#{{ @issue.id }}</small>
+			{{ @issue.name | esc }} <small>#{{ @issue.id }}</small>
 		</h3>
 		<div class="pull-right">
 			<check if="{{ @issue.status_closed }}">
@@ -89,10 +89,10 @@
 				<p class="pull-left">
 					<check if="{{ @author.username }}">
 						<true>
-							<a href="{{ @site.url }}user/{{ @author.username }}" class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name }}</a>
+							<a href="{{ @site.url }}user/{{ @author.username }}" class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</a>
 						</true>
 						<false>
-							<span class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name }}</span>
+							<span class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</span>
 						</false>
 					</check>
 					<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@issue.created_date))) }}
@@ -102,7 +102,7 @@
 			<dl class="dl-inline">
 				<check if="{{ @issue.sprint_id }}">
 					<dt>{{ @dict.cols.sprint }}</dt>
-					<dd><a href="{{ @site.url }}taskboard/{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
+					<dd><a href="{{ @site.url }}taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
 				</check>
 
 				<dt>{{ @dict.cols.type }}</dt>
@@ -125,10 +125,10 @@
 						<true>
 							<check if="{{ @owner.username }}">
 								<true>
-									<a href="{{ @site.url }}user/{{ @owner.username }}">{{ @owner.name }}</a>
+									<a href="{{ @site.url }}user/{{ @owner.username }}">{{ @owner.name | esc }}</a>
 								</true>
 								<false>
-									{{ @owner.name }}
+									{{ @owner.name | esc }}
 								</false>
 							</check>
 						</true>
@@ -186,10 +186,10 @@
 					<div class="tab-pane fade in active" id="files-tiles">
 						<ul class="list-inline file-list">
 							<repeat group="{{ @files }}" value="{{ @file }}">
-								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @this->formatFilesize(@file.filesize) }}">
-									<a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">
+								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @this->formatFilesize(@file.filesize) }}">
+									<a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename | esc }}" data-mime="{{ @file.content_type }}" target="_blank">
 										<img class src="{{ @site.url }}files/thumb/96-{{ @file.id }}.png" /><br />
-										{{ @file.filename }}
+										{{ @file.filename | esc }}
 									</a>
 									<button class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
 								</li>
@@ -210,8 +210,8 @@
 								<repeat group="{{ @files }}" value="{{ @file }}">
 									<tr id="ft-{{ @file.id }}" data-id="{{ @file.id }}">
 										<td>{{ @file.id }}</td>
-										<td><a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename }}</a></td>
-										<td>{{ @file.user_name }}</td>
+										<td><a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename | esc }}</a></td>
+										<td>{{ @file.user_name | esc }}</td>
 										<td>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
 										<td>{{ @this->formatFilesize(@file.filesize) }}</td>
 										<td><button class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button></td>
@@ -272,10 +272,10 @@
 									<check if="{{ @comment.file_id }}">
 										<check if="{{ @comment.file_deleted_date }}">
 											<true>
-												<div><b>{{ @dict.attached_file }}:</b> <span style="text-decoration: line-through;">{{@comment.file_filename}}</span> <span class="text-danger">[{{ @dict.deleted }}]</span></div>
+												<div><b>{{ @dict.attached_file }}:</b> <span style="text-decoration: line-through;">{{ @comment.file_filename | esc }}</span> <span class="text-danger">[{{ @dict.deleted }}]</span></div>
 											</true>
 											<false>
-												<div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="{{ @site.url }}files/{{ @comment.file_id }}/{{ @comment.file_filename }}" target="_blank">{{@comment.file_filename}}</a></div>
+												<div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="{{ @site.url }}files/{{ @comment.file_id }}/{{ @comment.file_filename | esc }}" target="_blank">{{ @comment.file_filename | esc }}</a></div>
 											</false>
 										</check>
 									</check>
@@ -416,7 +416,7 @@ $(function() {
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
 			$li = $(this).parents('li');
-			$.post('issues/{{ @issue.id }}', {
+			$.post(site_url + 'issues/{{ @issue.id }}', {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
 			});
@@ -428,7 +428,7 @@ $(function() {
 		});
 		$('#add-watcher').submit(function(e) {
 			$this = $(this);
-			$.post('issues/{{ @issue.id }}', $this.serialize());
+			$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
 
 			$select = $this.find('select');
 			$('<li />')
@@ -467,7 +467,7 @@ $(function() {
 	$(".file-list").on("click", ".delete", function(e) {
 		var $file = $(this).parents("li, tr");
 		$file.fadeTo(100, 0.5).popover("hide");
-		$.post("issues/file/delete", {id: $file.data("id")}, function(data) {
+		$.post(site_url + "issues/file/delete", {id: $file.data("id")}, function(data) {
 			$("#alert span").html('File deleted. <a href="{{ @site.url }}javascript:void(0);" onclick="restoreFile(' + data.id + ')">Undo</a>');
 			$("#alert").show();
 			$(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();
@@ -485,7 +485,7 @@ $(function() {
 		if(confirm("{{ @dict.comment_delete_confirm }}")) {
 			var $comment = $(this).parents(".media");
 			$comment.css("text-decoration", "line-through");
-			jQuery.post("issues/comment/delete", {id: $comment.data("id")}, function(data) {
+			jQuery.post(site_url + "issues/comment/delete", {id: $comment.data("id")}, function(data) {
 				$comment.remove();
 			});
 		}

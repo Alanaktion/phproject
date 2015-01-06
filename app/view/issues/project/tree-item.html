@@ -1,9 +1,9 @@
 <check if="{{ @issue.closed_date }}">
 	<true>
-		<a href="{{ @site.url }}issues/{{ @issue.id }}" class="text-muted"><s>#{{ @issue.id }} &ndash; {{ @issue.name }}</s></a>
+		<a href="{{ @site.url }}issues/{{ @issue.id }}" class="text-muted"><s>#{{ @issue.id }} &ndash; {{ @issue.name | esc }}</s></a>
 	</true>
 	<false>
-		<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} &ndash; {{ @issue.name }}</a>
+		<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} &ndash; {{ @issue.name | esc }}</a>
 	</false>
 </check>
 <check if="{{ @children }}">

@@ -183,10 +183,12 @@ class Session extends Mapper {
 		}
 		$csrf=$fw->hash($fw->get('ROOT').$fw->get('BASE')).'.'.
 			$fw->hash(mt_rand());
+		/* Disabling CSRF for performance as it's not currently used
 		if ($this->load(array('session_id=?',$this->sid=session_id()))) {
 			$this->set('csrf',$csrf);
 			$this->save();
 		}
+		*/
 	}
 
 }

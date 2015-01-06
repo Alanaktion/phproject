@@ -10,7 +10,7 @@
 	<form action="{{ @site.url }}admin/sprints/{{@sprint.id}}" method="post" role="form" class="form-horizontal" autocomplete="off">
 		<legend>{{ @dict.edit_sprint }}</legend>
 		<div class="form-group">
-			<label for="name" class="col-md-2 control-label label-sm">{{ @dict.name }}</label>
+			<label for="name" class="col-md-2 control-label label-sm">{{ @dict.name | esc }}</label>
 			<div class="col-md-10">
 				<input class="form-control input-sm" id="name" type="text" name="name" value="{{ @sprint.name }}">
 			</div>

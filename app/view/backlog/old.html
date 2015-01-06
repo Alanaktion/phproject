@@ -42,7 +42,7 @@
 								<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 									<span class="title">
 										<a href="{{ @site.url }}issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-										{{ @project.name }}
+										{{ @project.name | esc }}
 									</span>
 									<span class="badge">{{ @project.status_name }}</span>
 								</li>

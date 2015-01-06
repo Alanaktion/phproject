@@ -18,7 +18,7 @@
 		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @site.url }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
 		<h4>Issues due today:</h4>
 		<repeat group="{{ @issues }}" value="{{ @issue }}">
-			<p><a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }}: {{ @issue.name }}</a></p>
+			<p><a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }}: {{ @issue.name | esc }}</a></p>
 		</repeat>
 	</div>
 </body>

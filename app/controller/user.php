@@ -356,9 +356,10 @@ class User extends \Controller {
 
 			// Helper function for recursive tree rendering
 			$recurDisplay = function($issue) use(&$recurDisplay) {
+				$url = \Base::instance()->get("site.url");
 				echo "<li>";
 				if(!empty($issue["id"])) {
-					echo '<a href="issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
+					echo '<a href="'.$url.'issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
 					if($issue["author_name"]) {
 						echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
 					}
