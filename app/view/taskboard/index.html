@@ -305,7 +305,7 @@
 
 			// Preload burndown data
 			$.ajax({
-				url: "taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}",
+				url: site_url + "taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}",
 				success: function(data) {
 					BurndownData = data;
 					BurndownReady = true;
