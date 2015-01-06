@@ -138,7 +138,7 @@
 					</check>
 				</dd>
 
-				<check if="{{ @issue.repeat_cycle != 'none' }}">
+				<check if="{{ @issue.repeat_cycle && @issue.repeat_cycle != 'none' }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>
 					<dd>{{ ucfirst(@issue.repeat_cycle) }}</dd>
 				</check>
@@ -161,7 +161,7 @@
 					<dd>{{ date("D, M j, Y", strtotime(@issue.start_date)) }}</dd>
 				</check>
 
-				<check if="{{ strtotime(@issue.due_date) }}">
+				<check if="{{ @issue.due_date && strtotime(@issue.due_date) }}">
 					<dt>{{ @dict.cols.due_date }}</dt>
 					<dd>{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</dd>
 				</check>
