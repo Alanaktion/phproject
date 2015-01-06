@@ -17,9 +17,13 @@ function showHeader($title) {
 	}
 }
 
-if(PHP_SAPI != 'cli') {
-	echo "<h1>Unit Test Results</h1>\n";
-}
+if(PHP_SAPI != 'cli') { ?>
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, minimum-scale=1, width=device-width">
+<h1>Unit Test Results</h1>
+<?php }
 
 showHeader("Issues");
 include "issues.php";
