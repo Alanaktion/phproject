@@ -13,22 +13,22 @@
 			<form role="form" onsubmit="return false;">
 				<div class="form-group">
 					<label class="sr-only" for="group-name">{{ @dict.group_name }}</label>
-					<input type="text" class="form-control input-lg" id="group-name" name="name" value="{{ @group.name }}">
+					<input type="text" class="form-control input-lg" id="group-name" name="name" value="{{ @group.name | esc }}">
 				</div>
 			</form>
 			<ul id="members" class="list-unstyled">
-				<repeat group="{{ @members }}" value="{{ @val }}">
-					<li data-user-id="{{ @val.user_id }}">
+				<repeat group="{{ @members }}" value="{{ @member }}">
+					<li data-user-id="{{ @member.user_id }}">
 						<a href="{{ @site.url }}#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
-						<check if="{{ @val.manager }}">
+						<check if="{{ @member.manager }}">
 							<true>
 								<span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="glyphicon glyphicon-star"></span></span>&nbsp;
 							</true>
 							<false>
-								<a href="{{ @site.url }}admin/groups/{{ @group.id }}/setmanager/{{ @val.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
+								<a href="{{ @site.url }}admin/groups/{{ @group.id }}/setmanager/{{ @member.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
 							</false>
 						</check>
-						{{ @val.user_name }}
+						{{ @member.user_name }}
 					</li>
 				</repeat>
 			</ul>
@@ -39,8 +39,8 @@
 				<input type="hidden" name="group_id" value="{{ @group.id }}">
 				<div class="form-group">
 					<select name="user[]" style="height: 160px;" class="form-control" multiple>
-						<repeat group="{{ @users }}" value="{{ @val }}">
-							<option value="{{ @val.id }}">{{ @val.name }}</option>
+						<repeat group="{{ @users }}" value="{{ @item }}">
+							<option value="{{ @item.id }}">{{ @item.name | esc }}</option>
 						</repeat>
 					</select>
 				</div>

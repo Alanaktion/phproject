@@ -20,7 +20,7 @@
 				<set meta="{{ @plugin->_meta() }}" />
 				{~ @method = array(@plugin, '_admin'); ~}
 				<tr>
-					<td>{{ @meta.package }}</td>
+					<td>{{ @meta.package | esc }}</td>
 					<td>{{ @meta.author | esc }}</td>
 					<td>{{ @meta.version }}</td>
 					<td>

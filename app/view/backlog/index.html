@@ -23,7 +23,7 @@
 							<check if="{{ count(@groups) }}">
 								<li class="divider"></li>
 								<repeat group="{{ @groups }}" value="{{ @group }}">
-									<li class="{{ @groupid == @group.id ? 'active' : '' }}"><a href="{{ @site.url }}backlog/groups/{{ @group.id }}">{{ @group.name }}</a></li>
+									<li class="{{ @groupid == @group.id ? 'active' : '' }}"><a href="{{ @site.url }}backlog/groups/{{ @group.id }}">{{ @group.name | esc }}</a></li>
 								</repeat>
 							</check>
 						</ul>
@@ -38,7 +38,7 @@
 							<li class="list-group-item" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 								<span class="title">
 									<a href="{{ @site.url }}issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-									{{ @project.name }}
+									{{ @project.name | esc }}
 								</span>
 								<span class="badge">{{ @project.priority_name }}</span>
 							</li>
@@ -62,7 +62,7 @@
 								<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 									<span class="title">
 										<a href="{{ @site.url }}issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-										{{ @project.name }}
+										{{ @project.name | esc }}
 									</span>
 									<span class="badge">{{ @project.priority_name }}</span>
 								</li>

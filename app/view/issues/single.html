@@ -102,22 +102,22 @@
 			<dl class="dl-inline">
 				<check if="{{ @issue.sprint_id }}">
 					<dt>{{ @dict.cols.sprint }}</dt>
-					<dd><a href="{{ @site.url }}taskboard/{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
+					<dd><a href="{{ @site.url }}taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
 				</check>
 
 				<dt>{{ @dict.cols.type }}</dt>
 				<dd>
-					{{ @issue.type_name | esc }}
+					{{ @issue.type_name }}
 					<check if="{{ @issue.type_id == @issue_type.project }}">
 						&ndash; <a href="{{ @site.url }}issues/project/{{ @issue.id }}">{{ @dict.project_overview }}</a>
 					</check>
 				</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
-				<dd>{{ @issue.priority_name | esc }}</dd>
+				<dd>{{ @issue.priority_name }}</dd>
 
 				<dt>{{ @dict.cols.status }}</dt>
-				<dd>{{ @issue.status_name | esc }}</dd>
+				<dd>{{ @issue.status_name }}</dd>
 
 				<dt>{{ @dict.cols.assignee }}</dt>
 				<dd>
@@ -186,8 +186,8 @@
 					<div class="tab-pane fade in active" id="files-tiles">
 						<ul class="list-inline file-list">
 							<repeat group="{{ @files }}" value="{{ @file }}">
-								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @this->formatFilesize(@file.filesize) }}">
-									<a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">
+								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @this->formatFilesize(@file.filesize) }}">
+									<a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename | esc }}" data-mime="{{ @file.content_type }}" target="_blank">
 										<img class src="{{ @site.url }}files/thumb/96-{{ @file.id }}.png" /><br />
 										{{ @file.filename | esc }}
 									</a>

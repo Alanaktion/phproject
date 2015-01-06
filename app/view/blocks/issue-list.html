@@ -67,20 +67,20 @@
 					<td>
 						<select class="form-control input-sm" name="author_id">
 							<option></option>
-							<option value="{{ @user.id }}">{{ @user.name }}</option>
+							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
 							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
-										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
-										<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
+										<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+										<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
 									</check>
 								</repeat>
 							</optgroup>
 							<optgroup label="{{ @dict.users }}">
 								<repeat group="{{ @users }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
-										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
-										<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
+										<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+										<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
 									</check>
 								</repeat>
 							</optgroup>
@@ -89,20 +89,20 @@
 					<td>
 						<select class="form-control input-sm" name="owner_id">
 							<option></option>
-							<option value="{{ @user.id }}">{{ @user.name }}</option>
+							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
 							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
-										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
-										<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
+										<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+										<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
 									</check>
 								</repeat>
 							</optgroup>
 							<optgroup label="{{ @dict.users }}">
 								<repeat group="{{ @users }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
-										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
-										<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
+										<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+										<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
 									</check>
 								</repeat>
 							</optgroup>
@@ -191,25 +191,25 @@
 				<tr data-id="{{ @item.id }}" class="{{ @item.status_closed ? 'closed' : '' }}">
 					<td><input type="checkbox" name="id[]" value="{{ @item.id }}"></td>
 					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.id }}</a></td>
-					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.name }}</a></td>
+					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.name | esc }}</a></td>
 					<td>{{ @item.type_name }}</td>
 					<td>{{ @item.priority_name }}</td>
 					<td>{{ @item.status_name }}</td>
 					<td>{{ @item.parent_id ?: '' }}</td>
 					<check if="{{ @item.author_username }}">
 						<true>
-							<td><a href="{{ @site.url }}user/{{ @item.author_username }}" rel="author">{{ @item.author_name }}</a></td>
+							<td><a href="{{ @site.url }}user/{{ @item.author_username }}" rel="author">{{ @item.author_name | esc }}</a></td>
 						</true>
 						<false>
-							<td>{{ @item.author_name }}</td>
+							<td>{{ @item.author_name | esc }}</td>
 						</false>
 					</check>
 					<check if="{{ @item.owner_username }}">
 						<true>
-							<td><a href="{{ @site.url }}user/{{ @item.owner_username }}">{{ @item.owner_name }}</a></td>
+							<td><a href="{{ @site.url }}user/{{ @item.owner_username }}">{{ @item.owner_name | esc }}</a></td>
 						</true>
 						<false>
-							<td>{{ @item.owner_name }}</td>
+							<td>{{ @item.owner_name | esc }}</td>
 						</false>
 					</check>
 					<td>{{ !empty(@item.sprint_start_date) ? date("n/j/y", strtotime(@item.sprint_start_date)) : "" }}</td>

@@ -1,7 +1,7 @@
 <ul class="list-unstyled" id="watchers-list">
 	<repeat group="{{ @watchers }}" value="{{ @watcher }}">
 		<li data-user-id="{{ @watcher.id }}">
-			<a href="{{ @site.url }}#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;{{ @watcher.name }}
+			<a href="{{ @site.url }}#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;{{ @watcher.name | esc }}
 		</li>
 	</repeat>
 </ul>
@@ -10,7 +10,7 @@
 	<div class="form-group">
 		<select name="user_id" class="form-control input-sm" id="watcherselect">
 			<repeat group="{{ @users }}" value="{{ @user }}">
-				<option value="{{ @user.id }}">{{ @user.name }}</option>
+				<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
 			</repeat>
 		</select>
 	</div>
