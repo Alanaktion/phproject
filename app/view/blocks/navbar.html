@@ -134,11 +134,11 @@
 		</p>
 	</div>
 </check>
-	<div class="{{ empty(@fullwidth) ? 'container' : 'container-fluid' }}">
 <check if="{{ !empty(@site.demo) && empty(@COOKIE.demo_dismiss) }}">
+	<div class="{{ empty(@fullwidth) ? 'container' : 'container-fluid' }}">
 		<p class="alert alert-info alert-dismissable">
 			<button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="document.cookie='demo_dismiss=1';">&times;</button>
 			{{ @dict.demo_notice }}
 		</p>
-	</check>
+	</div>
 </check>
