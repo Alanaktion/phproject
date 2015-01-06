@@ -1,6 +1,6 @@
 <?php
 /**
- * Run ALL tests at once, outputting all results
+ * Run all tests at once, outputting all results
  * @package  Test
  * @author   Alan Hardman <alan@phpizza.com>
  */
@@ -26,6 +26,3 @@ include "issues.php";
 
 showHeader("Strings");
 include "strings.php";
-
-showHeader("Routes");
-include "routes.php";
