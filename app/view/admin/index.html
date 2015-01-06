@@ -46,7 +46,7 @@
 			<check if="{{ !empty(@newer_version) }}">
 				<div class="clearfix">
 					<b>{{ @dict.update_available }}:</b>
-					<form class="pull-right" action="admin" method="post">
+					<form class="pull-right" action="{{ @site.url }}admin" method="post">
 						<input type="hidden" name="action" value="updatedb">
 						<input type="hidden" name="version" value="{{@newer_version}}">
 						<button onclick="return confirm('{{ @dict.backup_db }}')" type="submit" class="btn btn-warning btn-xs">{{ @dict.update_to_n,@newer_version | format }}</button>
@@ -57,7 +57,7 @@
 		<div class="col-md-3 col-sm-6">
 			<div class="clearfix">
 				<h4 class="pull-left">Cache</h4>
-				<form class="pull-right" action="admin" method="post" style="margin-top: 10px;">
+				<form class="pull-right" action="{{ @site.url }}admin" method="post" style="margin-top: 10px;">
 					<input type="hidden" name="action" value="clearcache">
 					<button type="submit" class="btn btn-warning btn-xs">Clear Cache</button>
 				</form>

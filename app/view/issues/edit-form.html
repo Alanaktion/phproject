@@ -1,6 +1,6 @@
-<form class="form-horizontal well" role="form" action="issues/save" method="post">
+<form class="form-horizontal well" role="form" action="{{ @site.url }}issues/save" method="post">
 	<check if="{{ !empty(@issue) }}">
-		<a href="issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
+		<a href="{{ @site.url }}issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
 		<input type="hidden" name="id" value="{{ @issue.id }}">
 		<!-- Hashed original values used in saving updates -->
 		<repeat group="{{ @issue->cast() }}" key="{{ @key }}" value="{{ @value }}">
@@ -195,7 +195,7 @@
 			</check>
 			</div>
 			<check if="{{ !empty(@issue) }}">
-				<a href="issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
+				<a href="{{ @site.url }}issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
 				<button type="reset" class="btn btn-default btn-sm">{{ @dict.reset }}</button>
 			</check>
 			<check if="{{ empty(@issue) }}">

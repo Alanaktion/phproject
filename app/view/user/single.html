@@ -71,16 +71,16 @@
 			<div class="col-md-12">
 				<p>
 					{{ @dict.browse }}:&nbsp;
-					<a href="issues?status=open&amp;author_id={{ @this_user.id }}">{{ @dict.created_issues }}</a>&nbsp;
-					<a href="issues?status=open&amp;owner_id={{ @this_user.id }}">{{ @dict.assigned_issues }}</a>&nbsp;
-					<a href="user/{{ @this_user.username }}/tree">{{ @dict.issue_tree }}</a>
+					<a href="{{ @site.url }}issues?status=open&amp;author_id={{ @this_user.id }}">{{ @dict.created_issues }}</a>&nbsp;
+					<a href="{{ @site.url }}issues?status=open&amp;owner_id={{ @this_user.id }}">{{ @dict.assigned_issues }}</a>&nbsp;
+					<a href="{{ @site.url }}user/{{ @this_user.username }}/tree">{{ @dict.issue_tree }}</a>
 				</p>
 				<include href="blocks/issue-list.html" />
 			</div>
 		</div>
 		<include href="blocks/footer.html" />
 	</div>
-	<script src="js/chart.js"></script>
+	<script src="{{ @site.url }}js/chart.js"></script>
 	<check if="{{ @this_user.role != 'group' }}">
 		<true>
 			<set stats="{{ @this_user->stats() }}" />
