@@ -22,6 +22,7 @@ $test = new Test;
 
 // No output for routes
 $f3->set("QUIET", true);
+$f3->set("HALT", false);
 
 $f3->mock("GET /login");
 $test->expect(
@@ -53,15 +54,15 @@ $f3->mset(array(
 	"issue_types" => $types->find()
 ));
 
+$test->expect(
+	$user->id == 1,
+	"Force user authentication"
+);
+
 $f3->mock("GET /ping");
 $test->expect(
 	!$f3->get("ERROR"),
 	"GET /ping (active session)"
-);
-
-$test->expect(
-	$user->id == 1,
-	"Force user authentication"
 );
 
 $f3->mock("GET /");
