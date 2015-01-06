@@ -9,7 +9,6 @@ require_once "base.php";
 
 // Set up basic web environment
 $f3->mset(array(
-	"microtime" => microtime(true),
 	"site.url" => $f3->get("SCHEME") . "://" .
 		$f3->get("HOST") . $f3->get("BASE") . "/",
 	"revision" => ""
@@ -30,7 +29,8 @@ $test->expect(
 	"GET /login"
 );
 
-$f3->mock("POST /login", array("username" => "admin",		"password" => "admin"));
+$f3->mock("POST /login", array("username" => "admin",
+	"password" => "admin"));
 
 $test->expect(
 	!$f3->get("ERROR"),
