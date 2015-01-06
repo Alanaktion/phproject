@@ -75,7 +75,7 @@
 			<repeat group="{{ @taskboard }}" value="{{ @row }}">
 				<tr data-story-id="{{ @row.project.id }}" class="tb-row">
 					<td class="column column-1">
-						<div id="project_{{  @row.project.id}}" class="card story {{ @row.project.closed_date ? 'completed' : '' }}" style="border-color:#{{ @row.project.owner_task_color }};">
+						<div id="project_{{  @row.project.id}}" class="card story {{ @row.project.status_closed ? 'completed' : '' }}" style="border-color:#{{ @row.project.owner_task_color }};">
 							<div class="top">
 								<a href="issues/new/{{ @issue_type.task }}" title="Add Task" class="add-task has-tooltip pull-right" data-placement="right">
 									<span class="glyphicon glyphicon-plus"></span>

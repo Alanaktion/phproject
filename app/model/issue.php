@@ -13,7 +13,7 @@ class Issue extends \Model {
 	 * Get complete parent list for issue
 	 * @return array
 	 */
-	public function hierarchy() {
+	public function getAncestors() {
 		if($this->_heirarchy !== null) {
 			return $this->_heirarchy;
 		}
@@ -99,7 +99,7 @@ class Issue extends \Model {
 		}
 
 		// Create a new task if repeating
-		if($this->get("closed_date") && $this->get("repeat_cycle") != "none") {
+		if($this->get("closed_date") && $this->get("repeat_cycle") && $this->get("repeat_cycle") != "none") {
 
 			$repeat_issue = new \Model\Issue();
 			$repeat_issue->name = $this->get("name");
@@ -141,7 +141,7 @@ class Issue extends \Model {
 			$repeat_issue->save();
 			$notification = \Helper\Notification::instance();
 			$notification->issue_create($repeat_issue->id);
-			$this->set("repeat_cycle", "none");
+			$this->set("repeat_cycle", null);
 		}
 
 		// Move all non-project children to same sprint
@@ -178,6 +178,11 @@ class Issue extends \Model {
 	 */
 	public function save($notify = true) {
 		$f3 = \Base::instance();
+
+		// Catch empty sprint at the lowest level here
+		if($this->get("sprint_id") === 0) {
+			$this->set("sprint_id", null);
+		}
 
 		// Censor credit card numbers if enabled
 		if($f3->get("security.block_ccs")) {
@@ -321,7 +326,7 @@ class Issue extends \Model {
 			return $this->_children;
 		}
 
-		return $this->_children ?: $this->_children = $this->find(array("parent_id = ?", $this->get("id")));
+		return $this->_children ?: $this->_children = $this->find(array("parent_id = ? AND deleted_date IS NULL", $this->get("id")));
 	}
 
 }

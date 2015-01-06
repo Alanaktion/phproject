@@ -734,7 +734,7 @@ class Issues extends \Controller {
 		$f3->set("watching", !!$watching->id);
 
 		$f3->set("issue", $issue);
-		$f3->set("hierarchy", $issue->hierarchy());
+		$f3->set("ancestors", $issue->getAncestors());
 		$f3->set("type", $type);
 		$f3->set("author", $author);
 		$f3->set("owner", $owner);
@@ -974,27 +974,6 @@ class Issues extends \Controller {
 	}
 
 	/**
-	 * Get a project's descendant tree
-	 * @param  int $parent_id
-	 * @return array
-	 */
-	/*protected function _projectTree($parent_id) {
-
-		// Find child issues
-		$model = new \Model\Issue;
-		$result = $model->find(array("parent_id = ?", $parent_id));
-
-		// Build array
-		$issues = array();
-		foreach($result as $issue) {
-			$issues[] = $issue->cast() + array("children" => $this->_projectTree($issue["id"]));
-		}
-
-		// Return array
-		return $issues;
-	}*/
-
-	/**
 	 * Project Overview action
 	 * @param  Base $f3
 	 * @param  array $params
@@ -1056,7 +1035,7 @@ class Issues extends \Controller {
 						}
 					}
 				}
-				$hive = array("issue" => $issue, "children" => $children, "childrenCompleted" => $childCompleted);
+				$hive = array("issue" => $issue, "children" => $children, "childrenCompleted" => $childCompleted, "dict" => \Base::instance()->get("dict"));
 				echo "<li>";
 				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
 				if($children) {

@@ -5,12 +5,16 @@
 		<dl>
 			<?php foreach($f3->get("ERROR.trace") as $line) { ?>
 				<dt><?php echo $line["file"]; ?></dt>
-				<dd><?php echo $line["line"]; ?>: <?php echo $line["class"], $line["type"], $line["function"]; ?></dd>
+				<dd><?php echo $line["line"]; ?>: <?php echo $line["class"], $line["type"], $line["function"], "(", implode(", ", $line["args"]), ")"; ?></dd>
 			<?php } ?>
 		</dl>
+	<?php } ?>
+	<?php if($f3->get("DEBUG") >= 3) { ?>
 		<pre><?php echo $f3->get("db.instance")->log(); ?></pre>
 	<?php } ?>
 </div>
-<!-- <div class="alert alert-danger" style="position: absolute; top: 75px; right: 15px; display: inline-block;">
+<?php /*
+<div class="alert alert-danger" style="position: absolute; top: 75px; right: 15px; display: inline-block;">
 	<a href="#error-msg">Fatal Error</a>
-</div> -->
+</div>
+*/ ?>

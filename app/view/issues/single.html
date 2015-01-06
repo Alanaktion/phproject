@@ -25,10 +25,10 @@
 		</p>
 	</check>
 
-	<check if="{{ count(@hierarchy) > 1 }}">
+	<check if="{{ count(@ancestors) > 1 }}">
 		<div class="clearfix">
 			<ol class="breadcrumb pull-left">
-				<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
+				<repeat group="{{ @ancestors }}" value="{{ @crumb }}">
 					<check if="{{ @crumb.id != @issue.id }}">
 						<li class="active">
 							<a href="issues/{{ @crumb.id }}">
@@ -45,17 +45,17 @@
 			{{ @issue.name }} <small>#{{ @issue.id }}</small>
 		</h3>
 		<div class="pull-right">
-			<check if="{{ !@issue.closed_date }}">
-				<true>
+			<check if="{{ @issue.status_closed }}">
+				<false>
 					<a id="btn-issue-close" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
 						<span class="glyphicon glyphicon-check"></span>&ensp;{{ @dict.complete }}
 					</a>
-				</true>
-				<false>
+				</false>
+				<true>
 					<a id="btn-issue-reopen" href="issues/reopen/{{ @issue.id }}" class="btn btn-warning btn-xs">
 						<span class="glyphicon glyphicon-repeat"></span>&ensp;{{ @dict.reopen }}
 					</a>
-				</false>
+				</true>
 			</check>
 			<a id="btn-copy" href="issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
 				<span class="glyphicon glyphicon-file"></span>&ensp;{{ @dict.copy }}
@@ -106,7 +106,12 @@
 				</check>
 
 				<dt>{{ @dict.cols.type }}</dt>
-				<dd>{{ @issue.type_name }}</dd>
+				<dd>
+					{{ @issue.type_name }}
+					<check if="{{ @issue.type_id == @issue_type.project }}">
+						&ndash; <a href="issues/project/{{ @issue.id }}">{{ @dict.project_overview }}</a>
+					</check>
+				</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
 				<dd>{{ @issue.priority_name }}</dd>
@@ -133,7 +138,7 @@
 					</check>
 				</dd>
 
-				<check if="{{ @issue.repeat_cycle != 'none' }}">
+				<check if="{{ @issue.repeat_cycle && @issue.repeat_cycle != 'none' }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>
 					<dd>{{ ucfirst(@issue.repeat_cycle) }}</dd>
 				</check>
@@ -156,7 +161,7 @@
 					<dd>{{ date("D, M j, Y", strtotime(@issue.start_date)) }}</dd>
 				</check>
 
-				<check if="{{ strtotime(@issue.due_date) }}">
+				<check if="{{ @issue.due_date && strtotime(@issue.due_date) }}">
 					<dt>{{ @dict.cols.due_date }}</dt>
 					<dd>{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</dd>
 				</check>
@@ -350,22 +355,6 @@
 	</div>
 </div>
 
-<!-- <div class="modal fade" id="modal-file" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
-				<h4 class="modal-title"></h4>
-			</div>
-			<div class="modal-body"></div>
-			<div class="modal-footer">
-				<a class="btn btn-default btn-sm" href="#" target="_blank">Download</a>
-				<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">{{ @dict.close }}</button>
-			</div>
-		</div>
-	</div>
-</div> -->
-
 <script src="minify/js/bootstrap-datepicker.js,stupidtable.min.js"></script>
 <script type="text/javascript">
 $(function() {
@@ -385,6 +374,7 @@ $(function() {
 	$('#comment_form').submit(function(e) {
 		var $this = $(this);
 		if($this.children('textarea').val() !== '') {
+			$('#comment_form').prop('disabled', true);
 			$.post($this.attr('action'), $this.serialize(), function(data) {
 				if(data.error) {
 					return;
@@ -399,7 +389,7 @@ $(function() {
 							'</a>' +
 							'<div class="media-body">' +
 								'<p class="media-heading"><a href="user/' + data.user_username + '">' + data.user_name + '</a></p>' +
-								'<p class="tex">' + data.text + '</p>' +
+								'<div class="tex">' + data.text + '</div>' +
 								'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
 							'</div>' +
 						'</div>');
@@ -500,26 +490,6 @@ $(function() {
 			});
 		}
 	});
-
-	// Trigger modal on plain text attachments
-	/*$(".file-attachment").click(function(e) {
-		$this = $(this);
-		if($this.data("mime") == "text/plain") {
-			console.log($this[0]);
-			$.get($this.attr("href"), function(data) {
-				$("#modal-file .modal-body").empty();
-				$("<pre />").text(data).appendTo("#modal-file .modal-body");
-			});
-			$("#modal-file .modal-body").html("{{ @dict.loading }}");
-			$("#modal-file .modal-title").text($this.text());
-			$("#modal-file .modal-footer a").attr("href", $this.attr("href"));
-			$("#modal-file").modal("show");
-			e.preventDefault();
-		}
-	});
-	$("#modal-file .modal-footer a").click(function(e) {
-		$(this).parents(".modal").modal("hide");
-	});*/
 
 });
 
