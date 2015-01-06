@@ -26,7 +26,7 @@
 		</thead>
 		<tbody>
 			<repeat group="{{ @users }}" value="{{ @user }}">
-				<tr onclick="self.location='admin/users/{{ @user.id }}'" style="cursor: pointer">
+				<tr onclick="self.location='{{ @site.url }}admin/users/{{ @user.id }}'" style="cursor: pointer">
 					<td><a href="{{ @site.url }}admin/users/{{ @user.id }}">{{ @user.id }}</a></td>
 					<td>{{ @user.username }}</td>
 					<td>{{ @user.email }}</td>

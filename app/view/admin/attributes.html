@@ -23,7 +23,7 @@
 		</thead>
 		<tbody>
 			<repeat group="{{ @attributes }}" value="{{ @attr }}">
-				<tr onclick="self.location='admin/attributes/{{ @attr.id }}'" style="cursor: pointer">
+				<tr onclick="self.location='{{ @site.url }}admin/attributes/{{ @attr.id }}'" style="cursor: pointer">
 					<td><a href="{{ @site.url }}admin/attributes/{{ @attr.id }}">{{ @attr.id }}</a></td>
 					<td>{{ @attr.name }}</td>
 					<td>{{ @attr.type }}</td>

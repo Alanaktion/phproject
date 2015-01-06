@@ -26,7 +26,7 @@
 		</thead>
 		<tbody>
 			<repeat group="{{ @groups }}" value="{{ @group }}">
-				<tr onclick="self.location='admin/groups/{{ @group.id }}'" style="cursor: pointer">
+				<tr onclick="self.location='{{ @site.url }}admin/groups/{{ @group.id }}'" style="cursor: pointer">
 					<td><a href="{{ @site.url }}admin/groups/{{ @group.id }}">{{ @group.id }}</a></td>
 					<td>{{ @group.name }}</td>
 					<td>{{ @group.count }}</td>
