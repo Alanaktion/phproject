@@ -21,7 +21,7 @@ footer {
 }
 @media screen and (min-width: 992px) {
 	.col-padded {
-		padding-top: 65px;
+		padding-top: 45px;
 	}
 }
 .jumbotron-inverse {
