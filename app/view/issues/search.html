@@ -4,24 +4,25 @@
 	<include href="blocks/head.html" />
 </head>
 <body>
+<set fullwidth="{{ true }}" />
+<include href="blocks/navbar.html" />
 <div class="container-fluid">
-	<include href="blocks/navbar.html" />
 	<include href="blocks/issue-list.html" />
 	<ul class="pager">
 		<check if="{{ !empty(@prev) }}">
 			<true>
-				<li class="previous"><a href="issues{{ @prev }}" rel="prev">&larr; Previous</a></li>
+				<li class="previous"><a href="{{ @site.url }}issues{{ @prev }}" rel="prev">&larr; {{ @dict.go_previous }}</a></li>
 			</true>
 			<false>
-				<li class="previous disabled"><a href="javascript:void(0)">&larr; Previous</a></li>
+				<li class="previous disabled"><a href="{{ @site.url }}javascript:void(0)">&larr; {{ @dict.go_previous }}</a></li>
 			</false>
 		</check>
 		<check if="{{ !empty(@next) }}">
 			<true>
-				<li class="next"><a href="issues{{ @next }}" rel="next">Next &rarr;</a></li>
+				<li class="next"><a href="{{ @site.url }}issues{{ @next }}" rel="next">{{ @dict.go_next }} &rarr;</a></li>
 			</true>
 			<false>
-				<li class="next disabled"><a href="javascript:void(0)">Next &rarr;</a></li>
+				<li class="next disabled"><a href="{{ @site.url }}javascript:void(0)">{{ @dict.go_next }} &rarr;</a></li>
 			</false>
 		</check>
 	</ul>

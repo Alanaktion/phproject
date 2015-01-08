@@ -16,7 +16,7 @@
 </check>
 <footer class="row">
 	<div class="col-xs-4">
-		<p class="visible-sm visible-xs"><a href="logout" class="btn btn-default btn-xs">{{ @dict.log_out }}</a></p>
+		<p class="visible-sm visible-xs"><a href="{{ @site.url }}logout" class="btn btn-default btn-xs">{{ @dict.log_out }}</a></p>
 	</div>
 	<div class="col-xs-8">
 		<p class="text-right text-muted">
@@ -32,12 +32,15 @@
 			</check>
 			<span title="Real usage: {{ memory_get_peak_usage(true) }} bytes">{{ \Helper\View::instance()->formatFilesize(memory_get_peak_usage()) }}</span>
 			<check if="{{ @revision }}">
-				 &middot; <a class="nolink" title="{{ @dict.current_commit_n,@revision | format }}" href="https://github.com/Alanaktion/phproject/commit/{{ @revision }}" target="_blank">{{ substr(@revision, 0, 7) }}</a>
+				&middot; <a class="nolink" title="{{ @dict.current_commit_n,@revision | format }}" href="https://github.com/Alanaktion/phproject/commit/{{ @revision }}" target="_blank">{{ substr(@revision, 0, 7) }}</a>
+			</check>
+			<check if="{{ @plugins }}">
+				&middot; {{ count(@plugins) }} {{ @dict.plugins }}
 			</check>
 		</p>
 	</div>
 </footer>
 <script>var site_url = '{{ @site.url }}';</script>
-<script src="minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,global.js"></script>
-<script src="js/respond.min.js"></script>
+<script src="{{ @site.url }}minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,global.js"></script>
+<script src="{{ @site.url }}js/respond.min.js"></script>
 <include href="blocks/footer-hotkeys-modals.html" if="{{ !empty(@user.id) }}">

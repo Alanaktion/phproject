@@ -4,14 +4,14 @@
 	<include href="blocks/head.html" />
 </head>
 <body>
-<div class="container-fluid">
-	<include href="blocks/navbar.html" />
+<include href="blocks/navbar.html" />
+<div class="container">
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">
 			<h3>Select Issue Type</h3>
 			<div class="list-group">
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
-					<a href="issues/new/{{ @type.id }}" class="list-group-item">
+					<a href="{{ @site.url }}issues/new/{{ @type.id }}" class="list-group-item">
 						<h4 class="list-group-item-heading">{{ @type.name }}</h4>
 					</a>
 				</repeat>

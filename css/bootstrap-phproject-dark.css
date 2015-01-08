@@ -6411,7 +6411,7 @@ textarea:focus {
 	color: white !important;
 }
 #taskboard .spinner {
-	background-image: url(/img/ajax-loader-dark.gif) !important;
+	background-image: url(../img/ajax-loader-dark.gif) !important;
 }
 .datepicker {
 	color: #111;

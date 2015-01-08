@@ -4,15 +4,15 @@
 	<include href="blocks/head.html" />
 </head>
 <body>
-<div class="container-fluid">
-	<check if="{{ empty(@user) }}">
-		<true>
-			<include href="blocks/navbar-public.html" />
-		</true>
-		<false>
-			<include href="blocks/navbar.html" />
-		</false>
-	</check>
+<check if="{{ empty(@user) }}">
+	<true>
+		<include href="blocks/navbar-public.html" />
+	</true>
+	<false>
+		<include href="blocks/navbar.html" />
+	</false>
+</check>
+<div class="container">
 	<div class="jumbotron">
 		<h1><strong>{{ @ERROR.code }}</strong> Not Found</h1>
 		<p>The page you requested is not available.</p>

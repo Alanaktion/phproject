@@ -4,16 +4,12 @@
 	<include href="blocks/head.html" />
 </head>
 <body>
-<div class="container-fluid">
-	<include href="blocks/navbar.html" />
-	<div class="row">
-		<div class="col-md-12">
-			<include href="issues/edit-form.html" />
-		</div>
-	</div>
+<include href="blocks/navbar.html" />
+<div class="container">
+	<include href="issues/edit-form.html" />
 	<include href="blocks/footer.html" />
 </div>
-<script src="minify/js/bootstrap-datepicker.js"></script>
+<script src="{{ @site.url }}minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(function() {
 	var nowTemp = new Date();

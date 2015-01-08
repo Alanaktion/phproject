@@ -1,10 +1,10 @@
 <div class="list-group">
 	<repeat group="{{ @issues }}" value="{{ @item }}">
-		<a class="list-group-item" href="issues/{{ @item.id }}">
-			<span class="badge status">{{ @item.status_name }}</span>
+		<a class="list-group-item" href="{{ @site.url }}issues/{{ @item.id }}">
+			<span class="badge status">{{ @item.status_name | esc }}</span>
 			<check if="{{ @item.owner_id != @user.id }}">
 				<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="{{ @dict.cols.assignee }}">
-					<span class="glyphicon glyphicon-user"></span>&ensp;{{ @item.owner_name }}
+					<span class="glyphicon glyphicon-user"></span>&ensp;{{ @item.owner_name | esc }}
 				</p>
 			</check>
 			<check if="{{ @item.repeat_cycle && @item.repeat_cycle != 'none' }}">
@@ -13,7 +13,7 @@
 				</p>
 			</check>
 			<p class="list-group-item-heading">
-				#{{ @item.id }} - {{ @item.name }}
+				#{{ @item.id }} - {{ @item.name | esc }}
 				<check if="{{ @item.priority != 0 }}">
 					<span class="label-{{ @item.priority < 0 ? 'default' : 'danger' }} priority" style="width: {{ !@item.priority ? 0 : 1 + 1 * abs(@item.priority) }}px;"></span>
 				</check>
@@ -27,7 +27,7 @@
 					<true><set sprint_date_range="{{ @sprint_date_range . date('j', strtotime(@item.sprint_end_date)) }}" /></true>
 					<false><set sprint_date_range="{{ @sprint_date_range . date('M j', strtotime(@item.sprint_end_date)) }}" /></false>
 				</check>
-				<p class="list-group-item-text text-muted"><span class="has-tooltip" title="{{ @dict.sprint }} #{{ @item.sprint_id }}: {{ @sprint_date_range }}" data-placement="right">{{ @item.sprint_name }}</span></p>
+				<p class="list-group-item-text text-muted"><span class="has-tooltip" title="{{ @dict.sprint }} #{{ @item.sprint_id }}: {{ @sprint_date_range }}" data-placement="right">{{ @item.sprint_name | esc }}</span></p>
 			</check>
 		</a>
 	</repeat>

@@ -584,7 +584,7 @@ class Issues extends \Controller {
 		$issue->owner_id = $post["owner_id"];
 		$issue->hours_total = $post["hours_remaining"] ?: null;
 		$issue->hours_remaining = $post["hours_remaining"] ?: null;
-		$issue->repeat_cycle = $post["repeat_cycle"];
+		$issue->repeat_cycle = $post["repeat_cycle"] != "none" ? $post["repeat_cycle"] : null;
 		$issue->sprint_id = $post["sprint_id"];
 
 		if(!empty($post["due_date"])) {
@@ -739,7 +739,7 @@ class Issues extends \Controller {
 		$f3->set("watching", !!$watching->id);
 
 		$f3->set("issue", $issue);
-		$f3->set("hierarchy", $issue->hierarchy());
+		$f3->set("ancestors", $issue->getAncestors());
 		$f3->set("type", $type);
 		$f3->set("author", $author);
 		$f3->set("owner", $owner);
@@ -976,6 +976,90 @@ class Issues extends \Controller {
 		}
 
 		$f3->reroute("/issues/" . $issue->id);
+	}
+
+	/**
+	 * Project Overview action
+	 * @param  Base $f3
+	 * @param  array $params
+	 */
+	public function project_overview($f3, $params) {
+
+		// Load issue
+		$project = new \Model\Issue\Detail;
+		$project->load($params["id"]);
+		if(!$project->id) {
+			$f3->error(404);
+			return;
+		}
+		if($project->type_id != $f3->get("issue_type.project")) {
+			$f3->error(400, "Issue is not a project.");
+			return;
+		}
+
+		/**
+		 * Helper function to get a percentage of completed issues across the entire tree
+		 * @param   Issue $issue
+		 * @var     callable $completeCount This function, required for recursive calls
+		 * @return  array
+		 */
+		$completeCount = function(\Model\Issue &$issue) use(&$completeCount) {
+			$total = 0;
+			$complete = 0;
+			if($issue->id) {
+				$total ++;
+				if($issue->closed_date) {
+					$complete ++;
+				}
+				foreach($issue->getChildren() as $child) {
+					$result = $completeCount($child);
+					$total += $result["total"];
+					$complete += $result["complete"];
+				}
+			}
+			return array(
+				"total" => $total,
+				"complete" => $complete
+			);
+		};
+		$f3->set("stats", $completeCount($project));
+
+		/**
+		 * Helper function for recursive tree rendering
+		 * @param   Issue $issue
+		 * @var     callable $renderTree This function, required for recursive calls
+		 */
+		$renderTree = function(\Model\Issue &$issue) use(&$renderTree) {
+			if($issue->id) {
+				$children = $issue->getChildren();
+				$childCompleted = 0;
+				if($children) {
+					foreach($children as $item) {
+						if($item->closed_date) {
+							$childCompleted ++;
+						}
+					}
+				}
+				$hive = array("issue" => $issue, "children" => $children, "childrenCompleted" => $childCompleted, "dict" => \Base::instance()->get("dict"), "site" => \Base::instance()->get("site"));
+				echo "<li>";
+				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
+				if($children) {
+					echo "<ul>";
+					foreach($children as $item) {
+						$renderTree($item);
+					}
+					echo "</ul>";
+				}
+				echo "</li>";
+			}
+		};
+		$f3->set("renderTree", $renderTree);
+
+		// Render view
+		$f3->set("project", $project);
+		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - Project Overview");
+		$this->_render("issues/project.html");
+
 	}
 
 }
