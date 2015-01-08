@@ -75,8 +75,10 @@ class Issues extends \Controller {
 		$filter_str .= " deleted_date IS NULL ";
 
 		// Build SQL ORDER BY string
-		$orderby = !empty($_GET['orderby']) ? $_GET['orderby'] : "priority";
-		$ascdesc = !empty($_GET['ascdesc']) && $_GET['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		$orderby = !empty($args['orderby']) ? $args['orderby'] : "priority";
+		$filter["orderby"] = $orderby;
+		$ascdesc = !empty($args['ascdesc']) && $args['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		$filter["ascdesc"] = $ascdesc;
 		switch($orderby) {
 			case "id":
 				$filter_str .= " ORDER BY id {$ascdesc} ";
@@ -111,7 +113,7 @@ class Issues extends \Controller {
 				break;
 		}
 
-		return array($filter, $filter_str, $ascdesc);
+		return array($filter, $filter_str);
 
 	}
 
@@ -125,7 +127,7 @@ class Issues extends \Controller {
 
 		// Get filter
 		$args = $f3->get("GET");
-		list($filter, $filter_str, $ascdesc) = $this->_buildFilter();
+		list($filter, $filter_str) = $this->_buildFilter();
 
 		// Load type if a type_id was passed
 		$type = new \Model\Issue\Type;
@@ -162,6 +164,10 @@ class Issues extends \Controller {
 
 		// Pass filter string for pagination
 		$filter_get = http_build_query($filter);
+
+		if(!empty($orderby)) {
+			$filter_get  .= "&orderby=" . $orderby;
+		}
 		if($issue_page["count"] > 7) {
 			if($issue_page["pos"] <= 3) {
 				$min = 0;
@@ -182,7 +188,6 @@ class Issues extends \Controller {
 
 		$f3->set("menuitem", "browse");
 		$f3->set("heading_links_enabled", true);
-		$f3->set("ascdesc", $ascdesc);
 
 		$f3->set("show_filters", true);
 		$f3->set("show_export", true);
@@ -278,7 +283,7 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue\Detail;
 
 		// Get filter data and load issues
-		list($filter, $filter_str, $ascdesc) = $this->_buildFilter();
+		list($filter, $filter_str) = $this->_buildFilter();
 		$issues = $issue->find($filter_str);
 
 		// Configure visible fields
