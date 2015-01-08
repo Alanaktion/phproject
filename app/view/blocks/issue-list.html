@@ -165,7 +165,7 @@
 				<check if="{{ !empty(@heading_links_enabled) }}">
 					<true>
 						<repeat group="{{ @headings }}" value="{{ @heading }}">
-							<th class="nowrap"><a href="{{ @site.url }}#" class="issue-sort nolink" id="{{ @heading }}">
+							<th class="nowrap"><a href="#" class="issue-sort nolink" id="{{ @heading }}">
 								<check if="{{ !empty(@GET.orderby) && @GET.orderby == @heading }}">
 									<true>
 										<check if="{{ !empty(@GET.ascdesc) && @GET.ascdesc == 'asc' }}">

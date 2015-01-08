@@ -178,8 +178,8 @@
 		<div class="col-lg-7">
 			<ul class="nav nav-tabs" role="tablist">
 				<li class="disabled"><a>Files</a></li>
-				<li class="active"><a href="{{ @site.url }}#files-tiles" data-toggle="tab"><span class="glyphicon glyphicon-th-large"></span></a></li>
-				<li><a href="{{ @site.url }}#files-table" data-toggle="tab"><span class="glyphicon glyphicon-list"></span></a></li>
+				<li class="active"><a href="#files-tiles" data-toggle="tab"><span class="glyphicon glyphicon-th-large"></span></a></li>
+				<li><a href="#files-table" data-toggle="tab"><span class="glyphicon glyphicon-list"></span></a></li>
 			</ul>
 			<div class="tab-content">
 				<check if="{{ !empty(@files) }}">
@@ -224,19 +224,19 @@
 				</check>
 			</div>
 			<p>
-				<a class="btn btn-default btn-sm" data-toggle="modal" href="{{ @site.url }}#" data-target="#upload">{{ @dict.upload }}</a>
+				<a class="btn btn-default btn-sm" data-toggle="modal" href="#" data-target="#upload">{{ @dict.upload }}</a>
 			</p>
 			<br>
 			<ul class="nav nav-tabs">
-				<li class="active"><a href="{{ @site.url }}#comments" data-toggle="tab">{{ @dict.comments }}&ensp;<span class="badge" id="comment_badge">{{ count(@comments) }}</span></a></li>
-				<li><a href="{{ @site.url }}#history" data-toggle="tab" id="tab_history">{{ @dict.history }}</a></li>
-				<li><a href="{{ @site.url }}#watchers" data-toggle="tab" id="tab_watchers">{{ @dict.watchers }}</a></li>
+				<li class="active"><a href="#comments" data-toggle="tab">{{ @dict.comments }}&ensp;<span class="badge" id="comment_badge">{{ count(@comments) }}</span></a></li>
+				<li><a href="#history" data-toggle="tab" id="tab_history">{{ @dict.history }}</a></li>
+				<li><a href="#watchers" data-toggle="tab" id="tab_watchers">{{ @dict.watchers }}</a></li>
 				<check if="{{ @issue_type.project == @type.id }}">
 					<true>
-						<li><a href="{{ @site.url }}#related" data-toggle="tab" id="tab_related">{{ @dict.child_tasks }}</a></li>
+						<li><a href="#related" data-toggle="tab" id="tab_related">{{ @dict.child_tasks }}</a></li>
 					</true>
 					<false>
-						<li><a href="{{ @site.url }}#related" data-toggle="tab" id="tab_related">{{ @dict.related_tasks }}</a></li>
+						<li><a href="#related" data-toggle="tab" id="tab_related">{{ @dict.related_tasks }}</a></li>
 					</false>
 				</check>
 			</ul>
@@ -433,7 +433,7 @@ $(function() {
 			$select = $this.find('select');
 			$('<li />')
 				.data('user-id', $select.val())
-				.html('<a href="{{ @site.url }}#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $select.children('option:selected').text())
+				.html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $select.children('option:selected').text())
 				.appendTo('#watchers-list');
 
 			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) + 1);
