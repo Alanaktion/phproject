@@ -72,8 +72,12 @@ $f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
 
 // Initialize plugins
 $plugins = scandir("app/plugin");
+$locales = "";
 foreach($plugins as $i=>&$plugin) {
 	if($plugin != "." && $plugin != ".." && is_file("app/plugin/$plugin/base.php")) {
+		if(is_dir("app/plugin/$plugin/dict/")) {
+			$locales .= ";app/plugin/$plugin/dict/";
+		}
 		$plugin = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $plugin))) . "\\Base";
 		$plugin = $plugin::instance();
 		if(!$plugin->_installed()) {
@@ -93,6 +97,9 @@ foreach($plugins as $i=>&$plugin) {
 	}
 }
 $f3->set("plugins", $plugins);
+if($locales) {
+	$f3->set("LOCALES", $f3->get("LOCALES") . $locales);
+}
 
 // Set up session handler
 if($f3->get("site.db_sessions")) {
