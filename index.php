@@ -70,9 +70,17 @@ $f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
 	echo Web::instance()->minify($args["files"]);
 }, $f3->get("cache_expire.minify"));
 
-// Initialize plugins
+// Initialize plugins and any included locales
 $plugins = scandir("app/plugin");
 $locales = "";
+foreach($plugins as $i=>$plugin) {
+	if(is_dir("app/plugin/$plugin/dict/")) {
+		$locales .= ";app/plugin/$plugin/dict/";
+	}
+}
+if($locales) {
+	$f3->set("LOCALES", $f3->get("LOCALES") . $locales);
+}
 foreach($plugins as $i=>&$plugin) {
 	if($plugin != "." && $plugin != ".." && is_file("app/plugin/$plugin/base.php")) {
 		if(is_dir("app/plugin/$plugin/dict/")) {
@@ -97,9 +105,6 @@ foreach($plugins as $i=>&$plugin) {
 	}
 }
 $f3->set("plugins", $plugins);
-if($locales) {
-	$f3->set("LOCALES", $f3->get("LOCALES") . $locales);
-}
 
 // Set up session handler
 if($f3->get("site.db_sessions")) {
