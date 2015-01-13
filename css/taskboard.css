@@ -54,16 +54,12 @@ body {
 #taskboard .card.task {
 	cursor: move;
 	width: 145px;
-	height: 120px;
 	float: left;
 }
 #taskboard .card.task.placeholder {
 	background-color: #fff;
 	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
 	opacity: .1;
-}
-#taskboard .card.story {
-	height: 92px;
 }
 #taskboard .card.story .task-id {
 	float: left;
