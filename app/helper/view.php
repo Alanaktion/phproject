@@ -83,6 +83,7 @@ class View extends \Template {
 					break;
 			}
 			if($i) {
+				$f3 = \Base::instance();
 				if($theme = $f3->get("user.theme")) {} else {
 					$theme = $f3->get("site.theme");
 				}
