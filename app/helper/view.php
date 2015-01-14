@@ -12,6 +12,7 @@ class View extends \Template {
 	 * @return string
 	 */
 	public function parseTextile($str, $ttl=false) {
+		$f3 = \Base::instance();
 		if($ttl !== false) {
 			$cache = \Cache::instance();
 			$hash = sha1($str);
@@ -29,7 +30,8 @@ class View extends \Template {
 		$val = $tex->parse($str);
 
 		// Find issue IDs and convert to links
-		$val = preg_replace("/(?<=[\s,\(^])#([0-9]+)(?=[\s,\)\.,$])/", "<a href=\"/issues/$1\">#$1</a>", $val);
+		$siteUrl = $f3->get("site.url");
+		$val = preg_replace("/(?<=[\s,\(^])#([0-9]+)(?=[\s,\)\.,$])/", "<a href=\"{$siteUrl}issues/$1\">#$1</a>", $val);
 
 		// Convert URLs to links
 		$val = $this->make_clickable($val);
@@ -81,7 +83,6 @@ class View extends \Template {
 					break;
 			}
 			if($i) {
-				$f3 = \Base::instance();
 				if($theme = $f3->get("user.theme")) {} else {
 					$theme = $f3->get("site.theme");
 				}
