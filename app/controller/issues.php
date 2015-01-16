@@ -47,6 +47,10 @@ class Issues extends \Controller {
 				$filter_str .= "status_closed = 0 AND ";
 			} elseif($i == "status" && $val == "closed") {
 				$filter_str .= "status_closed = 1 AND ";
+			} elseif($i == "repeat_cycle" && $val == "repeat") {
+				$filter_str .= "repeat_cycle NOT IN ('none', '') AND ";
+			} elseif($i == "repeat_cycle" && $val == "none") {
+				$filter_str .= "repeat_cycle IN ('none', '') AND ";
 			} elseif(($i == "author_id" || $i== "owner_id") && !empty($val) && is_numeric($val)) {
 				// Find all users in a group if necessary
 				$user = new \Model\User;
@@ -71,8 +75,10 @@ class Issues extends \Controller {
 		$filter_str .= " deleted_date IS NULL ";
 
 		// Build SQL ORDER BY string
-		$orderby = !empty($_GET['orderby']) ? $_GET['orderby'] : "priority";
-		$ascdesc = !empty($_GET['ascdesc']) && $_GET['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		$orderby = !empty($args['orderby']) ? $args['orderby'] : "priority";
+		$filter["orderby"] = $orderby;
+		$ascdesc = !empty($args['ascdesc']) && $args['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		$filter["ascdesc"] = $ascdesc;
 		switch($orderby) {
 			case "id":
 				$filter_str .= " ORDER BY id {$ascdesc} ";
@@ -107,7 +113,7 @@ class Issues extends \Controller {
 				break;
 		}
 
-		return array($filter, $filter_str, $ascdesc);
+		return array($filter, $filter_str);
 
 	}
 
@@ -121,7 +127,7 @@ class Issues extends \Controller {
 
 		// Get filter
 		$args = $f3->get("GET");
-		list($filter, $filter_str, $ascdesc) = $this->_buildFilter();
+		list($filter, $filter_str) = $this->_buildFilter();
 
 		// Load type if a type_id was passed
 		$type = new \Model\Issue\Type;
@@ -144,7 +150,7 @@ class Issues extends \Controller {
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(null, array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->getAll());
@@ -158,6 +164,10 @@ class Issues extends \Controller {
 
 		// Pass filter string for pagination
 		$filter_get = http_build_query($filter);
+
+		if(!empty($orderby)) {
+			$filter_get  .= "&orderby=" . $orderby;
+		}
 		if($issue_page["count"] > 7) {
 			if($issue_page["pos"] <= 3) {
 				$min = 0;
@@ -178,7 +188,6 @@ class Issues extends \Controller {
 
 		$f3->set("menuitem", "browse");
 		$f3->set("heading_links_enabled", true);
-		$f3->set("ascdesc", $ascdesc);
 
 		$f3->set("show_filters", true);
 		$f3->set("show_export", true);
@@ -209,6 +218,10 @@ class Issues extends \Controller {
 							&& $issue->$i != $val
 							&& !empty($val)
 						) {
+							// Allow setting to Not Assigned
+							if($i == "owner_id" && $val == -1) {
+								$val = 0;
+							}
 							$issue->$i = $val;
 							if($i == "status") {
 								$status = new \Model\Issue\Status;
@@ -242,11 +255,7 @@ class Issues extends \Controller {
 						}
 					}
 
-
-
-
 					$issue->save();
-
 
 				} else {
 					$f3->error(500, "Failed to update all the issues, starting with: $id.");
@@ -274,7 +283,7 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue\Detail;
 
 		// Get filter data and load issues
-		list($filter, $filter_str, $ascdesc) = $this->_buildFilter();
+		list($filter, $filter_str) = $this->_buildFilter();
 		$issues = $issue->find($filter_str);
 
 		// Configure visible fields
@@ -575,7 +584,7 @@ class Issues extends \Controller {
 		$issue->owner_id = $post["owner_id"];
 		$issue->hours_total = $post["hours_remaining"] ?: null;
 		$issue->hours_remaining = $post["hours_remaining"] ?: null;
-		$issue->repeat_cycle = $post["repeat_cycle"];
+		$issue->repeat_cycle = $post["repeat_cycle"] != "none" ? $post["repeat_cycle"] : null;
 		$issue->sprint_id = $post["sprint_id"];
 
 		if(!empty($post["due_date"])) {
@@ -730,7 +739,7 @@ class Issues extends \Controller {
 		$f3->set("watching", !!$watching->id);
 
 		$f3->set("issue", $issue);
-		$f3->set("hierarchy", $issue->hierarchy());
+		$f3->set("ancestors", $issue->getAncestors());
 		$f3->set("type", $type);
 		$f3->set("author", $author);
 		$f3->set("owner", $owner);
@@ -967,6 +976,90 @@ class Issues extends \Controller {
 		}
 
 		$f3->reroute("/issues/" . $issue->id);
+	}
+
+	/**
+	 * Project Overview action
+	 * @param  Base $f3
+	 * @param  array $params
+	 */
+	public function project_overview($f3, $params) {
+
+		// Load issue
+		$project = new \Model\Issue\Detail;
+		$project->load($params["id"]);
+		if(!$project->id) {
+			$f3->error(404);
+			return;
+		}
+		if($project->type_id != $f3->get("issue_type.project")) {
+			$f3->error(400, "Issue is not a project.");
+			return;
+		}
+
+		/**
+		 * Helper function to get a percentage of completed issues across the entire tree
+		 * @param   Issue $issue
+		 * @var     callable $completeCount This function, required for recursive calls
+		 * @return  array
+		 */
+		$completeCount = function(\Model\Issue &$issue) use(&$completeCount) {
+			$total = 0;
+			$complete = 0;
+			if($issue->id) {
+				$total ++;
+				if($issue->closed_date) {
+					$complete ++;
+				}
+				foreach($issue->getChildren() as $child) {
+					$result = $completeCount($child);
+					$total += $result["total"];
+					$complete += $result["complete"];
+				}
+			}
+			return array(
+				"total" => $total,
+				"complete" => $complete
+			);
+		};
+		$f3->set("stats", $completeCount($project));
+
+		/**
+		 * Helper function for recursive tree rendering
+		 * @param   Issue $issue
+		 * @var     callable $renderTree This function, required for recursive calls
+		 */
+		$renderTree = function(\Model\Issue &$issue) use(&$renderTree) {
+			if($issue->id) {
+				$children = $issue->getChildren();
+				$childCompleted = 0;
+				if($children) {
+					foreach($children as $item) {
+						if($item->closed_date) {
+							$childCompleted ++;
+						}
+					}
+				}
+				$hive = array("issue" => $issue, "children" => $children, "childrenCompleted" => $childCompleted, "dict" => \Base::instance()->get("dict"), "site" => \Base::instance()->get("site"));
+				echo "<li>";
+				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
+				if($children) {
+					echo "<ul>";
+					foreach($children as $item) {
+						$renderTree($item);
+					}
+					echo "</ul>";
+				}
+				echo "</li>";
+			}
+		};
+		$f3->set("renderTree", $renderTree);
+
+		// Render view
+		$f3->set("project", $project);
+		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - Project Overview");
+		$this->_render("issues/project.html");
+
 	}
 
 }

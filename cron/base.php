@@ -1,4 +1,10 @@
 <?php
+/**
+ * Cron job base initialization
+ * @package  Test
+ * @author   Alan Hardman <alan@phpizza.com>
+ */
+
 if (PHP_SAPI != 'cli') {
 	throw new Exception("Cron jobs must be run from the command line.");
 }
@@ -10,7 +16,8 @@ $f3=require($homedir."lib/base.php");
 $f3->mset(array(
 	"UI" => $homedir."app/view/",
 	"LOGS" => $homedir."log/",
-	"AUTOLOAD" => $homedir."app/"
+	"AUTOLOAD" => $homedir."app/",
+	"TEMP" => $homedir."tmp/",
 ));
 
 // Load local configuration

@@ -247,19 +247,19 @@ class Taskboard extends \Controller {
 
 			// Get total_hours, which is the initial amount entered on each task, and cache this query
 			if($i == 1) {
-				$result = $db->exec($query_initial, array("date" => $sprint->start_date), 2592000);
+				$result = $db->exec($query_initial, array(":date" => $sprint->start_date), 2592000);
 				$burnDays[$date] = $result[0];
 			}
 
 			// Get between day values and cache them... this also will get the last day of completed sprints so they will be cached
 			elseif ($i < ($burnDatesCount - 1) || $burnComplete) {
-				$result = $db->exec($query_daily, array("date" => $date . " 23:59:59"), 2592000);
+				$result = $db->exec($query_daily, array(":date" => $date . " 23:59:59"), 2592000);
 				$burnDays[$date] = $result[0];
 			}
 
 			// Get the today's info and don't cache it
 			else {
-				$result = $db->exec($query_daily, array("date" => $date . " 23:59:59"));
+				$result = $db->exec($query_daily, array(":date" => $date . " 23:59:59"));
 				$burnDays[$date] = $result[0];
 			}
 

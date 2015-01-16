@@ -2,6 +2,9 @@
 
 abstract class Plugin extends \Prefab {
 
+	// Metadata container
+	private $_meta;
+
 	/**
 	 * Initialize the plugin including any hooks
 	 */
@@ -70,6 +73,48 @@ abstract class Plugin extends \Prefab {
 	 */
 	final public function now($time = true) {
 		return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
+	}
+
+	/**
+	 * Get plugin's metadata including author, package, version, etc.
+	 * @return array
+	 */
+	final public function _meta() {
+		if($this->_meta) {
+			return $this->_meta;
+		}
+
+		// Parse class file for phpDoc comments
+		$obj = new ReflectionClass($this);
+		$str = file_get_contents($obj->getFileName());
+		preg_match_all("/\\s+@(package|author|version) (.+)/m", $str, $matches, PREG_SET_ORDER);
+
+		// Build meta array from phpDoc comments
+		$meta = array();
+		foreach($matches as $match) {
+			$meta[$match[1]] = trim($match[2]);
+		}
+
+		$this->_meta = $meta + array("package" => str_replace(array("Plugin\\", "\\Base"), "", get_class($this)), "author" => null, "version" => null);
+		return $this->_meta;
+	}
+
+	/**
+	 * Get plugin's package name
+	 * @return string
+	 */
+	final public function _package() {
+		$meta = $this->_meta();
+		return $meta["package"];
+	}
+
+	/**
+	 * Get plugin's version number, if any
+	 * @return string
+	 */
+	final public function _version() {
+		$meta = $this->_meta();
+		return $meta["version"];
 	}
 
 }

@@ -68,7 +68,10 @@ $(document).ready(function() {
 
 	// Add double click on issue listing
 	$('.issue-list tbody tr').dblclick(function(e) {
-		self.location = 'issues/' + $(this).data('id');
+		var id = $(this).data('id');
+		if(id) {
+			self.location = site_url + 'issues/' + id;
+		}
 	});
 
 	// Submit from textarea if Ctrl+Enter or Cmd+Enter is pressed

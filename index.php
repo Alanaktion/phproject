@@ -4,6 +4,7 @@
 $f3=require("lib/base.php");
 $f3->mset(array(
 	"UI" => "app/view/",
+	"ESCAPE" => false,
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
 	"LOCALES" => "app/dict/",
@@ -69,20 +70,41 @@ $f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
 	echo Web::instance()->minify($args["files"]);
 }, $f3->get("cache_expire.minify"));
 
-// Initialize plugins
+// Initialize plugins and any included locales
 $plugins = scandir("app/plugin");
-foreach($plugins as &$plugin) {
+$locales = "";
+foreach($plugins as $i=>$plugin) {
+	if(is_dir("app/plugin/$plugin/dict/")) {
+		$locales .= ";app/plugin/$plugin/dict/";
+	}
+}
+if($locales) {
+	$f3->set("LOCALES", $f3->get("LOCALES") . $locales);
+}
+foreach($plugins as $i=>&$plugin) {
 	if($plugin != "." && $plugin != ".." && is_file("app/plugin/$plugin/base.php")) {
+		if(is_dir("app/plugin/$plugin/dict/")) {
+			$locales .= ";app/plugin/$plugin/dict/";
+		}
 		$plugin = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $plugin))) . "\\Base";
 		$plugin = $plugin::instance();
 		if(!$plugin->_installed()) {
-			$plugin->_install();
+			try {
+				$plugin->_install();
+			} catch (Exception $e) {
+				$f3->set("error", "Failed to install plugin " . $plugin->_package() . ": " . $e->getMessage());
+			}
 		}
-		$plugin->_load();
+		try {
+			$plugin->_load();
+		} catch (Exception $e) {
+			$f3->set("error", "Failed to initialize plugin " . $plugin->_package() . ": " . $e->getMessage());
+		}
 	} else {
-		unset($plugin);
+		unset($plugins[$i]);
 	}
 }
+$f3->set("plugins", $plugins);
 
 // Set up session handler
 if($f3->get("site.db_sessions")) {

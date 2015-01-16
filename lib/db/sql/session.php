@@ -1,16 +1,17 @@
 <?php
 
 /*
-	Copyright (c) 2009-2014 F3::Factory/Bong Cosca, All rights reserved.
 
-	This file is part of the Fat-Free Framework (http://fatfree.sf.net).
+	Copyright (c) 2009-2015 F3::Factory/Bong Cosca, All rights reserved.
 
-	THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF
-	ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
-	PURPOSE.
+	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
-	Please see the license.txt file for more information.
+	This is free software: you can redistribute it and/or modify it under the
+	terms of the GNU General Public License as published by the Free Software
+	Foundation, either version 3 of the License, or later.
+
+	Please see the LICENSE file for more information.
+
 */
 
 namespace DB\SQL;
@@ -136,27 +137,30 @@ class Session extends Mapper {
 	*	@param $db object
 	*	@param $table string
 	*	@param $force bool
-	*	@param $verify bool
 	**/
-	function __construct(\DB\SQL $db,$table='sessions',$force=TRUE,$verify=FALSE) {
-		if ($force)
+	function __construct(\DB\SQL $db,$table='sessions',$force=TRUE) {
+		if ($force) {
+			$eol="\n";
+			$tab="\t";
 			$db->exec(
 				(preg_match('/mssql|sqlsrv|sybase/',$db->driver())?
 					('IF NOT EXISTS (SELECT * FROM sysobjects WHERE '.
 						'name='.$db->quote($table).' AND xtype=\'U\') '.
 						'CREATE TABLE dbo.'):
 					('CREATE TABLE IF NOT EXISTS '.
-						(($name=$db->name())?($name.'.'):''))).
-				$table.' ('.
-					'session_id VARCHAR(40),'.
-					'data TEXT,'.
-					'csrf TEXT,'.
-					'ip VARCHAR(40),'.
-					'agent VARCHAR(255),'.
-					'stamp INTEGER,'.
-					'PRIMARY KEY(session_id)'.
+						((($name=$db->name())&&$db->driver()!='pgsql')?
+							($name.'.'):''))).
+				$table.' ('.$eol.
+					$tab.$db->quotekey('session_id').' VARCHAR(40),'.$eol.
+					$tab.$db->quotekey('data').' TEXT,'.$eol.
+					$tab.$db->quotekey('csrf').' TEXT,'.$eol.
+					$tab.$db->quotekey('ip').' VARCHAR(40),'.$eol.
+					$tab.$db->quotekey('agent').' VARCHAR(255),'.$eol.
+					$tab.$db->quotekey('stamp').' INTEGER,'.$eol.
+					$tab.'PRIMARY KEY ('.$db->quotekey('session_id').')'.$eol.
 				');'
 			);
+		}
 		parent::__construct($db,$table);
 		session_set_save_handler(
 			array($this,'open'),
@@ -170,20 +174,21 @@ class Session extends Mapper {
 		@session_start();
 		$fw=\Base::instance();
 		$headers=$fw->get('HEADERS');
-		if ($verify && (
-			($ip=$this->ip()) && $ip!=$fw->get('IP') ||
+		if (($ip=$this->ip()) && $ip!=$fw->get('IP') ||
 			($agent=$this->agent()) &&
 			(!isset($headers['User-Agent']) ||
-				$agent!=$headers['User-Agent']))) {
+				$agent!=$headers['User-Agent'])) {
 			session_destroy();
 			$fw->error(403);
 		}
 		$csrf=$fw->hash($fw->get('ROOT').$fw->get('BASE')).'.'.
 			$fw->hash(mt_rand());
+		/* Disabling CSRF for performance as it's not currently used
 		if ($this->load(array('session_id=?',$this->sid=session_id()))) {
 			$this->set('csrf',$csrf);
 			$this->save();
 		}
+		*/
 	}
 
 }

@@ -69,7 +69,7 @@ class Backlog extends \Controller {
 		}
 		if(!empty($large_project_ids)) {
 			$large_project_ids = implode(",", $large_project_ids);
-			$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids}) $filter_string", $f3->get("issue_type.project")),
+			$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND status_closed = '0' AND id NOT IN ({$large_project_ids}) $filter_string", $f3->get("issue_type.project")),
 						array('order' => 'priority DESC, due_date')
 					);
 		} else {

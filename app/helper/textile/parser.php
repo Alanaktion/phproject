@@ -2546,6 +2546,10 @@ class Parser
                 $showitem = (strlen($content) > 0);
 
                 if ('o' === $ltype) {
+                    // Edit: disabling ordered lists
+                    $out[] = $line;
+                    continue;
+
                     // Handle list continuation/start attribute on ordered lists.
                     if (!isset($this->olstarts[$tl])) {
                         $this->olstarts[$tl] = 1;

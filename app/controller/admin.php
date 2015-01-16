@@ -8,6 +8,7 @@ class Admin extends \Controller {
 
 	public function __construct() {
 		$this->_userId = $this->_requireAdmin();
+		\Base::instance()->set("menuitem", "admin");
 	}
 
 	public function index($f3, $params) {
@@ -19,30 +20,68 @@ class Admin extends \Controller {
 			$f3->set("success", "Cache cleared successfully.");
 		}
 
-		// Gather some stats
 		$db = $f3->get("db.instance");
 
-		$db->exec("SELECT id FROM user WHERE deleted_date IS NULL AND role != 'group'");
-		$f3->set("count_user", $db->count());
-		$db->exec("SELECT id FROM issue WHERE deleted_date IS NULL");
-		$f3->set("count_issue", $db->count());
-		$db->exec("SELECT id FROM issue_update");
-		$f3->set("count_issue_update", $db->count());
-		$db->exec("SELECT id FROM issue_comment");
-		$f3->set("count_issue_comment", $db->count());
+		if($f3->get("POST.action") == "updatedb") {
+			if(file_exists("db/".$f3->get("POST.version").".sql")) {
+				$update_db = file_get_contents("db/".$f3->get("POST.version").".sql");
+				$db->exec(explode(";", $update_db));
+				\Cache::instance()->reset();
+				$f3->set("success", " Database updated to version: ". $f3->get("POST.version"));
+			} else {
+				$f3->set("error", " Database file not found for version: ". $f3->get("POST.version"));
+			}
+		}
+
+		// Gather some stats
+		$result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE deleted_date IS NULL AND role != 'group'");
+		$f3->set("count_user", $result[0]["count"]);
+		$result = $db->exec("SELECT COUNT(id) AS `count` FROM issue WHERE deleted_date IS NULL");
+		$f3->set("count_issue", $result[0]["count"]);
+		$result = $db->exec("SELECT COUNT(id) AS `count` FROM issue_update");
+		$f3->set("count_issue_update", $result[0]["count"]);
+		$result = $db->exec("SELECT COUNT(id) AS `count` FROM issue_comment");
+		$f3->set("count_issue_comment", $result[0]["count"]);
+		$result = @$db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
+		if(!empty($result)) {
+			$f3->set("version", $result[0]["version"]);
+		} else {
+			$f3->set("version", '1.0.0');
+		}
+		$db_files = scandir("db");
+		foreach ($db_files as $file) {
+			$file = substr($file, 0, -4);
+			if(version_compare($file, $f3->get('version')) >0) {
+				$f3->set("newer_version", $file);
+				break;
+			}
+		}
 
 		if($f3->get("CACHE") == "apc") {
 			$f3->set("apc_stats", apc_cache_info("user", true));
 		}
 
-		$f3->set("db_stats", $db->exec("SHOW STATUS WHERE Variable_name LIKE 'Delayed_%' OR Variable_name LIKE 'Table_lock%' OR Variable_name = 'Uptime'"));
-
 		$this->_render("admin/index.html");
+	}
+
+	public function plugins($f3, $params) {
+		$f3->set("title", "Plugins");
+		$this->_render("admin/plugins.html");
+	}
+
+	public function plugin_single($f3, $params) {
+		$plugins = $f3->get("plugins");
+		if($plugin = $plugins[$params["id"]]) {
+			$f3->set("title", $plugin->_package());
+			$f3->set("plugin", $plugin);
+			$this->_render("admin/plugins/single.html");
+		} else {
+			$f3->error(404);
+		}
 	}
 
 	public function users($f3, $params) {
 		$f3->set("title", "Manage Users");
-		$f3->set("menuitem", "admin");
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'"));
@@ -52,7 +91,6 @@ class Admin extends \Controller {
 
 	public function user_edit($f3, $params) {
 		$f3->set("title", "Edit User");
-		$f3->set("menuitem", "admin");
 
 		$user = new \Model\User();
 		$user->load($params["id"]);
@@ -69,14 +107,12 @@ class Admin extends \Controller {
 
 	public function user_new($f3, $params) {
 		$f3->set("title", "New User");
-		$f3->set("menuitem", "admin");
 
 		$f3->set("rand_color", sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF)));
 		$this->_render("admin/users/edit.html");
 	}
 
 	public function user_save($f3, $params) {
-		$f3->set("menuitem", "admin");
 
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
@@ -165,7 +201,6 @@ class Admin extends \Controller {
 
 	public function groups($f3, $params) {
 		$f3->set("title", "Manage Groups");
-		$f3->set("menuitem", "admin");
 
 		$group = new \Model\User();
 		$groups = $group->find("deleted_date IS NULL AND role = 'group'");
@@ -189,7 +224,6 @@ class Admin extends \Controller {
 
 	public function group_new($f3, $params) {
 		$f3->set("title", "New Group");
-		$f3->set("menuitem", "admin");
 
 		if($f3->get("POST")) {
 			$group = new \Model\User();
@@ -207,7 +241,6 @@ class Admin extends \Controller {
 
 	public function group_edit($f3, $params) {
 		$f3->set("title", "Edit Group");
-		$f3->set("menuitem", "admin");
 
 		$group = new \Model\User();
 		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
@@ -295,7 +328,6 @@ class Admin extends \Controller {
 
 	public function attributes($f3, $params) {
 		$f3->set("title", "Manage Attributes");
-		$f3->set("menuitem", "admin");
 
 		$attributes = new \Model\Attribute();
 		$f3->set("attributes", $attributes->find());
@@ -314,7 +346,7 @@ class Admin extends \Controller {
 				$attr->default = trim($post["default"]);
 				$attr->save();
 				foreach($post["types"] as $type) {
-					// Save types
+					// TODO: Save types
 				}
 			} else {
 				$f3->set("attribute", $f3->get("POST"));
@@ -338,7 +370,6 @@ class Admin extends \Controller {
 
 	public function sprints($f3, $params) {
 		$f3->set("title", "Manage Sprints");
-		$f3->set("menuitem", "admin");
 
 		$sprints = new \Model\Sprint();
 		$f3->set("sprints", $sprints->find());
@@ -348,7 +379,6 @@ class Admin extends \Controller {
 
 	public function sprint_new($f3, $params) {
 		$f3->set("title", "New Sprint");
-		$f3->set("menuitem", "admin");
 
 		if($post = $f3->get("POST")) {
 			if(empty($post["start_date"]) || empty($post["end_date"])) {
@@ -378,12 +408,8 @@ class Admin extends \Controller {
 		$this->_render("admin/sprints/new.html");
 	}
 
-	//new function here!!!
-
-
 	public function sprint_edit($f3, $params) {
 		$f3->set("title", "Edit Sprint");
-		$f3->set("menuitem", "admin");
 
 		$sprint = new \Model\Sprint;
 		$sprint->load($params["id"]);
@@ -421,10 +447,4 @@ class Admin extends \Controller {
 		$this->_render("admin/sprints/edit.html");
 	}
 
-	public function sprint_breaker($f3, $params) {
-		$f3->set("title", "SprintBreaker");
-		$f3->set("menuitem", "admin");
-
-		$this->_render("admin/sprints/breaker.html");
-	}
 }

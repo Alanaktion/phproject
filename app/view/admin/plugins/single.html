@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body>
+<include href="blocks/navbar.html" />
+<div class="container">
+	<include href="blocks/admin/tabs.html" />
+	<ol class="breadcrumb">
+		<li><a href="{{ @site.url }}admin/plugins">{{ @dict.plugins }}</a></li>
+		<li class="active">{{ @plugin->_package() }}</li>
+	</ol>
+	{~ @plugin->_admin() ~}
+	<include href="blocks/footer.html" />
+</div>
+</body>
+</html>
