@@ -163,7 +163,7 @@ class User extends \Model {
 		}
 
 		foreach($dates as $date) {
-			$return["labels"][$date] = date("D-j", strtotime($date));
+			$return["labels"][$date] = date("D j", strtotime($date));
 			if(!isset($return["spent"][$date])) {
 				$return["spent"][$date] = 0;
 			}
