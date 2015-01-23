@@ -105,6 +105,7 @@ class Issue extends \Model {
 			$repeat_issue->name = $this->get("name");
 			$repeat_issue->type_id = $this->get("type_id");
 			$repeat_issue->sprint_id = $this->get("sprint_id");
+			$repeat_issue->parent_id = $this->get("parent_id");
 			$repeat_issue->author_id = $this->get("author_id");
 			$repeat_issue->owner_id = $this->get("owner_id");
 			$repeat_issue->description = $this->get("description");
