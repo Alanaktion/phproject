@@ -290,19 +290,19 @@ class Notification extends \Prefab {
 		$recipients = array();
 
 		// Add issue author and owner
-		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.author_id = u.id WHERE i.id = ?", $issue_id);
+		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.author_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
 		if(!empty( $result[0]["email"])) {
 			$recipients[] = $result[0]["email"];
 		}
 
 
-		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.owner_id = u.id WHERE i.id = ?", $issue_id);
+		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.owner_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
 		if(!empty( $result[0]["email"])) {
 			$recipients[] = $result[0]["email"];
 		}
 
 		// Add whole group
-		$result = $db->exec("SELECT u.role, u.id FROM issue i INNER JOIN `user` u on i.owner_id = u.id  WHERE i.id = ?", $issue_id);
+		$result = $db->exec("SELECT u.role, u.id FROM issue i INNER JOIN `user` u on i.owner_id = u.id  WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
 		if($result && $result[0]["role"] == 'group') {
 			$group_users = $db->exec("SELECT g.user_email FROM user_group_user g  WHERE g.group_id = ?", $result[0]["id"]);
 			foreach($group_users as $group_user) {
@@ -313,7 +313,7 @@ class Notification extends \Prefab {
 		}
 
 		// Add watchers
-		$watchers = $db->exec("SELECT u.email FROM issue_watcher w INNER JOIN `user` u ON w.user_id = u.id WHERE issue_id = ?", $issue_id);
+		$watchers = $db->exec("SELECT u.email FROM issue_watcher w INNER JOIN `user` u ON w.user_id = u.id WHERE u.deleted_date IS NULL AND issue_id = ?", $issue_id);
 		foreach($watchers as $watcher) {
 			$recipients[] = $watcher["email"];
 		}
