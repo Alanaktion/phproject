@@ -403,3 +403,10 @@ th[data-sort] {
 		visibility: visible;
 	}
 }
+
+/* Fix navbar dropdowns on mobile devices */
+@media only screen and (max-width: 768px) {
+	.dropdown-backdrop {
+		position: static;
+	}
+}

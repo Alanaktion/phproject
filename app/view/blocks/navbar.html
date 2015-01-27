@@ -1,22 +1,19 @@
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
 	<div class="{{ empty(@fullwidth) ? 'container' : 'container-fluid' }}">
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nb-collapse">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nb-collapse">
 				<span class="sr-only">Toggle Navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
 			<a class="navbar-brand" href="{{ @site.url }}">
-				<span class="hidden-sm">
-					<check if="{{ empty(@site.logo) }}">
-						<true>{{ @site.name }}</true>
-						<false>
-							<img src="{{ @site.logo }}" />
-						</false>
-					</check>
-				</span>
-				<span class="glyphicon glyphicon-home visible-sm"></span>
+				<check if="{{ empty(@site.logo) }}">
+					<true>{{ @site.name }}</true>
+					<false>
+						<img src="{{ @site.logo }}" />
+					</false>
+				</check>
 			</a>
 		</div>
 
@@ -24,10 +21,10 @@
 
 			<ul class="nav navbar-nav">
 				<li class="dropdown {{ @menuitem == 'new' ? 'active':'' }}">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						{{ @dict.new }} <b class="caret"></b>
 					</a>
-					<ul class="dropdown-menu">
+					<ul class="dropdown-menu" role="menu">
 						<check if="{{ @user.role == 'admin' }}">
 							<li><a href="{{ @site.url }}admin/sprints/new">{{ @dict.sprint }}</a></li>
 							<li role="presentation" class="divider"></li>
@@ -55,10 +52,10 @@
 					</ul>
 				</li>
 				<li class="dropdown {{ @menuitem == 'browse' ? 'active':'' }}">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						{{ @dict.browse }} <b class="caret"></b>
 					</a>
-					<ul class="dropdown-menu">
+					<ul class="dropdown-menu" role="menu">
 						<li><a href="{{ @site.url }}issues/?status=open">{{ @dict.open }}</a></li>
 						<li><a href="{{ @site.url }}issues/?status=closed">{{ @dict.closed }}</a></li>
 						<li role="presentation" class="divider"></li>
@@ -89,11 +86,11 @@
 					</li>
 				</check>
 				<li class="dropdown {{ @menuitem == 'user' ? 'active':'' }}">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<span class="hidden-sm">{{ @user.name | esc }} <b class="caret"></b></span>
 						<span class="glyphicon glyphicon-user visible-sm"></span>
 					</a>
-					<ul class="dropdown-menu">
+					<ul class="dropdown-menu" role="menu">
 						<li><a href="{{ @site.url }}">{{ @dict.dashboard }}</a></li>
 						<li><a href="{{ @site.url }}user/{{ @user.username }}">{{ @dict.my_issues }}</a></li>
 						<li><a href="{{ @site.url }}user">{{ @dict.my_account }}</a></li>
