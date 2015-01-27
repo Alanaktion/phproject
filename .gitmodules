@@ -1,0 +1,9 @@
+[submodule "app/plugin/bitbucket"]
+	path = app/plugin/bitbucket
+	url = https://github.com/phproject-plugins/bitbucket.git
+[submodule "app/plugin/porter"]
+	path = app/plugin/porter
+	url = https://github.com/phproject-plugins/porter.git
+[submodule "app/plugin/wiki"]
+	path = app/plugin/wiki
+	url = https://github.com/phproject-plugins/wiki.git
