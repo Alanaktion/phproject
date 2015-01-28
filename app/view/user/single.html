@@ -71,9 +71,12 @@
 			<div class="col-md-12">
 				<p>
 					{{ @dict.browse }}:&nbsp;
-					<a href="{{ @site.url }}issues?status=open&amp;author_id={{ @this_user.id }}">{{ @dict.created_issues }}</a>&nbsp;
-					<a href="{{ @site.url }}issues?status=open&amp;owner_id={{ @this_user.id }}">{{ @dict.assigned_issues }}</a>&nbsp;
-					<a href="{{ @site.url }}user/{{ @this_user.username }}/tree">{{ @dict.issue_tree }}</a>
+					<a href="{{ @site.url }}issues?status=open&amp;author_id={{ @this_user.id }}">{{ @dict.created_issues }}</a>&nbsp;&middot;
+					<a href="{{ @site.url }}issues?status=open&amp;owner_id={{ @this_user.id }}">{{ @dict.assigned_issues }}</a>&nbsp;&middot;
+					<a href="{{ @site.url }}user/{{ @this_user.username }}/tree">{{ @dict.issue_tree }}</a>&nbsp;&middot;
+					<check if="{{ @sprint && @sprint.id }}">
+						<a href="{{ @site.url }}taskboard/{{ @sprint.id }}/{{ @this_user.id }}">{{ @dict.taskboard }}</a>
+					</check>
 				</p>
 				<include href="blocks/issue-list.html" />
 			</div>

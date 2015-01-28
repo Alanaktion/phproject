@@ -271,6 +271,11 @@ class User extends \Controller {
 			$issues = $issue->paginate(0, 100, array("status_closed = '0' AND deleted_date IS NULL AND (owner_id = ? OR author_id = ?)", $user->id, $user->id));
 			$f3->set("issues", $issues);
 
+			// Get current sprint if there is one
+			$sprint = new \Model\Sprint;
+			$sprint->load("NOW() BETWEEN start_date AND end_date");
+			$f3->set("sprint", $sprint);
+
 			$this->_render("user/single.html");
 		} else {
 			$f3->error(404);
