@@ -218,7 +218,7 @@
 							<label for="repeat_cycle">{{ @dict.cols.repeat_cycle }}</label>
 							<div>
 								<select class="form-control input-sm" id="repeat_cycle" name="repeat_cycle">
-									<option value="none">{{ @dict.not_repeating }}</option>
+									<option value="">{{ @dict.not_repeating }}</option>
 									<option value="daily" {{ !empty(@issue) && @issue.repeat_cycle == 'daily' ? "selected" : "" }}>{{ @dict.daily }}</option>
 									<option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>{{ @dict.weekly }}</option>
 									<option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>{{ @dict.monthly }}</option>
