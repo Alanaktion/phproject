@@ -9,4 +9,5 @@ Phproject plugins should be placed in this directory.
     * Block should contain the @author tag
 * Plugins must have an `_installed()` method which will be called to check the installation status of the plugin
 * Plugins may have an `_install()` method which will be called if `_installed()` returns `false`
+* Plugins may have a `dict` directory, which will be loaded for localization
 * Plugins should follow the [Code Standards](http://www.phproject.org/contribute.html)
