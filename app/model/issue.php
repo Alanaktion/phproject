@@ -229,7 +229,30 @@ class Issue extends \Model {
 			return $issue;
 		}
 
+		$this->saveTags();
+
 		return empty($issue) ? parent::save() : $issue;
+	}
+
+	/**
+	 * Finds and saves the current issue's tags
+	 * @return Issue
+	 */
+	function saveTags() {
+		$tag = new \Model\Issue\Tag;
+		$issue_id = $this->get("id");
+		$str = $this->get("description");
+		$count = preg_match_all("/(?<=\W#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=\W|$)/i", $str, $matches);
+		$tag->deleteByIssueId($issue_id);
+		if($count) {
+			foreach($matches[0] as $match) {
+				$tag->reset();
+				$tag->tag = str_replace("_", "-", $match);
+				$tag->issue_id = $issue_id;
+				$tag->save();
+			}
+		}
+		return $this;
 	}
 
 	/**
@@ -305,8 +328,7 @@ class Issue extends \Model {
 			if($replace_existing) {
 				$query .= " AND sprint_id IS NULL";
 			}
-			$db = $f3->get("db.instance");
-			$db->exec(
+			$this->db->exec(
 				$query,
 				array(
 					":sprint" => $this->get("sprint_id"),

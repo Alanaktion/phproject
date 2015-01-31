@@ -29,9 +29,10 @@ class View extends \Template {
 			->setDimensionlessImages(true);
 		$val = $tex->parse($str);
 
-		// Find issue IDs and convert to links
+		// Find issue IDs and tags, and convert them to links
 		$siteUrl = $f3->get("site.url");
 		$val = preg_replace("/(?<=[\s,\(^])#([0-9]+)(?=[\s,\)\.,$])/", "<a href=\"{$siteUrl}issues/$1\">#$1</a>", $val);
+		$val = preg_replace("/(?<=\W|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=\W|$)/i", "<a href=\"{$siteUrl}tag/$1\">#$1</a>", $val);
 
 		// Convert URLs to links
 		$val = $this->make_clickable($val);
