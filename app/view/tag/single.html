@@ -6,6 +6,9 @@
 <body>
 	<include href="blocks/navbar.html" />
 	<div class="container">
+		<a href="{{ @site.url }}tag">
+			<span class="glyphicon glyphicon-chevron-left"></span>&ensp;{{ @dict.view_all_tags }}
+		</a>
 		<h1>#{{ @tag.tag }}</h1>
 		<p>{{ @dict.tag_help_1 }}<br>
 			<small>{{ @dict.tag_help_2 }}</small>
