@@ -165,7 +165,9 @@
 				</tr>
 			</check>
 			<tr>
-				<th><input type="checkbox" id="chk-toggle-all"></th>
+				<check if="{{ isset(@statuses) }}">
+					<th><input type="checkbox" id="chk-toggle-all"></th>
+				</check>
 				<check if="{{ !empty(@heading_links_enabled) }}">
 					<true>
 						<repeat group="{{ @headings }}" value="{{ @heading }}">
@@ -193,7 +195,9 @@
 		<tbody>
 			<repeat group="{{ @issues.subset }}" value="{{ @item }}">
 				<tr data-id="{{ @item.id }}" class="{{ @item.status_closed ? 'closed' : '' }}">
-					<td><input type="checkbox" name="id[]" value="{{ @item.id }}"></td>
+					<check if="{{ isset(@statuses) }}">
+						<td><input type="checkbox" name="id[]" value="{{ @item.id }}"></td>
+					</check>
 					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.id }}</a></td>
 					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.name | esc }}</a></td>
 					<td>{{ @item.type_name }}</td>
