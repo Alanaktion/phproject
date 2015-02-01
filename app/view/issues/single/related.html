@@ -1,14 +1,14 @@
 <check if="{{ empty(@parent) }}">
 	<true>
-		<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.new_task }}</a>
+		<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.new_task }}</a>
 	</true>
 	<false>
 		<check if="{{ !@parent.closed_date }}">
 			<check if="{{ @parent.type_id == @issue_type.project }}">
-				<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.project }}/{{ @parent.id }}">{{ @dict.new_sub_project }}</a>
+				<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.project }}/{{ @parent.id }}">{{ @dict.new_sub_project }}</a>
 			</check>
-			<a class="btn btn-default btn-sm" href="issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
-			<span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="issues/' . @parent.id . '">#' . @parent.id . ' ' . @parent.name . '</a>' | format }}</span>
+			<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
+			<span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="' . @site.url . 'issues/' . @parent.id . '">#' . @parent.id . ' ' . @parent.name . '</a>' | format }}</span>
 		</check>
 	</false>
 </check>
@@ -30,12 +30,12 @@
 		<tbody>
 			<repeat group="{{ @issues }}" value="{{ @item }}">
 				<tr data-id="{{ @item.id }}" class="{{ @item.status_closed ? 'closed' : '' }}">
-					<td><a href="issues/{{ @item.id }}">{{ @item.id }}</a></td>
-					<td><a href="issues/{{ @item.id }}">{{ @item.name }}</a></td>
-					<td><a href="user/{{ @item.author_username }}">{{ @item.author_name }}</a></td>
-					<td><a href="user/{{ @item.owner_username }}">{{ @item.owner_name }}</a></td>
+					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.id }}</a></td>
+					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.name | esc }}</a></td>
+					<td><a href="{{ @site.url }}user/{{ @item.author_username }}">{{ @item.author_name | esc }}</a></td>
+					<td><a href="{{ @site.url }}user/{{ @item.owner_username }}">{{ @item.owner_name | esc }}</a></td>
 					<td data-sort-value="{{ strtotime(@item.created_date) }}" title="{{ date('M j, Y \\a\\t g:ia', strtotime(@item.created_date)) }}">{{ date("n/j/y", strtotime(@item.created_date)) }}</td>
-					<td data-sort-value="{{ @item.priority }}">{{ @item.priority_name }}</td>
+					<td data-sort-value="{{ @item.priority }}">{{ @item.priority_name}}</td>
 					<td data-sort-value="{{ strtotime(@item.due_date) ?: 0 }}">{{ !empty(@item.due_date) ? date("n/j", strtotime(@item.due_date)) : "" }}</td>
 					<td data-sort-value="{{ @item.status }}">{{ @item.status_name }}</td>
 				</tr>

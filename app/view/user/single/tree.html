@@ -12,7 +12,7 @@
 				<img src="{{ @this_user->avatar(128) }}" class="img-rounded profile-picture" alt>
 			</div>
 			<div class="pull-left">
-				<h3>{{ @this_user.name }}</h3>
+				<h3>{{ @this_user.name | esc }}</h3>
 				<p>{{ @dict.username }}: {{ @this_user.username }}</p>
 				<check if="{{ @this_user.role != 'group' }}">
 					<p>{{ @dict.email }}: {{ @this_user.email }}</p>
@@ -20,26 +20,12 @@
 			</div>
 		</div>
 
-		<div class="row">
-			<div class="col-lg-6">
-				<h3>{{ @dict.assigned_issues }}</h3>
-				<ul>
-					<repeat group="{{ @issues }}" value="{{ @iss }}">
-						{~ @recurDisplay(@iss) ~}
-					</repeat>
-				</ul>
-			</div>
-			<exclude>
-				<div class="col-lg-6">
-					<h3>{{ @dict.created_issues }}</h3>
-					<ul>
-						<repeat group="{{ @issues }}" value="{{ @iss }}">
-							{~ @recurDisplay(@iss) ~}
-						</repeat>
-					</ul>
-				</div>
-			</exclude>
-		</div>
+		<h3>{{ @dict.assigned_issues }}</h3>
+		<ul>
+			<repeat group="{{ @issues }}" value="{{ @iss }}">
+				{~ @recurDisplay(@iss) ~}
+			</repeat>
+		</ul>
 
 		<include href="blocks/footer.html" />
 	</div>

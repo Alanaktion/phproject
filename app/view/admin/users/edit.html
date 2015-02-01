@@ -6,13 +6,8 @@
 <body>
 <include href="blocks/navbar.html" />
 <div class="container">
-	<ul class="nav nav-tabs">
-		<li><a href="admin/">{{ @dict.overview }}</a></li>
-		<li class="active"><a href="admin/users">{{ @dict.users }}</a></li>
-		<li><a href="admin/groups">{{ @dict.groups }}</a></li>
-		<li><a href="admin/sprints">{{ @dict.sprints }}</a></li>
-	</ul>
-	<form action="admin/users/save" method="post" role="form" class="form-horizontal" autocomplete="off">
+	<include href="blocks/admin/tabs.html" />
+	<form action="{{ @site.url }}admin/users/save" method="post" role="form" class="form-horizontal" autocomplete="off">
 		<check if="{{ empty(@this_user) }}">
 			<true>
 				<legend>{{ @dict.new_user }}</legend>
@@ -35,7 +30,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="name" class="col-lg-2 control-label label-sm">{{ @dict.name }}</label>
+			<label for="name" class="col-lg-2 control-label label-sm">{{ @dict.name | esc }}</label>
 			<div class="col-lg-10">
 				<input class="form-control input-sm" id="name" type="text" name="name" value="{{ @@this_user.name ?: @@POST.name }}">
 			</div>
@@ -81,7 +76,7 @@
 		<div class="form-group">
 			<div class="col-lg-10 col-lg-offset-2">
 				<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save }}</button>
-				<a href="admin/users" class="btn btn-default btn-sm">{{ @dict.cancel }}</a>
+				<a href="{{ @site.url }}admin/users" class="btn btn-default btn-sm">{{ @dict.cancel }}</a>
 			</div>
 		</div>
 	</form>

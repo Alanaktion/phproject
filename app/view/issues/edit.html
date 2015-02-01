@@ -6,14 +6,10 @@
 <body>
 <include href="blocks/navbar.html" />
 <div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<include href="issues/edit-form.html" />
-		</div>
-	</div>
+	<include href="issues/edit-form.html" />
 	<include href="blocks/footer.html" />
 </div>
-<script src="minify/js/bootstrap-datepicker.js"></script>
+<script src="{{ @site.url }}minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(function() {
 	var nowTemp = new Date();

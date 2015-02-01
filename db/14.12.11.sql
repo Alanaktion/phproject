@@ -1,8 +1,7 @@
 # This database update occured after commit f7c42f23b8
 
 # Add Version checking to the database
-DROP TABLE IF EXISTS `config`;
-CREATE TABLE `config` (
+CREATE TABLE IF NOT EXISTS `config` (
   `id` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `attribute` varchar(255)  NULL,
   `value` varchar(255)  NULL,

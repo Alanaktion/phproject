@@ -13,6 +13,7 @@ CREATE TABLE `user` (
 	`role` enum('user','admin','group') NOT NULL DEFAULT 'user',
 	`task_color` char(6) DEFAULT NULL,
 	`theme` varchar(64) DEFAULT NULL,
+	`language` varchar(5) DEFAULT NULL,
 	`avatar_filename` varchar(64) DEFAULT NULL,
 	`api_key` varchar(40) NULL,
 	`created_date` datetime NOT NULL,
@@ -38,7 +39,7 @@ CREATE TABLE `user_group` (
 DROP TABLE IF EXISTS `issue`;
 CREATE TABLE `issue` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`status` int(11) NOT NULL DEFAULT '1',
+	`status` int(10) unsigned NOT NULL DEFAULT '1',
 	`type_id` int(11) unsigned NOT NULL DEFAULT '1',
 	`name` varchar(255) NOT NULL,
 	`description` text NOT NULL,
@@ -52,7 +53,7 @@ CREATE TABLE `issue` (
 	`created_date` datetime NOT NULL,
 	`closed_date` datetime DEFAULT NULL,
 	`deleted_date` datetime DEFAULT NULL,
-	`start_sate` date DEFAULT NULL,
+	`start_date` date DEFAULT NULL,
 	`due_date` date DEFAULT NULL,
 	`repeat_cycle` varchar(10) NOT NULL DEFAULT 'none',
 	`sprint_id` int(10) unsigned DEFAULT NULL,
@@ -60,19 +61,12 @@ CREATE TABLE `issue` (
 	KEY `sprint_id` (`sprint_id`),
 	KEY `repeat_cycle` (`repeat_cycle`),
 	KEY `due_date` (`due_date`),
-	KEY `type_id` (`type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `issue_checklist`;
-CREATE TABLE `issue_checklist` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`issue_id` int(10) unsigned NOT NULL,
-	`text` text NOT NULL,
-	`checked` tinyint(1) unsigned NOT NULL DEFAULT '0',
-	`created_date` datetime NOT NULL,
-	PRIMARY KEY (`id`),
-	KEY `issue_id` (`issue_id`),
-	CONSTRAINT `issue_checklist_issue_id` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`)
+	KEY `type_id` (`type_id`),
+	KEY `parent_id` (`parent_id`),
+	CONSTRAINT `issue_type_id` FOREIGN KEY (`type_id`) REFERENCES `issue_type`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT `issue_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `issue_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `issue_status` FOREIGN KEY (`status`) REFERENCES `issue_status`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_comment`;
@@ -87,7 +81,7 @@ CREATE TABLE `issue_comment` (
 	KEY `issue_id` (`issue_id`),
 	KEY `user` (`user_id`),
 	CONSTRAINT `comment_issue` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `comment_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT `comment_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_file`;
@@ -183,6 +177,16 @@ CREATE TABLE `issue_watcher` (
 	UNIQUE KEY `unique_watch` (`issue_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `issue_tag`;
+CREATE TABLE `issue_tag`(
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`tag` VARCHAR(60) NOT NULL,
+	`issue_id` INT UNSIGNED NOT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `issue_tag_tag` (`tag`, `issue_id`),
+	CONSTRAINT `issue_tag_issue` FOREIGN KEY (`issue_id`) REFERENCES `issue`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=INNODB CHARSET=utf8;
+
 DROP TABLE IF EXISTS `sprint`;
 CREATE TABLE `sprint` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -262,13 +266,12 @@ CREATE TABLE `session` (
 	PRIMARY KEY(`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
-  `id` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `attribute` varchar(255) COLLATE 'utf8_general_ci' NULL,
-  `value` varchar(255) COLLATE 'utf8_general_ci' NULL,
-  UNIQUE KEY `attribute` (`attribute`)
+	`id` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`attribute` varchar(255) COLLATE 'utf8_general_ci' NULL,
+	`value` varchar(255) COLLATE 'utf8_general_ci' NULL,
+	UNIQUE KEY `attribute` (`attribute`)
 ) ;
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '14.12.11');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.01.31');

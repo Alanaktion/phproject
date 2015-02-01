@@ -21,17 +21,17 @@
 	<check if="{{ @issue.deleted_date }}">
 		<p id="alert" class="alert alert-danger">
 			{{ @dict.deleted_notice }}&ensp;
-			<a href="issues/undelete/{{ @issue.id }}" class="btn btn-default btn-xs">{{ @dict.restore_issue }}</a>
+			<a href="{{ @site.url }}issues/undelete/{{ @issue.id }}" class="btn btn-default btn-xs">{{ @dict.restore_issue }}</a>
 		</p>
 	</check>
 
-	<check if="{{ count(@hierarchy) > 1 }}">
+	<check if="{{ count(@ancestors) > 1 }}">
 		<div class="clearfix">
 			<ol class="breadcrumb pull-left">
-				<repeat group="{{ @hierarchy }}" value="{{ @crumb }}">
+				<repeat group="{{ @ancestors }}" value="{{ @crumb }}">
 					<check if="{{ @crumb.id != @issue.id }}">
 						<li class="active">
-							<a href="issues/{{ @crumb.id }}">
+							<a href="{{ @site.url }}issues/{{ @crumb.id }}">
 								{{ @crumb.name }} <small>#{{ @crumb.id }}</small>
 							</a>
 						</li>
@@ -42,22 +42,22 @@
 	</check>
 	<div class="clearfix">
 		<h3 class="pull-left issue-heading">
-			{{ @issue.name }} <small>#{{ @issue.id }}</small>
+			{{ @issue.name | esc }} <small>#{{ @issue.id }}</small>
 		</h3>
 		<div class="pull-right">
-			<check if="{{ !@issue.closed_date }}">
-				<true>
-					<a id="btn-issue-close" href="issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
+			<check if="{{ @issue.status_closed }}">
+				<false>
+					<a id="btn-issue-close" href="{{ @site.url }}issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
 						<span class="glyphicon glyphicon-check"></span>&ensp;{{ @dict.complete }}
 					</a>
-				</true>
-				<false>
-					<a id="btn-issue-reopen" href="issues/reopen/{{ @issue.id }}" class="btn btn-warning btn-xs">
+				</false>
+				<true>
+					<a id="btn-issue-reopen" href="{{ @site.url }}issues/reopen/{{ @issue.id }}" class="btn btn-warning btn-xs">
 						<span class="glyphicon glyphicon-repeat"></span>&ensp;{{ @dict.reopen }}
 					</a>
-				</false>
+				</true>
 			</check>
-			<a id="btn-copy" href="issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
+			<a id="btn-copy" href="{{ @site.url }}issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
 				<span class="glyphicon glyphicon-file"></span>&ensp;{{ @dict.copy }}
 			</a>
 			<check if="{{ @watching }}">
@@ -72,11 +72,11 @@
 					</button>
 				</false>
 			</check>
-			<a id="btn-edit" href="issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
+			<a id="btn-edit" href="{{ @site.url }}issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
 				<span class="glyphicon glyphicon-pencil"></span>&ensp;{{ @dict.edit }}
 			</a>
 			<check if="{{ @user.role == 'admin' }}">
-				<a href="issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
+				<a href="{{ @site.url }}issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
 					<span class="glyphicon glyphicon-remove"></span>&ensp;{{ @dict.delete }}
 				</a>
 			</check>
@@ -89,10 +89,10 @@
 				<p class="pull-left">
 					<check if="{{ @author.username }}">
 						<true>
-							<a href="user/{{ @author.username }}" class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name }}</a>
+							<a href="{{ @site.url }}user/{{ @author.username }}" class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</a>
 						</true>
 						<false>
-							<span class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name }}</span>
+							<span class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</span>
 						</false>
 					</check>
 					<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@issue.created_date))) }}
@@ -102,11 +102,16 @@
 			<dl class="dl-inline">
 				<check if="{{ @issue.sprint_id }}">
 					<dt>{{ @dict.cols.sprint }}</dt>
-					<dd><a href="taskboard/{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
+					<dd><a href="{{ @site.url }}taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
 				</check>
 
 				<dt>{{ @dict.cols.type }}</dt>
-				<dd>{{ @issue.type_name }}</dd>
+				<dd>
+					{{ @issue.type_name }}
+					<check if="{{ @issue.type_id == @issue_type.project }}">
+						&ndash; <a href="{{ @site.url }}issues/project/{{ @issue.id }}">{{ @dict.project_overview }}</a>
+					</check>
+				</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
 				<dd>{{ @issue.priority_name }}</dd>
@@ -120,10 +125,10 @@
 						<true>
 							<check if="{{ @owner.username }}">
 								<true>
-									<a href="user/{{ @owner.username }}">{{ @owner.name }}</a>
+									<a href="{{ @site.url }}user/{{ @owner.username }}">{{ @owner.name | esc }}</a>
 								</true>
 								<false>
-									{{ @owner.name }}
+									{{ @owner.name | esc }}
 								</false>
 							</check>
 						</true>
@@ -133,7 +138,7 @@
 					</check>
 				</dd>
 
-				<check if="{{ @issue.repeat_cycle != 'none' }}">
+				<check if="{{ @issue.repeat_cycle && @issue.repeat_cycle != 'none' }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>
 					<dd>{{ ucfirst(@issue.repeat_cycle) }}</dd>
 				</check>
@@ -156,7 +161,7 @@
 					<dd>{{ date("D, M j, Y", strtotime(@issue.start_date)) }}</dd>
 				</check>
 
-				<check if="{{ strtotime(@issue.due_date) }}">
+				<check if="{{ @issue.due_date && strtotime(@issue.due_date) }}">
 					<dt>{{ @dict.cols.due_date }}</dt>
 					<dd>{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</dd>
 				</check>
@@ -181,10 +186,10 @@
 					<div class="tab-pane fade in active" id="files-tiles">
 						<ul class="list-inline file-list">
 							<repeat group="{{ @files }}" value="{{ @file }}">
-								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name }}</p>{{ @file.filename }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @this->formatFilesize(@file.filesize) }}">
-									<a class="file-attachment" href="files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">
-										<img class src="files/thumb/96-{{ @file.id }}.png" /><br />
-										{{ @file.filename }}
+								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @this->formatFilesize(@file.filesize) }}">
+									<a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename | esc }}" data-mime="{{ @file.content_type }}" target="_blank">
+										<img class src="{{ @site.url }}files/thumb/96-{{ @file.id }}.png" /><br />
+										{{ @file.filename | esc }}
 									</a>
 									<button class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
 								</li>
@@ -205,8 +210,8 @@
 								<repeat group="{{ @files }}" value="{{ @file }}">
 									<tr id="ft-{{ @file.id }}" data-id="{{ @file.id }}">
 										<td>{{ @file.id }}</td>
-										<td><a class="file-attachment" href="files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename }}</a></td>
-										<td>{{ @file.user_name }}</td>
+										<td><a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename | esc }}</a></td>
+										<td>{{ @file.user_name | esc }}</td>
 										<td>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
 										<td>{{ @this->formatFilesize(@file.filesize) }}</td>
 										<td><button class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button></td>
@@ -238,7 +243,7 @@
 			<div class="tab-content">
 				<div class="tab-pane fade in active" id="comments">
 					<div class="comments">
-						<form action="issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
+						<form action="{{ @site.url }}issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
 							<input type="hidden" name="action" value="comment">
 							<div class="form-group">
 								<div class="col-md-12">
@@ -253,12 +258,12 @@
 						</form>
 						<repeat group="{{ @comments }}" value="{{ @comment }}">
 							<div class="media" id="c-{{ @comment.id }}" data-id="{{ @comment.id }}">
-								<a class="pull-left" href="user/{{ @comment.user_username }}">
-									<img class="profile-picture media-object img-rounded" src="avatar/48-{{ @comment.user_id }}.png" alt>
+								<a class="pull-left" href="{{ @site.url }}user/{{ @comment.user_username }}">
+									<img class="profile-picture media-object img-rounded" src="{{ @site.url }}avatar/48-{{ @comment.user_id }}.png" alt>
 								</a>
 								<div class="media-body">
 									<p class="media-heading clearfix">
-										<a href="user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
+										<a href="{{ @site.url }}user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
 										<check if="{{ @user.role == 'admin' }}">
 											<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
 										</check>
@@ -267,10 +272,10 @@
 									<check if="{{ @comment.file_id }}">
 										<check if="{{ @comment.file_deleted_date }}">
 											<true>
-												<div><b>{{ @dict.attached_file }}:</b> <span style="text-decoration: line-through;">{{@comment.file_filename}}</span> <span class="text-danger">[{{ @dict.deleted }}]</span></div>
+												<div><b>{{ @dict.attached_file }}:</b> <span style="text-decoration: line-through;">{{ @comment.file_filename | esc }}</span> <span class="text-danger">[{{ @dict.deleted }}]</span></div>
 											</true>
 											<false>
-												<div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="files/{{ @comment.file_id }}/{{ @comment.file_filename }}" target="_blank">{{@comment.file_filename}}</a></div>
+												<div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="{{ @site.url }}files/{{ @comment.file_id }}/{{ @comment.file_filename | esc }}" target="_blank">{{ @comment.file_filename | esc }}</a></div>
 											</false>
 										</check>
 									</check>
@@ -310,7 +315,7 @@
 	<include href="blocks/footer.html" />
 </div>
 
-<form class="modal fade in" id="upload" method="post" enctype="multipart/form-data" action="issues/upload">
+<form class="modal fade in" id="upload" method="post" enctype="multipart/form-data" action="{{ @site.url }}issues/upload">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -344,29 +349,13 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{ @dict.cancel }}</button>
-				<a id="btn-copy-confirm" class="btn btn-primary btn-sm" href="/issues/copy/{{ @issue.id }}">{{ @dict.copy_issue }}</a>
+				<a id="btn-copy-confirm" class="btn btn-primary btn-sm" href="{{ @site.url }}issues/copy/{{ @issue.id }}">{{ @dict.copy_issue }}</a>
 			</div>
 		</div>
 	</div>
 </div>
 
-<!-- <div class="modal fade" id="modal-file" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
-				<h4 class="modal-title"></h4>
-			</div>
-			<div class="modal-body"></div>
-			<div class="modal-footer">
-				<a class="btn btn-default btn-sm" href="#" target="_blank">Download</a>
-				<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">{{ @dict.close }}</button>
-			</div>
-		</div>
-	</div>
-</div> -->
-
-<script src="minify/js/bootstrap-datepicker.js,stupidtable.min.js"></script>
+<script src="{{ @site.url }}minify/js/bootstrap-datepicker.js,stupidtable.min.js"></script>
 <script type="text/javascript">
 $(function() {
 
@@ -385,21 +374,22 @@ $(function() {
 	$('#comment_form').submit(function(e) {
 		var $this = $(this);
 		if($this.children('textarea').val() !== '') {
+			$('#comment_form .btn').prop('disabled', true);
 			$.post($this.attr('action'), $this.serialize(), function(data) {
+				$('#comment_form .btn').prop('disabled', false);
 				if(data.error) {
 					return;
 				}
 				// Append the new comment to the list
 				$('#comment_form')
-					.prop('disabled', false)
 					.after(
 						'<div class="media" id="c-' + data.id + '" data-id="' + data.id + '">' +
-							'<a class="pull-left" href="user/' + data.user_username + '">' +
+							'<a class="pull-left" href="{{ @site.url }}user/' + data.user_username + '">' +
 								'<img src="{{ @user_obj->avatar(48) }}" class="media-object profile-picture img-rounded" alt>' +
 							'</a>' +
 							'<div class="media-body">' +
-								'<p class="media-heading"><a href="user/' + data.user_username + '">' + data.user_name + '</a></p>' +
-								'<p class="tex">' + data.text + '</p>' +
+								'<p class="media-heading"><a href="{{ @site.url }}user/' + data.user_username + '">' + data.user_name + '</a></p>' +
+								'<div class="tex">' + data.text + '</div>' +
 								'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
 							'</div>' +
 						'</div>');
@@ -413,20 +403,20 @@ $(function() {
 	});
 
 	// Load history, watchers, and related issues
-	$.get('issues/{{ @issue.id }}/history', {}, function(data) {
+	$.get(site_url + 'issues/{{ @issue.id }}/history', {}, function(data) {
 		$('#history').empty().append(data.html);
 		$('#tab_history').html('{{ @dict.history }}&ensp;<span class="badge">' + data.total + '</span>');
 	}, 'json').error(function() {
 		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_history }}'));
 	});
-	$.get('issues/{{ @issue.id }}/watchers', {}, function(data) {
+	$.get(site_url + 'issues/{{ @issue.id }}/watchers', {}, function(data) {
 		$('#watchers').empty().append(data.html);
 		$('#tab_watchers').html('{{ @dict.watchers }}&ensp;<span class="badge" id="watchers-badge">' + data.total + '</span>');
 
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
 			$li = $(this).parents('li');
-			$.post('issues/{{ @issue.id }}', {
+			$.post(site_url + 'issues/{{ @issue.id }}', {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
 			});
@@ -438,7 +428,7 @@ $(function() {
 		});
 		$('#add-watcher').submit(function(e) {
 			$this = $(this);
-			$.post('issues/{{ @issue.id }}', $this.serialize());
+			$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
 
 			$select = $this.find('select');
 			$('<li />')
@@ -454,7 +444,7 @@ $(function() {
 	}, 'json').error(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
 	});
-	$.get('issues/{{ @issue.id }}/related', {}, function(data) {
+	$.get(site_url + 'issues/{{ @issue.id }}/related', {}, function(data) {
 		$('#related').empty().append(data.html);
 		$('#tab_related').html($('#tab_related').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 		$('#related table').stupidtable();
@@ -477,8 +467,8 @@ $(function() {
 	$(".file-list").on("click", ".delete", function(e) {
 		var $file = $(this).parents("li, tr");
 		$file.fadeTo(100, 0.5).popover("hide");
-		$.post("issues/file/delete", {id: $file.data("id")}, function(data) {
-			$("#alert span").html('File deleted. <a href="javascript:void(0);" onclick="restoreFile(' + data.id + ')">Undo</a>');
+		$.post(site_url + "issues/file/delete", {id: $file.data("id")}, function(data) {
+			$("#alert span").html('File deleted. <a href="{{ @site.url }}javascript:void(0);" onclick="restoreFile(' + data.id + ')">Undo</a>');
 			$("#alert").show();
 			$(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();
 		}, "json");
@@ -495,46 +485,26 @@ $(function() {
 		if(confirm("{{ @dict.comment_delete_confirm }}")) {
 			var $comment = $(this).parents(".media");
 			$comment.css("text-decoration", "line-through");
-			jQuery.post("issues/comment/delete", {id: $comment.data("id")}, function(data) {
+			jQuery.post(site_url + "issues/comment/delete", {id: $comment.data("id")}, function(data) {
 				$comment.remove();
 			});
 		}
 	});
 
-	// Trigger modal on plain text attachments
-	/*$(".file-attachment").click(function(e) {
-		$this = $(this);
-		if($this.data("mime") == "text/plain") {
-			console.log($this[0]);
-			$.get($this.attr("href"), function(data) {
-				$("#modal-file .modal-body").empty();
-				$("<pre />").text(data).appendTo("#modal-file .modal-body");
-			});
-			$("#modal-file .modal-body").html("{{ @dict.loading }}");
-			$("#modal-file .modal-title").text($this.text());
-			$("#modal-file .modal-footer a").attr("href", $this.attr("href"));
-			$("#modal-file").modal("show");
-			e.preventDefault();
-		}
-	});
-	$("#modal-file .modal-footer a").click(function(e) {
-		$(this).parents(".modal").modal("hide");
-	});*/
-
 });
 
 function restoreFile(file_id) {
-	$.post("issues/file/undelete", {id: file_id}, function(data) {
+	$.post(site_url + 'issues/file/undelete', {id: file_id}, function(data) {
 		window.location = window.location;
 	});
 }
 
 function watch_issue() {
-	$.post('issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
+	$.post(site_url + 'issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="glyphicon glyphicon-eye-close"></span>&ensp;{{ @dict.unwatch }}');
 }
 function unwatch_issue() {
-	$.post('issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
+	$.post(site_url + 'issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="glyphicon glyphicon-eye-open"></span>&ensp;{{ @dict.watch }}');
 }
 </script>

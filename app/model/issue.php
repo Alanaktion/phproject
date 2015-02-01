@@ -4,13 +4,20 @@ namespace Model;
 
 class Issue extends \Model {
 
-	protected $_table_name = "issue";
+	protected
+		$_table_name = "issue",
+		$_heirarchy = null,
+		$_children = null;
 
 	/**
 	 * Get complete parent list for issue
 	 * @return array
 	 */
-	public function hierarchy() {
+	public function getAncestors() {
+		if($this->_heirarchy !== null) {
+			return $this->_heirarchy;
+		}
+
 		$issues = array();
 		$issues[] = $this;
 		$issue_ids = array($this->get("id"));
@@ -36,7 +43,8 @@ class Issue extends \Model {
 			}
 		}
 
-		return array_reverse($issues);
+		$this->_heirarchy = array_reverse($issues);
+		return $this->_heirarchy;
 	}
 
 	/**
@@ -50,7 +58,7 @@ class Issue extends \Model {
 
 	/**
 	 * Delete without sending notification
-	 * @return mixed
+	 * @return Issue
 	 */
 	public function delete() {
 		$this->set("deleted_date", date("Y-m-d H:i:s"));
@@ -91,12 +99,13 @@ class Issue extends \Model {
 		}
 
 		// Create a new task if repeating
-		if($this->get("closed_date") && $this->get("repeat_cycle") != "none") {
+		if($this->get("closed_date") && $this->get("repeat_cycle") && $this->get("repeat_cycle") != "none") {
 
 			$repeat_issue = new \Model\Issue();
 			$repeat_issue->name = $this->get("name");
 			$repeat_issue->type_id = $this->get("type_id");
 			$repeat_issue->sprint_id = $this->get("sprint_id");
+			$repeat_issue->parent_id = $this->get("parent_id");
 			$repeat_issue->author_id = $this->get("author_id");
 			$repeat_issue->owner_id = $this->get("owner_id");
 			$repeat_issue->description = $this->get("description");
@@ -126,14 +135,14 @@ class Issue extends \Model {
 			// If the project was in a sprint before, put it in a sprint again.
 			if($this->get("sprint_id")) {
 				$sprint = new \Model\Sprint();
-				$sprint->load(array("id > ? AND end_date > ? AND start_date < ?", $this->get("sprint_id"), $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
+				$sprint->load(array("end_date > ? AND start_date < ?", $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
 				$repeat_issue->sprint_id = $sprint->id;
 			}
 
 			$repeat_issue->save();
 			$notification = \Helper\Notification::instance();
 			$notification->issue_create($repeat_issue->id);
-			$this->set("repeat_cycle", "none");
+			$this->set("repeat_cycle", null);
 		}
 
 		// Move all non-project children to same sprint
@@ -170,6 +179,11 @@ class Issue extends \Model {
 	 */
 	public function save($notify = true) {
 		$f3 = \Base::instance();
+
+		// Catch empty sprint at the lowest level here
+		if($this->get("sprint_id") === 0) {
+			$this->set("sprint_id", null);
+		}
 
 		// Censor credit card numbers if enabled
 		if($f3->get("security.block_ccs")) {
@@ -215,7 +229,30 @@ class Issue extends \Model {
 			return $issue;
 		}
 
+		$this->saveTags();
+
 		return empty($issue) ? parent::save() : $issue;
+	}
+
+	/**
+	 * Finds and saves the current issue's tags
+	 * @return Issue
+	 */
+	function saveTags() {
+		$tag = new \Model\Issue\Tag;
+		$issue_id = $this->get("id");
+		$str = $this->get("description");
+		$count = preg_match_all("/(?<=\W#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=\W|$)/i", $str, $matches);
+		$tag->deleteByIssueId($issue_id);
+		if($count) {
+			foreach($matches[0] as $match) {
+				$tag->reset();
+				$tag->tag = str_replace("_", "-", $match);
+				$tag->issue_id = $issue_id;
+				$tag->save();
+			}
+		}
+		return $this;
 	}
 
 	/**
@@ -246,8 +283,9 @@ class Issue extends \Model {
 
 	/**
 	 * Duplicate a complete issue tree, starting from a duplicated issue created by duplicate()
-	 * @param int $id
-	 * @param int $new_id
+	 * @param  int $id
+	 * @param  int $new_id
+	 * @return Issue $this
 	 */
 	protected function _duplicateTree($id, $new_id) {
 
@@ -275,11 +313,13 @@ class Issue extends \Model {
 			}
 		}
 
+		return $this;
+
 	}
 
 	/**
 	 * Move all non-project children to same sprint
-	 * @return Issue
+	 * @return Issue $this
 	 */
 	public function resetChildren($replace_existing = true) {
 		$f3 = \Base::instance();
@@ -288,8 +328,7 @@ class Issue extends \Model {
 			if($replace_existing) {
 				$query .= " AND sprint_id IS NULL";
 			}
-			$db = $f3->get("db.instance");
-			$db->exec(
+			$this->db->exec(
 				$query,
 				array(
 					":sprint" => $this->get("sprint_id"),
@@ -299,6 +338,18 @@ class Issue extends \Model {
 			);
 		}
 		return $this;
+	}
+
+	/**
+	 * Get children of current issue
+	 * @return array
+	 */
+	public function getChildren() {
+		if($this->_children !== null) {
+			return $this->_children;
+		}
+
+		return $this->_children ?: $this->_children = $this->find(array("parent_id = ? AND deleted_date IS NULL", $this->get("id")));
 	}
 
 }

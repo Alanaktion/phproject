@@ -6,8 +6,17 @@ class User extends \Controller {
 
 	protected $_userId;
 
+	private $_languages;
+
 	public function __construct() {
 		$this->_userId = $this->_requireLogin();
+		$this->_languages = array(
+			"en" => \ISO::LC_en,
+			"en_GB" => \ISO::LC_en . " (Great Britain)",
+			"es" => \ISO::LC_es . " (Español)",
+			"pt" => \ISO::LC_pt . " (Português)",
+			"ru" => \ISO::LC_ru . " (Pу́сский Язы́к)",
+		);
 	}
 
 	public function index($f3, $params) {
@@ -55,7 +64,7 @@ class User extends \Controller {
 		));
 
 		$watchlist = new \Model\Issue\Watcher();
-		$f3->set("watchlist", $watchlist->findby_watcher($f3, $this->_userId, $order));
+		$f3->set("watchlist", $watchlist->findby_watcher($this->_userId, $order));
 
 
 		$tasks = new \Model\Issue\Detail();
@@ -97,9 +106,8 @@ class User extends \Controller {
 	public function account($f3, $params) {
 		$f3->set("title", "My Account");
 		$f3->set("menuitem", "user");
-
+		$f3->set("languages", $this->_languages);
 		$this->_loadThemes();
-
 		$this->_render("user/account.html");
 	}
 
@@ -156,6 +164,12 @@ class User extends \Controller {
 				$user->theme = $post["theme"];
 			}
 
+			if(empty($post["language"])) {
+				$user->language = null;
+			} else {
+				$user->language = $post["language"];
+			}
+
 			if(empty($error)) {
 				$f3->set("success", "Profile updated successfully.");
 			} else {
@@ -170,6 +184,8 @@ class User extends \Controller {
 
 		// Use new user values for page
 		$user->loadCurrent();
+
+		$f3->set("languages", $this->_languages);
 		$this->_loadThemes();
 
 		$this->_render("user/account.html");
@@ -252,8 +268,13 @@ class User extends \Controller {
 
 
 			$issue = new \Model\Issue\Detail;
-			$issues = $issue->paginate(0, 100, array("closed_date IS NULL AND deleted_date IS NULL AND (owner_id = ? OR author_id = ?)", $user->id, $user->id));
+			$issues = $issue->paginate(0, 100, array("status_closed = '0' AND deleted_date IS NULL AND (owner_id = ? OR author_id = ?)", $user->id, $user->id));
 			$f3->set("issues", $issues);
+
+			// Get current sprint if there is one
+			$sprint = new \Model\Sprint;
+			$sprint->load("NOW() BETWEEN start_date AND end_date");
+			$f3->set("sprint", $sprint);
 
 			$this->_render("user/single.html");
 		} else {
@@ -321,7 +342,7 @@ class User extends \Controller {
 					$missing_ids[] = $iss["parent_id"];
 				}
 			}
-			do {
+			while(!empty($missing_ids)) {
 				$parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
 				foreach($parents as $iss) {
 					if (($key = array_search($iss->id, $missing_ids)) !== false) {
@@ -333,17 +354,20 @@ class User extends \Controller {
 						$missing_ids[] = $iss->parent_id;
 					}
 				}
-			} while(!empty($missing_ids));
+			}
 
 			// Convert list to tree
 			$tree = $this->_buildTree($issues);
 
 			// Helper function for recursive tree rendering
 			$recurDisplay = function($issue) use(&$recurDisplay) {
+				$url = \Base::instance()->get("site.url");
 				echo "<li>";
 				if(!empty($issue["id"])) {
-					echo '<a href="issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
-					echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+					echo '<a href="'.$url.'issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
+					if($issue["author_name"]) {
+						echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+					}
 				}
 				if(!empty($issue["children"])) {
 					echo "<ul>";

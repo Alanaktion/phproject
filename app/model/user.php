@@ -19,6 +19,10 @@ class User extends \Model {
 			if($this->id) {
 				$f3->set("user", $this->cast());
 				$f3->set("user_obj", $this);
+				// Change default language if user has selected one
+				if($this->exists("language") && $this->language) {
+					$f3->set("LANGUAGE", $this->language);
+				}
 			}
 		}
 		return $this;
@@ -107,8 +111,6 @@ class User extends \Model {
 	 * @return array
 	 */
 	public function stats($time = 0) {
-		$db = \Base::instance()->get("db.instance");
-
 		\Helper\View::instance()->utc2local();
 		$offset = \Base::instance()->get("site.timeoffset");
 
@@ -117,7 +119,7 @@ class User extends \Model {
 		}
 
 		$result = array();
-		$result["spent"] = $db->exec(
+		$result["spent"] = $this->db->exec(
 			"SELECT DATE(DATE_ADD(u.created_date, INTERVAL :offset SECOND)) AS `date`, SUM(f.new_value - f.old_value) AS `val`
 			FROM issue_update u
 			JOIN issue_update_field f ON u.id = f.issue_update_id AND f.field = 'hours_spent'
@@ -125,14 +127,14 @@ class User extends \Model {
 			GROUP BY DATE(DATE_ADD(u.created_date, INTERVAL :offset2 SECOND))",
 			array(":user" => $this->id, ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
 		);
-		$result["closed"] = $db->exec(
+		$result["closed"] = $this->db->exec(
 			"SELECT DATE(DATE_ADD(i.closed_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
 			FROM issue i
 			WHERE i.owner_id = :user AND i.closed_date > :date
 			GROUP BY DATE(DATE_ADD(i.closed_date, INTERVAL :offset2 SECOND))",
 			array(":user" => $this->id, ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
 		);
-		$result["created"] = $db->exec(
+		$result["created"] = $this->db->exec(
 			"SELECT DATE(DATE_ADD(i.created_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
 			FROM issue i
 			WHERE i.author_id = :user AND i.created_date > :date
@@ -159,7 +161,7 @@ class User extends \Model {
 		}
 
 		foreach($dates as $date) {
-			$return["labels"][$date] = date("M j", strtotime($date));
+			$return["labels"][$date] = date("D j", strtotime($date));
 			if(!isset($return["spent"][$date])) {
 				$return["spent"][$date] = 0;
 			}
