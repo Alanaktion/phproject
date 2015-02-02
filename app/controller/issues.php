@@ -843,20 +843,27 @@ class Issues extends \Controller {
 	}
 
 	public function single_delete($f3, $params) {
-		$this->_requireAdmin();
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
-		$issue->delete();
-		$f3->reroute("/issues?deleted={$issue->id}");
+		$user = $f3->get("user_obj");
+		if($user->role == "admin" || $issue->author_id == $user->id) {
+			$issue->delete();
+			$f3->reroute("/issues?deleted={$issue->id}");
+		} else {
+			$f3->error(403);
+		}
 	}
 
 	public function single_undelete($f3, $params) {
-		$this->_requireAdmin();
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
-		$issue->deleted_date = null;
-		$issue->save();
-		$f3->reroute("/issues/{$issue->id}");
+		if($user->role == "admin" || $issue->author_id == $user->id) {
+			$issue->deleted_date = null;
+			$issue->save();
+			$f3->reroute("/issues/{$issue->id}");
+		} else {
+			$f3->error(403);
+		}
 	}
 
 	public function comment_delete($f3, $params) {
