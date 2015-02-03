@@ -857,6 +857,7 @@ class Issues extends \Controller {
 	public function single_undelete($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
+		$user = $f3->get("user_obj");
 		if($user->role == "admin" || $issue->author_id == $user->id) {
 			$issue->deleted_date = null;
 			$issue->save();
