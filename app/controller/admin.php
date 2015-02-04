@@ -208,7 +208,7 @@ class Admin extends \Controller {
 		$group_array = array();
 		$db = $f3->get("db.instance");
 		foreach($groups as $g) {
-			$db->exec("SELECT id FROM user_group WHERE group_id = ?", $g["id"]);
+			$db->exec("SELECT g.id FROM user_group g JOIN user u ON g.user_id = u.id WHERE g.group_id = ? AND u.deleted_date IS NULL", $g["id"]);
 			$count = $db->count();
 			$group_array[] = array(
 				"id" => $g["id"],
