@@ -11,6 +11,7 @@ $f3->mset(array(
 	"CACHE" => false,
 	"AUTOLOAD" => "app/",
 	"PACKAGE" => "Phproject",
+	"site.url" => $f3->get("SCHEME") . "://" . $f3->get("HOST") . $f3->get("BASE") . "/"
 ));
 
 // Check if already installed
