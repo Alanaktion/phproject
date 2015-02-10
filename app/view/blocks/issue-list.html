@@ -112,12 +112,12 @@
 						</select>
 					</td>
 					<td>
-						<select class="form-control input-sm" name="sprint_start_date">
+						<select class="form-control input-sm" name="sprint_id">
 							<option></option>
 							<repeat group="{{ @sprints }}" value="{{ @item }}">
-								<check if="{{ !empty(@GET.sprint_start_date) && @GET.sprint_start_date == @item.start_date }}">
-									<true><option value="{{ @item.start_date }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
-									<false><option value="{{ @item.start_date }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
+								<check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.sprint_id }}">
+									<true><option value="{{ @item.sprint_id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
+									<false><option value="{{ @item.sprint_id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
 								</check>
 							</repeat>
 						</select>
