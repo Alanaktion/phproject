@@ -38,7 +38,7 @@ class User extends \Model {
 			return false;
 		}
 		if($this->get("avatar_filename") && is_file("uploads/avatars/" . $this->get("avatar_filename"))) {
-			return "/avatar/$size-" . $this->id . ".png";
+			return "/avatar/$size-" . $this->id . "-png";
 		}
 		return \Helper\View::instance()->gravatar($this->get("email"), $size);
 	}
