@@ -75,7 +75,7 @@
 			<a id="btn-edit" href="{{ @site.url }}issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
 				<span class="glyphicon glyphicon-pencil"></span>&ensp;{{ @dict.edit }}
 			</a>
-			<check if="{{ @user.role == 'admin' || @user.id == @issue.author_id }}">
+			<check if="{{ @user.role == 'admin' || @user.rank >= 3 || @user.id == @issue.author_id }}">
 				<a href="{{ @site.url }}issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
 					<span class="glyphicon glyphicon-remove"></span>&ensp;{{ @dict.delete }}
 				</a>
@@ -264,7 +264,7 @@
 								<div class="media-body">
 									<p class="media-heading clearfix">
 										<a href="{{ @site.url }}user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
-										<check if="{{ @user.role == 'admin' }}">
+										<check if="{{ @user.role == 'admin' || @user.rank >= 3 }}">
 											<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
 										</check>
 									</p>
