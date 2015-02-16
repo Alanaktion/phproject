@@ -179,7 +179,8 @@ class Admin extends \Controller {
 		$user->username = $f3->get("POST.username");
 		$user->email = $f3->get("POST.email");
 		$user->name = $f3->get("POST.name");
-		$user->role = $f3->get("POST.role");
+		$user->rank = $f3->get("POST.rank");
+		$user->role = $user->rank < 4 ? 'user' : 'admin';
 		$user->task_color = ltrim($f3->get("POST.task_color"), "#");
 
 		// Save user
