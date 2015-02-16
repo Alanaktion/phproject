@@ -35,9 +35,8 @@ if(!function_exists("imagecreatetruecolor")) {
 }
 
 // Run installation process if post data received
-if($f3->get("POST")) {
-	$f3 = \Base::instance();
-	$post = $f3->get("POST");
+if($_POST) {
+	$post = $_POST;
 
 	try {
 		// Connect to database
@@ -56,6 +55,7 @@ if($f3->get("POST")) {
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
 		$user->role = "admin";
+		$user->rank = 5; // superadmin
 		$user->name = "Admin";
 		$user->username = $post["user-username"] ?: "admin";
 		$user->email = $post["user-email"];

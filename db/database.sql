@@ -11,6 +11,7 @@ CREATE TABLE `user` (
 	`password` char(40) DEFAULT NULL,
 	`salt` char(32) DEFAULT NULL,
 	`role` enum('user','admin','group') NOT NULL DEFAULT 'user',
+	`rank` tinyint(1) unsigned NOT NULL DEFAULT '0',
 	`task_color` char(6) DEFAULT NULL,
 	`theme` varchar(64) DEFAULT NULL,
 	`language` varchar(5) DEFAULT NULL,
@@ -22,8 +23,6 @@ CREATE TABLE `user` (
 	UNIQUE KEY `username` (`username`),
 	UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-INSERT INTO `user` (`username`, `email`, `name`, `password`, `salt`, `role`, `api_key`, `created_date`) VALUES ('admin', 'admin@local', 'Admin', '703983b055847560176a1e2e8508dd68d237ddfa', 'Qfv42OMfAS751Mn6hsKeTECDgyq5dVf7', 'admin', '', NOW());
 
 DROP TABLE IF EXISTS `user_group`;
 CREATE TABLE `user_group` (
@@ -274,4 +273,4 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 ) ;
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.01.31');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.02.07');
