@@ -642,7 +642,7 @@ class Issues extends \Controller {
 		$issue->load(array("id=?", $f3->get("PARAMS.id")));
 		$user = $f3->get("user_obj");
 
-		if(!$issue->id || !($user->role == 'admin' || $user->rank >= 3 || $issue->author_id == $user->id)) {
+		if(!$issue->id || ($issue->deleted_date && !($user->role == 'admin' || $user->rank >= 3 || $issue->author_id == $user->id))) {
 			$f3->error(404);
 			return;
 		}
