@@ -62,7 +62,7 @@
 			<div class="col-lg-10">
 				<select class="form-control input-sm" id="rank" name="rank">
 					<repeat group="{{ range(0, 5) }}" value="{{ @rank }}">
-						<option value="admin" {{ (empty(@this_user) && @rank == 2 || @@this_user.rank == @rank) ? "selected" : "" }}>{{ @dict.ranks[@rank] }} &mdash; {{ @dict.rank_permissions[@rank] }}</option>
+						<option value="{{ @rank }}" {{ (empty(@this_user) && @rank == 2 || @@this_user.rank == @rank) ? "selected" : "" }}>{{ @dict.ranks[@rank] }} &mdash; {{ @dict.rank_permissions[@rank] }}</option>
 					</repeat>
 				</select>
 			</div>
