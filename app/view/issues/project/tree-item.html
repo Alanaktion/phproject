@@ -6,8 +6,8 @@
 		<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} &ndash; {{ @issue.name | esc }}</a>
 	</false>
 </check>
-<check if="{{ @issue.author_name }}">
-	<span class="text-muted" title="{{ @dict.cols.assignee }}">&middot; {{ @issue.author_name }}</span>
+<check if="{{ @issue.owner_name }}">
+	<span class="text-muted" title="{{ @dict.cols.assignee }}">&middot; {{ @issue.owner_name }}</span>
 </check>
 <check if="{{ @children }}">
 	<span class="text-muted">&middot; {{ @dict.n_child_issues, count(@children) | format }} &middot; {{ @dict.n_complete, round(@childrenCompleted / count(@children) * 100).'%' | format }}</span>
