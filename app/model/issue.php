@@ -112,20 +112,25 @@ class Issue extends \Model {
 			$repeat_issue->repeat_cycle = $this->get("repeat_cycle");
 			$repeat_issue->created_date = date("Y-m-d H:i:s");
 
+
 			// Find a due date in the future
 			switch($repeat_issue->repeat_cycle) {
 				case 'daily':
+					$repeat_issue->start_date = $this->get("start_date") ? date("Y-m-d", strtotime("tomorrow")) : NULL;
 					$repeat_issue->due_date = date("Y-m-d", strtotime("tomorrow"));
 					break;
 				case 'weekly':
+					$repeat_issue->start_date = $this->get("start_date") ? date("Y-m-d", strtotime($this->get("start_date") . " +1 week")) : NULL;
 					$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 week"));
 					break;
 				case 'monthly':
+					$repeat_issue->start_date = $this->get("start_date") ? date("Y-m-d", strtotime($this->get("start_date") . " +1 month")) : NULL;
 					$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 month"));
 					break;
 				case 'sprint':
 					$sprint = new \Model\Sprint();
 					$sprint->load(array("start_date > NOW()"), array('order'=>'start_date'));
+					$repeat_issue->start_date = $this->get("start_date") ?  $sprint->start_date : NULL;
 					$repeat_issue->due_date =  $sprint->end_date;
 					break;
 				default:
