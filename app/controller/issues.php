@@ -107,6 +107,9 @@ class Issues extends \Controller {
 			case "sprint":
 				$filter_str .= " ORDER BY sprint_start_date {$ascdesc}, priority DESC, due_date DESC ";
 				break;
+			case "closed":
+				$filter_str .= " ORDER BY closed_date {$ascdesc}, priority DESC, due_date DESC ";
+				break;
 			case "priority":
 			default:
 				$filter_str .= " ORDER BY priority {$ascdesc}, due_date DESC ";
@@ -636,13 +639,10 @@ class Issues extends \Controller {
 
 	public function single($f3, $params) {
 		$issue = new \Model\Issue\Detail;
-		if($f3->get("user.role") == "admin") {
-			$issue->load(array("id=?", $f3->get("PARAMS.id")));
-		} else {
-			$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
-		}
+		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		$user = $f3->get("user_obj");
 
-		if(!$issue->id) {
+		if(!$issue->id || ($issue->deleted_date && !($user->role == 'admin' || $user->rank >= 3 || $issue->author_id == $user->id))) {
 			$f3->error(404);
 			return;
 		}
@@ -840,20 +840,28 @@ class Issues extends \Controller {
 	}
 
 	public function single_delete($f3, $params) {
-		$this->_requireAdmin();
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
-		$issue->delete();
-		$f3->reroute("/issues?deleted={$issue->id}");
+		$user = $f3->get("user_obj");
+		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
+			$issue->delete();
+			$f3->reroute("/issues?deleted={$issue->id}");
+		} else {
+			$f3->error(403);
+		}
 	}
 
 	public function single_undelete($f3, $params) {
-		$this->_requireAdmin();
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
-		$issue->deleted_date = null;
-		$issue->save();
-		$f3->reroute("/issues/{$issue->id}");
+		$user = $f3->get("user_obj");
+		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
+			$issue->deleted_date = null;
+			$issue->save();
+			$f3->reroute("/issues/{$issue->id}");
+		} else {
+			$f3->error(403);
+		}
 	}
 
 	public function comment_delete($f3, $params) {

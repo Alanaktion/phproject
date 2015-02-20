@@ -58,11 +58,12 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="role" class="col-lg-2 control-label label-sm">{{ @dict.role }}</label>
+			<label for="rank" class="col-lg-2 control-label label-sm">{{ @dict.rank }}</label>
 			<div class="col-lg-10">
-				<select class="form-control input-sm" id="role" name="role">
-					<option value="user">{{ @dict.user }}</option>
-					<option value="admin" {{ @@this_user.role == "admin" ? "selected" : "" }}>{{ @dict.administrator }}</option>
+				<select class="form-control input-sm" id="rank" name="rank">
+					<repeat group="{{ range(0, 5) }}" value="{{ @rank }}">
+						<option value="{{ @rank }}" {{ (empty(@this_user) && @rank == 2 || @@this_user.rank == @rank) ? "selected" : "" }}>{{ @dict.ranks[@rank] }} &mdash; {{ @dict.rank_permissions[@rank] }}</option>
+					</repeat>
 				</select>
 			</div>
 		</div>

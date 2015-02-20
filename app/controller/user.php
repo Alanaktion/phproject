@@ -64,7 +64,7 @@ class User extends \Controller {
 		));
 
 		$watchlist = new \Model\Issue\Watcher();
-		$f3->set("watchlist", $watchlist->findby_watcher($f3, $this->_userId, $order));
+		$f3->set("watchlist", $watchlist->findby_watcher($this->_userId, $order));
 
 
 		$tasks = new \Model\Issue\Detail();

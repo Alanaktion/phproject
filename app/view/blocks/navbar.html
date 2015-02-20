@@ -59,6 +59,8 @@
 						<li><a href="{{ @site.url }}issues/?status=open">{{ @dict.open }}</a></li>
 						<li><a href="{{ @site.url }}issues/?status=closed">{{ @dict.closed }}</a></li>
 						<li role="presentation" class="divider"></li>
+						<li><a href="{{ @site.url }}tag">{{ @dict.issue_tags }}</a></li>
+						<li role="presentation" class="divider"></li>
 						<li><a href="{{ @site.url }}issues/?status=open&amp;author_id={{ @user.id }}">{{ @dict.created_by_me }}</a></li>
 						<li><a href="{{ @site.url }}issues/?status=open&amp;owner_id={{ @user.id }}">{{ @dict.assigned_to_me }}</a></li>
 						<li role="presentation" class="divider"></li>

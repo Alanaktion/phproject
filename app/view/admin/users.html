@@ -15,12 +15,12 @@
 	<table class="table table-striped table-condensed">
 		<thead>
 			<tr>
-				<th>{{ @dict.cols.id }}</th>
-				<th>{{ @dict.username }}</th>
-				<th>{{ @dict.email }}</th>
-				<th>{{ @dict.name }}</th>
-				<th>{{ @dict.role }}</th>
-				<th>{{ @dict.task_color }}</th>
+				<th data-sort="int">{{ @dict.cols.id }}</th>
+				<th data-sort="string">{{ @dict.username }}</th>
+				<th data-sort="string">{{ @dict.email }}</th>
+				<th data-sort="string">{{ @dict.name }}</th>
+				<th data-sort="string">{{ @dict.role }}</th>
+				<th data-sort="string">{{ @dict.task_color }}</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -39,6 +39,12 @@
 		</tbody>
 	</table>
 	<include href="blocks/footer.html" />
+	<script src="{{ @site.url }}minify/js/stupidtable.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('.table').stupidtable();
+	});
+	</script>
 </div>
 </body>
 </html>

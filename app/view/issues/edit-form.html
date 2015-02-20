@@ -208,17 +208,10 @@
 	<div class="form-group">
 		<div class="col-md-offset-2 col-md-10 text-right">
 			<div class="checkbox checkbox-inline">
-			<check if="{{ @user.role == 'admin' }}">
-				<true>
-					<label>
-						<input type="checkbox" name="notify" value="1" checked>
-						{{ @dict.send_notifications }}
-					</label>
-				</true>
-				<false>
-					<input type="hidden" name="notify" value="1">
-				</false>
-			</check>
+				<label>
+					<input type="checkbox" name="notify" value="1" checked>
+					{{ @dict.send_notifications }}
+				</label>
 			</div>
 			<check if="{{ !empty(@issue) }}">
 				<a href="{{ @site.url }}issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
