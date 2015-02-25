@@ -389,4 +389,23 @@ class User extends \Controller {
 		}
 	}
 
+	public function single_overdue($f3, $params) {
+		$this->_requireLogin();
+
+		$user = new \Model\User;
+		$user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
+
+		if($user->id) {
+			$f3->set("title", $user->name);
+			$f3->set("this_user", $user);
+			$issue = new \Model\Issue\Detail;
+			$view = \Helper\View::instance();
+			$issues = $issue->find(array("owner_id = ? AND status_closed = 0 AND due_date IS NOT NULL AND due_date < ?", $user->id, date("Y-m-d", $view->utc2local())), array("order" => "due_date ASC"));
+			$f3->set("issues.subset", $issues);
+			$this->_render("user/single/overdue.html");
+		} else {
+			$f3->error(404);
+		}
+	}
+
 }
