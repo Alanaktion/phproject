@@ -501,12 +501,13 @@ class Issues extends \Controller {
 		}
 
 		// Diff contents and save what's changed.
+		$hashState = json_decode($post["hash_state"]);
 		foreach($post as $i=>$val) {
 			if(
 				$issue->exists($i)
 				&& $i != "id"
 				&& $issue->$i != $val
-				&& (md5($val) != $post["hash_" . $i] || !isset($post["hash_" . $i]))
+				&& md5($val) != $hashState->$i
 			) {
 				if(empty($val)) {
 					$issue->$i = null;
