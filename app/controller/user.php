@@ -36,14 +36,23 @@ class User extends \Controller {
 
 
 		$order = "priority DESC, has_due_date ASC, due_date ASC";
-		$f3->set("projects", $issue->find(
+		$projects = $issue->find(
 			array(
 				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.project"),
 			),array(
 				"order" => $order
 			)
-		));
+		);
+		$subprojects = array();
+		foreach($projects as $i=>$project) {
+			if($project->parent_id) {
+				$subprojects[] = $project;
+				unset($projects[$i]);
+			}
+		}
+		$f3->set("projects", $projects);
+		$f3->set("subprojects", $subprojects);
 
 		$f3->set("bugs", $issue->find(
 			array(
