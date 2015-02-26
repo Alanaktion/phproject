@@ -400,7 +400,7 @@ class User extends \Controller {
 			$f3->set("this_user", $user);
 			$issue = new \Model\Issue\Detail;
 			$view = \Helper\View::instance();
-			$issues = $issue->find(array("owner_id = ? AND status_closed = 0 AND due_date IS NOT NULL AND due_date < ?", $user->id, date("Y-m-d", $view->utc2local())), array("order" => "due_date ASC"));
+			$issues = $issue->find(array("owner_id = ? AND status_closed = 0 AND deleted_date IS NULL AND due_date IS NOT NULL AND due_date < ?", $user->id, date("Y-m-d", $view->utc2local())), array("order" => "due_date ASC"));
 			$f3->set("issues.subset", $issues);
 			$this->_render("user/single/overdue.html");
 		} else {
