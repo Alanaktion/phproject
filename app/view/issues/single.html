@@ -420,7 +420,7 @@ $(function() {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
 			});
-			$li.remove();
+			$('#watchers-list li').filter('[data-user-id=' + $li.data('user-id') + ']').remove();
 
 			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) - 1);
 
