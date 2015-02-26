@@ -273,4 +273,4 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 ) ;
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.02.07');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.02.26');
