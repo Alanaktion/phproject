@@ -420,9 +420,10 @@ $(function() {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
 			});
-			$('#watchers-list li').filter('[data-user-id=' + $li.data('user-id') + ']').remove();
 
-			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) - 1);
+			var matches = $('#watchers-list li').filter('[data-user-id=' + $li.data('user-id') + ']');
+			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) - matches.length);
+			matches.remove();
 
 			e.preventDefault();
 		});
@@ -432,7 +433,7 @@ $(function() {
 
 			$select = $this.find('select');
 			$('<li />')
-				.data('user-id', $select.val())
+				.attr('data-user-id', $select.val())
 				.html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $select.children('option:selected').text())
 				.appendTo('#watchers-list');
 
