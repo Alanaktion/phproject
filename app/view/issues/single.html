@@ -268,7 +268,7 @@
 											<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
 										</check>
 									</p>
-									<div class="tex">{{ $this->parseTextile(@comment.text) }}</div>
+									<div class="tex">{{ $this->parseTextile(@comment.text, false, false) }}</div>
 									<check if="{{ @comment.file_id }}">
 										<check if="{{ @comment.file_deleted_date }}">
 											<true>
