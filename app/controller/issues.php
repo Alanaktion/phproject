@@ -153,7 +153,7 @@ class Issues extends \Controller {
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(null, array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(array("end_date >= ?", date("Y-m-d")), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->getAll());
@@ -1067,6 +1067,15 @@ class Issues extends \Controller {
 		$f3->set("project", $project);
 		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - Project Overview");
 		$this->_render("issues/project.html");
+
+	}
+
+
+	/**
+	 * decide if the user can view a private issue or project
+	 * @return array
+	 */
+	protected function _checkPrivate() {
 
 	}
 
