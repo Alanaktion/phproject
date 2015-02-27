@@ -501,12 +501,13 @@ class Issues extends \Controller {
 		}
 
 		// Diff contents and save what's changed.
+		$hashState = json_decode($post["hash_state"]);
 		foreach($post as $i=>$val) {
 			if(
 				$issue->exists($i)
 				&& $i != "id"
 				&& $issue->$i != $val
-				&& (md5($val) != $post["hash_" . $i] || !isset($post["hash_" . $i]))
+				&& md5($val) != $hashState->$i
 			) {
 				if(empty($val)) {
 					$issue->$i = null;
@@ -1037,28 +1038,17 @@ class Issues extends \Controller {
 		 * @param   Issue $issue
 		 * @var     callable $renderTree This function, required for recursive calls
 		 */
-		$renderTree = function(\Model\Issue &$issue) use(&$renderTree) {
+		$renderTree = function(\Model\Issue &$issue, $level = 0) use(&$renderTree) {
 			if($issue->id) {
+				$f3 = \Base::instance();
 				$children = $issue->getChildren();
-				$childCompleted = 0;
-				if($children) {
-					foreach($children as $item) {
-						if($item->closed_date) {
-							$childCompleted ++;
-						}
-					}
-				}
-				$hive = array("issue" => $issue, "children" => $children, "childrenCompleted" => $childCompleted, "dict" => \Base::instance()->get("dict"), "site" => \Base::instance()->get("site"));
-				echo "<li>";
+				$hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level);
 				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
 				if($children) {
-					echo "<ul>";
 					foreach($children as $item) {
-						$renderTree($item);
+						$renderTree($item, $level + 1);
 					}
-					echo "</ul>";
 				}
-				echo "</li>";
 			}
 		};
 		$f3->set("renderTree", $renderTree);

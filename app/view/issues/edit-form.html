@@ -2,10 +2,7 @@
 	<check if="{{ !empty(@issue) }}">
 		<a href="{{ @site.url }}issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
 		<input type="hidden" name="id" value="{{ @issue.id }}">
-		<!-- Hashed original values used in saving updates -->
-		<repeat group="{{ @issue->cast() }}" key="{{ @key }}" value="{{ @value }}">
-			<input type="hidden" name="hash_{{ @key }}" value="{{ md5(@value) }}">
-		</repeat>
+		<input type="hidden" name="hash_state" value="{{ json_encode(@issue->hashState()) | esc }}">
 	</check>
 	<check if="{{ empty(@issue) }}">
 		<true>

@@ -97,6 +97,7 @@
 								<span class="task-dueDate">{{ empty(@row.project.due_date) ? "" : date('n/j', strtotime(@row.project.due_date)) }}</span>
 							</div>
 							<div class="title">{{ @row.project.name | esc }}</div>
+							<div class="type">{{ @row.project.parent_id ? @dict.subproject : @dict.project }}</div>
 						</div>
 					</td>
 					<repeat group="{{ @row.columns }}" key="{{ @status_id }}" value="{{ @col }}">

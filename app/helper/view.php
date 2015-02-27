@@ -9,9 +9,10 @@ class View extends \Template {
 	 * also converts issue IDs and usernames to links
 	 * @param  string   $str
 	 * @param  int|bool $ttl
+	 * @param  bool     $hashtags
 	 * @return string
 	 */
-	public function parseTextile($str, $ttl=false) {
+	public function parseTextile($str, $ttl = false, $hashtags = true) {
 		$f3 = \Base::instance();
 		if($ttl !== false) {
 			$cache = \Cache::instance();
@@ -32,7 +33,9 @@ class View extends \Template {
 		// Find issue IDs and tags, and convert them to links
 		$siteUrl = $f3->get("site.url");
 		$val = preg_replace("/(?<=[\s,\(^])#([0-9]+)(?=[\s,\)\.,$])/", "<a href=\"{$siteUrl}issues/$1\">#$1</a>", $val);
-		$val = preg_replace("/(?<=\W|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=\W|$)/i", "<a href=\"{$siteUrl}tag/$1\">#$1</a>", $val);
+		if($hashtags) {
+			$val = preg_replace("/(?<=\W|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=\W|$)/i", "<a href=\"{$siteUrl}tag/$1\">#$1</a>", $val);
+		}
 
 		// Convert URLs to links
 		$val = $this->make_clickable($val);

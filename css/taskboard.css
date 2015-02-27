@@ -90,6 +90,16 @@ body {
 	padding-left: 5px;
 	color: #969696;
 }
+#taskboard .card .type {
+	position: absolute;
+	bottom: 5px;
+	left: 0;
+	height: 18px;
+	text-align: left;
+	overflow: hidden;
+	padding-left: 5px;
+	color: #969696;
+}
 #taskboard .card .hours {
 	position: absolute;
 	bottom: -3px;

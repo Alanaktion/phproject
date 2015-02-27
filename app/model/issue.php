@@ -359,4 +359,16 @@ class Issue extends \Model {
 		return $this->_children ?: $this->_children = $this->find(array("parent_id = ? AND deleted_date IS NULL", $this->get("id")));
 	}
 
+	/**
+	 * Generate MD5 hashes for each column in a key=>value array
+	 * @return array
+	 */
+	public function hashState() {
+		$result = $this->cast();
+		foreach ($result as &$value) {
+			$value = md5($value);
+		}
+		return $result;
+	}
+
 }

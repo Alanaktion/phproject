@@ -23,11 +23,19 @@
 			</check>
 			<check if="{{ @item.sprint_id }}">
 				<set sprint_date_range="{{ date('M j-', strtotime(@item.sprint_start_date)) }}" />
-				<check if="{{ date('Ym', strtotime(@item.sprint_start_date)) == date('Ym', strtotime(@item.sprint_end_date)) }}">
-					<true><set sprint_date_range="{{ @sprint_date_range . date('j', strtotime(@item.sprint_end_date)) }}" /></true>
-					<false><set sprint_date_range="{{ @sprint_date_range . date('M j', strtotime(@item.sprint_end_date)) }}" /></false>
-				</check>
-				<p class="list-group-item-text text-muted"><span class="has-tooltip" title="{{ @dict.sprint }} #{{ @item.sprint_id }}: {{ @sprint_date_range }}" data-placement="right">{{ @item.sprint_name | esc }}</span></p>
+				{~
+					if(date('Ym', strtotime(@item.sprint_start_date)) == date('Ym', strtotime(@item.sprint_end_date))) {
+						@sprint_date_range = @sprint_date_range . date('j', strtotime(@item.sprint_end_date));
+					} else {
+						@sprint_date_range = @sprint_date_range . date('M j', strtotime(@item.sprint_end_date));
+					}
+				~}
+				<p class="list-group-item-text text-muted">
+					<span class="has-tooltip" title="{{ @dict.sprint }} #{{ @item.sprint_id }}: {{ @sprint_date_range }}">{{ @item.sprint_name | esc }}</span>
+					<check if="{{ @item.type_id == @issue_type.project && @item.parent_id }}">
+						&mdash; <span class="has-tooltip" title="Parent Project">{{ @dict.under_n, '#' . @item.parent_id . ' - ' . @@item.parent_name | format }}</span>
+					</check>
+				</p>
 			</check>
 		</a>
 	</repeat>

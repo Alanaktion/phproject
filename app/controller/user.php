@@ -36,14 +36,23 @@ class User extends \Controller {
 
 
 		$order = "priority DESC, has_due_date ASC, due_date ASC";
-		$f3->set("projects", $issue->find(
+		$projects = $issue->find(
 			array(
 				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.project"),
 			),array(
 				"order" => $order
 			)
-		));
+		);
+		$subprojects = array();
+		foreach($projects as $i=>$project) {
+			if($project->parent_id) {
+				$subprojects[] = $project;
+				unset($projects[$i]);
+			}
+		}
+		$f3->set("projects", $projects);
+		$f3->set("subprojects", $subprojects);
 
 		$f3->set("bugs", $issue->find(
 			array(
@@ -384,6 +393,25 @@ class User extends \Controller {
 			$f3->set("issues", $tree);
 			$this->_render("user/single/tree.html");
 
+		} else {
+			$f3->error(404);
+		}
+	}
+
+	public function single_overdue($f3, $params) {
+		$this->_requireLogin();
+
+		$user = new \Model\User;
+		$user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
+
+		if($user->id) {
+			$f3->set("title", $user->name);
+			$f3->set("this_user", $user);
+			$issue = new \Model\Issue\Detail;
+			$view = \Helper\View::instance();
+			$issues = $issue->find(array("owner_id = ? AND status_closed = 0 AND deleted_date IS NULL AND due_date IS NOT NULL AND due_date < ?", $user->id, date("Y-m-d", $view->utc2local())), array("order" => "due_date ASC"));
+			$f3->set("issues.subset", $issues);
+			$this->_render("user/single/overdue.html");
 		} else {
 			$f3->error(404);
 		}

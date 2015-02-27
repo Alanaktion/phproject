@@ -21,7 +21,7 @@
 
 			<ul class="nav navbar-nav">
 				<li class="dropdown {{ @menuitem == 'new' ? 'active':'' }}">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+					<a href="{{ @site.url }}issues/new" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						{{ @dict.new }} <b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu" role="menu">
@@ -52,7 +52,7 @@
 					</ul>
 				</li>
 				<li class="dropdown {{ @menuitem == 'browse' ? 'active':'' }}">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+					<a href="{{ @site.url }}issues" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						{{ @dict.browse }} <b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu" role="menu">
@@ -83,12 +83,12 @@
 					<li class="{{ @menuitem == 'admin' ? 'active':'' }}">
 						<a href="{{ @site.url }}admin">
 							<span class="hidden-sm">{{ @dict.administration }}</span>
-							<span class="glyphicon glyphicon-wrench visible-sm"></span>
+							<span class="glyphicon glyphicon-cog visible-sm"></span>
 						</a>
 					</li>
 				</check>
 				<li class="dropdown {{ @menuitem == 'user' ? 'active':'' }}">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+					<a href="{{ @site.url }}user/{{ @user.username }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<span class="hidden-sm">{{ @user.name | esc }} <b class="caret"></b></span>
 						<span class="glyphicon glyphicon-user visible-sm"></span>
 					</a>
