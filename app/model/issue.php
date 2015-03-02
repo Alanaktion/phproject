@@ -84,6 +84,34 @@ class Issue extends \Model {
 	}
 
 	/**
+	 * Restore a deleted issue without notifying
+	 * @param  bool $recursive
+	 * @return Issue
+	 */
+	public function restore($recursive = true) {
+		$deleted = $this->get("deleted_date");
+		if(!$deleted) {
+			$this->clear("deleted_date");
+			if($recursive) {
+				$this->_restoreTree();
+			}
+		}
+		return $this->save(false);
+	}
+
+	/**
+	 * Restore a complete issue tree
+	 * @return Issue
+	 */
+	protected function _restoreTree() {
+		$children = $this->find(array("parent_id = ? AND deleted_date IS NOT NULL", $this->get("id")));
+		foreach($children as $child) {
+			$child->restore();
+		}
+		return $this;
+	}
+
+	/**
 	 * Log and save an issue update
 	 * @param  boolean $notify
 	 * @return Issue\Update
