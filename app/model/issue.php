@@ -58,11 +58,29 @@ class Issue extends \Model {
 
 	/**
 	 * Delete without sending notification
+	 * @param  bool $recursive
 	 * @return Issue
 	 */
-	public function delete() {
-		$this->set("deleted_date", date("Y-m-d H:i:s"));
+	public function delete($recursive = true) {
+		if(!$this->get("delete_date")) {
+			$this->set("deleted_date", date("Y-m-d H:i:s"));
+		}
+		if($recursive) {
+			$this->_deleteTree();
+		}
 		return $this->save(false);
+	}
+
+	/**
+	 * Delete a complete issue tree
+	 * @return Issue
+	 */
+	protected function _deleteTree() {
+		$children = $this->find(array("parent_id = ?", $this->get("id")));
+		foreach($children as $child) {
+			$child->delete();
+		}
+		return $this;
 	}
 
 	/**
