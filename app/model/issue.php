@@ -110,8 +110,8 @@ class Issue extends \Model {
 			$repeat_issue->owner_id = $this->get("owner_id");
 			$repeat_issue->description = $this->get("description");
 			$repeat_issue->repeat_cycle = $this->get("repeat_cycle");
+			$repeat_issue->hours_total = $this->get("hours_total");
 			$repeat_issue->created_date = date("Y-m-d H:i:s");
-
 
 			// Find a due date in the future
 			switch($repeat_issue->repeat_cycle) {
