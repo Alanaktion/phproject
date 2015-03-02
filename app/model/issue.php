@@ -62,7 +62,7 @@ class Issue extends \Model {
 	 * @return Issue
 	 */
 	public function delete($recursive = true) {
-		if(!$this->get("delete_date")) {
+		if(!$this->get("deleted_date")) {
 			$this->set("deleted_date", date("Y-m-d H:i:s"));
 		}
 		if($recursive) {
