@@ -846,7 +846,7 @@ class Issues extends \Controller {
 		$user = $f3->get("user_obj");
 		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
 			$issue->delete();
-			$f3->reroute("/issues?deleted={$issue->id}");
+			$f3->reroute("/issues/{$issue->id}");
 		} else {
 			$f3->error(403);
 		}
