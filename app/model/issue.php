@@ -89,12 +89,9 @@ class Issue extends \Model {
 	 * @return Issue
 	 */
 	public function restore($recursive = true) {
-		$deleted = $this->get("deleted_date");
-		if($deleted) {
-			$this->clear("deleted_date");
-			if($recursive) {
-				$this->_restoreTree();
-			}
+		$this->set("deleted_date", null);
+		if($recursive) {
+			$this->_restoreTree();
 		}
 		return $this->save(false);
 	}
