@@ -30,20 +30,22 @@ class View extends \Template {
 			->setDimensionlessImages(true);
 		$val = $tex->parse($str);
 
+		echo htmlentities($val), "<br>";
+
 		// Find issue IDs and tags, and convert them to links
 		$siteUrl = $f3->get("site.url");
-		$val = preg_replace("/(?<=[\s,\(]|^)#([0-9]+)(?=[\s,\)\.,]|$)/", "<a href=\"{$siteUrl}issues/$1\">#$1</a>", $val);
+		$val = preg_replace("/(?<=[^a-z\\/&]|^)#([0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$siteUrl}issues/$1\">#$1</a>", $val);
 		if($hashtags) {
-			$val = preg_replace("/(?<=[\s,\(]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[\s,\)\.,]|$)/i", "<a href=\"{$siteUrl}tag/$1\">#$1</a>", $val);
+			$val = preg_replace("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$siteUrl}tag/$1\">#$1</a>", $val);
 		}
 
 		// Convert URLs to links
 		$val = $this->make_clickable($val);
 
 		// Convert emoticons
-		$val = preg_replace_callback("/(\s|^)(3|&gt;)?[:;8B][)(PDOoSs|\/\\\](\s|$)/", function($matches) {
+		$val = preg_replace_callback("/([^a-z\\/&]|\\>|^)(3|&gt;)?[:;8B][)(PDOoSs|\/\\\]([^a-z\\/]|\\<|$)/", function($matches) {
 			$i = "";
-			switch (trim($matches[0])) {
+			switch (trim($matches[0], "<> ")) {
 				case ":)":
 					$i = "smiley";
 					break;
@@ -88,7 +90,8 @@ class View extends \Template {
 			}
 			if($i) {
 				$f3 = \Base::instance();
-				if($theme = $f3->get("user.theme")) {} else {
+				$theme = $f3->get("user.theme");
+				if(!$theme) {
 					$theme = $f3->get("site.theme");
 				}
 				if(preg_match("/slate|geo|dark|cyborg/i", $theme)) {
