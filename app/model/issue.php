@@ -90,7 +90,7 @@ class Issue extends \Model {
 	 */
 	public function restore($recursive = true) {
 		$deleted = $this->get("deleted_date");
-		if(!$deleted) {
+		if($deleted) {
 			$this->clear("deleted_date");
 			if($recursive) {
 				$this->_restoreTree();
@@ -144,7 +144,7 @@ class Issue extends \Model {
 			$this->set("hours_remaining", 0);
 		}
 
-		// Create a new task if repeating
+		// Create a new issue if repeating
 		if($this->get("closed_date") && $this->get("repeat_cycle") && $this->get("repeat_cycle") != "none") {
 
 			$repeat_issue = new \Model\Issue();
@@ -183,7 +183,7 @@ class Issue extends \Model {
 					$repeat_issue->repeat_cycle = 'none';
 			}
 
-			// If the project was in a sprint before, put it in a sprint again.
+			// If the issue was in a sprint before, put it in a sprint again.
 			if($this->get("sprint_id")) {
 				$sprint = new \Model\Sprint();
 				$sprint->load(array("end_date > ? AND start_date < ?", $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
