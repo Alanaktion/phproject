@@ -83,7 +83,7 @@ $(document).ready(function() {
 					}
 					break;
 				case 67:
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $("#btn-issue-close").lenth) { // Close issue
+					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $("#btn-issue-close").length) { // Close issue
 						window.location = $("#btn-issue-close").attr("href");
 					} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Comment on issue
 						$("#comment_textarea").focus();
