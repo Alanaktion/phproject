@@ -1,3 +1,4 @@
+<set nav="{{ \Helper\Plugin::instance()->getAllNavs(@PATH) }}" />
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
 	<div class="{{ empty(@fullwidth) ? 'container' : 'container-fluid' }}">
 		<div class="navbar-header">
@@ -32,6 +33,12 @@
 						<repeat group="{{ @issue_types }}" value="{{ @type }}">
 							<li><a href="{{ @site.url }}issues/new/{{ @type.id }}">{{ @type.name }}</a></li>
 						</repeat>
+						<check if="{{ @nav.new }}">
+							<li role="presentation" class="divider"></li>
+							<repeat group="{{ @nav.new }}" value="{{ @navitem }}">
+								<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @site.url }}{{ @navitem.href }}">{{ @navitem.title }}</a></li>
+							</repeat>
+						</check>
 						<check if="{{ !empty(@issue) && !@issue.closed_date }}">
 							<li role="presentation" class="divider"></li>
 							<check if="{{ @issue.type_id == @issue_type.project }}">
@@ -68,12 +75,18 @@
 						<repeat group="{{ @issue_types }}" value="{{ @type }}">
 							<li><a href="{{ @site.url }}issues?type_id={{ @type.id }}&amp;status=open">{{ @inflector->pluralize(@type.name) }}</a></li>
 						</repeat>
+						<check if="{{ @nav.browse }}">
+							<li role="presentation" class="divider"></li>
+							<repeat group="{{ @nav.browse }}" value="{{ @navitem }}">
+								<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @site.url }}{{ @navitem.href }}">{{ @navitem.title }}</a></li>
+							</repeat>
+						</check>
 					</ul>
 				</li>
 				<li class="{{ @menuitem == 'backlog' ? 'active':'' }}">
 					<a href="{{ @site.url }}backlog">{{ @dict.sprints }}</a>
 				</li>
-				<repeat group="{{ \Helper\Plugin::instance()->getNav(@PATH) }}" value="{{ @navitem }}">
+				<repeat group="{{ @nav.root }}" value="{{ @navitem }}">
 					<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @site.url }}{{ @navitem.href }}">{{ @navitem.title }}</a></li>
 				</repeat>
 			</ul>
@@ -96,8 +109,14 @@
 						<li><a href="{{ @site.url }}">{{ @dict.dashboard }}</a></li>
 						<li><a href="{{ @site.url }}user/{{ @user.username }}">{{ @dict.my_issues }}</a></li>
 						<li><a href="{{ @site.url }}user">{{ @dict.my_account }}</a></li>
-						<li class="divider"></li>
+						<li role="presentation" class="divider"></li>
 						<li><a href="{{ @site.url }}logout">{{ @dict.log_out }}</a></li>
+						<check if="{{ @nav.user }}">
+							<li role="presentation" class="divider"></li>
+							<repeat group="{{ @nav.user }}" value="{{ @navitem }}">
+								<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @site.url }}{{ @navitem.href }}">{{ @navitem.title }}</a></li>
+							</repeat>
+						</check>
 					</ul>
 				</li>
 			</ul>
