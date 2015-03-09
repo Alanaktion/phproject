@@ -109,14 +109,14 @@
 						<li><a href="{{ @site.url }}">{{ @dict.dashboard }}</a></li>
 						<li><a href="{{ @site.url }}user/{{ @user.username }}">{{ @dict.my_issues }}</a></li>
 						<li><a href="{{ @site.url }}user">{{ @dict.my_account }}</a></li>
-						<li role="presentation" class="divider"></li>
-						<li><a href="{{ @site.url }}logout">{{ @dict.log_out }}</a></li>
 						<check if="{{ @nav.user }}">
 							<li role="presentation" class="divider"></li>
 							<repeat group="{{ @nav.user }}" value="{{ @navitem }}">
 								<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @site.url }}{{ @navitem.href }}">{{ @navitem.title }}</a></li>
 							</repeat>
 						</check>
+						<li role="presentation" class="divider"></li>
+						<li><a href="{{ @site.url }}logout">{{ @dict.log_out }}</a></li>
 					</ul>
 				</li>
 			</ul>
