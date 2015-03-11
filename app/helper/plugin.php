@@ -57,7 +57,7 @@ class Plugin extends \Prefab {
 	 * @param string $match
 	 */
 	public function addJsFile($file, $match = null) {
-		$_nav[] = array(
+		$this->_jsFiles[] = array(
 			"file"  => $file,
 			"match" => $match
 		);

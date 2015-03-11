@@ -10,7 +10,13 @@ abstract class Controller {
 	protected function _requireLogin($rank = 1) {
 		$f3 = \Base::instance();
 		if($id = $f3->get("user.id")) {
-			return $id;
+			if($f3->get("user.rank") >= $rank) {
+				return $id;
+			} else {
+				$f3->error(403);
+				$f3->unload();
+				return false;
+			}
 		} else {
 			if(empty($_GET)) {
 				$f3->reroute("/login?to=" . urlencode($f3->get("PATH")));
@@ -32,7 +38,13 @@ abstract class Controller {
 
 		$f3 = \Base::instance();
 		if($f3->get("user.role") == "admin") {
-			return $id;
+			if($f3->get("user.rank") >= $rank) {
+				return $id;
+			} else {
+				$f3->error(403);
+				$f3->unload();
+				return false;
+			}
 		} else {
 			$f3->error(403);
 			$f3->unload();

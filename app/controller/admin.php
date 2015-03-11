@@ -42,7 +42,7 @@ class Admin extends \Controller {
 		$f3->set("count_issue_update", $result[0]["count"]);
 		$result = $db->exec("SELECT COUNT(id) AS `count` FROM issue_comment");
 		$f3->set("count_issue_comment", $result[0]["count"]);
-		$result = @$db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
+		$result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
 		if(!empty($result)) {
 			$f3->set("version", $result[0]["version"]);
 		} else {
@@ -325,48 +325,6 @@ class Admin extends \Controller {
 		$db->exec("UPDATE user_group SET manager = 1 WHERE id = ?", $params["user_group_id"]);
 
 		$f3->reroute("/admin/groups/" . $group->id);
-	}
-
-	public function attributes($f3, $params) {
-		$f3->set("title", "Manage Attributes");
-
-		$attributes = new \Model\Attribute();
-		$f3->set("attributes", $attributes->find());
-
-		$this->_render("admin/attributes.html");
-	}
-
-	public function attribute_new($f3, $params) {
-		$f3->set("title", "New Attribute");
-
-		if($post = $f3->get("POST")) {
-			if(!empty($post["name"]) && !empty($post["types"])) {
-				$attr = new \Model\Attribute();
-				$attr->name = trim($post["name"]);
-				$attr->type = trim($post["type"]);
-				$attr->default = trim($post["default"]);
-				$attr->save();
-				foreach($post["types"] as $type) {
-					// TODO: Save types
-				}
-			} else {
-				$f3->set("attribute", $f3->get("POST"));
-			}
-		}
-
-		$this->_render("admin/attributes/edit.html");
-	}
-
-	public function attribute_edit($f3, $params) {
-		$f3->set("title", "Edit Attribute");
-		$types = new \Model\Issue\Type();
-		$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
-
-		$attr = new \Model\Attribute();
-		$attr->load($params["id"]);
-		$f3->set("attribute", $attr);
-
-		$this->_render("admin/attributes/edit.html");
 	}
 
 	public function sprints($f3, $params) {
