@@ -129,6 +129,7 @@ class Issue extends \Model {
 		if($f3->exists('update_comment')) {
 			$update->comment_id = $f3->get('update_comment')->id;
 		}
+		$update->notify = 0;
 		$update->save();
 
 		// Set hours_total to the hours_remaining value if it's 0 or null
@@ -143,7 +144,6 @@ class Issue extends \Model {
 
 		// Create a new issue if repeating
 		if($this->get("closed_date") && $this->get("repeat_cycle") && $this->get("repeat_cycle") != "none") {
-
 			$repeat_issue = new \Model\Issue();
 			$repeat_issue->name = $this->get("name");
 			$repeat_issue->type_id = $this->get("type_id");
@@ -193,11 +193,10 @@ class Issue extends \Model {
 			$this->set("repeat_cycle", null);
 		}
 
-		// Move all non-project children to same sprint
-		$this->resetChildren();
-
 		// Log updated fields
 		$updated = 0;
+		$important_changes = 0;
+		$important_fields = array('status', 'name', 'description', 'owner_id', 'priority', 'due_date');
 		foreach ($this->fields as $key=>$field) {
 			if ($field["changed"] && $field["value"] != $this->_getPrev($key)) {
 				$update_field = new \Model\Issue\Update\Field();
@@ -207,12 +206,24 @@ class Issue extends \Model {
 				$update_field->new_value = $field["value"];
 				$update_field->save();
 				$updated ++;
+				if($key == 'sprint_id') {
+					$this->resetTaskSprints();
+				}
+				if(in_array($key, $important_fields)) {
+					$important_changes ++;
+				}
 			}
 		}
 
 		// Delete update if no fields were changed
 		if(!$updated) {
 			$update->delete();
+		}
+
+		// Set notify flag if important changes occurred
+		if($notify && $important_changes) {
+			$update->notify = 1;
+			$update->save();
 		}
 
 		// Send back the update
@@ -249,9 +260,9 @@ class Issue extends \Model {
 		if($this->query) {
 
 			// Save issue updates and send notifications
-			$update = $this->_saveUpdate();
+			$update = $this->_saveUpdate($notify);
 			$issue = parent::save();
-			if($update->id && $notify) {
+			if($notify && $update && $update->id && $update->notify) {
 				$notification = \Helper\Notification::instance();
 				$notification->issue_update($this->get("id"), $update->id);
 			}
@@ -368,7 +379,7 @@ class Issue extends \Model {
 	 * Move all non-project children to same sprint
 	 * @return Issue $this
 	 */
-	public function resetChildren($replace_existing = true) {
+	public function resetTaskSprints($replace_existing = true) {
 		$f3 = \Base::instance();
 		if($this->get("sprint_id")) {
 			$query = "UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type";
