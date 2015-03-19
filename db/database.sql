@@ -150,6 +150,7 @@ CREATE TABLE `issue_update` (
 	`user_id` int(10) unsigned NOT NULL,
 	`created_date` datetime NOT NULL,
 	`comment_id` int(10) unsigned DEFAULT NULL,
+	`notify` TINYINT(1) UNSIGNED NULL,
 	PRIMARY KEY (`id`),
 	KEY `issue` (`issue_id`),
 	KEY `user` (`user_id`),
@@ -273,4 +274,4 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 ) ;
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.02.26');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.03.14');

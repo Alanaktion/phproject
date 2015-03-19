@@ -286,8 +286,8 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue\Detail;
 
 		// Get filter data and load issues
-		list($filter, $filter_str) = $this->_buildFilter();
-		$issues = $issue->find($filter_str);
+		$filter = $this->_buildFilter();
+		$issues = $issue->find($filter[1]);
 
 		// Configure visible fields
 		$fields = array(
