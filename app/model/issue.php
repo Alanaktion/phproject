@@ -128,8 +128,10 @@ class Issue extends \Model {
 		$update->created_date = date("Y-m-d H:i:s");
 		if($f3->exists('update_comment')) {
 			$update->comment_id = $f3->get('update_comment')->id;
+			$update->notify = 1;
+		} else {
+			$update->notify = 0;
 		}
-		$update->notify = 0;
 		$update->save();
 
 		// Set hours_total to the hours_remaining value if it's 0 or null
