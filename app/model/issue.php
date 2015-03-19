@@ -128,7 +128,9 @@ class Issue extends \Model {
 		$update->created_date = date("Y-m-d H:i:s");
 		if($f3->exists('update_comment')) {
 			$update->comment_id = $f3->get('update_comment')->id;
-			$update->notify = 1;
+			if($notify) {
+				$update->notify = 1;
+			}
 		} else {
 			$update->notify = 0;
 		}
