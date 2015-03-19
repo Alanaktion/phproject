@@ -588,7 +588,7 @@ class Issues extends \Controller {
 		$issue->owner_id = $post["owner_id"];
 		$issue->hours_total = $post["hours_remaining"] ?: null;
 		$issue->hours_remaining = $post["hours_remaining"] ?: null;
-		$issue->repeat_cycle = $post["repeat_cycle"] != "none" ? $post["repeat_cycle"] : null;
+		$issue->repeat_cycle = in_array($post["repeat_cycle"], array("none", "")) ? null : $post["repeat_cycle"];
 		$issue->sprint_id = $post["sprint_id"];
 
 		if(!empty($post["due_date"])) {
@@ -1041,7 +1041,7 @@ class Issues extends \Controller {
 			if($issue->id) {
 				$f3 = \Base::instance();
 				$children = $issue->getChildren();
-				$hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level);
+				$hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level, "issue_type" => $f3->get("issue_type"));
 				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
 				if($children) {
 					foreach($children as $item) {
