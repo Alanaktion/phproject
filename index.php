@@ -104,12 +104,7 @@ foreach($pluginDir as $pluginName) {
 }
 $f3->set("plugins", $plugins);
 
-// Set up session handler
-if($f3->get("site.db_sessions")) {
-	new \DB\SQL\Session($f3->get("db.instance"), "session", false);
-}
-
-// Load user if session exists
+// Set up user session
 $user = new Model\User();
 $user->loadCurrent();
 

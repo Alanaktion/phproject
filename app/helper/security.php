@@ -39,6 +39,18 @@ class Security extends \Prefab {
 	}
 
 	/**
+	 * Generate a secure SHA256-SHA512 salt
+	 * @return string
+	 */
+	public function salt_sha2($size = 512) {
+		$allSizes = array(256, 384, 512);
+		if(!in_array($size, $allSizes)) {
+			throw new Exception("Hash size must be one of: " . implode(", ", $allSizes));
+		}
+		return hash("sha$size", $this->rand_bytes(512), false);
+	}
+
+	/**
 	 * Encrypt a string with ROT13
 	 * @param  string $string
 	 * @return string
@@ -99,7 +111,6 @@ class Security extends \Prefab {
 			$char = mt_rand(0, 30);
 			$rnd .= chr(hexdec($sha[$char] . $sha[$char + 1]));
 		}
-
 		return (binary)$rnd;
 	}
 

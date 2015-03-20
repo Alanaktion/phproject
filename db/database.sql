@@ -256,15 +256,14 @@ DROP VIEW IF EXISTS `attribute_value_detail`;
 CREATE VIEW `attribute_value_detail` AS (select `v`.`id` AS `id`,`v`.`attribute_id` AS `attribute_id`,`v`.`issue_id` AS `issue_id`,`v`.`value` AS `value`,`a`.`name` AS `name`,`a`.`type` AS `type`,`a`.`default` AS `default` from (`attribute_value` `v` join `attribute` `a` on((`v`.`attribute_id` = `a`.`id`))));
 
 DROP TABLE IF EXISTS `session`;
-CREATE TABLE `session` (
-	`session_id` varchar(40),
-	`data` text,
-	`csrf` text,
-	`ip` varchar(40),
-	`agent` varchar(255),
-	`stamp` integer,
-	PRIMARY KEY(`session_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `session`(
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`key` VARCHAR(128) NOT NULL,
+	`user_id` INT UNSIGNED NOT NULL,
+	`created` DATETIME NOT NULL,
+	PRIMARY KEY (`id`),
+	CONSTRAINT `session_user_id` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=INNODB CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
@@ -272,6 +271,6 @@ CREATE TABLE `config` (
 	`attribute` varchar(255) COLLATE 'utf8_general_ci' NULL,
 	`value` varchar(255) COLLATE 'utf8_general_ci' NULL,
 	UNIQUE KEY `attribute` (`attribute`)
-) ;
+);
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.03.14');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.03.20');

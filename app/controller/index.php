@@ -16,7 +16,8 @@ class Index extends \Controller {
 					$user = new \Model\User();
 					$user->load($f3->get("site.demo"));
 					if($user->id) {
-						$f3->set("SESSION.phproject_user_id", $user->id);
+						$session = new \Model\Session($user->id);
+						$f3->set("COOKIE.phproj_key", $session->key);
 						$f3->reroute("/");
 						return;
 					} else {
@@ -28,7 +29,7 @@ class Index extends \Controller {
 		}
 	}
 
-	public function login($f3, $params) {
+	public function login($f3) {
 		if($f3->get("user.id")) {
 			if(!$f3->get("GET.to")) {
 				$f3->reroute("/");
@@ -43,7 +44,7 @@ class Index extends \Controller {
 		}
 	}
 
-	public function loginpost($f3, $params) {
+	public function loginpost($f3) {
 		$user = new \Model\User();
 
 		// Load user by username or email address
@@ -77,7 +78,7 @@ class Index extends \Controller {
 		}
 	}
 
-	public function registerpost($f3, $params) {
+	public function registerpost($f3) {
 
 		// Exit immediately if public registrations are disabled
 		if(!$f3->get("site.public_registration")) {
@@ -132,7 +133,7 @@ class Index extends \Controller {
 		}
 	}
 
-	public function reset($f3, $params) {
+	public function reset($f3) {
 		if($f3->get("user.id")) {
 			$f3->reroute("/");
 		} else {
@@ -184,7 +185,7 @@ class Index extends \Controller {
 		}
 	}
 
-	public function reset_forced($f3, $params) {
+	public function reset_forced($f3) {
 		if(!$f3->get("SESSION.phproject_temp_user_id")) {
 			$f3->error(403);
 			return;
@@ -209,13 +210,13 @@ class Index extends \Controller {
 		$this->_render("index/reset_forced.html");
 	}
 
-	public function logout($f3, $params) {
+	public function logout($f3) {
 		$f3->clear("SESSION.phproject_user_id");
 		session_destroy();
 		$f3->reroute("/");
 	}
 
-	public function ping($f3, $params) {
+	public function ping($f3) {
 		if($f3->get("user.id")) {
 			$this->_printJson(array("user_id" => $f3->get("user.id"), "is_logged_in" => true));
 		} else {
@@ -223,7 +224,7 @@ class Index extends \Controller {
 		}
 	}
 
-	public function atom($f3, $params) {
+	public function atom($f3) {
 		// Authenticate user
 		if($f3->get("GET.key")) {
 			$user = new \Model\User;
