@@ -19,7 +19,7 @@ class User extends \Controller {
 		);
 	}
 
-	public function index($f3, $params) {
+	public function index($f3) {
 		$f3->reroute("/user");
 	}
 

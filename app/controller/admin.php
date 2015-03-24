@@ -11,7 +11,7 @@ class Admin extends \Controller {
 		\Base::instance()->set("menuitem", "admin");
 	}
 
-	public function index($f3, $params) {
+	public function index($f3) {
 		$f3->set("title", "Administration");
 		$f3->set("menuitem", "admin");
 
@@ -21,17 +21,6 @@ class Admin extends \Controller {
 		}
 
 		$db = $f3->get("db.instance");
-
-		if($f3->get("POST.action") == "updatedb") {
-			if(file_exists("db/".$f3->get("POST.version").".sql")) {
-				$update_db = file_get_contents("db/".$f3->get("POST.version").".sql");
-				$db->exec(explode(";", $update_db));
-				\Cache::instance()->reset();
-				$f3->set("success", " Database updated to version: ". $f3->get("POST.version"));
-			} else {
-				$f3->set("error", " Database file not found for version: ". $f3->get("POST.version"));
-			}
-		}
 
 		// Gather some stats
 		$result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE deleted_date IS NULL AND role != 'group'");
@@ -43,19 +32,7 @@ class Admin extends \Controller {
 		$result = $db->exec("SELECT COUNT(id) AS `count` FROM issue_comment");
 		$f3->set("count_issue_comment", $result[0]["count"]);
 		$result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
-		if(!empty($result)) {
-			$f3->set("version", $result[0]["version"]);
-		} else {
-			$f3->set("version", '1.0.0');
-		}
-		$db_files = scandir("db");
-		foreach ($db_files as $file) {
-			$file = substr($file, 0, -4);
-			if(version_compare($file, $f3->get('version')) >0) {
-				$f3->set("newer_version", $file);
-				break;
-			}
-		}
+		$f3->set("version", $result[0]["version"]);
 
 		if($f3->get("CACHE") == "apc") {
 			$f3->set("apc_stats", apc_cache_info("user", true));
@@ -64,7 +41,7 @@ class Admin extends \Controller {
 		$this->_render("admin/index.html");
 	}
 
-	public function plugins($f3, $params) {
+	public function plugins($f3) {
 		$f3->set("title", "Plugins");
 		$this->_render("admin/plugins.html");
 	}
@@ -80,7 +57,7 @@ class Admin extends \Controller {
 		}
 	}
 
-	public function users($f3, $params) {
+	public function users($f3) {
 		$f3->set("title", "Manage Users");
 
 		$users = new \Model\User();
@@ -105,14 +82,14 @@ class Admin extends \Controller {
 
 	}
 
-	public function user_new($f3, $params) {
+	public function user_new($f3) {
 		$f3->set("title", "New User");
 
 		$f3->set("rand_color", sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF)));
 		$this->_render("admin/users/edit.html");
 	}
 
-	public function user_save($f3, $params) {
+	public function user_save($f3) {
 
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
@@ -200,7 +177,7 @@ class Admin extends \Controller {
 		}
 	}
 
-	public function groups($f3, $params) {
+	public function groups($f3) {
 		$f3->set("title", "Manage Groups");
 
 		$group = new \Model\User();
@@ -223,7 +200,7 @@ class Admin extends \Controller {
 		$this->_render("admin/groups.html");
 	}
 
-	public function group_new($f3, $params) {
+	public function group_new($f3) {
 		$f3->set("title", "New Group");
 
 		if($f3->get("POST")) {
@@ -267,7 +244,7 @@ class Admin extends \Controller {
 		}
 	}
 
-	public function group_ajax($f3, $params) {
+	public function group_ajax($f3) {
 		if(!$f3->get("AJAX")) {
 			$f3->error(400);
 		}
@@ -327,7 +304,7 @@ class Admin extends \Controller {
 		$f3->reroute("/admin/groups/" . $group->id);
 	}
 
-	public function sprints($f3, $params) {
+	public function sprints($f3) {
 		$f3->set("title", "Manage Sprints");
 
 		$sprints = new \Model\Sprint();
@@ -336,7 +313,7 @@ class Admin extends \Controller {
 		$this->_render("admin/sprints.html");
 	}
 
-	public function sprint_new($f3, $params) {
+	public function sprint_new($f3) {
 		$f3->set("title", "New Sprint");
 
 		if($post = $f3->get("POST")) {

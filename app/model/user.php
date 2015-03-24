@@ -17,7 +17,7 @@ class User extends \Model {
 
 		// Load current session
 		$session = new \Model\Session;
-		$session->load(array("key = ?", $f3->get("COOKIE.phproj_key")));
+		$session->loadCurrent();
 
 		// Load user
 		if($session->user_id) {

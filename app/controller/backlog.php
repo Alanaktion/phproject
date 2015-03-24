@@ -89,7 +89,7 @@ class Backlog extends \Controller {
 
 
 
-	public function edit($f3, $params) {
+	public function edit($f3) {
 		$post = $f3->get("POST");
 		$issue = new \Model\Issue();
 		$issue->load($post["itemId"]);

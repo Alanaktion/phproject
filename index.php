@@ -36,6 +36,12 @@ $f3->config("config.ini");
 // Load routes
 $f3->config("app/routes.ini");
 
+// Set cookie properties
+$f3->mset(array(
+	"JAR.path" => parse_url($f3->get("site.url"), PHP_URL_PATH),
+	"JAR.domain" => parse_url($f3->get("site.url"), PHP_URL_HOST),
+));
+
 // Set up error handling
 $f3->set("ONERROR", function(Base $f3) {
 	switch($f3->get("ERROR.code")) {
@@ -62,6 +68,12 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.user"),
 	$f3->get("db.pass")
 ));
+
+// Ensure database is up to date
+$version = \Helper\Security::instance()->checkDatabaseVersion();
+if($version !== true) {
+	\Helper\Security::instance()->updateDatabase($version);
+}
 
 // Minify static resources
 // Cache for 1 week
