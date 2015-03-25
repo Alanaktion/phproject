@@ -43,16 +43,6 @@
 			<b>{{ @dict.username }}:</b> {{ @db.user }}<br>
 			<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
 			<b>{{ @dict.current_version }}:</b> {{@version}}<br>
-			<check if="{{ !empty(@newer_version) }}">
-				<div class="clearfix">
-					<b>{{ @dict.update_available }}:</b>
-					<form class="pull-right" action="{{ @site.url }}admin" method="post">
-						<input type="hidden" name="action" value="updatedb">
-						<input type="hidden" name="version" value="{{@newer_version}}">
-						<button onclick="return confirm('{{ @dict.backup_db }}')" type="submit" class="btn btn-warning btn-xs">{{ @dict.update_to_n,@newer_version | format }}</button>
-					</form>
-				</div>
-			</check>
 		</div>
 		<div class="col-md-3 col-sm-6">
 			<div class="clearfix">
