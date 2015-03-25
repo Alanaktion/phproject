@@ -39,8 +39,18 @@ class Session extends \Model {
 		if($token) {
 			$this->load(array("token = ?", $token));
 			$expire = $f3->get("JAR.expire");
+
+
+			// Delete expired sessions
 			if(time() - $expire > strtotime($this->created)) {
 				$this->delete();
+				return $this;
+			}
+
+			// Update nearly expired sessions
+			if(time() - $expire / 2 > strtotime($this->created)) {
+				$this->created = date("Y-m-d H:i:s");
+				$this->setCurrent();
 			}
 		}
 		return $this;
