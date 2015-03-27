@@ -11,19 +11,19 @@
 		<div class="col-md-6">
 		<p>
 			<a href="{{ @site.url }}backlog" class="btn btn-default btn-sm">
-			<span class="glyphicon glyphicon-chevron-left"></span>&ensp;Future Sprints
+			<span class="glyphicon glyphicon-chevron-left"></span>&ensp;{{ @dict.future_sprints }}
 			</a>
 		</p>
 			 <div class="panel panel-default">
 				<div class="panel-heading">
-					Backlog
+					{{ @dict.backlog }}
 				</div>
 				<div class="panel-body in" id="panel-0">
 					<ul class="list-group sortable" data-list-id="0">
 					</ul>
 				</div>
 				<p style="text-align:center;" class="text-muted">
-					Drag projects here to remove from a sprint
+					{{ @dict.backlog_old_help_text }}
 				</p>
 			</div>
 		</div>

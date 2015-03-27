@@ -54,12 +54,13 @@
 												</div>
 											</div>
 											<div class="form-group form-group-sm">
-												<label for="language" class="col-sm-3 control-label">Language</label>
+												<label for="language" class="col-sm-3 control-label">{{ @dict.language }}</label>
 												<div class="col-sm-9">
 													<select class="form-control" name="language" id="language">
 														<option value="">Default (English)</option>
 														<option value="es">Spanish (Español)</option>
                                                         <option value="ru">Russian (Русский)</option>
+                                                        <option value="pt">Portuguese (Português)</option>
 													</select>
 												</div>
 											</div>
@@ -109,19 +110,19 @@
 												<h4>Administrator User</h4>
 											</div>
 											<div class="form-group form-group-sm">
-												<label for="user-username" class="col-sm-3 control-label">Username</label>
+												<label for="user-username" class="col-sm-3 control-label">{{ @dict.username }}</label>
 												<div class="col-sm-9">
 													<input type="text" class="form-control" id="user-username" name="user-username" required value="admin">
 												</div>
 											</div>
 											<div class="form-group form-group-sm">
-												<label for="user-email" class="col-sm-3 control-label">Email</label>
+												<label for="user-email" class="col-sm-3 control-label">{{ @dict.email }}</label>
 												<div class="col-sm-9">
 													<input type="email" class="form-control" id="user-email" name="user-email" required>
 												</div>
 											</div>
 											<div class="form-group form-group-sm">
-												<label for="user-password" class="col-sm-3 control-label">Password</label>
+												<label for="user-password" class="col-sm-3 control-label">{{ @dict.password }}</label>
 												<div class="col-sm-9">
 													<input type="password" class="form-control" id="user-password" name="user-password" placeholder="admin">
 												</div>

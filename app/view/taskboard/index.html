@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ @LANGUAGE }}">
 <head>
 	<include href="blocks/head.html" />
 	<link rel="stylesheet" href="{{ @site.url }}minify/css/taskboard.css">
@@ -45,11 +45,11 @@
 				<th class="column column-1">
 					<div class="btn-group">
 						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
-							<span class="glyphicon glyphicon-filter"></span> Filter Tasks <span class="caret"></span>
+							<span class="glyphicon glyphicon-filter"></span> {{ @dict.filter_tasks }} <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/all">All Tasks</a></li>
-							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/groups">My Groups</a></li>
+							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/all">{{ @dict.all_tasks }}</a></li>
+							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/groups">{{ @dict.my_groups }}</a></li>
 							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/me">{{ @dict.my_tasks }}</a></li>
 							<check if="{{ count(@groups) }}">
 								<li class="divider"></li>
@@ -60,7 +60,7 @@
 						</ul>
 					</div>
 					<button id="btn-burndown" class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
-						<span class="glyphicon glyphicon-fire"></span> Burndown
+						<span class="glyphicon glyphicon-fire"></span> {{ @dict.burndown }}
 					</button>
 					<a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Reload taskboard">
 						<span class="glyphicon glyphicon-repeat"></span>
@@ -239,20 +239,20 @@
 					<div class="col-md-12">
 						<hr>
 						<div class="form-inline">
-							<label>Track Time Spent</label><br>
+							<label>{{ @dict.track_time_spent }}</label><br>
 							<div class="form-group form-group-wide">
 								<label class="sr-only" for="comment">{{ @dict.comment }}</label>
 								<input type="text" name="comment" id="comment" class="form-control input-sm" placeholder="{{ @dict.comment }}">
 							</div>
 							<div class="form-group form-group-narrow">
-								<label class="sr-only" for="hours_spent">Hours</label>
-								<input type="text" name="hours_spent" id="hours_spent" class="form-control input-sm" placeholder="Hours">
+								<label class="sr-only" for="hours_spent">{{ @dict.hours_spent }}</label>
+								<input type="text" name="hours_spent" id="hours_spent" class="form-control input-sm" placeholder="{{ @dict.hours_spent }}">
 							</div>
 							<div class="checkbox">
 								&nbsp;
 								<input type="hidden" name="burndown" value="0">
 								<label>
-									<input type="checkbox" name="burndown" id="input-burndown" value="1" checked> Burn hours
+									<input type="checkbox" name="burndown" id="input-burndown" value="1" checked> {{ @dict.burn_hours }}
 								</label>
 							</div>
 						</div>
@@ -272,7 +272,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
-					<h4 class="modal-title">Burndown Chart</h4>
+					<h4 class="modal-title">{{ @dict.burndown }}</h4>
 				</div>
 				<div class="modal-body">
 					<div class="row">

@@ -60,7 +60,7 @@
 			<div class="col-sm-4">
 				<form action="{{ @site.url }}register" method="post" class="form-horizontal">
 					<div class="clearfix">
-						<h3 class="col-md-8 col-md-offset-4">Register</h3>
+						<h3 class="col-md-8 col-md-offset-4">{{ @dict.register }}</h3>
 					</div>
 					<input type="hidden" name="to" value="{{ empty(@to) ? '/' : @to }}">
 					<check if="{{ !empty(@register.error) }}">
@@ -92,7 +92,7 @@
 					</div>
 					<div class="form-group">
 						<div class="col-lg-8 col-lg-offset-4">
-							<button type="submit" class="btn btn-primary">Register</button>
+							<button type="submit" class="btn btn-primary">{{ @dict.register }}</button>
 						</div>
 					</div>
 				</form>
