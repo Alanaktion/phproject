@@ -66,6 +66,10 @@ public function _load() {
 
 Hooks are not currently implemented in Phproject, but will be initialized from your `Base->_load()` method with calls to `$this->_hook()` in future releases.
 
+#### Future hooks
+
+`view.parse`, `model.before_save`, `model.after_save`, `model/issue.before_save`, `model/issue.after_save`
+
 
 ### Menu Items
 
