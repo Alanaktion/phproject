@@ -17,7 +17,7 @@ class Index extends \Controller {
 					$user->load($f3->get("site.demo"));
 					if($user->id) {
 						$session = new \Model\Session($user->id);
-						$f3->set("COOKIE.phproj_token", $session->token);
+						$session->setCurrent();
 						$f3->reroute("/");
 						return;
 					} else {
