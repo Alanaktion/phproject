@@ -57,7 +57,7 @@
 						</div>
 						<check if="{{ @user.role == 'admin' }}">
 							<div class="form-group">
-								<div class="col-sm-2 control-label label-sm">API Key</div>
+								<label class="col-sm-2 control-label label-sm">API Key</label>
 								<div class="col-sm-4 col-md-2 col-lg-2">
 									<p class="form-control-static input-sm">{{ @user.api_key ?: 'No API Key' }}</p>
 								</div>
@@ -81,7 +81,7 @@
 									<button type="submit" class="btn btn-default btn-sm pull-left nojs">{{ @dict.upload }}</button>
 								</form>
 								<check if="{{ empty($user->avatar_filename) }}">
-									<p class="help-block"><a href="{{ @site.url }}https://www.gravatar.com/emails/" target="_blank">{{ @dict.edit_on_gravatar }}</a></p>
+									<p class="help-block"><a href="https://www.gravatar.com/emails/" target="_blank">{{ @dict.edit_on_gravatar }}</a></p>
 								</check>
 							</div>
 						</div>
