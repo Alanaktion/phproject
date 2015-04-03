@@ -137,11 +137,11 @@ class Issues extends \Controller {
 		if(!empty($args["type_id"])) {
 			$type->load($args["type_id"]);
 			if($type->id) {
-				$f3->set("title", $type->name . "s");
+				$f3->set("title", Helper\Inflector::instance()->pluralize($type->name));
 				$f3->set("type", $type);
 			}
 		} else {
-			$f3->set("title", "Issues");
+			$f3->set("title", $f3->get("dict.issues"));
 		}
 
 		$status = new \Model\Issue\Status;
@@ -378,7 +378,7 @@ class Issues extends \Controller {
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
-		$f3->set("title", "New " . $type->name);
+		$f3->set("title", $f3->get("dict.new_n", $type->name));
 		$f3->set("menuitem", "new");
 		$f3->set("type", $type);
 
@@ -389,7 +389,7 @@ class Issues extends \Controller {
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
-		$f3->set("title", "New Issue");
+		$f3->set("title", $f3->get("dist.new_n", $f3->get("dict.issue")));
 		$f3->set("menuitem", "new");
 		$this->_render("issues/new.html");
 	}
@@ -419,7 +419,7 @@ class Issues extends \Controller {
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
-		$f3->set("title", "Edit #" . $issue->id);
+		$f3->set("title", $f3->get("edit_n", $issue->id));
 		$f3->set("issue", $issue);
 		$f3->set("type", $type);
 
@@ -1054,7 +1054,7 @@ class Issues extends \Controller {
 
 		// Render view
 		$f3->set("project", $project);
-		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - Project Overview");
+		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - " . $f3->get("dict.project_overview"));
 		$this->_render("issues/project.html");
 
 	}

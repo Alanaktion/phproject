@@ -12,7 +12,7 @@ class Admin extends \Controller {
 	}
 
 	public function index($f3) {
-		$f3->set("title", "Administration");
+		$f3->set("title", $f3->get("dict.administration"));
 		$f3->set("menuitem", "admin");
 
 		if($f3->get("POST.action") == "clearcache") {
@@ -42,7 +42,7 @@ class Admin extends \Controller {
 	}
 
 	public function plugins($f3) {
-		$f3->set("title", "Plugins");
+		$f3->set("title", $f3->get("dict.plugins"));
 		$this->_render("admin/plugins.html");
 	}
 
@@ -58,7 +58,7 @@ class Admin extends \Controller {
 	}
 
 	public function users($f3) {
-		$f3->set("title", "Manage Users");
+		$f3->set("title", $f3->get("dict.users"));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'"));
@@ -67,7 +67,7 @@ class Admin extends \Controller {
 	}
 
 	public function user_edit($f3, $params) {
-		$f3->set("title", "Edit User");
+		$f3->set("title", $f3->get("dict.edit_user"));
 
 		$user = new \Model\User();
 		$user->load($params["id"]);
@@ -83,7 +83,7 @@ class Admin extends \Controller {
 	}
 
 	public function user_new($f3) {
-		$f3->set("title", "New User");
+		$f3->set("title", $f3->get("dict.new_user"));
 
 		$f3->set("rand_color", sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF)));
 		$this->_render("admin/users/edit.html");
@@ -96,11 +96,11 @@ class Admin extends \Controller {
 
 		// Load current user if set, otherwise validate fields for new user
 		if($user_id = $f3->get("POST.user_id")) {
-			$f3->set("title", "Edit User");
+			$f3->set("title", $f3->get("dict.edit_user"));
 			$user->load($user_id);
 			$f3->set("this_user", $user);
 		} else {
-			$f3->set("title", "New User");
+			$f3->set("title", $f3->get("dict.new_user"));
 
 			// Verify a password is being set
 			if(!$f3->get("POST.password")) {
@@ -178,7 +178,7 @@ class Admin extends \Controller {
 	}
 
 	public function groups($f3) {
-		$f3->set("title", "Manage Groups");
+		$f3->set("title", $f3->get("dict.groups"));
 
 		$group = new \Model\User();
 		$groups = $group->find("deleted_date IS NULL AND role = 'group'");
@@ -201,7 +201,7 @@ class Admin extends \Controller {
 	}
 
 	public function group_new($f3) {
-		$f3->set("title", "New Group");
+		$f3->set("title", $f3->get("dict.groups"));
 
 		if($f3->get("POST")) {
 			$group = new \Model\User();
@@ -218,7 +218,7 @@ class Admin extends \Controller {
 	}
 
 	public function group_edit($f3, $params) {
-		$f3->set("title", "Edit Group");
+		$f3->set("title", $f3->get("dict.groups"));
 
 		$group = new \Model\User();
 		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
@@ -305,7 +305,7 @@ class Admin extends \Controller {
 	}
 
 	public function sprints($f3) {
-		$f3->set("title", "Manage Sprints");
+		$f3->set("title", $f3->get("dict.sprints"));
 
 		$sprints = new \Model\Sprint();
 		$f3->set("sprints", $sprints->find());
@@ -314,7 +314,7 @@ class Admin extends \Controller {
 	}
 
 	public function sprint_new($f3) {
-		$f3->set("title", "New Sprint");
+		$f3->set("title", $f3->get("dict.sprints"));
 
 		if($post = $f3->get("POST")) {
 			if(empty($post["start_date"]) || empty($post["end_date"])) {
@@ -345,7 +345,7 @@ class Admin extends \Controller {
 	}
 
 	public function sprint_edit($f3, $params) {
-		$f3->set("title", "Edit Sprint");
+		$f3->set("title", $f3->get("dict.sprints"));
 
 		$sprint = new \Model\Sprint;
 		$sprint->load($params["id"]);

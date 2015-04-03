@@ -18,7 +18,7 @@ class Tag extends \Controller {
 		$tag = new \Model\Issue\Tag;
 		$cloud = $tag->cloud();
 		shuffle($cloud);
-		$f3->set("title", "Issue Tags");
+		$f3->set("title", $f3->get("dict.issue_tags"));
 		$f3->set("cloud", $cloud);
 		$this->_render("tag/index.html");
 	}
@@ -40,7 +40,7 @@ class Tag extends \Controller {
 		$issue = new \Model\Issue\Detail;
 		$issue_ids = implode(',', $tag->issues());
 
-		$f3->set("title", "#" . $params["tag"]);
+		$f3->set("title", "#" . $params["tag"] . " - " . $f3->get("dict.issue_tags"));
 		$f3->set("tag", $tag);
 		$f3->set("issues.subset", $issue->find("id IN ($issue_ids)"));
 		$this->_render("tag/single.html");

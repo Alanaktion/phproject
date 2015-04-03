@@ -82,7 +82,7 @@ class Backlog extends \Controller {
 		$f3->set("sprints", $sprint_details);
 		$f3->set("backlog", $unset_projects);
 
-		$f3->set("title", "Backlog");
+		$f3->set("title", $f3->get("dict.backlog"));
 		$f3->set("menuitem", "backlog");
 		$this->_render("backlog/index.html");
 	}
@@ -113,7 +113,7 @@ class Backlog extends \Controller {
 
 		$f3->set("sprints", $sprint_details);
 
-		$f3->set("title", "Backlog");
+		$f3->set("title", $f3->get("dict.backlog"));
 		$f3->set("menuitem", "backlog");
 		$this->_render("backlog/old.html");
 	}

@@ -113,7 +113,7 @@ class User extends \Controller {
 	}
 
 	public function account($f3, $params) {
-		$f3->set("title", "My Account");
+		$f3->set("title", $f3->get("dict.my_account"));
 		$f3->set("menuitem", "user");
 		$f3->set("languages", $this->_languages);
 		$this->_loadThemes();
@@ -188,7 +188,7 @@ class User extends \Controller {
 		}
 
 		$user->save();
-		$f3->set("title", "My Account");
+		$f3->set("title", $f3->get("dict.my_account"));
 		$f3->set("menuitem", "user");
 
 		// Use new user values for page
