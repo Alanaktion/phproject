@@ -137,7 +137,7 @@ class Issues extends \Controller {
 		if(!empty($args["type_id"])) {
 			$type->load($args["type_id"]);
 			if($type->id) {
-				$f3->set("title", Helper\Inflector::instance()->pluralize($type->name));
+				$f3->set("title", \Helper\Inflector::instance()->pluralize($type->name));
 				$f3->set("type", $type);
 			}
 		} else {
