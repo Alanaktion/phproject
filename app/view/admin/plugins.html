@@ -13,6 +13,9 @@
 				<th>{{ @dict.name }}</th>
 				<th>{{ @dict.cols.author }}</th>
 				<th>Version</th>
+				<check if="{{ @user.rank >= 5 }}">
+					<th></th>
+				</check>
 			</tr>
 		</thead>
 		<tbody>
@@ -24,7 +27,7 @@
 					<td>{{ @meta.author | esc }}</td>
 					<td>{{ @meta.version }}</td>
 					<td>
-						<check if="{{ is_callable(@method) }}">
+						<check if="{{ @user.rank >= 5 && is_callable(@method) }}">
 							<a href="{{ @site.url }}admin/plugins/{{ @key }}">Details</a>
 						</check>
 					</td>

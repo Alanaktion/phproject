@@ -60,20 +60,38 @@
 		</div>
 		<div class="col-md-3 col-sm-6">
 			<h4>SMTP <small>(Outgoing mail)</small></h4>
-			<p><b>From:</b> {{ @mail.from }}</p>
+			<check if="{{ @mail.from }}">
+				<true>
+					<p><b>From:</b> {{ @mail.from }}</p>
+				</true>
+				<false>
+					SMTP is not enabled.
+				</false>
+			</check>
 			<h4>IMAP <small>(Incoming mail)</small></h4>
-			<b>Hostname:</b> {{ @imap.hostname }}<br>
-			<b>{{ @dict.username }}:</b> {{ @imap.username }}<br>
-			<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
+			<check if="{{ @imap.hostname }}">
+				<true>
+					<b>Hostname:</b> {{ @imap.hostname }}<br>
+					<b>{{ @dict.username }}:</b> {{ @imap.username }}<br>
+					<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
+				</true>
+				<false>
+					IMAP is not enabled.
+				</false>
+			</check>
 		</div>
 		<div class="col-md-3 col-sm-6">
 			<h4>Miscellaneous</h4>
-			<b>Debug level:</b> {{ @DEBUG }}<br>
-			<b>Session Lifetime:</b> {{ gmdate("z\\d G\\h", @JAR.expire) }}<br>
-			<b>Max upload:</b> {{ round(@files.maxsize/1024/1024, 2) }}MB<br>
-			<small>Gravatar</small><br>
-			<b>Max rating:</b> {{ @gravatar.rating }}<br>
-			<b>Default:</b> {{ @gravatar.default }}<br>
+			<p>
+				<b>Debug level:</b> {{ @DEBUG }}<br>
+				<b>Session Lifetime:</b> {{ gmdate("z\\d G\\h", @JAR.expire) }}<br>
+				<b>Max upload:</b> {{ round(@files.maxsize/1024/1024, 2) }}MB
+			</p>
+			<p>
+				<small>Gravatar</small><br>
+				<b>Max rating:</b> {{ @gravatar.rating }}<br>
+				<b>Default:</b> {{ @gravatar.default }}<br>
+			</p>
 		</div>
 	</div>
 

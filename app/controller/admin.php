@@ -47,6 +47,7 @@ class Admin extends \Controller {
 	}
 
 	public function plugin_single($f3, $params) {
+		$this->_userId = $this->_requireAdmin(5);
 		$plugins = $f3->get("plugins");
 		if($plugin = $plugins[$params["id"]]) {
 			$f3->set("title", $plugin->_package());
@@ -73,7 +74,10 @@ class Admin extends \Controller {
 		$user->load($params["id"]);
 
 		if($user->id) {
-			$f3->set("title", "Edit User");
+			if($user->rank > $f3->get("user.rank")) {
+				$f3->error(403, "You are not authorized to edit this user.");
+				return;
+			}
 			$f3->set("this_user", $user);
 			$this->_render("admin/users/edit.html");
 		} else {
@@ -156,7 +160,10 @@ class Admin extends \Controller {
 		$user->username = $f3->get("POST.username");
 		$user->email = $f3->get("POST.email");
 		$user->name = $f3->get("POST.name");
-		$user->rank = $f3->get("POST.rank");
+		if($user->id != $f3->get("user.id")) {
+			// Don't allow user to change own rank
+			$user->rank = $f3->get("POST.rank");
+		}
 		$user->role = $user->rank < 4 ? 'user' : 'admin';
 		$user->task_color = ltrim($f3->get("POST.task_color"), "#");
 
