@@ -4,9 +4,8 @@
 	<include href="blocks/head.html" />
 </head>
 <body>
-<set fullwidth="{{ true }}" />
 <include href="blocks/navbar.html" />
-<div class="container-fluid">
+<div class="container">
 	<h2>{{ @project.name | esc }} <small>#{{ @project.id }}</small></h2>
 	<h3 class="h4"><i>{{ @dict.project_overview }}</i></h3>
 	<set percentComplete="{{ round(@stats.complete / @stats.total * 100) }}" />
@@ -21,13 +20,14 @@
 
 	<h4>{{ @dict.project_tree }}</h4>
 	<div class="table-responsive">
-		<table class="table table-condensed table-hover" style="width: auto;">
+		<table class="table table-condensed table-hover">
 			<thead>
 				<tr>
 					<th>{{ @dict.cols.id }}</th>
 					<th>{{ @dict.cols.title }}</th>
 					<th>{{ @dict.cols.type }}</th>
 					<th>{{ @dict.cols.assignee }}</th>
+					<th>{{ @dict.cols.author }}</th>
 					<th>{{ @dict.cols.priority }}</th>
 					<th>{{ @dict.cols.due_date }}</th>
 					<th>{{ @dict.cols.sprint }}</th>

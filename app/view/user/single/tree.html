@@ -4,30 +4,47 @@
 	<include href="blocks/head.html" />
 </head>
 <body>
-	<include href="blocks/navbar.html" />
-	<div class="container">
+<include href="blocks/navbar.html" />
+<div class="container">
 
-		<div class="clearfix">
-			<div class="pull-left" style="margin-right: 15px;">
-				<img src="{{ @this_user->avatar(128) }}" class="img-rounded profile-picture" alt>
-			</div>
-			<div class="pull-left">
-				<h3>{{ @this_user.name | esc }}</h3>
-				<p>{{ @dict.username }}: {{ @this_user.username }}</p>
-				<check if="{{ @this_user.role != 'group' }}">
-					<p>{{ @dict.email }}: {{ @this_user.email }}</p>
-				</check>
-			</div>
+	<div class="clearfix">
+		<div class="pull-left" style="margin-right: 15px;">
+			<img src="{{ @this_user->avatar(128) }}" class="img-rounded profile-picture" alt>
 		</div>
-
-		<h3>{{ @dict.assigned_issues }}</h3>
-		<ul>
-			<repeat group="{{ @issues }}" value="{{ @iss }}">
-				{~ @recurDisplay(@iss) ~}
-			</repeat>
-		</ul>
-
-		<include href="blocks/footer.html" />
+		<div class="pull-left">
+			<h3>{{ @this_user.name | esc }}</h3>
+			<p>{{ @dict.username }}: {{ @this_user.username }}</p>
+			<check if="{{ @this_user.role != 'group' }}">
+				<p>{{ @dict.email }}: {{ @this_user.email }}</p>
+			</check>
+		</div>
 	</div>
+
+	<h3>{{ @dict.assigned_issues }}</h3>
+	<div class="table-responsive">
+		<table class="table table-condensed table-hover">
+			<thead>
+				<tr>
+					<th>{{ @dict.cols.id }}</th>
+					<th>{{ @dict.cols.title }}</th>
+					<th>{{ @dict.cols.type }}</th>
+					<th>{{ @dict.cols.assignee }}</th>
+					<th>{{ @dict.cols.author }}</th>
+					<th>{{ @dict.cols.priority }}</th>
+					<th>{{ @dict.cols.due_date }}</th>
+					<th>{{ @dict.cols.sprint }}</th>
+					<th>{{ @dict.cols.hours_spent }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<repeat group="{{ @issues }}" value="{{ @issue }}">
+					{~ @renderTree(@issue) ~}
+				</repeat>
+			</tbody>
+		</table>
+	</div>
+
+	<include href="blocks/footer.html" />
+</div>
 </body>
 </html>
