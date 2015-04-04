@@ -32,24 +32,6 @@ body.login {
 .navbar-form.navbar-right:last-child {
 	margin-right: 0;
 }
-/*.navbar-form .input-group {
-	max-width: 206px;
-}
-.navbar-form[role="search"] .input-group {
-	max-width: 240px;
-	min-width: 225px;
-	margin-right: 10px;
-	display: block;
-}
-.navbar-form[role="search"] > .input-group > input:first-child {
-	border-radius: 16px 0 0 16px;
-	padding-left: 15px;
-}
-.navbar-form[role="search"] > .input-group > .input-group-btn:last-child .btn {
-	border-radius: 0 16px 16px 0;
-	padding-right: 15px;
-	box-shadow: none;
-}*/
 
 footer p {
 	line-height: 20px;
@@ -66,10 +48,6 @@ footer p {
 .pull-left-full {
 	overflow: hidden;
 }
-
-/*legend, label {
-	font-weight: 300;
-}*/
 
 a.nolink {
 	color: inherit;
@@ -111,10 +89,6 @@ textarea {
 }
 .img-border-rounded:before {
 	border-radius: 6px;
-}
-
-.profile-picture {
-	background-color: #ecf0f1;
 }
 
 .issue-list .issue-filters th,
