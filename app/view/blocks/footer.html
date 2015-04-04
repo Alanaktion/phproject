@@ -8,7 +8,14 @@
 					<div class="text-muted">{{ @row.timestamp }} ({{ @row.runtime }}) {{ @row.query }}</div>
 				</true>
 				<false>
-					<div>{{ @row.timestamp }} ({{ @row.runtime }}) {{ @row.query }}</div>
+					<check if="{{ floatval(@row.runtime) > 10 }}">
+						<true>
+							<div class="text-warning">{{ @row.timestamp }} ({{ @row.runtime }}) {{ @row.query }}</div>
+						</true>
+						<false>
+							<div>{{ @row.timestamp }} ({{ @row.runtime }}) {{ @row.query }}</div>
+						</false>
+					</check>
 				</false>
 			</check>
 		</repeat>
@@ -41,6 +48,6 @@
 	</div>
 </footer>
 <script>var site_url = '{{ @site.url }}';</script>
-<script src="{{ @site.url }}minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,global.js"></script>
+<script src="{{ @site.url }}minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,knmi.min.js,global.js"></script>
 <script src="{{ @site.url }}js/respond.min.js"></script>
 <include href="blocks/footer-hotkeys-modals.html" if="{{ !empty(@user.id) }}">

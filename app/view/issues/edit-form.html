@@ -2,10 +2,7 @@
 	<check if="{{ !empty(@issue) }}">
 		<a href="{{ @site.url }}issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
 		<input type="hidden" name="id" value="{{ @issue.id }}">
-		<!-- Hashed original values used in saving updates -->
-		<repeat group="{{ @issue->cast() }}" key="{{ @key }}" value="{{ @value }}">
-			<input type="hidden" name="hash_{{ @key }}" value="{{ md5(@value) }}">
-		</repeat>
+		<input type="hidden" name="hash_state" value="{{ json_encode(@issue->hashState()) | esc }}">
 	</check>
 	<check if="{{ empty(@issue) }}">
 		<true>
@@ -208,17 +205,10 @@
 	<div class="form-group">
 		<div class="col-md-offset-2 col-md-10 text-right">
 			<div class="checkbox checkbox-inline">
-			<check if="{{ @user.role == 'admin' }}">
-				<true>
-					<label>
-						<input type="checkbox" name="notify" value="1" checked>
-						{{ @dict.send_notifications }}
-					</label>
-				</true>
-				<false>
-					<input type="hidden" name="notify" value="1">
-				</false>
-			</check>
+				<label>
+					<input type="checkbox" name="notify" value="1" checked>
+					{{ @dict.send_notifications }}
+				</label>
 			</div>
 			<check if="{{ !empty(@issue) }}">
 				<a href="{{ @site.url }}issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>

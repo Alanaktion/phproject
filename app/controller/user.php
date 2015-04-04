@@ -15,11 +15,11 @@ class User extends \Controller {
 			"en_GB" => \ISO::LC_en . " (Great Britain)",
 			"es" => \ISO::LC_es . " (Español)",
 			"pt" => \ISO::LC_pt . " (Português)",
-			"ru" => \ISO::LC_ru . " (Pу́сский Язы́к)",
+			"ru" => \ISO::LC_ru . " (Pу́сский)",
 		);
 	}
 
-	public function index($f3, $params) {
+	public function index($f3) {
 		$f3->reroute("/user");
 	}
 
@@ -36,14 +36,23 @@ class User extends \Controller {
 
 
 		$order = "priority DESC, has_due_date ASC, due_date ASC";
-		$f3->set("projects", $issue->find(
+		$projects = $issue->find(
 			array(
 				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
 				":type" => $f3->get("issue_type.project"),
 			),array(
 				"order" => $order
 			)
-		));
+		);
+		$subprojects = array();
+		foreach($projects as $i=>$project) {
+			if($project->parent_id) {
+				$subprojects[] = $project;
+				unset($projects[$i]);
+			}
+		}
+		$f3->set("projects", $projects);
+		$f3->set("subprojects", $subprojects);
 
 		$f3->set("bugs", $issue->find(
 			array(
@@ -104,7 +113,7 @@ class User extends \Controller {
 	}
 
 	public function account($f3, $params) {
-		$f3->set("title", "My Account");
+		$f3->set("title", $f3->get("dict.my_account"));
 		$f3->set("menuitem", "user");
 		$f3->set("languages", $this->_languages);
 		$this->_loadThemes();
@@ -179,7 +188,7 @@ class User extends \Controller {
 		}
 
 		$user->save();
-		$f3->set("title", "My Account");
+		$f3->set("title", $f3->get("dict.my_account"));
 		$f3->set("menuitem", "user");
 
 		// Use new user values for page
@@ -359,31 +368,48 @@ class User extends \Controller {
 			// Convert list to tree
 			$tree = $this->_buildTree($issues);
 
-			// Helper function for recursive tree rendering
-			$recurDisplay = function($issue) use(&$recurDisplay) {
-				$url = \Base::instance()->get("site.url");
-				echo "<li>";
-				if(!empty($issue["id"])) {
-					echo '<a href="'.$url.'issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
-					if($issue["author_name"]) {
-						echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+			/**
+			 * Helper function for recursive tree rendering
+			 * @param   Issue $issue
+			 * @var     callable $renderTree This function, required for recursive calls
+			 */
+			$renderTree = function(&$issue, $level = 0) use(&$renderTree) {
+				if(!empty($issue['id'])) {
+					$f3 = \Base::instance();
+					$hive = array("issue" => $issue, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level, "issue_type" => $f3->get("issue_type"));
+					echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
+					if(!empty($issue['children'])) {
+						foreach($issue['children'] as $item) {
+							$renderTree($item, $level + 1);
+						}
 					}
 				}
-				if(!empty($issue["children"])) {
-					echo "<ul>";
-					foreach($issue["children"] as $iss) {
-						$recurDisplay($iss);
-					}
-					echo "</ul>";
-				}
-				echo "</li>";
 			};
-			$f3->set("recurDisplay", $recurDisplay);
+			$f3->set("renderTree", $renderTree);
 
 			// Render view
 			$f3->set("issues", $tree);
 			$this->_render("user/single/tree.html");
 
+		} else {
+			$f3->error(404);
+		}
+	}
+
+	public function single_overdue($f3, $params) {
+		$this->_requireLogin();
+
+		$user = new \Model\User;
+		$user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
+
+		if($user->id) {
+			$f3->set("title", $user->name);
+			$f3->set("this_user", $user);
+			$issue = new \Model\Issue\Detail;
+			$view = \Helper\View::instance();
+			$issues = $issue->find(array("owner_id = ? AND status_closed = 0 AND deleted_date IS NULL AND due_date IS NOT NULL AND due_date < ?", $user->id, date("Y-m-d", $view->utc2local())), array("order" => "due_date ASC"));
+			$f3->set("issues.subset", $issues);
+			$this->_render("user/single/overdue.html");
 		} else {
 			$f3->error(404);
 		}

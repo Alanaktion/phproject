@@ -43,10 +43,11 @@ abstract class Plugin extends \Prefab {
 	 * @param string $href
 	 * @param string $title
 	 * @param string $match Optional regex, will highlight if the URL matches
+	 * @param string $location Optional location, valid values: 'root', 'user', 'new', 'browse'
 	 * @return Plugin
 	 */
-	final protected function _addNav($href, $title, $match = null) {
-		\Helper\Plugin::instance()->addNavItem($href, $title, $match);
+	final protected function _addNav($href, $title, $match = null, $location = 'root') {
+		\Helper\Plugin::instance()->addNavItem($href, $title, $match, $location);
 		return $this;
 	}
 

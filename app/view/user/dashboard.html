@@ -20,6 +20,12 @@
 			<set issues="{{ @projects }}" />
 			<include href="blocks/dashboard-issue-list.html" />
 
+			<check if="{{ count(@subprojects) }}">
+				<h3>{{ @dict.my_subprojects }}&ensp;<small>{{ count(@subprojects) }}</small></h3>
+				<set issues="{{ @subprojects }}" />
+				<include href="blocks/dashboard-issue-list.html" />
+			</check>
+
 			<check if="{{ count(@bugs) }}">
 				<h3>{{ @dict.my_bugs }}&ensp;<small>{{ count(@bugs) }}</small>&ensp;
 					<a class="btn btn-sm btn-default has-tooltip" href="{{ @site.url }}issues/new/{{ @issue_type.bug }}" title="{{ @dict.add_bug }}"><span class="glyphicon glyphicon-plus"></span></a>

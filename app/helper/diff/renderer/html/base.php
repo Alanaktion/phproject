@@ -177,7 +177,7 @@ class Base extends \Helper\Diff\Renderer\Base
 		$lines = array_map(array($this, 'ExpandTabs'), $lines);
 		$lines = array_map(array($this, 'HtmlSafe'), $lines);
 		foreach($lines as &$line) {
-			$line = preg_replace('# ( +)|^ #e', "\$this->fixSpaces('\\1')", $line);
+			$line = preg_replace_callback('# ( +)|^ #', array($this, 'fixSpaces'), $line);
 		}
 		return $lines;
 	}
@@ -188,9 +188,9 @@ class Base extends \Helper\Diff\Renderer\Base
 	 * @param string $spaces The string of spaces.
 	 * @return string The HTML representation of the string.
 	 */
-	function fixSpaces($spaces='')
+	function fixSpaces($spaces=array(''))
 	{
-		$count = strlen($spaces);
+		$count = strlen($spaces[0]);
 		if($count == 0) {
 			return '';
 		}

@@ -11,8 +11,8 @@ class Admin extends \Controller {
 		\Base::instance()->set("menuitem", "admin");
 	}
 
-	public function index($f3, $params) {
-		$f3->set("title", "Administration");
+	public function index($f3) {
+		$f3->set("title", $f3->get("dict.administration"));
 		$f3->set("menuitem", "admin");
 
 		if($f3->get("POST.action") == "clearcache") {
@@ -21,17 +21,6 @@ class Admin extends \Controller {
 		}
 
 		$db = $f3->get("db.instance");
-
-		if($f3->get("POST.action") == "updatedb") {
-			if(file_exists("db/".$f3->get("POST.version").".sql")) {
-				$update_db = file_get_contents("db/".$f3->get("POST.version").".sql");
-				$db->exec(explode(";", $update_db));
-				\Cache::instance()->reset();
-				$f3->set("success", " Database updated to version: ". $f3->get("POST.version"));
-			} else {
-				$f3->set("error", " Database file not found for version: ". $f3->get("POST.version"));
-			}
-		}
 
 		// Gather some stats
 		$result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE deleted_date IS NULL AND role != 'group'");
@@ -42,20 +31,8 @@ class Admin extends \Controller {
 		$f3->set("count_issue_update", $result[0]["count"]);
 		$result = $db->exec("SELECT COUNT(id) AS `count` FROM issue_comment");
 		$f3->set("count_issue_comment", $result[0]["count"]);
-		$result = @$db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
-		if(!empty($result)) {
-			$f3->set("version", $result[0]["version"]);
-		} else {
-			$f3->set("version", '1.0.0');
-		}
-		$db_files = scandir("db");
-		foreach ($db_files as $file) {
-			$file = substr($file, 0, -4);
-			if(version_compare($file, $f3->get('version')) >0) {
-				$f3->set("newer_version", $file);
-				break;
-			}
-		}
+		$result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
+		$f3->set("version", $result[0]["version"]);
 
 		if($f3->get("CACHE") == "apc") {
 			$f3->set("apc_stats", apc_cache_info("user", true));
@@ -64,12 +41,13 @@ class Admin extends \Controller {
 		$this->_render("admin/index.html");
 	}
 
-	public function plugins($f3, $params) {
-		$f3->set("title", "Plugins");
+	public function plugins($f3) {
+		$f3->set("title", $f3->get("dict.plugins"));
 		$this->_render("admin/plugins.html");
 	}
 
 	public function plugin_single($f3, $params) {
+		$this->_userId = $this->_requireAdmin(5);
 		$plugins = $f3->get("plugins");
 		if($plugin = $plugins[$params["id"]]) {
 			$f3->set("title", $plugin->_package());
@@ -80,8 +58,8 @@ class Admin extends \Controller {
 		}
 	}
 
-	public function users($f3, $params) {
-		$f3->set("title", "Manage Users");
+	public function users($f3) {
+		$f3->set("title", $f3->get("dict.users"));
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'"));
@@ -90,13 +68,16 @@ class Admin extends \Controller {
 	}
 
 	public function user_edit($f3, $params) {
-		$f3->set("title", "Edit User");
+		$f3->set("title", $f3->get("dict.edit_user"));
 
 		$user = new \Model\User();
 		$user->load($params["id"]);
 
 		if($user->id) {
-			$f3->set("title", "Edit User");
+			if($user->rank > $f3->get("user.rank")) {
+				$f3->error(403, "You are not authorized to edit this user.");
+				return;
+			}
 			$f3->set("this_user", $user);
 			$this->_render("admin/users/edit.html");
 		} else {
@@ -105,25 +86,25 @@ class Admin extends \Controller {
 
 	}
 
-	public function user_new($f3, $params) {
-		$f3->set("title", "New User");
+	public function user_new($f3) {
+		$f3->set("title", $f3->get("dict.new_user"));
 
 		$f3->set("rand_color", sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF)));
 		$this->_render("admin/users/edit.html");
 	}
 
-	public function user_save($f3, $params) {
+	public function user_save($f3) {
 
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
 
 		// Load current user if set, otherwise validate fields for new user
 		if($user_id = $f3->get("POST.user_id")) {
-			$f3->set("title", "Edit User");
+			$f3->set("title", $f3->get("dict.edit_user"));
 			$user->load($user_id);
 			$f3->set("this_user", $user);
 		} else {
-			$f3->set("title", "New User");
+			$f3->set("title", $f3->get("dict.new_user"));
 
 			// Verify a password is being set
 			if(!$f3->get("POST.password")) {
@@ -179,7 +160,11 @@ class Admin extends \Controller {
 		$user->username = $f3->get("POST.username");
 		$user->email = $f3->get("POST.email");
 		$user->name = $f3->get("POST.name");
-		$user->role = $f3->get("POST.role");
+		if($user->id != $f3->get("user.id")) {
+			// Don't allow user to change own rank
+			$user->rank = $f3->get("POST.rank");
+		}
+		$user->role = $user->rank < 4 ? 'user' : 'admin';
 		$user->task_color = ltrim($f3->get("POST.task_color"), "#");
 
 		// Save user
@@ -199,8 +184,8 @@ class Admin extends \Controller {
 		}
 	}
 
-	public function groups($f3, $params) {
-		$f3->set("title", "Manage Groups");
+	public function groups($f3) {
+		$f3->set("title", $f3->get("dict.groups"));
 
 		$group = new \Model\User();
 		$groups = $group->find("deleted_date IS NULL AND role = 'group'");
@@ -208,7 +193,7 @@ class Admin extends \Controller {
 		$group_array = array();
 		$db = $f3->get("db.instance");
 		foreach($groups as $g) {
-			$db->exec("SELECT id FROM user_group WHERE group_id = ?", $g["id"]);
+			$db->exec("SELECT g.id FROM user_group g JOIN user u ON g.user_id = u.id WHERE g.group_id = ? AND u.deleted_date IS NULL", $g["id"]);
 			$count = $db->count();
 			$group_array[] = array(
 				"id" => $g["id"],
@@ -222,8 +207,8 @@ class Admin extends \Controller {
 		$this->_render("admin/groups.html");
 	}
 
-	public function group_new($f3, $params) {
-		$f3->set("title", "New Group");
+	public function group_new($f3) {
+		$f3->set("title", $f3->get("dict.groups"));
 
 		if($f3->get("POST")) {
 			$group = new \Model\User();
@@ -240,7 +225,7 @@ class Admin extends \Controller {
 	}
 
 	public function group_edit($f3, $params) {
-		$f3->set("title", "Edit Group");
+		$f3->set("title", $f3->get("dict.groups"));
 
 		$group = new \Model\User();
 		$group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
@@ -266,7 +251,7 @@ class Admin extends \Controller {
 		}
 	}
 
-	public function group_ajax($f3, $params) {
+	public function group_ajax($f3) {
 		if(!$f3->get("AJAX")) {
 			$f3->error(400);
 		}
@@ -326,50 +311,8 @@ class Admin extends \Controller {
 		$f3->reroute("/admin/groups/" . $group->id);
 	}
 
-	public function attributes($f3, $params) {
-		$f3->set("title", "Manage Attributes");
-
-		$attributes = new \Model\Attribute();
-		$f3->set("attributes", $attributes->find());
-
-		$this->_render("admin/attributes.html");
-	}
-
-	public function attribute_new($f3, $params) {
-		$f3->set("title", "New Attribute");
-
-		if($post = $f3->get("POST")) {
-			if(!empty($post["name"]) && !empty($post["types"])) {
-				$attr = new \Model\Attribute();
-				$attr->name = trim($post["name"]);
-				$attr->type = trim($post["type"]);
-				$attr->default = trim($post["default"]);
-				$attr->save();
-				foreach($post["types"] as $type) {
-					// TODO: Save types
-				}
-			} else {
-				$f3->set("attribute", $f3->get("POST"));
-			}
-		}
-
-		$this->_render("admin/attributes/edit.html");
-	}
-
-	public function attribute_edit($f3, $params) {
-		$f3->set("title", "Edit Attribute");
-		$types = new \Model\Issue\Type();
-		$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
-
-		$attr = new \Model\Attribute();
-		$attr->load($params["id"]);
-		$f3->set("attribute", $attr);
-
-		$this->_render("admin/attributes/edit.html");
-	}
-
-	public function sprints($f3, $params) {
-		$f3->set("title", "Manage Sprints");
+	public function sprints($f3) {
+		$f3->set("title", $f3->get("dict.sprints"));
 
 		$sprints = new \Model\Sprint();
 		$f3->set("sprints", $sprints->find());
@@ -377,8 +320,8 @@ class Admin extends \Controller {
 		$this->_render("admin/sprints.html");
 	}
 
-	public function sprint_new($f3, $params) {
-		$f3->set("title", "New Sprint");
+	public function sprint_new($f3) {
+		$f3->set("title", $f3->get("dict.sprints"));
 
 		if($post = $f3->get("POST")) {
 			if(empty($post["start_date"]) || empty($post["end_date"])) {
@@ -409,7 +352,7 @@ class Admin extends \Controller {
 	}
 
 	public function sprint_edit($f3, $params) {
-		$f3->set("title", "Edit Sprint");
+		$f3->set("title", $f3->get("dict.sprints"));
 
 		$sprint = new \Model\Sprint;
 		$sprint->load($params["id"]);

@@ -28,12 +28,14 @@ class Plugin extends \Prefab {
 	 * @param string $href
 	 * @param string $title
 	 * @param string $match
+	 * @param string $location
 	 */
-	public function addNavItem($href, $title, $match = null) {
+	public function addNavItem($href, $title, $match = null, $location = 'root') {
 		$this->_nav[] = array(
 			"href"  => $href,
 			"title" => $title,
-			"match" => $match
+			"match" => $match,
+			"location" => $location
 		);
 	}
 
@@ -55,7 +57,7 @@ class Plugin extends \Prefab {
 	 * @param string $match
 	 */
 	public function addJsFile($file, $match = null) {
-		$_nav[] = array(
+		$this->_jsFiles[] = array(
 			"file"  => $file,
 			"match" => $match
 		);
@@ -64,18 +66,32 @@ class Plugin extends \Prefab {
 	/**
 	 * Get navbar items, optionally setting matching items as active
 	 * @param  string $path
+	 * @param  string $location
 	 * @return array
 	 */
-	public function getNav($path = null) {
-		$return = $this->_nav;
-		foreach($return as &$item) {
-			if($item["match"] && $path && preg_match($item["match"], $path)) {
-				$item["active"] = true;
-			} else {
-				$item["active"] = false;
+	public function getNav($path = null, $location = "root") {
+		$all = $this->_nav;
+		$return = array();
+		foreach($all as $item) {
+			if($item['location'] == $location) {
+				$return[] = $item + array("active" => ($item["match"] && $path && preg_match($item["match"], $path)));
 			}
 		}
 		return $return;
+	}
+
+	/**
+	 * Get a multidimensional array of all nav items by location
+	 * @param  string $path
+	 * @return array
+	 */
+	public function getAllNavs($path = null) {
+		return array(
+			"root" => $this->getNav($path, "root"),
+			"user" => $this->getNav($path, "user"),
+			"new" => $this->getNav($path, "new"),
+			"browse" => $this->getNav($path, "browse")
+		);
 	}
 
 }

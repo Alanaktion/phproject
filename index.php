@@ -63,6 +63,12 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.pass")
 ));
 
+// Ensure database is up to date
+$version = \Helper\Security::instance()->checkDatabaseVersion();
+if($version !== true) {
+	\Helper\Security::instance()->updateDatabase($version);
+}
+
 // Minify static resources
 // Cache for 1 week
 $f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
@@ -74,19 +80,16 @@ $f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
 $pluginDir = scandir("app/plugin");
 $plugins = array();
 $locales = "";
-foreach($pluginDir as $i=>$pluginName) {
-	if(is_dir("app/plugin/$pluginName/dict/")) {
+foreach($pluginDir as $pluginName) {
+	if($pluginName != "." && $pluginName != ".." && is_file("app/plugin/$pluginName/base.php") && is_dir("app/plugin/$pluginName/dict/")) {
 		$locales .= ";app/plugin/$pluginName/dict/";
 	}
 }
 if($locales) {
 	$f3->set("LOCALES", $f3->get("LOCALES") . $locales);
 }
-foreach($pluginDir as $i=>$pluginName) {
+foreach($pluginDir as $pluginName) {
 	if($pluginName != "." && $pluginName != ".." && is_file("app/plugin/$pluginName/base.php")) {
-		if(is_dir("app/plugin/$pluginName/dict/")) {
-			$locales .= ";app/plugin/$pluginName/dict/";
-		}
 		$pluginName = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $pluginName))) . "\\Base";
 		$plugin = $pluginName::instance();
 		$slug = \Web::instance()->slug($plugin->_package());
@@ -107,12 +110,7 @@ foreach($pluginDir as $i=>$pluginName) {
 }
 $f3->set("plugins", $plugins);
 
-// Set up session handler
-if($f3->get("site.db_sessions")) {
-	new \DB\SQL\Session($f3->get("db.instance"), "session", false);
-}
-
-// Load user if session exists
+// Set up user session
 $user = new Model\User();
 $user->loadCurrent();
 

@@ -13,7 +13,7 @@
 						<dl class="dl-inline">
 							<dt>?</dt>
 							<dd>Show hotkeys</dd>
-							<dt>b</dt>
+							<dt>shift+b</dt>
 							<dd>{{ @dict.browse }}</dd>
 							<dt>r</dt>
 							<dd>Reload page</dd>
@@ -68,7 +68,7 @@ $(document).ready(function() {
 					}
 					break;
 				case 66: // Browse
-					if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
+					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
 						window.location = site_url + 'issues?status=open';
 					}
 					break;
@@ -83,14 +83,14 @@ $(document).ready(function() {
 					}
 					break;
 				case 67:
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Close issue
+					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $("#btn-issue-close").length) { // Close issue
 						window.location = $("#btn-issue-close").attr("href");
 					} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Comment on issue
 						$("#comment_textarea").focus();
 					}
 					break;
 				case 82:
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Reopen issue
+					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $("#btn-issue-reopen").length) { // Reopen issue
 						window.location = $("#btn-issue-reopen").attr("href");
 					} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Reload
 						window.location.reload();

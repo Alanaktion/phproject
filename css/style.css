@@ -5,7 +5,7 @@ body {
 body.login {
 	padding-top: 20px;
 }
-@media only screen and (max-width: 767px) {
+@media (max-width: 767px) {
 	.navbar-fixed-top > .navbar-btn {
 		float: right;
 		margin-right: 8px;
@@ -32,24 +32,6 @@ body.login {
 .navbar-form.navbar-right:last-child {
 	margin-right: 0;
 }
-/*.navbar-form .input-group {
-	max-width: 206px;
-}
-.navbar-form[role="search"] .input-group {
-	max-width: 240px;
-	min-width: 225px;
-	margin-right: 10px;
-	display: block;
-}
-.navbar-form[role="search"] > .input-group > input:first-child {
-	border-radius: 16px 0 0 16px;
-	padding-left: 15px;
-}
-.navbar-form[role="search"] > .input-group > .input-group-btn:last-child .btn {
-	border-radius: 0 16px 16px 0;
-	padding-right: 15px;
-	box-shadow: none;
-}*/
 
 footer p {
 	line-height: 20px;
@@ -66,10 +48,6 @@ footer p {
 .pull-left-full {
 	overflow: hidden;
 }
-
-/*legend, label {
-	font-weight: 300;
-}*/
 
 a.nolink {
 	color: inherit;
@@ -111,10 +89,6 @@ textarea {
 }
 .img-border-rounded:before {
 	border-radius: 6px;
-}
-
-.profile-picture {
-	background-color: #ecf0f1;
 }
 
 .issue-list .issue-filters th,
@@ -398,15 +372,42 @@ th[data-sort] {
 .media:hover .comment-delete {
 	visibility: visible;
 }
-@media only screen and (max-width: 768px) {
+@media (max-width: 768px) {
 	.comment-delete {
 		visibility: visible;
 	}
 }
 
-/* Fix navbar dropdowns on mobile devices */
-@media only screen and (max-width: 768px) {
+/* Possibly fix navbar dropdowns on mobile devices */
+@media (max-width: 768px) {
 	.dropdown-backdrop {
 		position: static;
+	}
+}
+
+/* Prevent navbar from overflowing when containing many items */
+@media (min-width: 768px) and (max-width: 1200px) {
+	.navbar-nav > li:nth-last-child(n+5) > a,
+	.navbar-nav > li:nth-last-child(n+5) ~ li > a {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+}
+@media (min-width: 768px) and (max-width: 992px) {
+	.navbar-form[role=search] .form-control:not(:focus)-webkit-input-placeholder {
+		color: transparent;
+	}
+	.navbar-form[role=search] .form-control:not(:focus)::-moz-placeholder {
+		color: transparent;
+	}
+	.navbar-form[role=search] .form-control:not(:focus):-ms-input-placeholder {
+		color: transparent;
+	}
+	.navbar-form[role=search] .form-control {
+		width: 105px;
+		transition: all .1s ease;
+	}
+	.navbar-form[role=search] .form-control:focus {
+		width: 165px;
 	}
 }

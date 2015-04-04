@@ -75,7 +75,7 @@
 			<a id="btn-edit" href="{{ @site.url }}issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
 				<span class="glyphicon glyphicon-pencil"></span>&ensp;{{ @dict.edit }}
 			</a>
-			<check if="{{ @user.role == 'admin' }}">
+			<check if="{{ @user.role == 'admin' || @user.rank >= 3 || @user.id == @issue.author_id }}">
 				<a href="{{ @site.url }}issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
 					<span class="glyphicon glyphicon-remove"></span>&ensp;{{ @dict.delete }}
 				</a>
@@ -177,7 +177,7 @@
 
 		<div class="col-lg-7">
 			<ul class="nav nav-tabs" role="tablist">
-				<li class="disabled"><a>Files</a></li>
+				<li class="disabled"><a>{{ @dict.files }}</a></li>
 				<li class="active"><a href="#files-tiles" data-toggle="tab"><span class="glyphicon glyphicon-th-large"></span></a></li>
 				<li><a href="#files-table" data-toggle="tab"><span class="glyphicon glyphicon-list"></span></a></li>
 			</ul>
@@ -200,10 +200,10 @@
 						<table class="table table-striped table-responsive table-condensed file-list">
 							<thead>
 								<th>{{ @dict.cols.id }}</th>
-								<th>File Name</th>
-								<th>Uploaded By</th>
-								<th>Upload Date</th>
-								<th>File Size</th>
+								<th>{{ @dict.file_name }}</th>
+								<th>{{ @dict.uploaded_by }}</th>
+								<th>{{ @dict.upload_date }}</th>
+								<th>{{ @dict.file_size }}</th>
 								<th></th>
 							</thead>
 							<tbody>
@@ -264,11 +264,11 @@
 								<div class="media-body">
 									<p class="media-heading clearfix">
 										<a href="{{ @site.url }}user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
-										<check if="{{ @user.role == 'admin' }}">
+										<check if="{{ @user.role == 'admin' || @user.rank >= 3 }}">
 											<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
 										</check>
 									</p>
-									<div class="tex">{{ $this->parseTextile(@comment.text) }}</div>
+									<div class="tex">{{ $this->parseTextile(@comment.text, false, false) }}</div>
 									<check if="{{ @comment.file_id }}">
 										<check if="{{ @comment.file_deleted_date }}">
 											<true>
@@ -420,9 +420,10 @@ $(function() {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
 			});
-			$li.remove();
 
-			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) - 1);
+			var matches = $('#watchers-list li').filter('[data-user-id=' + $li.data('user-id') + ']');
+			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) - matches.length);
+			matches.remove();
 
 			e.preventDefault();
 		});
@@ -432,7 +433,7 @@ $(function() {
 
 			$select = $this.find('select');
 			$('<li />')
-				.data('user-id', $select.val())
+				.attr('data-user-id', $select.val())
 				.html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $select.children('option:selected').text())
 				.appendTo('#watchers-list');
 
@@ -468,7 +469,7 @@ $(function() {
 		var $file = $(this).parents("li, tr");
 		$file.fadeTo(100, 0.5).popover("hide");
 		$.post(site_url + "issues/file/delete", {id: $file.data("id")}, function(data) {
-			$("#alert span").html('File deleted. <a href="{{ @site.url }}javascript:void(0);" onclick="restoreFile(' + data.id + ')">Undo</a>');
+			$("#alert span").html('{{ @dict.file_deleted }} <a href="{{ @site.url }}javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
 			$("#alert").show();
 			$(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();
 		}, "json");

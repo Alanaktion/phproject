@@ -11,6 +11,7 @@ CREATE TABLE `user` (
 	`password` char(40) DEFAULT NULL,
 	`salt` char(32) DEFAULT NULL,
 	`role` enum('user','admin','group') NOT NULL DEFAULT 'user',
+	`rank` tinyint(1) unsigned NOT NULL DEFAULT '0',
 	`task_color` char(6) DEFAULT NULL,
 	`theme` varchar(64) DEFAULT NULL,
 	`language` varchar(5) DEFAULT NULL,
@@ -22,8 +23,6 @@ CREATE TABLE `user` (
 	UNIQUE KEY `username` (`username`),
 	UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-INSERT INTO `user` (`username`, `email`, `name`, `password`, `salt`, `role`, `api_key`, `created_date`) VALUES ('admin', 'admin@local', 'Admin', '703983b055847560176a1e2e8508dd68d237ddfa', 'Qfv42OMfAS751Mn6hsKeTECDgyq5dVf7', 'admin', '', NOW());
 
 DROP TABLE IF EXISTS `user_group`;
 CREATE TABLE `user_group` (
@@ -151,6 +150,7 @@ CREATE TABLE `issue_update` (
 	`user_id` int(10) unsigned NOT NULL,
 	`created_date` datetime NOT NULL,
 	`comment_id` int(10) unsigned DEFAULT NULL,
+	`notify` TINYINT(1) UNSIGNED NULL,
 	PRIMARY KEY (`id`),
 	KEY `issue` (`issue_id`),
 	KEY `user` (`user_id`),
@@ -256,15 +256,14 @@ DROP VIEW IF EXISTS `attribute_value_detail`;
 CREATE VIEW `attribute_value_detail` AS (select `v`.`id` AS `id`,`v`.`attribute_id` AS `attribute_id`,`v`.`issue_id` AS `issue_id`,`v`.`value` AS `value`,`a`.`name` AS `name`,`a`.`type` AS `type`,`a`.`default` AS `default` from (`attribute_value` `v` join `attribute` `a` on((`v`.`attribute_id` = `a`.`id`))));
 
 DROP TABLE IF EXISTS `session`;
-CREATE TABLE `session` (
-	`session_id` varchar(40),
-	`data` text,
-	`csrf` text,
-	`ip` varchar(40),
-	`agent` varchar(255),
-	`stamp` integer,
-	PRIMARY KEY(`session_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `session`(
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`key` VARCHAR(128) NOT NULL,
+	`user_id` INT UNSIGNED NOT NULL,
+	`created` DATETIME NOT NULL,
+	PRIMARY KEY (`id`),
+	CONSTRAINT `session_user_id` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=INNODB CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
@@ -272,6 +271,6 @@ CREATE TABLE `config` (
 	`attribute` varchar(255) COLLATE 'utf8_general_ci' NULL,
 	`value` varchar(255) COLLATE 'utf8_general_ci' NULL,
 	UNIQUE KEY `attribute` (`attribute`)
-) ;
+);
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.01.31');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.03.20');

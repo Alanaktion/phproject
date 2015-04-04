@@ -61,7 +61,7 @@ class Issues extends \Controller\Api {
 	}
 
 	// Get a list of issues
-	public function get($f3, $params) {
+	public function get($f3) {
 		$issue = new \Model\Issue\Detail();
 		$result = $issue->paginate(
 			$f3->get("GET.offset") / ($f3->get("GET.limit") ?: 30),
@@ -82,7 +82,7 @@ class Issues extends \Controller\Api {
 	}
 
 	// Create a new issue
-	public function post($f3, $params) {
+	public function post($f3) {
 		if($_REQUEST) {
 			// By default, use standard HTTP POST fields
 			$post = $_REQUEST;
@@ -193,7 +193,6 @@ class Issues extends \Controller\Api {
 		}
 
 		$issue->save();
-		// $f3->status(201);
 		$this->_printJson(array(
 			"issue" => $issue->cast()
 		));

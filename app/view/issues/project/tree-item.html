@@ -1,11 +1,29 @@
-<check if="{{ @issue.closed_date }}">
-	<true>
-		<a href="{{ @site.url }}issues/{{ @issue.id }}" class="text-muted"><s>#{{ @issue.id }} &ndash; {{ @issue.name | esc }}</s></a>
-	</true>
-	<false>
-		<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} &ndash; {{ @issue.name | esc }}</a>
-	</false>
-</check>
-<check if="{{ @children }}">
-	<span class="text-muted">&middot; {{ @dict.n_child_issues, count(@children) | format }} &middot; {{ @dict.n_complete, round(@childrenCompleted / count(@children) * 100).'%' | format }}</span>
-</check>
+<tr>
+	<td colspan="2">
+		{{ str_repeat("&emsp;", @level) }}
+		{{ @issue.id }} &ndash;
+		<check if="{{ @issue.closed_date }}">
+			<true>
+				<a href="{{ @site.url }}issues/{{ @issue.id }}" class="text-muted"><s>{{ @issue.name | esc }}</s></a>
+			</true>
+			<false>
+				<a href="{{ @site.url }}issues/{{ @issue.id }}">{{ @issue.name | esc }}</a>
+			</false>
+		</check>
+	</td>
+	<td>{{ @issue.type_name }}</td>
+	<td>{{ @issue.owner_name }}</td>
+	<td>{{ @issue.author_name }}</td>
+	<td>{{ @issue.priority_name }}</td>
+	<td>
+		<check if="{{ @issue.sprint_start_date }}">
+			{{ date("n/j/y", strtotime(@issue.sprint_start_date)) }}
+		</check>
+	</td>
+	<td>
+		<check if="{{ @issue.due_date }}">
+			{{ date("n/j/y", strtotime(@issue.due_date)) }}
+		</check>
+	</td>
+	<td>{{ @issue.hours_spent }}</td>
+</tr>

@@ -58,11 +58,54 @@ class Issue extends \Model {
 
 	/**
 	 * Delete without sending notification
+	 * @param  bool $recursive
 	 * @return Issue
 	 */
-	public function delete() {
-		$this->set("deleted_date", date("Y-m-d H:i:s"));
+	public function delete($recursive = true) {
+		if(!$this->get("deleted_date")) {
+			$this->set("deleted_date", date("Y-m-d H:i:s"));
+		}
+		if($recursive) {
+			$this->_deleteTree();
+		}
 		return $this->save(false);
+	}
+
+	/**
+	 * Delete a complete issue tree
+	 * @return Issue
+	 */
+	protected function _deleteTree() {
+		$children = $this->find(array("parent_id = ?", $this->get("id")));
+		foreach($children as $child) {
+			$child->delete();
+		}
+		return $this;
+	}
+
+	/**
+	 * Restore a deleted issue without notifying
+	 * @param  bool $recursive
+	 * @return Issue
+	 */
+	public function restore($recursive = true) {
+		$this->set("deleted_date", null);
+		if($recursive) {
+			$this->_restoreTree();
+		}
+		return $this->save(false);
+	}
+
+	/**
+	 * Restore a complete issue tree
+	 * @return Issue
+	 */
+	protected function _restoreTree() {
+		$children = $this->find(array("parent_id = ? AND deleted_date IS NOT NULL", $this->get("id")));
+		foreach($children as $child) {
+			$child->restore();
+		}
+		return $this;
 	}
 
 	/**
@@ -85,6 +128,11 @@ class Issue extends \Model {
 		$update->created_date = date("Y-m-d H:i:s");
 		if($f3->exists('update_comment')) {
 			$update->comment_id = $f3->get('update_comment')->id;
+			if($notify) {
+				$update->notify = 1;
+			}
+		} else {
+			$update->notify = 0;
 		}
 		$update->save();
 
@@ -98,9 +146,8 @@ class Issue extends \Model {
 			$this->set("hours_remaining", 0);
 		}
 
-		// Create a new task if repeating
+		// Create a new issue if repeating
 		if($this->get("closed_date") && $this->get("repeat_cycle") && $this->get("repeat_cycle") != "none") {
-
 			$repeat_issue = new \Model\Issue();
 			$repeat_issue->name = $this->get("name");
 			$repeat_issue->type_id = $this->get("type_id");
@@ -110,29 +157,34 @@ class Issue extends \Model {
 			$repeat_issue->owner_id = $this->get("owner_id");
 			$repeat_issue->description = $this->get("description");
 			$repeat_issue->repeat_cycle = $this->get("repeat_cycle");
+			$repeat_issue->hours_total = $this->get("hours_total");
 			$repeat_issue->created_date = date("Y-m-d H:i:s");
 
 			// Find a due date in the future
 			switch($repeat_issue->repeat_cycle) {
 				case 'daily':
+					$repeat_issue->start_date = $this->get("start_date") ? date("Y-m-d", strtotime("tomorrow")) : NULL;
 					$repeat_issue->due_date = date("Y-m-d", strtotime("tomorrow"));
 					break;
 				case 'weekly':
+					$repeat_issue->start_date = $this->get("start_date") ? date("Y-m-d", strtotime($this->get("start_date") . " +1 week")) : NULL;
 					$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 week"));
 					break;
 				case 'monthly':
+					$repeat_issue->start_date = $this->get("start_date") ? date("Y-m-d", strtotime($this->get("start_date") . " +1 month")) : NULL;
 					$repeat_issue->due_date = date("Y-m-d", strtotime($this->get("due_date") . " +1 month"));
 					break;
 				case 'sprint':
 					$sprint = new \Model\Sprint();
 					$sprint->load(array("start_date > NOW()"), array('order'=>'start_date'));
+					$repeat_issue->start_date = $this->get("start_date") ?  $sprint->start_date : NULL;
 					$repeat_issue->due_date =  $sprint->end_date;
 					break;
 				default:
 					$repeat_issue->repeat_cycle = 'none';
 			}
 
-			// If the project was in a sprint before, put it in a sprint again.
+			// If the issue was in a sprint before, put it in a sprint again.
 			if($this->get("sprint_id")) {
 				$sprint = new \Model\Sprint();
 				$sprint->load(array("end_date > ? AND start_date < ?", $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
@@ -145,11 +197,10 @@ class Issue extends \Model {
 			$this->set("repeat_cycle", null);
 		}
 
-		// Move all non-project children to same sprint
-		$this->resetChildren();
-
 		// Log updated fields
 		$updated = 0;
+		$important_changes = 0;
+		$important_fields = array('status', 'name', 'description', 'owner_id', 'priority', 'due_date');
 		foreach ($this->fields as $key=>$field) {
 			if ($field["changed"] && $field["value"] != $this->_getPrev($key)) {
 				$update_field = new \Model\Issue\Update\Field();
@@ -159,12 +210,24 @@ class Issue extends \Model {
 				$update_field->new_value = $field["value"];
 				$update_field->save();
 				$updated ++;
+				if($key == 'sprint_id') {
+					$this->resetTaskSprints();
+				}
+				if(in_array($key, $important_fields)) {
+					$important_changes ++;
+				}
 			}
 		}
 
 		// Delete update if no fields were changed
 		if(!$updated) {
 			$update->delete();
+		}
+
+		// Set notify flag if important changes occurred
+		if($notify && $important_changes) {
+			$update->notify = 1;
+			$update->save();
 		}
 
 		// Send back the update
@@ -201,9 +264,9 @@ class Issue extends \Model {
 		if($this->query) {
 
 			// Save issue updates and send notifications
-			$update = $this->_saveUpdate();
+			$update = $this->_saveUpdate($notify);
 			$issue = parent::save();
-			if($update->id && $notify) {
+			if($notify && $update && $update->id && $update->notify) {
 				$notification = \Helper\Notification::instance();
 				$notification->issue_update($this->get("id"), $update->id);
 			}
@@ -273,6 +336,7 @@ class Issue extends \Model {
 		$new_issue = new Issue;
 		$new_issue->copyfrom("duplicating_issue");
 		$new_issue->clear("due_date");
+		$new_issue->author_id = $f3->get("user.id");
 		$new_issue->save();
 
 		// Run the recursive function to duplicate the complete descendant tree
@@ -288,40 +352,38 @@ class Issue extends \Model {
 	 * @return Issue $this
 	 */
 	protected function _duplicateTree($id, $new_id) {
-
 		// Find all child issues
 		$children = $this->find(array("parent_id = ?", $id));
 		if(count($children)) {
 			$f3 = \Base::instance();
 			foreach($children as $child) {
+				if(!$child->deleted_date) {
+					// Duplicate issue
+					$child->copyto("duplicating_issue");
+					$f3->clear("duplicating_issue.id");
+					$f3->clear("duplicating_issue.due_date");
 
-				// Duplicate issue
-				$child->copyto("duplicating_issue");
-				$f3->clear("duplicating_issue.id");
-				$f3->clear("duplicating_issue.due_date");
+					$new_child = new Issue;
+					$new_child->copyfrom("duplicating_issue");
+					$new_child->clear("id");
+					$new_child->clear("due_date");
+					$new_child->author_id = $f3->get("user.id");
+					$new_child->set("parent_id", $new_id);
+					$new_child->save(false);
 
-				$new_child = new Issue;
-				$new_child->copyfrom("duplicating_issue");
-				$new_child->clear("id");
-				$new_child->clear("due_date");
-				$new_child->set("parent_id", $new_id);
-				$new_child->save();
-
-				// Duplicate issue's children
-				$this->_duplicateTree($child->id, $new_child->id);
-
+					// Duplicate issue's children
+					$this->_duplicateTree($child->id, $new_child->id);
+				}
 			}
 		}
-
 		return $this;
-
 	}
 
 	/**
 	 * Move all non-project children to same sprint
 	 * @return Issue $this
 	 */
-	public function resetChildren($replace_existing = true) {
+	public function resetTaskSprints($replace_existing = true) {
 		$f3 = \Base::instance();
 		if($this->get("sprint_id")) {
 			$query = "UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type";
@@ -350,6 +412,18 @@ class Issue extends \Model {
 		}
 
 		return $this->_children ?: $this->_children = $this->find(array("parent_id = ? AND deleted_date IS NULL", $this->get("id")));
+	}
+
+	/**
+	 * Generate MD5 hashes for each column in a key=>value array
+	 * @return array
+	 */
+	public function hashState() {
+		$result = $this->cast();
+		foreach ($result as &$value) {
+			$value = md5($value);
+		}
+		return $result;
 	}
 
 }

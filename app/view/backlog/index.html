@@ -11,14 +11,14 @@
 		<div class="col-md-6">
 			 <div class="panel panel-default">
 				<div class="panel-heading has-buttons">
-					Backlog&ensp;
+					{{ @dict.backlog }}&ensp;
 					<div class="btn-group">
 						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
-							<span class="glyphicon glyphicon-filter"></span> Filter Projects <span class="caret"></span>
+							<span class="glyphicon glyphicon-filter"></span> {{ @dict.filter_projects }} <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @site.url }}backlog/all">All Projects</a></li>
-							<li class="{{ @filter == 'groups' && empty(@groupid) ? 'active' : '' }}"><a href="{{ @site.url }}backlog/groups">My Groups</a></li>
+							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @site.url }}backlog/all">{{ @dict.all_projects }}</a></li>
+							<li class="{{ @filter == 'groups' && empty(@groupid) ? 'active' : '' }}"><a href="{{ @site.url }}backlog/groups">{{ @dict.my_groups }}</a></li>
 							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @site.url }}backlog/me">{{ @dict.my_projects }}</a></li>
 							<check if="{{ count(@groups) }}">
 								<li class="divider"></li>
@@ -72,7 +72,7 @@
 				</div>
 			</repeat>
 			<p class="text-center">
-				<a href="{{ @site.url }}backlog/old">Show Previous Sprints</a>
+				<a href="{{ @site.url }}backlog/old">{{ @dict.previous_sprints }}</a>
 			</p>
 		</div>
 	</div>
