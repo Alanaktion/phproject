@@ -578,7 +578,7 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue;
 
 		// Set all supported issue fields
-		$issue->author_id = $f3->get("user.id");
+		$issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $f3->get("user.id");
 		$issue->type_id = $post["type_id"];
 		$issue->created_date = $this->now();
 		$issue->name = $post["name"];
