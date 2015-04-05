@@ -1,0 +1,10 @@
+--- ---
+New comment from {{ @comment.user_name }} on #{{ @issue.id }} {{ @issue.name }}:
+{{ @comment.text }}
+<check if="{{ @comment.file_id }}">
+Attached file: {{ @comment.file_filename }} - {{ @site.url }}files/{{ @comment.file_id }}/{{ @comment.file_filename }}
+</check>
+
+View comment: {{ @site.url }}issues/{{ @issue.id }}
+
+{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@comment.created_date))) }}

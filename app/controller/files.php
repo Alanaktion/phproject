@@ -36,7 +36,7 @@ class Files extends \Controller {
 			if(!$filename) {
 				$filename = basename($file);
 			}
-			header("Content-Disposition: attachment; filename=$filename");
+			header("Content-Disposition: attachment; filename=\"$filename\"");
 		}
 
 		header("Accept-Ranges: bytes");
@@ -67,7 +67,7 @@ class Files extends \Controller {
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);
 
-		if(!$file->id || !is_file($file->disk_filename)) {
+		if(!$file->id) {
 			$f3->error(404);
 			return;
 		}
@@ -112,6 +112,25 @@ class Files extends \Controller {
 				$icon = new \Image("img/mime/table.png");
 				$img->overlay($icon);
 			}
+		}
+
+		// Generate thumbnail of MS Office document
+		elseif(extension_loaded("zip")
+			&& $file->content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+			$zip = zip_open($file->disk_filename);
+			while(($entry = zip_read($zip)) !== false) {
+				if(preg_match("/word\/media\/image[0-9]+\.(png|jpe?g|gif|bmp|dib)/i", zip_entry_name($entry))) {
+					$idata = zip_entry_read($entry, zip_entry_filesize($entry));
+					$img = new \Helper\Image();
+					$img->load($idata);
+					break;
+				}
+			}
+
+			if(!isset($img)) {
+				$img = new \Helper\Image("img/mime/base.png");
+			}
+			$img->resize($params["size"], $params["size"]);
 		}
 
 		// Use generic file icon if type is not supported

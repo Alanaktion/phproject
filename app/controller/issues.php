@@ -47,6 +47,10 @@ class Issues extends \Controller {
 				$filter_str .= "status_closed = 0 AND ";
 			} elseif($i == "status" && $val == "closed") {
 				$filter_str .= "status_closed = 1 AND ";
+			} elseif($i == "repeat_cycle" && $val == "repeat") {
+				$filter_str .= "repeat_cycle NOT IN ('none', '') AND ";
+			} elseif($i == "repeat_cycle" && $val == "none") {
+				$filter_str .= "repeat_cycle IN ('none', '') AND ";
 			} elseif(($i == "author_id" || $i== "owner_id") && !empty($val) && is_numeric($val)) {
 				// Find all users in a group if necessary
 				$user = new \Model\User;
@@ -71,8 +75,10 @@ class Issues extends \Controller {
 		$filter_str .= " deleted_date IS NULL ";
 
 		// Build SQL ORDER BY string
-		$orderby = !empty($_GET['orderby']) ? $_GET['orderby'] : "priority";
-		$ascdesc = !empty($_GET['ascdesc']) && $_GET['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		$orderby = !empty($args['orderby']) ? $args['orderby'] : "priority";
+		$filter["orderby"] = $orderby;
+		$ascdesc = !empty($args['ascdesc']) && $args['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		$filter["ascdesc"] = $ascdesc;
 		switch($orderby) {
 			case "id":
 				$filter_str .= " ORDER BY id {$ascdesc} ";
@@ -86,6 +92,9 @@ class Issues extends \Controller {
 			case "status":
 				$filter_str .= " ORDER BY status {$ascdesc}, priority DESC, due_date DESC ";
 				break;
+			case "parent_id":
+				$filter_str .= " ORDER BY parent_id {$ascdesc}, priority DESC, due_date DESC ";
+				break;
 			case "author":
 				$filter_str .= " ORDER BY author_name {$ascdesc}, priority DESC, due_date DESC ";
 				break;
@@ -98,13 +107,16 @@ class Issues extends \Controller {
 			case "sprint":
 				$filter_str .= " ORDER BY sprint_start_date {$ascdesc}, priority DESC, due_date DESC ";
 				break;
+			case "closed":
+				$filter_str .= " ORDER BY closed_date {$ascdesc}, priority DESC, due_date DESC ";
+				break;
 			case "priority":
 			default:
 				$filter_str .= " ORDER BY priority {$ascdesc}, due_date DESC ";
 				break;
 		}
 
-		return array($filter, $filter_str, $ascdesc);
+		return array($filter, $filter_str);
 
 	}
 
@@ -118,18 +130,18 @@ class Issues extends \Controller {
 
 		// Get filter
 		$args = $f3->get("GET");
-		list($filter, $filter_str, $ascdesc) = $this->_buildFilter();
+		list($filter, $filter_str) = $this->_buildFilter();
 
 		// Load type if a type_id was passed
 		$type = new \Model\Issue\Type;
 		if(!empty($args["type_id"])) {
 			$type->load($args["type_id"]);
 			if($type->id) {
-				$f3->set("title", $type->name . "s");
+				$f3->set("title", \Helper\Inflector::instance()->pluralize($type->name));
 				$f3->set("type", $type);
 			}
 		} else {
-			$f3->set("title", "Issues");
+			$f3->set("title", $f3->get("dict.issues"));
 		}
 
 		$status = new \Model\Issue\Status;
@@ -141,11 +153,11 @@ class Issues extends \Controller {
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
 		$sprint = new \Model\Sprint;
-		$f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC")));
+		$f3->set("sprints", $sprint->find(array("end_date >= ?", date("Y-m-d")), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
-		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+		$f3->set("users", $users->getAll());
+		$f3->set("groups", $users->getAllGroups());
 
 		if(empty($args["page"])) {
 			$args["page"] = 0;
@@ -153,35 +165,116 @@ class Issues extends \Controller {
 		$issue_page = $issues->paginate($args["page"], 50, $filter_str);
 		$f3->set("issues", $issue_page);
 
-		// Set up pagination
+		// Pass filter string for pagination
 		$filter_get = http_build_query($filter);
-		if($issue_page["pos"] < $issue_page["count"] - 1) {
-			$f3->set("next", "?page=" . ($issue_page["pos"] + 1) . "&" . $filter_get);
+
+		if(!empty($orderby)) {
+			$filter_get  .= "&orderby=" . $orderby;
 		}
-		if($issue_page["pos"] > 0) {
-			$f3->set("prev", "?page=" . ($issue_page["pos"] - 1) . "&" . $filter_get);
+		if($issue_page["count"] > 7) {
+			if($issue_page["pos"] <= 3) {
+				$min = 0;
+			} else {
+				$min = $issue_page["pos"] - 3;
+			}
+			if($issue_page["pos"] < $issue_page["count"] - 3) {
+				$max = $issue_page["pos"] + 3;
+			} else {
+				$max = $issue_page["count"] - 1;
+			}
+		} else {
+			$min = 0;
+			$max = $issue_page["count"] - 1;
 		}
+		$f3->set("pages", range($min, $max));
+		$f3->set("filter_get", $filter_get);
 
 		$f3->set("menuitem", "browse");
-		$headings = array(
-				"id",
-				"title",
-				"type",
-				"priority",
-				"status",
-				"author",
-				"assignee",
-				"sprint",
-				"created",
-				"due"
-			);
-		$f3->set("headings", $headings);
-		$f3->set("ascdesc", $ascdesc);
+		$f3->set("heading_links_enabled", true);
 
 		$f3->set("show_filters", true);
 		$f3->set("show_export", true);
 
 		$this->_render("issues/index.html");
+	}
+
+	/**
+	 * Update a list of issues
+	 * @param  Base  $f3
+	 * @param  array $params from form
+	 */
+	public function bulk_update($f3, $params) {
+		$post = $f3->get("POST");
+
+		$issue = new \Model\Issue;
+		if( !empty($post["id"] ) && is_array($post["id"] )) {
+			foreach($post["id"] as $id) {
+				// Updating existing issue.
+				$issue->load($id);
+				if($issue->id) {
+
+					// Diff contents and save what's changed.
+					foreach($post as $i=>$val) {
+						if(
+							$issue->exists($i)
+							&& $i != "id"
+							&& $issue->$i != $val
+							&& !empty($val)
+						) {
+							// Allow setting to Not Assigned
+							if($i == "owner_id" && $val == -1) {
+								$val = 0;
+							}
+							$issue->$i = $val;
+							if($i == "status") {
+								$status = new \Model\Issue\Status;
+								$status->load($val);
+
+								// Toggle closed_date if issue has been closed/restored
+								if($status->closed) {
+									if(!$issue->closed_date) {
+										$issue->closed_date = $this->now();
+									}
+								} else {
+									$issue->closed_date = null;
+								}
+							}
+						}
+					}
+
+					// Save to the sprint of the due date if no sprint selected
+					if (!empty($post['due_date']) && empty($post['sprint_id'])) {
+						$sprint = new \Model\Sprint;
+						$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
+						$issue->sprint_id = $sprint->id;
+					}
+
+					// If it's a child issue and the parent is in a sprint, assign to that sprint
+					if(!empty($post['bulk']['parent_id']) && !$issue->sprint_id) {
+						$parent = new \Model\Issue;
+						$parent->load($issue->parent_id);
+						if($parent->sprint_id) {
+							$issue->sprint_id = $parent->sprint_id;
+						}
+					}
+
+					$issue->save();
+
+				} else {
+					$f3->error(500, "Failed to update all the issues, starting with: $id.");
+					return;
+				}
+			}
+
+		} else {
+			$f3->reroute($post["url_path"] . "?" . $post["url_query"]);
+		}
+
+		if (!empty($post["url_path"]))	{
+			$f3->reroute($post["url_path"] . "?" . $post["url_query"]);
+		} else {
+			$f3->reroute("/issues?" . $post["url_query"]);
+		}
 	}
 
 	/**
@@ -193,8 +286,8 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue\Detail;
 
 		// Get filter data and load issues
-		list($filter, $filter_str, $ascdesc) = $this->_buildFilter();
-		$issues = $issue->find($filter_str);
+		$filter = $this->_buildFilter();
+		$issues = $issue->find($filter[1]);
 
 		// Configure visible fields
 		$fields = array(
@@ -285,7 +378,7 @@ class Issues extends \Controller {
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
-		$f3->set("title", "New " . $type->name);
+		$f3->set("title", $f3->get("dict.new_n", $type->name));
 		$f3->set("menuitem", "new");
 		$f3->set("type", $type);
 
@@ -296,7 +389,7 @@ class Issues extends \Controller {
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
-		$f3->set("title", "New Issue");
+		$f3->set("title", $f3->get("dist.new_n", $f3->get("dict.issue")));
 		$f3->set("menuitem", "new");
 		$this->_render("issues/new.html");
 	}
@@ -326,7 +419,7 @@ class Issues extends \Controller {
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
-		$f3->set("title", "Edit #" . $issue->id);
+		$f3->set("title", $f3->get("edit_n", $issue->id));
 		$f3->set("issue", $issue);
 		$f3->set("type", $type);
 
@@ -392,77 +485,139 @@ class Issues extends \Controller {
 
 	}
 
-	public function save($f3, $params) {
+	/**
+	 * Save an updated issue
+	 * @return Issue
+	 */
+	protected function _saveUpdate() {
+		$f3 = \Base::instance();
 		$post = array_map("trim", $f3->get("POST"));
-
 		$issue = new \Model\Issue;
-		if(!empty($post["id"])) {
 
-			// Updating existing issue.
-			$issue->load($post["id"]);
-			if($issue->id) {
+		// Load issue and return if not set
+		$issue->load($post["id"]);
+		if(!$issue->id) {
+			return $issue;
+		}
 
-				// Diff contents and save what's changed.
-				foreach($post as $i=>$val) {
-					if(
-						$issue->exists($i)
-						&& $i != "id"
-						&& $issue->$i != $val
-						&& (md5($val) != $post["hash_" . $i] || !isset($post["hash_" . $i]))
-					) {
-						if(empty($val)) {
-							$issue->$i = null;
+		// Diff contents and save what's changed.
+		$hashState = json_decode($post["hash_state"]);
+		foreach($post as $i=>$val) {
+			if(
+				$issue->exists($i)
+				&& $i != "id"
+				&& $issue->$i != $val
+				&& md5($val) != $hashState->$i
+			) {
+				if(empty($val)) {
+					$issue->$i = null;
+				} else {
+					$issue->$i = $val;
+
+					if($i == "status") {
+						$status = new \Model\Issue\Status;
+						$status->load($val);
+
+						// Toggle closed_date if issue has been closed/restored
+						if($status->closed) {
+							if(!$issue->closed_date) {
+								$issue->closed_date = $this->now();
+							}
 						} else {
-							$issue->$i = $val;
-							if($i == "status") {
-								$status = new \Model\Issue\Status;
-								$status->load($val);
+							$issue->closed_date = null;
+						}
+					}
 
-								// Toggle closed_date if issue has been closed/restored
-								if($status->closed) {
-									if(!$issue->closed_date) {
-										$issue->closed_date = $this->now();
-									}
-								} else {
-									$issue->closed_date = null;
-								}
-							}
-
-							// Save to the sprint of the due date
-							if ($i=="due_date" && !empty($val)) {
-								$sprint = new \Model\Sprint;
-								$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
-								$issue->sprint_id = $sprint->id;
-							}
+					// Save to the sprint of the due date unless one already set
+					if ($i=="due_date" && !empty($val)) {
+						if(empty($post['sprint_id'])) {
+							$sprint = new \Model\Sprint;
+							$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
+							$issue->sprint_id = $sprint->id;
 						}
 					}
 				}
+			}
+		}
 
-				// If it's a child issue and the parent is in a sprint,
-				// use that sprint if another has not been set already
-				if(!$issue->sprint_id && $issue->parent_id) {
-					$parent = new \Model\Issue;
-					$parent->load($issue->parent_id);
-					if($parent->sprint_id) {
-						$issue->sprint_id = $parent->sprint_id;
-					}
-				}
+		// If it's a child issue and the parent is in a sprint,
+		// use that sprint if another has not been set already
+		if(!$issue->sprint_id && $issue->parent_id) {
+			$parent = new \Model\Issue;
+			$parent->load($issue->parent_id);
+			if($parent->sprint_id) {
+				$issue->sprint_id = $parent->sprint_id;
+			}
+		}
 
-				// Save comment if given
-				if(!empty($post["comment"])) {
-					$comment = new \Model\Issue\Comment;
-					$comment->user_id = $this->_userId;
-					$comment->issue_id = $issue->id;
-					$comment->text = $post["comment"];
-					$comment->created_date = $this->now();
-					$comment->save();
-					$issue->update_comment = $comment->id;
-				}
+		// Save comment if given
+		if(!empty($post["comment"])) {
+			$comment = new \Model\Issue\Comment;
+			$comment->user_id = $this->_userId;
+			$comment->issue_id = $issue->id;
+			$comment->text = $post["comment"];
+			$comment->created_date = $this->now();
+			$comment->save();
+			$f3->set("update_comment", $comment);
+		}
 
-				// Save issue, optionally send notifications
-				$notify = !empty($post["notify"]);
-				$issue->save($notify);
+		// Save issue, optionally send notifications
+		$notify = !empty($post["notify"]);
+		$issue->save($notify);
 
+		return $issue;
+	}
+
+	/**
+	 * Save a newly created issue
+	 * @return Issue
+	 */
+	protected function _saveNew() {
+		$f3 = \Base::instance();
+		$post = array_map("trim", $f3->get("POST"));
+		$issue = new \Model\Issue;
+
+		// Set all supported issue fields
+		$issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $f3->get("user.id");
+		$issue->type_id = $post["type_id"];
+		$issue->created_date = $this->now();
+		$issue->name = $post["name"];
+		$issue->description = $post["description"];
+		$issue->priority = $post["priority"];
+		$issue->status = $post["status"];
+		$issue->owner_id = $post["owner_id"];
+		$issue->hours_total = $post["hours_remaining"] ?: null;
+		$issue->hours_remaining = $post["hours_remaining"] ?: null;
+		$issue->repeat_cycle = in_array($post["repeat_cycle"], array("none", "")) ? null : $post["repeat_cycle"];
+		$issue->sprint_id = $post["sprint_id"];
+
+		if(!empty($post["due_date"])) {
+			$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
+
+			// Save to the sprint of the due date if a sprint was not specified
+			if(!$issue->sprint_id) {
+				$sprint = new \Model\Sprint();
+				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
+				$issue->sprint_id = $sprint->id;
+			}
+		}
+		if(!empty($post["parent_id"])) {
+			$issue->parent_id = $post["parent_id"];
+		}
+
+		// Save issue, optionally send notifications
+		$notify = !empty($post["notify"]);
+		$issue->save($notify);
+
+		return $issue;
+	}
+
+	public function save($f3, $params) {
+		if($f3->get("POST.id")) {
+
+			// Updating existing issue.
+			$issue = $this->_saveUpdate();
+			if($issue->id) {
 				$f3->reroute("/issues/" . $issue->id);
 			} else {
 				$f3->error(404, "This issue does not exist.");
@@ -471,37 +626,7 @@ class Issues extends \Controller {
 		} elseif($f3->get("POST.name")) {
 
 			// Creating new issue.
-			$issue->author_id = $f3->get("user.id");
-			$issue->type_id = $post["type_id"];
-			$issue->created_date = $this->now();
-			$issue->name = $post["name"];
-			$issue->description = $post["description"];
-			$issue->priority = $post["priority"];
-			$issue->status = $post["status"];
-			$issue->owner_id = $post["owner_id"];
-			$issue->hours_total = $post["hours_remaining"] ?: null;
-			$issue->hours_remaining = $post["hours_remaining"] ?: null;
-			$issue->repeat_cycle = $post["repeat_cycle"];
-			$issue->sprint_id = $post["sprint_id"];
-
-			if(!empty($post["due_date"])) {
-				$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
-
-				// Save to the sprint of the due date if a sprint was not specified
-				if(!$issue->sprint_id) {
-					$sprint = new \Model\Sprint();
-					$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
-					$issue->sprint_id = $sprint->id;
-				}
-			}
-			if(!empty($post["parent_id"])) {
-				$issue->parent_id = $post["parent_id"];
-			}
-
-			// Save issue, send notifications (unless admin opts out)
-			$notify =  empty($post["notify"]) ? false : true;
-			$issue->save($notify);
-
+			$issue = $this->_saveNew();
 			if($issue->id) {
 				$f3->reroute("/issues/" . $issue->id);
 			} else {
@@ -515,13 +640,10 @@ class Issues extends \Controller {
 
 	public function single($f3, $params) {
 		$issue = new \Model\Issue\Detail;
-		if($f3->get("user.role") == "admin") {
-			$issue->load(array("id=?", $f3->get("PARAMS.id")));
-		} else {
-			$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("PARAMS.id")));
-		}
+		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		$user = $f3->get("user_obj");
 
-		if(!$issue->id) {
+		if(!$issue->id || ($issue->deleted_date && !($user->role == 'admin' || $user->rank >= 3 || $issue->author_id == $user->id))) {
 			$f3->error(404);
 			return;
 		}
@@ -618,7 +740,7 @@ class Issues extends \Controller {
 		$f3->set("watching", !!$watching->id);
 
 		$f3->set("issue", $issue);
-		$f3->set("hierarchy", $issue->hierarchy());
+		$f3->set("ancestors", $issue->getAncestors());
 		$f3->set("type", $type);
 		$f3->set("author", $author);
 		$f3->set("owner", $owner);
@@ -719,20 +841,35 @@ class Issues extends \Controller {
 	}
 
 	public function single_delete($f3, $params) {
-		$this->_requireAdmin();
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
-		$issue->delete();
-		$f3->reroute("/issues?deleted={$issue->id}");
+		$user = $f3->get("user_obj");
+		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
+			$issue->delete();
+			$f3->reroute("/issues/{$issue->id}");
+		} else {
+			$f3->error(403);
+		}
 	}
 
 	public function single_undelete($f3, $params) {
-		$this->_requireAdmin();
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
-		$issue->deleted_date = null;
-		$issue->save();
-		$f3->reroute("/issues/{$issue->id}");
+		$user = $f3->get("user_obj");
+		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
+			$issue->restore();
+			$f3->reroute("/issues/{$issue->id}");
+		} else {
+			$f3->error(403);
+		}
+	}
+
+	public function comment_delete($f3, $params) {
+		$this->_requireAdmin();
+		$comment = new \Model\Issue\Comment;
+		$comment->load($f3->get("POST.id"));
+		$comment->delete();
+		$this->_printJson(array("id" => $f3->get("POST.id")) + $comment->cast());
 	}
 
 	public function file_delete($f3, $params) {
@@ -847,6 +984,88 @@ class Issues extends \Controller {
 		}
 
 		$f3->reroute("/issues/" . $issue->id);
+	}
+
+	/**
+	 * Project Overview action
+	 * @param  Base $f3
+	 * @param  array $params
+	 */
+	public function project_overview($f3, $params) {
+
+		// Load issue
+		$project = new \Model\Issue\Detail;
+		$project->load($params["id"]);
+		if(!$project->id) {
+			$f3->error(404);
+			return;
+		}
+		if($project->type_id != $f3->get("issue_type.project")) {
+			$f3->error(400, "Issue is not a project.");
+			return;
+		}
+
+		/**
+		 * Helper function to get a percentage of completed issues across the entire tree
+		 * @param   Issue $issue
+		 * @var     callable $completeCount This function, required for recursive calls
+		 * @return  array
+		 */
+		$completeCount = function(\Model\Issue &$issue) use(&$completeCount) {
+			$total = 0;
+			$complete = 0;
+			if($issue->id) {
+				$total ++;
+				if($issue->closed_date) {
+					$complete ++;
+				}
+				foreach($issue->getChildren() as $child) {
+					$result = $completeCount($child);
+					$total += $result["total"];
+					$complete += $result["complete"];
+				}
+			}
+			return array(
+				"total" => $total,
+				"complete" => $complete
+			);
+		};
+		$f3->set("stats", $completeCount($project));
+
+		/**
+		 * Helper function for recursive tree rendering
+		 * @param   Issue $issue
+		 * @var     callable $renderTree This function, required for recursive calls
+		 */
+		$renderTree = function(\Model\Issue &$issue, $level = 0) use(&$renderTree) {
+			if($issue->id) {
+				$f3 = \Base::instance();
+				$children = $issue->getChildren();
+				$hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level, "issue_type" => $f3->get("issue_type"));
+				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
+				if($children) {
+					foreach($children as $item) {
+						$renderTree($item, $level + 1);
+					}
+				}
+			}
+		};
+		$f3->set("renderTree", $renderTree);
+
+		// Render view
+		$f3->set("project", $project);
+		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - " . $f3->get("dict.project_overview"));
+		$this->_render("issues/project.html");
+
+	}
+
+
+	/**
+	 * decide if the user can view a private issue or project
+	 * @return array
+	 */
+	protected function _checkPrivate() {
+
 	}
 
 }

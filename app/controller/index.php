@@ -16,7 +16,8 @@ class Index extends \Controller {
 					$user = new \Model\User();
 					$user->load($f3->get("site.demo"));
 					if($user->id) {
-						$f3->set("SESSION.phproject_user_id", $user->id);
+						$session = new \Model\Session($user->id);
+						$session->setCurrent();
 						$f3->reroute("/");
 						return;
 					} else {
@@ -28,7 +29,7 @@ class Index extends \Controller {
 		}
 	}
 
-	public function login($f3, $params) {
+	public function login($f3) {
 		if($f3->get("user.id")) {
 			if(!$f3->get("GET.to")) {
 				$f3->reroute("/");
@@ -43,7 +44,7 @@ class Index extends \Controller {
 		}
 	}
 
-	public function loginpost($f3, $params) {
+	public function loginpost($f3) {
 		$user = new \Model\User();
 
 		// Load user by username or email address
@@ -55,13 +56,23 @@ class Index extends \Controller {
 
 		// Verify password
 		$security = \Helper\Security::instance();
-		if($security->hash($f3->get("POST.password"), $user->salt) == $user->password) {
-			$f3->set("SESSION.phproject_user_id", $user->id);
-			if(!$f3->get("POST.to")) {
-				$f3->reroute("/");
+		if($security->hash($f3->get("POST.password"), $user->salt ?: "") == $user->password) {
+
+			// Create a session and use it
+			$session = new \Model\Session($user->id);
+			$session->setCurrent();
+
+			if($user->salt) {
+				if(!$f3->get("POST.to")) {
+					$f3->reroute("/");
+				} else {
+					$f3->reroute($f3->get("POST.to"));
+				}
 			} else {
-				$f3->reroute($f3->get("POST.to"));
+				$f3->set("user", $user->cast());
+				$this->_render("index/reset_forced.html");
 			}
+
 		} else {
 			if($f3->get("POST.to")) {
 				$f3->set("to", $f3->get("POST.to"));
@@ -71,7 +82,7 @@ class Index extends \Controller {
 		}
 	}
 
-	public function registerpost($f3, $params) {
+	public function registerpost($f3) {
 
 		// Exit immediately if public registrations are disabled
 		if(!$f3->get("site.public_registration")) {
@@ -119,14 +130,18 @@ class Index extends \Controller {
 			extract($security->hash($f3->get("POST.register-password")));
 			$user->password = $hash;
 			$user->salt = $salt;
-			$user->task_color = sprintf("%06X", mt_rand(0, 0xFFFFFF));
+			$user->task_color = sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
 			$user->save();
-			$f3->set("SESSION.phproject_user_id", $user->id);
+
+			// Create a session and use it
+			$session = new \Model\Session($user->id);
+			$session->setCurrent();
+
 			$f3->reroute("/");
 		}
 	}
 
-	public function reset($f3, $params) {
+	public function reset($f3) {
 		if($f3->get("user.id")) {
 			$f3->reroute("/");
 		} else {
@@ -178,18 +193,85 @@ class Index extends \Controller {
 		}
 	}
 
-	public function logout($f3, $params) {
-		$f3->clear("SESSION.phproject_user_id");
-		session_destroy();
+	public function reset_forced($f3) {
+		$user = new \Model\User;
+		$user->loadCurrent();
+
+		if($f3->get("POST.password1") != $f3->get("POST.password2")) {
+			$f3->set("reset.error", "The given passwords don't match.");
+		} elseif(strlen($f3->get("POST.password1")) < 6) {
+			$f3->set("reset.error", "The given password is too short. Passwords must be at least 6 characters.");
+		} else {
+			// Save new password and redirect to dashboard
+			$security = \Helper\Security::instance();
+			$user->salt = $security->salt();
+			$user->password = $security->hash($f3->get("POST.password1"), $user->salt);
+			$user->save();
+			$f3->reroute("/");
+			return;
+		}
+		$this->_render("index/reset_forced.html");
+	}
+
+	public function logout($f3) {
+		$session = new \Model\Session;
+		$session->delete();
 		$f3->reroute("/");
 	}
 
-	public function ping($f3, $params) {
+	public function ping($f3) {
 		if($f3->get("user.id")) {
 			$this->_printJson(array("user_id" => $f3->get("user.id"), "is_logged_in" => true));
 		} else {
 			$this->_printJson(array("user_id" => null, "is_logged_in" => false));
 		}
+	}
+
+	public function atom($f3) {
+		// Authenticate user
+		if($f3->get("GET.key")) {
+			$user = new \Model\User;
+			$user->load(array("api_key = ?", $f3->get("GET.key")));
+			if(!$user->id) {
+				$f3->error(403);
+				return;
+			}
+		} else {
+			$f3->error(403);
+			return;
+		}
+
+		// Get requested array substituting defaults
+		$get = $f3->get("GET") + array("type" => "assigned", "user" => $user->username);
+		unset($user);
+
+		// Load target user
+		$user = new \Model\User;
+		$user->load(array("username = ?", $get["user"]));
+		if(!$user->id) {
+			$f3->error(404);
+			return;
+		}
+
+		// Load issues
+		$issue = new \Model\Issue\Detail;
+		$options = array("order" => "created_date DESC");
+		if($get["type"] == "assigned") {
+			$issues = $issue->find(array("author_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
+		} elseif($get["type"] == "created") {
+			$issues = $issue->find(array("owner = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
+		} elseif($get["type"] == "all") {
+			$issues = $issue->find("status_closed = 0 AND deleted_date IS NULL", $options + array("limit" => 50));
+		} else {
+			$f3->error(400, "Invalid feed type");
+			return;
+		}
+
+		// Render feed
+		$f3->set("get", $get);
+		$f3->set("feed_user", $user);
+		$f3->set("issues", $issues);
+		$this->_render("index/atom.xml", "application/atom+xml");
 	}
 
 }

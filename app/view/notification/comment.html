@@ -18,17 +18,17 @@
 
 	<div style="padding: 10px;">
 		<p style="margin: 0 0 10px;"><strong>
-			New comment from <a href="{{ @site.url }}user/{{ @comment.user_username }}">{{ @comment.user_name }}</a> on <a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name }}</a>:
+			New comment from <a href="{{ @site.url }}user/{{ @comment.user_username }}">{{ @comment.user_name | esc }}</a> on <a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name | esc }}</a>:
 		</strong></p>
 		<check if="{{ @issue.parent_id }}">
-			<p><small>Under: <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name }}</a></small></p>
+			<p><small>Under: <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name | esc }}</a></small></p>
 		</check>
 		<img src="{{ @site.url }}avatar/48-{{ @comment.user_id }}.png" alt style="float: left; margin-right: 10px;">
 		<div style="float: left" class="tex">
-			{{ $this->parseTextile(@comment.text) | raw }}
+			{{ $this->parseTextile(@comment.text) }}
 		</div>
 		<check if="{{ @comment.file_id }}">
-			<div><i>Attached file:</i> <a href="{{ @site.url }}files/{{ @comment.file_id }}/{{ @comment.file_filename }}">{{@comment.file_filename}}</a></div>
+			<div><i>Attached file:</i> <a href="{{ @site.url }}files/{{ @comment.file_id }}/{{ @comment.file_filename }}">{{ @comment.file_filename | esc }}</a></div>
 		</check>
 		<div style="clear:both"></div>
 	</div>

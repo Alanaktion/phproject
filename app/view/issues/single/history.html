@@ -1,13 +1,13 @@
 <repeat group="{{ @updates }}" value="{{ @update }}">
 	<div class="media" id="u-{{ @update.id }}">
-		<a class="pull-left" href="user/{{ @update.user_username }}">
-			<img src="avatar/48-{{ @update.user_id }}.png" class="media-object profile-picture img-rounded" alt>
+		<a class="pull-left" href="{{ @site.url }}user/{{ @update.user_username }}">
+			<img src="{{ @site.url }}avatar/48-{{ @update.user_id }}.png" class="media-object profile-picture img-rounded" alt>
 		</a>
 		<div class="media-body">
 			<p class="media-heading">
 				<check if="{{ @update.user_username }}">
 					<true>
-						<a href="user/{{ @update.user_username }}">{{ @update.user_name }}</a>
+						<a href="{{ @site.url }}user/{{ @update.user_username }}">{{ @update.user_name | esc }}</a>
 					</true>
 					<false>
 						{{ @update.user_name }}
@@ -32,7 +32,7 @@
 											</li>
 										</true>
 										<false>
-											<li><b>{{ @humanreadable.field }}</b> changed from <i>{{ @humanreadable.old }}</i> to <i>{{ @humanreadable.new }}</i></li>
+											<li><b>{{ @humanreadable.field }}</b> changed from <i>{{ @humanreadable.old | esc }}</i> to <i>{{ @humanreadable.new | esc }}</i></li>
 										</false>
 									</check>
 								</true>
@@ -42,17 +42,17 @@
 							</check>
 						</true>
 						<false>
-							<li><b>{{ @humanreadable.field }}</b> set to <i>{{ @humanreadable.new }}</i></li>
+							<li><b>{{ @humanreadable.field }}</b> set to <i>{{ @humanreadable.new | esc }}</i></li>
 						</false>
 					</check>
 				</repeat>
 			</ul>
 			<check if="{{ @update.comment_id }}">
-				<div class="tex">{{ $this->parseTextile(@update.comment_text) | raw }}</div>
+				<div class="tex">{{ $this->parseTextile(@update.comment_text) }}</div>
 			</check>
 		</div>
 	</div>
 </repeat>
 <check if="{{ empty(@updates) }}">
-	<p class="text-center text-muted">No history available</p>
+	<p class="text-center text-muted">{{ @dict.no_history_available }}</p>
 </check>

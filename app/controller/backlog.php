@@ -69,7 +69,7 @@ class Backlog extends \Controller {
 		}
 		if(!empty($large_project_ids)) {
 			$large_project_ids = implode(",", $large_project_ids);
-			$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND closed_date IS NULL AND id NOT IN ({$large_project_ids}) $filter_string", $f3->get("issue_type.project")),
+			$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND status_closed = '0' AND id NOT IN ({$large_project_ids}) $filter_string", $f3->get("issue_type.project")),
 						array('order' => 'priority DESC, due_date')
 					);
 		} else {
@@ -82,14 +82,14 @@ class Backlog extends \Controller {
 		$f3->set("sprints", $sprint_details);
 		$f3->set("backlog", $unset_projects);
 
-		$f3->set("title", "Backlog");
+		$f3->set("title", $f3->get("dict.backlog"));
 		$f3->set("menuitem", "backlog");
 		$this->_render("backlog/index.html");
 	}
 
 
 
-	public function edit($f3, $params) {
+	public function edit($f3) {
 		$post = $f3->get("POST");
 		$issue = new \Model\Issue();
 		$issue->load($post["itemId"]);
@@ -113,7 +113,7 @@ class Backlog extends \Controller {
 
 		$f3->set("sprints", $sprint_details);
 
-		$f3->set("title", "Backlog");
+		$f3->set("title", $f3->get("dict.backlog"));
 		$f3->set("menuitem", "backlog");
 		$this->_render("backlog/old.html");
 	}

@@ -4,25 +4,18 @@
 	<include href="blocks/head.html" />
 </head>
 <body>
-<div class="container-fluid">
-	<include href="blocks/navbar.html" />
-	<div class="row">
-		<div class="col-md-12">
-			<include href="issues/edit-form.html" />
-		</div>
-	</div>
+<include href="blocks/navbar.html" />
+<div class="container">
+	<include href="issues/edit-form.html" />
 	<include href="blocks/footer.html" />
 </div>
-<script src="minify/js/bootstrap-datepicker.js"></script>
+<script src="{{ @site.url }}minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(function() {
 	var nowTemp = new Date();
 	var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
 	$('#due_date').datepicker({
-		format: 'yyyy-mm-dd',
-		/*onRender: function(date) {
-			return date.valueOf() < now.valueOf() ? 'disabled' : '';
-		}*/
+		format: 'yyyy-mm-dd'
 	});
 });
 </script>

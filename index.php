@@ -4,6 +4,7 @@
 $f3=require("lib/base.php");
 $f3->mset(array(
 	"UI" => "app/view/",
+	"ESCAPE" => false,
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
 	"LOCALES" => "app/dict/",
@@ -62,6 +63,12 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.pass")
 ));
 
+// Ensure database is up to date
+$version = \Helper\Security::instance()->checkDatabaseVersion();
+if($version !== true) {
+	\Helper\Security::instance()->updateDatabase($version);
+}
+
 // Minify static resources
 // Cache for 1 week
 $f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
@@ -69,12 +76,41 @@ $f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
 	echo Web::instance()->minify($args["files"]);
 }, $f3->get("cache_expire.minify"));
 
-// Set up session handler
-if($f3->get("site.db_sessions")) {
-	new \DB\SQL\Session($f3->get("db.instance"), "session", false);
+// Initialize plugins and any included locales
+$pluginDir = scandir("app/plugin");
+$plugins = array();
+$locales = "";
+foreach($pluginDir as $pluginName) {
+	if($pluginName != "." && $pluginName != ".." && is_file("app/plugin/$pluginName/base.php") && is_dir("app/plugin/$pluginName/dict/")) {
+		$locales .= ";app/plugin/$pluginName/dict/";
+	}
 }
+if($locales) {
+	$f3->set("LOCALES", $f3->get("LOCALES") . $locales);
+}
+foreach($pluginDir as $pluginName) {
+	if($pluginName != "." && $pluginName != ".." && is_file("app/plugin/$pluginName/base.php")) {
+		$pluginName = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $pluginName))) . "\\Base";
+		$plugin = $pluginName::instance();
+		$slug = \Web::instance()->slug($plugin->_package());
+		$plugins[$slug] = $plugin;
+		if(!$plugin->_installed()) {
+			try {
+				$plugin->_install();
+			} catch (Exception $e) {
+				$f3->set("error", "Failed to install plugin " . $plugin->_package() . ": " . $e->getMessage());
+			}
+		}
+		try {
+			$plugin->_load();
+		} catch (Exception $e) {
+			$f3->set("error", "Failed to initialize plugin " . $plugin->_package() . ": " . $e->getMessage());
+		}
+	}
+}
+$f3->set("plugins", $plugins);
 
-// Load user if session exists
+// Set up user session
 $user = new Model\User();
 $user->loadCurrent();
 

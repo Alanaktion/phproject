@@ -4,12 +4,19 @@ abstract class Controller {
 
 	/**
 	 * Require a user to be logged in. Redirects to /login if a session is not found.
+	 * @param  int $rank
 	 * @return int|bool
 	 */
-	protected function _requireLogin() {
+	protected function _requireLogin($rank = 1) {
 		$f3 = \Base::instance();
 		if($id = $f3->get("user.id")) {
-			return $id;
+			if($f3->get("user.rank") >= $rank) {
+				return $id;
+			} else {
+				$f3->error(403);
+				$f3->unload();
+				return false;
+			}
 		} else {
 			if(empty($_GET)) {
 				$f3->reroute("/login?to=" . urlencode($f3->get("PATH")));
@@ -23,14 +30,21 @@ abstract class Controller {
 
 	/**
 	 * Require a user to be an administrator. Throws HTTP 403 if logged in, but not an admin.
+	 * @param  int $rank
 	 * @return int|bool
 	 */
-	protected function _requireAdmin() {
+	protected function _requireAdmin($rank = 4) {
 		$id = $this->_requireLogin();
 
 		$f3 = \Base::instance();
 		if($f3->get("user.role") == "admin") {
-			return $id;
+			if($f3->get("user.rank") >= $rank) {
+				return $id;
+			} else {
+				$f3->error(403);
+				$f3->unload();
+				return false;
+			}
 		} else {
 			$f3->error(403);
 			$f3->unload();
