@@ -21,6 +21,7 @@ class Session extends \Model {
 		if($user_id !== null) {
 			$this->user_id = $user_id;
 			$this->token = \Helper\Security::instance()->salt_sha2();
+			$this->ip = \Base::instance()->get("IP");
 			$this->created = date("Y-m-d H:i:s");
 			if($auto_save) {
 				$this->save();
@@ -35,9 +36,10 @@ class Session extends \Model {
 	 */
 	public function loadCurrent() {
 		$f3 = \Base::instance();
+		$ip = $f3->get("IP");
 		$token = $f3->get("COOKIE.{$this->cookie_name}");
 		if($token) {
-			$this->load(array("token = ?", $token));
+			$this->load(array("token = ? AND ip = ?", $token, $ip));
 			$expire = $f3->get("JAR.expire");
 
 

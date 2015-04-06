@@ -215,6 +215,7 @@ class Index extends \Controller {
 
 	public function logout($f3) {
 		$session = new \Model\Session;
+		$session->loadCurrent();
 		$session->delete();
 		$f3->reroute("/");
 	}
