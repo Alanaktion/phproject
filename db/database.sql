@@ -165,8 +165,9 @@ CREATE TABLE `issue_update_field` (
 	`old_value` text NOT NULL,
 	`new_value` text NOT NULL,
 	PRIMARY KEY (`id`),
-	KEY `issue_update_field_update_id` (`issue_update_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+	KEY `issue_update_field_update_id` (`issue_update_id`),
+	CONSTRAINT `issue_update_field_update` FOREIGN KEY (`issue_update_id`) REFERENCES `issue_update` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_watcher`;
 CREATE TABLE `issue_watcher` (
@@ -276,4 +277,4 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 );
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.03.20');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.04.07');
