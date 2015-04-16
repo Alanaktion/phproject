@@ -61,7 +61,7 @@ class Update extends \Prefab {
 	 * @return string
 	 */
 	public function convertOwnerId($id) {
-		return convertUserId($id);
+		return $this->convertUserId($id);
 	}
 
 	/**
@@ -70,7 +70,7 @@ class Update extends \Prefab {
 	 * @return string
 	 */
 	public function convertAuthorId($id) {
-		return convertUserId($id);
+		return $this->convertUserId($id);
 	}
 
 	/**
