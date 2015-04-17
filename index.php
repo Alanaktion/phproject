@@ -63,6 +63,12 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.pass")
 ));
 
+// Ensure database is up to date
+$version = \Helper\Security::instance()->checkDatabaseVersion();
+if($version !== true) {
+	\Helper\Security::instance()->updateDatabase($version);
+}
+
 // Minify static resources
 // Cache for 1 week
 $f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
@@ -104,12 +110,7 @@ foreach($pluginDir as $pluginName) {
 }
 $f3->set("plugins", $plugins);
 
-// Set up session handler
-if($f3->get("site.db_sessions")) {
-	new \DB\SQL\Session($f3->get("db.instance"), "session", false);
-}
-
-// Load user if session exists
+// Set up user session
 $user = new Model\User();
 $user->loadCurrent();
 

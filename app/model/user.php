@@ -14,17 +14,26 @@ class User extends \Model {
 	 */
 	public function loadCurrent() {
 		$f3 = \Base::instance();
-		if($user_id = $f3->get("SESSION.phproject_user_id")) {
-			$this->load(array("id = ? AND deleted_date IS NULL", $user_id));
+
+		// Load current session
+		$session = new \Model\Session;
+		$session->loadCurrent();
+
+		// Load user
+		if($session->user_id) {
+			$this->load(array("id = ? AND deleted_date IS NULL", $session->user_id));
 			if($this->id) {
 				$f3->set("user", $this->cast());
 				$f3->set("user_obj", $this);
+
 				// Change default language if user has selected one
 				if($this->exists("language") && $this->language) {
 					$f3->set("LANGUAGE", $this->language);
 				}
+
 			}
 		}
+
 		return $this;
 	}
 

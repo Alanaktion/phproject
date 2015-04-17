@@ -188,9 +188,9 @@ class Base extends \Helper\Diff\Renderer\Base
 	 * @param string $spaces The string of spaces.
 	 * @return string The HTML representation of the string.
 	 */
-	function fixSpaces($spaces='')
+	function fixSpaces($spaces=array(''))
 	{
-		$count = strlen($spaces);
+		$count = strlen($spaces[0]);
 		if($count == 0) {
 			return '';
 		}

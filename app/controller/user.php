@@ -15,11 +15,11 @@ class User extends \Controller {
 			"en_GB" => \ISO::LC_en . " (Great Britain)",
 			"es" => \ISO::LC_es . " (Español)",
 			"pt" => \ISO::LC_pt . " (Português)",
-			"ru" => \ISO::LC_ru . " (Pу́сский Язы́к)",
+			"ru" => \ISO::LC_ru . " (Pу́сский)",
 		);
 	}
 
-	public function index($f3, $params) {
+	public function index($f3) {
 		$f3->reroute("/user");
 	}
 
@@ -113,7 +113,7 @@ class User extends \Controller {
 	}
 
 	public function account($f3, $params) {
-		$f3->set("title", "My Account");
+		$f3->set("title", $f3->get("dict.my_account"));
 		$f3->set("menuitem", "user");
 		$f3->set("languages", $this->_languages);
 		$this->_loadThemes();
@@ -188,7 +188,7 @@ class User extends \Controller {
 		}
 
 		$user->save();
-		$f3->set("title", "My Account");
+		$f3->set("title", $f3->get("dict.my_account"));
 		$f3->set("menuitem", "user");
 
 		// Use new user values for page
@@ -368,26 +368,24 @@ class User extends \Controller {
 			// Convert list to tree
 			$tree = $this->_buildTree($issues);
 
-			// Helper function for recursive tree rendering
-			$recurDisplay = function($issue) use(&$recurDisplay) {
-				$url = \Base::instance()->get("site.url");
-				echo "<li>";
-				if(!empty($issue["id"])) {
-					echo '<a href="'.$url.'issues/'.$issue['id'].'">#'.$issue["id"].' - '.$issue["name"].'</a> ';
-					if($issue["author_name"]) {
-						echo '<small class="text-muted">&ndash; '.$issue["author_name"].'</small>';
+			/**
+			 * Helper function for recursive tree rendering
+			 * @param   Issue $issue
+			 * @var     callable $renderTree This function, required for recursive calls
+			 */
+			$renderTree = function(&$issue, $level = 0) use(&$renderTree) {
+				if(!empty($issue['id'])) {
+					$f3 = \Base::instance();
+					$hive = array("issue" => $issue, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level, "issue_type" => $f3->get("issue_type"));
+					echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
+					if(!empty($issue['children'])) {
+						foreach($issue['children'] as $item) {
+							$renderTree($item, $level + 1);
+						}
 					}
 				}
-				if(!empty($issue["children"])) {
-					echo "<ul>";
-					foreach($issue["children"] as $iss) {
-						$recurDisplay($iss);
-					}
-					echo "</ul>";
-				}
-				echo "</li>";
 			};
-			$f3->set("recurDisplay", $recurDisplay);
+			$f3->set("renderTree", $renderTree);
 
 			// Render view
 			$f3->set("issues", $tree);

@@ -55,7 +55,7 @@
 				<h4 class="modal-title">{{ @dict.new }}</h4>
 			</div>
 			<div class="modal-body">
-				<input type="text" class="form-control" id="input_name" name="name" placeholder="Group Name">
+				<input type="text" class="form-control" id="input_name" name="name" placeholder="{{ @dict.name }}">
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#input_name').val('');">{{ @dict.cancel }}</button>

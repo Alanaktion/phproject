@@ -57,16 +57,18 @@
 				</div>
 			</div>
 		</div>
-		<div class="form-group">
-			<label for="rank" class="col-lg-2 control-label label-sm">{{ @dict.rank }}</label>
-			<div class="col-lg-10">
-				<select class="form-control input-sm" id="rank" name="rank">
-					<repeat group="{{ range(0, 5) }}" value="{{ @rank }}">
-						<option value="{{ @rank }}" {{ (empty(@this_user) && @rank == 2 || @@this_user.rank == @rank) ? "selected" : "" }}>{{ @dict.ranks[@rank] }} &mdash; {{ @dict.rank_permissions[@rank] }}</option>
-					</repeat>
-				</select>
+		<check if="{{ @@this_user.id != @user.id }}">
+			<div class="form-group">
+				<label for="rank" class="col-lg-2 control-label label-sm">{{ @dict.rank }}</label>
+				<div class="col-lg-10">
+					<select class="form-control input-sm" id="rank" name="rank">
+						<repeat group="{{ @user.rank >= 5 ? range(0, 5) : range(0, 4) }}" value="{{ @rank }}">
+							<option value="{{ @rank }}" {{ (empty(@this_user) && @rank == 2 || @@this_user.rank == @rank) ? "selected" : "" }}>{{ @dict.ranks[@rank] }} &mdash; {{ @dict.rank_permissions[@rank] }}</option>
+						</repeat>
+					</select>
+				</div>
 			</div>
-		</div>
+		</check>
 		<div class="form-group">
 			<label for="task_color" class="col-lg-2 control-label label-sm">{{ @dict.task_color }}</label>
 			<div class="col-lg-10">

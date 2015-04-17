@@ -25,7 +25,7 @@ abstract class Model extends \DB\SQL\Mapper {
 	 * @return mixed
 	 */
 	function save() {
-		if(array_key_exists("created_date", $this->fields) && !$this->query && !$this->get("created_date")) {
+		if(!$this->query && array_key_exists("created_date", $this->fields) && !$this->get("created_date")) {
 			$this->set("created_date", date("Y-m-d H:i:s"));
 		}
 		return parent::save();

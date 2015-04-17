@@ -1,4 +1,6 @@
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Alanaktion/phproject?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![](https://img.shields.io/badge/Gitter-Join Chat-3498DB.svg)](https://gitter.im/Alanaktion/phproject?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+![](https://img.shields.io/badge/stability-experimental-F39C12.svg)
+
 Phproject
 ===========
 *A high-performance project management system in PHP*

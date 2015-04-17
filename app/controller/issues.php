@@ -137,11 +137,11 @@ class Issues extends \Controller {
 		if(!empty($args["type_id"])) {
 			$type->load($args["type_id"]);
 			if($type->id) {
-				$f3->set("title", $type->name . "s");
+				$f3->set("title", \Helper\Inflector::instance()->pluralize($type->name));
 				$f3->set("type", $type);
 			}
 		} else {
-			$f3->set("title", "Issues");
+			$f3->set("title", $f3->get("dict.issues"));
 		}
 
 		$status = new \Model\Issue\Status;
@@ -286,8 +286,8 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue\Detail;
 
 		// Get filter data and load issues
-		list($filter, $filter_str) = $this->_buildFilter();
-		$issues = $issue->find($filter_str);
+		$filter = $this->_buildFilter();
+		$issues = $issue->find($filter[1]);
 
 		// Configure visible fields
 		$fields = array(
@@ -378,7 +378,7 @@ class Issues extends \Controller {
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
-		$f3->set("title", "New " . $type->name);
+		$f3->set("title", $f3->get("dict.new_n", $type->name));
 		$f3->set("menuitem", "new");
 		$f3->set("type", $type);
 
@@ -389,7 +389,7 @@ class Issues extends \Controller {
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
-		$f3->set("title", "New Issue");
+		$f3->set("title", $f3->get("dist.new_n", $f3->get("dict.issue")));
 		$f3->set("menuitem", "new");
 		$this->_render("issues/new.html");
 	}
@@ -419,7 +419,7 @@ class Issues extends \Controller {
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
-		$f3->set("title", "Edit #" . $issue->id);
+		$f3->set("title", $f3->get("edit_n", $issue->id));
 		$f3->set("issue", $issue);
 		$f3->set("type", $type);
 
@@ -578,7 +578,7 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue;
 
 		// Set all supported issue fields
-		$issue->author_id = $f3->get("user.id");
+		$issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $f3->get("user.id");
 		$issue->type_id = $post["type_id"];
 		$issue->created_date = $this->now();
 		$issue->name = $post["name"];
@@ -588,7 +588,7 @@ class Issues extends \Controller {
 		$issue->owner_id = $post["owner_id"];
 		$issue->hours_total = $post["hours_remaining"] ?: null;
 		$issue->hours_remaining = $post["hours_remaining"] ?: null;
-		$issue->repeat_cycle = $post["repeat_cycle"] != "none" ? $post["repeat_cycle"] : null;
+		$issue->repeat_cycle = in_array($post["repeat_cycle"], array("none", "")) ? null : $post["repeat_cycle"];
 		$issue->sprint_id = $post["sprint_id"];
 
 		if(!empty($post["due_date"])) {
@@ -846,7 +846,7 @@ class Issues extends \Controller {
 		$user = $f3->get("user_obj");
 		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
 			$issue->delete();
-			$f3->reroute("/issues?deleted={$issue->id}");
+			$f3->reroute("/issues/{$issue->id}");
 		} else {
 			$f3->error(403);
 		}
@@ -857,8 +857,7 @@ class Issues extends \Controller {
 		$issue->load($params["id"]);
 		$user = $f3->get("user_obj");
 		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
-			$issue->deleted_date = null;
-			$issue->save();
+			$issue->restore();
 			$f3->reroute("/issues/{$issue->id}");
 		} else {
 			$f3->error(403);
@@ -1042,7 +1041,7 @@ class Issues extends \Controller {
 			if($issue->id) {
 				$f3 = \Base::instance();
 				$children = $issue->getChildren();
-				$hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level);
+				$hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level, "issue_type" => $f3->get("issue_type"));
 				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
 				if($children) {
 					foreach($children as $item) {
@@ -1055,7 +1054,7 @@ class Issues extends \Controller {
 
 		// Render view
 		$f3->set("project", $project);
-		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - Project Overview");
+		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - " . $f3->get("dict.project_overview"));
 		$this->_render("issues/project.html");
 
 	}

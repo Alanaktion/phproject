@@ -39,6 +39,19 @@ class Security extends \Prefab {
 	}
 
 	/**
+	 * Generate a secure SHA-256/384/512 salt
+	 * @param  integer $size 256, 384, or 512
+	 * @return string
+	 */
+	public function salt_sha2($size = 256) {
+		$allSizes = array(256, 384, 512);
+		if(!in_array($size, $allSizes)) {
+			throw new Exception("Hash size must be one of: " . implode(", ", $allSizes));
+		}
+		return hash("sha$size", $this->rand_bytes(512), false);
+	}
+
+	/**
 	 * Encrypt a string with ROT13
 	 * @param  string $string
 	 * @return string
@@ -99,8 +112,46 @@ class Security extends \Prefab {
 			$char = mt_rand(0, 30);
 			$rnd .= chr(hexdec($sha[$char] . $sha[$char + 1]));
 		}
-
 		return (binary)$rnd;
+	}
+
+	/**
+	 * Check if the database is the latest version
+	 * @return bool|string TRUE if up-to-date, next version otherwise.
+	 */
+	public function checkDatabaseVersion() {
+
+		// Get current version
+		$db = \Base::instance()->get("db.instance");
+		$result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
+
+		// Check available versions
+		$db_files = scandir("db");
+		foreach ($db_files as $file) {
+			$file = substr($file, 0, -4);
+			if(version_compare($file, $result[0]["version"]) > 0) {
+				return $file;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Install latest core database updates
+	 * @param string $version
+	 */
+	public function updateDatabase($version) {
+		$f3 = \Base::instance();
+		if(file_exists("db/{$version}.sql")) {
+			$update_db = file_get_contents("db/{$version}.sql");
+			$db = $f3->get("db.instance");
+			$db->exec(explode(";", $update_db));
+			\Cache::instance()->reset();
+			$f3->set("success", " Database updated to version: {$version}");
+		} else {
+			$f3->set("error", " Database file not found for version: {$version}");
+		}
 	}
 
 }
