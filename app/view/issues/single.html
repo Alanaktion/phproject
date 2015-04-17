@@ -489,16 +489,16 @@ $(function() {
 				$this = $(this);
 				$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
 
-				$loading_dependencies;
 				e.preventDefault();
+				loading_dependencies();
 			});
 
 			$('#dependent_form').submit(function(e) {
 				$this = $(this);
 				$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
 
-				$loading_dependencies;
 				e.preventDefault();
+				loading_dependencies();
 			});
 
 		}, 'json').error(function() {
