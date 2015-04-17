@@ -344,7 +344,13 @@
 							</div>
 						</div>
 					</div>
-					<div class="modal-footer">
+					<div class="modal-footer form-group">
+						<div class="checkbox checkbox-inline">
+							<label>
+								<input type="checkbox" name="notify" value="1" checked>
+								{{ @dict.send_notifications }}&nbsp;
+							</label>
+						</div>
 						<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ @dict.cancel }}</button>
 						<button type="submit" id="bulk-submit" class="btn btn-sm btn-primary">{{ @dict.submit }}</button>
 					</div>

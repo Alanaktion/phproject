@@ -258,7 +258,8 @@ class Issues extends \Controller {
 						}
 					}
 
-					$issue->save();
+					$notify = !empty($post["notify"]);
+					$issue->save($notify);
 
 				} else {
 					$f3->error(500, "Failed to update all the issues, starting with: $id.");
