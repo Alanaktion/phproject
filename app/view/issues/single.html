@@ -239,8 +239,7 @@
 						<li><a href="#related" data-toggle="tab" id="tab_related">{{ @dict.related_tasks }}</a></li>
 					</false>
 				</check>
-				<li><a href="#dependencies" data-toggle="tab" id="tab_dependencies">{{ @dict.dependencies }}</a></li>
-
+				<li><a href="#dependencies" data-toggle="tab" id="tab_dependencies">{{ @dict.dependencies }}&ensp;<span class="badge" id="dependencies_badge"></span></a></li>
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane fade in active" id="comments">
@@ -462,48 +461,39 @@ $(function() {
 		$('#related').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_related_issues }}'));
 	});
 
-	$(function loading_dependencies(){
+	// Load dependencies
+	var load_dependencies = function() {
 		$.get(site_url + 'issues/{{ @issue.id }}/dependencies', {}, function(data) {
 			$('#dependencies').empty().append(data.html);
-			$('#tab_dependencies').html($('#tab_dependencies').text() + '&ensp;<span class="badge" id="dependencies-badge">' + data.total + '</span>');
+			$('#dependencies_badge').text(data.total);
 			$('#dependencies table').stupidtable();
-
-			// Add/remove dependencies from tab
-			$('.dependency-list').on('click', 'a.delete', function(e) {
-				$tr = $(this).parents('tr');
-				$.post(site_url + 'issues/{{ @issue.id }}', {
-					action: 'remove_dependency',
-					id: $tr.data('id')
-				});
-
-				$tr.fadeOut(400, function(){
-				 	$tr.remove();
-				 });
-
-				$('#dependencies-badge').text(parseInt($('#dependencies-badge').text())  - 1);
-
-				e.preventDefault();
-			});
-
-			$('#dependency_form').submit(function(e) {
-				$this = $(this);
-				$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
-
-				e.preventDefault();
-				loading_dependencies();
-			});
-
-			$('#dependent_form').submit(function(e) {
-				$this = $(this);
-				$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
-
-				e.preventDefault();
-				loading_dependencies();
-			});
-
 		}, 'json').error(function() {
 			$('#dependencies').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_dependencies }}'));
 		});
+	};
+	load_dependencies();
+
+	// Add/remove dependencies from tab
+	$('#dependencies').on('click', 'a.delete', function(e) {
+		$tr = $(this).parents('tr');
+		$.post(site_url + 'issues/{{ @issue.id }}', {
+			action: 'remove_dependency',
+			id: $tr.data('id')
+		});
+
+		$tr.fadeOut(400, function(){
+		 	$tr.remove();
+		});
+
+		$('#dependencies_badge').text(parseInt($('#dependencies_badge').text())  - 1);
+		e.preventDefault();
+	});
+	$('#dependencies').on('submit', 'form', function(e) {
+		$this = $(this);
+		$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
+
+		e.preventDefault();
+		load_dependencies();
 	});
 
 	// Handle inline edit form
@@ -546,13 +536,11 @@ $(function() {
 	});
 
 });
-
 function restoreFile(file_id) {
 	$.post(site_url + 'issues/file/undelete', {id: file_id}, function(data) {
 		window.location = window.location;
 	});
 }
-
 function watch_issue() {
 	$.post(site_url + 'issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="glyphicon glyphicon-eye-close"></span>&ensp;{{ @dict.unwatch }}');
