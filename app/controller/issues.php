@@ -713,6 +713,45 @@ class Issues extends \Controller {
 					if($f3->get("AJAX"))
 						return;
 					break;
+
+
+
+				case "add_dependency":
+					$dependencies = new \Model\Issue\Dependency;
+					// Loads just in case the task  is already a dependency
+					$dependencies->load(array("issue_id = ? AND dependency_id = ?", $issue->id, $post["id"]));
+					$dependencies->issue_id = $issue->id;
+					$dependencies->dependency_id = $post["id"];
+					$dependencies->dependency_type = $post["type_id"];
+					$dependencies->save();
+
+					if($f3->get("AJAX"))
+						return;
+					break;
+
+				case "add_dependent":
+					$dependencies = new \Model\Issue\Dependency;
+					// Loads just in case the task  is already a dependency
+					$dependencies->load(array("issue_id = ? AND dependency_id = ?",  $post["id"],  $issue->id));
+					$dependencies->dependency_id = $issue->id;
+					$dependencies->issue_id = $post["id"];
+					$dependencies->dependency_type = $post["type_id"];
+					$dependencies->save();
+
+					if($f3->get("AJAX"))
+						return;
+					break;
+
+
+				case "remove_dependency":
+					$dependencies = new \Model\Issue\Dependency;
+					$dependencies->load($post["id"]);
+					$dependencies->delete();
+
+					if($f3->get("AJAX"))
+						return;
+					break;
+
 			}
 		}
 
@@ -838,6 +877,26 @@ class Issues extends \Controller {
 			"total" => count($f3->get("watchers")),
 			"html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/watchers.html"))
 		));
+	}
+
+	public function single_dependencies($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load($params["id"]);
+
+		if($issue->id) {
+			$dependencies = new \Model\Issue\Dependency;
+			$f3->set("dependencies", $dependencies->findby_issue($issue->id));
+			$f3->set("dependents", $dependencies->findby_dependent($issue->id));
+
+			$this->_printJson(array(
+				"total" => count($f3->get("dependencies")) + count($f3->get("dependents")),
+				"html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/dependencies.html"))
+			));
+		} else {
+			$f3->error(404);
+		}
+
+
 	}
 
 	public function single_delete($f3, $params) {

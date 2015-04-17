@@ -239,6 +239,8 @@
 						<li><a href="#related" data-toggle="tab" id="tab_related">{{ @dict.related_tasks }}</a></li>
 					</false>
 				</check>
+				<li><a href="#dependencies" data-toggle="tab" id="tab_dependencies">{{ @dict.dependencies }}</a></li>
+
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane fade in active" id="comments">
@@ -302,6 +304,13 @@
 					</div>
 				</div>
 				<div class="tab-pane fade" id="related">
+					<div class="col-md-4 col-md-offset-4">
+						<div class="progress progress-striped active">
+							<div class="progress-bar" style="width: 100%"></div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane fade" id="dependencies">
 					<div class="col-md-4 col-md-offset-4">
 						<div class="progress progress-striped active">
 							<div class="progress-bar" style="width: 100%"></div>
@@ -451,6 +460,50 @@ $(function() {
 		$('#related table').stupidtable();
 	}, 'json').error(function() {
 		$('#related').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_related_issues }}'));
+	});
+
+	$(function loading_dependencies(){
+		$.get(site_url + 'issues/{{ @issue.id }}/dependencies', {}, function(data) {
+			$('#dependencies').empty().append(data.html);
+			$('#tab_dependencies').html($('#tab_dependencies').text() + '&ensp;<span class="badge" id="dependencies-badge">' + data.total + '</span>');
+			$('#dependencies table').stupidtable();
+
+			// Add/remove dependencies from tab
+			$('.dependency-list').on('click', 'a.delete', function(e) {
+				$tr = $(this).parents('tr');
+				$.post(site_url + 'issues/{{ @issue.id }}', {
+					action: 'remove_dependency',
+					id: $tr.data('id')
+				});
+
+				$tr.fadeOut(400, function(){
+				 	$tr.remove();
+				 });
+
+				$('#dependencies-badge').text(parseInt($('#dependencies-badge').text())  - 1);
+
+				e.preventDefault();
+			});
+
+			$('#dependency_form').submit(function(e) {
+				$this = $(this);
+				$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
+
+				$loading_dependencies;
+				e.preventDefault();
+			});
+
+			$('#dependent_form').submit(function(e) {
+				$this = $(this);
+				$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
+
+				$loading_dependencies;
+				e.preventDefault();
+			});
+
+		}, 'json').error(function() {
+			$('#dependencies').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_dependencies }}'));
+		});
 	});
 
 	// Handle inline edit form
