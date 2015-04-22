@@ -223,7 +223,7 @@ class Issues extends \Controller {
 						) {
 							// Allow setting to Not Assigned
 							if($i == "owner_id" && $val == -1) {
-								$val = 0;
+								$val = null;
 							}
 							$issue->$i = $val;
 							if($i == "status") {
@@ -586,7 +586,7 @@ class Issues extends \Controller {
 		$issue->description = $post["description"];
 		$issue->priority = $post["priority"];
 		$issue->status = $post["status"];
-		$issue->owner_id = $post["owner_id"];
+		$issue->owner_id = $post["owner_id"] ?: null;
 		$issue->hours_total = $post["hours_remaining"] ?: null;
 		$issue->hours_remaining = $post["hours_remaining"] ?: null;
 		$issue->repeat_cycle = in_array($post["repeat_cycle"], array("none", "")) ? null : $post["repeat_cycle"];
