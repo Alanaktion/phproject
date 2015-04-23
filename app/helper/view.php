@@ -11,7 +11,7 @@ class View extends \Template {
 	 * @param  int    $ttl
 	 * @return string
 	 */
-	public function parse($str, $options = array(), $ttl = false) {
+	public function parseText($str, $options = array(), $ttl = null) {
 		$options = $options + \Base::instance()->get("parse");
 
 		// Check for cached value if $ttl is set
@@ -39,12 +39,6 @@ class View extends \Template {
 			$str = $this->_parseEmoticons($str);
 		}
 		if($options["textile"]) {
-			if($options["textile_tables"]) {
-				$str = $this->_parseTextile($str);
-			} else {
-				$str = $this->_parseTextile($str, false);
-			}
-		} elseif($options["textile_tables"]) {
 			$str = $this->_parseTextile($str);
 		}
 		if($options["markdown"]) {
@@ -52,7 +46,7 @@ class View extends \Template {
 		}
 
 		// Cache the value if $ttl is set
-		if($ttl !== false) {
+		if($ttl !== null) {
 			$cache->set("$hash.tex", $str, $ttl);
 		}
 
@@ -66,7 +60,7 @@ class View extends \Template {
 	 */
 	protected function _parseIds($str) {
 		$url = \Base::instance()->get("site.url");
-		$str = preg_replace("/(?<=[^a-z\\/&]|^)#([0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}issues/$1\">#$1</a>", $str);
+		return preg_replace("/(?<=[^a-z\\/&]|^)#([0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}issues/$1\">#$1</a>", $str);
 	}
 
 	/**
@@ -76,7 +70,7 @@ class View extends \Template {
 	 */
 	protected function _parseHashtags($str) {
 		$url = \Base::instance()->get("site.url");
-		$str = preg_replace("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}tag/$1\">#$1</a>", $str);
+		return preg_replace("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}tag/$1\">#$1</a>", $str);
 	}
 
 	/**
@@ -135,7 +129,7 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseEmoticons($str) {
-		$str = preg_replace_callback("/([^a-z\\/&]|\\>|^)(3|&gt;)?[:;8B][)(PDOoSs|\/\\\]([^a-z\\/]|\\<|$)/", function($matches) {
+		return preg_replace_callback("/([^a-z\\/&]|\\>|^)(3|&gt;)?[:;8B][)(PDOoSs|\/\\\]([^a-z\\/]|\\<|$)/", function($matches) {
 			$i = "";
 			switch (trim($matches[0], "<> ")) {
 				case ":)":
@@ -199,10 +193,9 @@ class View extends \Template {
 	/**
  	 * Passes a string through the Textile parser
 	 * @param  string $str
-	 * @param  bool   $tables
 	 * @return string
 	 */
-	protected function _parseTextile($str, $tables = true) {
+	protected function _parseTextile($str) {
 		$tex = new Textile\Parser();
 		$tex->setDocumentType('html5')
 			->setDimensionlessImages(true);
