@@ -169,7 +169,7 @@
 
 			<dl>
 				<dt>{{ @dict.cols.description }}:</dt>
-				<dd class="tex">{{ $this->parseTextile(@issue.description) }}</dd>
+				<dd class="tex">{{ $this->parse(@issue.description) }}</dd>
 			</dl>
 
 			<hr class="hidden-lg">
@@ -269,7 +269,7 @@
 											<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
 										</check>
 									</p>
-									<div class="tex">{{ $this->parseTextile(@comment.text, false, false) }}</div>
+									<div class="tex">{{ $this->parse(@comment.text, array('hashtags' => false)) }}</div>
 									<check if="{{ @comment.file_id }}">
 										<check if="{{ @comment.file_deleted_date }}">
 											<true>
