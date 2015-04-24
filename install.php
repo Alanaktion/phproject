@@ -6,6 +6,7 @@ $f3->mset(array(
 	"UI" => "app/view/",
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
+	"PREFIX" => "dict.",
 	"LOCALES" => "app/dict/",
 	"FALLBACK" => "en",
 	"CACHE" => false,
@@ -76,9 +77,20 @@ if($_POST) {
 		mkdir("log", 0777, true);
 	}
 
+	// Build custom config string
 	$config = "[globals]";
 	if(!empty($post["language"])) {
 		$config .= "\nLANGUAGE={$post['language']}";
+	}
+
+	if($post["parser"] != "both") {
+		$config .= "\n\n; Parser options";
+		if($post["parser"] != "markdown") {
+			$config .= "\nparse.markdown=false";
+		}
+		if($post["parser"] != "textile") {
+			$config .= "\nparse.textile=false";
+		}
 	}
 
 	// Write configuration file
