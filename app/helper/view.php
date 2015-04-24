@@ -101,7 +101,7 @@ class View extends \Template {
 			return $matches[1] . "<a href=\"$url\" rel=\"nofollow\" target=\"_blank\">$url</a>".$ret;
 		}, $str);
 
-		$str = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', function($matches) {
+		$str = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', function($m) {
 			$s = '';
 			$d = $m[2];
 
@@ -116,7 +116,7 @@ class View extends \Template {
 			return $m[1] . "<a href=\"http://$d\" rel=\"nofollow\" target=\"_blank\">$d</a>".$s;
 		}, $str);
 
-		$str = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', function($matches) {
+		$str = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', function($m) {
 			$email = $m[2].'@'.$m[3];
 			return $m[1]."<a href=\"mailto:$email\">$email</a>";
 		}, $str);
