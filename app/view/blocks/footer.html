@@ -52,8 +52,7 @@
 	@types = array();
 	foreach(@issue_types as @type) {
 		if(@type.id > 0 && @type.id < 10) {
-			@types[] = @type.id;
-			echo @type.id;
+			array_push(@types, @type.id);
 		}
 	}
 ~}

@@ -32,17 +32,22 @@ class View extends \Template {
 		if($options["hashtags"]) {
 			$str = $this->_parseHashtags($str);
 		}
-		if($options["urls"]) {
-			$str = $this->_parseUrls($str);
+		if($options["markdown"]) {
+			$str = $this->_parseMarkdown($str);
+		}
+		if($options["textile"]) {
+			if($options["markdown"]) {
+				// Yes, this is hacky. Please open an issue on GitHub if you
+				// know of a better way of supporting Markdown and Textile :)
+				$str = html_entity_decode($str);
+			}
+			$str = $this->_parseTextile($str);
 		}
 		if($options["emoticons"]) {
 			$str = $this->_parseEmoticons($str);
 		}
-		if($options["textile"]) {
-			$str = $this->_parseTextile($str);
-		}
-		if($options["markdown"]) {
-			$str = $this->_parseMarkdown($str);
+		if($options["urls"]) {
+			$str = $this->_parseUrls($str);
 		}
 
 		// Cache the value if $ttl is set
@@ -196,9 +201,8 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseTextile($str) {
-		$tex = new Textile\Parser();
-		$tex->setDocumentType('html5')
-			->setDimensionlessImages(true);
+		$tex = new Textile\Parser('html5');
+		$tex->setDimensionlessImages(true);
 		return $tex->parse($str);
 	}
 
@@ -209,6 +213,7 @@ class View extends \Template {
 	 */
 	protected function _parseMarkdown($str) {
 		$mkd = new Parsedown();
+		$mkd->setUrlsLinked(false);
 		return $mkd->text($str);
 	}
 
