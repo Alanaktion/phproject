@@ -56,6 +56,7 @@ class Session extends \Model {
 							. "; new date: " . date("Y-m-d H:i:s"));
 				}
 				$this->created = date("Y-m-d H:i:s");
+				$this->save();
 				$this->setCurrent();
 			}
 		}
