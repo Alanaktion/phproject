@@ -84,6 +84,10 @@ class Session extends \Model {
 	 * @return Session
 	 */
 	public function delete() {
+		if(!$this->id) {
+			return $this;
+		}
+
 		$f3 = \Base::instance();
 
 		if($f3->get("DEBUG")) {
@@ -92,7 +96,7 @@ class Session extends \Model {
 		}
 
 		// Empty the session cookie if it matches the current token
-		if($this->token = $f3->get("COOKIE.{$this->cookie_name}")) {
+		if($this->token == $f3->get("COOKIE.{$this->cookie_name}")) {
 			$f3->set("COOKIE.{$this->cookie_name}", "");
 		}
 
