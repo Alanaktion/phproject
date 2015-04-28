@@ -19,6 +19,7 @@ class Session extends \Model {
 		parent::__construct();
 
 		if($user_id !== null) {
+			$f3 = \Base::instance();
 			$this->user_id = $user_id;
 			$this->token = \Helper\Security::instance()->salt_sha2();
 			$this->ip = \Base::instance()->get("IP");
