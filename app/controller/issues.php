@@ -223,7 +223,7 @@ class Issues extends \Controller {
 						) {
 							// Allow setting to Not Assigned
 							if($i == "owner_id" && $val == -1) {
-								$val = 0;
+								$val = null;
 							}
 							$issue->$i = $val;
 							if($i == "status") {
@@ -258,7 +258,8 @@ class Issues extends \Controller {
 						}
 					}
 
-					$issue->save();
+					$notify = !empty($post["notify"]);
+					$issue->save($notify);
 
 				} else {
 					$f3->error(500, "Failed to update all the issues, starting with: $id.");
@@ -585,7 +586,7 @@ class Issues extends \Controller {
 		$issue->description = $post["description"];
 		$issue->priority = $post["priority"];
 		$issue->status = $post["status"];
-		$issue->owner_id = $post["owner_id"];
+		$issue->owner_id = $post["owner_id"] ?: null;
 		$issue->hours_total = $post["hours_remaining"] ?: null;
 		$issue->hours_remaining = $post["hours_remaining"] ?: null;
 		$issue->repeat_cycle = in_array($post["repeat_cycle"], array("none", "")) ? null : $post["repeat_cycle"];
@@ -681,7 +682,7 @@ class Issues extends \Controller {
 						$this->_printJson(
 							array(
 								"id" => $comment->id,
-								"text" => \Helper\View::instance()->parseTextile($comment->text),
+								"text" => \Helper\View::instance()->parseText($comment->text, array("hashtags" => false)),
 								"date_formatted" => date("D, M j, Y \\a\\t g:ia", \Helper\View::instance()->utc2local(time())),
 								"user_name" => $f3->get('user.name'),
 								"user_username" => $f3->get('user.username'),
@@ -713,6 +714,45 @@ class Issues extends \Controller {
 					if($f3->get("AJAX"))
 						return;
 					break;
+
+
+
+				case "add_dependency":
+					$dependencies = new \Model\Issue\Dependency;
+					// Loads just in case the task  is already a dependency
+					$dependencies->load(array("issue_id = ? AND dependency_id = ?", $issue->id, $post["id"]));
+					$dependencies->issue_id = $issue->id;
+					$dependencies->dependency_id = $post["id"];
+					$dependencies->dependency_type = $post["type_id"];
+					$dependencies->save();
+
+					if($f3->get("AJAX"))
+						return;
+					break;
+
+				case "add_dependent":
+					$dependencies = new \Model\Issue\Dependency;
+					// Loads just in case the task  is already a dependency
+					$dependencies->load(array("issue_id = ? AND dependency_id = ?",  $post["id"],  $issue->id));
+					$dependencies->dependency_id = $issue->id;
+					$dependencies->issue_id = $post["id"];
+					$dependencies->dependency_type = $post["type_id"];
+					$dependencies->save();
+
+					if($f3->get("AJAX"))
+						return;
+					break;
+
+
+				case "remove_dependency":
+					$dependencies = new \Model\Issue\Dependency;
+					$dependencies->load($post["id"]);
+					$dependencies->delete();
+
+					if($f3->get("AJAX"))
+						return;
+					break;
+
 			}
 		}
 
@@ -838,6 +878,26 @@ class Issues extends \Controller {
 			"total" => count($f3->get("watchers")),
 			"html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/watchers.html"))
 		));
+	}
+
+	public function single_dependencies($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load($params["id"]);
+
+		if($issue->id) {
+			$dependencies = new \Model\Issue\Dependency;
+			$f3->set("dependencies", $dependencies->findby_issue($issue->id));
+			$f3->set("dependents", $dependencies->findby_dependent($issue->id));
+
+			$this->_printJson(array(
+				"total" => count($f3->get("dependencies")) + count($f3->get("dependents")),
+				"html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/dependencies.html"))
+			));
+		} else {
+			$f3->error(404);
+		}
+
+
 	}
 
 	public function single_delete($f3, $params) {

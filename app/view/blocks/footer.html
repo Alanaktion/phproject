@@ -47,7 +47,24 @@
 		</p>
 	</div>
 </footer>
-<script>var site_url = '{{ @site.url }}';</script>
-<script src="{{ @site.url }}minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,global.js"></script>
+
+{~
+	@types = array();
+	foreach(@issue_types as @type) {
+		if(@type.id > 0 && @type.id < 10) {
+			array_push(@types, @type.id);
+		}
+	}
+~}
+<script>var site_url = '{{ @site.url }}', issue_types = {{ json_encode(@types) }};</script>
+<script src="{{ @site.url }}minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,intercom.min.js,global.js"></script>
 <script src="{{ @site.url }}js/respond.min.js"></script>
-<include href="blocks/footer-hotkeys-modals.html" if="{{ !empty(@user.id) }}">
+
+<include href="blocks/footer-modals.html" if="{{ !empty(@user.id) }}" />
+
+<repeat group="{{ \Helper\Plugin::instance()->getJsFiles(@PATH) }}" value="{{ @file }}">
+	<script src="{{ @file }}"></script>
+</repeat>
+<repeat group="{{ \Helper\Plugin::instance()->getJsCode(@PATH) }}" value="{{ @code }}">
+	<script>{{ @code }}</script>
+</repeat>

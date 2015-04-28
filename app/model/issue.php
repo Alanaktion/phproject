@@ -187,7 +187,7 @@ class Issue extends \Model {
 			// If the issue was in a sprint before, put it in a sprint again.
 			if($this->get("sprint_id")) {
 				$sprint = new \Model\Sprint();
-				$sprint->load(array("end_date > ? AND start_date < ?", $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
+				$sprint->load(array("end_date >= ? AND start_date <= ?", $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
 				$repeat_issue->sprint_id = $sprint->id;
 			}
 

@@ -5,43 +5,136 @@ namespace Helper;
 class View extends \Template {
 
 	/**
- 	 * Passes a string through the Textile parser,
-	 * also converts issue IDs and usernames to links
-	 * @param  string   $str
-	 * @param  int|bool $ttl
-	 * @param  bool     $hashtags
+	 * Convert Textile or Markdown to HTML, adding hashtags
+	 * @param  string $str
+	 * @param  array  $options
+	 * @param  int    $ttl
 	 * @return string
 	 */
-	public function parseTextile($str, $ttl = false, $hashtags = true) {
-		$f3 = \Base::instance();
-		if($ttl !== false) {
+	public function parseText($str, $options = array(), $ttl = null) {
+		$options = $options + \Base::instance()->get("parse");
+
+		// Check for cached value if $ttl is set
+		if($ttl !== null) {
 			$cache = \Cache::instance();
-			$hash = sha1($str);
+			$hash = sha1($str . json_encode($options));
 
 			// Return value if cached
-			if(($val = $cache->get("$hash.tex")) !== false) {
-				return $val;
+			if(($str = $cache->get("$hash.tex")) !== false) {
+				return $str;
 			}
 		}
 
-		// Value wasn't cached, run the parser
-		$tex = new Textile\Parser();
-		$tex->setDocumentType('html5')
-			->setDimensionlessImages(true);
-		$val = $tex->parse($str);
-
-		// Find issue IDs and tags, and convert them to links
-		$siteUrl = $f3->get("site.url");
-		$val = preg_replace("/(?<=[^a-z\\/&]|^)#([0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$siteUrl}issues/$1\">#$1</a>", $val);
-		if($hashtags) {
-			$val = preg_replace("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$siteUrl}tag/$1\">#$1</a>", $val);
+		// Run through the parsers based on $options
+		if($options["ids"]) {
+			$str = $this->_parseIds($str);
+		}
+		if($options["hashtags"]) {
+			$str = $this->_parseHashtags($str);
+		}
+		if($options["markdown"]) {
+			$str = $this->_parseMarkdown($str);
+		}
+		if($options["textile"]) {
+			if($options["markdown"]) {
+				// Yes, this is hacky. Please open an issue on GitHub if you
+				// know of a better way of supporting Markdown and Textile :)
+				$str = html_entity_decode($str);
+			}
+			$str = $this->_parseTextile($str);
+		}
+		if($options["emoticons"]) {
+			$str = $this->_parseEmoticons($str);
+		}
+		if($options["urls"]) {
+			$str = $this->_parseUrls($str);
 		}
 
-		// Convert URLs to links
-		$val = $this->make_clickable($val);
+		// Cache the value if $ttl is set
+		if($ttl !== null) {
+			$cache->set("$hash.tex", $str, $ttl);
+		}
 
-		// Convert emoticons
-		$val = preg_replace_callback("/([^a-z\\/&]|\\>|^)(3|&gt;)?[:;8B][)(PDOoSs|\/\\\]([^a-z\\/]|\\<|$)/", function($matches) {
+		return $str;
+	}
+
+	/**
+ 	 * Replaces IDs with links to their corresponding issues
+	 * @param  string $str
+	 * @return string
+	 */
+	protected function _parseIds($str) {
+		$url = \Base::instance()->get("site.url");
+		return preg_replace("/(?<=[^a-z\\/&]|^)#([0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}issues/$1\">#$1</a>", $str);
+	}
+
+	/**
+ 	 * Replaces hashtags with links to their corresponding tag pages
+	 * @param  string $str
+	 * @return string
+	 */
+	protected function _parseHashtags($str) {
+		$url = \Base::instance()->get("site.url");
+		return preg_replace("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}tag/$1\">#$1</a>", $str);
+	}
+
+	/**
+ 	 * Replaces URLs with links
+	 * @param  string $str
+	 * @return string
+	 */
+	protected function _parseUrls($str) {
+		$str = ' ' . $str;
+
+		// In testing, using arrays here was found to be faster
+		$str = preg_replace_callback('#([\s>])([\w]+?://[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', function($matches) {
+			$ret = '';
+			$url = $matches[2];
+
+			if(empty($url))
+				return $matches[0];
+			// removed trailing [.,;:] from URL
+			if(in_array(substr($url,-1),array('.',',',';',':')) === true) {
+				$ret = substr($url,-1);
+				$url = substr($url,0,strlen($url)-1);
+			}
+			return $matches[1] . "<a href=\"$url\" rel=\"nofollow\" target=\"_blank\">$url</a>".$ret;
+		}, $str);
+
+		$str = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', function($m) {
+			$s = '';
+			$d = $m[2];
+
+			if (empty($d))
+				return $m[0];
+
+			// removed trailing [,;:] from URL
+			if(in_array(substr($d,-1),array('.',',',';',':')) === true) {
+				$s = substr($d,-1);
+				$d = substr($d,0,strlen($d)-1);
+			}
+			return $m[1] . "<a href=\"http://$d\" rel=\"nofollow\" target=\"_blank\">$d</a>".$s;
+		}, $str);
+
+		$str = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', function($m) {
+			$email = $m[2].'@'.$m[3];
+			return $m[1]."<a href=\"mailto:$email\">$email</a>";
+		}, $str);
+
+		// This one is not in an array because we need it to run last, for cleanup of accidental links within links
+		$str = preg_replace("#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i", "$1$3</a>",$str);
+		$str = trim($str);
+
+		return $str;
+	}
+
+	/**
+ 	 * Replaces text emoticons with webfont versions
+	 * @param  string $str
+	 * @return string
+	 */
+	protected function _parseEmoticons($str) {
+		return preg_replace_callback("/([^a-z\\/&]|\\>|^)(3|&gt;)?[:;8B][)(PDOoSs|\/\\\]([^a-z\\/]|\\<|$)/", function($matches) {
 			$i = "";
 			switch (trim($matches[0], "<> ")) {
 				case ":)":
@@ -99,86 +192,30 @@ class View extends \Template {
 			} else {
 				return $matches[0];
 			}
-		}, $val);
-
-
-		// Cache the value if $ttl was given
-		if($ttl !== false) {
-			$cache->set("$hash.tex", $val, $ttl);
-		}
-
-		// Return the parsed value
-		return $val;
-	}
-
-
-	/**
-	 * Internal function used by make_clickable
-	 * @param  array  $matches
-	 * @return string
-	 */
-	protected function _make_url_clickable_cb($matches) {
-		$ret = '';
-		$url = $matches[2];
-
-		if(empty($url))
-			return $matches[0];
-		// removed trailing [.,;:] from URL
-		if(in_array(substr($url,-1),array('.',',',';',':')) === true) {
-			$ret = substr($url,-1);
-			$url = substr($url,0,strlen($url)-1);
-		}
-		return $matches[1] . "<a href=\"$url\" rel=\"nofollow\" target=\"_blank\">$url</a>".$ret;
+		}, $str);
 	}
 
 	/**
-	 * Internal function used by make_clickable
-	 * @param  array $m
+ 	 * Passes a string through the Textile parser
+	 * @param  string $str
 	 * @return string
 	 */
-	protected function _make_web_ftp_clickable_cb($m) {
-		$s = '';
-		$d = $m[2];
-
-		if (empty($d))
-			return $m[0];
-
-		// removed trailing [,;:] from URL
-		if(in_array(substr($d,-1),array('.',',',';',':')) === true) {
-			$s = substr($d,-1);
-			$d = substr($d,0,strlen($d)-1);
-		}
-		return $m[1] . "<a href=\"http://$d\" rel=\"nofollow\" target=\"_blank\">$d</a>".$s;
+	protected function _parseTextile($str) {
+		$tex = new Textile\Parser('html5');
+		$tex->setDimensionlessImages(true);
+		return $tex->parse($str);
 	}
 
 	/**
-	 * Internal function used by make_clickable
-	 * @param  array $m
+ 	 * Passes a string through the Markdown parser
+	 * @param  string $str
 	 * @return string
 	 */
-	protected function _make_email_clickable_cb($m) {
-		$email = $m[2].'@'.$m[3];
-		return $m[1]."<a href=\"mailto:$email\">$email</a>";
+	protected function _parseMarkdown($str) {
+		$mkd = new Parsedown();
+		$mkd->setUrlsLinked(false);
+		return $mkd->text($str);
 	}
-
-	/**
-	 * Converts recognized URLs and email addresses into HTML hyperlinks
-	 * @param  string $s
-	 * @return string
-	 */
-	public function make_clickable($s) {
-		$s = ' '.$s;
-		// in testing, using arrays here was found to be faster
-		$s = preg_replace_callback('#([\s>])([\w]+?://[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', array($this, '_make_url_clickable_cb'), $s);
-		$s = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', array($this, '_make_web_ftp_clickable_cb'), $s);
-		$s = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', array($this, '_make_email_clickable_cb'), $s);
-
-		// this one is not in an array because we need it to run last, for cleanup of accidental links within links
-		$s = preg_replace("#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i", "$1$3</a>",$s);
-		$s = trim($s);
-		return $s;
-	}
-
 
 	/**
 	 * Get a human-readable file size
@@ -196,7 +233,6 @@ class View extends \Template {
 			return $filesize . " bytes";
 		}
 	}
-
 
 	/**
 	 * Get a Gravatar URL from email address and size, uses global Gravatar configuration

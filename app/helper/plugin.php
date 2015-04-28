@@ -94,4 +94,40 @@ class Plugin extends \Prefab {
 		);
 	}
 
+	/**
+	 * Get an array of matching JS files to include
+	 * @param  string $path
+	 * @return array
+	 */
+	public function getJsFiles($path = null) {
+		$return = array();
+		foreach($this->_jsFiles as $item) {
+			if(
+				!$item['match'] || !$path ||
+				($item['match'] && $path && preg_match($item['match'], $path))
+			) {
+				$return[] = $item['file'];
+			}
+		}
+		return $return;
+	}
+
+	/**
+	 * Get an array of matching JS code to include
+	 * @param  string $path
+	 * @return array
+	 */
+	public function getJsCode($path = null) {
+		$return = array();
+		foreach($this->_jsCode as $item) {
+			if(
+				!$item['match'] || !$path ||
+				($item['match'] && $path && preg_match($item['match'], $path))
+			) {
+				$return[] = $item['code'];
+			}
+		}
+		return $return;
+	}
+
 }

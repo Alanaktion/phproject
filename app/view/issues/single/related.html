@@ -30,8 +30,8 @@
 		<tbody>
 			<repeat group="{{ @issues }}" value="{{ @item }}">
 				<tr data-id="{{ @item.id }}" class="{{ @item.status_closed ? 'closed' : '' }}">
-					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.id }}</a></td>
-					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.name | esc }}</a></td>
+					<td><a href="{{ @site.url }}issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.id }}</a></td>
+					<td><a href="{{ @site.url }}issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.name | esc }}</a></td>
 					<td><a href="{{ @site.url }}user/{{ @item.author_username }}">{{ @item.author_name | esc }}</a></td>
 					<td><a href="{{ @site.url }}user/{{ @item.owner_username }}">{{ @item.owner_name | esc }}</a></td>
 					<td data-sort-value="{{ strtotime(@item.created_date) }}" title="{{ date('M j, Y \\a\\t g:ia', strtotime(@item.created_date)) }}">{{ date("n/j/y", strtotime(@item.created_date)) }}</td>

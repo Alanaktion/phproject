@@ -48,7 +48,7 @@
 				</repeat>
 			</ul>
 			<check if="{{ @update.comment_id }}">
-				<div class="tex">{{ $this->parseTextile(@update.comment_text) }}</div>
+				<div class="tex">{{ $this->parseText(@update.comment_text, array('hashtags' => false)) }}</div>
 			</check>
 		</div>
 	</div>

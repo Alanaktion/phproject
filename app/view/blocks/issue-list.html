@@ -198,8 +198,8 @@
 					<check if="{{ isset(@statuses) }}">
 						<td><input type="checkbox" name="id[]" value="{{ @item.id }}"></td>
 					</check>
-					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.id }}</a></td>
-					<td><a href="{{ @site.url }}issues/{{ @item.id }}">{{ @item.name | esc }}</a></td>
+					<td><a href="{{ @site.url }}issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.id }}</a></td>
+					<td><a href="{{ @site.url }}issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.name | esc }}</a></td>
 					<td>{{ @item.type_name }}</td>
 					<td>{{ @item.priority_name }}</td>
 					<td>{{ @item.status_name }}</td>
@@ -344,7 +344,13 @@
 							</div>
 						</div>
 					</div>
-					<div class="modal-footer">
+					<div class="modal-footer form-group">
+						<div class="checkbox checkbox-inline">
+							<label>
+								<input type="checkbox" name="notify" value="1" checked>
+								{{ @dict.send_notifications }}&nbsp;
+							</label>
+						</div>
 						<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ @dict.cancel }}</button>
 						<button type="submit" id="bulk-submit" class="btn btn-sm btn-primary">{{ @dict.submit }}</button>
 					</div>
