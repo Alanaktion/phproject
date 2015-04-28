@@ -25,6 +25,15 @@ class Session extends \Model {
 			$this->created = date("Y-m-d H:i:s");
 			if($auto_save) {
 				$this->save();
+				if($f3->get("DEBUG")) {
+					$log = new \Log("session.log");
+					$log->write("Created session with autosave: " . json_encode($this->cast()));
+				}
+			} else {
+				if($f3->get("DEBUG")) {
+					$log = new \Log("session.log");
+					$log->write("Created session without autosave: " . json_encode($this->cast()));
+				}
 			}
 		}
 
@@ -42,6 +51,10 @@ class Session extends \Model {
 			$this->load(array("token = ? AND ip = ?", $token, $ip));
 			$expire = $f3->get("JAR.expire");
 
+			if($f3->get("DEBUG")) {
+				$log = new \Log("session.log");
+				$log->write("Loaded session: " . json_encode($this->cast()));
+			}
 
 			// Delete expired sessions
 			if(time() - $expire > strtotime($this->created)) {
@@ -64,6 +77,12 @@ class Session extends \Model {
 	 */
 	public function setCurrent() {
 		$f3 = \Base::instance();
+
+		if($f3->get("DEBUG")) {
+			$log = new \Log("session.log");
+			$log->write("Setting current session: " . json_encode($this->cast()));
+		}
+
 		$f3->set("COOKIE.{$this->cookie_name}", $this->token, $f3->get("JAR.expire"));
 		return $this;
 	}
@@ -73,9 +92,14 @@ class Session extends \Model {
 	 * @return Session
 	 */
 	public function delete() {
+		$f3 = \Base::instance();
+
+		if($f3->get("DEBUG")) {
+			$log = new \Log("session.log");
+			$log->write("Deleting session: " . json_encode($this->cast()));
+		}
 
 		// Empty the session cookie if it matches the current token
-		$f3 = \Base::instance();
 		if($this->token = $f3->get("COOKIE.{$this->cookie_name}")) {
 			$f3->set("COOKIE.{$this->cookie_name}", "");
 		}
