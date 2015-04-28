@@ -120,16 +120,20 @@ class Security extends \Prefab {
 	 * @return bool|string TRUE if up-to-date, next version otherwise.
 	 */
 	public function checkDatabaseVersion() {
+		$f3 = \Base::instance();
 
 		// Get current version
-		$db = \Base::instance()->get("db.instance");
-		$result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
+		$version = $f3->get("version");
+		if(!$version) {
+			$result = $f3->get("db.instance")->exec("SELECT value as version FROM config WHERE attribute = 'version'");
+			$version = $result[0]["version"];
+		}
 
 		// Check available versions
 		$db_files = scandir("db");
 		foreach ($db_files as $file) {
 			$file = substr($file, 0, -4);
-			if(version_compare($file, $result[0]["version"]) > 0) {
+			if(version_compare($file, $version) > 0) {
 				return $file;
 			}
 		}

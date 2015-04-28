@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body>
+<include href="blocks/navbar.html" />
+<div class="container">
+	<include href="blocks/admin/tabs.html" />
+
+	<!-- <div class="alert alert-info alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<strong>Note:</strong> Changes made here are easily reversible, and have no permanent effect on the site.
+	</div> -->
+
+	<form action="{{ @BASE }}/admin/config" method="post" id="frm-config">
+		<div class="row">
+
+			<div class="col-md-3">
+				<ul class="nav nav-pills nav-stacked">
+					<li class="active"><a href="#config-site" data-toggle="tab">Site Basics</a></li>
+					<li><a href="#config-parse" data-toggle="tab">Text Parsing</a></li>
+					<li><a href="#config-email" data-toggle="tab">Email (SMTP/IMAP)</a></li>
+					<li><a href="#config-advanced" data-toggle="tab">Advanced</a></li>
+				</ul>
+			</div>
+
+			<div class="col-md-9 tab-content">
+
+				<div role="tabpanel" class="tab-pane fade in active" id="config-site">
+					<div class="form-group">
+						<label for="site-name">Site Name</label>
+						<input type="text" class="form-control" name="site-name" value="{{ @site.name }}" required>
+					</div>
+					<div class="form-group">
+						<label for="site-description">Site Description</label>
+						<textarea class="form-control input-sm" name="site-description">{{ @site.description | esc }}</textarea>
+					</div>
+					<div class="form-group">
+						<label for="site-timezone">Timezone</label>
+						<input type="text" class="form-control input-sm" name="site-timezone" value="{{ @site.timezone }}" required>
+					</div>
+					<div class="form-group">
+						<label for="site-theme">Default Theme</label>
+						<input type="text" class="form-control input-sm" name="site-theme" value="{{ @site.theme }}" required>
+					</div>
+					<div class="form-group">
+						<label for="site-logo">Logo</label>
+						<input type="text" class="form-control input-sm" name="site-logo" placeholder="(Site Name)" value="{{ @site.logo }}">
+					</div>
+					<div class="form-group">
+						Allow public registration<br>
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<!-- TODO: Set checked attribute on current value, rather than default -->
+							<label class="btn btn-default active">
+								<input type="radio" name="site-public_registration" value="1" autocomplete="off">
+								<span class="glyphicon glyphicon-ok"></span>
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="site-public_registration" value="0" autocomplete="off" checked>
+								<span class="glyphicon glyphicon-remove"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<div role="tabpanel" class="tab-pane fade" id="config-parse">
+					<!-- TODO: Set checked attributes on current values, rather than defaults -->
+					<div class="form-group">
+						<p>Parser Syntax</p>
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input type="checkbox" name="parse-markdown" value="1" autocomplete="off" checked>
+								Markdown
+							</label>
+							<label class="btn btn-default">
+								<input type="checkbox" name="parse-textile" value="0" autocomplete="off">
+								Textile
+							</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input type="radio" name="parse-ids" value="1" autocomplete="off" checked>
+								<span class="glyphicon glyphicon-ok"></span>
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="parse-ids" value="0" autocomplete="off">
+								<span class="glyphicon glyphicon-remove"></span>
+							</label>
+						</div>
+						&emsp;Convert IDs to Links
+					</div>
+					<div class="form-group">
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input type="radio" name="parse-hashtags" value="1" autocomplete="off" checked>
+								<span class="glyphicon glyphicon-ok"></span>
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="parse-hashtags" value="0" autocomplete="off">
+								<span class="glyphicon glyphicon-remove"></span>
+							</label>
+						</div>
+						&emsp;Convert Hashtags to Links
+					</div>
+					<div class="form-group">
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input type="radio" name="parse-urls" value="1" autocomplete="off" checked>
+								<span class="glyphicon glyphicon-ok"></span>
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="parse-urls" value="0" autocomplete="off">
+								<span class="glyphicon glyphicon-remove"></span>
+							</label>
+						</div>
+						&emsp;Convert URLs to links
+					</div>
+					<div class="form-group">
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input type="radio" name="parse-emoticons" value="1" autocomplete="off" checked>
+								<span class="glyphicon glyphicon-ok"></span>
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="parse-emoticons" value="0" autocomplete="off">
+								<span class="glyphicon glyphicon-remove"></span>
+							</label>
+						</div>
+						&emsp;Convert emoticons to glyphs
+					</div>
+				</div>
+
+				<div role="tabpanel" class="tab-pane fade" id="config-email">
+					<fieldset>
+						<legend>Outgoing Mail (SMTP)</legend>
+						<div class="form-group">
+							<label for="mail-from">From Address</label>
+							<input type="text" class="form-control input-sm" name="mail-from" value="{{ @mail.from }}" placeholder="Leave blank to disable outgoing email">
+						</div>
+						<p class="alert alert-info"><strong>Note:</strong> {{ @PACKAGE }} uses your default PHP mail configuration for outgoing email.</p>
+					</fieldset>
+					<br>
+					<fieldset>
+						<legend>Incoming Mail (IMAP)</legend>
+						<div class="form-group">
+							<label for="imap-hostname">Hostname</label>
+							<input type="text" class="form-control input-sm" name="imap-hostname" value="{{ @imap.hostname }}" placeholder="Leave blank to disable incoming email">
+						</div>
+						<div class="form-group">
+							<label for="imap-username">Username</label>
+							<input type="text" class="form-control input-sm" name="imap-username" value="{{ @imap.username }}">
+						</div>
+						<div class="form-group">
+							<label for="imap-password">Password</label>
+							<input type="text" class="form-control input-sm" name="imap-password" value="{{ str_repeat('*', strlen(@imap.password)) }}">
+						</div>
+						<p class="alert alert-info"><strong>Note:</strong> IMAP settings here will have no effect unless the <code>checkmail.php</code> cron is being run.</p>
+					</fieldset>
+				</div>
+
+				<div role="tabpanel" class="tab-pane fade" id="config-advanced">
+					<div class="form-group">
+						<label>Debug Level (DEBUG)</label>
+						<input type="text" class="form-control input-sm" value="{{ @DEBUG }}" disabled>
+					</div>
+					<div class="form-group">
+						<label>Cache Mode (CACHE)</label>
+						<input type="text" class="form-control input-sm" value="{{ @CACHE }}" disabled>
+					</div>
+					<div class="form-group">
+						<label>Cookie Expiration (JAR.expire)</label>
+						<input type="text" class="form-control input-sm" value="{{ @JAR.expire }}" disabled>
+					</div>
+					<div class="form-group">
+						<label>Max Upload Size (files.maxsize)</label>
+						<input type="text" class="form-control input-sm" value="{{ @files.maxsize }}" disabled>
+					</div>
+					<div class="form-group">
+						<label>Censor Credit Card Numbers (security.block_ccs)</label>
+						<input type="text" class="form-control input-sm" value="{{ @security.block_ccs }}" disabled>
+					</div>
+					<div class="form-group">
+						<label>Demo User (site.demo)</label>
+						<input type="text" class="form-control input-sm" value="{{ @site.demo }}" disabled>
+					</div>
+					<div class="form-group">
+						<label for="mail-truncate_lines">IMAP Message Truncate Lines (mail.truncate_lines)</label>
+						<textarea class="form-control input-sm" rows="4" disabled>{{ implode("\n", @mail.truncate_lines) | esc }}</textarea>
+					</div>
+					<p class="alert alert-info">These values can be changed by editing the <code>config.ini</code> file in {{ @ROOT }}.</p>
+				</div>
+
+			</div>
+		</div>
+	</form>
+
+	<include href="blocks/footer.html" />
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+
+	// Auto-select tab if hash is present
+	if(window.location.hash) {
+		$('.nav a').filter('[href=#config-' + window.location.hash.substr(1) + ']').click();
+	}
+
+	// Handle input changes
+	$('#frm-config').on('change', 'input, select, textarea', function(e) {
+		// TODO: implement validation and AJAX calls
+	});
+
+	// Update classes on active btns
+	/*$('.btn-group .btn.active').addClass('btn-success');
+	$('#frm-config').on('click', '.btn-group', function(e) {
+		$(this).find('.btn').removeClass('btn-success');
+		$(this).find('.active').addClass('btn-success');
+	});*/
+
+});
+</script>
+</body>
+</html>

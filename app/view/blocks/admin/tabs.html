@@ -1,5 +1,6 @@
 <ul class="nav nav-tabs">
 	<li class="{{ @PATH == '/admin' ? 'active':'' }}"><a href="{{ @site.url }}admin/">{{ @dict.overview }}</a></li>
+	<li class="{{ strpos(@PATH, 'config') ? 'active':'' }}"><a href="{{ @site.url }}admin/config">{{ @dict.configuration }}</a></li>
 	<li class="{{ strpos(@PATH, 'plugins') ? 'active':'' }}"><a href="{{ @site.url }}admin/plugins">{{ @dict.plugins }}</a></li>
 	<li class="{{ strpos(@PATH, 'users') ? 'active':'' }}"><a href="{{ @site.url }}admin/users">{{ @dict.users }}</a></li>
 	<li class="{{ strpos(@PATH, 'groups') ? 'active':'' }}"><a href="{{ @site.url }}admin/groups">{{ @dict.groups }}</a></li>

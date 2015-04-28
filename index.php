@@ -64,6 +64,9 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.pass")
 ));
 
+// Load final configuration
+\Model\Config::loadAll();
+
 // Ensure database is up to date
 $version = \Helper\Security::instance()->checkDatabaseVersion();
 if($version !== true) {

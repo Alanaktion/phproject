@@ -41,6 +41,15 @@ class Admin extends \Controller {
 		$this->_render("admin/index.html");
 	}
 
+	public function config($f3) {
+		$f3->set("title", $f3->get("dict.configuration"));
+		$this->_render("admin/config.html");
+	}
+
+	public function config_post_val($f3, $params) {
+
+	}
+
 	public function plugins($f3) {
 		$f3->set("title", $f3->get("dict.plugins"));
 		$this->_render("admin/plugins.html");
