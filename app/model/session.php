@@ -19,22 +19,12 @@ class Session extends \Model {
 		parent::__construct();
 
 		if($user_id !== null) {
-			$f3 = \Base::instance();
 			$this->user_id = $user_id;
 			$this->token = \Helper\Security::instance()->salt_sha2();
 			$this->ip = \Base::instance()->get("IP");
 			$this->created = date("Y-m-d H:i:s");
 			if($auto_save) {
 				$this->save();
-				if($f3->get("DEBUG")) {
-					$log = new \Log("session.log");
-					$log->write("Created session with autosave: " . json_encode($this->cast()));
-				}
-			} else {
-				if($f3->get("DEBUG")) {
-					$log = new \Log("session.log");
-					$log->write("Created session without autosave: " . json_encode($this->cast()));
-				}
 			}
 		}
 
@@ -52,11 +42,6 @@ class Session extends \Model {
 			$this->load(array("token = ? AND ip = ?", $token, $ip));
 			$expire = $f3->get("JAR.expire");
 
-			if($f3->get("DEBUG")) {
-				$log = new \Log("session.log");
-				$log->write("Loaded session: " . json_encode($this->cast()));
-			}
-
 			// Delete expired sessions
 			if(time() - $expire > strtotime($this->created)) {
 				$this->delete();
@@ -65,6 +50,11 @@ class Session extends \Model {
 
 			// Update nearly expired sessions
 			if(time() - $expire / 2 > strtotime($this->created)) {
+				if($f3->get("DEBUG")) {
+					$log = new \Log("session.log");
+					$log->write("Updating expiration: " . json_encode($this->cast())
+							. "; new date: " . date("Y-m-d H:i:s"));
+				}
 				$this->created = date("Y-m-d H:i:s");
 				$this->setCurrent();
 			}
