@@ -1,24 +1,25 @@
-<form id="dependency_form" role="form" class="form-horizontal">
-<input type="hidden" name="action" value="add_dependency">
-<div class="form-group">
-		<label class="col-md-3"><strong> {{ @dict.task_depends }} </strong></label>
-		<div class="col-md-2">
-			<input type="text" class="form-control input-sm" name="id" value="" required>
+<check if="{{ !empty(@user.id) }}">
+	<form id="dependency_form" role="form" class="form-horizontal">
+		<input type="hidden" name="action" value="add_dependency">
+		<div class="form-group">
+			<label class="col-md-3"><strong> {{ @dict.task_depends }} </strong></label>
+			<div class="col-md-2">
+				<input type="text" class="form-control input-sm" name="id" value="" required>
+			</div>
+			<div class="col-md-1">
+				<select class="form-control input-sm" name="type_id">
+					<option>FS</option>
+					<option>FF</option>
+					<option>SS</option>
+					<option>SF</option>
+				</select>
+			</div>
+			<div class="col-md-1">
+				<button type="submit" class="btn btn-primary btn-sm">Add  Dependency</button>
+			</div>
 		</div>
-		<div class="col-md-1">
-			<select class="form-control input-sm" name="type_id">
-				<option>FS</option>
-				<option>FF</option>
-				<option>SS</option>
-				<option>SF</option>
-			</select>
-		</div>
-		<div class="col-md-1">
-			<button type="submit" class="btn btn-primary btn-sm">Add  Dependency</button>
-		</div>
-	</div>
-
-</form>
+	</form>
+</check>
 <check if="{{ !empty(@dependencies) }}">
 	<true>
 		<table class="table table-striped table-responsive table-condensed issue-list dependency-list">
@@ -54,27 +55,28 @@
 	</true>
 </check>
 <hr>
-<form id="dependent_form" role="form" class="form-horizontal">
-<input type="hidden" name="action" value="add_dependent">
-<div class="form-group">
-		<label class="col-md-3"><strong> {{ @dict.task_dependency }} </strong></label>
-		<div class="col-md-2">
-			<input type="text" class="form-control input-sm" name="id" value="" required>
+<check if="{{ !empty(@user.id) }}">
+	<form id="dependent_form" role="form" class="form-horizontal">
+		<input type="hidden" name="action" value="add_dependent">
+		<div class="form-group">
+			<label class="col-md-3"><strong> {{ @dict.task_dependency }} </strong></label>
+			<div class="col-md-2">
+				<input type="text" class="form-control input-sm" name="id" value="" required>
+			</div>
+			<div class="col-md-1">
+				<select class="form-control input-sm" name="type_id">
+					<option>FS</option>
+					<option>FF</option>
+					<option>SS</option>
+					<option>SF</option>
+				</select>
+			</div>
+			<div class="col-md-1">
+				<button type="submit" class="btn btn-primary btn-sm">Add Dependent</button>
+			</div>
 		</div>
-		<div class="col-md-1">
-			<select class="form-control input-sm" name="type_id">
-				<option>FS</option>
-				<option>FF</option>
-				<option>SS</option>
-				<option>SF</option>
-			</select>
-		</div>
-		<div class="col-md-1">
-			<button type="submit" class="btn btn-primary btn-sm">Add Dependent</button>
-		</div>
-	</div>
-
-</form>
+	</form>
+</check>
 <check if="{{ !empty(@dependents) }}">
 	<true>
 		<table class="table table-striped table-responsive table-condensed issue-list dependency-list">

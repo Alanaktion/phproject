@@ -7,7 +7,7 @@ class Tag extends \Controller {
 	protected $_userId;
 
 	public function __construct() {
-		$this->_userId = $this->_requireLogin();
+		$this->_userId = $this->_requireLogin(0);
 	}
 
 	/**

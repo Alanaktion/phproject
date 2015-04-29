@@ -10,9 +10,11 @@
 			<span class="glyphicon glyphicon-chevron-left"></span>&ensp;{{ @dict.view_all_tags }}
 		</a>
 		<h1>#{{ @tag.tag }}</h1>
-		<p>{{ @dict.tag_help_1 }}<br>
-			<small>{{ @dict.tag_help_2 }}</small>
-		</p>
+		<check if="{{ isset(@user.id) }}">
+			<p>{{ @dict.tag_help_1 }}<br>
+				<small>{{ @dict.tag_help_2 }}</small>
+			</p>
+		</check>
 		<include href="blocks/issue-list.html" />
 		<include href="blocks/footer.html" />
 	</div>

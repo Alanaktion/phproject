@@ -10,9 +10,11 @@
 		<check if="{{ !@cloud }}">
 			<p>{{ @dict.no_tags_created }}</p>
 		</check>
-		<p>{{ @dict.tag_help_1 }}<br>
-			<small>{{ @dict.tag_help_2 }}</small>
-		</p>
+		<check if="{{ isset(@user.id) }}">
+			<p>{{ @dict.tag_help_1 }}<br>
+				<small>{{ @dict.tag_help_2 }}</small>
+			</p>
+		</check>
 		<div class="tag-cloud">
 			<repeat group="{{ @cloud }}" value="{{ @item }}">
 				<a href="{{ @site.url }}tag/{{ @item.tag }}" style="font-size: {{ 14 + (@item.freq * 2) }}px;">{{ @item.tag }}</a>&ensp;

@@ -1,16 +1,18 @@
-<check if="{{ empty(@parent) }}">
-	<true>
-		<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.new_task }}</a>
-	</true>
-	<false>
-		<check if="{{ !@parent.closed_date }}">
-			<check if="{{ @parent.type_id == @issue_type.project }}">
-				<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.project }}/{{ @parent.id }}">{{ @dict.new_sub_project }}</a>
+<check if="{{ isset(@user.id) }}">
+	<check if="{{ empty(@parent) }}">
+		<true>
+			<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.new_task }}</a>
+		</true>
+		<false>
+			<check if="{{ !@parent.closed_date }}">
+				<check if="{{ @parent.type_id == @issue_type.project }}">
+					<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.project }}/{{ @parent.id }}">{{ @dict.new_sub_project }}</a>
+				</check>
+				<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
+				<span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="' . @site.url . 'issues/' . @parent.id . '">#' . @parent.id . ' ' . @parent.name . '</a>' | format }}</span>
 			</check>
-			<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
-			<span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="' . @site.url . 'issues/' . @parent.id . '">#' . @parent.id . ' ' . @parent.name . '</a>' | format }}</span>
-		</check>
-	</false>
+		</false>
+	</check>
 </check>
 <check if="{{ !empty(@issues) }}">
 	<true>

@@ -70,7 +70,9 @@
 					<td>
 						<select class="form-control input-sm" name="author_id">
 							<option></option>
-							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
+							<check if="{{ isset(@user.id) }}">
+								<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
+							</check>
 							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
@@ -92,7 +94,9 @@
 					<td>
 						<select class="form-control input-sm" name="owner_id">
 							<option></option>
-							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
+							<check if="{{ isset(@user.id) }}">
+								<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
+							</check>
 							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
@@ -234,7 +238,7 @@
 	</table>
 </form>
 
-<check if="{{ isset(@statuses) && isset(@groups) && isset(@users) && isset(@priorities) && isset(@sprints) && isset(@issue_types) }}">
+<check if="{{ isset(@user.id) && isset(@statuses) && isset(@groups) && isset(@users) && isset(@priorities) && isset(@sprints) && isset(@issue_types) }}">
 	<a class="btn btn-default btn-sm" data-toggle="modal" href="{{ @site.url }}javascript:void(0)" data-target="#bulk-actions">{{ @dict.bulk_actions }}</a>
 	<div class="contatiner modal fade in" id="bulk-actions">
 		<form action="{{ @site.url }}issues/bulk_update" method="post" id="bulk-form">
@@ -265,7 +269,9 @@
 									<select class="form-control input-sm bulk-input" name="owner_id">
 										<option value="">{{ @dict.choose_option }}</option>
 										<option value="-1">{{ @dict.not_assigned }}</option>
-										<option value="{{ @user.id }}">{{ @user.name }}</option>
+										<check if="{{ isset(@user.id) }}">
+											<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
+										</check>
 										<optgroup label="Groups">
 											<repeat group="{{ @groups }}" value="{{ @group }}">
 												<option value="{{ @group.id }}">{{ @group.name }}</option>

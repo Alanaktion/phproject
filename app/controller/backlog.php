@@ -7,13 +7,14 @@ class Backlog extends \Controller {
 	protected $_userId;
 
 	public function __construct() {
-		$this->_userId = $this->_requireLogin();
+		$this->_userId = $this->_requireLogin(0);
 	}
 
 	public function index($f3, $params) {
-
-		if(empty($params["filter"])) {
+		if(empty($params["filter"]) && $this->_userId) {
 			$params["filter"] = "groups";
+		} elseif(empty($params["filter"])) {
+			$params["filter"] = "all";
 		}
 
 		if(empty($params["groupid"])) {
@@ -87,9 +88,8 @@ class Backlog extends \Controller {
 		$this->_render("backlog/index.html");
 	}
 
-
-
 	public function edit($f3) {
+		$this->_requireLogin(2);
 		$post = $f3->get("POST");
 		$issue = new \Model\Issue();
 		$issue->load($post["itemId"]);
@@ -99,7 +99,6 @@ class Backlog extends \Controller {
 	}
 
 	public function index_old($f3) {
-
 		$sprint_model = new \Model\Sprint();
 		$sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date DESC"));
 

@@ -1,20 +1,25 @@
 <ul class="list-unstyled" id="watchers-list">
 	<repeat group="{{ @watchers }}" value="{{ @watcher }}">
 		<li data-user-id="{{ @watcher.id }}">
-			<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;{{ @watcher.name | esc }}
+			<check if="{{ isset(@user.id) }}">
+				<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+			</check>
+			{{ @watcher.name | esc }}
 		</li>
 	</repeat>
 </ul>
-<form class="form-inline" role="form" id="add-watcher">
-	<input type="hidden" name="action" value="add_watcher">
-	<div class="form-group">
-		<select name="user_id" class="form-control input-sm" id="watcherselect">
-			<repeat group="{{ @users }}" value="{{ @user }}">
-				<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
-			</repeat>
-		</select>
-	</div>
-	<div class="form-group">
-		<button type="submit" class="btn btn-sm btn-primary">{{ @dict.add_watcher }}</button>
-	</div>
-</form>
+<check if="{{ isset(@user.id) }}">
+	<form class="form-inline" role="form" id="add-watcher">
+		<input type="hidden" name="action" value="add_watcher">
+		<div class="form-group">
+			<select name="user_id" class="form-control input-sm" id="watcherselect">
+				<repeat group="{{ @users }}" value="{{ @user }}">
+					<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
+				</repeat>
+			</select>
+		</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-sm btn-primary">{{ @dict.add_watcher }}</button>
+		</div>
+	</form>
+</check>

@@ -3,7 +3,11 @@
 abstract class Controller {
 
 	/**
-	 * Require a user to be logged in. Redirects to /login if a session is not found.
+	 * Require a user to be logged in.
+	 *
+	 * Sends HTTP 403 if logged in, but not sufficient rank
+	 * Redirects to /login if a session is not found and $rank is > 0
+	 *
 	 * @param  int $rank
 	 * @return int|bool
 	 */
@@ -24,38 +28,26 @@ abstract class Controller {
 				if($user->id) {
 					$session = new \Model\Session($user->id);
 					$session->setCurrent();
-					$f3->reroute("/");
-					return;
+					return $user->id;
 				} else {
 					$f3->set("error", "Auto-login failed, demo user was not found.");
 				}
 			}
-			if(empty($_GET)) {
-				$f3->reroute("/login?to=" . urlencode($f3->get("PATH")));
-			} else {
-				$f3->reroute("/login?to=" . urlencode($f3->get("PATH")) . urlencode("?" . http_build_query($_GET)));
+			if($rank > 0 || !$f3->get("site.public_access")) {
+				$f3->reroute("/login?to=" . urlencode($f3->get("PATH")) . (empty($_GET) ? '' : urlencode("?" . http_build_query($_GET))));
+				$f3->unload();
 			}
-			$f3->unload();
 			return false;
 		}
 	}
 
 	/**
-	 * Require a user to be an administrator. Throws HTTP 403 if logged in, but not an admin.
+	 * Require a user to be an administrator.
 	 * @param  int $rank
 	 * @return int|bool
 	 */
 	protected function _requireAdmin($rank = 4) {
-		$id = $this->_requireLogin();
-
-		$f3 = \Base::instance();
-		if($f3->get("user.role") == "admin" && $f3->get("user.rank") >= $rank) {
-			return $id;
-		} else {
-			$f3->error(403);
-			$f3->unload();
-			return false;
-		}
+		return $this->_requireLogin($rank);
 	}
 
 	/**
@@ -85,7 +77,7 @@ abstract class Controller {
 	 * @param  boolean $time  Whether to include the time in the string
 	 * @return string
 	 */
-	function now($time = true) {
+	final public function now($time = true) {
 		return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
 	}
 

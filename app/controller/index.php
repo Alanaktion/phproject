@@ -9,7 +9,7 @@ class Index extends \Controller {
 			$user_controller = new \Controller\User();
 			return $user_controller->dashboard($f3, $params);
 		} else {
-			if($f3->get("site.public")) {
+			if($f3->get("site.public_access")) {
 				$this->_render("index/index.html");
 			} else {
 				if($f3->get("site.demo") && is_numeric($f3->get("site.demo"))) {

@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
 	<include href="blocks/head.html" />
-	<link rel="stylesheet" href="{{ @site.url }}css/backlog.css">
+	<check if="{{ isset(@user.id) }}">
+		<link rel="stylesheet" href="{{ @site.url }}css/backlog.css">
+	</check>
 </head>
 <body>
 <include href="blocks/navbar.html" />
@@ -22,9 +24,11 @@
 					<ul class="list-group sortable" data-list-id="0">
 					</ul>
 				</div>
-				<p style="text-align:center;" class="text-muted">
-					{{ @dict.backlog_old_help_text }}
-				</p>
+				<check if="{{ isset(@user.id) }}">
+					<p style="text-align:center;" class="text-muted">
+						{{ @dict.backlog_old_help_text }}
+					</p>
+				</check>
 			</div>
 		</div>
 		<div class="col-md-6">
@@ -54,8 +58,10 @@
 		</div>
 	</div>
 	<include href="blocks/footer.html" />
-	<script src="{{ @site.url }}minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
-	<script src="{{ @site.url }}minify/js/backlog.js"></script>
+	<check if="{{ isset(@user.id) }}">
+		<script src="{{ @site.url }}minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
+		<script src="{{ @site.url }}minify/js/backlog.js"></script>
+	</script>
 </div>
 </body>
 </html>

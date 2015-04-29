@@ -7,7 +7,7 @@ class Issues extends \Controller {
 	protected $_userId;
 
 	public function __construct() {
-		$this->_userId = $this->_requireLogin();
+		$this->_userId = $this->_requireLogin(0);
 	}
 
 	/**
@@ -204,6 +204,7 @@ class Issues extends \Controller {
 	 * @param  array $params from form
 	 */
 	public function bulk_update($f3, $params) {
+		$this->_requireLogin(2);
 		$post = $f3->get("POST");
 
 		$issue = new \Model\Issue;
@@ -343,6 +344,8 @@ class Issues extends \Controller {
 	 * @param  array $params
 	 */
 	public function add($f3, $params) {
+		$this->_requireLogin(2);
+
 		if($f3->get("PARAMS.type")) {
 			$type_id = $f3->get("PARAMS.type");
 		} else {
@@ -387,6 +390,8 @@ class Issues extends \Controller {
 	}
 
 	public function add_selecttype($f3, $params) {
+		$this->_requireLogin(2);
+
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
@@ -396,6 +401,8 @@ class Issues extends \Controller {
 	}
 
 	public function edit($f3, $params) {
+		$this->_requireLogin(2);
+
 		$issue = new \Model\Issue;
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -432,6 +439,8 @@ class Issues extends \Controller {
 	}
 
 	public function close($f3, $params) {
+		$this->_requireLogin(2);
+
 		$issue = new \Model\Issue;
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -450,6 +459,8 @@ class Issues extends \Controller {
 	}
 
 	public function reopen($f3, $params) {
+		$this->_requireLogin(2);
+
 		$issue = new \Model\Issue;
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -468,6 +479,8 @@ class Issues extends \Controller {
 	}
 
 	public function copy($f3, $params) {
+		$this->_requireLogin(2);
+
 		$issue = new \Model\Issue;
 		$issue->load($f3->get("PARAMS.id"));
 
@@ -614,6 +627,8 @@ class Issues extends \Controller {
 	}
 
 	public function save($f3, $params) {
+		$this->_requireLogin(2);
+
 		if($f3->get("POST.id")) {
 
 			// Updating existing issue.
@@ -657,6 +672,7 @@ class Issues extends \Controller {
 		if(!empty($post)) {
 			switch($post["action"]) {
 				case "comment":
+					$this->_requireLogin(1);
 					$comment = new \Model\Issue\Comment;
 					if(empty($post["text"])) {
 						if($f3->get("AJAX")) {
@@ -695,6 +711,7 @@ class Issues extends \Controller {
 					break;
 
 				case "add_watcher":
+					$this->_requireLogin(1);
 					$watching = new \Model\Issue\Watcher;
 					// Loads just in case the user is already a watcher
 					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
@@ -707,6 +724,7 @@ class Issues extends \Controller {
 					break;
 
 				case "remove_watcher":
+					$this->_requireLogin(1);
 					$watching = new \Model\Issue\Watcher;
 					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
 					$watching->delete();
@@ -715,9 +733,8 @@ class Issues extends \Controller {
 						return;
 					break;
 
-
-
 				case "add_dependency":
+					$this->_requireLogin(2);
 					$dependencies = new \Model\Issue\Dependency;
 					// Loads just in case the task  is already a dependency
 					$dependencies->load(array("issue_id = ? AND dependency_id = ?", $issue->id, $post["id"]));
@@ -731,6 +748,7 @@ class Issues extends \Controller {
 					break;
 
 				case "add_dependent":
+					$this->_requireLogin(2);
 					$dependencies = new \Model\Issue\Dependency;
 					// Loads just in case the task  is already a dependency
 					$dependencies->load(array("issue_id = ? AND dependency_id = ?",  $post["id"],  $issue->id));
@@ -743,8 +761,8 @@ class Issues extends \Controller {
 						return;
 					break;
 
-
 				case "remove_dependency":
+					$this->_requireLogin(2);
 					$dependencies = new \Model\Issue\Dependency;
 					$dependencies->load($post["id"]);
 					$dependencies->delete();
@@ -752,7 +770,6 @@ class Issues extends \Controller {
 					if($f3->get("AJAX"))
 						return;
 					break;
-
 			}
 		}
 
@@ -896,11 +913,11 @@ class Issues extends \Controller {
 		} else {
 			$f3->error(404);
 		}
-
-
 	}
 
 	public function single_delete($f3, $params) {
+		$this->_requireLogin(2);
+
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$user = $f3->get("user_obj");
@@ -913,6 +930,8 @@ class Issues extends \Controller {
 	}
 
 	public function single_undelete($f3, $params) {
+		$this->_requireLogin(2);
+
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$user = $f3->get("user_obj");
@@ -925,7 +944,7 @@ class Issues extends \Controller {
 	}
 
 	public function comment_delete($f3, $params) {
-		$this->_requireAdmin();
+		$this->_requireLogin(3);
 		$comment = new \Model\Issue\Comment;
 		$comment->load($f3->get("POST.id"));
 		$comment->delete();
@@ -933,6 +952,7 @@ class Issues extends \Controller {
 	}
 
 	public function file_delete($f3, $params) {
+		$this->_requireLogin(2);
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
 		$file->delete();
@@ -940,6 +960,7 @@ class Issues extends \Controller {
 	}
 
 	public function file_undelete($f3, $params) {
+		$this->_requireLogin(2);
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
 		$file->deleted_date = null;
@@ -973,7 +994,7 @@ class Issues extends \Controller {
 	}
 
 	public function upload($f3, $params) {
-		$user_id = $this->_userId;
+		$user_id = $this->_requireLogin(2);
 
 		$issue = new \Model\Issue;
 		$issue->load(array("id=? AND deleted_date IS NULL", $f3->get("POST.issue_id")));
