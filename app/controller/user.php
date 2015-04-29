@@ -99,13 +99,9 @@ class User extends \Controller {
 		$f3 = \Base::instance();
 
 		// Get theme list
-		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput", "emote");
 		$themes = array();
-		foreach (glob("css/*.css") as $file) {
-			$name = pathinfo($file, PATHINFO_FILENAME);
-			if(!in_array($name, $hidden_themes)) {
-				$themes[] = $name;
-			}
+		foreach (glob("assets/theme-css/*.css") as $file) {
+			$themes[] = basename($file, ".css");
 		}
 
 		$f3->set("themes", $themes);

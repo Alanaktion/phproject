@@ -1,0 +1,43 @@
+// Phproject primary theme
+// Based on Flatly
+
+@import "../../../bower_components/bootstrap/less/bootstrap.less";
+@import "../bootswatch/flatly/variables.less";
+
+// Change fonts
+@font-family-sans-serif: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+@import url("//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600");
+
+// Run Bootswatch
+@import "../bootswatch/flatly/bootswatch.less";
+
+// Adjust heading font weights
+h1, h2, h3,
+.h1, .h2, .h3,
+.issue-heading {
+	font-weight: 300;
+}
+
+// Border changes
+.form-control,
+input {
+	border-width: 1px;
+}
+
+.has-warning .form-control,
+.has-error .form-control,
+.has-success .form-control {
+	border-width: 1px;
+	&:focus {
+		border-width: 1px;
+	}
+}
+
+// Color fixes
+.panel-default .close,
+.modal .close,
+.popover {
+	color: @brand-primary;
+}
+
+@import "../style.less";

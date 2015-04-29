@@ -1,2 +1,4 @@
-plugin
+app/plugin
+assets/bower_components
+assets/node_modules
 config.ini

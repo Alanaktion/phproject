@@ -1,0 +1,74 @@
+// Phproject dark theme
+// Based on Darkly
+
+@import "../../../bower_components/bootstrap/less/bootstrap.less";
+@import "../bootswatch/darkly/variables.less";
+@import "../bootswatch/darkly/bootswatch.less";
+
+// Border changes
+.form-control,
+input {
+	border-width: 1px;
+}
+
+.has-warning .form-control,
+.has-error .form-control,
+.has-success .form-control {
+	border-width: 1px;
+	&:focus {
+		border-width: 1px;
+	}
+}
+
+// Color changes
+.navbar-default {
+	background-color: @gray-dark;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .open > a {
+	background-color: @gray;
+	&:hover,
+	&:focus {
+		background-color: @gray;
+	}
+}
+.navbar-default .navbar-toggle {
+	border-color: @gray;
+	&:hover,
+	&:focus {
+		background-color: @gray;
+	}
+}
+.close {
+	color: @text-color;
+	&:hover,
+	&:focus {
+		color: @text-color;
+	}
+}
+
+@import "../style.less";
+
+// @todo Update taskboard.less and datepicker.less to remove the need for this
+#taskboard table.taskboard-head {
+	background-color: transparent;
+}
+#taskboard table.taskboard-head th {
+	background-color: #222;
+	background-color: rgba(34,34,34,.8) !important;
+	color: white !important;
+}
+#taskboard .spinner {
+	background-image: url(../img/ajax-loader-dark.gif) !important;
+}
+.datepicker {
+	color: #111;
+}
+.datepicker td.active,
+.datepicker td span.active {
+	background-color: #375A7F !important;
+}
+.datepicker td.active:hover,
+.datepicker td span.active:hover {
+	background-color: #2B4663 !important;
+}

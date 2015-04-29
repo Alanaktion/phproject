@@ -33,7 +33,7 @@
 								<select name="theme" class="form-control input-sm">
 									<option value="">[ {{ @dict.default }} ]</option>
 									<repeat group="{{ @themes }}" value="{{ @item }}">
-										<option value="css/{{ @item }}.css" {{ (@user.theme == 'css/'.@item.'.css') ? 'selected' : '' }}>{{ str_replace(array("bootstrap-", ".min"), "", @item) }}</option>
+										<option value="{{ @item }}" {{ (@user.theme == @item) ? 'selected':'' }}>{{ @item }}</option>
 									</repeat>
 								</select>
 							</div>
@@ -74,7 +74,7 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">{{ @dict.avatar }}</label>
 							<div class="col-sm-10">
-								<p><a href="https://www.gravatar.com/emails/" target="_blank" class="img-border img-border-rounded"><img src="{{ @user_obj->avatar(96) }}" class="img-rounded profile-picture" alt="Gravatar"></a></p>
+								<p><a href="https://www.gravatar.com/emails/" target="_blank" class="img-rounded"><img src="{{ @user_obj->avatar(96) }}" class="img-rounded profile-picture" alt="Gravatar"></a></p>
 								<form style="display: none;"></form>
 								<form class="clearfix" method="post" enctype="multipart/form-data" action="{{ @site.url }}user/avatar">
 									<input type="file" name="avatar" id="input_avatar" class="pull-left">

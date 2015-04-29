@@ -45,7 +45,7 @@ class Image extends \Image {
 
 		$f3 = \Base::instance();
 
-		$font = "fonts/" . $font;
+		$font = "assets/fonts/" . $font;
 		if(!is_file($font)) {
 			$f3->error(500, "Font file not found");
 			return false;
