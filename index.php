@@ -7,6 +7,7 @@ $f3->mset(array(
 	"ESCAPE" => false,
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
+	"PREFIX" => "dict.",
 	"LOCALES" => "app/dict/",
 	"FALLBACK" => "en",
 	"CACHE" => true,

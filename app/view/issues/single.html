@@ -42,7 +42,7 @@
 	</check>
 	<div class="clearfix">
 		<h3 class="pull-left issue-heading">
-			{{ @issue.name | esc }} <small>#{{ @issue.id }}</small>
+			<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="nolink">{{ @issue.name | esc }}</a> <small>#{{ @issue.id }}</small>
 		</h3>
 		<div class="pull-right">
 			<check if="{{ @issue.status_closed }}">
@@ -169,7 +169,7 @@
 
 			<dl>
 				<dt>{{ @dict.cols.description }}:</dt>
-				<dd class="tex">{{ $this->parseTextile(@issue.description) }}</dd>
+				<dd class="tex">{{ $this->parseText(@issue.description) }}</dd>
 			</dl>
 
 			<hr class="hidden-lg">
@@ -269,7 +269,7 @@
 											<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
 										</check>
 									</p>
-									<div class="tex">{{ $this->parseTextile(@comment.text, false, false) }}</div>
+									<div class="tex">{{ $this->parseText(@comment.text, array('hashtags' => false)) }}</div>
 									<check if="{{ @comment.file_id }}">
 										<check if="{{ @comment.file_deleted_date }}">
 											<true>
