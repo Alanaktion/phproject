@@ -440,11 +440,13 @@ class Issues extends \Controller {
 			return;
 		}
 
-		$status = new \Model\Issue\Status;
-		$status->load(array("closed = ?", 1));
-		$issue->status = $status->id;
-		$issue->closed_date = $this->now();
-		$issue->save();
+		if(!$issue->closed_date) {
+			$status = new \Model\Issue\Status;
+			$status->load(array("closed = ?", 1));
+			$issue->status = $status->id;
+			$issue->closed_date = $this->now();
+			$issue->save();
+		}
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
@@ -458,11 +460,13 @@ class Issues extends \Controller {
 			return;
 		}
 
-		$status = new \Model\Issue\Status;
-		$status->load(array("closed = ?", 0));
-		$issue->status = $status->id;
-		$issue->closed_date = null;
-		$issue->save();
+		if($issue->closed_date) {
+			$status = new \Model\Issue\Status;
+			$status->load(array("closed = ?", 0));
+			$issue->status = $status->id;
+			$issue->closed_date = null;
+			$issue->save();
+		}
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
