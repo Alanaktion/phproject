@@ -4269,18 +4269,18 @@ a.list-group-item-danger.active, a.list-group-item-danger.active:hover, a.list-g
 	border-bottom-color: #3d3d3d;
 }
 .panel-success {
-	border-color: #d74300;
+	border-color: #78AA28;
 }
 .panel-success > .panel-heading {
 	color: #fff;
-	background-color: #d74300;
-	border-color: #d74300;
+	background-color: #78AA28;
+	border-color: #78AA28;
 }
 .panel-success > .panel-heading + .panel-collapse .panel-body {
-	border-top-color: #d74300;
+	border-top-color: #78AA28;
 }
 .panel-success > .panel-footer + .panel-collapse .panel-body {
-	border-bottom-color: #d74300;
+	border-bottom-color: #78AA28;
 }
 .panel-info {
 	border-color: #3498db;
