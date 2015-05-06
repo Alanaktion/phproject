@@ -70,9 +70,9 @@
 
 		<div role="tabpanel">
 			<ul class="nav nav-tabs" role="tablist">
-				<li class="active"><a href="#user-created" data-toggle="tab">{{ @dict.created_issues }}</a></li>
-				<li><a href="#user-assigned" data-toggle="tab">{{ @dict.assigned_issues }}</a></li>
-				<li><a href="#user-overdue" data-toggle="tab">{{ @dict.overdue_issues }}</a></li>
+				<li class="active"><a href="#user-created" data-toggle="tab">{{ @dict.created_issues }}&ensp;<span class="badge">{{ @created_issues.total }}</span></a></li>
+				<li><a href="#user-assigned" data-toggle="tab">{{ @dict.assigned_issues }}&ensp;<span class="badge">{{ @assigned_issues.total }}</span></a></li>
+				<li><a href="#user-overdue" data-toggle="tab">{{ @dict.overdue_issues }}&ensp;<span class="badge">{{ @overdue_issues.total }}</span></a></li>
 				<li><a href="#user-tree" data-toggle="tab">{{ @dict.issue_tree }}</a></li>
 			</ul>
 			<div class="tab-content">
