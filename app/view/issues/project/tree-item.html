@@ -16,14 +16,22 @@
 	<td>{{ @issue.author_name }}</td>
 	<td>{{ @issue.priority_name }}</td>
 	<td>
+		<check if="{{ @issue.due_date }}">
+			<true>
+			{{ date("n/j/y", strtotime(@issue.due_date)) }}
+			</true>
+			<false>
+				<check if="{{ @issue.sprint_end_date }}">
+					{{ date("n/j/y", strtotime(@issue.sprint_end_date)) }}
+				</check>
+			</false>
+		</check>
+	</td>
+	<td>
 		<check if="{{ @issue.sprint_start_date }}">
 			{{ date("n/j/y", strtotime(@issue.sprint_start_date)) }}
 		</check>
 	</td>
-	<td>
-		<check if="{{ @issue.due_date }}">
-			{{ date("n/j/y", strtotime(@issue.due_date)) }}
-		</check>
-	</td>
+
 	<td>{{ @issue.hours_spent }}</td>
 </tr>
