@@ -67,20 +67,33 @@
 			</div>
 		</div>
 		<br>
-		<div class="row">
-			<div class="col-md-12">
-				<p>
-					{{ @dict.browse }}:&nbsp;
-					<a href="{{ @site.url }}issues?status=open&amp;author_id={{ @this_user.id }}">{{ @dict.created_issues }}</a>&nbsp;&middot;
-					<a href="{{ @site.url }}issues?status=open&amp;owner_id={{ @this_user.id }}">{{ @dict.assigned_issues }}</a>&nbsp;&middot;
-					<a href="{{ @site.url }}user/{{ @this_user.username }}/tree">{{ @dict.issue_tree }}</a>&nbsp;&middot;
-					<check if="{{ @sprint && @sprint.id }}">
-						<a href="{{ @site.url }}taskboard/{{ @sprint.id }}/{{ @this_user.id }}">{{ @dict.taskboard }}</a>
-					</check>
-				</p>
-				<include href="blocks/issue-list.html" />
+
+		<div role="tabpanel">
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="active"><a href="#user-created" data-toggle="tab">{{ @dict.created_issues }}&ensp;<span class="badge">{{ @created_issues.total }}</span></a></li>
+				<li><a href="#user-assigned" data-toggle="tab">{{ @dict.assigned_issues }}&ensp;<span class="badge">{{ @assigned_issues.total }}</span></a></li>
+				<li><a href="#user-overdue" data-toggle="tab">{{ @dict.overdue_issues }}&ensp;<span class="badge">{{ @overdue_issues.total }}</span></a></li>
+				<li><a href="#user-tree" data-toggle="tab">{{ @dict.issue_tree }}</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane fade in active" id="user-created">
+					<set issues="{{ @created_issues }}" />
+					<include href="blocks/issue-list.html" />
+				</div>
+				<div class="tab-pane fade" id="user-assigned">
+					<set issues="{{ @assigned_issues }}" />
+					<include href="blocks/issue-list.html" />
+				</div>
+				<div class="tab-pane fade" id="user-tree">
+					<p>{{ @dict.loading }}</p>
+				</div>
+				<div class="tab-pane fade" id="user-overdue">
+					<set issues="{{ @overdue_issues }}" />
+					<include href="blocks/issue-list.html" />
+				</div>
 			</div>
 		</div>
+
 		<include href="blocks/footer.html" />
 	</div>
 	<script src="{{ @site.url }}js/chart.js"></script>
@@ -101,6 +114,7 @@
 		</false>
 	</check>
 	<script>
+	// TODO: Add data for each user and loop through it
 	var charts = {
 		data: {
 			labels: $.parseJSON(jsonData.labels),
@@ -146,9 +160,20 @@
 			responsive: true,
 		}
 	};
+
 	$(document).ready(function() {
+
+		// Preload issue tree
+		$.get(site_url + 'user/{{ @this_user.username }}/tree', {}, function(data) {
+			$('#user-tree').html(data);
+		}).error(function() {
+			$('#user-tree').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.404_text }}'));
+		});
+
+		// Render chart
 		var ctx = document.getElementById("stats").getContext("2d");
 		charts.chart = new Chart(ctx).Line(charts.data, charts.options);
+
 	});
 	</script>
 </body>
