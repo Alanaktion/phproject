@@ -96,10 +96,12 @@ class Index extends \Controller {
 		// Check for existing users
 		$user->load(array("email=?", $f3->get("POST.register-email")));
 		if($user->id) {
+            $user->reset();
 			$errors[] = "A user already exists with this email address.";
 		}
 		$user->load(array("username=?", $f3->get("POST.register-username")));
 		if($user->id) {
+            $user->reset();
 			$errors[] = "A user already exists with this username.";
 		}
 
