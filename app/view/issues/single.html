@@ -244,8 +244,8 @@
 			<div class="tab-content">
 				<div class="tab-pane fade in active" id="comments">
 					<div class="comments">
-						<form action="{{ @site.url }}issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
-							<input type="hidden" name="action" value="comment">
+						<form action="{{ @site.url }}issues/comment/save" method="POST" id="comment_form" role="form" class="form-horizontal">
+							<input type="hidden" name="issue_id" value="{{ @issue.id }}">
 							<div class="form-group">
 								<div class="col-md-12">
 									<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="{{ @dict.write_a_comment }}" autocomplete="off"></textarea>
