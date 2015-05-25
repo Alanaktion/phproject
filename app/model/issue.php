@@ -8,6 +8,22 @@ class Issue extends \Model {
 		$_table_name = "issue",
 		$_heirarchy = null,
 		$_children = null;
+	protected static $requiredFields = array("type_id", "status", "name", "author_id");
+
+	/**
+	 * Create and save a new comment
+	 * @param  array $data
+	 * @param  bool  $notify
+	 * @return Comment
+	 */
+	public static function create(array $data, $notify = true) {
+		$item = parent::create($data);
+		if($notify) {
+			$notification = \Helper\Notification::instance();
+			$notification->issue_create($item->issue_id);
+		}
+		return $item;
+	}
 
 	/**
 	 * Get complete parent list for issue
