@@ -36,6 +36,9 @@ $(document).ready(function() {
 		e.stopPropagation();
 	});
 	$('.issue-list tbody tr').click(function(e) {
+		if(e.which != 1) {
+			return;
+		}
 		var $checkbox = $(this).find('input'),
 			checked = $checkbox.prop('checked');
 		if (e.ctrlKey || e.metaKey) {
