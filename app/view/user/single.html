@@ -96,7 +96,7 @@
 
 		<include href="blocks/footer.html" />
 	</div>
-	<script src="{{ @site.url }}js/chart.js"></script>
+	<script src="{{ @BASE }}/js/chart.js"></script>
 	<check if="{{ @this_user.role != 'group' }}">
 		<true>
 			<set stats="{{ @this_user->stats() }}" />
@@ -158,13 +158,16 @@
 			datasetFill: true,
 			animation: false,
 			responsive: true,
+			maintainAspectRatio: false,
+			scaleLineColor: "rgba(127,127,127,.2)",
+			scaleGridLineColor : "rgba(127,127,127,.1)"
 		}
 	};
 
 	$(document).ready(function() {
 
 		// Preload issue tree
-		$.get(site_url + 'user/{{ @this_user.username }}/tree', {}, function(data) {
+		$.get(BASE + 'user/{{ @this_user.username }}/tree', {}, function(data) {
 			$('#user-tree').html(data);
 		}).error(function() {
 			$('#user-tree').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.404_text }}'));

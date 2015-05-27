@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{ @dict.install_phproject }}</title>
-	<link rel="stylesheet" type="text/css" href="{{ @site.url }}css/bootstrap-phproject.css">
+	<link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/bootstrap-phproject.css">
 	<style type="text/css">
 		body {
 			margin: 15px 0;
@@ -29,7 +29,7 @@
 										<check if="{{ !empty(@warning) }}">
 											<p class="alert alert-warning">{{ @warning }}</p>
 										</check>
-										<form role="form" class="form-horizontal" action="{{ @site.url }}install.php" method="post">
+										<form role="form" class="form-horizontal" action="{{ @BASE }}/install.php" method="post">
 											<div class="col-sm-9 col-sm-offset-3">
 												<h4>Site Configuration</h4>
 											</div>
@@ -154,7 +154,7 @@
 							<false>
 								<p class="alert alert-success">{{ @success }}</p>
 								<div class="text-right">
-									<a class="btn btn-success" href="{{ @site.url }}">Continue</a>
+									<a class="btn btn-success" href="{{ @BASE }}">Continue</a>
 								</div>
 							</false>
 						</check>

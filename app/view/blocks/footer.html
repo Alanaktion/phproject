@@ -23,7 +23,7 @@
 </check>
 <footer class="row">
 	<div class="col-xs-4">
-		<p class="visible-sm visible-xs"><a href="{{ @site.url }}logout" class="btn btn-default btn-xs">{{ @dict.log_out }}</a></p>
+		<p class="visible-sm visible-xs"><a href="{{ @BASE }}/logout" class="btn btn-default btn-xs">{{ @dict.log_out }}</a></p>
 	</div>
 	<div class="col-xs-8">
 		<p class="text-right text-muted">
@@ -56,9 +56,9 @@
 		}
 	}
 ~}
-<script>var site_url = '{{ @site.url }}', issue_types = {{ json_encode(@types) }};</script>
-<script src="{{ @site.url }}minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,intercom.min.js,global.js"></script>
-<script src="{{ @site.url }}js/respond.min.js"></script>
+<script>var BASE = '{{ @BASE }}/', issue_types = {{ json_encode(@types) }};</script>
+<script src="{{ @BASE }}/minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,intercom.min.js,global.js"></script>
+<script src="{{ @BASE }}/js/respond.min.js"></script>
 
 <include href="blocks/footer-modals.html" if="{{ !empty(@user.id) }}" />
 

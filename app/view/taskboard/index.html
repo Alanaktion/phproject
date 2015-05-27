@@ -2,7 +2,7 @@
 <html lang="{{ @LANGUAGE }}">
 <head>
 	<include href="blocks/head.html" />
-	<link rel="stylesheet" href="{{ @site.url }}minify/css/taskboard.css">
+	<link rel="stylesheet" href="{{ @BASE }}/minify/css/taskboard.css">
 	<set columnwidth="160" />
 	<check if="{{ !empty(@taskboard[0]) }}">
 		<style type="text/css">
@@ -48,13 +48,13 @@
 							<span class="glyphicon glyphicon-filter"></span> {{ @dict.filter_tasks }} <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/all">{{ @dict.all_tasks }}</a></li>
-							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/groups">{{ @dict.my_groups }}</a></li>
-							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/me">{{ @dict.my_tasks }}</a></li>
+							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/all">{{ @dict.all_tasks }}</a></li>
+							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/groups">{{ @dict.my_groups }}</a></li>
+							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/me">{{ @dict.my_tasks }}</a></li>
 							<check if="{{ count(@groups) }}">
 								<li class="divider"></li>
 								<repeat group="{{ @groups }}" value="{{ @group }}">
-									<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/{{ @group.id }}">{{ @group.name | esc }}</a></li>
+									<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @group.id }}">{{ @group.name | esc }}</a></li>
 								</repeat>
 							</check>
 						</ul>
@@ -62,7 +62,7 @@
 					<button id="btn-burndown" class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#burndown-modal">
 						<span class="glyphicon glyphicon-fire"></span> {{ @dict.burndown }}
 					</button>
-					<a href="{{ @site.url }}taskboard/{{ @PARAMS.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Reload taskboard">
+					<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Reload taskboard">
 						<span class="glyphicon glyphicon-repeat"></span>
 					</a>
 				</th>
@@ -77,13 +77,13 @@
 					<td class="column column-1">
 						<div id="project_{{  @row.project.id}}" class="card story {{ @row.project.status_closed ? 'completed' : '' }}" style="border-color:#{{ @row.project.owner_task_color }};">
 							<div class="top">
-								<a href="{{ @site.url }}issues/new/{{ @issue_type.task }}" title="Add Task" class="add-task has-tooltip pull-right" data-placement="right">
+								<a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}" title="Add Task" class="add-task has-tooltip pull-right" data-placement="right">
 									<span class="glyphicon glyphicon-plus"></span>
 								</a>
 								<span class="owner">
 									<check if="{{ @row.project.owner_username }}">
 										<true>
-											<a href="{{ @site.url }}user/{{ @row.project.owner_username }}" target="_blank">{{ @row.project.owner_name | esc }}</a>
+											<a href="{{ @BASE }}/user/{{ @row.project.owner_username }}" target="_blank">{{ @row.project.owner_name | esc }}</a>
 										</true>
 										<false>
 											{{ @row.project.owner_name | esc }}
@@ -91,7 +91,7 @@
 									</check>
 								</span>
 								<span class="task-id">
-									<a href="{{ @site.url }}issues/{{ @row.project.id }}" target="_blank">{{ @row.project.id }}</a>
+									<a href="{{ @BASE }}/issues/{{ @row.project.id }}" target="_blank">{{ @row.project.id }}</a>
 								</span>
 
 								<span class="task-dueDate">{{ empty(@row.project.due_date) ? "" : date('n/j', strtotime(@row.project.due_date)) }}</span>
@@ -107,7 +107,7 @@
 									<div class="hidden repeat_cycle">{{ @task.repeat_cycle }}</div>
 									<div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
 									<div class="top">
-										<span class="task-id"><a href="{{ @site.url }}issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
+										<span class="task-id"><a href="{{ @BASE }}/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
 										<span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
 									</div>
 									<div class="title">{{ @task.name | esc }}</div>
@@ -138,7 +138,7 @@
 									<div class="owner" data-id="{{ @task.owner_id }}">
 										<check if="{{ @task.owner_username }}">
 											<true>
-												<a href="{{ @site.url }}user/{{ @task.owner_username }}" target="_blank">{{ @task.owner_name | esc }}</a>
+												<a href="{{ @BASE }}/user/{{ @task.owner_username }}" target="_blank">{{ @task.owner_name | esc }}</a>
 											</true>
 											<false>
 												{{ @task.owner_name | esc }}
@@ -290,9 +290,9 @@
 		</div>
 	</div>
 
-	<script src="{{ @site.url }}minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js,bootstrap-datepicker.js"></script>
-	<script src="{{ @site.url }}js/chart.js"></script>
-	<script src="{{ @site.url }}minify/js/taskboard.js,burndown.js"></script>
+	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js,bootstrap-datepicker.js"></script>
+	<script src="{{ @BASE }}/js/chart.js"></script>
+	<script src="{{ @BASE }}/minify/js/taskboard.js,burndown.js"></script>
 	<script>
 		var BurndownData,
 			BurndownReady = false,
@@ -306,7 +306,7 @@
 
 			// Preload burndown data
 			$.ajax({
-				url: site_url + "taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}",
+				url: BASE + "taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}",
 				success: function(data) {
 					BurndownData = data;
 					BurndownReady = true;

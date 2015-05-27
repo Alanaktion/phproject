@@ -6,7 +6,7 @@
 <body class="login">
 
 <h1 class="h2 text-center">
-	<a href="{{ @site.url }}" class="nolink">{{ @site.name }}</a>
+	<a href="{{ @BASE }}/" class="nolink">{{ @site.name }}</a>
 </h1>
 
 <br><br>
@@ -14,7 +14,7 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-sm-4 {{ @site.public_registration ? 'col-sm-offset-2' : 'col-sm-offset-4' }}">
-			<form action="{{ @site.url }}login" method="post" class="form-horizontal">
+			<form action="{{ @BASE }}/login" method="post" class="form-horizontal">
 				<div class="clearfix">
 					<h3 class="col-md-8 col-md-offset-4">{{ @dict.log_in }}</h3>
 				</div>
@@ -51,14 +51,14 @@
 				<div class="form-group">
 					<div class="col-lg-8 col-lg-offset-4">
 						<button type="submit" class="btn btn-primary">{{ @dict.log_in }}</button>
-						<a href="{{ @site.url }}reset" class="btn btn-link">{{ @dict.reset_password }}</a>
+						<a href="{{ @BASE }}/reset" class="btn btn-link">{{ @dict.reset_password }}</a>
 					</div>
 				</div>
 			</form>
 		</div>
 		<check if="{{ @site.public_registration }}">
 			<div class="col-sm-4">
-				<form action="{{ @site.url }}register" method="post" class="form-horizontal">
+				<form action="{{ @BASE }}/register" method="post" class="form-horizontal">
 					<div class="clearfix">
 						<h3 class="col-md-8 col-md-offset-4">{{ @dict.register }}</h3>
 					</div>

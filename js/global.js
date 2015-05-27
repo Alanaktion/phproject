@@ -64,7 +64,7 @@ $(document).ready(function() {
 	$('.issue-list tbody tr').dblclick(function(e) {
 		var id = $(this).data('id');
 		if(id) {
-			self.location = site_url + 'issues/' + id;
+			self.location = BASE + '/issues/' + id;
 		}
 	});
 
@@ -118,7 +118,7 @@ $(document).ready(function() {
 					break;
 				case 66: // Browse
 					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						window.location = site_url + 'issues?status=open';
+						window.location = BASE + '/issues?status=open';
 					}
 					break;
 				case 87: // Watch/unwatch issue
@@ -147,7 +147,7 @@ $(document).ready(function() {
 					break;
 				default:
 					if(!e.shiftKey && !e.ctrlKey && e.altKey && issue_types.indexOf(e.which - 48) >= 0) {
-						window.location = site_url + 'issues/new/' + (e.which - 48);
+						window.location = BASE + '/issues/new/' + (e.which - 48);
 					}
 			}
 		}
@@ -190,7 +190,7 @@ var Session = {
 	 * Send Ping request
 	 */
 	ping: function() {
-		$.get(site_url + 'ping', function(data) {
+		$.get(BASE + '/ping', function(data) {
 			if(Intercom.supported) {
 				Intercom.getInstance().emit('pingResponse', data);
 			} else {
