@@ -5,8 +5,8 @@ $(function() {
 });
 
 var Taskboard = {
-	updateURL: site_url + 'taskboard/edit', // AJAX Update Route (id is added dynamically)
-	addURL: site_url + 'taskboard/add', // AJAX Add Route
+	updateURL: BASE + '/taskboard/edit', // AJAX Update Route (id is added dynamically)
+	addURL: BASE + '/taskboard/add', // AJAX Add Route
 	taskReceived: false, // used for checking tasks resorted within the same list or to another
 	newTaskId: 0, // keep track of new tasks in case there are a few error tasks
 	init: function() {

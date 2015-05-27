@@ -28,7 +28,7 @@
 					<td>{{ @meta.version }}</td>
 					<td>
 						<check if="{{ @user.rank >= 5 && is_callable(@method) }}">
-							<a href="{{ @site.url }}admin/plugins/{{ @key }}">Details</a>
+							<a href="{{ @BASE }}/admin/plugins/{{ @key }}">Details</a>
 						</check>
 					</td>
 				</tr>

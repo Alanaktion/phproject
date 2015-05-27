@@ -12,7 +12,7 @@ class User extends \Controller {
 		$this->_userId = $this->_requireLogin();
 		$this->_languages = array(
 			"en" => \ISO::LC_en,
-			"en_GB" => \ISO::LC_en . " (Great Britain)",
+			"en-GB" => \ISO::LC_en . " (Great Britain)",
 			"es" => \ISO::LC_es . " (Español)",
 			"pt" => \ISO::LC_pt . " (Português)",
 			"ru" => \ISO::LC_ru . " (Pу́сский)",

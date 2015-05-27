@@ -4,10 +4,10 @@
 		{{ @issue.id }} &ndash;
 		<check if="{{ @issue.closed_date }}">
 			<true>
-				<a href="{{ @site.url }}issues/{{ @issue.id }}" class="text-muted"><s>{{ @issue.name | esc }}</s></a>
+				<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="text-muted"><s>{{ @issue.name | esc }}</s></a>
 			</true>
 			<false>
-				<a href="{{ @site.url }}issues/{{ @issue.id }}">{{ @issue.name | esc }}</a>
+				<a href="{{ @BASE }}/issues/{{ @issue.id }}">{{ @issue.name | esc }}</a>
 			</false>
 		</check>
 	</td>

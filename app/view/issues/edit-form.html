@@ -1,6 +1,6 @@
-<form class="form-horizontal well" role="form" action="{{ @site.url }}issues/save" method="post">
+<form class="form-horizontal well" role="form" action="{{ @BASE }}/issues/save" method="post">
 	<check if="{{ !empty(@issue) }}">
-		<a href="{{ @site.url }}issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
+		<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
 		<input type="hidden" name="id" value="{{ @issue.id }}">
 		<input type="hidden" name="hash_state" value="{{ json_encode(@issue->hashState()) | esc }}">
 	</check>
@@ -196,12 +196,14 @@
 		</div>
 	</div>
 	<hr>
-	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">{{ @dict.comment }}</label>
-		<div class="col-md-10">
-			<textarea class="form-control input-sm" name="comment" rows="3">{{ !empty(@comment) && is_string(@comment) ? @comment : "" | esc }}</textarea>
+	<check if="{{ !empty(@issue) }}">
+		<div class="form-group">
+			<label class="col-md-2 control-label label-sm">{{ @dict.comment }}</label>
+			<div class="col-md-10">
+				<textarea class="form-control input-sm" name="comment" rows="3">{{ !empty(@comment) && is_string(@comment) ? @comment : "" | esc }}</textarea>
+			</div>
 		</div>
-	</div>
+	</check>
 	<div class="form-group">
 		<div class="col-md-offset-2 col-md-10 text-right">
 			<div class="checkbox checkbox-inline">
@@ -211,7 +213,7 @@
 				</label>
 			</div>
 			<check if="{{ !empty(@issue) }}">
-				<a href="{{ @site.url }}issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
+				<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
 				<button type="reset" class="btn btn-default btn-sm">{{ @dict.reset }}</button>
 			</check>
 			<check if="{{ empty(@issue) }}">

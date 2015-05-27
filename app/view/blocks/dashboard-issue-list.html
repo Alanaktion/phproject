@@ -1,6 +1,6 @@
 <div class="list-group">
 	<repeat group="{{ @issues }}" value="{{ @item }}">
-		<a class="list-group-item" href="{{ @site.url }}issues/{{ @item.id }}">
+		<a class="list-group-item" href="{{ @BASE }}/issues/{{ @item.id }}">
 			<span class="badge status">{{ @item.status_name | esc }}</span>
 			<check if="{{ @item.owner_id != @user.id }}">
 				<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="{{ @dict.cols.assignee }}">

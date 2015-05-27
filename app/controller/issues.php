@@ -440,11 +440,13 @@ class Issues extends \Controller {
 			return;
 		}
 
-		$status = new \Model\Issue\Status;
-		$status->load(array("closed = ?", 1));
-		$issue->status = $status->id;
-		$issue->closed_date = $this->now();
-		$issue->save();
+		if(!$issue->closed_date) {
+			$status = new \Model\Issue\Status;
+			$status->load(array("closed = ?", 1));
+			$issue->status = $status->id;
+			$issue->closed_date = $this->now();
+			$issue->save();
+		}
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
@@ -458,11 +460,13 @@ class Issues extends \Controller {
 			return;
 		}
 
-		$status = new \Model\Issue\Status;
-		$status->load(array("closed = ?", 0));
-		$issue->status = $status->id;
-		$issue->closed_date = null;
-		$issue->save();
+		if($issue->closed_date) {
+			$status = new \Model\Issue\Status;
+			$status->load(array("closed = ?", 0));
+			$issue->status = $status->id;
+			$issue->closed_date = null;
+			$issue->save();
+		}
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
@@ -656,44 +660,6 @@ class Issues extends \Controller {
 		$post = $f3->get("POST");
 		if(!empty($post)) {
 			switch($post["action"]) {
-				case "comment":
-					$comment = new \Model\Issue\Comment;
-					if(empty($post["text"])) {
-						if($f3->get("AJAX")) {
-							$this->_printJson(array("error" => 1));
-						}
-						else {
-								$f3->reroute("/issues/" . $issue->id);
-						}
-						return;
-					}
-
-					$comment = new \Model\Issue\Comment();
-					$comment->user_id = $this->_userId;
-					$comment->issue_id = $issue->id;
-					$comment->text = $post["text"];
-					$comment->created_date = $this->now();
-					$comment->save();
-
-					$notification = \Helper\Notification::instance();
-					$notification->issue_comment($issue->id, $comment->id);
-
-					if($f3->get("AJAX")) {
-						$this->_printJson(
-							array(
-								"id" => $comment->id,
-								"text" => \Helper\View::instance()->parseText($comment->text, array("hashtags" => false)),
-								"date_formatted" => date("D, M j, Y \\a\\t g:ia", \Helper\View::instance()->utc2local(time())),
-								"user_name" => $f3->get('user.name'),
-								"user_username" => $f3->get('user.username'),
-								"user_email" => $f3->get('user.email'),
-								"user_email_md5" => md5(strtolower($f3->get('user.email'))),
-							)
-						);
-						return;
-					}
-					break;
-
 				case "add_watcher":
 					$watching = new \Model\Issue\Watcher;
 					// Loads just in case the user is already a watcher
@@ -714,8 +680,6 @@ class Issues extends \Controller {
 					if($f3->get("AJAX"))
 						return;
 					break;
-
-
 
 				case "add_dependency":
 					$dependencies = new \Model\Issue\Dependency;
@@ -743,7 +707,6 @@ class Issues extends \Controller {
 						return;
 					break;
 
-
 				case "remove_dependency":
 					$dependencies = new \Model\Issue\Dependency;
 					$dependencies->load($post["id"]);
@@ -752,7 +715,6 @@ class Issues extends \Controller {
 					if($f3->get("AJAX"))
 						return;
 					break;
-
 			}
 		}
 
@@ -896,8 +858,6 @@ class Issues extends \Controller {
 		} else {
 			$f3->error(404);
 		}
-
-
 	}
 
 	public function single_delete($f3, $params) {
@@ -921,6 +881,41 @@ class Issues extends \Controller {
 			$f3->reroute("/issues/{$issue->id}");
 		} else {
 			$f3->error(403);
+		}
+	}
+
+	public function comment_save($f3, $params) {
+		$post = $f3->get("POST");
+		if(empty($post["text"])) {
+			if($f3->get("AJAX")) {
+				$this->_printJson(array("error" => 1));
+			} else {
+				$f3->reroute("/issues/" . $post["issue_id"]);
+			}
+			return;
+		}
+
+		$comment = \Model\Issue\Comment::create(array(
+			"issue_id" => $post["issue_id"],
+			"user_id" => $this->_userId,
+			"text" => trim($post["text"])
+		));
+
+		if($f3->get("AJAX")) {
+			$this->_printJson(
+				array(
+					"id" => $comment->id,
+					"text" => \Helper\View::instance()->parseText($comment->text, array("hashtags" => false)),
+					"date_formatted" => date("D, M j, Y \\a\\t g:ia", \Helper\View::instance()->utc2local(time())),
+					"user_name" => $f3->get('user.name'),
+					"user_username" => $f3->get('user.username'),
+					"user_email" => $f3->get('user.email'),
+					"user_email_md5" => md5(strtolower($f3->get('user.email'))),
+				)
+			);
+			return;
+		} else {
+			$f3->reroute("/issues/" . $comment->issue_id);
 		}
 	}
 
