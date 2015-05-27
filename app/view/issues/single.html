@@ -411,20 +411,20 @@ $(function() {
 	});
 
 	// Load history, watchers, and related issues
-	$.get(BASE + 'issues/{{ @issue.id }}/history', {}, function(data) {
+	$.get(BASE + '/issues/{{ @issue.id }}/history', {}, function(data) {
 		$('#history').empty().append(data.html);
 		$('#tab_history').html('{{ @dict.history }}&ensp;<span class="badge">' + data.total + '</span>');
 	}, 'json').error(function() {
 		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_history }}'));
 	});
-	$.get(BASE + 'issues/{{ @issue.id }}/watchers', {}, function(data) {
+	$.get(BASE + '/issues/{{ @issue.id }}/watchers', {}, function(data) {
 		$('#watchers').empty().append(data.html);
 		$('#tab_watchers').html('{{ @dict.watchers }}&ensp;<span class="badge" id="watchers-badge">' + data.total + '</span>');
 
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
 			$li = $(this).parents('li');
-			$.post(BASE + 'issues/{{ @issue.id }}', {
+			$.post(BASE + '/issues/{{ @issue.id }}', {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
 			});
@@ -437,7 +437,7 @@ $(function() {
 		});
 		$('#add-watcher').submit(function(e) {
 			$this = $(this);
-			$.post(BASE + 'issues/{{ @issue.id }}', $this.serialize());
+			$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
 
 			$select = $this.find('select');
 			$('<li />')
@@ -453,7 +453,7 @@ $(function() {
 	}, 'json').error(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
 	});
-	$.get(BASE + 'issues/{{ @issue.id }}/related', {}, function(data) {
+	$.get(BASE + '/issues/{{ @issue.id }}/related', {}, function(data) {
 		$('#related').empty().append(data.html);
 		$('#tab_related').html($('#tab_related').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 		$('#related table').stupidtable();
@@ -463,7 +463,7 @@ $(function() {
 
 	// Load dependencies
 	var load_dependencies = function() {
-		$.get(BASE + 'issues/{{ @issue.id }}/dependencies', {}, function(data) {
+		$.get(BASE + '/issues/{{ @issue.id }}/dependencies', {}, function(data) {
 			$('#dependencies').empty().append(data.html);
 			$('#dependencies_badge').text(data.total);
 			$('#dependencies table').stupidtable();
@@ -476,7 +476,7 @@ $(function() {
 	// Add/remove dependencies from tab
 	$('#dependencies').on('click', 'a.delete', function(e) {
 		$tr = $(this).parents('tr');
-		$.post(BASE + 'issues/{{ @issue.id }}', {
+		$.post(BASE + '/issues/{{ @issue.id }}', {
 			action: 'remove_dependency',
 			id: $tr.data('id')
 		});
@@ -490,7 +490,7 @@ $(function() {
 	});
 	$('#dependencies').on('submit', 'form', function(e) {
 		$this = $(this);
-		$.post(BASE + 'issues/{{ @issue.id }}', $this.serialize());
+		$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
 
 		e.preventDefault();
 		load_dependencies();
@@ -537,16 +537,16 @@ $(function() {
 
 });
 function restoreFile(file_id) {
-	$.post(BASE + 'issues/file/undelete', {id: file_id}, function(data) {
+	$.post(BASE + '/issues/file/undelete', {id: file_id}, function(data) {
 		window.location = window.location;
 	});
 }
 function watch_issue() {
-	$.post(BASE + 'issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
+	$.post(BASE + '/issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="glyphicon glyphicon-eye-close"></span>&ensp;{{ @dict.unwatch }}');
 }
 function unwatch_issue() {
-	$.post(BASE + 'issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
+	$.post(BASE + '/issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="glyphicon glyphicon-eye-open"></span>&ensp;{{ @dict.watch }}');
 }
 </script>
