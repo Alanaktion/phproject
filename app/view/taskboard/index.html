@@ -177,7 +177,7 @@
 					<h4 class="modal-title" id="task-dialog-title">{{ @dict.edit }}</h4>
 				</div>
 				<fieldset class="modal-body">
-					<input type="hidden" name="sprintId" id="sprintId" value="{{ @PARAMS.id }}">
+					<input type="hidden" name="sprint_id" id="sprint_id" value="{{ @PARAMS.id }}">
 					<input type="hidden" name="taskId" id="taskId" value="">
 					<div class="col-md-7">
 						<div class="form-group">
@@ -212,8 +212,8 @@
 							<input type="number" name="hours" id="hours" class="form-control input-sm" min="0" step=".5">
 						</div>
 						<div class="form-group">
-							<label for="dueDate">{{ @dict.cols.due_date }}</label>
-							<input type="text" name="dueDate" id="dueDate" value="" class="dueDate form-control input-sm">
+							<label for="due_date">{{ @dict.cols.due_date }}</label>
+							<input type="text" name="due_date" id="due_date" value="" class="due_date form-control input-sm">
 						</div>
 						<div class="form-group">
 							<label for="repeat_cycle">{{ @dict.cols.repeat_cycle }}</label>
