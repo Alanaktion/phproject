@@ -219,7 +219,7 @@ class Issues extends \Controller {
 							$issue->exists($i)
 							&& $i != "id"
 							&& $issue->$i != $val
-							&& (!empty($val) || $val == 0)
+							&& (!empty($val) || $val === "0")
 						) {
 							// Allow setting to Not Assigned
 							if($i == "owner_id" && $val == -1) {
