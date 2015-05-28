@@ -1096,7 +1096,7 @@ class Issues extends \Controller {
 			if($issue->id) {
 				$f3 = \Base::instance();
 				$children = $issue->getChildren();
-				$hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level, "issue_type" => $f3->get("issue_type"));
+				$hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "BASE" => $f3->get("BASE"), "level" => $level, "issue_type" => $f3->get("issue_type"));
 				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
 				if($children) {
 					foreach($children as $item) {
