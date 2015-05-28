@@ -25,24 +25,24 @@
 									<check if="{{ @change.field == 'description' }}">
 										<true>
 											<li>
-												<b>{{ @humanreadable.field }}</b> changed:<br>
+												{{ @dict.a_changed,'<b>'.@humanreadable.field.'</b>' | format }}<br>
 												{~ @diff = new \Helper\Diff(explode("\n", @change.old_value), explode("\n", @change.new_value), array("ignoreWhitespace" => true)); ~}
 												{~ @diff_renderer = new \Helper\Diff\Renderer\Html\Inline ~}
 												{{ @diff->render(@diff_renderer) }}
 											</li>
 										</true>
 										<false>
-											<li><b>{{ @humanreadable.field }}</b> changed from <i>{{ @humanreadable.old | esc }}</i> to <i>{{ @humanreadable.new | esc }}</i></li>
+											<li>{{ @dict.a_changed_from_b_to_c, '<b>'.@humanreadable.field.'</b>', '<i>'.@this->esc(@humanreadable.old).'</i>', '<i>'.@this->esc(@humanreadable.new).'</i>' | format }}</li>
 										</false>
 									</check>
 								</true>
 								<false>
-									<li><b>{{ @humanreadable.field }}</b> removed</li>
+									<li>{{ @dict.a_removed,'<b>'.@humanreadable.field.'</b>' | format }}</li>
 								</false>
 							</check>
 						</true>
 						<false>
-							<li><b>{{ @humanreadable.field }}</b> set to <i>{{ @humanreadable.new | esc }}</i></li>
+							<li>{{ @dict.a_set_to_b, '<b>'.@humanreadable.field.'</b>', '<i>'.@this->esc(@humanreadable.new).'</i>' | format }}</li>
 						</false>
 					</check>
 				</repeat>
