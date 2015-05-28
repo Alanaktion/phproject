@@ -306,12 +306,12 @@
 
 			// Preload burndown data
 			$.ajax({
-				url: BASE + "taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}",
+				url: BASE + '/taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}',
 				success: function(data) {
 					BurndownData = data;
 					BurndownReady = true;
 				},
-				dataType: "json",
+				dataType: 'json',
 				cache: false
 			});
 
