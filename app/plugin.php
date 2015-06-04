@@ -3,7 +3,7 @@
 abstract class Plugin extends \Prefab {
 
 	// Metadata container
-	private $_meta;
+	protected $_meta;
 
 	/**
 	 * Initialize the plugin including any hooks
@@ -18,12 +18,14 @@ abstract class Plugin extends \Prefab {
 	public function _install() {}
 
 	/**
-	 * Checks if the plugin is installed
+	 * Check if plugin is installed
 	 *
 	 * The return value of this method should be cached when possible
 	 * @return bool
 	 */
-	abstract public function _installed();
+	public function _installed() {
+		return true;
+	}
 
 	/**
 	 * Hook into a core feature
