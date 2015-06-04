@@ -33,7 +33,7 @@
 					<td>{{ @user.name }}</td>
 					<td>{{ ucfirst(@user.role) }}</td>
 					<td><span class="badge" style="background-color: #{{ @user.task_color }};">&ensp;</span>&ensp;#{{ @user.task_color }}</td>
-					<td><a href="{{ @BASE }}/admin/users/{{ @user.id }}/delete" class="has-tooltip" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-trash"></span></a></td>
+					<td><a href="{{ @BASE }}/admin/users/{{ @user.id }}/delete" class="has-tooltip" title="{{ @dict.deactivate }}"><span class="glyphicon glyphicon-remove"></span></a></td>
 				</tr>
 			</repeat>
 		</tbody>

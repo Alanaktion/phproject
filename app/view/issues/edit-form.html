@@ -42,7 +42,7 @@
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="priority">
 				<repeat group="{{ @priorities }}" value="{{ @item }}">
-					<check if="{{ empty(@issue) }}">
+					<check if="{{ empty(@issue) || empty(@issue.priority_id) }}">
 						<true>
 							<option value="{{ @item.value }}" {{ @item.value == @issue_priority.default ? "selected" : "" }}>{{ @item.name }}</option>
 						</true>
