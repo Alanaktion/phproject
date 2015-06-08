@@ -66,5 +66,5 @@
 	<script src="{{ @file }}"></script>
 </repeat>
 <repeat group="{{ \Helper\Plugin::instance()->getJsCode(@PATH) }}" value="{{ @code }}">
-	<script>{{ @code }}</script>
+	{{ @code }}
 </repeat>
