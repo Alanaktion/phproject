@@ -283,6 +283,7 @@ table a.btn {
 	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 	font-size: 11px;
 	overflow-x: auto;
+	white-space: pre;
 }
 
 /* Textile processed styles */
