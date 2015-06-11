@@ -1033,7 +1033,7 @@ class Issues extends \Controller {
 
 			$notification = \Helper\Notification::instance();
 			$notification->issue_comment($issue->id, $comment->id);
-		} else {
+		} elseif($newfile->id) {
 			$notification = \Helper\Notification::instance();
 			$notification->issue_file($issue->id, $f3->get("file_id"));
 		}
