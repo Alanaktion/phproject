@@ -15,7 +15,11 @@ Phproject includes several officially supported plugins that are maintained alon
 
 [Bitbucket](https://github.com/phproject-plugins/bitbucket) - Integrate Bitbucket commits into your Phproject issues
 
-[Porter](https://github.com/phproject-plugins/porter) - Maintains your Phproject instance
+[Team Daily](https://github.com/phproject-plugins/teamdaily) - A specialized dashboard to show the status of individual team members.
+
+[Dev Stickers](https://github.com/phproject-plugins/devstickers) - Add the "Yes We Code" sticker set for issue descriptions and comments.
+
+[Porter](https://github.com/phproject-plugins/porter) - Keeps your Phproject instance clean
 
 [Wiki](https://github.com/phproject-plugins/wiki) - A minimal but powerful Wiki for your projects
 
