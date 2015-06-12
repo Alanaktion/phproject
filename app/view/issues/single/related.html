@@ -8,7 +8,7 @@
 				<a class="btn btn-default btn-sm" href="{{ @BASE }}/issues/new/{{ @issue_type.project }}/{{ @parent.id }}">{{ @dict.new_sub_project }}</a>
 			</check>
 			<a class="btn btn-default btn-sm" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
-			<span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="' . @BASE . 'issues/' . @parent.id . '">#' . @parent.id . ' ' . @parent.name . '</a>' | format }}</span>
+			<span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="' . @BASE . '/issues/' . @parent.id . '">#' . @parent.id . ' ' . @parent.name . '</a>' | format }}</span>
 		</check>
 	</false>
 </check>
