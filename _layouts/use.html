@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+{% include head.html %}
+<body data-spy="scroll" data-target="side-nav" style="position: relative;">
+	{% include header.html %}
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-8 col-lg-10" id="content">
+				{{ content }}
+			</div>
+			<div class="col-sm-4 col-lg-2 hidden-xs" id="side-nav">
+				<ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="60">
+					<li>
+						<a href="#basics">Basics</a>
+						<ul>
+							<li><a href="#issues">Issues</a></li>
+							<li><a href="#notifications">Notifications</a></li>
+							<li><a href="#files">Files</a></li>
+							<li><a href="#sprints">Sprints</a></li>
+							<li><a href="#administration">Administration</a></li>
+							<li><a href="#hotkeys">Hotkeys</a></li>
+						</ul>
+					</li>
+					<li>
+						<a href="#advanced">Advanced</a>
+						<ul>
+							<li><a href="#incoming-mail">Incoming Mail</a></li>
+							<li><a href="#atom-feeds">Atom Feeds</a></li>
+							<li><a href="#rest-api">REST API</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	{% include footer.html %}
+	<!-- <script>
+	$(document).ready(function() {
+		$(window).resize(function() {
+			$('#side-nav > .nav')
+				.css('width', ($('#side-nav > .nav').width()) + 'px')
+				.css('left', ($('#side-nav > .nav').position().left) + 'px');
+		})
+		$('#side-nav > .nav')
+			.css('top', ($('.navbar').height() + 15) + 'px')
+			.css('position', 'fixed');
+		$(window).resize();
+	});
+	</script> -->
+</body>
+</html>
