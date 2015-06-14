@@ -793,29 +793,12 @@ class Issues extends \Controller {
 		$issue->load($params["id"]);
 
 		if($issue->id) {
-			$f3->set("issue", $issue);
+			$f3->set("parent", $issue);
+
 			$issues = new \Model\Issue\Detail;
-			if($f3->get("issue_type.project") == $issue->type_id || !$issue->parent_id) {
-				$searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
-				$orderparams = array("order" => "status_closed, priority DESC, due_date");
-				$found_issues = $issues->find($searchparams, $orderparams);
-				$f3->set("issues", $found_issues);
-				$f3->set("parent", $issue);
-			} else {
-				if($issue->parent_id) {
-					$searchparams = array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id);
-					$orderparams = array('order' => "status_closed, priority DESC, due_date");
-					$found_issues = $issues->find($searchparams, $orderparams);
-
-					$f3->set("issues", $found_issues);
-
-					$parent = new \Model\Issue;
-					$parent->load($issue->parent_id);
-					$f3->set("parent", $parent);
-				} else {
-					$f3->set("issues", array());
-				}
-			}
+			$searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
+			$orderparams = array("order" => "status_closed, priority DESC, due_date");
+			$f3->set("issues", $issues->find($searchparams, $orderparams));
 
 			$searchparams[0] = $searchparams[0]  . " AND status_closed = 0";
 			$openissues = $issues->count($searchparams);

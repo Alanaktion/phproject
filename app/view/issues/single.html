@@ -231,14 +231,10 @@
 				<li class="active"><a href="#comments" data-toggle="tab">{{ @dict.comments }}&ensp;<span class="badge" id="comment_badge">{{ count(@comments) }}</span></a></li>
 				<li><a href="#history" data-toggle="tab" id="tab_history">{{ @dict.history }}</a></li>
 				<li><a href="#watchers" data-toggle="tab" id="tab_watchers">{{ @dict.watchers }}</a></li>
-				<check if="{{ @issue_type.project == @type.id }}">
-					<true>
-						<li><a href="#related" data-toggle="tab" id="tab_related">{{ @dict.child_tasks }}</a></li>
-					</true>
-					<false>
-						<li><a href="#related" data-toggle="tab" id="tab_related">{{ @dict.related_tasks }}</a></li>
-					</false>
+				<check if="{{ @issue.parent_id }}">
+					<li><a href="#related-sibling" data-toggle="tab" id="tab_related-sibling">{{ @dict.sibling_tasks }}</a></li>
 				</check>
+				<li><a href="#related-child" data-toggle="tab" id="tab_related-child">{{ @dict.child_tasks }}</a></li>
 				<li><a href="#dependencies" data-toggle="tab" id="tab_dependencies">{{ @dict.dependencies }}&ensp;<span class="badge" id="dependencies_badge"></span></a></li>
 			</ul>
 			<div class="tab-content">
@@ -251,10 +247,8 @@
 									<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="{{ @dict.write_a_comment }}" autocomplete="off"></textarea>
 								</div>
 							</div>
-							<div class="form-group">
-								<div class="col-md-12 text-right">
-									<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_comment }}</button>
-								</div>
+							<div class="text-right">
+								<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_comment }}</button>
 							</div>
 						</form>
 						<repeat group="{{ @comments }}" value="{{ @comment }}">
@@ -289,28 +283,37 @@
 					</div>
 				</div>
 				<div class="tab-pane fade" id="history">
-					<div class="col-md-4 col-md-offset-4">
+					<div class="col-sm-4 col-sm-offset-4">
 						<div class="progress progress-striped active">
 							<div class="progress-bar" style="width: 100%"></div>
 						</div>
 					</div>
 				</div>
 				<div class="tab-pane fade" id="watchers">
-					<div class="col-md-4 col-md-offset-4">
+					<div class="col-sm-4 col-sm-offset-4">
 						<div class="progress progress-striped active">
 							<div class="progress-bar" style="width: 100%"></div>
 						</div>
 					</div>
 				</div>
-				<div class="tab-pane fade" id="related">
-					<div class="col-md-4 col-md-offset-4">
+				<check if="{{ @issue.parent_id }}">
+					<div class="tab-pane fade" id="related-sibling">
+						<div class="col-sm-4 col-sm-offset-4">
+							<div class="progress progress-striped active">
+								<div class="progress-bar" style="width: 100%"></div>
+							</div>
+						</div>
+					</div>
+				</check>
+				<div class="tab-pane fade" id="related-child">
+					<div class="col-sm-4 col-sm-offset-4">
 						<div class="progress progress-striped active">
 							<div class="progress-bar" style="width: 100%"></div>
 						</div>
 					</div>
 				</div>
 				<div class="tab-pane fade" id="dependencies">
-					<div class="col-md-4 col-md-offset-4">
+					<div class="col-sm-4 col-sm-offset-4">
 						<div class="progress progress-striped active">
 							<div class="progress-bar" style="width: 100%"></div>
 						</div>
@@ -453,12 +456,21 @@ $(function() {
 	}, 'json').error(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
 	});
+	if('{{ @issue.parent_id }}') {
+		$.get(BASE + '/issues/{{ @issue.parent_id }}/related', {}, function(data) {
+			$('#related-sibling').empty().append(data.html);
+			$('#tab_related-sibling').html($('#tab_related-sibling').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
+			$('#related-sibling table').stupidtable();
+		}, 'json').error(function() {
+			$('#related-sibling').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_related_issues }}'));
+		});
+	}
 	$.get(BASE + '/issues/{{ @issue.id }}/related', {}, function(data) {
-		$('#related').empty().append(data.html);
-		$('#tab_related').html($('#tab_related').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
-		$('#related table').stupidtable();
+		$('#related-child').empty().append(data.html);
+		$('#tab_related-child').html($('#tab_related-child').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
+		$('#related-child table').stupidtable();
 	}, 'json').error(function() {
-		$('#related').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_related_issues }}'));
+		$('#related-child').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_related_issues }}'));
 	});
 
 	// Load dependencies
