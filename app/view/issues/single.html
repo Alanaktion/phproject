@@ -21,7 +21,7 @@
 	<check if="{{ @issue.deleted_date }}">
 		<p id="alert" class="alert alert-danger">
 			{{ @dict.deleted_notice }}&ensp;
-			<a href="{{ @site.url }}issues/undelete/{{ @issue.id }}" class="btn btn-default btn-xs">{{ @dict.restore_issue }}</a>
+			<a href="{{ @BASE }}/issues/undelete/{{ @issue.id }}" class="btn btn-default btn-xs">{{ @dict.restore_issue }}</a>
 		</p>
 	</check>
 
@@ -31,7 +31,7 @@
 				<repeat group="{{ @ancestors }}" value="{{ @crumb }}">
 					<check if="{{ @crumb.id != @issue.id }}">
 						<li class="active">
-							<a href="{{ @site.url }}issues/{{ @crumb.id }}">
+							<a href="{{ @BASE }}/issues/{{ @crumb.id }}">
 								{{ @crumb.name }} <small>#{{ @crumb.id }}</small>
 							</a>
 						</li>
@@ -42,22 +42,22 @@
 	</check>
 	<div class="clearfix">
 		<h3 class="pull-left issue-heading">
-			{{ @issue.name | esc }} <small>#{{ @issue.id }}</small>
+			<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="nolink">{{ @issue.name | esc }}</a> <small>#{{ @issue.id }}</small>
 		</h3>
 		<div class="pull-right">
 			<check if="{{ @issue.status_closed }}">
 				<false>
-					<a id="btn-issue-close" href="{{ @site.url }}issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
+					<a id="btn-issue-close" href="{{ @BASE }}/issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
 						<span class="glyphicon glyphicon-check"></span>&ensp;{{ @dict.complete }}
 					</a>
 				</false>
 				<true>
-					<a id="btn-issue-reopen" href="{{ @site.url }}issues/reopen/{{ @issue.id }}" class="btn btn-warning btn-xs">
+					<a id="btn-issue-reopen" href="{{ @BASE }}/issues/reopen/{{ @issue.id }}" class="btn btn-warning btn-xs">
 						<span class="glyphicon glyphicon-repeat"></span>&ensp;{{ @dict.reopen }}
 					</a>
 				</true>
 			</check>
-			<a id="btn-copy" href="{{ @site.url }}issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
+			<a id="btn-copy" href="{{ @BASE }}/issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
 				<span class="glyphicon glyphicon-file"></span>&ensp;{{ @dict.copy }}
 			</a>
 			<check if="{{ @watching }}">
@@ -72,12 +72,12 @@
 					</button>
 				</false>
 			</check>
-			<a id="btn-edit" href="{{ @site.url }}issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
+			<a id="btn-edit" href="{{ @BASE }}/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
 				<span class="glyphicon glyphicon-pencil"></span>&ensp;{{ @dict.edit }}
 			</a>
 			<check if="{{ @user.role == 'admin' || @user.rank >= 3 || @user.id == @issue.author_id }}">
-				<a href="{{ @site.url }}issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
-					<span class="glyphicon glyphicon-remove"></span>&ensp;{{ @dict.delete }}
+				<a href="{{ @BASE }}/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
+					<span class="glyphicon glyphicon-remove"></span><span class="hidden-xs">&ensp;{{ @dict.delete }}</span>
 				</a>
 			</check>
 		</div>
@@ -89,7 +89,7 @@
 				<p class="pull-left">
 					<check if="{{ @author.username }}">
 						<true>
-							<a href="{{ @site.url }}user/{{ @author.username }}" class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</a>
+							<a href="{{ @BASE }}/user/{{ @author.username }}" class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</a>
 						</true>
 						<false>
 							<span class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</span>
@@ -102,14 +102,14 @@
 			<dl class="dl-inline">
 				<check if="{{ @issue.sprint_id }}">
 					<dt>{{ @dict.cols.sprint }}</dt>
-					<dd><a href="{{ @site.url }}taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
+					<dd><a href="{{ @BASE }}/taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
 				</check>
 
 				<dt>{{ @dict.cols.type }}</dt>
 				<dd>
 					{{ @issue.type_name }}
 					<check if="{{ @issue.type_id == @issue_type.project }}">
-						&ndash; <a href="{{ @site.url }}issues/project/{{ @issue.id }}">{{ @dict.project_overview }}</a>
+						&ndash; <a href="{{ @BASE }}/issues/project/{{ @issue.id }}">{{ @dict.project_overview }}</a>
 					</check>
 				</dd>
 
@@ -125,7 +125,7 @@
 						<true>
 							<check if="{{ @owner.username }}">
 								<true>
-									<a href="{{ @site.url }}user/{{ @owner.username }}">{{ @owner.name | esc }}</a>
+									<a href="{{ @BASE }}/user/{{ @owner.username }}">{{ @owner.name | esc }}</a>
 								</true>
 								<false>
 									{{ @owner.name | esc }}
@@ -169,7 +169,7 @@
 
 			<dl>
 				<dt>{{ @dict.cols.description }}:</dt>
-				<dd class="tex">{{ $this->parseText(@issue.description) }}</dd>
+				<dd class="tex">{{ @issue.description | parseText }}</dd>
 			</dl>
 
 			<hr class="hidden-lg">
@@ -186,9 +186,9 @@
 					<div class="tab-pane fade in active" id="files-tiles">
 						<ul class="list-inline file-list">
 							<repeat group="{{ @files }}" value="{{ @file }}">
-								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @this->formatFilesize(@file.filesize) }}">
-									<a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename | esc }}" data-mime="{{ @file.content_type }}" target="_blank">
-										<img class src="{{ @site.url }}files/thumb/96-{{ @file.id }}.png" /><br />
+								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @file.filesize | formatFilesize }}">
+									<a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" data-mime="{{ @file.content_type }}" target="_blank">
+										<img class src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" /><br />
 										{{ @file.filename | esc }}
 									</a>
 									<button class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
@@ -210,10 +210,10 @@
 								<repeat group="{{ @files }}" value="{{ @file }}">
 									<tr id="ft-{{ @file.id }}" data-id="{{ @file.id }}">
 										<td>{{ @file.id }}</td>
-										<td><a class="file-attachment" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename | esc }}</a></td>
+										<td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename | esc }}</a></td>
 										<td>{{ @file.user_name | esc }}</td>
 										<td>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
-										<td>{{ @this->formatFilesize(@file.filesize) }}</td>
+										<td>{{ @file.filesize | formatFilesize }}</td>
 										<td><button class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button></td>
 									</tr>
 								</repeat>
@@ -244,8 +244,8 @@
 			<div class="tab-content">
 				<div class="tab-pane fade in active" id="comments">
 					<div class="comments">
-						<form action="{{ @site.url }}issues/{{ @issue.id }}" method="POST" id="comment_form" role="form" class="form-horizontal">
-							<input type="hidden" name="action" value="comment">
+						<form action="{{ @BASE }}/issues/comment/save" method="POST" id="comment_form" role="form" class="form-horizontal">
+							<input type="hidden" name="issue_id" value="{{ @issue.id }}">
 							<div class="form-group">
 								<div class="col-md-12">
 									<textarea class="form-control input-sm" id="comment_textarea" name="text" type="text" placeholder="{{ @dict.write_a_comment }}" autocomplete="off"></textarea>
@@ -259,24 +259,24 @@
 						</form>
 						<repeat group="{{ @comments }}" value="{{ @comment }}">
 							<div class="media" id="c-{{ @comment.id }}" data-id="{{ @comment.id }}">
-								<a class="pull-left" href="{{ @site.url }}user/{{ @comment.user_username }}">
-									<img class="profile-picture media-object img-rounded" src="{{ @site.url }}avatar/48-{{ @comment.user_id }}.png" alt>
+								<a class="pull-left" href="{{ @BASE }}/user/{{ @comment.user_username }}">
+									<img class="profile-picture media-object img-rounded" src="{{ @BASE }}/avatar/48-{{ @comment.user_id }}.png" alt>
 								</a>
 								<div class="media-body">
 									<p class="media-heading clearfix">
-										<a href="{{ @site.url }}user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
+										<a href="{{ @BASE }}/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
 										<check if="{{ @user.role == 'admin' || @user.rank >= 3 }}">
 											<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
 										</check>
 									</p>
-									<div class="tex">{{ $this->parseText(@comment.text, array('hashtags' => false)) }}</div>
+									<div class="tex">{{ @comment.text, array('hashtags' => false) | parseText }}</div>
 									<check if="{{ @comment.file_id }}">
 										<check if="{{ @comment.file_deleted_date }}">
 											<true>
 												<div><b>{{ @dict.attached_file }}:</b> <span style="text-decoration: line-through;">{{ @comment.file_filename | esc }}</span> <span class="text-danger">[{{ @dict.deleted }}]</span></div>
 											</true>
 											<false>
-												<div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="{{ @site.url }}files/{{ @comment.file_id }}/{{ @comment.file_filename | esc }}" target="_blank">{{ @comment.file_filename | esc }}</a></div>
+												<div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="{{ @BASE }}/files/{{ @comment.file_id }}/{{ @comment.file_filename | esc }}" target="_blank">{{ @comment.file_filename | esc }}</a></div>
 											</false>
 										</check>
 									</check>
@@ -323,7 +323,7 @@
 	<include href="blocks/footer.html" />
 </div>
 
-<form class="modal fade in" id="upload" method="post" enctype="multipart/form-data" action="{{ @site.url }}issues/upload">
+<form class="modal fade in" id="upload" method="post" enctype="multipart/form-data" action="{{ @BASE }}/issues/upload">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -357,13 +357,13 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{ @dict.cancel }}</button>
-				<a id="btn-copy-confirm" class="btn btn-primary btn-sm" href="{{ @site.url }}issues/copy/{{ @issue.id }}">{{ @dict.copy_issue }}</a>
+				<a id="btn-copy-confirm" class="btn btn-primary btn-sm" href="{{ @BASE }}/issues/copy/{{ @issue.id }}">{{ @dict.copy_issue }}</a>
 			</div>
 		</div>
 	</div>
 </div>
 
-<script src="{{ @site.url }}minify/js/bootstrap-datepicker.js,stupidtable.min.js"></script>
+<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js,stupidtable.min.js"></script>
 <script type="text/javascript">
 $(function() {
 
@@ -392,11 +392,11 @@ $(function() {
 				$('#comment_form')
 					.after(
 						'<div class="media" id="c-' + data.id + '" data-id="' + data.id + '">' +
-							'<a class="pull-left" href="{{ @site.url }}user/' + data.user_username + '">' +
+							'<a class="pull-left" href="{{ @BASE }}/user/' + data.user_username + '">' +
 								'<img src="{{ @user_obj->avatar(48) }}" class="media-object profile-picture img-rounded" alt>' +
 							'</a>' +
 							'<div class="media-body">' +
-								'<p class="media-heading"><a href="{{ @site.url }}user/' + data.user_username + '">' + data.user_name + '</a></p>' +
+								'<p class="media-heading"><a href="{{ @BASE }}/user/' + data.user_username + '">' + data.user_name + '</a></p>' +
 								'<div class="tex">' + data.text + '</div>' +
 								'<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
 							'</div>' +
@@ -411,20 +411,20 @@ $(function() {
 	});
 
 	// Load history, watchers, and related issues
-	$.get(site_url + 'issues/{{ @issue.id }}/history', {}, function(data) {
+	$.get(BASE + '/issues/{{ @issue.id }}/history', {}, function(data) {
 		$('#history').empty().append(data.html);
 		$('#tab_history').html('{{ @dict.history }}&ensp;<span class="badge">' + data.total + '</span>');
 	}, 'json').error(function() {
 		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_history }}'));
 	});
-	$.get(site_url + 'issues/{{ @issue.id }}/watchers', {}, function(data) {
+	$.get(BASE + '/issues/{{ @issue.id }}/watchers', {}, function(data) {
 		$('#watchers').empty().append(data.html);
 		$('#tab_watchers').html('{{ @dict.watchers }}&ensp;<span class="badge" id="watchers-badge">' + data.total + '</span>');
 
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
 			$li = $(this).parents('li');
-			$.post(site_url + 'issues/{{ @issue.id }}', {
+			$.post(BASE + '/issues/{{ @issue.id }}', {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
 			});
@@ -437,7 +437,7 @@ $(function() {
 		});
 		$('#add-watcher').submit(function(e) {
 			$this = $(this);
-			$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
+			$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
 
 			$select = $this.find('select');
 			$('<li />')
@@ -453,7 +453,7 @@ $(function() {
 	}, 'json').error(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
 	});
-	$.get(site_url + 'issues/{{ @issue.id }}/related', {}, function(data) {
+	$.get(BASE + '/issues/{{ @issue.id }}/related', {}, function(data) {
 		$('#related').empty().append(data.html);
 		$('#tab_related').html($('#tab_related').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 		$('#related table').stupidtable();
@@ -463,7 +463,7 @@ $(function() {
 
 	// Load dependencies
 	var load_dependencies = function() {
-		$.get(site_url + 'issues/{{ @issue.id }}/dependencies', {}, function(data) {
+		$.get(BASE + '/issues/{{ @issue.id }}/dependencies', {}, function(data) {
 			$('#dependencies').empty().append(data.html);
 			$('#dependencies_badge').text(data.total);
 			$('#dependencies table').stupidtable();
@@ -476,7 +476,7 @@ $(function() {
 	// Add/remove dependencies from tab
 	$('#dependencies').on('click', 'a.delete', function(e) {
 		$tr = $(this).parents('tr');
-		$.post(site_url + 'issues/{{ @issue.id }}', {
+		$.post(BASE + '/issues/{{ @issue.id }}', {
 			action: 'remove_dependency',
 			id: $tr.data('id')
 		});
@@ -490,7 +490,7 @@ $(function() {
 	});
 	$('#dependencies').on('submit', 'form', function(e) {
 		$this = $(this);
-		$.post(site_url + 'issues/{{ @issue.id }}', $this.serialize());
+		$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
 
 		e.preventDefault();
 		load_dependencies();
@@ -511,8 +511,8 @@ $(function() {
 	$(".file-list").on("click", ".delete", function(e) {
 		var $file = $(this).parents("li, tr");
 		$file.fadeTo(100, 0.5).popover("hide");
-		$.post(site_url + "issues/file/delete", {id: $file.data("id")}, function(data) {
-			$("#alert span").html('{{ @dict.file_deleted }} <a href="{{ @site.url }}javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
+		$.post(BASE + "/issues/file/delete", {id: $file.data("id")}, function(data) {
+			$("#alert span").html('{{ @dict.file_deleted }} <a href="{{ @BASE }}/javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
 			$("#alert").show();
 			$(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();
 		}, "json");
@@ -529,7 +529,7 @@ $(function() {
 		if(confirm("{{ @dict.comment_delete_confirm }}")) {
 			var $comment = $(this).parents(".media");
 			$comment.css("text-decoration", "line-through");
-			jQuery.post(site_url + "issues/comment/delete", {id: $comment.data("id")}, function(data) {
+			jQuery.post(BASE + "/issues/comment/delete", {id: $comment.data("id")}, function(data) {
 				$comment.remove();
 			});
 		}
@@ -537,16 +537,16 @@ $(function() {
 
 });
 function restoreFile(file_id) {
-	$.post(site_url + 'issues/file/undelete', {id: file_id}, function(data) {
+	$.post(BASE + '/issues/file/undelete', {id: file_id}, function(data) {
 		window.location = window.location;
 	});
 }
 function watch_issue() {
-	$.post(site_url + 'issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
+	$.post(BASE + '/issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="glyphicon glyphicon-eye-close"></span>&ensp;{{ @dict.unwatch }}');
 }
 function unwatch_issue() {
-	$.post(site_url + 'issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
+	$.post(BASE + '/issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="glyphicon glyphicon-eye-open"></span>&ensp;{{ @dict.watch }}');
 }
 </script>

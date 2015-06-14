@@ -5,12 +5,12 @@ $(function() {
 });
 
 var Backlog = {
-	updateUrl: site_url + "backlog/edit",
+	updateUrl: BASE + "/backlog/edit",
 	projectReceived: 0,
 	init: function() {
 		Backlog.makeSortable(".sortable");
 		$(".sortable").on("dblclick", "li", function(e) {
-			window.open(site_url + "issues/" + $(this).data("id"));
+			window.open(BASE + "/issues/" + $(this).data("id"));
 		});
 	},
 	makeSortable: function(selector) {

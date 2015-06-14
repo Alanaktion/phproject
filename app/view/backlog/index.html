@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<include href="blocks/head.html" />
-	<link rel="stylesheet" href="{{ @site.url }}css/backlog.css">
+	<link rel="stylesheet" href="{{ @BASE }}/css/backlog.css">
 </head>
 <body>
 <include href="blocks/navbar.html" />
@@ -17,18 +17,18 @@
 							<span class="glyphicon glyphicon-filter"></span> {{ @dict.filter_projects }} <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @site.url }}backlog/all">{{ @dict.all_projects }}</a></li>
-							<li class="{{ @filter == 'groups' && empty(@groupid) ? 'active' : '' }}"><a href="{{ @site.url }}backlog/groups">{{ @dict.my_groups }}</a></li>
-							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @site.url }}backlog/me">{{ @dict.my_projects }}</a></li>
+							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/all">{{ @dict.all_projects }}</a></li>
+							<li class="{{ @filter == 'groups' && empty(@groupid) ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/groups">{{ @dict.my_groups }}</a></li>
+							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/me">{{ @dict.my_projects }}</a></li>
 							<check if="{{ count(@groups) }}">
 								<li class="divider"></li>
 								<repeat group="{{ @groups }}" value="{{ @group }}">
-									<li class="{{ @groupid == @group.id ? 'active' : '' }}"><a href="{{ @site.url }}backlog/groups/{{ @group.id }}">{{ @group.name | esc }}</a></li>
+									<li class="{{ @groupid == @group.id ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/groups/{{ @group.id }}">{{ @group.name | esc }}</a></li>
 								</repeat>
 							</check>
 						</ul>
 					</div>
-					<a href="{{ @site.url }}issues/new/{{ @issue_type.project }}" class="btn btn-default btn-xs pull-right">
+					<a href="{{ @BASE }}/issues/new/{{ @issue_type.project }}" class="btn btn-default btn-xs pull-right">
 						<span class="glyphicon glyphicon-plus"></span> {{ @dict.add_project }}
 					</a>
 				</div>
@@ -37,7 +37,7 @@
 						<repeat group="{{ @backlog }}" value="{{ @project }}">
 							<li class="list-group-item" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 								<span class="title">
-									<a href="{{ @site.url }}issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
+									<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
 									{{ @project.name | esc }}
 								</span>
 								<span class="badge">{{ @project.priority_name }}</span>
@@ -52,7 +52,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading has-buttons">
 						<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
-						<a href="{{ @site.url }}taskboard/{{ @sprint.id }}/{{ @filter }}" class="btn btn-default btn-xs pull-right">
+						<a href="{{ @BASE }}/taskboard/{{ @sprint.id }}/{{ @filter }}" class="btn btn-default btn-xs pull-right">
 							<span class="glyphicon glyphicon-list"></span> {{ @dict.taskboard }}
 						</a>
 					</div>
@@ -61,7 +61,7 @@
 							<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
 								<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 									<span class="title">
-										<a href="{{ @site.url }}issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
+										<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
 										{{ @project.name | esc }}
 									</span>
 									<span class="badge">{{ @project.priority_name }}</span>
@@ -72,13 +72,13 @@
 				</div>
 			</repeat>
 			<p class="text-center">
-				<a href="{{ @site.url }}backlog/old">{{ @dict.previous_sprints }}</a>
+				<a href="{{ @BASE }}/backlog/old">{{ @dict.previous_sprints }}</a>
 			</p>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />
-	<script src="{{ @site.url }}minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
-	<script src="{{ @site.url }}minify/js/backlog.js"></script>
+	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
+	<script src="{{ @BASE }}/minify/js/backlog.js"></script>
 </div>
 </body>
 </html>

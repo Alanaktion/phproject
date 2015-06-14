@@ -184,7 +184,7 @@ select[multiple] {
 
 .form-horizontal .checkbox-inline {
 	display: inline-block;
-	padding-top: 2px;
+	padding-top: 5px;
 	margin-left: 10px;
 }
 
@@ -283,6 +283,7 @@ table a.btn {
 	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 	font-size: 11px;
 	overflow-x: auto;
+	white-space: pre;
 }
 
 /* Textile processed styles */

@@ -25,7 +25,7 @@
 		</check>
 		<img src="{{ @site.url }}avatar/48-{{ @comment.user_id }}.png" alt style="float: left; margin-right: 10px;">
 		<div style="float: left" class="tex">
-			{{ $this->parseText(@comment.text) }}
+			{{ @comment.text | parseText }}
 		</div>
 		<check if="{{ @comment.file_id }}">
 			<div><i>Attached file:</i> <a href="{{ @site.url }}files/{{ @comment.file_id }}/{{ @comment.file_filename }}">{{ @comment.file_filename | esc }}</a></div>
