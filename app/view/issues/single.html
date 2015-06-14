@@ -77,7 +77,7 @@
 			</a>
 			<check if="{{ @user.role == 'admin' || @user.rank >= 3 || @user.id == @issue.author_id }}">
 				<a href="{{ @BASE }}/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
-					<span class="glyphicon glyphicon-remove"></span>&ensp;{{ @dict.delete }}
+					<span class="glyphicon glyphicon-remove"></span><span class="hidden-xs">&ensp;{{ @dict.delete }}</span>
 				</a>
 			</check>
 		</div>

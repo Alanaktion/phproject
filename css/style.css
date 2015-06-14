@@ -184,7 +184,7 @@ select[multiple] {
 
 .form-horizontal .checkbox-inline {
 	display: inline-block;
-	padding-top: 2px;
+	padding-top: 5px;
 	margin-left: 10px;
 }
 

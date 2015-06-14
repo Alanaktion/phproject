@@ -204,26 +204,30 @@
 			</div>
 		</div>
 	</check>
-	<div class="form-group">
-		<div class="col-md-offset-2 col-md-10 text-right">
-			<div class="checkbox checkbox-inline">
-				<label>
-					<input type="checkbox" name="notify" value="1" checked>
-					{{ @dict.send_notifications }}
-				</label>
+	<div class="row">
+		<div class="col-md-offset-2 col-md-10 clearfix">
+			<div class="pull-right" style="margin-left: 15px;">
+				<check if="{{ !empty(@issue) }}">
+					<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
+					<button type="reset" class="btn btn-default btn-sm">{{ @dict.reset }}</button>
+				</check>
+				<check if="{{ empty(@issue) }}">
+					<true>
+						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.create_n,@type.name | format }}</button>
+					</true>
+					<false>
+						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_n,@type.name | format }}</button>
+					</false>
+				</check>
 			</div>
-			<check if="{{ !empty(@issue) }}">
-				<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
-				<button type="reset" class="btn btn-default btn-sm">{{ @dict.reset }}</button>
-			</check>
-			<check if="{{ empty(@issue) }}">
-				<true>
-					<button type="submit" class="btn btn-primary btn-sm">{{ @dict.create_n,@type.name | format }}</button>
-				</true>
-				<false>
-					<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_n,@type.name | format }}</button>
-				</false>
-			</check>
+			<div class="pull-right">
+				<div class="checkbox checkbox-inline">
+					<label>
+						<input type="checkbox" name="notify" value="1" checked>
+						{{ @dict.send_notifications }}
+					</label>
+				</div>
+			</div>
 		</div>
 	</div>
 </form>
