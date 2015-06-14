@@ -2,8 +2,6 @@
 ![](https://img.shields.io/badge/stability-release-18BC9C.svg)
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/phproject/localized.png)](https://crowdin.com/project/phproject)
 
->>>>>>> master
-
 Phproject
 ===========
 *A high-performance project management system in PHP*
