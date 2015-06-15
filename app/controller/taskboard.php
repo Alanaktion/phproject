@@ -142,11 +142,11 @@ class Taskboard extends \Controller {
 		$parent_ids_str = implode(",", $parent_ids);
 		$f3->set("tasks", $task_ids_str);
 
-		// Find all visible projects
+		// Find all visible projects or parent tasks
 		$projects = $issue->find(array(
-			"(id IN ($parent_ids_str) AND type_id = ?) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
+			"id IN ($parent_ids_str) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
 				. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
-			$f3->get("issue_type.project"), $sprint->id, $f3->get("issue_type.project")
+			$sprint->id, $f3->get("issue_type.project")
 		), array("order" => "owner_id ASC"));
 
 		// Build multidimensional array of all tasks and projects
@@ -166,7 +166,7 @@ class Taskboard extends \Controller {
 				}
 			}
 
-			// Add hierarchial structure to taskboard array
+			// Add hierarchical structure to taskboard array
 			$taskboard[] = array(
 				"project" => $project,
 				"columns" => $columns
