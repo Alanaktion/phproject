@@ -25,6 +25,9 @@ class View extends \Template {
 			}
 		}
 
+		// Pass to any plugin hooks
+		$str = \Helper\Plugin::instance()->callHook("text.parse.before", $str);
+
 		// Run through the parsers based on $options
 		if($options["ids"]) {
 			$str = $this->_parseIds($str);
@@ -49,6 +52,9 @@ class View extends \Template {
 		if($options["urls"]) {
 			$str = $this->_parseUrls($str);
 		}
+
+		// Pass to any plugin hooks
+		$str = \Helper\Plugin::instance()->callHook("text.parse.after", $str);
 
 		// Cache the value if $ttl is set
 		if($ttl !== null) {

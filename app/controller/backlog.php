@@ -101,7 +101,7 @@ class Backlog extends \Controller {
 	public function index_old($f3) {
 
 		$sprint_model = new \Model\Sprint();
-		$sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date DESC"));
+		$sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date ASC"));
 
 		$issue = new \Model\Issue\Detail();
 

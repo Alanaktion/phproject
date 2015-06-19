@@ -15,7 +15,7 @@
 		</p>
 		<div class="tag-cloud">
 			<repeat group="{{ @cloud }}" value="{{ @item }}">
-				<a href="{{ @site.url }}tag/{{ @item.tag }}" style="font-size: {{ 14 + (@item.freq * 2) }}px;">{{ @item.tag }}</a>&ensp;
+				<a href="{{ @BASE }}/tag/{{ @item.tag }}" style="font-size: {{ 14 + (@item.freq * 2) }}px;">{{ @item.tag }}</a>&ensp;
 			</repeat>
 		</div>
 		<include href="blocks/footer.html" />

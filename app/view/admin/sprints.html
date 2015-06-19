@@ -8,30 +8,32 @@
 <div class="container">
 	<div class="clearfix">
 		<div class="pull-right">
-			<a href="{{ @site.url }}admin/sprints/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new }}</a>
+			<a href="{{ @BASE }}/admin/sprints/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new }}</a>
 		</div>
 		<include href="blocks/admin/tabs.html" />
 	</div>
-	<table class="table table-striped table-condensed">
-		<thead>
-			<tr>
-				<th>{{ @dict.cols.id }}</th>
-				<th>{{ @dict.name }}</th>
-				<th>{{ @dict.start_date }}</th>
-				<th>{{ @dict.end_date }}</th>
-			</tr>
-		</thead>
-		<tbody>
-			<repeat group="{{ @sprints }}" value="{{ @sprint }}">
-				<tr data-sprint-id="{{ @sprint.id }}" onclick="self.location='{{ @site.url }}admin/sprints/{{ @sprint.id }}'" style="cursor: pointer">
-					<td><a href="{{ @site.url }}admin/sprints/{{ @sprint.id }}">{{ @sprint.id }}</a></td>
-					<td>{{ @sprint.name }}</td>
-					<td>{{ @sprint.start_date }}</td>
-					<td>{{ @sprint.end_date }}</td>
+	<div class="table-responsive">
+		<table class="table table-striped table-condensed">
+			<thead>
+				<tr>
+					<th>{{ @dict.cols.id }}</th>
+					<th>{{ @dict.name }}</th>
+					<th>{{ @dict.start_date }}</th>
+					<th>{{ @dict.end_date }}</th>
 				</tr>
-			</repeat>
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				<repeat group="{{ @sprints }}" value="{{ @sprint }}">
+					<tr data-sprint-id="{{ @sprint.id }}" onclick="self.location='{{ @BASE }}/admin/sprints/{{ @sprint.id }}'" style="cursor: pointer">
+						<td><a href="{{ @BASE }}/admin/sprints/{{ @sprint.id }}">{{ @sprint.id }}</a></td>
+						<td>{{ @sprint.name }}</td>
+						<td>{{ @sprint.start_date }}</td>
+						<td>{{ @sprint.end_date }}</td>
+					</tr>
+				</repeat>
+			</tbody>
+		</table>
+	</div>
 	<include href="blocks/footer.html" />
 </div>
 </body>

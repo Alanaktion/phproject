@@ -7,7 +7,7 @@
 <include href="blocks/navbar.html" />
 <div class="container">
 	<include href="blocks/admin/tabs.html" />
-	<form action="{{ @site.url }}admin/users/save" method="post" role="form" class="form-horizontal" autocomplete="off">
+	<form action="{{ @BASE }}/admin/users/save" method="post" role="form" class="form-horizontal" autocomplete="off">
 		<check if="{{ empty(@this_user) }}">
 			<true>
 				<legend>{{ @dict.new_user }}</legend>
@@ -79,7 +79,7 @@
 		<div class="form-group">
 			<div class="col-lg-10 col-lg-offset-2">
 				<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save }}</button>
-				<a href="{{ @site.url }}admin/users" class="btn btn-default btn-sm">{{ @dict.cancel }}</a>
+				<a href="{{ @BASE }}/admin/users" class="btn btn-default btn-sm">{{ @dict.cancel }}</a>
 			</div>
 		</div>
 	</form>

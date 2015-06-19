@@ -14,7 +14,7 @@
 				<true>
 					<check if="{{ @project.owner_username }}">
 						<true>
-							<a href="{{ @site.url }}user/{{ @project.owner_username }}">{{ @project.owner_name | esc }}</a>
+							<a href="{{ @BASE }}/user/{{ @project.owner_username }}">{{ @project.owner_name | esc }}</a>
 						</true>
 						<false>
 							{{ @project.owner_name | esc }}
@@ -28,7 +28,7 @@
 		</dd>
 	</dl>
 	<check if="{{ @project.description }}">
-		<div class="tex">{{ @this->parseText(@project.description) }}</div><br>
+		<div class="tex">{{ @project.description | parseText }}</div><br>
 	</check>
 	<h3 class="h4"><i>{{ @dict.project_overview }}</i></h3>
 	<set percentComplete="{{ round(@stats.complete / @stats.total * 100) }}" />

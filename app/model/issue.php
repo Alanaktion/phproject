@@ -8,6 +8,22 @@ class Issue extends \Model {
 		$_table_name = "issue",
 		$_heirarchy = null,
 		$_children = null;
+	protected static $requiredFields = array("type_id", "status", "name", "author_id");
+
+	/**
+	 * Create and save a new comment
+	 * @param  array $data
+	 * @param  bool  $notify
+	 * @return Comment
+	 */
+	public static function create(array $data, $notify = true) {
+		$item = parent::create($data);
+		if($notify) {
+			$notification = \Helper\Notification::instance();
+			$notification->issue_create($item->issue_id);
+		}
+		return $item;
+	}
 
 	/**
 	 * Get complete parent list for issue
@@ -151,13 +167,14 @@ class Issue extends \Model {
 			$repeat_issue = new \Model\Issue();
 			$repeat_issue->name = $this->get("name");
 			$repeat_issue->type_id = $this->get("type_id");
-			$repeat_issue->sprint_id = $this->get("sprint_id");
 			$repeat_issue->parent_id = $this->get("parent_id");
 			$repeat_issue->author_id = $this->get("author_id");
 			$repeat_issue->owner_id = $this->get("owner_id");
 			$repeat_issue->description = $this->get("description");
+			$repeat_issue->priority = $this->get("priority");
 			$repeat_issue->repeat_cycle = $this->get("repeat_cycle");
 			$repeat_issue->hours_total = $this->get("hours_total");
+			$repeat_issue->hours_remaining = $this->get("hours_total"); // Reset hours remaining to start hours
 			$repeat_issue->created_date = date("Y-m-d H:i:s");
 
 			// Find a due date in the future
