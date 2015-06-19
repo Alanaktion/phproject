@@ -45,7 +45,7 @@
 										<select name="theme" class="form-control input-sm">
 											<option value="">[ {{ @dict.default }} ]</option>
 											<repeat group="{{ @themes }}" value="{{ @item }}">
-												<option value="css/{{ @item }}.css" {{ (@user.theme == 'css/'.@item.'.css') ? 'selected' : '' }}>{{ str_replace(array("bootstrap-", ".min"), "", @item) }}</option>
+												<option value="{{ @item }}" {{ (@user.theme == @item) ? 'selected':'' }}>{{ @item }}</option>
 											</repeat>
 										</select>
 									</div>

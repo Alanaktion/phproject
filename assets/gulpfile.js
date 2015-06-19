@@ -20,7 +20,7 @@ gulp.task('css', function() {
 		.on('error', function() {
 			this.emit('end');
 		})
-		// .pipe(minifycss())
+		.pipe(minifycss())
 		.pipe(gulp.dest('theme-css/'));
 });
 
