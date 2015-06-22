@@ -255,7 +255,7 @@
 						</form>
 						<repeat group="{{ @comments }}" value="{{ @comment }}">
 							<div class="media" id="c-{{ @comment.id }}" data-id="{{ @comment.id }}">
-								<a class="media-left" href="{{ @BASE }}/user/{{ @comment.user_username }}">
+								<a class="pull-left" href="{{ @BASE }}/user/{{ @comment.user_username }}">
 									<img class="profile-picture media-object img-rounded" src="{{ @BASE }}/avatar/48-{{ @comment.user_id }}.png" alt>
 								</a>
 								<div class="media-body">
