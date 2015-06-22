@@ -178,9 +178,9 @@
 	</div>
 
 	<!-- Add/Edit Task Modal -->
-	<div class="modal" id="task-dialog" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="#task-dialog-title" method="post">
+	<div class="modal" id="task-dialog" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="#task-dialog-title">
 		<div class="modal-dialog">
-			<form class="modal-content">
+			<form class="modal-content" method="post">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
 					<h4 class="modal-title" id="task-dialog-title">{{ @dict.edit }}</h4>
@@ -196,7 +196,7 @@
 									<input type="text" name="title" id="title" class="form-control input-sm" required>
 								</div>
 								<div class="form-group">
-									<label for="Description">{{ @dict.cols.description }}</label>
+									<label for="description">{{ @dict.cols.description }}</label>
 									<textarea name="description" id="description" class="form-control input-sm" rows="8"></textarea>
 								</div>
 							</div>
@@ -220,7 +220,7 @@
 								</div>
 								<div class="form-group">
 									<label for="hours">{{ @dict.cols.remaining_hours }}</label>
-									<input type="number" name="hours" id="hours" class="form-control input-sm" min="0" step=".5">
+									<input type="number" name="hours" id="hours" class="form-control input-sm" min="0">
 								</div>
 								<div class="form-group">
 									<label for="dueDate">{{ @dict.cols.due_date }}</label>
