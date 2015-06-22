@@ -14,8 +14,8 @@
 	</div>
 
 	<div id="alert" class="alert alert-success alert-popup alert-popup-center clearfix" style="display: none;">
-		<span></span>
 		<button type="button" class="close">&times;</button>
+		<span></span>
 	</div>
 
 	<check if="{{ @issue.deleted_date }}">
@@ -62,12 +62,12 @@
 			</a>
 			<check if="{{ @watching }}">
 				<true>
-					<button class="btn btn-default btn-xs" onclick="unwatch_issue();" id="watch-btn">
+					<button type="button" class="btn btn-default btn-xs" onclick="unwatch_issue();" id="watch-btn">
 						<span class="glyphicon glyphicon-eye-close"></span>&ensp;{{ @dict.unwatch }}
 					</button>
 				</true>
 				<false>
-					<button class="btn btn-default btn-xs" onclick="watch_issue();" id="watch-btn">
+					<button type="button" class="btn btn-default btn-xs" onclick="watch_issue();" id="watch-btn">
 						<span class="glyphicon glyphicon-eye-open"></span>&ensp;{{ @dict.watch }}
 					</button>
 				</false>
@@ -191,34 +191,36 @@
 										<img class src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" /><br />
 										{{ @file.filename | esc }}
 									</a>
-									<button class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
+									<button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
 								</li>
 							</repeat>
 						</ul>
 					</div>
 					<div class="tab-pane fade" id="files-table">
-						<table class="table table-striped table-responsive table-condensed file-list">
-							<thead>
-								<th>{{ @dict.cols.id }}</th>
-								<th>{{ @dict.file_name }}</th>
-								<th>{{ @dict.uploaded_by }}</th>
-								<th>{{ @dict.upload_date }}</th>
-								<th>{{ @dict.file_size }}</th>
-								<th></th>
-							</thead>
-							<tbody>
-								<repeat group="{{ @files }}" value="{{ @file }}">
-									<tr id="ft-{{ @file.id }}" data-id="{{ @file.id }}">
-										<td>{{ @file.id }}</td>
-										<td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename | esc }}</a></td>
-										<td>{{ @file.user_name | esc }}</td>
-										<td>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
-										<td>{{ @file.filesize | formatFilesize }}</td>
-										<td><button class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button></td>
-									</tr>
-								</repeat>
-							</tbody>
-						</table>
+						<div class="table-responsive">
+							<table class="table table-striped table-condensed file-list">
+								<thead>
+									<th>{{ @dict.cols.id }}</th>
+									<th>{{ @dict.file_name }}</th>
+									<th>{{ @dict.uploaded_by }}</th>
+									<th>{{ @dict.upload_date }}</th>
+									<th>{{ @dict.file_size }}</th>
+									<th></th>
+								</thead>
+								<tbody>
+									<repeat group="{{ @files }}" value="{{ @file }}">
+										<tr id="ft-{{ @file.id }}" data-id="{{ @file.id }}">
+											<td>{{ @file.id }}</td>
+											<td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename | esc }}</a></td>
+											<td>{{ @file.user_name | esc }}</td>
+											<td>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
+											<td>{{ @file.filesize | formatFilesize }}</td>
+											<td><button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button></td>
+										</tr>
+									</repeat>
+								</tbody>
+							</table>
+						</div>
 					</div>
 					<p class="clear"></p>
 				</check>
@@ -253,7 +255,7 @@
 						</form>
 						<repeat group="{{ @comments }}" value="{{ @comment }}">
 							<div class="media" id="c-{{ @comment.id }}" data-id="{{ @comment.id }}">
-								<a class="pull-left" href="{{ @BASE }}/user/{{ @comment.user_username }}">
+								<a class="media-left" href="{{ @BASE }}/user/{{ @comment.user_username }}">
 									<img class="profile-picture media-object img-rounded" src="{{ @BASE }}/avatar/48-{{ @comment.user_id }}.png" alt>
 								</a>
 								<div class="media-body">
