@@ -3,7 +3,7 @@
 <check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
 {~ @headings[] = 'closed' ~}
 </check>
-<form action="{{ @BASE }}/issues" method="get" class="table-responsive" class="filter-form">
+<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form">
 	<check if="{{ !empty(@heading_links_enabled) }}">
 		<input type="hidden" name="orderby" value="{{ !empty(@GET.orderby) ? @GET.orderby : 'priority' }}" />
 		<input type="hidden" name="ascdesc" value="{{ !empty(@GET.ascdesc) ? @GET.ascdesc : 'desc' }}" />
