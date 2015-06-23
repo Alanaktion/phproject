@@ -24,7 +24,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="type_id">
-							<option>--</option>
+							<option value="">--</option>
 							<repeat group="{{ @types }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.type_id) && @GET.type_id == @item.id }}">
 									<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
@@ -35,7 +35,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="priority">
-							<option>--</option>
+							<option value="">--</option>
 							<repeat group="{{ @priorities }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.priority) && @GET.priority == @item.value }}">
 									<true><option value="{{ @item.value }}" selected>{{ @item.name }}</option></true>
@@ -46,7 +46,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="status">
-							<option>--</option>
+							<option value="">--</option>
 							<optgroup label="{{ @dict.general }}">
 								<check if="{{ !empty(@GET.status) && @GET.status == 'open' }}">
 									<true><option value="open" selected>{{ @dict.open }}</option></true>
@@ -72,7 +72,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="author_id">
-							<option>--</option>
+							<option value="">--</option>
 							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
 							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
@@ -94,7 +94,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="owner_id">
-							<option>--</option>
+							<option value="">--</option>
 							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
 							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
@@ -116,7 +116,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="sprint_id">
-							<option>--</option>
+							<option value="">--</option>
 							<repeat group="{{ @sprints }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
 									<true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
@@ -127,7 +127,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="repeat_cycle">
-							<option>--</option>
+							<option value="">--</option>
 							<optgroup label="{{ @dict.general }}">
 								<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'repeat' }}">
 									<true><option value="repeat" selected>{{ @dict.repeating }}</option></true>
