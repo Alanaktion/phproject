@@ -131,8 +131,10 @@ ol.issue-heading.breadcrumb {
 	line-height: 16px;
 }
 .comments,
-.comments > .media p,
-#history .media p,
+.comments > .media p:first-child,
+.comments > .media p:last-child,
+#history .media p:first-child,
+#history .media p:last-child,
 .comments .form-group:last-child {
 	margin-bottom: 0;
 }
