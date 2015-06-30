@@ -310,7 +310,13 @@ class Taskboard extends \Controller {
 	 * Add a new task
 	 */
 	public function add($f3, $params) {
-		$issue = \Model\Issue::create($f3->get("POST"));
+		$post = $f3->get("POST");
+		$post['sprint_id'] = $post['sprintId'];
+		$post['name'] = $post['title'];
+		$post['owner_id'] = $post['assigned'];
+		$post['due_date'] = $post['dueDate'];
+		$post['parent_id'] = $post['storyId'];
+		$issue = \Model\Issue::create($post);
 		$this->_printJson($issue->cast() + array("taskId" => $issue->id));
 	}
 

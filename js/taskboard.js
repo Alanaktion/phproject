@@ -106,7 +106,7 @@ var Taskboard = {
 			title = $(data).find('.title').text().trim(),
 			description = $(data).find('.description').text().trim(),
 			hours = $(data).find('.hours').text().trim(),
-			date = $(data).find('.due_date').text().trim(),
+			date = $(data).find('.dueDate').text().trim(),
 			priority = $(data).find('.priority').data('val'),
 			repeat_cycle = $(data).find('.repeat_cycle').text();
 
@@ -117,8 +117,8 @@ var Taskboard = {
 		$("#task-dialog input#hours_spent").val('');
 		$("#task-dialog input#comment").val('');
 		$("#task-dialog select#repeat_cycle").val(repeat_cycle);
-		$("#task-dialog input#due_date").val(date);
-		$("#task-dialog").find("#due_date").datepicker({
+		$("#task-dialog input#dueDate").val(date);
+		$("#task-dialog").find("#dueDate").datepicker({
 			format: 'mm/dd/yyyy'
 		});
 		Taskboard.setOptionByVal("#task-dialog", user);
@@ -128,15 +128,15 @@ var Taskboard = {
 		$("#task-dialog").modal("show");
 		Taskboard.changeModalColor(userColor);
 	},
-	modalAdd: function(parent_id) {
+	modalAdd: function(storyId) {
 		$("#task-dialog input, #task-dialog textarea").not("#sprintId").val("");
 		$("#task-dialog #priority").val(0);
 		$("#task-dialog #assigned").val($("#task-dialog #assigned").data("default-value"));
 		Taskboard.changeModalColor($("#task-dialog #assigned").data("default-color"));
 		$("#task-dialog .modal-title").text("Add Task");
-		$("#task-dialog form").data("story-id", parent_id);
+		$("#task-dialog form").data("story-id", storyId);
 		$("#task-dialog").modal("show");
-		$("#task-dialog").find("#due_date").datepicker({
+		$("#task-dialog").find("#dueDate").datepicker({
 			format: 'mm/dd/yyyy'
 		});
 	},
@@ -183,13 +183,13 @@ var Taskboard = {
 		}
 
 		$(card).find(".description").text(data.description);
-		$(card).find(".due_date").text(data.due_date);
+		$(card).find(".dueDate").text(data.dueDate);
 		$(card).find(".owner").text($("#task-dialog #assigned option[value='" + data.assigned + "']").first().text()).data('id', data.assigned);
 		$(card).css("border-color", $("#task-dialog #assigned option[value='" + data.assigned + "']").first().attr("data-color"));
 		Taskboard.updateCardPriority(data.priority, card);
 		Taskboard.ajaxUpdateTask(data);
 	},
-	addCard: function(story, data, parent_id) {
+	addCard: function(story, data, storyId) {
 		var row = $(story).parents('.tb-row');
 		var cell = row.find("td.column-2"); // put new tasks in the new column
 		cell.append($(".cloneable:last").clone());
@@ -206,14 +206,14 @@ var Taskboard = {
 		}
 
 		$(card).find(".description").text(data.description);
-		// $(card).find(".due_date").text(data.due_date);
+		// $(card).find(".dueDate").text(data.dueDate);
 		$(card).find(".owner").text($("#task-dialog #assigned option[value='" + data.assigned + "']").first().text());
 		$(card).css("border-color", $("#task-dialog #assigned option[value='" + data.assigned + "']").first().attr("data-color"));
 		$(card).removeClass("cloneable");
 		$(card).attr("id", "new_task_" + Taskboard.newTaskId);
 		Taskboard.updateCardPriority(data.priority, card);
 
-		data.parent_id = parent_id;
+		data.storyId = storyId;
 		data.newTaskId = Taskboard.newTaskId;
 		Taskboard.ajaxAddTask(data, card);
 		Taskboard.newTaskId++;
