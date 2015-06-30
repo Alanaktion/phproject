@@ -1,5 +1,5 @@
 ---
-layout: md
+layout: use
 title: Use
 ---
 <h1 class="page-header">Use</h1>
