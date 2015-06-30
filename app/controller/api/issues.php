@@ -63,16 +63,32 @@ class Issues extends \Controller\Api {
 	// Get a list of issues
 	public function get($f3) {
 		$issue = new \Model\Issue\Detail();
+
+		// Build filter string
+		$filter = array();
+		$get = $f3->get("GET");
+		$db = $f3->get("db.instance");
+		foreach($issue->fields(false) as $i) {
+			if(isset($get[$i])) {
+				$filter[] = "`$i` = " . $db->quote($get[$i]);
+			}
+		}
+		$filter_str = $filter ? implode(' AND ', $filter) : null;
+
+		// Load issues
 		$result = $issue->paginate(
 			$f3->get("GET.offset") / ($f3->get("GET.limit") ?: 30),
-			$f3->get("GET.limit") ?: 30
+			$f3->get("GET.limit") ?: 30,
+			$filter_str
 		);
 
+		// Build result objects
 		$issues = array();
 		foreach($result["subset"] as $iss) {
 			$issues[] = $this->_issueMultiArray($iss);
 		}
 
+		// Output response
 		$this->_printJson(array(
 			"total_count" => $result["total"],
 			"limit" => $result["limit"],
