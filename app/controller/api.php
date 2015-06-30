@@ -52,7 +52,7 @@ abstract class Api extends \Controller {
 			$key = $f3->get("HEADERS.X-Api-Key");
 		}
 
-		$user->load(array("api_key", $key));
+		$user->load(array("api_key = ?", $key));
 
 		if($key && $user->id && $user->api_key) {
 			$f3->set("user", $user->cast());
