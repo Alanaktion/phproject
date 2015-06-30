@@ -1,7 +1,7 @@
 <form id="dependency_form" role="form" class="form-horizontal">
 <input type="hidden" name="action" value="add_dependency">
 <div class="form-group">
-		<label class="col-md-3"><strong> {{ @dict.task_depends }} </strong></label>
+		<label class="col-md-3"><strong>{{ @dict.task_depends }}</strong></label>
 		<div class="col-md-2">
 			<input type="text" class="form-control input-sm" name="id" value="" required>
 		</div>
@@ -14,14 +14,14 @@
 			</select>
 		</div>
 		<div class="col-md-1">
-			<button type="submit" class="btn btn-primary btn-sm">Add  Dependency</button>
+			<button type="submit" class="btn btn-primary btn-sm">{{ @dict.add_dependency }}</button>
 		</div>
 	</div>
 
 </form>
 <check if="{{ !empty(@dependencies) }}">
-	<true>
-		<table class="table table-striped table-responsive table-condensed issue-list dependency-list">
+	<div class="table-responsive">
+		<table class="table table-striped table-condensed issue-list dependency-list">
 		<thead>
 			<tr>
 				<th data-sort="int">{{ @dict.cols.id }}</th>
@@ -51,33 +51,33 @@
 			</repeat>
 		</tbody>
 		</table>
-	</true>
+	</div>
 </check>
 <hr>
 <form id="dependent_form" role="form" class="form-horizontal">
 <input type="hidden" name="action" value="add_dependent">
 <div class="form-group">
-		<label class="col-md-3"><strong> {{ @dict.task_dependency }} </strong></label>
+		<label class="col-md-3"><strong>{{ @dict.task_dependency }}</strong></label>
 		<div class="col-md-2">
 			<input type="text" class="form-control input-sm" name="id" value="" required>
 		</div>
 		<div class="col-md-1">
 			<select class="form-control input-sm" name="type_id">
-				<option>FS</option>
-				<option>FF</option>
-				<option>SS</option>
-				<option>SF</option>
+				<option>{{ @dict.fs }}</option>
+				<option>{{ @dict.ff }}</option>
+				<option>{{ @dict.ss }}</option>
+				<option>{{ @dict.sf }}</option>
 			</select>
 		</div>
 		<div class="col-md-1">
-			<button type="submit" class="btn btn-primary btn-sm">Add Dependent</button>
+			<button type="submit" class="btn btn-primary btn-sm">{{ @dict.add_dependent }}</button>
 		</div>
 	</div>
 
 </form>
 <check if="{{ !empty(@dependents) }}">
-	<true>
-		<table class="table table-striped table-responsive table-condensed issue-list dependency-list">
+	<div class="table-responsive">
+		<table class="table table-striped table-condensed issue-list dependency-list">
 		<thead>
 			<tr>
 				<th data-sort="int">{{ @dict.cols.id }}</th>
@@ -107,5 +107,5 @@
 			</repeat>
 		</tbody>
 		</table>
-	</true>
+	</div>
 </check>

@@ -10,7 +10,7 @@
 
 		<div class="clearfix">
 			<div class="pull-left" style="margin-right: 15px;">
-				<img src="{{ @this_user->avatar(128) }}" class="img-rounded profile-picture" alt>
+				<img src="{{ @this_user->avatar(128) | esc }}" class="img-rounded profile-picture" alt>
 			</div>
 			<div class="pull-left">
 				<h3>{{ @this_user.name | esc }}</h3>
