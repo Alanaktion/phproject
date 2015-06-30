@@ -56,10 +56,24 @@ abstract class Model extends \DB\SQL\Mapper {
 	 * @return mixed
 	 */
 	function save() {
+		// Ensure created_date is set if possible
 		if(!$this->query && array_key_exists("created_date", $this->fields) && !$this->get("created_date")) {
 			$this->set("created_date", date("Y-m-d H:i:s"));
 		}
-		return parent::save();
+
+		// Call before_save hooks
+		$hookName = str_replace("\\", "/", strtolower(get_class($this)));
+		\Helper\Plugin::instance()->callHook("model.before_save", $this);
+		\Helper\Plugin::instance()->callHook($hookName.".before_save", $this);
+
+		// Save object
+		$result = parent::save();
+
+		// Call after save hooks
+		\Helper\Plugin::instance()->callHook("model.after_save", $this);
+		\Helper\Plugin::instance()->callHook($hookName.".after_save", $this);
+
+		return $result;
 	}
 
 	/**
