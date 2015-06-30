@@ -1,17 +1,20 @@
 <set headings="{{ array('id', 'title', 'type', 'priority', 'status', 'parent_id', 'author', 'assignee', 'sprint', 'repeat_cycle', 'created', 'due') }}" />
+<set bulkUpdate="{{ isset(@statuses) && isset(@groups) && isset(@users) && isset(@priorities) && isset(@sprints) && isset(@issue_types) }}" />
 <check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
 {~ @headings[] = 'closed' ~}
 </check>
-<form action="{{ @site.url }}issues" method="get" id="filter">
-	<table class="table table-striped table-hover table-responsive table-condensed issue-list">
+<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form">
+	<check if="{{ !empty(@heading_links_enabled) }}">
+		<input type="hidden" name="orderby" value="{{ !empty(@GET.orderby) ? @GET.orderby : 'priority' }}" />
+		<input type="hidden" name="ascdesc" value="{{ !empty(@GET.ascdesc) ? @GET.ascdesc : 'desc' }}" />
+	</check>
+	<table class="table table-striped table-hover table-condensed issue-list">
 		<thead>
-			<input type="hidden" name="orderby" id="orderby" value="{{ !empty(@GET.orderby) ? @GET.orderby : 'priority' }}" />
-			<input type="hidden" name="ascdesc" id="ascdesc" value="{{ !empty(@GET.ascdesc) ? @GET.ascdesc : 'desc' }}" />
 			<check if="{{ !empty(@show_filters) }}">
 				<tr class="issue-filters">
-					<td colspan="2">
+					<td colspan="{{ @bulkUpdate ? 2 : 1 }}">
 						<check if="{{ !empty(@show_export) }}">
-							<a class="btn btn-default btn-xs" href="{{ @site.url }}issues/export?{{ http_build_query($_GET) }}">
+							<a class="btn btn-default btn-xs" href="{{ @BASE }}/issues/export?{{ http_build_query($_GET) }}">
 								<span class="glyphicon glyphicon-save"></span>&ensp;{{ @dict.export }}
 							</a>
 						</check>
@@ -21,7 +24,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="type_id">
-							<option></option>
+							<option value="">--</option>
 							<repeat group="{{ @types }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.type_id) && @GET.type_id == @item.id }}">
 									<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
@@ -32,7 +35,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="priority">
-							<option></option>
+							<option value="">--</option>
 							<repeat group="{{ @priorities }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.priority) && @GET.priority == @item.value }}">
 									<true><option value="{{ @item.value }}" selected>{{ @item.name }}</option></true>
@@ -43,7 +46,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="status">
-							<option></option>
+							<option value="">--</option>
 							<optgroup label="{{ @dict.general }}">
 								<check if="{{ !empty(@GET.status) && @GET.status == 'open' }}">
 									<true><option value="open" selected>{{ @dict.open }}</option></true>
@@ -69,7 +72,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="author_id">
-							<option></option>
+							<option value="">--</option>
 							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
 							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
@@ -91,7 +94,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="owner_id">
-							<option></option>
+							<option value="">--</option>
 							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
 							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
@@ -113,8 +116,8 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="sprint_id">
-							<option></option>
-							<repeat group="{{ array_reverse(@sprints) }}" value="{{ @item }}">
+							<option value="">--</option>
+							<repeat group="{{ @sprints }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
 									<true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
 									<false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
@@ -124,7 +127,7 @@
 					</td>
 					<td>
 						<select class="form-control input-sm" name="repeat_cycle">
-							<option></option>
+							<option value="">--</option>
 							<optgroup label="{{ @dict.general }}">
 								<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'repeat' }}">
 									<true><option value="repeat" selected>{{ @dict.repeating }}</option></true>
@@ -165,8 +168,8 @@
 				</tr>
 			</check>
 			<tr>
-				<check if="{{ isset(@statuses) }}">
-					<th><input type="checkbox" id="chk-toggle-all"></th>
+				<check if="{{ @bulkUpdate }}">
+					<th><input type="checkbox" class="chk-toggle-all"></th>
 				</check>
 				<check if="{{ !empty(@heading_links_enabled) }}">
 					<true>
@@ -195,18 +198,18 @@
 		<tbody>
 			<repeat group="{{ @issues.subset }}" value="{{ @item }}">
 				<tr data-id="{{ @item.id }}" class="{{ @item.status_closed ? 'closed' : '' }}">
-					<check if="{{ isset(@statuses) }}">
+					<check if="{{ @bulkUpdate }}">
 						<td><input type="checkbox" name="id[]" value="{{ @item.id }}"></td>
 					</check>
-					<td><a href="{{ @site.url }}issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.id }}</a></td>
-					<td><a href="{{ @site.url }}issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.name | esc }}</a></td>
+					<td><a href="{{ @BASE }}/issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.id }}</a></td>
+					<td><a href="{{ @BASE }}/issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.name | esc }}</a></td>
 					<td>{{ @item.type_name }}</td>
 					<td>{{ @item.priority_name }}</td>
 					<td>{{ @item.status_name }}</td>
 					<td>{{ @item.parent_id ?: '' }}</td>
 					<check if="{{ @item.author_username }}">
 						<true>
-							<td><a href="{{ @site.url }}user/{{ @item.author_username }}" rel="author">{{ @item.author_name | esc }}</a></td>
+							<td><a href="{{ @BASE }}/user/{{ @item.author_username }}" rel="author">{{ @item.author_name | esc }}</a></td>
 						</true>
 						<false>
 							<td>{{ @item.author_name | esc }}</td>
@@ -214,7 +217,7 @@
 					</check>
 					<check if="{{ @item.owner_username }}">
 						<true>
-							<td><a href="{{ @site.url }}user/{{ @item.owner_username }}">{{ @item.owner_name | esc }}</a></td>
+							<td><a href="{{ @BASE }}/user/{{ @item.owner_username }}">{{ @item.owner_name | esc }}</a></td>
 						</true>
 						<false>
 							<td>{{ @item.owner_name | esc }}</td>
@@ -234,10 +237,10 @@
 	</table>
 </form>
 
-<check if="{{ isset(@statuses) && isset(@groups) && isset(@users) && isset(@priorities) && isset(@sprints) && isset(@issue_types) }}">
-	<a class="btn btn-default btn-sm" data-toggle="modal" href="{{ @site.url }}javascript:void(0)" data-target="#bulk-actions">{{ @dict.bulk_actions }}</a>
+<check if="{{ @bulkUpdate }}">
+	<a class="btn btn-default btn-sm" data-toggle="modal" href="{{ @BASE }}/javascript:void(0)" data-target="#bulk-actions">{{ @dict.bulk_actions }}</a>
 	<div class="contatiner modal fade in" id="bulk-actions">
-		<form action="{{ @site.url }}issues/bulk_update" method="post" id="bulk-form">
+		<form action="{{ @BASE }}/issues/bulk_update" method="post" id="bulk-form">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -323,6 +326,7 @@
 								<div class="col-xs-9">
 									<select class="form-control input-sm bulk-input" name="sprint_id">
 										<option value="">{{ @dict.choose_option }}</option>
+										<option value="-1">{{ @dict.no_sprint }}</option>
 										<repeat group="{{ @sprints }}" value="{{ @item }}">
 											<option value="{{ @item.id }}" >{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
 										</repeat>
@@ -345,7 +349,7 @@
 						</div>
 					</div>
 					<div class="modal-footer form-group">
-						<div class="checkbox checkbox-inline">
+						<div class="checkbox checkbox-container-inline">
 							<label>
 								<input type="checkbox" name="notify" value="1" checked>
 								{{ @dict.send_notifications }}&nbsp;
@@ -356,7 +360,7 @@
 					</div>
 				</div>
 			</div>
-			<input type="hidden" id="url_query" name="url_query" value="{{ http_build_query($_GET) }}" />
+			<input type="hidden" id="url_query" name="url_query" value="{{ http_build_query($_GET) | esc }}" />
 			<input type="hidden" id="url_path" name="url_path" value="{{ @PATH }}" />
 		</form>
 	</div>

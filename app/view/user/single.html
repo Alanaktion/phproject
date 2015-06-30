@@ -27,7 +27,7 @@
 		<div class="row">
 			<div class="col-md-4 clearfix">
 				<div class="pull-left" style="margin-right: 15px;">
-					<img src="{{ @this_user->avatar(128) }}" class="img-rounded profile-picture" alt>
+					<img src="{{ @this_user->avatar(128) | esc }}" class="img-rounded profile-picture" alt>
 				</div>
 				<div class="pull-left">
 					<h3>{{ @this_user.name | esc }}</h3>
@@ -37,119 +37,123 @@
 					</check>
 				</div>
 			</div>
-			<div class="col-md-8">
+			<div class="col-md-8 hidden-xs">
 				<check if="{{ @this_user.role != 'group' }}">
-					<true>
-						<div>
-							<canvas id="stats" width="600" height="100"></canvas>
-						</div>
-						<div class="chart-legend clearfix">
-							<div><span style="background-color: #2ecc71;"></span>{{ @dict.cols.total_spent_hours }}</div>
-							<div><span style="background-color: #3498db;"></span>{{ @dict.closed }}</div>
-							<div><span style="background-color: #9b59b6;"></span>{{ @dict.cols.created }}</div>
-						</div>
-					</true>
-					<false>
-						<repeat group="{{ @this_user->getGroupUsers() }}" value="{{ @current_user }}">
-							{{ @current_user.name }}
-							<div>
-								<canvas id="stats-{{ @current_user.id }}" width="600" height="100"></canvas>
-							</div>
-							<div class="chart-legend clearfix">
-								<div><span style="background-color: #2ecc71;"></span>{{ @dict.cols.total_spent_hours }}</div>
-								<div><span style="background-color: #3498db;"></span>{{ @dict.closed }}</div>
-								<div><span style="background-color: #9b59b6;"></span>{{ @dict.cols.created }}</div>
-							</div>
-							<br>
-						</repeat>
-					</false>
+					<div>
+						<canvas id="stats" width="600" height="100"></canvas>
+					</div>
+					<div class="chart-legend clearfix">
+						<div><span style="background-color: #2ecc71;"></span>{{ @dict.cols.total_spent_hours }}</div>
+						<div><span style="background-color: #3498db;"></span>{{ @dict.closed }}</div>
+						<div><span style="background-color: #9b59b6;"></span>{{ @dict.cols.created }}</div>
+					</div>
 				</check>
 			</div>
 		</div>
 		<br>
-		<div class="row">
-			<div class="col-md-12">
-				<p>
-					{{ @dict.browse }}:&nbsp;
-					<a href="{{ @site.url }}issues?status=open&amp;author_id={{ @this_user.id }}">{{ @dict.created_issues }}</a>&nbsp;&middot;
-					<a href="{{ @site.url }}issues?status=open&amp;owner_id={{ @this_user.id }}">{{ @dict.assigned_issues }}</a>&nbsp;&middot;
-					<a href="{{ @site.url }}user/{{ @this_user.username }}/tree">{{ @dict.issue_tree }}</a>&nbsp;&middot;
-					<check if="{{ @sprint && @sprint.id }}">
-						<a href="{{ @site.url }}taskboard/{{ @sprint.id }}/{{ @this_user.id }}">{{ @dict.taskboard }}</a>
-					</check>
-				</p>
-				<include href="blocks/issue-list.html" />
+
+		<div role="tabpanel">
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="active"><a href="#user-created" data-toggle="tab">{{ @dict.created_issues }}&ensp;<span class="badge">{{ @created_issues.total }}</span></a></li>
+				<li><a href="#user-assigned" data-toggle="tab">{{ @dict.assigned_issues }}&ensp;<span class="badge">{{ @assigned_issues.total }}</span></a></li>
+				<li><a href="#user-overdue" data-toggle="tab">{{ @dict.overdue_issues }}&ensp;<span class="badge">{{ @overdue_issues.total }}</span></a></li>
+				<li><a href="#user-tree" data-toggle="tab">{{ @dict.issue_tree }}</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane fade in active" id="user-created">
+					<set issues="{{ @created_issues }}" />
+					<include href="blocks/issue-list.html" />
+				</div>
+				<div class="tab-pane fade" id="user-assigned">
+					<set issues="{{ @assigned_issues }}" />
+					<include href="blocks/issue-list.html" />
+				</div>
+				<div class="tab-pane fade" id="user-tree">
+					<p>{{ @dict.loading }}</p>
+				</div>
+				<div class="tab-pane fade" id="user-overdue">
+					<set issues="{{ @overdue_issues }}" />
+					<include href="blocks/issue-list.html" />
+				</div>
 			</div>
 		</div>
+
 		<include href="blocks/footer.html" />
 	</div>
-	<script src="{{ @site.url }}js/chart.js"></script>
+	<script src="{{ @BASE }}/js/chart.js"></script>
 	<check if="{{ @this_user.role != 'group' }}">
-		<true>
-			<set stats="{{ @this_user->stats() }}" />
-			<script>
-			var jsonData = {
-				labels: '{{ json_encode(array_values(@stats.labels)) }}',
-				spent: '{{ json_encode(array_values(@stats.spent)) }}',
-				closed: '{{ json_encode(array_values(@stats.closed)) }}',
-				created: '{{ json_encode(array_values(@stats.created)) }}'
-			};
-			</script>
-		</true>
-		<false>
-			<!-- Need to initialize chart for each user -->
-		</false>
+		<set stats="{{ @this_user->stats() }}" />
+		<script>
+		var jsonData = {
+			labels: '{{ json_encode(array_values(@stats.labels)) }}',
+			spent: '{{ json_encode(array_values(@stats.spent)) }}',
+			closed: '{{ json_encode(array_values(@stats.closed)) }}',
+			created: '{{ json_encode(array_values(@stats.created)) }}'
+		};
+		var charts = {
+			data: {
+				labels: $.parseJSON(jsonData.labels),
+				datasets: [{
+					data: $.parseJSON(jsonData.spent),
+					label: "{{ @dict.cols.total_spent_hours }}",
+					fillColor: "rgba(42,204,113,0.1)",
+					strokeColor: "#2ecc71",
+					pointColor: "#2ecc71",
+					pointStrokeColor: "#2ecc71",
+					pointHighlightFill: "#fff",
+					pointHighlightStroke: "#2ecc71"
+				},{
+					data: $.parseJSON(jsonData.closed),
+					label: "{{ @dict.closed }}",
+					fillColor: "rgba(52,152,219,0.1)",
+					strokeColor: "#3498db",
+					pointColor: "#3498db",
+					pointStrokeColor: "#3498db",
+					pointHighlightFill: "#fff",
+					pointHighlightStroke: "#3498db",
+				},{
+					data: $.parseJSON(jsonData.created),
+					label: "{{ @dict.cols.created }}",
+					fillColor: "rgba(155,89,152,0.1)",
+					strokeColor: "#9b59b6",
+					pointColor: "#9b59b6",
+					pointStrokeColor: "#9b59b6",
+					pointHighlightFill: "#fff",
+					pointHighlightStroke: "#9b59b6",
+				}]
+			},
+			options: {
+				scaleBeginAtZero: true,
+				bezierCurve: false,
+				pointDot: true,
+				pointDotRadius: 2,
+				pointDotStrokeWidth: 1,
+				datasetStroke: true,
+				datasetStrokeWidth: 2,
+				datasetFill: true,
+				animation: false,
+				responsive: true,
+				maintainAspectRatio: false,
+				scaleLineColor: "rgba(127,127,127,.2)",
+				scaleGridLineColor : "rgba(127,127,127,.1)"
+			}
+		};
+
+		$(document).ready(function() {
+
+			// Preload issue tree
+			$.get(BASE + '/user/{{ @this_user.username }}/tree', {}, function(data) {
+				$('#user-tree').html(data);
+			}).error(function() {
+				$('#user-tree').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.404_text }}'));
+			});
+
+			// Render chart
+			var ctx = document.getElementById("stats").getContext("2d");
+			charts.chart = new Chart(ctx).Line(charts.data, charts.options);
+
+		});
+		</script>
 	</check>
-	<script>
-	var charts = {
-		data: {
-			labels: $.parseJSON(jsonData.labels),
-			datasets: [{
-				data: $.parseJSON(jsonData.spent),
-				label: "{{ @dict.cols.total_spent_hours }}",
-				fillColor: "rgba(42,204,113,0.1)",
-				strokeColor: "#2ecc71",
-				pointColor: "#2ecc71",
-				pointStrokeColor: "#2ecc71",
-				pointHighlightFill: "#fff",
-				pointHighlightStroke: "#2ecc71"
-			},{
-				data: $.parseJSON(jsonData.closed),
-				label: "{{ @dict.closed }}",
-				fillColor: "rgba(52,152,219,0.1)",
-				strokeColor: "#3498db",
-				pointColor: "#3498db",
-				pointStrokeColor: "#3498db",
-				pointHighlightFill: "#fff",
-				pointHighlightStroke: "#3498db",
-			},{
-				data: $.parseJSON(jsonData.created),
-				label: "{{ @dict.cols.created }}",
-				fillColor: "rgba(155,89,152,0.1)",
-				strokeColor: "#9b59b6",
-				pointColor: "#9b59b6",
-				pointStrokeColor: "#9b59b6",
-				pointHighlightFill: "#fff",
-				pointHighlightStroke: "#9b59b6",
-			}]
-		},
-		options: {
-			scaleBeginAtZero: true,
-			bezierCurve: false,
-			pointDot: true,
-			pointDotRadius: 2,
-			pointDotStrokeWidth: 1,
-			datasetStroke: true,
-			datasetStrokeWidth: 2,
-			datasetFill: true,
-			animation: false,
-			responsive: true,
-		}
-	};
-	$(document).ready(function() {
-		var ctx = document.getElementById("stats").getContext("2d");
-		charts.chart = new Chart(ctx).Line(charts.data, charts.options);
-	});
-	</script>
 </body>
 </html>

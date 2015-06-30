@@ -8,7 +8,7 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-sm-4 col-sm-offset-4">
-			<form action="{{ @site.url }}reset" method="post" class="form-horizontal">
+			<form action="{{ @BASE }}/reset" method="post" class="form-horizontal">
 				<fieldset>
 					<legend>{{ @dict.reset_password }}</legend>
 					<check if="{{ !empty(@reset.success) }}">
@@ -26,7 +26,7 @@
 					<div class="form-group">
 						<div class="col-lg-8 col-lg-offset-4">
 							<button type="submit" class="btn btn-primary">{{ @dict.reset_password }}</button>
-							<a href="{{ @site.url }}login" class="btn btn-link">{{ @dict.cancel }}</a>
+							<a href="{{ @BASE }}/login" class="btn btn-link">{{ @dict.cancel }}</a>
 						</div>
 					</div>
 				</fieldset>

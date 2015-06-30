@@ -11,16 +11,33 @@ class Plugin extends \Prefab {
 			$_jsFiles = array();
 
 	/**
-	 * Add a hook entry
+	 * Register a hook function
 	 * @param string   $hook
 	 * @param callable $action
 	 */
 	public function addHook($hook, callable $action) {
 		if(isset($this->_hooks[$hook])) {
-			$this->_hooks[$hook][] = $callable;
+			$this->_hooks[$hook][] = $action;
 		} else {
-			$this->_hooks[$hook] = array($callable);
+			$this->_hooks[$hook] = array($action);
 		}
+	}
+
+	/**
+	 * Call registered hook functions, passing data
+	 * @param  string $hook
+	 * @param  mixed  $data
+	 * @return mixed
+	 */
+	public function callHook($hook, $data = null) {
+		if(empty($this->_hooks[$hook])) {
+			return $data;
+		}
+
+		foreach($this->_hooks[$hook] as $cb) {
+			$data = $cb($data);
+		}
+		return $data;
 	}
 
 	/**

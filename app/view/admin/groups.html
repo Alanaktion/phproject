@@ -14,33 +14,35 @@
 		</div>
 		<include href="blocks/admin/tabs.html" />
 	</div>
-	<table class="table table-striped table-condensed">
-		<thead>
-			<tr>
-				<th data-sort="int">{{ @dict.cols.id }}</th>
-				<th data-sort="string">{{ @dict.name }}</th>
-				<th data-sort="int">{{ @dict.members }}</th>
-				<th data-sort="string">{{ @dict.task_color }}</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			<repeat group="{{ @groups }}" value="{{ @group }}">
-				<tr onclick="self.location='{{ @site.url }}admin/groups/{{ @group.id }}'" style="cursor: pointer">
-					<td><a href="{{ @site.url }}admin/groups/{{ @group.id }}">{{ @group.id }}</a></td>
-					<td>{{ @group.name }}</td>
-					<td>{{ @group.count }}</td>
-					<td><span class="badge" style="background-color: #{{ @group.task_color }};">&ensp;</span>&ensp;#{{ @group.task_color }}</td>
-					<td><a href="{{ @site.url }}admin/groups/{{ @group.id }}/delete" class="has-tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></a></td>
+	<div class="table-responsive">
+		<table class="table table-striped table-condensed">
+			<thead>
+				<tr>
+					<th data-sort="int">{{ @dict.cols.id }}</th>
+					<th data-sort="string">{{ @dict.name }}</th>
+					<th data-sort="int">{{ @dict.members }}</th>
+					<th data-sort="string">{{ @dict.task_color }}</th>
+					<th></th>
 				</tr>
-			</repeat>
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				<repeat group="{{ @groups }}" value="{{ @group }}">
+					<tr onclick="self.location='{{ @BASE }}/admin/groups/{{ @group.id }}'" style="cursor: pointer">
+						<td><a href="{{ @BASE }}/admin/groups/{{ @group.id }}">{{ @group.id }}</a></td>
+						<td>{{ @group.name }}</td>
+						<td>{{ @group.count }}</td>
+						<td><span class="badge" style="background-color: #{{ @group.task_color }};">&ensp;</span>&ensp;#{{ @group.task_color }}</td>
+						<td><a href="{{ @BASE }}/admin/groups/{{ @group.id }}/delete" class="has-tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></a></td>
+					</tr>
+				</repeat>
+			</tbody>
+		</table>
+	</div>
 	<check if="{{ empty(@groups) }}">
 		<p class="text-center">{{ @dict.no_groups_exist }}</p>
 	</check>
 	<include href="blocks/footer.html" />
-	<script src="{{ @site.url }}minify/js/stupidtable.min.js"></script>
+	<script src="{{ @BASE }}/minify/js/stupidtable.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
 		$('.table').stupidtable();
@@ -49,7 +51,7 @@
 </div>
 <div class="modal" id="new" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog">
-		<form class="modal-content" action="{{ @site.url }}admin/groups/new" method="post">
+		<form class="modal-content" action="{{ @BASE }}/admin/groups/new" method="post">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#input_name').val('');">&times;</button>
 				<h4 class="modal-title">{{ @dict.new }}</h4>

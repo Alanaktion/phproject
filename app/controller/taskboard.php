@@ -142,11 +142,11 @@ class Taskboard extends \Controller {
 		$parent_ids_str = implode(",", $parent_ids);
 		$f3->set("tasks", $task_ids_str);
 
-		// Find all visible projects
+		// Find all visible projects or parent tasks
 		$projects = $issue->find(array(
-			"(id IN ($parent_ids_str) AND type_id = ?) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
+			"id IN ($parent_ids_str) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
 				. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
-			$f3->get("issue_type.project"), $sprint->id, $f3->get("issue_type.project")
+			$sprint->id, $f3->get("issue_type.project")
 		), array("order" => "owner_id ASC"));
 
 		// Build multidimensional array of all tasks and projects
@@ -166,7 +166,7 @@ class Taskboard extends \Controller {
 				}
 			}
 
-			// Add hierarchial structure to taskboard array
+			// Add hierarchical structure to taskboard array
 			$taskboard[] = array(
 				"project" => $project,
 				"columns" => $columns
@@ -220,13 +220,14 @@ class Taskboard extends \Controller {
 		$burnDatesCount = count($burnDates);
 
 		$db = $f3->get("db.instance");
+		$visible_tasks_str = implode(",", $visible_tasks);
 		$query_initial =
-				"SELECT SUM(i.hours_total) AS remaining
+				"SELECT SUM(IFNULL(i.hours_total, i.hours_remaining)) AS remaining
 				FROM issue i
 				WHERE i.created_date < :date
 				AND i.id IN (" . implode(",", $visible_tasks) . ")";
 		$query_daily =
-				"SELECT SUM(IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value)) AS remaining
+				"SELECT SUM(IF(f.id IS NULL, IFNULL(i.hours_total, i.hours_remaining), f.new_value)) AS remaining
 				FROM issue_update_field f
 				JOIN issue_update u ON u.id = f.issue_update_id
 				JOIN (
@@ -235,12 +236,13 @@ class Taskboard extends \Controller {
 					JOIN issue_update_field f ON f.issue_update_id = u.id
 					WHERE f.field = 'hours_remaining'
 					AND u.created_date < :date
+					AND u.issue_id IN ($visible_tasks_str)
 					GROUP BY u.issue_id
 				) a ON a.max_id = u.id
 				RIGHT JOIN issue i ON i.id = u.issue_id
 				WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
 				AND i.created_date < :date
-				AND i.id IN (" . implode(",", $visible_tasks) . ")";
+				AND i.id IN ($visible_tasks_str)";
 
 		$i = 1;
 		foreach($burnDates as $date) {

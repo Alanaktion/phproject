@@ -11,7 +11,7 @@
 			<h3>{{ @dict.new_n, @dict.issues | format }}</h3>
 			<div class="list-group">
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
-					<a href="{{ @site.url }}issues/new/{{ @type.id }}" class="list-group-item">
+					<a href="{{ @BASE }}/issues/new/{{ @type.id }}" class="list-group-item">
 						<h4 class="list-group-item-heading">{{ @type.name }}</h4>
 					</a>
 				</repeat>

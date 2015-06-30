@@ -25,7 +25,7 @@
 								<span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="glyphicon glyphicon-star"></span></span>&nbsp;
 							</true>
 							<false>
-								<a href="{{ @site.url }}admin/groups/{{ @group.id }}/setmanager/{{ @member.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
+								<a href="{{ @BASE }}/admin/groups/{{ @group.id }}/setmanager/{{ @member.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
 							</false>
 						</check>
 						{{ @member.user_name }}
@@ -56,7 +56,7 @@
 $(function(){
 	$('#group-name').change(function(e) {
 		if($(this).val().length > 0) {
-			$.post('/admin/groups/ajax',{
+			$.post('{{ @BASE }}/admin/groups/ajax',{
 				action: 'change_title',
 				group_id: parseInt('{{ @group.id }}'),
 				name: $(this).val()
@@ -71,7 +71,7 @@ $(function(){
 	$('#members').on('click', 'a.delete', function(e) {
 		$li = $(this).parents('li');
 		if(confirm('Are you sure you want to remove this user?')) {
-			$.post('/admin/groups/ajax', {
+			$.post('{{ @BASE }}/admin/groups/ajax', {
 				action: 'remove_member',
 				group_id: parseInt('{{ @group.id }}'),
 				user_id: $li.data('user-id')
@@ -84,7 +84,7 @@ $(function(){
 		e.preventDefault();
 	});
 	$('#adduser').submit(function(e) {
-		$.post('/admin/groups/ajax', $(this).serialize());
+		$.post('{{ @BASE }}/admin/groups/ajax', $(this).serialize());
 		$('#adduser select option:selected').each(function(i) {
 			$this = $(this);
 			$('<li />').data('user-id', $this.val()).html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $this.text()).appendTo('#members');

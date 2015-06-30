@@ -120,5 +120,8 @@ Burndown = {
 		datasetFill: true,
 		animation: false,
 		responsive: true,
+		maintainAspectRatio: false,
+		scaleLineColor: "rgba(127,127,127,.2)",
+		scaleGridLineColor : "rgba(127,127,127,.1)"
 	}
 };

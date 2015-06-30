@@ -12,7 +12,7 @@ class User extends \Controller {
 		$this->_userId = $this->_requireLogin();
 		$this->_languages = array(
 			"en" => \ISO::LC_en,
-			"en_GB" => \ISO::LC_en . " (Great Britain)",
+			"en-GB" => \ISO::LC_en . " (Great Britain)",
 			"es" => \ISO::LC_es . " (Español)",
 			"pt" => \ISO::LC_pt . " (Português)",
 			"ru" => \ISO::LC_ru . " (Pу́сский)",
@@ -247,7 +247,6 @@ class User extends \Controller {
 		$f3->reroute("/user");
 	}
 
-
 	public function single($f3, $params) {
 		$this->_requireLogin();
 
@@ -269,21 +268,16 @@ class User extends \Controller {
 			$priority = new \Model\Issue\Priority;
 			$f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
-			$sprint = new \Model\Sprint;
-			$f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC")));
-
 			$type = new \Model\Issue\Type;
 			$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
-
 			$issue = new \Model\Issue\Detail;
-			$issues = $issue->paginate(0, 100, array("status_closed = '0' AND deleted_date IS NULL AND (owner_id = ? OR author_id = ?)", $user->id, $user->id));
-			$f3->set("issues", $issues);
-
-			// Get current sprint if there is one
-			$sprint = new \Model\Sprint;
-			$sprint->load("NOW() BETWEEN start_date AND end_date");
-			$f3->set("sprint", $sprint);
+			$f3->set("created_issues", $issue->paginate(0, 200, array("status_closed = '0' AND deleted_date IS NULL AND author_id = ?", $user->id),
+					array("order" => "priority DESC, due_date DESC")));
+			$f3->set("assigned_issues", $issue->paginate(0, 200, array("status_closed = '0' AND deleted_date IS NULL AND owner_id = ?", $user->id),
+					array("order" => "priority DESC, due_date DESC")));
+			$f3->set("overdue_issues", $issue->paginate(0, 200, array("status_closed = '0' AND deleted_date IS NULL AND owner_id = ? AND due_date IS NOT NULL AND due_date < ?",
+					$user->id, date("Y-m-d", \Helper\View::instance()->utc2local())), array("order" => "due_date ASC")));
 
 			$this->_render("user/single.html");
 		} else {
@@ -376,7 +370,7 @@ class User extends \Controller {
 			$renderTree = function(&$issue, $level = 0) use(&$renderTree) {
 				if(!empty($issue['id'])) {
 					$f3 = \Base::instance();
-					$hive = array("issue" => $issue, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level, "issue_type" => $f3->get("issue_type"));
+					$hive = array("issue" => $issue, "dict" => $f3->get("dict"), "BASE" => $f3->get("BASE"), "level" => $level, "issue_type" => $f3->get("issue_type"));
 					echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
 					if(!empty($issue['children'])) {
 						foreach($issue['children'] as $item) {
@@ -389,27 +383,8 @@ class User extends \Controller {
 
 			// Render view
 			$f3->set("issues", $tree);
-			$this->_render("user/single/tree.html");
+			$this->_render($f3->get("AJAX") ? "user/single/tree/ajax.html" : "user/single/tree.html");
 
-		} else {
-			$f3->error(404);
-		}
-	}
-
-	public function single_overdue($f3, $params) {
-		$this->_requireLogin();
-
-		$user = new \Model\User;
-		$user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
-
-		if($user->id) {
-			$f3->set("title", $user->name);
-			$f3->set("this_user", $user);
-			$issue = new \Model\Issue\Detail;
-			$view = \Helper\View::instance();
-			$issues = $issue->find(array("owner_id = ? AND status_closed = 0 AND deleted_date IS NULL AND due_date IS NOT NULL AND due_date < ?", $user->id, date("Y-m-d", $view->utc2local())), array("order" => "due_date ASC"));
-			$f3->set("issues.subset", $issues);
-			$this->_render("user/single/overdue.html");
 		} else {
 			$f3->error(404);
 		}

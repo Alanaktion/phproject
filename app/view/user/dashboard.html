@@ -15,7 +15,7 @@
 	<div class="row">
 		<div class="col-sm-5">
 			<h3>{{ @dict.my_projects }}&ensp;<small>{{ count(@projects) }}</small>&ensp;
-				<a class="btn btn-sm btn-default has-tooltip" href="{{ @site.url }}issues/new/{{ @issue_type.project }}" title="{{ @dict.add_project }}"><span class="glyphicon glyphicon-plus"></span></a>
+				<a class="btn btn-sm btn-default has-tooltip" href="{{ @BASE }}/issues/new/{{ @issue_type.project }}" title="{{ @dict.add_project }}"><span class="glyphicon glyphicon-plus"></span></a>
 			</h3>
 			<set issues="{{ @projects }}" />
 			<include href="blocks/dashboard-issue-list.html" />
@@ -28,7 +28,7 @@
 
 			<check if="{{ count(@bugs) }}">
 				<h3>{{ @dict.my_bugs }}&ensp;<small>{{ count(@bugs) }}</small>&ensp;
-					<a class="btn btn-sm btn-default has-tooltip" href="{{ @site.url }}issues/new/{{ @issue_type.bug }}" title="{{ @dict.add_bug }}"><span class="glyphicon glyphicon-plus"></span></a>
+					<a class="btn btn-sm btn-default has-tooltip" href="{{ @BASE }}/issues/new/{{ @issue_type.bug }}" title="{{ @dict.add_bug }}"><span class="glyphicon glyphicon-plus"></span></a>
 				</h3>
 				<set issues="{{ @bugs }}" />
 				<include href="blocks/dashboard-issue-list.html" />
@@ -49,11 +49,11 @@
 		<div class="col-sm-7">
 			<div class="clearfix">
 				<h3 class="pull-left">{{ @dict.my_tasks }}&ensp;<small>{{ count(@tasks) }}</small>&ensp;
-					<a class="btn btn-sm btn-default has-tooltip" href="{{ @site.url }}issues/new/{{ @issue_type.task }}" title="{{ @dict.add_task }}"><span class="glyphicon glyphicon-plus"></span></a>
+					<a class="btn btn-sm btn-default has-tooltip" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}" title="{{ @dict.add_task }}"><span class="glyphicon glyphicon-plus"></span></a>
 				</h3>
 				<check if="{{ @sprint && @sprint.id }}">
 					<div class="h3 pull-right text-right">
-						<a class="btn btn-default btn-sm" href="{{ @site.url }}taskboard/{{ @sprint.id }}/me"><span class="glyphicon glyphicon-list"></span>&ensp;{{ @dict.taskboard }}</a>
+						<a class="btn btn-default btn-sm" href="{{ @BASE }}/taskboard/{{ @sprint.id }}/me"><span class="glyphicon glyphicon-list"></span>&ensp;{{ @dict.taskboard }}</a>
 					</div>
 				</check>
 			</div>

@@ -76,6 +76,15 @@ class Admin extends \Controller {
 		$this->_render("admin/users.html");
 	}
 
+	public function deleted_users($f3) {
+		$f3->set("title", $f3->get("dict.users"));
+
+		$users = new \Model\User();
+		$f3->set("users", $users->find("deleted_date IS NOT NULL AND role != 'group'"));
+
+		$this->_render("admin/users/deleted.html");
+	}
+
 	public function user_edit($f3, $params) {
 		$f3->set("title", $f3->get("dict.edit_user"));
 
@@ -184,7 +193,29 @@ class Admin extends \Controller {
 	public function user_delete($f3, $params) {
 		$user = new \Model\User();
 		$user->load($params["id"]);
+		if(!$user->id) {
+			$f3->reroute("/admin/users");
+			return;
+		}
+
 		$user->delete();
+		if($f3->get("AJAX")) {
+			$this->_printJson(array("deleted" => 1));
+		} else {
+			$f3->reroute("/admin/users");
+		}
+	}
+
+	public function user_undelete($f3, $params) {
+		$user = new \Model\User();
+		$user->load($params["id"]);
+		if(!$user->id) {
+			$f3->reroute("/admin/users");
+			return;
+		}
+
+		$user->deleted_date = null;
+		$user->save();
 
 		if($f3->get("AJAX")) {
 			$this->_printJson(array("deleted" => 1));

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body>
+<include href="blocks/navbar.html" />
+<div class="container">
+	<div class="clearfix">
+		<div class="pull-right">
+			<a href="{{ @BASE }}/admin/users/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new_user }}</a>
+		</div>
+		<include href="blocks/admin/tabs.html" />
+	</div>
+	<p>
+		<a class="btn btn-default btn-sm" href="{{ @BASE }}/admin/users"><span class="glyphicon glyphicon-chevron-left"></span>&ensp;Show Active Users</a>
+	</p>
+	<table class="table table-striped table-condensed">
+		<thead>
+			<tr>
+				<th data-sort="int">{{ @dict.cols.id }}</th>
+				<th data-sort="string">{{ @dict.username }}</th>
+				<th data-sort="string">{{ @dict.email }}</th>
+				<th data-sort="string">{{ @dict.name }}</th>
+				<th data-sort="string">{{ @dict.role }}</th>
+				<th data-sort="string">{{ @dict.task_color }}</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody class="text-muted">
+			<repeat group="{{ @users }}" value="{{ @user }}">
+				<tr>
+					<td style="text-decoration: line-through;">{{ @user.id }}</a></td>
+					<td>{{ @user.username }}</td>
+					<td>{{ @user.email }}</td>
+					<td>{{ @user.name }}</td>
+					<td>{{ ucfirst(@user.role) }}</td>
+					<td><span class="badge" style="background-color: #{{ @user.task_color }};">&ensp;</span>&ensp;#{{ @user.task_color }}</td>
+					<td><a href="{{ @BASE }}/admin/users/{{ @user.id }}/undelete" class="has-tooltip" title="{{ @dict.reactivate }}"><span class="glyphicon glyphicon-repeat" style="transform: scaleX(-1);"></span></a></td>
+				</tr>
+			</repeat>
+		</tbody>
+	</table>
+	<include href="blocks/footer.html" />
+	<script src="{{ @BASE }}/minify/js/stupidtable.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('.table').stupidtable();
+	});
+	</script>
+</div>
+</body>
+</html>

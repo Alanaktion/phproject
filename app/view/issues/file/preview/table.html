@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 	<title>{{ @file.filename }}</title>
-	<link rel="stylesheet" type="text/css" href="{{ @site.url }}css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/bootstrap.min.css">
 </head>
 <body style="padding: 15px;">
 	<set fh="{{ fopen(@file->disk_filename, 'r') }}" />
 	<p>
-		<a class="btn btn-default" href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" target="_blank" onclick="window.close();">
+		<a class="btn btn-default" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename }}" target="_blank" onclick="window.close();">
 			<span class="glyphicon glyphicon-download"></span>&ensp;Download
 		</a>
 	</p>

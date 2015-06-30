@@ -1,37 +1,20 @@
+{~
+	@dblog = @db.instance->log();
+	@total = preg_match_all('/\([0-9\.]{3,}ms\)/', @dblog, $matches);
+	@cached = substr_count(@dblog, '[CACHED]');
+~}
 <check if="{{ @DEBUG == 3 }}">
-	<set dblog="{{ @db.instance->log(true) }}" />
 	<br>
-	<div class="well well-sm log">
-		<repeat group="{{ @dblog }}" value="{{ @row }}">
-			<check if="{{ @row.cached }}">
-				<true>
-					<div class="text-muted">{{ @row.timestamp }} ({{ @row.runtime }}) {{ @row.query }}</div>
-				</true>
-				<false>
-					<check if="{{ floatval(@row.runtime) > 10 }}">
-						<true>
-							<div class="text-warning">{{ @row.timestamp }} ({{ @row.runtime }}) {{ @row.query }}</div>
-						</true>
-						<false>
-							<div>{{ @row.timestamp }} ({{ @row.runtime }}) {{ @row.query }}</div>
-						</false>
-					</check>
-				</false>
-			</check>
-		</repeat>
-	</div>
+	<div class="well well-sm log">{{ @dblog }}</div>
 </check>
 <footer class="row">
 	<div class="col-xs-4">
-		<p class="visible-sm visible-xs"><a href="{{ @site.url }}logout" class="btn btn-default btn-xs">{{ @dict.log_out }}</a></p>
+		<p class="visible-sm visible-xs"><a href="{{ @BASE }}/logout" class="btn btn-default btn-xs">{{ @dict.log_out }}</a></p>
 	</div>
 	<div class="col-xs-8">
 		<p class="text-right text-muted">
-			<check if="{{ @db.instance->log() }}">
-				<set querylog="{{ @db.instance->log(true) }}" />
-				<set cached="0" />
-				{~ foreach(@querylog as @r) if(@r.cached) ++@cached; ~}
-				<span title="{{ @dict.n_total_queries_n_cached,count(@querylog),intval(@cached) | format }}">{{ @dict.n_queries,(count(@querylog) - @cached) | format }}</span> &middot;
+			<check if="{{ @dblog }}">
+				<span title="{{ @dict.n_total_queries_n_cached,@total,@cached | format }}">{{ @dict.n_queries,(@total - @cached) | format }}</span> &middot;
 			</check>
 			<check if="{{ !empty(@microtime) }}">
 				<set pagemtime="{{ microtime(true) - @microtime }}" />
@@ -56,9 +39,9 @@
 		}
 	}
 ~}
-<script>var site_url = '{{ @site.url }}', issue_types = {{ json_encode(@types) }};</script>
-<script src="{{ @site.url }}minify/js/jquery-1.7.2.min.js,bootstrap.min.js,modernizr.custom.js,intercom.min.js,global.js"></script>
-<script src="{{ @site.url }}js/respond.min.js"></script>
+<script>var BASE = '{{ @BASE }}', issue_types = {{ json_encode(@types) }};</script>
+<script src="{{ @BASE }}/minify/js/jquery-1.11.3.min.js,bootstrap.min.js,modernizr.custom.js,intercom.min.js,global.js"></script>
+<script src="{{ @BASE }}/js/respond.min.js"></script>
 
 <include href="blocks/footer-modals.html" if="{{ !empty(@user.id) }}" />
 
@@ -66,5 +49,5 @@
 	<script src="{{ @file }}"></script>
 </repeat>
 <repeat group="{{ \Helper\Plugin::instance()->getJsCode(@PATH) }}" value="{{ @code }}">
-	<script>{{ @code }}</script>
+	{{ @code }}
 </repeat>

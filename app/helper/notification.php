@@ -184,7 +184,7 @@ class Notification extends \Prefab {
 			$text = $this->_render("notification/new.txt");
 			$body = $this->_render("notification/new.html");
 
-			$subject =  "[#{$issue->id}] - {$issue->name} created by {$issue->author_name}";
+			$subject = "[#{$issue->id}] - {$issue->name} created by {$issue->author_name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
@@ -209,6 +209,11 @@ class Notification extends \Prefab {
 			$issue->load($issue_id);
 			$file = new \Model\Issue\File\Detail;
 			$file->load($file_id);
+
+			// This should catch a bug I can't currently find the source of. --Alan
+			if($file->issue_id != $issue->id) {
+				return;
+			}
 
 			// Get issue parent if set
 			if($issue->parent_id) {

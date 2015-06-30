@@ -1,47 +1,42 @@
-<check if="{{ empty(@parent) }}">
-	<true>
-		<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.new_task }}</a>
-	</true>
-	<false>
-		<check if="{{ !@parent.closed_date }}">
-			<check if="{{ @parent.type_id == @issue_type.project }}">
-				<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.project }}/{{ @parent.id }}">{{ @dict.new_sub_project }}</a>
-			</check>
-			<a class="btn btn-default btn-sm" href="{{ @site.url }}issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
-			<span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="' . @site.url . 'issues/' . @parent.id . '">#' . @parent.id . ' ' . @parent.name . '</a>' | format }}</span>
-		</check>
-	</false>
+<check if="{{ !@parent.closed_date }}">
+	<check if="{{ @parent.type_id == @issue_type.project }}">
+		<a class="btn btn-default btn-sm" href="{{ @BASE }}/issues/new/{{ @issue_type.project }}/{{ @parent.id }}">{{ @dict.new_sub_project }}</a>
+	</check>
+	<a class="btn btn-default btn-sm" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
+	<span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="' . @BASE . '/issues/' . @parent.id . '">#' . @parent.id . ' ' . @parent.name . '</a>' | format }}</span>
 </check>
 <check if="{{ !empty(@issues) }}">
 	<true>
-		<table class="table table-striped table-responsive table-condensed issue-list">
-		<thead>
-			<tr>
-				<th data-sort="int">{{ @dict.cols.id }}</th>
-				<th data-sort="string">{{ @dict.cols.title }}</th>
-				<th data-sort="string">{{ @dict.cols.author }}</th>
-				<th data-sort="string">{{ @dict.cols.assignee }}</th>
-				<th data-sort="int">{{ @dict.cols.created }}</th>
-				<th data-sort="int">{{ @dict.cols.priority }}</th>
-				<th data-sort="int">{{ @dict.cols.due }}</th>
-				<th data-sort="int">{{ @dict.cols.status }}</th>
-			</tr>
-		</thead>
-		<tbody>
-			<repeat group="{{ @issues }}" value="{{ @item }}">
-				<tr data-id="{{ @item.id }}" class="{{ @item.status_closed ? 'closed' : '' }}">
-					<td><a href="{{ @site.url }}issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.id }}</a></td>
-					<td><a href="{{ @site.url }}issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.name | esc }}</a></td>
-					<td><a href="{{ @site.url }}user/{{ @item.author_username }}">{{ @item.author_name | esc }}</a></td>
-					<td><a href="{{ @site.url }}user/{{ @item.owner_username }}">{{ @item.owner_name | esc }}</a></td>
-					<td data-sort-value="{{ strtotime(@item.created_date) }}" title="{{ date('M j, Y \\a\\t g:ia', strtotime(@item.created_date)) }}">{{ date("n/j/y", strtotime(@item.created_date)) }}</td>
-					<td data-sort-value="{{ @item.priority }}">{{ @item.priority_name}}</td>
-					<td data-sort-value="{{ strtotime(@item.due_date) ?: 0 }}">{{ !empty(@item.due_date) ? date("n/j", strtotime(@item.due_date)) : "" }}</td>
-					<td data-sort-value="{{ @item.status }}">{{ @item.status_name }}</td>
-				</tr>
-			</repeat>
-		</tbody>
-		</table>
+		<div class="table-responsive">
+			<table class="table table-striped table-condensed issue-list">
+				<thead>
+					<tr>
+						<th data-sort="int">{{ @dict.cols.id }}</th>
+						<th data-sort="string">{{ @dict.cols.title }}</th>
+						<th data-sort="string">{{ @dict.cols.author }}</th>
+						<th data-sort="string">{{ @dict.cols.assignee }}</th>
+						<th data-sort="int">{{ @dict.cols.created }}</th>
+						<th data-sort="int">{{ @dict.cols.priority }}</th>
+						<th data-sort="int">{{ @dict.cols.due }}</th>
+						<th data-sort="int">{{ @dict.cols.status }}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<repeat group="{{ @issues }}" value="{{ @item }}">
+						<tr data-id="{{ @item.id }}" class="{{ @item.status_closed ? 'closed' : '' }}">
+							<td><a href="{{ @BASE }}/issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.id }}</a></td>
+							<td><a href="{{ @BASE }}/issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.name | esc }}</a></td>
+							<td><a href="{{ @BASE }}/user/{{ @item.author_username }}">{{ @item.author_name | esc }}</a></td>
+							<td><a href="{{ @BASE }}/user/{{ @item.owner_username }}">{{ @item.owner_name | esc }}</a></td>
+							<td data-sort-value="{{ strtotime(@item.created_date) }}" title="{{ date('M j, Y \\a\\t g:ia', strtotime(@item.created_date)) }}">{{ date("n/j/y", strtotime(@item.created_date)) }}</td>
+							<td data-sort-value="{{ @item.priority }}">{{ @item.priority_name}}</td>
+							<td data-sort-value="{{ strtotime(@item.due_date) ?: 0 }}">{{ !empty(@item.due_date) ? date("n/j", strtotime(@item.due_date)) : "" }}</td>
+							<td data-sort-value="{{ @item.status }}">{{ @item.status_name }}</td>
+						</tr>
+					</repeat>
+				</tbody>
+			</table>
+		</div>
 	</true>
 	<false>
 		<p class="text-center text-muted">{{ @dict.no_related_issues }}</p>

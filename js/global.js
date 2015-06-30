@@ -36,6 +36,9 @@ $(document).ready(function() {
 		e.stopPropagation();
 	});
 	$('.issue-list tbody tr').click(function(e) {
+		if(e.which != 1) {
+			return;
+		}
 		var $checkbox = $(this).find('input'),
 			checked = $checkbox.prop('checked');
 		if (e.ctrlKey || e.metaKey) {
@@ -64,7 +67,7 @@ $(document).ready(function() {
 	$('.issue-list tbody tr').dblclick(function(e) {
 		var id = $(this).data('id');
 		if(id) {
-			self.location = site_url + 'issues/' + id;
+			self.location = BASE + '/issues/' + id;
 		}
 	});
 
@@ -75,18 +78,18 @@ $(document).ready(function() {
 
 	// Submit issue sorting options
 	$(".issue-sort").on("click", function(e) {
+		$form = $(this).parents('form');
 		e.preventDefault();
 
-		if($("#orderby").val() == $(this).attr('id')) {
-			if($("#ascdesc").val() == "desc") {
-				$("#ascdesc").val("asc");
+		if($form.find("input[name=orderby]").val() == $(this).attr('id')) {
+			if($form.find("input[name=ascdesc]").val() == "desc") {
+				$form.find("input[name=ascdesc]").val("asc");
 			} else {
-				$("#ascdesc").val("desc");
+				$form.find("input[name=ascdesc]").val("desc");
 			}
-
 		} else {
-			$("#orderby").val($(this).attr('id'));
-			$("#ascdesc").val("desc");
+			$form.find("input[name=orderby]").val($(this).attr('id'));
+			$form.find("input[name=ascdesc]").val("desc");
 		}
 		$(this).parents('form').submit();
 	});
@@ -118,7 +121,7 @@ $(document).ready(function() {
 					break;
 				case 66: // Browse
 					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						window.location = site_url + 'issues?status=open';
+						window.location = BASE + '/issues?status=open';
 					}
 					break;
 				case 87: // Watch/unwatch issue
@@ -147,7 +150,7 @@ $(document).ready(function() {
 					break;
 				default:
 					if(!e.shiftKey && !e.ctrlKey && e.altKey && issue_types.indexOf(e.which - 48) >= 0) {
-						window.location = site_url + 'issues/new/' + (e.which - 48);
+						window.location = BASE + '/issues/new/' + (e.which - 48);
 					}
 			}
 		}
@@ -190,7 +193,7 @@ var Session = {
 	 * Send Ping request
 	 */
 	ping: function() {
-		$.get(site_url + 'ping', function(data) {
+		$.get(BASE + '/ping', function(data) {
 			if(Intercom.supported) {
 				Intercom.getInstance().emit('pingResponse', data);
 			} else {
