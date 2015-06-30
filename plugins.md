@@ -4,10 +4,8 @@ title: Plugins
 ---
 <h1 class="page-header">Plugins</h1>
 
-<p class="alert alert-info">Plugin support is limited in the <code>release</code> branch. For the most up-to-date plugin support, use <code>master</code>.</p>
-
 ## Installing plugins
-Most plugins can be installed by simply cloning their repository in your `app/plugin` directory. To install without git, simply copy/move the plugin's folder to `app/plugin`. Note that the folder name *must* match the plugin's package name (@package in the plugin's `base.php` file).
+Most plugins can be installed by simply cloning their repository in your `app/plugin/` directory. To install without git, simply copy/move the plugin's folder to `app/plugin/`. Note that the folder name *must* match the plugin's package name (@package in the plugin's `base.php` file).
 
 ### Official plugins
 
@@ -31,7 +29,7 @@ Phproject includes several officially supported plugins that are maintained alon
 
 <p class="text-warning">Plugin support is still under development, and may include significant changes to the API with future updates.</p>
 
-Plugins are made up of one or more PHP classes installed the `app/plugin` directory. As a minimum, all plugins must have a `base.php` file within their own directory.
+Plugins are made up of one or more PHP classes installed the `app/plugin/` directory. As a minimum, all plugins must have a `base.php` file within their own directory.
 
 
 ### Plugin Standards
@@ -56,23 +54,39 @@ If your plugin adds additional routes, they should point to a separate class out
 
 {% highlight php %}
 <?php
-...
-public function _load() {
-    $f3 = \Base::instance();
-    $f3->route("GET /yourplugin/action", "Plugin\Yourplugin\Controller->action");
-}
-...
+    // ...
+    public function _load() {
+        $f3 = \Base::instance();
+        $f3->route("GET /yourplugin/action", "Plugin\Yourplugin\Controller->action");
+    }
+    // ...
 ?>
 {% endhighlight %}
 
 
 ### Hooks
 
-Hooks are not currently implemented in Phproject, but will be initialized from your `Base->_load()` method with calls to `$this->_hook()` in future releases.
+Hooks allow your plugin to extend core Phproject functionality while avoiding conflicts. Hooks are callback functions that are called automatically when certain events happen, such as an `Issue` being saved or a text block being rendered. Your callback function will be passed an object or value which it can then manipulate and return to the core.
 
-#### Future hooks
+{% highlight php %}
+<?php
+    // ...
+    public function _load() {
+        $this->_hook("view.parse", function($str) {
+            return str_replace("asdf", "jkl;", $str);
+        });
+    }
+    // ...
+?>
+{% endhighlight %}
 
-`view.parse`, `model.before_save`, `model.after_save`, `model/issue.before_save`, `model/issue.after_save`
+#### Available hooks
+
+* `view.parse`: extend the text parser, allowing you to add new formatting options to issue descriptions and comments. (v1.0.0+)
+* `model.before_save`: called before all model saves, passes the model instance. (v1.1.0+)
+* `model.after_save`: called after all model saves, passes the model instance. (v1.1.0+)
+* `model/[name].before_save` (i.e. `model/issue.before_save`): called before specific model saves, passes the model instance. (v1.1.0+)
+* `model/[name].after_save` (i.e. `model/issue.after_save`): called after specific model saves, passes the model instance. (v1.1.0+)
 
 
 ### Menu Items
@@ -83,11 +97,16 @@ Menu items can be added to the main navigation with a simple call to `$this->_ad
 <?php
     // ...
     public function _load() {
-        $this->_addNav("myplugin/page", "My Plugin", "/myplugin\/page/");
+        $this->_addNav("myplugin/page", "My Plugin", "/^myplugin\/page/");
     }
     // ...
 ?>
 {% endhighlight %}
+
+
+### Scripts
+
+Plugins can add javascript code and files by
 
 
 ### Localization
@@ -128,9 +147,8 @@ class Base extends \Plugin {
 
 ### Example folder structure
 
-    app
-        plugin
-            yourplugin
+    app/
+        plugin/
+            yourplugin/
                 base.php
                 ...
-
