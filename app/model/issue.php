@@ -20,7 +20,7 @@ class Issue extends \Model {
 		// Normalize data
 		if(isset($data["hours"])) {
 			$data["hours_total"] = $data["hours"];
-			$data["hours_reamining"] = $data["hours"];
+			$data["hours_remaining"] = $data["hours"];
 			unset($data["hours"]);
 		}
 		if(isset($data["due_date"])) {
@@ -43,7 +43,7 @@ class Issue extends \Model {
 		// Send creation notifications
 		if($notify) {
 			$notification = \Helper\Notification::instance();
-			$notification->issue_create($item->issue_id);
+			$notification->issue_create($item->id);
 		}
 
 		// Return instance
