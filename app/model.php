@@ -52,7 +52,7 @@ abstract class Model extends \DB\SQL\Mapper {
 	}
 
 	/**
-	 * Set object created date if possible
+	 * Save model, triggering plugin hooks and setting created_date
 	 * @return mixed
 	 */
 	function save() {
