@@ -78,18 +78,18 @@ $(document).ready(function() {
 
 	// Submit issue sorting options
 	$(".issue-sort").on("click", function(e) {
+		$form = $(this).parents('form');
 		e.preventDefault();
 
-		if($("#orderby").val() == $(this).attr('id')) {
-			if($("#ascdesc").val() == "desc") {
-				$("#ascdesc").val("asc");
+		if($form.find("input[name=orderby]").val() == $(this).attr('id')) {
+			if($form.find("input[name=ascdesc]").val() == "desc") {
+				$form.find("input[name=ascdesc]").val("asc");
 			} else {
-				$("#ascdesc").val("desc");
+				$form.find("input[name=ascdesc]").val("desc");
 			}
-
 		} else {
-			$("#orderby").val($(this).attr('id'));
-			$("#ascdesc").val("desc");
+			$form.find("input[name=orderby]").val($(this).attr('id'));
+			$form.find("input[name=ascdesc]").val("desc");
 		}
 		$(this).parents('form').submit();
 	});

@@ -26,7 +26,7 @@ gulp.task('css', function() {
 
 gulp.task('js', function() {
     var scripts = [
-    	'src/js/jquery-1.7.2.min.js',
+    	'src/js/jquery-1.11.3.min.js',
     	'src/js/jquery-ui-dragsort.min.js',
     	'src/js/jquery.ui.touch-punch.min.js',
     	'src/js/bootstrap.min.js',
