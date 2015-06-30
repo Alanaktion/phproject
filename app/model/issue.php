@@ -17,11 +17,36 @@ class Issue extends \Model {
 	 * @return Comment
 	 */
 	public static function create(array $data, $notify = true) {
+		// Normalize data
+		if(isset($data["hours"])) {
+			$data["hours_total"] = $data["hours"];
+			$data["hours_remaining"] = $data["hours"];
+			unset($data["hours"]);
+		}
+		if(isset($data["due_date"])) {
+			if(!preg_match("/[0-9]{4}(-[0-9]{2}){2}/", $data["due_date"])) {
+				$data["due_date"] = date("Y-m-d", strtotime($data["due_date"]));
+			}
+			if(empty($data["sprint_id"])) {
+				$sprint = new Sprint();
+				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
+				$data["sprint_id"] = $sprint->id;
+			}
+		}
+		if(empty($data["author_id"]) && $user_id = \Base::instance()->get("user.id")) {
+			$data["author_id"] = $user_id;
+		}
+
+		// Create issue
 		$item = parent::create($data);
+
+		// Send creation notifications
 		if($notify) {
 			$notification = \Helper\Notification::instance();
-			$notification->issue_create($item->issue_id);
+			$notification->issue_create($item->id);
 		}
+
+		// Return instance
 		return $item;
 	}
 

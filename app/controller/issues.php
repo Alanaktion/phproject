@@ -574,47 +574,12 @@ class Issues extends \Controller {
 	}
 
 	/**
-	 * Save a newly created issue
+	 * Create a new issue from $_POST
 	 * @return Issue
 	 */
 	protected function _saveNew() {
 		$f3 = \Base::instance();
-		$post = array_map("trim", $f3->get("POST"));
-		$issue = new \Model\Issue;
-
-		// Set all supported issue fields
-		$issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $f3->get("user.id");
-		$issue->type_id = $post["type_id"];
-		$issue->created_date = $this->now();
-		$issue->name = $post["name"];
-		$issue->description = $post["description"];
-		$issue->priority = $post["priority"];
-		$issue->status = $post["status"];
-		$issue->owner_id = $post["owner_id"] ?: null;
-		$issue->hours_total = $post["hours_remaining"] ?: null;
-		$issue->hours_remaining = $post["hours_remaining"] ?: null;
-		$issue->repeat_cycle = in_array($post["repeat_cycle"], array("none", "")) ? null : $post["repeat_cycle"];
-		$issue->sprint_id = $post["sprint_id"];
-
-		if(!empty($post["due_date"])) {
-			$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
-
-			// Save to the sprint of the due date if a sprint was not specified
-			if(!$issue->sprint_id) {
-				$sprint = new \Model\Sprint();
-				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
-				$issue->sprint_id = $sprint->id;
-			}
-		}
-		if(!empty($post["parent_id"])) {
-			$issue->parent_id = $post["parent_id"];
-		}
-
-		// Save issue, optionally send notifications
-		$notify = !empty($post["notify"]);
-		$issue->save($notify);
-
-		return $issue;
+		return \Model\Issue::create($f3->get("POST"), !empty($post["notify"]));
 	}
 
 	public function save($f3, $params) {
@@ -793,29 +758,12 @@ class Issues extends \Controller {
 		$issue->load($params["id"]);
 
 		if($issue->id) {
-			$f3->set("issue", $issue);
+			$f3->set("parent", $issue);
+
 			$issues = new \Model\Issue\Detail;
-			if($f3->get("issue_type.project") == $issue->type_id || !$issue->parent_id) {
-				$searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
-				$orderparams = array("order" => "status_closed, priority DESC, due_date");
-				$found_issues = $issues->find($searchparams, $orderparams);
-				$f3->set("issues", $found_issues);
-				$f3->set("parent", $issue);
-			} else {
-				if($issue->parent_id) {
-					$searchparams = array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id);
-					$orderparams = array('order' => "status_closed, priority DESC, due_date");
-					$found_issues = $issues->find($searchparams, $orderparams);
-
-					$f3->set("issues", $found_issues);
-
-					$parent = new \Model\Issue;
-					$parent->load($issue->parent_id);
-					$f3->set("parent", $parent);
-				} else {
-					$f3->set("issues", array());
-				}
-			}
+			$searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
+			$orderparams = array("order" => "status_closed, priority DESC, due_date");
+			$f3->set("issues", $issues->find($searchparams, $orderparams));
 
 			$searchparams[0] = $searchparams[0]  . " AND status_closed = 0";
 			$openissues = $issues->count($searchparams);

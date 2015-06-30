@@ -4,15 +4,15 @@
 		<input type="hidden" name="id" value="{{ @issue.id }}">
 		<input type="hidden" name="hash_state" value="{{ json_encode(@issue->hashState()) | esc }}">
 	</check>
+	<input type="hidden" name="type_id" value="{{ @type.id }}">
 	<check if="{{ empty(@issue) }}">
 		<true>
-			<legend>{{ @dict.new_n,@type.name | format }}</legend>
+			<h3>{{ @dict.new_n,@type.name | format }}</h3>
 		</true>
 		<false>
-			<legend>{{ @dict.edit_n,@type.name | format }}</legend>
+			<h3>{{ @dict.edit_n,@type.name | format }}</h3>
 		</false>
 	</check>
-	<input type="hidden" name="type_id" value="{{ @type.id }}">
 	<div class="form-group">
 		<label class="col-md-2 control-label">{{ @dict.cols.title }}</label>
 		<div class="col-md-10">
@@ -221,7 +221,7 @@
 				</check>
 			</div>
 			<div class="pull-right">
-				<div class="checkbox checkbox-inline">
+				<div class="checkbox checkbox-container-inline">
 					<label>
 						<input type="checkbox" name="notify" value="1" checked>
 						{{ @dict.send_notifications }}

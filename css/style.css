@@ -131,8 +131,10 @@ ol.issue-heading.breadcrumb {
 	line-height: 16px;
 }
 .comments,
-.comments > .media p,
-#history .media p,
+.comments > .media p.media-heading,
+.comments > .media p:last-child,
+#history .media p.media-heading,
+#history .media p:last-child,
 .comments .form-group:last-child {
 	margin-bottom: 0;
 }
@@ -182,7 +184,7 @@ select[multiple] {
 	text-decoration: line-through;
 }
 
-.form-horizontal .checkbox-inline {
+.form-horizontal .checkbox-container-inline {
 	display: inline-block;
 	padding-top: 5px;
 	margin-left: 10px;

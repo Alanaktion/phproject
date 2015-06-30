@@ -11,7 +11,7 @@ class Plugin extends \Prefab {
 			$_jsFiles = array();
 
 	/**
-	 * Add a hook entry
+	 * Register a hook function
 	 * @param string   $hook
 	 * @param callable $action
 	 */
