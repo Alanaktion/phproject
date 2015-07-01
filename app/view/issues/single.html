@@ -458,7 +458,7 @@ $(function() {
 	}, 'json').error(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
 	});
-	if('{{ @issue.parent_id }}') {
+	if(parseInt('{{ @issue.parent_id }}')) {
 		$.get(BASE + '/issues/{{ @issue.parent_id }}/related', {}, function(data) {
 			$('#related-sibling').empty().append(data.html);
 			$('#tab_related-sibling').html($('#tab_related-sibling').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');

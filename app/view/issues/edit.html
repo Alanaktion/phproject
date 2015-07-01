@@ -11,10 +11,8 @@
 </div>
 <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
-$(function() {
-	var nowTemp = new Date();
-	var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-	$('#due_date').datepicker({
+$(document).ready(function() {
+	$('#start_date, #due_date').datepicker({
 		format: 'yyyy-mm-dd'
 	});
 });
