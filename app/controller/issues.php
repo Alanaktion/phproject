@@ -579,7 +579,7 @@ class Issues extends \Controller {
 	 */
 	protected function _saveNew() {
 		$f3 = \Base::instance();
-		return \Model\Issue::create($f3->get("POST"), !empty($post["notify"]));
+		return \Model\Issue::create($f3->get("POST"), !!$f3->get("POST.notify"));
 	}
 
 	public function save($f3, $params) {
