@@ -10,10 +10,17 @@
 	<include href="blocks/footer.html" />
 </div>
 <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js"></script>
+<check if="{{ @user_obj->date_picker()->js }}">
+<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+</check>
 <script type="text/javascript">
-$(document).ready(function() {
-	$('#start_date, #due_date').datepicker({
-		format: 'yyyy-mm-dd'
+	$(function() {
+		var nowTemp = new Date();
+		var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+		$('#due_date, #start_date').datepicker({
+			format: 'yyyy-mm-dd',
+			language: '{{ @user_obj->date_picker()->language }}',
+			autoclose: true
 	});
 });
 </script>

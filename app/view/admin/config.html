@@ -18,10 +18,10 @@
 
 			<div class="col-md-3">
 				<ul class="nav nav-pills nav-stacked">
-					<li class="active"><a href="#config-site" data-toggle="tab">Site Basics</a></li>
-					<li><a href="#config-parse" data-toggle="tab">Text Parsing</a></li>
-					<li><a href="#config-email" data-toggle="tab">Email (SMTP/IMAP)</a></li>
-					<li><a href="#config-advanced" data-toggle="tab">Advanced</a></li>
+					<li class="active"><a href="#config-site" data-toggle="tab">{{ @dict.site_basics }}</a></li>
+					<li><a href="#config-parse" data-toggle="tab">{{ @dict.text_parsing }}</a></li>
+					<li><a href="#config-email" data-toggle="tab">{{ @dict.email_smtp_imap }}</a></li>
+					<li><a href="#config-advanced" data-toggle="tab">{{ @dict.advanced }}</a></li>
 				</ul>
 			</div>
 
@@ -29,27 +29,27 @@
 
 				<div role="tabpanel" class="tab-pane fade in active" id="config-site">
 					<div class="form-group">
-						<label for="site-name">Site Name</label>
+						<label for="site-name">{{ @dict.site_name }}</label>
 						<input type="text" class="form-control" name="site-name" value="{{ @site.name }}" required>
 					</div>
 					<div class="form-group">
-						<label for="site-description">Site Description</label>
+						<label for="site-description">{{ @dict.site_description }}</label>
 						<textarea class="form-control input-sm" name="site-description">{{ @site.description | esc }}</textarea>
 					</div>
 					<div class="form-group">
-						<label for="site-timezone">Timezone</label>
+						<label for="site-timezone">{{ @dict.tijdzone }}</label>
 						<input type="text" class="form-control input-sm" name="site-timezone" value="{{ @site.timezone }}" required>
 					</div>
 					<div class="form-group">
-						<label for="site-theme">Default Theme</label>
+						<label for="site-theme">{{ @dict.theme }}</label>
 						<input type="text" class="form-control input-sm" name="site-theme" value="{{ @site.theme }}" required>
 					</div>
 					<div class="form-group">
-						<label for="site-logo">Logo</label>
+						<label for="site-logo">{{ @dict.logo }}</label>
 						<input type="text" class="form-control input-sm" name="site-logo" placeholder="(Site Name)" value="{{ @site.logo }}">
 					</div>
 					<div class="form-group">
-						Allow public registration<br>
+						{{ @dict.allow_public_registration }}<br>
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
 							<!-- TODO: Set checked attribute on current value, rather than default -->
 							<label class="btn btn-default active">
@@ -67,15 +67,15 @@
 				<div role="tabpanel" class="tab-pane fade" id="config-parse">
 					<!-- TODO: Set checked attributes on current values, rather than defaults -->
 					<div class="form-group">
-						<p>Parser Syntax</p>
+						<p>{{ @dict.parser_syntax }}</p>
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
 							<label class="btn btn-default active">
 								<input type="checkbox" name="parse-markdown" value="1" autocomplete="off" checked>
-								Markdown
+								{{ @dict.markdown }}
 							</label>
 							<label class="btn btn-default">
 								<input type="checkbox" name="parse-textile" value="0" autocomplete="off">
-								Textile
+								{{ @dict.textile }}
 							</label>
 						</div>
 					</div>
@@ -90,7 +90,7 @@
 								<span class="glyphicon glyphicon-remove"></span>
 							</label>
 						</div>
-						&emsp;Convert IDs to Links
+						&emsp;{{ @dict.convert_ids }}
 					</div>
 					<div class="form-group">
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
@@ -103,7 +103,7 @@
 								<span class="glyphicon glyphicon-remove"></span>
 							</label>
 						</div>
-						&emsp;Convert Hashtags to Links
+						&emsp;{{ @dict.convert_hashtags }}
 					</div>
 					<div class="form-group">
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
@@ -116,7 +116,7 @@
 								<span class="glyphicon glyphicon-remove"></span>
 							</label>
 						</div>
-						&emsp;Convert URLs to links
+						&emsp;{{ @dict.convert_urls }}
 					</div>
 					<div class="form-group">
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
@@ -129,68 +129,68 @@
 								<span class="glyphicon glyphicon-remove"></span>
 							</label>
 						</div>
-						&emsp;Convert emoticons to glyphs
+						&emsp;{{ @dict.convert_emoticons }}
 					</div>
 				</div>
 
 				<div role="tabpanel" class="tab-pane fade" id="config-email">
 					<fieldset>
-						<legend>Outgoing Mail (SMTP)</legend>
+						<legend>{{ @dict.outgoing_mail }}</legend>
 						<div class="form-group">
-							<label for="mail-from">From Address</label>
-							<input type="text" class="form-control input-sm" name="mail-from" value="{{ @mail.from }}" placeholder="Leave blank to disable outgoing email">
+							<label for="mail-from">{{ @dict.from_address}}</label>
+							<input type="text" class="form-control input-sm" name="mail-from" value="{{ @mail.from }}" placeholder="{{ @dict.email_leave_blank }}">
 						</div>
-						<p class="alert alert-info"><strong>Note:</strong> {{ @PACKAGE }} uses your default PHP mail configuration for outgoing email.</p>
+						<p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.package_mail_config_note, @PACKAGE | format }} </p>
 					</fieldset>
 					<br>
 					<fieldset>
-						<legend>Incoming Mail (IMAP)</legend>
+						<legend>{{ @dict.incoming_mail }}</legend>
 						<div class="form-group">
-							<label for="imap-hostname">Hostname</label>
-							<input type="text" class="form-control input-sm" name="imap-hostname" value="{{ @imap.hostname }}" placeholder="Leave blank to disable incoming email">
+							<label for="imap-hostname">{{ @dict.hostname }}</label>
+							<input type="text" class="form-control input-sm" name="imap-hostname" value="{{ @imap.hostname }}" placeholder="{{ @dict.email_leave_blank }}">
 						</div>
 						<div class="form-group">
-							<label for="imap-username">Username</label>
+							<label for="imap-username">{{ @dict.hostname }}</label>
 							<input type="text" class="form-control input-sm" name="imap-username" value="{{ @imap.username }}">
 						</div>
 						<div class="form-group">
-							<label for="imap-password">Password</label>
+							<label for="imap-password">{{ @dict.password }}</label>
 							<input type="text" class="form-control input-sm" name="imap-password" value="{{ str_repeat('*', strlen(@imap.password)) }}">
 						</div>
-						<p class="alert alert-info"><strong>Note:</strong> IMAP settings here will have no effect unless the <code>checkmail.php</code> cron is being run.</p>
+						<p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.imap_settings_note, '<code>checkmail.php</code>' | format }}</p>
 					</fieldset>
 				</div>
 
 				<div role="tabpanel" class="tab-pane fade" id="config-advanced">
 					<div class="form-group">
-						<label>Debug Level (DEBUG)</label>
+						<label>{{ @dict.debug_level }}</label>
 						<input type="text" class="form-control input-sm" value="{{ @DEBUG }}" disabled>
 					</div>
 					<div class="form-group">
-						<label>Cache Mode (CACHE)</label>
+						<label>{{ @dict.cache_mode }}</label>
 						<input type="text" class="form-control input-sm" value="{{ @CACHE }}" disabled>
 					</div>
 					<div class="form-group">
-						<label>Cookie Expiration (JAR.expire)</label>
+						<label>{{ @dict.cookie_expiration }}</label>
 						<input type="text" class="form-control input-sm" value="{{ @JAR.expire }}" disabled>
 					</div>
 					<div class="form-group">
-						<label>Max Upload Size (files.maxsize)</label>
+						<label>{{ @dict.max_upload_size }}</label>
 						<input type="text" class="form-control input-sm" value="{{ @files.maxsize }}" disabled>
 					</div>
 					<div class="form-group">
-						<label>Censor Credit Card Numbers (security.block_ccs)</label>
+						<label>{{ @dict.censor_credit_card_numbers }}</label>
 						<input type="text" class="form-control input-sm" value="{{ @security.block_ccs }}" disabled>
 					</div>
 					<div class="form-group">
-						<label>Demo User (site.demo)</label>
+						<label>{{ @dict.demo_user }}</label>
 						<input type="text" class="form-control input-sm" value="{{ @site.demo }}" disabled>
 					</div>
 					<div class="form-group">
-						<label for="mail-truncate_lines">IMAP Message Truncate Lines (mail.truncate_lines)</label>
+						<label for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
 						<textarea class="form-control input-sm" rows="4" disabled>{{ @mail.truncate_lines | esc }}</textarea>
 					</div>
-					<p class="alert alert-info">These values can be changed by editing the <code>config.ini</code> file in {{ @ROOT }}.</p>
+					<p class="alert alert-info">{{ @dict.advanced_config_note,'<code>config.ini</code>',@ROOT | format }}</p>
 				</div>
 
 			</div>

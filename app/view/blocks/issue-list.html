@@ -238,7 +238,7 @@
 </form>
 
 <check if="{{ @bulkUpdate }}">
-	<a class="btn btn-default btn-sm" data-toggle="modal" href="{{ @BASE }}/javascript:void(0)" data-target="#bulk-actions">{{ @dict.bulk_actions }}</a>
+	<a class="btn btn-default btn-sm" data-toggle="modal" href="javascript:void(0)" data-target="#bulk-actions">{{ @dict.bulk_actions }}</a>
 	<div class="contatiner modal fade in" id="bulk-actions">
 		<form action="{{ @BASE }}/issues/bulk_update" method="post" id="bulk-form">
 			<div class="modal-dialog">
