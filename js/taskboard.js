@@ -119,7 +119,9 @@ var Taskboard = {
 		$("#task-dialog select#repeat_cycle").val(repeat_cycle);
 		$("#task-dialog input#dueDate").val(date);
 		$("#task-dialog").find("#dueDate").datepicker({
-			format: 'mm/dd/yyyy'
+			format: 'mm/dd/yyyy',
+			language: datepicker_language,
+			autoclose: true
 		});
 		Taskboard.setOptionByVal("#task-dialog", user);
 		Taskboard.setOptionByVal("#priority", priority);
@@ -137,7 +139,9 @@ var Taskboard = {
 		$("#task-dialog form").data("story-id", storyId);
 		$("#task-dialog").modal("show");
 		$("#task-dialog").find("#dueDate").datepicker({
-			format: 'mm/dd/yyyy'
+			format: 'mm/dd/yyyy',
+			language: datepicker_language,
+			autoclose: true
 		});
 	},
 	changeModalColor: function(userColor) {

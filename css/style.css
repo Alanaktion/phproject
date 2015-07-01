@@ -321,6 +321,10 @@ table a.btn {
 	overflow-y: auto;
 }
 
+.dropdown-menu.datepicker {
+	font-size: 14px;
+}
+
 .nowrap {
 	white-space: nowrap;
 }

@@ -5,6 +5,10 @@ $(function() {
 	});
 
 	$('#due_date, #start_date').datepicker({
-		format: 'yyyy-mm-dd'
+		format: 'yyyy-mm-dd',
+		language: datepicker_language,
+		orientation: 'top auto',
+		clearBtn: true,
+		autoclose: true
 	});
 });

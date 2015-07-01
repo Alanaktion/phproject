@@ -369,6 +369,9 @@
 </div>
 
 <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js,stupidtable.min.js"></script>
+<check if="{{ @user_obj->date_picker()->js }}">
+<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+</check>
 <script type="text/javascript">
 $(function() {
 
@@ -518,7 +521,9 @@ $(function() {
 
 	// Due date picker
 	$('#due_date, #start_date').datepicker({
-		format: 'yyyy-mm-dd'
+		format: 'yyyy-mm-dd',
+		language: '{{ @user_obj->date_picker()->language }}',
+		autoclose: true
 	});
 
 	// Handle file deletion
