@@ -1071,4 +1071,43 @@ class Issues extends \Controller {
 
 	}
 
+	/**
+	 * Load all matching issues
+	 * @param  Base $f3
+	 */
+	public function parent_ajax($f3) {
+		if(!$f3->get("AJAX")) {
+			$f3->error(400);
+		}
+		
+		$term = trim($f3->get('GET.q'));
+		$results = array();
+		
+		$issue = new \Model\Issue;
+		if((substr($term, 0, 1) == '#') && is_numeric(substr($term, 1))) {
+			$id = (int) substr($term, 1);
+			$issues = $issue->find(array('id LIKE ?', $id. '%'));
+
+			foreach($issues as $row) {
+				$results[] = (object) array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+			}
+		}
+		elseif(is_numeric($term)) {
+			$id = (int) $term;
+			$issues = $issue->find(array('(id LIKE ?) OR (name LIKE ?)', $id . '%', '%' . $id . '%'));
+
+			foreach($issues as $row) {
+				$results[] = (object) array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+			}
+		}
+		else {
+			$issues = $issue->find(array('name LIKE ?', '%' . addslashes($term) . '%'));
+
+			foreach($issues as $row) {
+				$results[] = (object) array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+			}
+		}
+
+		$this->_printJson((object) array('results' => $results));
+	}
 }

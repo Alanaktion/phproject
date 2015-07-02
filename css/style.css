@@ -420,3 +420,20 @@ th[data-sort] {
 		width: 165px;
 	}
 }
+
+.twitter-typeahead {
+	display: block !important;
+}
+
+.twitter-typeahead .dropdown-menu {
+	width: 100%;
+	padding: 0;
+}
+
+.twitter-typeahead .tt-suggestion {
+	padding: 6px 12px;
+}
+
+.twitter-typeahead .tt-suggestion:hover {
+	background-color: #18bc9c;
+}
