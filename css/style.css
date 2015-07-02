@@ -426,14 +426,22 @@ th[data-sort] {
 }
 
 .twitter-typeahead .dropdown-menu {
+	min-width: 300px;
 	width: 100%;
 	padding: 0;
 }
 
 .twitter-typeahead .tt-suggestion {
 	padding: 6px 12px;
+	color: #404040;
+	font-size: 13px;
 }
 
 .twitter-typeahead .tt-suggestion:hover {
-	background-color: #18bc9c;
+	background-color: #00bc8c;
+	color: #fff;
+}
+
+.twitter-typeahead .tt-suggestion:hover .text-muted {
+	color: #eee;
 }

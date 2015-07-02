@@ -1079,35 +1079,35 @@ class Issues extends \Controller {
 		if(!$f3->get("AJAX")) {
 			$f3->error(400);
 		}
-		
+
 		$term = trim($f3->get('GET.q'));
 		$results = array();
-		
+
 		$issue = new \Model\Issue;
 		if((substr($term, 0, 1) == '#') && is_numeric(substr($term, 1))) {
 			$id = (int) substr($term, 1);
-			$issues = $issue->find(array('id LIKE ?', $id. '%'));
+			$issues = $issue->find(array('id LIKE ?', $id. '%'), array('limit' => 20));
 
 			foreach($issues as $row) {
-				$results[] = (object) array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+				$results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
 			}
 		}
 		elseif(is_numeric($term)) {
 			$id = (int) $term;
-			$issues = $issue->find(array('(id LIKE ?) OR (name LIKE ?)', $id . '%', '%' . $id . '%'));
+			$issues = $issue->find(array('(id LIKE ?) OR (name LIKE ?)', $id . '%', '%' . $id . '%'), array('limit' => 20));
 
 			foreach($issues as $row) {
-				$results[] = (object) array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+				$results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
 			}
 		}
 		else {
-			$issues = $issue->find(array('name LIKE ?', '%' . addslashes($term) . '%'));
+			$issues = $issue->find(array('name LIKE ?', '%' . addslashes($term) . '%'), array('limit' => 20));
 
 			foreach($issues as $row) {
-				$results[] = (object) array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+				$results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
 			}
 		}
 
-		$this->_printJson((object) array('results' => $results));
+		$this->_printJson(array('results' => $results));
 	}
 }
