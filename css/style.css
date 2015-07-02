@@ -322,7 +322,9 @@ table a.btn {
 }
 
 .dropdown-menu.datepicker {
+	overflow-y: visible;
 	font-size: 14px;
+	max-height: none;
 }
 
 .nowrap {
