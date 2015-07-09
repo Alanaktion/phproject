@@ -30,7 +30,7 @@ class Config extends \Model {
 	 */
 	public static function importAll() {
 		$f3 = \Base::instance();
-		$root = $f3->get('ROOT');
+		$root = $f3->get('ROOT').$f3->get('BASE');
 
 		// Import existing config
 		$ini = parse_ini_file($root.'/config.ini');

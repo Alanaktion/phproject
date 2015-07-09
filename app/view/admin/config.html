@@ -29,35 +29,35 @@
 
 				<div role="tabpanel" class="tab-pane fade in active" id="config-site">
 					<div class="form-group">
-						<label for="site-name">{{ @dict.site_name }}</label>
+						<label class="control-label" for="site-name">{{ @dict.site_name }}</label>
 						<input type="text" class="form-control" name="site-name" value="{{ @site.name }}" required>
 					</div>
 					<div class="form-group">
-						<label for="site-description">{{ @dict.site_description }}</label>
+						<label class="control-label" for="site-description">{{ @dict.site_description }}</label>
 						<textarea class="form-control input-sm" name="site-description">{{ @site.description | esc }}</textarea>
 					</div>
 					<div class="form-group">
-						<label for="site-timezone">{{ @dict.timezone }}</label>
+						<label class="control-label" for="site-timezone">{{ @dict.timezone }}</label>
 						<input type="text" class="form-control input-sm" name="site-timezone" value="{{ @site.timezone }}" required>
 					</div>
 					<div class="form-group">
-						<label for="site-theme">{{ @dict.default_theme }}</label>
+						<label class="control-label" for="site-theme">{{ @dict.default_theme }}</label>
 						<input type="text" class="form-control input-sm" name="site-theme" value="{{ @site.theme }}" required>
 					</div>
 					<div class="form-group">
-						<label for="site-logo">{{ @dict.logo }}</label>
+						<label class="control-label" for="site-logo">{{ @dict.logo }}</label>
 						<input type="text" class="form-control input-sm" name="site-logo" placeholder="(Site Name)" value="{{ @site.logo }}">
 					</div>
 					<div class="form-group">
 						{{ @dict.allow_public_registration }}<br>
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
 							<!-- TODO: Set checked attribute on current value, rather than default -->
-							<label class="btn btn-default active">
-								<input type="radio" name="site-public_registration" value="1" autocomplete="off">
+							<label class="btn btn-default {{ @site.public_registration ? 'active' : '' }}">
+								<input type="radio" name="site-public_registration" value="1" autocomplete="off" {{ @site.public_registration ? 'checked' : '' }}>
 								<span class="glyphicon glyphicon-ok"></span>
 							</label>
-							<label class="btn btn-default">
-								<input type="radio" name="site-public_registration" value="0" autocomplete="off" checked>
+							<label class="btn btn-default {{ @site.public_registration ? '' : 'active' }}">
+								<input type="radio" name="site-public_registration" value="0" autocomplete="off" {{ @site.public_registration ? '' : 'checked' }}>
 								<span class="glyphicon glyphicon-remove"></span>
 							</label>
 						</div>
@@ -69,24 +69,24 @@
 					<div class="form-group">
 						<p>{{ @dict.parser_syntax }}</p>
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
-							<label class="btn btn-default active">
-								<input type="checkbox" name="parse-markdown" value="1" autocomplete="off" checked>
+							<label class="btn btn-default {{ @parse.markdown ? 'active' : '' }}">
+								<input type="checkbox" name="parse-markdown" value="1" autocomplete="off" {{ @parse.markdown ? 'checked' : '' }}>
 								Markdown
 							</label>
-							<label class="btn btn-default">
-								<input type="checkbox" name="parse-textile" value="0" autocomplete="off">
+							<label class="btn btn-default {{ @parse.textile ? 'active' : '' }}">
+								<input type="checkbox" name="parse-textile" value="1" autocomplete="off" {{ @parse.textile ? 'checked' : '' }}>
 								Textile
 							</label>
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
-							<label class="btn btn-default active">
-								<input type="radio" name="parse-ids" value="1" autocomplete="off" checked>
+							<label class="btn btn-default {{ @parse.ids ? 'active' : '' }}">
+								<input type="radio" name="parse-ids" value="1" autocomplete="off" {{ @parse.ids ? 'checked' : '' }}>
 								<span class="glyphicon glyphicon-ok"></span>
 							</label>
-							<label class="btn btn-default">
-								<input type="radio" name="parse-ids" value="0" autocomplete="off">
+							<label class="btn btn-default {{ @parse.ids ? '' : 'active' }}">
+								<input type="radio" name="parse-ids" value="0" autocomplete="off" {{ @parse.ids ? '' : 'checked' }}>
 								<span class="glyphicon glyphicon-remove"></span>
 							</label>
 						</div>
@@ -94,12 +94,12 @@
 					</div>
 					<div class="form-group">
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
-							<label class="btn btn-default active">
-								<input type="radio" name="parse-hashtags" value="1" autocomplete="off" checked>
+							<label class="btn btn-default {{ @parse.hashtags ? 'active' : '' }}">
+								<input type="radio" name="parse-hashtags" value="1" autocomplete="off" {{ @parse.hashtags ? 'checked' : '' }}>
 								<span class="glyphicon glyphicon-ok"></span>
 							</label>
-							<label class="btn btn-default">
-								<input type="radio" name="parse-hashtags" value="0" autocomplete="off">
+							<label class="btn btn-default {{ @parse.hashtags ? '' : 'active' }}">
+								<input type="radio" name="parse-hashtags" value="0" autocomplete="off" {{ @parse.hashtags ? '' : 'checked' }}>
 								<span class="glyphicon glyphicon-remove"></span>
 							</label>
 						</div>
@@ -107,12 +107,12 @@
 					</div>
 					<div class="form-group">
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
-							<label class="btn btn-default active">
-								<input type="radio" name="parse-urls" value="1" autocomplete="off" checked>
+							<label class="btn btn-default {{ @parse.urls ? 'active' : '' }}">
+								<input type="radio" name="parse-urls" value="1" autocomplete="off" {{ @parse.urls ? 'checked' : '' }}>
 								<span class="glyphicon glyphicon-ok"></span>
 							</label>
-							<label class="btn btn-default">
-								<input type="radio" name="parse-urls" value="0" autocomplete="off">
+							<label class="btn btn-default {{ @parse.urls ? '' : 'active' }}">
+								<input type="radio" name="parse-urls" value="0" autocomplete="off" {{ @parse.urls ? '' : 'checked' }}>
 								<span class="glyphicon glyphicon-remove"></span>
 							</label>
 						</div>
@@ -120,12 +120,12 @@
 					</div>
 					<div class="form-group">
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
-							<label class="btn btn-default active">
-								<input type="radio" name="parse-emoticons" value="1" autocomplete="off" checked>
+							<label class="btn btn-default {{ @parse.emoticons ? 'active' : '' }}">
+								<input type="radio" name="parse-emoticons" value="1" autocomplete="off" {{ @parse.emoticons ? 'checked' : '' }}>
 								<span class="glyphicon glyphicon-ok"></span>
 							</label>
-							<label class="btn btn-default">
-								<input type="radio" name="parse-emoticons" value="0" autocomplete="off">
+							<label class="btn btn-default {{ @parse.emoticons ? '' : 'active' }}">
+								<input type="radio" name="parse-emoticons" value="0" autocomplete="off" {{ @parse.emoticons ? '' : 'checked' }}>
 								<span class="glyphicon glyphicon-remove"></span>
 							</label>
 						</div>
@@ -137,7 +137,7 @@
 					<fieldset>
 						<legend>{{ @dict.outgoing_mail }}</legend>
 						<div class="form-group">
-							<label for="mail-from">{{ @dict.from_address}}</label>
+							<label class="control-label" for="mail-from">{{ @dict.from_address}}</label>
 							<input type="text" class="form-control input-sm" name="mail-from" value="{{ @mail.from }}" placeholder="{{ @dict.email_leave_blank }}">
 						</div>
 						<p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.package_mail_config_note, @PACKAGE | format }} </p>
@@ -146,15 +146,15 @@
 					<fieldset>
 						<legend>{{ @dict.incoming_mail }}</legend>
 						<div class="form-group">
-							<label for="imap-hostname">{{ @dict.hostname }}</label>
+							<label class="control-label" for="imap-hostname">{{ @dict.hostname }}</label>
 							<input type="text" class="form-control input-sm" name="imap-hostname" value="{{ @imap.hostname }}" placeholder="{{ @dict.email_leave_blank }}">
 						</div>
 						<div class="form-group">
-							<label for="imap-username">{{ @dict.hostname }}</label>
+							<label class="control-label" for="imap-username">{{ @dict.hostname }}</label>
 							<input type="text" class="form-control input-sm" name="imap-username" value="{{ @imap.username }}">
 						</div>
 						<div class="form-group">
-							<label for="imap-password">{{ @dict.password }}</label>
+							<label class="control-label" for="imap-password">{{ @dict.password }}</label>
 							<input type="text" class="form-control input-sm" name="imap-password" value="{{ str_repeat('*', strlen(@imap.password)) }}">
 						</div>
 						<p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.imap_settings_note, '<code>checkmail.php</code>' | format }}</p>
@@ -163,32 +163,32 @@
 
 				<div role="tabpanel" class="tab-pane fade" id="config-advanced">
 					<div class="form-group">
-						<label>{{ @dict.debug_level }}</label>
-						<input type="text" class="form-control input-sm" value="{{ @DEBUG }}" disabled>
+						<label class="control-label">{{ @dict.debug_level }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @DEBUG }}" readonly>
 					</div>
 					<div class="form-group">
-						<label>{{ @dict.cache_mode }}</label>
-						<input type="text" class="form-control input-sm" value="{{ @CACHE }}" disabled>
+						<label class="control-label">{{ @dict.cache_mode }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @CACHE }}" readonly>
 					</div>
 					<div class="form-group">
-						<label>{{ @dict.cookie_expiration }}</label>
-						<input type="text" class="form-control input-sm" value="{{ @JAR.expire }}" disabled>
+						<label class="control-label">{{ @dict.cookie_expiration }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @JAR.expire }}" readonly>
 					</div>
 					<div class="form-group">
-						<label>{{ @dict.max_upload_size }}</label>
-						<input type="text" class="form-control input-sm" value="{{ @files.maxsize }}" disabled>
+						<label class="control-label">{{ @dict.max_upload_size }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @files.maxsize }}" readonly>
 					</div>
 					<div class="form-group">
-						<label>{{ @dict.censor_credit_card_numbers }}</label>
-						<input type="text" class="form-control input-sm" value="{{ @security.block_ccs }}" disabled>
+						<label class="control-label">{{ @dict.censor_credit_card_numbers }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @security.block_ccs }}" readonly>
 					</div>
 					<div class="form-group">
-						<label>{{ @dict.demo_user }}</label>
-						<input type="text" class="form-control input-sm" value="{{ @site.demo }}" disabled>
+						<label class="control-label">{{ @dict.demo_user }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @site.demo }}" readonly>
 					</div>
 					<div class="form-group">
-						<label for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
-						<textarea class="form-control input-sm" rows="4" disabled>{{ @mail.truncate_lines | esc }}</textarea>
+						<label class="control-label" for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
+						<textarea class="form-control input-sm" rows="4" readonly>{{ @mail.truncate_lines | esc }}</textarea>
 					</div>
 					<p class="alert alert-info">{{ @dict.advanced_config_note,'<code>config.ini</code>',@ROOT | format }}</p>
 				</div>
@@ -209,7 +209,26 @@ $(document).ready(function() {
 
 	// Handle input changes
 	$('#frm-config').on('change', 'input, select, textarea', function(e) {
-		// TODO: implement validation and AJAX calls
+		var $el = $(this),
+			val = $el.val();
+
+		if($el.attr('type') == 'checkbox') {
+			val = $el.prop('checked') ? 1 : 0;
+		}
+
+		$.post(BASE + '/admin/config/saveattribute', {
+			attribute: $el.attr('name'),
+			value: val
+		}, function(data) {
+			if(data.error) {
+				alert(data.error);
+			} else {
+				$el.parents('.form-group').addClass('has-success');
+				setTimeout(function() {
+					$el.parents('.form-group').removeClass('has-success');
+				}, 2500);
+			}
+		}, 'json');
 	});
 
 	// Update classes on active btns
