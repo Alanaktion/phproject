@@ -5,9 +5,9 @@ namespace Model;
 class Issue extends \Model {
 
 	protected
-		$_table_name = "issue",
-		$_heirarchy = null,
-		$_children = null;
+	$_table_name = "issue",
+	$_heirarchy = null,
+	$_children = null;
 	protected static $requiredFields = array("type_id", "status", "name", "author_id");
 
 	/**
@@ -17,11 +17,36 @@ class Issue extends \Model {
 	 * @return Comment
 	 */
 	public static function create(array $data, $notify = true) {
-		$item = parent::create($data);
-		if($notify) {
-			$notification = \Helper\Notification::instance();
-			$notification->issue_create($item->issue_id);
+		// Normalize data
+		if (isset($data["hours"])) {
+			$data["hours_total"] = $data["hours"];
+			$data["hours_remaining"] = $data["hours"];
+			unset($data["hours"]);
 		}
+		if (!empty($data["due_date"])) {
+			if (!preg_match("/[0-9]{4}(-[0-9]{2}){2}/", $data["due_date"])) {
+				$data["due_date"] = date("Y-m-d", strtotime($data["due_date"]));
+			}
+			if (empty($data["sprint_id"])) {
+				$sprint = new Sprint();
+				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $issue->due_date));
+				$data["sprint_id"] = $sprint->id;
+			}
+		}
+		if (empty($data["author_id"]) && $user_id = \Base::instance()->get("user.id")) {
+			$data["author_id"] = $user_id;
+		}
+
+		// Create issue
+		$item = parent::create($data);
+
+		// Send creation notifications
+		if ($notify) {
+			$notification = \Helper\Notification::instance();
+			$notification->issue_create($item->id);
+		}
+
+		// Return instance
 		return $item;
 	}
 
@@ -30,7 +55,7 @@ class Issue extends \Model {
 	 * @return array
 	 */
 	public function getAncestors() {
-		if($this->_heirarchy !== null) {
+		if ($this->_heirarchy !== null) {
 			return $this->_heirarchy;
 		}
 
@@ -38,16 +63,16 @@ class Issue extends \Model {
 		$issues[] = $this;
 		$issue_ids = array($this->get("id"));
 		$parent_id = $this->parent_id;
-		while($parent_id) {
+		while ($parent_id) {
 			// Catch infinite loops early on, in case server isn't running linux :)
-			if(in_array($parent_id, $issue_ids)) {
+			if (in_array($parent_id, $issue_ids)) {
 				$f3 = \Base::instance();
 				$f3->set("error", "Issue parent tree contains an infinite loop. Issue {$parent_id} is the first point of recursion.");
 				break;
 			}
 			$issue = new Issue();
 			$issue->load($parent_id);
-			if($issue->id) {
+			if ($issue->id) {
 				$issues[] = $issue;
 				$parent_id = $issue->parent_id;
 				$issue_ids[] = $issue->id;
@@ -78,10 +103,10 @@ class Issue extends \Model {
 	 * @return Issue
 	 */
 	public function delete($recursive = true) {
-		if(!$this->get("deleted_date")) {
+		if (!$this->get("deleted_date")) {
 			$this->set("deleted_date", date("Y-m-d H:i:s"));
 		}
-		if($recursive) {
+		if ($recursive) {
 			$this->_deleteTree();
 		}
 		return $this->save(false);
@@ -93,7 +118,7 @@ class Issue extends \Model {
 	 */
 	protected function _deleteTree() {
 		$children = $this->find(array("parent_id = ?", $this->get("id")));
-		foreach($children as $child) {
+		foreach ($children as $child) {
 			$child->delete();
 		}
 		return $this;
@@ -106,7 +131,7 @@ class Issue extends \Model {
 	 */
 	public function restore($recursive = true) {
 		$this->set("deleted_date", null);
-		if($recursive) {
+		if ($recursive) {
 			$this->_restoreTree();
 		}
 		return $this->save(false);
@@ -118,7 +143,7 @@ class Issue extends \Model {
 	 */
 	protected function _restoreTree() {
 		$children = $this->find(array("parent_id = ? AND deleted_date IS NOT NULL", $this->get("id")));
-		foreach($children as $child) {
+		foreach ($children as $child) {
 			$child->restore();
 		}
 		return $this;
@@ -133,7 +158,7 @@ class Issue extends \Model {
 		$f3 = \Base::instance();
 
 		// Ensure issue is not tied to itself as a parent
-		if($this->get("id") == $this->get("parent_id")) {
+		if ($this->get("id") == $this->get("parent_id")) {
 			$this->set("parent_id", $this->_getPrev("parent_id"));
 		}
 
@@ -142,9 +167,9 @@ class Issue extends \Model {
 		$update->issue_id = $this->id;
 		$update->user_id = $f3->get("user.id");
 		$update->created_date = date("Y-m-d H:i:s");
-		if($f3->exists('update_comment')) {
+		if ($f3->exists('update_comment')) {
 			$update->comment_id = $f3->get('update_comment')->id;
-			if($notify) {
+			if ($notify) {
 				$update->notify = 1;
 			}
 		} else {
@@ -153,17 +178,17 @@ class Issue extends \Model {
 		$update->save();
 
 		// Set hours_total to the hours_remaining value if it's 0 or null
-		if($this->get("hours_remaining") && !$this->get("hours_total")) {
+		if ($this->get("hours_remaining") && !$this->get("hours_total")) {
 			$this->set("hours_total", $this->get("hours_remaining"));
 		}
 
 		// Set hours remaining to 0 if the issue has been closed
-		if($this->get("closed_date") && $this->get("hours_remaining")) {
+		if ($this->get("closed_date") && $this->get("hours_remaining")) {
 			$this->set("hours_remaining", 0);
 		}
 
 		// Create a new issue if repeating
-		if($this->get("closed_date") && $this->get("repeat_cycle") && $this->get("repeat_cycle") != "none") {
+		if ($this->get("closed_date") && $this->get("repeat_cycle") && $this->get("repeat_cycle") != "none") {
 			$repeat_issue = new \Model\Issue();
 			$repeat_issue->name = $this->get("name");
 			$repeat_issue->type_id = $this->get("type_id");
@@ -178,7 +203,7 @@ class Issue extends \Model {
 			$repeat_issue->created_date = date("Y-m-d H:i:s");
 
 			// Find a due date in the future
-			switch($repeat_issue->repeat_cycle) {
+			switch ($repeat_issue->repeat_cycle) {
 				case 'daily':
 					$repeat_issue->start_date = $this->get("start_date") ? date("Y-m-d", strtotime("tomorrow")) : NULL;
 					$repeat_issue->due_date = date("Y-m-d", strtotime("tomorrow"));
@@ -193,18 +218,18 @@ class Issue extends \Model {
 					break;
 				case 'sprint':
 					$sprint = new \Model\Sprint();
-					$sprint->load(array("start_date > NOW()"), array('order'=>'start_date'));
-					$repeat_issue->start_date = $this->get("start_date") ?  $sprint->start_date : NULL;
-					$repeat_issue->due_date =  $sprint->end_date;
+					$sprint->load(array("start_date > NOW()"), array('order' => 'start_date'));
+					$repeat_issue->start_date = $this->get("start_date") ? $sprint->start_date : NULL;
+					$repeat_issue->due_date = $sprint->end_date;
 					break;
 				default:
 					$repeat_issue->repeat_cycle = 'none';
 			}
 
 			// If the issue was in a sprint before, put it in a sprint again.
-			if($this->get("sprint_id")) {
+			if ($this->get("sprint_id")) {
 				$sprint = new \Model\Sprint();
-				$sprint->load(array("end_date >= ? AND start_date <= ?", $repeat_issue->due_date, $repeat_issue->due_date), array('order'=>'start_date'));
+				$sprint->load(array("end_date >= ? AND start_date <= ?", $repeat_issue->due_date, $repeat_issue->due_date), array('order' => 'start_date'));
 				$repeat_issue->sprint_id = $sprint->id;
 			}
 
@@ -218,7 +243,7 @@ class Issue extends \Model {
 		$updated = 0;
 		$important_changes = 0;
 		$important_fields = array('status', 'name', 'description', 'owner_id', 'priority', 'due_date');
-		foreach ($this->fields as $key=>$field) {
+		foreach ($this->fields as $key => $field) {
 			if ($field["changed"] && $field["value"] != $this->_getPrev($key)) {
 				$update_field = new \Model\Issue\Update\Field();
 				$update_field->issue_update_id = $update->id;
@@ -226,23 +251,23 @@ class Issue extends \Model {
 				$update_field->old_value = $this->_getPrev($key);
 				$update_field->new_value = $field["value"];
 				$update_field->save();
-				$updated ++;
-				if($key == 'sprint_id') {
+				$updated++;
+				if ($key == 'sprint_id') {
 					$this->resetTaskSprints();
 				}
-				if(in_array($key, $important_fields)) {
-					$important_changes ++;
+				if (in_array($key, $important_fields)) {
+					$important_changes++;
 				}
 			}
 		}
 
 		// Delete update if no fields were changed
-		if(!$updated) {
+		if (!$updated) {
 			$update->delete();
 		}
 
 		// Set notify flag if important changes occurred
-		if($notify && $important_changes) {
+		if ($notify && $important_changes) {
 			$update->notify = 1;
 			$update->save();
 		}
@@ -261,29 +286,36 @@ class Issue extends \Model {
 		$f3 = \Base::instance();
 
 		// Catch empty sprint at the lowest level here
-		if($this->get("sprint_id") === 0) {
+		if ($this->get("sprint_id") === 0) {
 			$this->set("sprint_id", null);
 		}
 
 		// Censor credit card numbers if enabled
-		if($f3->get("security.block_ccs")) {
-			if(preg_match("/([0-9]{3,4}-){3}[0-9]{3,4}/", $this->get("description"))) {
+		if ($f3->get("security.block_ccs")) {
+			if (preg_match("/([0-9]{3,4}-){3}[0-9]{3,4}/", $this->get("description"))) {
 				$this->set("description", preg_replace("/([0-9]{3,4}-){3}([0-9]{3,4})/", "************$2", $this->get("description")));
 			}
 		}
 
-		// Make due dates correct
-		if($this->due_date) {
+		// Make dates correct
+		if ($this->due_date) {
 			$this->due_date = date("Y-m-d", strtotime($this->due_date));
+		} else {
+			$this->due_date = null;
+		}
+		if ($this->start_date) {
+			$this->start_date = date("Y-m-d", strtotime($this->start_date));
+		} else {
+			$this->start_date = null;
 		}
 
 		// Check if updating or inserting
-		if($this->query) {
+		if ($this->query) {
 
 			// Save issue updates and send notifications
 			$update = $this->_saveUpdate($notify);
 			$issue = parent::save();
-			if($notify && $update && $update->id && $update->notify) {
+			if ($notify && $update && $update->id && $update->notify) {
 				$notification = \Helper\Notification::instance();
 				$notification->issue_update($this->get("id"), $update->id);
 			}
@@ -291,17 +323,17 @@ class Issue extends \Model {
 		} else {
 
 			// Move task to a sprint if the parent is in a sprint
-			if($this->get("parent_id") && !$this->get("sprint_id")) {
+			if ($this->get("parent_id") && !$this->get("sprint_id")) {
 				$parent = new \Model\Issue;
 				$parent->load($this->get("parent_id"));
-				if($parent->sprint_id) {
+				if ($parent->sprint_id) {
 					$this->set("sprint_id", $parent->sprint_id);
 				}
 			}
 
 			// Save issue and send notifications
 			$issue = parent::save();
-			if($notify) {
+			if ($notify) {
 				$notification = \Helper\Notification::instance();
 				$notification->issue_create($issue->id);
 			}
@@ -324,8 +356,8 @@ class Issue extends \Model {
 		$str = $this->get("description");
 		$count = preg_match_all("/(?<=\W#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=\W|$)/i", $str, $matches);
 		$tag->deleteByIssueId($issue_id);
-		if($count) {
-			foreach($matches[0] as $match) {
+		if ($count) {
+			foreach ($matches[0] as $match) {
 				$tag->reset();
 				$tag->tag = str_replace("_", "-", $match);
 				$tag->issue_id = $issue_id;
@@ -340,7 +372,7 @@ class Issue extends \Model {
 	 * @return Issue
 	 */
 	function duplicate() {
-		if(!$this->get("id")) {
+		if (!$this->get("id")) {
 			return false;
 		}
 
@@ -371,10 +403,10 @@ class Issue extends \Model {
 	protected function _duplicateTree($id, $new_id) {
 		// Find all child issues
 		$children = $this->find(array("parent_id = ?", $id));
-		if(count($children)) {
+		if (count($children)) {
 			$f3 = \Base::instance();
-			foreach($children as $child) {
-				if(!$child->deleted_date) {
+			foreach ($children as $child) {
+				if (!$child->deleted_date) {
 					// Duplicate issue
 					$child->copyto("duplicating_issue");
 					$f3->clear("duplicating_issue.id");
@@ -402,9 +434,9 @@ class Issue extends \Model {
 	 */
 	public function resetTaskSprints($replace_existing = true) {
 		$f3 = \Base::instance();
-		if($this->get("sprint_id")) {
+		if ($this->get("sprint_id")) {
 			$query = "UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type";
-			if($replace_existing) {
+			if ($replace_existing) {
 				$query .= " AND sprint_id IS NULL";
 			}
 			$this->db->exec(
@@ -412,7 +444,7 @@ class Issue extends \Model {
 				array(
 					":sprint" => $this->get("sprint_id"),
 					":issue" => $this->get("id"),
-					":type" => $f3->get("issue_type.project")
+					":type" => $f3->get("issue_type.project"),
 				)
 			);
 		}
@@ -424,7 +456,7 @@ class Issue extends \Model {
 	 * @return array
 	 */
 	public function getChildren() {
-		if($this->_children !== null) {
+		if ($this->_children !== null) {
 			return $this->_children;
 		}
 

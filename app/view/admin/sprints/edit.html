@@ -37,10 +37,15 @@
 	<include href="blocks/footer.html" />
 </div>
 <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js"></script>
+<check if="{{ @user_obj->date_picker()->js }}">
+<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+</check>
 <script>
 	$(function() {
 		$('#start_date, #end_date').datepicker({
-			format: 'yyyy-mm-dd'
+			format: 'yyyy-mm-dd',
+			language: '{{ @user_obj->date_picker()->language }}',
+			autoclose: true
 		});
 	});
 </script>

@@ -189,5 +189,8 @@ class User extends \Model {
 		return $return;
 	}
 
+	public function date_picker() {
+		return (object) array('language'=>$this->language, 'js'=>($this->language != 'en'));
+	}
 }
 

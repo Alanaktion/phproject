@@ -73,6 +73,9 @@ class Taskboard extends \Controller {
 		return $filter_users;
 	}
 
+	/**
+	 * View a taskboard
+	 */
 	public function index($f3, $params) {
 
 		// Require a valid numeric sprint ID
@@ -142,11 +145,11 @@ class Taskboard extends \Controller {
 		$parent_ids_str = implode(",", $parent_ids);
 		$f3->set("tasks", $task_ids_str);
 
-		// Find all visible projects
+		// Find all visible projects or parent tasks
 		$projects = $issue->find(array(
-			"(id IN ($parent_ids_str) AND type_id = ?) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
+			"id IN ($parent_ids_str) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
 				. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
-			$f3->get("issue_type.project"), $sprint->id, $f3->get("issue_type.project")
+			$sprint->id, $f3->get("issue_type.project")
 		), array("order" => "owner_id ASC"));
 
 		// Build multidimensional array of all tasks and projects
@@ -166,7 +169,7 @@ class Taskboard extends \Controller {
 				}
 			}
 
-			// Add hierarchial structure to taskboard array
+			// Add hierarchical structure to taskboard array
 			$taskboard[] = array(
 				"project" => $project,
 				"columns" => $columns
@@ -185,6 +188,9 @@ class Taskboard extends \Controller {
 		$this->_render("taskboard/index.html");
 	}
 
+	/**
+	 * Load the burndown chart data
+	 */
 	public function burndown($f3, $params) {
 		$sprint = new \Model\Sprint;
 		$sprint->load($params["id"]);
@@ -220,13 +226,14 @@ class Taskboard extends \Controller {
 		$burnDatesCount = count($burnDates);
 
 		$db = $f3->get("db.instance");
+		$visible_tasks_str = implode(",", $visible_tasks);
 		$query_initial =
-				"SELECT SUM(i.hours_total) AS remaining
+				"SELECT SUM(IFNULL(i.hours_total, i.hours_remaining)) AS remaining
 				FROM issue i
 				WHERE i.created_date < :date
 				AND i.id IN (" . implode(",", $visible_tasks) . ")";
 		$query_daily =
-				"SELECT SUM(IF(f.new_value = '' OR f.new_value IS NULL, i.hours_total, f.new_value)) AS remaining
+				"SELECT SUM(IF(f.id IS NULL, IFNULL(i.hours_total, i.hours_remaining), f.new_value)) AS remaining
 				FROM issue_update_field f
 				JOIN issue_update u ON u.id = f.issue_update_id
 				JOIN (
@@ -235,12 +242,13 @@ class Taskboard extends \Controller {
 					JOIN issue_update_field f ON f.issue_update_id = u.id
 					WHERE f.field = 'hours_remaining'
 					AND u.created_date < :date
+					AND u.issue_id IN ($visible_tasks_str)
 					GROUP BY u.issue_id
 				) a ON a.max_id = u.id
 				RIGHT JOIN issue i ON i.id = u.issue_id
 				WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
 				AND i.created_date < :date
-				AND i.id IN (" . implode(",", $visible_tasks) . ")";
+				AND i.id IN ($visible_tasks_str)";
 
 		$i = 1;
 		foreach($burnDates as $date) {
@@ -298,34 +306,23 @@ class Taskboard extends \Controller {
 		$this->_printJson($burnDays);
 	}
 
+	/**
+	 * Add a new task
+	 */
 	public function add($f3, $params) {
 		$post = $f3->get("POST");
-
-		$issue = new \Model\Issue();
-		$issue->name = $post["title"];
-		$issue->description = $post["description"];
-		$issue->author_id = $this->_userId;
-		$issue->owner_id = $post["assigned"];
-		$issue->created_date = $this->now();
-		if(!empty($post["hours"])) {
-			$issue->hours_total = $post["hours"];
-			$issue->hours_remaining = $post["hours"];
-		}
-		if(!empty($post["dueDate"])) {
-			$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
-		}
-		if(!empty($post["repeat_cycle"])) {
-			$issue->repeat_cycle = $post["repeat_cycle"];
-		}
-		$issue->priority = $post["priority"];
-		$issue->parent_id = $post["storyId"];
-		$issue->sprint_id = $post["sprintId"];
-
-		$issue->save();
-
+		$post['sprint_id'] = $post['sprintId'];
+		$post['name'] = $post['title'];
+		$post['owner_id'] = $post['assigned'];
+		$post['due_date'] = $post['dueDate'];
+		$post['parent_id'] = $post['storyId'];
+		$issue = \Model\Issue::create($post);
 		$this->_printJson($issue->cast() + array("taskId" => $issue->id));
 	}
 
+	/**
+	 * Update an existing task
+	 */
 	public function edit($f3, $params) {
 		$post = $f3->get("POST");
 		$issue = new \Model\Issue();

@@ -41,6 +41,56 @@ class Admin extends \Controller {
 		$this->_render("admin/index.html");
 	}
 
+	public function config($f3) {
+		$f3->set("title", $f3->get("dict.configuration"));
+		$this->_render("admin/config.html");
+	}
+
+	public function config_post_saveattribute($f3) {
+		$attribute = str_replace("-", ".", $f3->get("POST.attribute"));
+		$value = $f3->get("POST.value");
+		$response = array("error" => null);
+
+		if(!$attribute) {
+			$response["error"] = "No attribute specified.";
+			$this->_printJson($response);
+			return;
+		}
+
+		$config = new \Model\Config;
+		$config->load(array("attribute = ?", $attribute));
+
+		$config->attribute = $attribute;
+		switch($attribute) {
+			case "site-name":
+				if(trim($value)) {
+					$config->value = $value;
+					$config->save();
+				} else {
+					$response["error"] = "Site name cannot be empty.";
+				}
+				break;
+			case "site-timezone":
+				if(in_array($value, timezone_identifiers_list())) {
+					$config->value = $value;
+					$config->save();
+				} else {
+					$response["error"] = "Timezone is invalid.";
+				}
+				break;
+			default:
+				$config->value = $value;
+				$config->save();
+		}
+
+		if(!$response["error"]) {
+			$repsonse["attribute"] = $attribute;
+			$repsonse["value"] = $value;
+		}
+
+		$this->_printJson($response);
+	}
+
 	public function plugins($f3) {
 		$f3->set("title", $f3->get("dict.plugins"));
 		$this->_render("admin/plugins.html");
