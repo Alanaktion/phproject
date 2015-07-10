@@ -23,7 +23,6 @@ $f3->mset(array(
 // Load local configuration
 $f3->config($homedir."config-base.ini");
 $f3->config($homedir."config.ini");
-\Model\Config::loadAll();
 
 // Connect to database
 $f3->set("db.instance", new DB\SQL(
@@ -31,3 +30,6 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.user"),
 	$f3->get("db.pass")
 ));
+
+// Load database-backed config
+\Model\Config::loadAll();
