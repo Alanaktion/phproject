@@ -230,11 +230,11 @@ if($emails) {
 						$newfile->issue_id = $issue->id;
 						$newfile->user_id = $user->id;
 						$newfile->filename = $orig_name;
-						$newfile->disk_filename =$f3->get("UPLOADS").$filename;
+						$newfile->disk_filename = $f3->get("UPLOADS").$filename;
 						$newfile->disk_directory = $f3->get("UPLOADS");
 						$newfile->filesize = $file['size'];
 						$newfile->content_type = $file['type'];
-						$newfile->digest = md5_file($filename);
+						$newfile->digest = md5_file($f3->get("UPLOADS").$filename);
 						$newfile->created_date = date("Y-m-d H:i:s");
 						$newfile->save();
 
