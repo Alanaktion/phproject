@@ -1,5 +1,6 @@
 <?php
 require_once "base.php";
+$log = new \Log("checkmail.log");
 
 // connect to gmail
 $hostname = $f3->get("imap.hostname");
@@ -8,7 +9,9 @@ $password = $f3->get("imap.password");
 
 $inbox = imap_open($hostname,$username,$password);
 if($inbox === false) {
-	throw new Exception('Cannot connect to IMAP: ' . imap_last_error());
+	$err = 'Cannot connect to IMAP: ' . imap_last_error();
+	$log->write($err);
+	throw new Exception($err);
 }
 
 $emails = imap_search($inbox,'ALL UNSEEN');
@@ -108,6 +111,7 @@ if($emails) {
 					$issue->owner_id = $owner;
 					$issue->type_id = 1;
 					$issue->save();
+					$log->write('Saved issue ' . $issue->id);
 				}
 			}
 
