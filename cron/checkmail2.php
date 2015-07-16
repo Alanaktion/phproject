@@ -78,14 +78,14 @@ foreach($emails as $msg_number) {
 
 	$from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
 
-	$from_user = new \Model\User();
+	$from_user = new \Model\User;
 	$from_user->load(array('email = ? AND deleted_date IS NULL', $from));
 	if(!$from_user->id) {
 		$log->write('Unable to find user for ' . $hedaer->subject);
 		continue;
 	}
 
-	$to_user = new \Model\User();
+	$to_user = new \Model\User;
 	foreach($header->to as $to_email) {
 		$to = $to_email->mailbox . "@" . $to_email->host ;
 		$user->load(array('email = ? AND deleted_date IS NULL', $to));
@@ -96,5 +96,42 @@ foreach($emails as $msg_number) {
 			$owner = $from_user->id;
 		}
 	}
+
+	// Find issue IDs in subject
+	preg_match("/\[#([0-9]+)\] -/", $header->subject, $matches);
+
+	// Get issue instance
+	$issue = new \Model\Issue;
+	if(!empty($matches[0])) {
+		$issue->load(intval($matches[0]));
+	}
+	if(!$issue->id) {
+		$subject = trim(preg_replace("/^((Re|Fwd?):\s)*/i", "", $header->subject));
+		$issue->load(array('name=? AND deleted_date IS NULL AND closed_date IS NULL', $subject));
+	}
+
+	if($issue->id) {
+		if(trim($text)) {
+			$comment = \Model\Issue\Comment::create(array(
+				'user_id' => $from_user->id,
+				'issue_id' => $issue->id,
+				'text' => $text,
+			));
+			$log->write("Added comment {$comment->id} on issue {$issue->id}");
+		}
+	} else {
+		$issue = \Model\Issue::create(array(
+			'name' => $header->subject,
+			'description' => $text,
+			'author_id' => $from_user->id,
+			'owner_id' => $owner,
+			'type_id' => 1
+		));
+		$log->write("Created issue {$issue->id}");
+	}
+
+	// @todo: Add other recipients as watchers
+
+	// @todo: Save attachments
 
 }
