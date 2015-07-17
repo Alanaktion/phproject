@@ -24,21 +24,21 @@ foreach($emails as $msg_number) {
 	$header = imap_headerinfo($inbox, $msg_number);
 	$structure = imap_fetchstructure($inbox, $msg_number);
 
-	print_r($header);print_r($structure);exit;
-
 	$text = "";
 	$attachments = array();
 
 	// Load message parts
 	foreach($structure->parts as $part_number=>$part) {
-		if($part->type === 0 && !$text) {
+
+		// Handle plaintext
+		if($part->type === 0 && !trim($text)) {
 			$text = imap_fetchbody($inbox, $msg_number, $part_number);
 
 			// Decode body
 			if($part->encoding == 4) {
 				$text = imap_qprint($text);
 			} elseif($part->encoding == 3) {
-				$text = base64_decode($text);
+				$text = imap_base64($text);
 			}
 
 			// Un-HTML an HTML part
@@ -46,7 +46,29 @@ foreach($emails as $msg_number) {
 				$text = html_entity_decode(strip_tags($text));
 			}
 
-		} elseif($part->type > 0 && $part->ifdisposition && $part->disposition == 'ATTACHMENT') {
+		}
+
+		// Handle multipart
+		elseif($part->type == 1 && !trim($text)) {
+			foreach($part->parts as $multipart_number=>$multipart) {
+				$text = imap_fetchbody($inbox, $msg_number, ($part_number + 1) . '.' . $multipart_number);
+
+				// Decode body
+				if($multipart->encoding == 4) {
+					$text = imap_qprint($text);
+				} elseif($multipart->encoding == 3) {
+					$text = imap_base64($text);
+				}
+
+				// Un-HTML an HTML part
+				if($multipart->ifsubtype && $multipart->subtype == 'HTML') {
+					$text = html_entity_decode(strip_tags($text));
+				}
+			}
+		}
+
+		// Handle attachments
+		elseif($part->type > 1 && $part->ifdisposition && $part->disposition == 'ATTACHMENT') {
 
 			// Get filename
 			$filename = '';
@@ -66,22 +88,28 @@ foreach($emails as $msg_number) {
 				}
 			}
 
+			$bodystruct = imap_bodystruct($inbox, $msg_number, $part_number);
+			// print_r($bodystruct);
+
 			// Store attachment metadata
 			$attachments[] = array(
 				'part_number' => $part_number,
 				'filename' => $filename,
 				'size' => $part->bytes,
+				'encoding' => $part->encoding,
 			);
 
 		}
 	}
 
-	$from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
+	echo $text;
+	exit;
 
+	$from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
 	$from_user = new \Model\User;
 	$from_user->load(array('email = ? AND deleted_date IS NULL', $from));
 	if(!$from_user->id) {
-		$log->write('Unable to find user for ' . $hedaer->subject);
+		$log->write('Unable to find user for ' . $header->subject);
 		continue;
 	}
 
@@ -132,6 +160,42 @@ foreach($emails as $msg_number) {
 
 	// @todo: Add other recipients as watchers
 
-	// @todo: Save attachments
+	foreach($attachments as $item) {
+
+		// Skip big files
+		if($item['size'] > $f3->get("files.maxsize")) {
+			continue;
+		}
+
+		// Load file contents
+		$data = imap_fetchbody($inbox, $msg_number, $item['part_number']);
+
+		// Decode contents
+		if($item['encoding'] == 4) {
+			$data = imap_qprint($data);
+		} elseif($item['encoding'] == 3) {
+			$data = imap_base64($data);
+		}
+
+		// Store file
+		$dir = 'uploads/' . date('Y/m/');
+		$item['filename'] = preg_replace("/[^A-Z0-9._-]/i", "_", $item['filename']);
+		$disk_filename = $dir . time() . "_" . $item['filename'];
+		file_put_contents($f3->get('ROOT') . '/' . $disk_filename, $data);
+
+		// @todo: Find a way to parse the Content-type header from the message
+		$file = \Model\Issue\File::create(array(
+			"issue_id" => $issue->id,
+			"user_id" => $from_user->id,
+			"filename" => $item['filename'],
+			"disk_directory" => $dir,
+			"disk_filename" => $disk_filename,
+			"filesize" => strlen($data),
+			"content_type" => \Web::instance()->mime($item['filename']),
+			"digest" => md5($data),
+		));
+
+		$log->write("Saved file {$file->id} on issue {$issue->id}");
+	}
 
 }
