@@ -1,5 +1,6 @@
 <?php
 require_once "base.php";
+$log = new \Log("checkmail.log");
 
 // connect to gmail
 $hostname = $f3->get("imap.hostname");
@@ -8,7 +9,9 @@ $password = $f3->get("imap.password");
 
 $inbox = imap_open($hostname,$username,$password);
 if($inbox === false) {
-	throw new Exception('Cannot connect to IMAP: ' . imap_last_error());
+	$err = 'Cannot connect to IMAP: ' . imap_last_error();
+	$log->write($err);
+	throw new Exception($err);
 }
 
 $emails = imap_search($inbox,'ALL UNSEEN');
@@ -36,6 +39,9 @@ if($emails) {
 
 
 		$truncate = $f3->get("mail.truncate_lines");
+		if(is_string($truncate)) {
+			$truncate = $f3->split($truncate);
+		}
 		foreach ($truncate as $truncator) {
 			$parts = explode($truncator, $message);
 			$message = $parts[0];
@@ -105,6 +111,7 @@ if($emails) {
 					$issue->owner_id = $owner;
 					$issue->type_id = 1;
 					$issue->save();
+					$log->write('Saved issue ' . $issue->id);
 				}
 			}
 
@@ -223,11 +230,11 @@ if($emails) {
 						$newfile->issue_id = $issue->id;
 						$newfile->user_id = $user->id;
 						$newfile->filename = $orig_name;
-						$newfile->disk_filename =$f3->get("UPLOADS").$filename;
+						$newfile->disk_filename = $f3->get("UPLOADS").$filename;
 						$newfile->disk_directory = $f3->get("UPLOADS");
 						$newfile->filesize = $file['size'];
 						$newfile->content_type = $file['type'];
-						$newfile->digest = md5_file($filename);
+						$newfile->digest = md5_file($f3->get("UPLOADS").$filename);
 						$newfile->created_date = date("Y-m-d H:i:s");
 						$newfile->save();
 

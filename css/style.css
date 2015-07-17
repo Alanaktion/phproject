@@ -309,6 +309,13 @@ table a.btn {
 	padding: 0 0 0 5px;
 	margin-bottom: 5px;
 }
+.tex del {
+	opacity: 0.45;
+	transition: opacity .25s ease;
+}
+.tex del:hover {
+	opacity: 1;
+}
 
 .popover-content {
 	text-overflow: ellipsis;
