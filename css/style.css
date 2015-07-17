@@ -398,8 +398,8 @@ th[data-sort] {
 @media (min-width: 768px) and (max-width: 1200px) {
 	.navbar-nav > li:nth-last-child(n+5) > a,
 	.navbar-nav > li:nth-last-child(n+5) ~ li > a {
-		padding-left: 10px;
-		padding-right: 10px;
+		padding-left: 8px;
+		padding-right: 8px;
 	}
 }
 @media (min-width: 768px) and (max-width: 992px) {
@@ -418,6 +418,9 @@ th[data-sort] {
 	}
 	.navbar-form[role=search] .form-control:focus {
 		width: 165px;
+	}
+	.navbar-form[role=search] .btn {
+		display: none;
 	}
 }
 
