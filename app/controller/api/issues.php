@@ -75,11 +75,17 @@ class Issues extends \Controller\Api {
 		}
 		$filter_str = $filter ? implode(' AND ', $filter) : null;
 
+		// Build options
+		$options = array();
+		if($f3->get("GET.order")) {
+			$options["order"] = $f3->get("GET.order") . " " . $f3->get("GET.ascdesc");
+		}
+
 		// Load issues
 		$result = $issue->paginate(
 			$f3->get("GET.offset") / ($f3->get("GET.limit") ?: 30),
 			$f3->get("GET.limit") ?: 30,
-			$filter_str
+			$filter_str, $options
 		);
 
 		// Build result objects
