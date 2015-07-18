@@ -276,4 +276,27 @@ class Issues extends \Controller\Api {
 		$this->_printJson($return);
 	}
 
+	// List issue tags
+	public function tag($f3) {
+		$tag = new \Model\Issue\Tag;
+		$tags = $tag->cloud();
+		$this->_printJson($tags);
+	}
+
+	// List issues by tag
+	public function tag_single($f3, $params) {
+		$tag = new \Model\Issue\Tag;
+		$issueIds = $tag->issues($params['tag']);
+		$return = array();
+		if($issueIds) {
+			$issue = new \Model\Issue\Detail;
+			$issues = $issue->find(array("id IN (" . implode(",", $issueIds) . ") AND deleted_date IS NULL"));
+			foreach($issues as $item) {
+				$return[] = $this->_issueMultiArray($item);
+			}
+		}
+
+		$this->_printJson($return);
+	}
+
 }
