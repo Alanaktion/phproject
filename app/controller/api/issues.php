@@ -266,6 +266,40 @@ class Issues extends \Controller\Api {
 		));
 	}
 
+	// List issue comments
+	public function single_comments($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load($params["id"]);
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$comment = new \Model\Issue\Comment\Detail;
+		$comments = $comment->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC"));
+
+		$return = array();
+		foreach($comments as $item) {
+			$return[] = $item->cast();
+		}
+
+		$this->_printJson($return);
+	}
+
+	// Add a comment on an issue
+	public function single_comments_post($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load($params["id"]);
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$data = array("issue_id" => $issue->id, "user_id" => $this->_userId, "text" => $f3->get("POST.text"));
+		$comment = \Model\Issue\Comment::create($data);
+		$this->_printJson($comment->cast());
+	}
+
 	// List issue types
 	public function types($f3) {
 		$types = $f3->get("issue_types");

@@ -17,7 +17,7 @@ abstract class Api extends \Controller {
 				"error" => $f3->get("ERROR.text")
 			);
 			if($f3->get("DEBUG") >= 2) {
-				$out["trace"] = $f3->get("ERROR.trace");
+				$out["trace"] = strip_tags($f3->get("ERROR.trace"));
 			}
 			echo json_encode($out);
 		});
