@@ -266,4 +266,14 @@ class Issues extends \Controller\Api {
 		));
 	}
 
+	// List issue types
+	public function types($f3) {
+		$types = $f3->get("issue_types");
+		$return = array();
+		foreach($types as $type) {
+			$return[] = $type->cast();
+		}
+		$this->_printJson($return);
+	}
+
 }
