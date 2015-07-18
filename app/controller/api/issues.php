@@ -299,4 +299,26 @@ class Issues extends \Controller\Api {
 		$this->_printJson($return);
 	}
 
+	// List sprints
+	public function sprints($f3) {
+		$sprint_model = new \Model\Sprint;
+		$sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
+		$return = array();
+		foreach($sprints as $sprint) {
+			$return[] = $sprint->cast();
+		}
+		$this->_printJson($return);
+	}
+
+	// List past sprints
+	public function sprints_old($f3) {
+		$sprint_model = new \Model\Sprint;
+		$sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date ASC"));
+		$return = array();
+		foreach($sprints as $sprint) {
+			$return[] = $sprint->cast();
+		}
+		$this->_printJson($return);
+	}
+
 }
