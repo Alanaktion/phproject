@@ -103,7 +103,7 @@ $(document).ready(function() {
 	// Submit from textarea if Ctrl+Enter or Cmd+Enter is pressed
 	$('body').on('keypress', 'textarea', function(e) {
 		if((e.keyCode == 13 || e.keyCode == 10) && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.metaKey)))) {
-			$(this).parents('form')[0].submit();
+			$(this).parents('form').first().submit();
 			e.preventDefault();
 		}
 	});

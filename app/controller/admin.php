@@ -147,13 +147,11 @@ class Admin extends \Controller {
 
 	public function user_new($f3) {
 		$f3->set("title", $f3->get("dict.new_user"));
-
 		$f3->set("rand_color", sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF)));
 		$this->_render("admin/users/edit.html");
 	}
 
 	public function user_save($f3) {
-
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
 
@@ -237,6 +235,18 @@ class Admin extends \Controller {
 		if(!$user->id) {
 			$f3->reroute("/admin/users");
 			return;
+		}
+
+		// Reassign issues if requested
+		if($f3->get("POST.reassign")) {
+			switch ($f3->get("POST.reassign")) {
+				case "unassign":
+					$user->reassignIssues(null);
+					break;
+				case "to-user":
+					$user->reassignIssues($f3->get("POST.reassign-to"));
+					break;
+			}
 		}
 
 		$user->delete();

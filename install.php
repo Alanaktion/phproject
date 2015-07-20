@@ -62,6 +62,7 @@ if($_POST) {
 		$user->email = $post["user-email"];
 		$user->salt = $security->salt();
 		$user->password = $security->hash($post["user-password"] ?: "admin", $user->salt);
+		$user->api_key = $security->salt_sha1();
 		$user->save();
 
 	} catch(PDOException $e) {

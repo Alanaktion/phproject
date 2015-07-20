@@ -5,6 +5,7 @@ namespace Model;
 class Config extends \Model {
 
 	protected $_table_name = "config";
+	protected static $requiredFields = array('attribute', 'value');
 
 	/**
 	 * Loads the configuration for the site
@@ -52,6 +53,23 @@ class Config extends \Model {
 		$data .= "db.pass={$ini['db.pass']}\n";
 		$data .= "db.name={$ini['db.name']}\n";
 		file_put_contents($root.'/config.ini', $data);
+	}
+
+	/**
+	 * Set a configuration value
+	 * @param  string $key
+	 * @param  mixed  $value
+	 * @return Config
+	 */
+	public static function setVal($key, $value) {
+		$f3 = \Base::instance();
+		$f3->set($key, $value);
+		$item = new static();
+		$item->load(array('attribute = ?', $key));
+		$item->attribute = $attribute;
+		$item->value = $value;
+		$item->save();
+		return $item;
 	}
 
 }

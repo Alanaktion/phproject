@@ -16,7 +16,7 @@
 	<form action="{{ @BASE }}/admin/config" method="post" id="frm-config">
 		<div class="row">
 
-			<div class="col-md-3">
+			<div class="col-sm-3">
 				<ul class="nav nav-pills nav-stacked">
 					<li class="active"><a href="#config-site" data-toggle="tab">{{ @dict.site_basics }}</a></li>
 					<li><a href="#config-parse" data-toggle="tab">{{ @dict.text_parsing }}</a></li>
@@ -25,7 +25,7 @@
 				</ul>
 			</div>
 
-			<div class="col-md-9 tab-content">
+			<div class="col-sm-9 tab-content">
 
 				<div role="tabpanel" class="tab-pane fade in active" id="config-site">
 					<div class="form-group">
@@ -188,9 +188,9 @@
 					</div>
 					<div class="form-group">
 						<label class="control-label" for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
-						<textarea class="form-control input-sm" rows="4" readonly>{{ @mail.truncate_lines | esc }}</textarea>
+						<textarea class="form-control input-sm" rows="4" readonly>{{ implode("\n", @mail.truncate_lines) | esc }}</textarea>
 					</div>
-					<p class="alert alert-info">{{ @dict.advanced_config_note,'<code>config.ini</code>',@ROOT | format }}</p>
+					<p class="alert alert-info">{{ @dict.advanced_config_note,'<code>config</code>' | format }}</p>
 				</div>
 
 			</div>

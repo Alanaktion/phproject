@@ -32,7 +32,14 @@
 						<true>
 							<check if="{{ @change.new_value !== '' }}">
 								<true>
-									<li><b>{{ @human_readable.field }}</b> changed from <i>{{ @human_readable.old | esc }}</i> to <i>{{ @human_readable.new | esc }}</i></li>
+									<check if="{{ @change.field == 'description' }}">
+										<true>
+											<li><b>{{ @human_readable.field }}</b> changed</li>
+										</true>
+										<false>
+											<li><b>{{ @human_readable.field }}</b> changed from <i>{{ @human_readable.old | esc }}</i> to <i>{{ @human_readable.new | esc }}</i></li>
+										</false>
+									</check>
 								</true>
 								<false>
 									<li><b>{{ @human_readable.field }}</b> removed</li>

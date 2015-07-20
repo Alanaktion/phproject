@@ -8,7 +8,7 @@
 <div class="container">
 	<include href="blocks/admin/tabs.html" />
 	<div class="row">
-		<div class="col-md-8">
+		<div class="col-sm-8">
 			<p class="alert alert-success alert-popup saved" style="display: none;">{{ @dict.group_name_saved }}</p>
 			<form role="form" onsubmit="return false;">
 				<div class="form-group">
@@ -33,7 +33,7 @@
 				</repeat>
 			</ul>
 		</div>
-		<div class="col-md-4">
+		<div class="col-sm-4">
 			<form role="form" id="adduser">
 				<input type="hidden" name="action" value="add_member">
 				<input type="hidden" name="group_id" value="{{ @group.id }}">
