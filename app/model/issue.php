@@ -40,6 +40,9 @@ class Issue extends \Model {
 		// Create issue
 		$item = parent::create($data);
 
+		// Save hashtags
+		$item->saveTags();
+
 		// Send creation notifications
 		if ($notify) {
 			$notification = \Helper\Notification::instance();
