@@ -3,7 +3,7 @@
 // Initialize core
 $f3=require("lib/base.php");
 $f3->mset(array(
-	"UI" => "app/view/",
+	"UI" => "app/view/;app/plugin/",
 	"ESCAPE" => false,
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
@@ -63,6 +63,9 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.user"),
 	$f3->get("db.pass")
 ));
+
+// Load final configuration
+\Model\Config::loadAll();
 
 // Ensure database is up to date
 $version = \Helper\Security::instance()->checkDatabaseVersion();

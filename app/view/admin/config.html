@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include href="blocks/head.html" />
+</head>
+<body>
+<include href="blocks/navbar.html" />
+<div class="container">
+	<include href="blocks/admin/tabs.html" />
+
+	<!-- <div class="alert alert-info alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<strong>Note:</strong> Changes made here are easily reversible, and have no permanent effect on the site.
+	</div> -->
+
+	<form action="{{ @BASE }}/admin/config" method="post" id="frm-config">
+		<div class="row">
+
+			<div class="col-sm-3">
+				<ul class="nav nav-pills nav-stacked">
+					<li class="active"><a href="#config-site" data-toggle="tab">{{ @dict.site_basics }}</a></li>
+					<li><a href="#config-parse" data-toggle="tab">{{ @dict.text_parsing }}</a></li>
+					<li><a href="#config-email" data-toggle="tab">{{ @dict.email_smtp_imap }}</a></li>
+					<li><a href="#config-advanced" data-toggle="tab">{{ @dict.advanced }}</a></li>
+				</ul>
+			</div>
+
+			<div class="col-sm-9 tab-content">
+
+				<div role="tabpanel" class="tab-pane fade in active" id="config-site">
+					<div class="form-group">
+						<label class="control-label" for="site-name">{{ @dict.site_name }}</label>
+						<input type="text" class="form-control" name="site-name" value="{{ @site.name }}" required>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="site-description">{{ @dict.site_description }}</label>
+						<textarea class="form-control input-sm" name="site-description">{{ @site.description | esc }}</textarea>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="site-timezone">{{ @dict.timezone }}</label>
+						<input type="text" class="form-control input-sm" name="site-timezone" value="{{ @site.timezone }}" required>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="site-theme">{{ @dict.default_theme }}</label>
+						<input type="text" class="form-control input-sm" name="site-theme" value="{{ @site.theme }}" required>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="site-logo">{{ @dict.logo }}</label>
+						<input type="text" class="form-control input-sm" name="site-logo" placeholder="(Site Name)" value="{{ @site.logo }}">
+					</div>
+					<div class="form-group">
+						{{ @dict.allow_public_registration }}<br>
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<!-- TODO: Set checked attribute on current value, rather than default -->
+							<label class="btn btn-default {{ @site.public_registration ? 'active' : '' }}">
+								<input type="radio" name="site-public_registration" value="1" autocomplete="off" {{ @site.public_registration ? 'checked' : '' }}>
+								<span class="glyphicon glyphicon-ok"></span>
+							</label>
+							<label class="btn btn-default {{ @site.public_registration ? '' : 'active' }}">
+								<input type="radio" name="site-public_registration" value="0" autocomplete="off" {{ @site.public_registration ? '' : 'checked' }}>
+								<span class="glyphicon glyphicon-remove"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<div role="tabpanel" class="tab-pane fade" id="config-parse">
+					<!-- TODO: Set checked attributes on current values, rather than defaults -->
+					<div class="form-group">
+						<p>{{ @dict.parser_syntax }}</p>
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-default {{ @parse.markdown ? 'active' : '' }}">
+								<input type="checkbox" name="parse-markdown" value="1" autocomplete="off" {{ @parse.markdown ? 'checked' : '' }}>
+								Markdown
+							</label>
+							<label class="btn btn-default {{ @parse.textile ? 'active' : '' }}">
+								<input type="checkbox" name="parse-textile" value="1" autocomplete="off" {{ @parse.textile ? 'checked' : '' }}>
+								Textile
+							</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-default {{ @parse.ids ? 'active' : '' }}">
+								<input type="radio" name="parse-ids" value="1" autocomplete="off" {{ @parse.ids ? 'checked' : '' }}>
+								<span class="glyphicon glyphicon-ok"></span>
+							</label>
+							<label class="btn btn-default {{ @parse.ids ? '' : 'active' }}">
+								<input type="radio" name="parse-ids" value="0" autocomplete="off" {{ @parse.ids ? '' : 'checked' }}>
+								<span class="glyphicon glyphicon-remove"></span>
+							</label>
+						</div>
+						&emsp;{{ @dict.convert_ids }}
+					</div>
+					<div class="form-group">
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-default {{ @parse.hashtags ? 'active' : '' }}">
+								<input type="radio" name="parse-hashtags" value="1" autocomplete="off" {{ @parse.hashtags ? 'checked' : '' }}>
+								<span class="glyphicon glyphicon-ok"></span>
+							</label>
+							<label class="btn btn-default {{ @parse.hashtags ? '' : 'active' }}">
+								<input type="radio" name="parse-hashtags" value="0" autocomplete="off" {{ @parse.hashtags ? '' : 'checked' }}>
+								<span class="glyphicon glyphicon-remove"></span>
+							</label>
+						</div>
+						&emsp;{{ @dict.convert_hashtags }}
+					</div>
+					<div class="form-group">
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-default {{ @parse.urls ? 'active' : '' }}">
+								<input type="radio" name="parse-urls" value="1" autocomplete="off" {{ @parse.urls ? 'checked' : '' }}>
+								<span class="glyphicon glyphicon-ok"></span>
+							</label>
+							<label class="btn btn-default {{ @parse.urls ? '' : 'active' }}">
+								<input type="radio" name="parse-urls" value="0" autocomplete="off" {{ @parse.urls ? '' : 'checked' }}>
+								<span class="glyphicon glyphicon-remove"></span>
+							</label>
+						</div>
+						&emsp;{{ @dict.convert_urls }}
+					</div>
+					<div class="form-group">
+						<div class="btn-group btn-group-sm" data-toggle="buttons">
+							<label class="btn btn-default {{ @parse.emoticons ? 'active' : '' }}">
+								<input type="radio" name="parse-emoticons" value="1" autocomplete="off" {{ @parse.emoticons ? 'checked' : '' }}>
+								<span class="glyphicon glyphicon-ok"></span>
+							</label>
+							<label class="btn btn-default {{ @parse.emoticons ? '' : 'active' }}">
+								<input type="radio" name="parse-emoticons" value="0" autocomplete="off" {{ @parse.emoticons ? '' : 'checked' }}>
+								<span class="glyphicon glyphicon-remove"></span>
+							</label>
+						</div>
+						&emsp;{{ @dict.convert_emoticons }}
+					</div>
+				</div>
+
+				<div role="tabpanel" class="tab-pane fade" id="config-email">
+					<fieldset>
+						<legend>{{ @dict.outgoing_mail }}</legend>
+						<div class="form-group">
+							<label class="control-label" for="mail-from">{{ @dict.from_address}}</label>
+							<input type="text" class="form-control input-sm" name="mail-from" value="{{ @mail.from }}" placeholder="{{ @dict.email_leave_blank }}">
+						</div>
+						<p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.package_mail_config_note, @PACKAGE | format }} </p>
+					</fieldset>
+					<br>
+					<fieldset>
+						<legend>{{ @dict.incoming_mail }}</legend>
+						<div class="form-group">
+							<label class="control-label" for="imap-hostname">{{ @dict.hostname }}</label>
+							<input type="text" class="form-control input-sm" name="imap-hostname" value="{{ @imap.hostname }}" placeholder="{{ @dict.email_leave_blank }}">
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="imap-username">{{ @dict.hostname }}</label>
+							<input type="text" class="form-control input-sm" name="imap-username" value="{{ @imap.username }}">
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="imap-password">{{ @dict.password }}</label>
+							<input type="text" class="form-control input-sm" name="imap-password" value="{{ str_repeat('*', strlen(@imap.password)) }}">
+						</div>
+						<p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.imap_settings_note, '<code>checkmail.php</code>' | format }}</p>
+					</fieldset>
+				</div>
+
+				<div role="tabpanel" class="tab-pane fade" id="config-advanced">
+					<div class="form-group">
+						<label class="control-label">{{ @dict.debug_level }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @DEBUG }}" readonly>
+					</div>
+					<div class="form-group">
+						<label class="control-label">{{ @dict.cache_mode }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @CACHE }}" readonly>
+					</div>
+					<div class="form-group">
+						<label class="control-label">{{ @dict.cookie_expiration }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @JAR.expire }}" readonly>
+					</div>
+					<div class="form-group">
+						<label class="control-label">{{ @dict.max_upload_size }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @files.maxsize }}" readonly>
+					</div>
+					<div class="form-group">
+						<label class="control-label">{{ @dict.censor_credit_card_numbers }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @security.block_ccs }}" readonly>
+					</div>
+					<div class="form-group">
+						<label class="control-label">{{ @dict.demo_user }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @site.demo }}" readonly>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
+						<textarea class="form-control input-sm" rows="4" readonly>{{ implode("\n", @mail.truncate_lines) | esc }}</textarea>
+					</div>
+					<p class="alert alert-info">{{ @dict.advanced_config_note,'<code>config</code>' | format }}</p>
+				</div>
+
+			</div>
+		</div>
+	</form>
+
+	<include href="blocks/footer.html" />
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+
+	// Auto-select tab if hash is present
+	if(window.location.hash) {
+		$('.nav a').filter('[href=#config-' + window.location.hash.substr(1) + ']').click();
+	}
+
+	// Handle input changes
+	$('#frm-config').on('change', 'input, select, textarea', function(e) {
+		var $el = $(this),
+			val = $el.val();
+
+		if($el.attr('type') == 'checkbox') {
+			val = $el.prop('checked') ? 1 : 0;
+		}
+
+		$.post(BASE + '/admin/config/saveattribute', {
+			attribute: $el.attr('name'),
+			value: val
+		}, function(data) {
+			if(data.error) {
+				alert(data.error);
+			} else {
+				$el.parents('.form-group').addClass('has-success');
+				setTimeout(function() {
+					$el.parents('.form-group').removeClass('has-success');
+				}, 2500);
+			}
+		}, 'json');
+	});
+
+	// Update classes on active btns
+	/*$('.btn-group .btn.active').addClass('btn-success');
+	$('#frm-config').on('click', '.btn-group', function(e) {
+		$(this).find('.btn').removeClass('btn-success');
+		$(this).find('.active').addClass('btn-success');
+	});*/
+
+});
+</script>
+</body>
+</html>

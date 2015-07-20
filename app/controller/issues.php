@@ -574,47 +574,12 @@ class Issues extends \Controller {
 	}
 
 	/**
-	 * Save a newly created issue
+	 * Create a new issue from $_POST
 	 * @return Issue
 	 */
 	protected function _saveNew() {
 		$f3 = \Base::instance();
-		$post = array_map("trim", $f3->get("POST"));
-		$issue = new \Model\Issue;
-
-		// Set all supported issue fields
-		$issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $f3->get("user.id");
-		$issue->type_id = $post["type_id"];
-		$issue->created_date = $this->now();
-		$issue->name = $post["name"];
-		$issue->description = $post["description"];
-		$issue->priority = $post["priority"];
-		$issue->status = $post["status"];
-		$issue->owner_id = $post["owner_id"] ?: null;
-		$issue->hours_total = $post["hours_remaining"] ?: null;
-		$issue->hours_remaining = $post["hours_remaining"] ?: null;
-		$issue->repeat_cycle = in_array($post["repeat_cycle"], array("none", "")) ? null : $post["repeat_cycle"];
-		$issue->sprint_id = $post["sprint_id"];
-
-		if(!empty($post["due_date"])) {
-			$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
-
-			// Save to the sprint of the due date if a sprint was not specified
-			if(!$issue->sprint_id) {
-				$sprint = new \Model\Sprint();
-				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
-				$issue->sprint_id = $sprint->id;
-			}
-		}
-		if(!empty($post["parent_id"])) {
-			$issue->parent_id = $post["parent_id"];
-		}
-
-		// Save issue, optionally send notifications
-		$notify = !empty($post["notify"]);
-		$issue->save($notify);
-
-		return $issue;
+		return \Model\Issue::create($f3->get("POST"), !!$f3->get("POST.notify"));
 	}
 
 	public function save($f3, $params) {
@@ -1106,4 +1071,43 @@ class Issues extends \Controller {
 
 	}
 
+	/**
+	 * Load all matching issues
+	 * @param  Base $f3
+	 */
+	public function parent_ajax($f3) {
+		if(!$f3->get("AJAX")) {
+			$f3->error(400);
+		}
+
+		$term = trim($f3->get('GET.q'));
+		$results = array();
+
+		$issue = new \Model\Issue;
+		if((substr($term, 0, 1) == '#') && is_numeric(substr($term, 1))) {
+			$id = (int) substr($term, 1);
+			$issues = $issue->find(array('id LIKE ?', $id. '%'), array('limit' => 20));
+
+			foreach($issues as $row) {
+				$results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+			}
+		}
+		elseif(is_numeric($term)) {
+			$id = (int) $term;
+			$issues = $issue->find(array('(id LIKE ?) OR (name LIKE ?)', $id . '%', '%' . $id . '%'), array('limit' => 20));
+
+			foreach($issues as $row) {
+				$results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+			}
+		}
+		else {
+			$issues = $issue->find(array('name LIKE ?', '%' . addslashes($term) . '%'), array('limit' => 20));
+
+			foreach($issues as $row) {
+				$results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+			}
+		}
+
+		$this->_printJson(array('results' => $results));
+	}
 }

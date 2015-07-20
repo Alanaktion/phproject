@@ -73,6 +73,9 @@ class Taskboard extends \Controller {
 		return $filter_users;
 	}
 
+	/**
+	 * View a taskboard
+	 */
 	public function index($f3, $params) {
 
 		// Require a valid numeric sprint ID
@@ -185,6 +188,9 @@ class Taskboard extends \Controller {
 		$this->_render("taskboard/index.html");
 	}
 
+	/**
+	 * Load the burndown chart data
+	 */
 	public function burndown($f3, $params) {
 		$sprint = new \Model\Sprint;
 		$sprint->load($params["id"]);
@@ -300,34 +306,23 @@ class Taskboard extends \Controller {
 		$this->_printJson($burnDays);
 	}
 
+	/**
+	 * Add a new task
+	 */
 	public function add($f3, $params) {
 		$post = $f3->get("POST");
-
-		$issue = new \Model\Issue();
-		$issue->name = $post["title"];
-		$issue->description = $post["description"];
-		$issue->author_id = $this->_userId;
-		$issue->owner_id = $post["assigned"];
-		$issue->created_date = $this->now();
-		if(!empty($post["hours"])) {
-			$issue->hours_total = $post["hours"];
-			$issue->hours_remaining = $post["hours"];
-		}
-		if(!empty($post["dueDate"])) {
-			$issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
-		}
-		if(!empty($post["repeat_cycle"])) {
-			$issue->repeat_cycle = $post["repeat_cycle"];
-		}
-		$issue->priority = $post["priority"];
-		$issue->parent_id = $post["storyId"];
-		$issue->sprint_id = $post["sprintId"];
-
-		$issue->save();
-
+		$post['sprint_id'] = $post['sprintId'];
+		$post['name'] = $post['title'];
+		$post['owner_id'] = $post['assigned'];
+		$post['due_date'] = $post['dueDate'];
+		$post['parent_id'] = $post['storyId'];
+		$issue = \Model\Issue::create($post);
 		$this->_printJson($issue->cast() + array("taskId" => $issue->id));
 	}
 
+	/**
+	 * Update an existing task
+	 */
 	public function edit($f3, $params) {
 		$post = $f3->get("POST");
 		$issue = new \Model\Issue();

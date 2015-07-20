@@ -291,6 +291,13 @@ table a.btn {
 		margin-bottom: 5px;
 	}
 }
+.tex del {
+	opacity: 0.45;
+	transition: opacity .25s ease;
+}
+.tex del:hover {
+	opacity: 1;
+}
 
 .popover-content {
 	text-overflow: ellipsis;
@@ -301,6 +308,12 @@ table a.btn {
 .dropdown-menu {
 	max-height: 400px;
 	overflow-y: auto;
+}
+
+.dropdown-menu.datepicker {
+	overflow-y: visible;
+	font-size: 14px;
+	max-height: none;
 }
 
 .nowrap {
@@ -375,8 +388,8 @@ th[data-sort] {
 @media (min-width: @screen-sm-min) and (max-width: @screen-lg) {
 	.navbar-nav > li:nth-last-child(n+5) > a,
 	.navbar-nav > li:nth-last-child(n+5) ~ li > a {
-		padding-left: 10px;
-		padding-right: 10px;
+		padding-left: 8px;
+		padding-right: 8px;
 	}
 }
 @media (min-width: @screen-sm-min) and (max-width: @screen-md) {
@@ -396,6 +409,34 @@ th[data-sort] {
 	.navbar-form[role=search] .form-control:focus {
 		width: 165px;
 	}
+	.navbar-form[role=search] .btn {
+		display: none;
+	}
+}
+
+.twitter-typeahead {
+	display: block !important;
+}
+
+.twitter-typeahead .dropdown-menu {
+	min-width: 300px;
+	width: 100%;
+	padding: 0;
+}
+
+.twitter-typeahead .tt-suggestion {
+	padding: 6px 12px;
+	color: #404040;
+	font-size: 13px;
+}
+
+.twitter-typeahead .tt-suggestion:hover {
+	background-color: #00bc8c;
+	color: #fff;
+}
+
+.twitter-typeahead .tt-suggestion:hover .text-muted {
+	color: #eee;
 }
 
 // Import final styles

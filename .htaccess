@@ -7,6 +7,9 @@ RewriteEngine On
 #
 # RewriteBase /
 
+RewriteCond %{REQUEST_URI} app\/(controller|dict|helper|model|view)
+RewriteRule app\/(controller|dict|helper|model|view) - [R=404]
+
 RewriteCond %{REQUEST_URI} \.ini$
 RewriteRule \.ini$ - [R=404]
 

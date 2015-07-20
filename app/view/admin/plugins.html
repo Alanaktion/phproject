@@ -22,13 +22,12 @@
 			<tbody>
 				<repeat group="{{ @plugins }}" value="{{ @plugin }}" key="{{ @key }}">
 					<set meta="{{ @plugin->_meta() }}" />
-					{~ @method = array(@plugin, '_admin'); ~}
 					<tr>
 						<td>{{ @meta.package | esc }}</td>
 						<td>{{ @meta.author | esc }}</td>
 						<td>{{ @meta.version }}</td>
 						<td>
-							<check if="{{ @user.rank >= 5 && is_callable(@method) }}">
+							<check if="{{ @user.rank >= 5 && is_callable(array(@plugin, '_admin')) }}">
 								<a href="{{ @BASE }}/admin/plugins/{{ @key }}">Details</a>
 							</check>
 						</td>

@@ -189,5 +189,26 @@ class User extends \Model {
 		return $return;
 	}
 
+	/**
+	 * Reassign assigned issues
+	 * @param  int $user_id
+	 * @return int Number of issues affected
+	 */
+	public function reassignIssues($user_id) {
+		if(!$this->id) {
+			throw new \Exception("User is not initialized.");
+		}
+		$issue_model = new \Model\Issue;
+		$issues = $issue_model->find(array("owner_id = ? AND deleted_date IS NULL AND closed_date IS NULL", $this->id));
+		foreach($issues as $issue) {
+			$issue->owner_id = $user_id;
+			$issue->save();
+		}
+		return count($issues);
+	}
+
+	public function date_picker() {
+		return (object) array('language'=>$this->language, 'js'=>($this->language != 'en'));
+	}
 }
 

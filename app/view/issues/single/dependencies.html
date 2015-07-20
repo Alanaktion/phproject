@@ -1,11 +1,11 @@
 <form id="dependency_form" role="form" class="form-horizontal">
 <input type="hidden" name="action" value="add_dependency">
 <div class="form-group">
-		<label class="col-md-3"><strong>{{ @dict.task_depends }}</strong></label>
-		<div class="col-md-2">
+		<label class="col-md-4"><strong>{{ @dict.task_depends }}</strong></label>
+		<div class="col-md-3">
 			<input type="text" class="form-control input-sm" name="id" value="" required>
 		</div>
-		<div class="col-md-1">
+		<div class="col-md-2">
 			<select class="form-control input-sm" name="type_id">
 				<option>FS</option>
 				<option>FF</option>
@@ -13,7 +13,7 @@
 				<option>SF</option>
 			</select>
 		</div>
-		<div class="col-md-1">
+		<div class="col-md-2">
 			<button type="submit" class="btn btn-primary btn-sm">{{ @dict.add_dependency }}</button>
 		</div>
 	</div>
@@ -57,11 +57,11 @@
 <form id="dependent_form" role="form" class="form-horizontal">
 <input type="hidden" name="action" value="add_dependent">
 <div class="form-group">
-		<label class="col-md-3"><strong>{{ @dict.task_dependency }}</strong></label>
-		<div class="col-md-2">
+		<label class="col-md-4"><strong>{{ @dict.task_dependency }}</strong></label>
+		<div class="col-md-3">
 			<input type="text" class="form-control input-sm" name="id" value="" required>
 		</div>
-		<div class="col-md-1">
+		<div class="col-md-2">
 			<select class="form-control input-sm" name="type_id">
 				<option>{{ @dict.fs }}</option>
 				<option>{{ @dict.ff }}</option>
@@ -69,7 +69,7 @@
 				<option>{{ @dict.sf }}</option>
 			</select>
 		</div>
-		<div class="col-md-1">
+		<div class="col-md-2">
 			<button type="submit" class="btn btn-primary btn-sm">{{ @dict.add_dependent }}</button>
 		</div>
 	</div>

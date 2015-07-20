@@ -368,6 +368,10 @@
 	</div>
 </div>
 
+<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js,typeahead.jquery.js"></script>
+<check if="{{ @user_obj->date_picker()->js }}">
+<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+</check>
 <script type="text/javascript">
 $(function() {
 
@@ -457,7 +461,7 @@ $(function() {
 	}, 'json').error(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
 	});
-	if('{{ @issue.parent_id }}') {
+	if(parseInt('{{ @issue.parent_id }}')) {
 		$.get(BASE + '/issues/{{ @issue.parent_id }}/related', {}, function(data) {
 			$('#related-sibling').empty().append(data.html);
 			$('#tab_related-sibling').html($('#tab_related-sibling').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
@@ -480,6 +484,35 @@ $(function() {
 			$('#dependencies').empty().append(data.html);
 			$('#dependencies_badge').text(data.total);
 			$('#dependencies table').stupidtable();
+
+			$('#dependency_form input[name="id"],#dependent_form input[name="id"]').typeahead({
+				classNames: {
+					menu: 'dropdown-menu',
+				}
+			}, {
+				async: true,
+				limit: 10,
+				source: function(query, syncResults, asyncResults) {
+					$.ajax({
+						url: BASE + '/issues/parent_ajax',
+						data: { 'q': query },
+						success: function(data) {
+							asyncResults(data.results);
+							
+						},
+						dataType: 'json',
+						cache: false,
+					});
+				},
+				display: function(element) {
+					return element.id;
+				},
+				templates: {
+					suggestion: function(element) {
+						return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
+					}
+				}
+			});
 		}, 'json').error(function() {
 			$('#dependencies').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_dependencies }}'));
 		});
@@ -517,7 +550,9 @@ $(function() {
 
 	// Due date picker
 	$('#due_date, #start_date').datepicker({
-		format: 'yyyy-mm-dd'
+		format: 'yyyy-mm-dd',
+		language: '{{ @user_obj->date_picker()->language }}',
+		autoclose: true
 	});
 
 	// Handle file deletion
@@ -548,6 +583,34 @@ $(function() {
 		}
 	});
 
+	$('input[name="parent_id"]').typeahead({
+		classNames: {
+			menu: 'dropdown-menu',
+		}
+	}, {
+		async: true,
+		limit: 10,
+		source: function(query, syncResults, asyncResults) {
+			$.ajax({
+				url: BASE + '/issues/parent_ajax',
+				data: { 'q': query },
+				success: function(data) {
+					asyncResults(data.results);
+					
+				},
+				dataType: 'json',
+				cache: false,
+			});
+		},
+		display: function(element) {
+			return element.id;
+		},
+		templates: {
+			suggestion: function(element) {
+				return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
+			}
+		}
+	});
 });
 function restoreFile(file_id) {
 	$.post(BASE + '/issues/file/undelete', {id: file_id}, function(data) {
