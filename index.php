@@ -3,7 +3,7 @@
 // Initialize core
 $f3=require("lib/base.php");
 $f3->mset(array(
-	"UI" => "app/view/",
+	"UI" => "app/view/;app/plugin/",
 	"ESCAPE" => false,
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
