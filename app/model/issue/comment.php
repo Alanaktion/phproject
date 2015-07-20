@@ -14,6 +14,9 @@ class Comment extends \Model {
 	 * @return Comment
 	 */
 	public static function create(array $data, $notify = true) {
+		if(empty($data['text'])) {
+			throw new \Exception("Comment text cannot be empty.");
+		}
 		$item = parent::create($data);
 		if($notify) {
 			$notification = \Helper\Notification::instance();
