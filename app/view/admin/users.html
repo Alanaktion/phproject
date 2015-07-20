@@ -65,6 +65,9 @@
 		}).on('click', 'tbody tr', function(e) {
 			self.location = '{{ @BASE }}/admin/users/' + $(this).data('user-id');
 		});
+		$('#mdl-delete select').on('change', function(e) {
+			$('#mdl-delete input[value="to-user"]').prop('checked', true);
+		});
 		$('#mdl-delete').on('hide.bs.modal', function(e) {
 			$('#mdl-delete select option').prop('disabled', false);
 		});
