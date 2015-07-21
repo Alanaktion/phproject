@@ -113,6 +113,7 @@ class Admin extends \Controller {
 
 		$users = new \Model\User();
 		$f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'"));
+		$f3->set("select_users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 
 		$this->_render("admin/users.html");
 	}

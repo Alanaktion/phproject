@@ -40,6 +40,9 @@ class Issue extends \Model {
 		// Create issue
 		$item = parent::create($data);
 
+		// Save hashtags
+		$item->saveTags();
+
 		// Send creation notifications
 		if ($notify) {
 			$notification = \Helper\Notification::instance();
@@ -329,13 +332,6 @@ class Issue extends \Model {
 				if ($parent->sprint_id) {
 					$this->set("sprint_id", $parent->sprint_id);
 				}
-			}
-
-			// Save issue and send notifications
-			$issue = parent::save();
-			if ($notify) {
-				$notification = \Helper\Notification::instance();
-				$notification->issue_create($issue->id);
 			}
 
 			return $issue;
