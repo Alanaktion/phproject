@@ -334,13 +334,6 @@ class Issue extends \Model {
 				}
 			}
 
-			// Save issue and send notifications
-			$issue = parent::save();
-			if ($notify) {
-				$notification = \Helper\Notification::instance();
-				$notification->issue_create($issue->id);
-			}
-
 			return $issue;
 		}
 
