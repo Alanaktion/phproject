@@ -11,7 +11,7 @@ class Issue extends \Model {
 	protected static $requiredFields = array("type_id", "status", "name", "author_id");
 
 	/**
-	 * Create and save a new comment
+	 * Create and save a new issue
 	 * @param  array $data
 	 * @param  bool  $notify
 	 * @return Comment
@@ -39,9 +39,6 @@ class Issue extends \Model {
 
 		// Create issue
 		$item = parent::create($data);
-
-		// Save hashtags
-		$item->saveTags();
 
 		// Send creation notifications
 		if ($notify) {
@@ -334,6 +331,7 @@ class Issue extends \Model {
 				}
 			}
 
+			$issue = parent::save();
 			return $issue;
 		}
 
