@@ -85,7 +85,7 @@ $pluginDir = scandir("app/plugin");
 $plugins = array();
 $locales = "";
 foreach($pluginDir as $pluginName) {
-	if($pluginName != "." && $pluginName != ".." && is_file("app/plugin/$pluginName/base.php") && is_dir("app/plugin/$pluginName/dict/")) {
+	if($pluginName != "." && $pluginName != ".." && is_dir("app/plugin/$pluginName") && is_file("app/plugin/$pluginName/base.php") && is_dir("app/plugin/$pluginName/dict")) {
 		$locales .= ";app/plugin/$pluginName/dict/";
 	}
 }
@@ -93,7 +93,7 @@ if($locales) {
 	$f3->set("LOCALES", $f3->get("LOCALES") . $locales);
 }
 foreach($pluginDir as $pluginName) {
-	if($pluginName != "." && $pluginName != ".." && is_file("app/plugin/$pluginName/base.php")) {
+	if($pluginName != "." && $pluginName != ".." && is_dir("app/plugin/$pluginName") && is_file("app/plugin/$pluginName/base.php")) {
 		$pluginName = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $pluginName))) . "\\Base";
 		$plugin = $pluginName::instance();
 		$slug = \Web::instance()->slug($plugin->_package());
