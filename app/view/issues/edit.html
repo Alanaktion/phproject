@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ @this->lang() }}">
 <head>
 	<include href="blocks/head.html" />
 </head>
@@ -36,7 +36,7 @@
 						data: { 'q': query },
 						success: function(data) {
 							asyncResults(data.results);
-							
+
 						},
 						dataType: 'json',
 						cache: false,

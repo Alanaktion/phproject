@@ -281,4 +281,14 @@ class View extends \Template {
 		return $timestamp + $offset;
 	}
 
+	/**
+	 * Get the current primary language
+	 * @return string
+	 */
+	function lang() {
+		$f3 = \Base::instance();
+		$langs = $f3->split($f3->get("LANGUAGE"));
+		return isset($langs[0]) ? $langs[0] : $f3->get("FALLBACK");
+	}
+
 }
