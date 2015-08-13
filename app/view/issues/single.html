@@ -100,13 +100,34 @@
 			</div>
 
 			<dl class="dl-inline">
-				<check if="{{ @issue.sprint_id }}">
-					<dt>{{ @dict.cols.sprint }}</dt>
-					<dd><a href="{{ @BASE }}/taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
-				</check>
+				<dt>{{ @dict.cols.sprint }}</dt>
+				<dd data-attribute="sprint_id">
+					<check if="{{ @issue.sprint_id }}">
+						<true>
+							<a href="{{ @BASE }}/taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
+						</true>
+						<false>
+							{{ @dict.no_sprint }}
+						</false>
+					</check>
+					<div class="btn-group btn-group-xs edit">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="glyphicon glyphicon-edit"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="#" data-value="0">{{ @dict.no_sprint }}</a></li>
+							<check if="{{ @sprints }}">
+								<li role="presentation" class="divider"></li>
+							</check>
+							<repeat group="{{ @sprints }}" value="{{ @item }}">
+								<li><a href="#" data-value="{{ @item.id }}">{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</a></li>
+							</repeat>
+						</ul>
+					</div>
+				</dd>
 
 				<dt>{{ @dict.cols.type }}</dt>
-				<dd>
+				<dd data-attribute="type_id">
 					{{ @issue.type_name }}
 					<check if="{{ @issue.type_id == @issue_type.project }}">
 						&ndash; <a href="{{ @BASE }}/issues/project/{{ @issue.id }}">{{ @dict.project_overview }}</a>
@@ -114,13 +135,37 @@
 				</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
-				<dd>{{ @issue.priority_name }}</dd>
+				<dd data-attribute="priority">
+					{{ @issue.priority_name }}
+					<div class="btn-group btn-group-xs edit">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="glyphicon glyphicon-edit"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<repeat group="{{ @priorities }}" value="{{ @item }}">
+								<li><a href="#" data-value="{{ @item.value }}">{{ @item.name }}</a></li>
+							</repeat>
+						</ul>
+					</div>
+				</dd>
 
 				<dt>{{ @dict.cols.status }}</dt>
-				<dd>{{ @issue.status_name }}</dd>
+				<dd data-attribute="status_id">
+					{{ @issue.status_name }}
+					<div class="btn-group btn-group-xs edit">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="glyphicon glyphicon-edit"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<repeat group="{{ @statuses }}" value="{{ @item }}">
+								<li><a href="#" data-value="{{ @item.id }}">{{ @item.name }}</a></li>
+							</repeat>
+						</ul>
+					</div>
+				</dd>
 
 				<dt>{{ @dict.cols.assignee }}</dt>
-				<dd>
+				<dd data-attribute="owner_id">
 					<check if="{{ @owner.id }}">
 						<true>
 							<check if="{{ @owner.username }}">
@@ -136,34 +181,125 @@
 							{{ @dict.not_assigned }}
 						</false>
 					</check>
+					<div class="btn-group btn-group-xs edit">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="glyphicon glyphicon-edit"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="#" data-value="0">{{ @dict.not_assigned }}</a></li>
+							<li><a href="#" data-value="{{ @user.id }}">{{ @user.name }}</a></li>
+							<li role="presentation" class="divider"></li>
+							<repeat group="{{ @users }}" value="{{ @item }}">
+								<li><a href="#" data-value="{{ @item.id }}">{{ @item.name }}</a></li>
+							</repeat>
+							<check if="{{ @groups }}">
+								<li role="presentation" class="divider"></li>
+							</check>
+							<repeat group="{{ @groups }}" value="{{ @item }}">
+								<li><a href="#" data-value="{{ @item.id }}">{{ @item.name }}</a></li>
+							</repeat>
+						</ul>
+					</div>
 				</dd>
 
 				<check if="{{ @issue.repeat_cycle && @issue.repeat_cycle != 'none' }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>
-					<dd>{{ ucfirst(@issue.repeat_cycle) }}</dd>
+					<dd data-attribute="repeat_cycle">
+						{{ ucfirst(@issue.repeat_cycle) }}
+						<div class="btn-group btn-group-xs edit">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="glyphicon glyphicon-edit"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+							</ul>
+						</div>
+					</dd>
 				</check>
 
 				<check if="{{ !empty(@issue.hours_spent) }}">
 					<dt>{{ @dict.cols.total_spent_hours }}</dt>
-					<dd>{{ @issue.hours_spent}}</dd>
+					<dd data-attribute="hours_spent">
+						{{ @issue.hours_spent}}
+						<div class="btn-group btn-group-xs edit">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="glyphicon glyphicon-edit"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+							</ul>
+						</div>
+					</dd>
 				</check>
 
 				<check if="{{ !empty(@issue.hours_total) }}">
 					<dt>{{ @dict.cols.planned_hours }}</dt>
-					<dd>{{ @issue.hours_total ?: 0 }}</dd>
+					<dd data-attribute="hours_total">
+						{{ @issue.hours_total ?: 0 }}
+						<div class="btn-group btn-group-xs edit">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="glyphicon glyphicon-edit"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+							</ul>
+						</div>
+					</dd>
 
 					<dt>{{ @dict.cols.remaining_hours }}</dt>
-					<dd>{{ @issue.hours_remaining ?: 0 }}</dd>
+					<dd data-attribute="hours_remaining">
+						{{ @issue.hours_remaining ?: 0 }}
+						<div class="btn-group btn-group-xs edit">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="glyphicon glyphicon-edit"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+							</ul>
+						</div>
+					</dd>
 				</check>
 
 				<check if="{{ strtotime(@issue.start_date) }}">
 					<dt>{{ @dict.cols.start_date }}</dt>
-					<dd>{{ date("D, M j, Y", strtotime(@issue.start_date)) }}</dd>
+					<dd data-attribute="start_date">
+						{{ date("D, M j, Y", strtotime(@issue.start_date)) }}
+						<div class="btn-group btn-group-xs edit">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="glyphicon glyphicon-edit"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+							</ul>
+						</div>
+					</dd>
 				</check>
 
 				<check if="{{ @issue.due_date && strtotime(@issue.due_date) }}">
 					<dt>{{ @dict.cols.due_date }}</dt>
-					<dd>{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</dd>
+					<dd data-attribute="due_date">
+						{{ date("D, M j, Y", strtotime(@issue.due_date)) }}
+						<div class="btn-group btn-group-xs edit">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="glyphicon glyphicon-edit"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+								<li><a href="#">Item</a></li>
+							</ul>
+						</div>
+					</dd>
 				</check>
 			</dl>
 
@@ -543,8 +679,8 @@ $(function() {
 	});
 
 	// Handle inline edit form
-	$("#btn-edit, #form-edit .close, #form-edit .btn-cancel").click(function(e) {
-		$("#form-edit").slideToggle("fast");
+	$('#btn-edit, #form-edit .close, #form-edit .btn-cancel').click(function(e) {
+		$('#form-edit').slideToggle('fast');
 		e.preventDefault();
 	});
 
@@ -556,31 +692,36 @@ $(function() {
 	});
 
 	// Handle file deletion
-	$(".file-list").on("click", ".delete", function(e) {
-		var $file = $(this).parents("li, tr");
-		$file.fadeTo(100, 0.5).popover("hide");
-		$.post(BASE + "/issues/file/delete", {id: $file.data("id")}, function(data) {
+	$('.file-list').on('click', '.delete', function(e) {
+		var $file = $(this).parents('li, tr');
+		$file.fadeTo(100, 0.5).popover('hide');
+		$.post(BASE + '/issues/file/delete', {id: $file.data('id')}, function(data) {
 			$("#alert span").html('{{ @dict.file_deleted }} <a href="{{ @BASE }}/javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
-			$("#alert").show();
-			$(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();
+			$('#alert').show();
+			$('.file-list li[data-id="' + data.id + '"], .file-list tr[data-id="' + data.id + '"]').remove();
 		}, "json");
 	});
 
 	// Handle alert hide
-	$("#alert .close").click(function(e) {
-		$("#alert span").empty();
-		$("#alert").hide();
+	$('#alert .close').click(function(e) {
+		$('#alert span').empty();
+		$('#alert').hide();
 	});
 
 	// Handle comment deletion
-	$(".comments").on("click", ".comment-delete", function(e) {
-		if(confirm("{{ @dict.comment_delete_confirm }}")) {
-			var $comment = $(this).parents(".media");
-			$comment.css("text-decoration", "line-through");
-			jQuery.post(BASE + "/issues/comment/delete", {id: $comment.data("id")}, function(data) {
+	$('.comments').on('click', '.comment-delete', function(e) {
+		if(confirm('{{ @dict.comment_delete_confirm }}')) {
+			var $comment = $(this).parents('.media');
+			$comment.css('text-decoration', 'line-through');
+			jQuery.post(BASE + '/issues/comment/delete', {id: $comment.data('id')}, function(data) {
 				$comment.remove();
 			});
 		}
+	});
+
+	// Handle inline edits
+	$('.dl-inline dd .edit').on('click', '.dropdown-menu a', function() {
+		// TODO: handle dropdown item clicks
 	});
 
 	$('input[name="parent_id"]').typeahead({

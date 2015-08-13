@@ -38,8 +38,8 @@ footer p {
 	font-size: 85%;
 }
 
-.js{display: block;}
-.nojs{display: none;}
+.js {display: block;}
+.nojs {display: none;}
 
 .nav-tabs {
 	margin-bottom: 15px;
@@ -226,17 +226,35 @@ textarea.form-control {
 	padding-top: 8px;
 }
 
-
-dl.dl-inline dt {
+.dl-inline dt {
 	float: left;
 	clear: left;
 	margin-right: .5em;
 }
-dl.dl-inline dt:after {
+.dl-inline dt:after {
 	content: ':';
 }
 
-dl.dl-horizontal-left dt {
+/* Inline editing */
+.dl-inline dd .edit {
+	display: inline-block;
+	padding-left: 4px;
+	color: inherit;
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity .2s ease;
+}
+.dl-inline dt:hover + dd .edit,
+.dl-inline dd:hover .edit,
+.dl-inline dd .edit.open {
+	visibility: visible;
+	opacity: 1;
+}
+.dl-inline dd {
+	position: relative;
+}
+
+.dl-horizontal-left dt {
 	text-align: left;
 }
 
