@@ -43,7 +43,7 @@ $f3->set("ONERROR", function(Base $f3) {
 		case 404:
 			$f3->set("title", "Not Found");
 			$f3->set("ESCAPE", false);
-			echo Template::instance()->render("error/404.html");
+			echo \Helper\View::instance()->render("error/404.html");
 			break;
 		case 403:
 			echo "You do not have access to this page.";
