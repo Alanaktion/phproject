@@ -353,7 +353,7 @@ class Issue extends \Model {
 		if ($count) {
 			foreach ($matches[0] as $match) {
 				$tag->reset();
-				$tag->tag = str_replace("_", "-", $match);
+				$tag->tag = preg_replace("/[_-]+/", "-", $match);
 				$tag->issue_id = $issue_id;
 				$tag->save();
 			}

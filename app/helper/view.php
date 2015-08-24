@@ -80,8 +80,11 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseHashtags($str) {
-		$url = \Base::instance()->get("site.url");
-		return preg_replace("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}tag/$1\">#$1</a>", $str);
+		return preg_replace_callback("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", function($matches) {
+			$url = \Base::instance()->get("site.url");
+			$tag = preg_replace("/[_-]+/", "-", $matches[1]);
+			return "<a href=\"{$url}tag/$tag\">#$tag</a>";
+		}, $str);
 	}
 
 	/**
