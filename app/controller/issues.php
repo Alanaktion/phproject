@@ -908,8 +908,30 @@ class Issues extends \Controller {
 				OR author_username LIKE ? OR owner_username LIKE ?
 				OR author_email LIKE ? OR owner_email LIKE ?)
 			AND deleted_date IS NULL";
+
+		if(empty($args["closed"])) {
+			$where .= " AND status_closed = '0'";
+		}
+
 		$issue_page = $issues->paginate($args["page"], 50, array($where, $f3->get("GET.q"), $query, $query, $query, $query, $query, $query, $query, $query), array("order" => "created_date DESC"));
 		$f3->set("issues", $issue_page);
+
+		if($issue_page["count"] > 7) {
+			if($issue_page["pos"] <= 3) {
+				$min = 0;
+			} else {
+				$min = $issue_page["pos"] - 3;
+			}
+			if($issue_page["pos"] < $issue_page["count"] - 3) {
+				$max = $issue_page["pos"] + 3;
+			} else {
+				$max = $issue_page["count"] - 1;
+			}
+		} else {
+			$min = 0;
+			$max = $issue_page["count"] - 1;
+		}
+		$f3->set("pages", range($min, $max));
 
 		$f3->set("show_filters", false);
 		$this->_render("issues/search.html");
