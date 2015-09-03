@@ -11,7 +11,7 @@ class Issue extends \Model {
 	protected static $requiredFields = array("type_id", "status", "name", "author_id");
 
 	/**
-	 * Create and save a new comment
+	 * Create and save a new issue
 	 * @param  array $data
 	 * @param  bool  $notify
 	 * @return Comment
@@ -39,9 +39,6 @@ class Issue extends \Model {
 
 		// Create issue
 		$item = parent::create($data);
-
-		// Save hashtags
-		$item->saveTags();
 
 		// Send creation notifications
 		if ($notify) {
@@ -324,16 +321,7 @@ class Issue extends \Model {
 			}
 
 		} else {
-
-			// Move task to a sprint if the parent is in a sprint
-			if ($this->get("parent_id") && !$this->get("sprint_id")) {
-				$parent = new \Model\Issue;
-				$parent->load($this->get("parent_id"));
-				if ($parent->sprint_id) {
-					$this->set("sprint_id", $parent->sprint_id);
-				}
-			}
-
+			$issue = parent::save();
 			return $issue;
 		}
 
@@ -355,7 +343,7 @@ class Issue extends \Model {
 		if ($count) {
 			foreach ($matches[0] as $match) {
 				$tag->reset();
-				$tag->tag = str_replace("_", "-", $match);
+				$tag->tag = preg_replace("/[_-]+/", "-", $match);
 				$tag->issue_id = $issue_id;
 				$tag->save();
 			}

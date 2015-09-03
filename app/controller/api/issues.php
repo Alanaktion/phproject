@@ -215,6 +215,10 @@ class Issues extends \Controller\Api {
 		}
 
 		$issue->save();
+
+		$notification = \Helper\Notification::instance();
+		$notification->issue_create($issue->id);
+
 		$this->_printJson(array(
 			"issue" => $issue->cast()
 		));

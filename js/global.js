@@ -118,6 +118,10 @@ $(document).ready(function() {
 						$('.modal.in').not('#modal-hotkeys').modal('hide');
 						$('#modal-hotkeys').modal('toggle');
 					}
+					// Search
+					if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
+						$('.navbar-form input[type=search]').focus();
+					}
 					break;
 				case 66: // Browse
 					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
@@ -149,6 +153,7 @@ $(document).ready(function() {
 					}
 					break;
 				default:
+					console.log(e);
 					if(!e.shiftKey && !e.ctrlKey && e.altKey && issue_types.indexOf(e.which - 48) >= 0) {
 						window.location = BASE + '/issues/new/' + (e.which - 48);
 					}
