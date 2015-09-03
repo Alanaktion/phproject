@@ -164,4 +164,14 @@ class Update extends \Prefab {
 		return $type->name;
 	}
 
+	/**
+	 * Convert MySQL datetime to formatted local time
+	 * @param  string $date
+	 * @return string
+	 */
+	public function convertClosedDate($date) {
+		$time = View::instance()->utc2local(strtotime($date));
+		return date("D, M j, Y g:ia", $time);
+	}
+
 }
