@@ -10,6 +10,9 @@ body.login {
 		float: right;
 		margin-right: 8px;
 	}
+	.navbar-nav, .navbar-nav .dropdown.open {
+		text-align: right;
+	}
 }
 
 .navbar {
