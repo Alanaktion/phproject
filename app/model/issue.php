@@ -321,16 +321,6 @@ class Issue extends \Model {
 			}
 
 		} else {
-
-			// Move task to a sprint if the parent is in a sprint
-			if ($this->get("parent_id") && !$this->get("sprint_id")) {
-				$parent = new \Model\Issue;
-				$parent->load($this->get("parent_id"));
-				if ($parent->sprint_id) {
-					$this->set("sprint_id", $parent->sprint_id);
-				}
-			}
-
 			$issue = parent::save();
 			return $issue;
 		}
