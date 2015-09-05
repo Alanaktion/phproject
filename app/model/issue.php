@@ -321,8 +321,16 @@ class Issue extends \Model {
 			}
 
 		} else {
-			$issue = parent::save();
-			return $issue;
+
+			// Set closed date if status is closed
+			if(!$this->closed_date) {
+				$status = new Issue\Status;
+				$status->load($this->status);
+				if($status->closed) {
+					$this->closed_date = date("Y-m-d H:i:s");
+				}
+			}
+
 		}
 
 		$this->saveTags();
