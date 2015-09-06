@@ -2,6 +2,10 @@
 <html lang="{{ @this->lang() }}">
 <head>
 	<include href="blocks/head.html" />
+	<check if="{{ @parse.markdown }}">
+		<link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/simplemde.min.css">
+	</check>
 </head>
 <body>
 <set fullwidth="{{ true }}" />
@@ -370,7 +374,10 @@
 
 <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js,stupidtable.min.js,typeahead.jquery.js"></script>
 <check if="{{ @user_obj->date_picker()->js }}">
-<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+	<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+</check>
+<check if="{{ @parse.markdown }}">
+	<script src="{{ @BASE }}/js/simplemde.min.js"></script>
 </check>
 <script type="text/javascript">
 $(function() {
@@ -543,8 +550,17 @@ $(function() {
 	});
 
 	// Handle inline edit form
+	var hasClickedEdit = false;
 	$("#btn-edit, #form-edit .close, #form-edit .btn-cancel").click(function(e) {
 		$("#form-edit").slideToggle("fast");
+		if(!hasClickedEdit) {
+			hasClickedEdit = true;
+			var simplemde = new SimpleMDE({
+				element: $('input[name="description"]')[0],
+				toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide']
+			});
+			simplemde.render();
+		}
 		e.preventDefault();
 	});
 
@@ -611,6 +627,7 @@ $(function() {
 			}
 		}
 	});
+
 });
 function restoreFile(file_id) {
 	$.post(BASE + '/issues/file/undelete', {id: file_id}, function(data) {
