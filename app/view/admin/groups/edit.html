@@ -19,13 +19,13 @@
 			<ul id="members" class="list-unstyled">
 				<repeat group="{{ @members }}" value="{{ @member }}">
 					<li data-user-id="{{ @member.user_id }}">
-						<a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+						<a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="fa fa-remove"></span></a>&nbsp;
 						<check if="{{ @member.manager }}">
 							<true>
-								<span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="glyphicon glyphicon-star"></span></span>&nbsp;
+								<span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="fa fa-star"></span></span>&nbsp;
 							</true>
 							<false>
-								<a href="{{ @BASE }}/admin/groups/{{ @group.id }}/setmanager/{{ @member.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
+								<a href="{{ @BASE }}/admin/groups/{{ @group.id }}/setmanager/{{ @member.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="fa fa-star-empty"></span></a>&nbsp;
 							</false>
 						</check>
 						{{ @member.user_name }}
@@ -87,7 +87,7 @@ $(function(){
 		$.post('{{ @BASE }}/admin/groups/ajax', $(this).serialize());
 		$('#adduser select option:selected').each(function(i) {
 			$this = $(this);
-			$('<li />').data('user-id', $this.val()).html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $this.text()).appendTo('#members');
+			$('<li />').data('user-id', $this.val()).html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $this.text()).appendTo('#members');
 		});
 		e.preventDefault();
 	});

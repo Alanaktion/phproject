@@ -9,7 +9,7 @@
 	<div class="clearfix">
 		<div class="pull-right">
 			<a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#new" onclick="window.setTimeout('$(\'#input_name\').focus()',10);">
-				<span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new }}
+				<span class="fa fa-plus"></span>&ensp;{{ @dict.new }}
 			</a>
 		</div>
 		<include href="blocks/admin/tabs.html" />
@@ -32,7 +32,7 @@
 						<td>{{ @group.name }}</td>
 						<td>{{ @group.count }}</td>
 						<td><span class="badge" style="background-color: #{{ @group.task_color }};">&ensp;</span>&ensp;#{{ @group.task_color }}</td>
-						<td><a href="{{ @BASE }}/admin/groups/{{ @group.id }}/delete" class="has-tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></a></td>
+						<td><a href="{{ @BASE }}/admin/groups/{{ @group.id }}/delete" class="has-tooltip" title="Delete"><span class="fa fa-trash"></span></a></td>
 					</tr>
 				</repeat>
 			</tbody>

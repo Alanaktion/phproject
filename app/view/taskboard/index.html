@@ -45,7 +45,7 @@
 				<th class="column column-1">
 					<div class="btn-group">
 						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
-							<span class="glyphicon glyphicon-filter"></span> {{ @dict.filter_tasks }} <span class="caret"></span>
+							<span class="fa fa-filter"></span> {{ @dict.filter_tasks }} <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
 							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/all">{{ @dict.all_tasks }}</a></li>
@@ -60,10 +60,10 @@
 						</ul>
 					</div>
 					<button type="button" id="btn-burndown" class="btn btn-default btn-xs" data-toggle="modal" data-target="#burndown-modal">
-						<span class="glyphicon glyphicon-fire"></span> {{ @dict.burndown }}
+						<span class="fa fa-fire"></span> {{ @dict.burndown }}
 					</button>
 					<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Reload taskboard">
-						<span class="glyphicon glyphicon-repeat"></span>
+						<span class="fa fa-repeat"></span>
 					</a>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
@@ -78,7 +78,7 @@
 						<div id="project_{{ @row.project.id}}" class="card story {{ @row.project.status_closed ? 'completed' : '' }}" style="border-color:#{{ @row.project.owner_task_color }};">
 							<div class="top">
 								<a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @row.project.id }}" title="Add Task" class="add-task has-tooltip pull-right" data-placement="right">
-									<span class="glyphicon glyphicon-plus"></span>
+									<span class="fa fa-plus"></span>
 								</a>
 								<span class="owner">
 									<check if="{{ @row.project.owner_username }}">

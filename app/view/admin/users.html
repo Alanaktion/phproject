@@ -8,7 +8,7 @@
 <div class="container">
 	<div class="clearfix">
 		<div class="pull-right">
-			<a href="{{ @BASE }}/admin/users/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new_user }}</a>
+			<a href="{{ @BASE }}/admin/users/new" class="btn btn-default btn-sm"><span class="fa fa-plus"></span>&ensp;{{ @dict.new_user }}</a>
 		</div>
 		<include href="blocks/admin/tabs.html" />
 	</div>
@@ -37,7 +37,7 @@
 						<td>
 							<check if="{{ @user.id != @user_obj.id }}">
 								<a href="{{ @BASE }}/admin/users/{{ @user.id }}/delete" class="delete has-tooltip" title="{{ @dict.deactivate }}">
-									<span class="glyphicon glyphicon-remove"></span>
+									<span class="fa fa-remove"></span>
 								</a>
 							</check>
 						</td>
