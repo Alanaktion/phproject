@@ -321,8 +321,16 @@ class Issue extends \Model {
 			}
 
 		} else {
-			$issue = parent::save();
-			return $issue;
+
+			// Set closed date if status is closed
+			if(!$this->closed_date) {
+				$status = new Issue\Status;
+				$status->load($this->status);
+				if($status->closed) {
+					$this->closed_date = date("Y-m-d H:i:s");
+				}
+			}
+
 		}
 
 		$this->saveTags();
@@ -339,7 +347,9 @@ class Issue extends \Model {
 		$issue_id = $this->get("id");
 		$str = $this->get("description");
 		$count = preg_match_all("/(?<=\W#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=\W|$)/i", $str, $matches);
-		$tag->deleteByIssueId($issue_id);
+		if($issue_id) {
+			$tag->deleteByIssueId($issue_id);
+		}
 		if ($count) {
 			foreach ($matches[0] as $match) {
 				$tag->reset();

@@ -54,11 +54,11 @@
 							<!-- TODO: Set checked attribute on current value, rather than default -->
 							<label class="btn btn-default {{ @site.public_registration ? 'active' : '' }}">
 								<input type="radio" name="site-public_registration" value="1" autocomplete="off" {{ @site.public_registration ? 'checked' : '' }}>
-								<span class="glyphicon glyphicon-ok"></span>
+								<span class="fa fa-check"></span>
 							</label>
 							<label class="btn btn-default {{ @site.public_registration ? '' : 'active' }}">
 								<input type="radio" name="site-public_registration" value="0" autocomplete="off" {{ @site.public_registration ? '' : 'checked' }}>
-								<span class="glyphicon glyphicon-remove"></span>
+								<span class="fa fa-remove"></span>
 							</label>
 						</div>
 					</div>
@@ -66,14 +66,18 @@
 
 				<div role="tabpanel" class="tab-pane fade" id="config-parse">
 					<!-- TODO: Set checked attributes on current values, rather than defaults -->
-					<div class="form-group">
+					<div class="form-group" style="margin-bottom: 0;">
 						<p>{{ @dict.parser_syntax }}</p>
-						<div class="btn-group btn-group-sm" data-toggle="buttons">
-							<label class="btn btn-default {{ @parse.markdown ? 'active' : '' }}">
+						<div class="checkbox">
+							<label>
 								<input type="checkbox" name="parse-markdown" value="1" autocomplete="off" {{ @parse.markdown ? 'checked' : '' }}>
 								Markdown
 							</label>
-							<label class="btn btn-default {{ @parse.textile ? 'active' : '' }}">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="checkbox">
+							<label>
 								<input type="checkbox" name="parse-textile" value="1" autocomplete="off" {{ @parse.textile ? 'checked' : '' }}>
 								Textile
 							</label>
@@ -83,11 +87,11 @@
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
 							<label class="btn btn-default {{ @parse.ids ? 'active' : '' }}">
 								<input type="radio" name="parse-ids" value="1" autocomplete="off" {{ @parse.ids ? 'checked' : '' }}>
-								<span class="glyphicon glyphicon-ok"></span>
+								<span class="fa fa-check"></span>
 							</label>
 							<label class="btn btn-default {{ @parse.ids ? '' : 'active' }}">
 								<input type="radio" name="parse-ids" value="0" autocomplete="off" {{ @parse.ids ? '' : 'checked' }}>
-								<span class="glyphicon glyphicon-remove"></span>
+								<span class="fa fa-remove"></span>
 							</label>
 						</div>
 						&emsp;{{ @dict.convert_ids }}
@@ -96,11 +100,11 @@
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
 							<label class="btn btn-default {{ @parse.hashtags ? 'active' : '' }}">
 								<input type="radio" name="parse-hashtags" value="1" autocomplete="off" {{ @parse.hashtags ? 'checked' : '' }}>
-								<span class="glyphicon glyphicon-ok"></span>
+								<span class="fa fa-check"></span>
 							</label>
 							<label class="btn btn-default {{ @parse.hashtags ? '' : 'active' }}">
 								<input type="radio" name="parse-hashtags" value="0" autocomplete="off" {{ @parse.hashtags ? '' : 'checked' }}>
-								<span class="glyphicon glyphicon-remove"></span>
+								<span class="fa fa-remove"></span>
 							</label>
 						</div>
 						&emsp;{{ @dict.convert_hashtags }}
@@ -109,11 +113,11 @@
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
 							<label class="btn btn-default {{ @parse.urls ? 'active' : '' }}">
 								<input type="radio" name="parse-urls" value="1" autocomplete="off" {{ @parse.urls ? 'checked' : '' }}>
-								<span class="glyphicon glyphicon-ok"></span>
+								<span class="fa fa-check"></span>
 							</label>
 							<label class="btn btn-default {{ @parse.urls ? '' : 'active' }}">
 								<input type="radio" name="parse-urls" value="0" autocomplete="off" {{ @parse.urls ? '' : 'checked' }}>
-								<span class="glyphicon glyphicon-remove"></span>
+								<span class="fa fa-remove"></span>
 							</label>
 						</div>
 						&emsp;{{ @dict.convert_urls }}
@@ -122,11 +126,11 @@
 						<div class="btn-group btn-group-sm" data-toggle="buttons">
 							<label class="btn btn-default {{ @parse.emoticons ? 'active' : '' }}">
 								<input type="radio" name="parse-emoticons" value="1" autocomplete="off" {{ @parse.emoticons ? 'checked' : '' }}>
-								<span class="glyphicon glyphicon-ok"></span>
+								<span class="fa fa-check"></span>
 							</label>
 							<label class="btn btn-default {{ @parse.emoticons ? '' : 'active' }}">
 								<input type="radio" name="parse-emoticons" value="0" autocomplete="off" {{ @parse.emoticons ? '' : 'checked' }}>
-								<span class="glyphicon glyphicon-remove"></span>
+								<span class="fa fa-remove"></span>
 							</label>
 						</div>
 						&emsp;{{ @dict.convert_emoticons }}
@@ -188,7 +192,7 @@
 					</div>
 					<div class="form-group">
 						<label class="control-label" for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
-						<textarea class="form-control input-sm" rows="4" readonly>{{ implode("\n", \Base::instance()->split(@mail.truncate_lines)) | esc }}</textarea>
+						<textarea class="form-control input-sm" rows="4" readonly>{{ implode("\n", is_array(@mail.truncate_lines) ? @mail.truncate_lines : \Base::instance()->split(@mail.truncate_lines)) | esc }}</textarea>
 					</div>
 					<p class="alert alert-info">{{ @dict.advanced_config_note,'<code>config</code>' | format }}</p>
 				</div>

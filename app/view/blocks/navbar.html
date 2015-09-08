@@ -96,14 +96,14 @@
 					<li class="{{ @menuitem == 'admin' ? 'active':'' }}">
 						<a href="{{ @BASE }}/admin">
 							<span class="hidden-sm">{{ @dict.administration }}</span>
-							<span class="glyphicon glyphicon-cog visible-sm"></span>
+							<span class="fa fa-cog visible-sm"></span>
 						</a>
 					</li>
 				</check>
 				<li class="dropdown {{ @menuitem == 'user' ? 'active':'' }}">
 					<a href="{{ @BASE }}/user/{{ @user.username }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<span class="hidden-sm">{{ @user.name | esc }} <b class="caret"></b></span>
-						<span class="glyphicon glyphicon-user visible-sm"></span>
+						<span class="fa fa-user visible-sm"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li><a href="{{ @BASE }}/">{{ @dict.dashboard }}</a></li>
@@ -127,7 +127,7 @@
 				</div>
 				<button type="submit" class="btn btn-default btn-sm hidden-xs">
 					<span class="sr-only">{{ @dict.submit }}</span>
-					<span class="glyphicon glyphicon-search"></span>
+					<span class="fa fa-search"></span>
 				</button>
 			</form>
 

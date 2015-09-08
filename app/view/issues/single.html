@@ -2,6 +2,9 @@
 <html lang="{{ @this->lang() }}">
 <head>
 	<include href="blocks/head.html" />
+	<check if="{{ @parse.markdown }}">
+		<link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/simplemde.min.css">
+	</check>
 </head>
 <body>
 <set fullwidth="{{ true }}" />
@@ -48,36 +51,36 @@
 			<check if="{{ @issue.status_closed }}">
 				<false>
 					<a id="btn-issue-close" href="{{ @BASE }}/issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
-						<span class="glyphicon glyphicon-check"></span>&ensp;{{ @dict.complete }}
+						<span class="fa fa-check"></span>&ensp;{{ @dict.complete }}
 					</a>
 				</false>
 				<true>
 					<a id="btn-issue-reopen" href="{{ @BASE }}/issues/reopen/{{ @issue.id }}" class="btn btn-warning btn-xs">
-						<span class="glyphicon glyphicon-repeat"></span>&ensp;{{ @dict.reopen }}
+						<span class="fa fa-repeat"></span>&ensp;{{ @dict.reopen }}
 					</a>
 				</true>
 			</check>
 			<a id="btn-copy" href="{{ @BASE }}/issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
-				<span class="glyphicon glyphicon-file"></span>&ensp;{{ @dict.copy }}
+				<span class="fa fa-file"></span>&ensp;{{ @dict.copy }}
 			</a>
 			<check if="{{ @watching }}">
 				<true>
 					<button type="button" class="btn btn-default btn-xs" onclick="unwatch_issue();" id="watch-btn">
-						<span class="glyphicon glyphicon-eye-close"></span>&ensp;{{ @dict.unwatch }}
+						<span class="fa fa-eye-slash"></span>&ensp;{{ @dict.unwatch }}
 					</button>
 				</true>
 				<false>
 					<button type="button" class="btn btn-default btn-xs" onclick="watch_issue();" id="watch-btn">
-						<span class="glyphicon glyphicon-eye-open"></span>&ensp;{{ @dict.watch }}
+						<span class="fa fa-eye"></span>&ensp;{{ @dict.watch }}
 					</button>
 				</false>
 			</check>
 			<a id="btn-edit" href="{{ @BASE }}/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
-				<span class="glyphicon glyphicon-pencil"></span>&ensp;{{ @dict.edit }}
+				<span class="fa fa-pencil"></span>&ensp;{{ @dict.edit }}
 			</a>
 			<check if="{{ @user.role == 'admin' || @user.rank >= 3 || @user.id == @issue.author_id }}">
 				<a href="{{ @BASE }}/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
-					<span class="glyphicon glyphicon-remove"></span><span class="hidden-xs">&ensp;{{ @dict.delete }}</span>
+					<span class="fa fa-remove"></span><span class="hidden-xs">&ensp;{{ @dict.delete }}</span>
 				</a>
 			</check>
 		</div>
@@ -178,8 +181,8 @@
 		<div class="col-lg-7">
 			<ul class="nav nav-tabs" role="tablist">
 				<li class="disabled"><a>{{ @dict.files }}</a></li>
-				<li class="active"><a href="#files-tiles" data-toggle="tab"><span class="glyphicon glyphicon-th-large"></span></a></li>
-				<li><a href="#files-table" data-toggle="tab"><span class="glyphicon glyphicon-list"></span></a></li>
+				<li class="active"><a href="#files-tiles" data-toggle="tab"><span class="fa fa-th-large"></span></a></li>
+				<li><a href="#files-table" data-toggle="tab"><span class="fa fa-list"></span></a></li>
 			</ul>
 			<div class="tab-content">
 				<check if="{{ !empty(@files) }}">
@@ -370,7 +373,10 @@
 
 <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js,stupidtable.min.js,typeahead.jquery.js"></script>
 <check if="{{ @user_obj->date_picker()->js }}">
-<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+	<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+</check>
+<check if="{{ @parse.markdown }}">
+	<script src="{{ @BASE }}/js/simplemde.min.js"></script>
 </check>
 <script type="text/javascript">
 $(function() {
@@ -450,7 +456,7 @@ $(function() {
 			$select = $this.find('select');
 			$('<li />')
 				.attr('data-user-id', $select.val())
-				.html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $select.children('option:selected').text())
+				.html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $select.children('option:selected').text())
 				.appendTo('#watchers-list');
 
 			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) + 1);
@@ -543,8 +549,17 @@ $(function() {
 	});
 
 	// Handle inline edit form
+	var hasClickedEdit = false;
 	$("#btn-edit, #form-edit .close, #form-edit .btn-cancel").click(function(e) {
 		$("#form-edit").slideToggle("fast");
+		if(!hasClickedEdit) {
+			hasClickedEdit = true;
+			var simplemde = new SimpleMDE({
+				element: $('input[name="description"]')[0],
+				toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide']
+			});
+			simplemde.render();
+		}
 		e.preventDefault();
 	});
 
@@ -611,6 +626,7 @@ $(function() {
 			}
 		}
 	});
+
 });
 function restoreFile(file_id) {
 	$.post(BASE + '/issues/file/undelete', {id: file_id}, function(data) {
@@ -619,11 +635,11 @@ function restoreFile(file_id) {
 }
 function watch_issue() {
 	$.post(BASE + '/issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
-	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="glyphicon glyphicon-eye-close"></span>&ensp;{{ @dict.unwatch }}');
+	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="fa fa-eye-slash"></span>&ensp;{{ @dict.unwatch }}');
 }
 function unwatch_issue() {
 	$.post(BASE + '/issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
-	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="glyphicon glyphicon-eye-open"></span>&ensp;{{ @dict.watch }}');
+	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="fa fa-eye"></span>&ensp;{{ @dict.watch }}');
 }
 </script>
 </body>
