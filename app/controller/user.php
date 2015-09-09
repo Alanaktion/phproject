@@ -100,7 +100,7 @@ class User extends \Controller {
 		$f3 = \Base::instance();
 
 		// Get theme list
-		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput", "emote");
+		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput", "emote", "fontawesome");
 		$themes = array();
 		foreach (glob("css/*.css") as $file) {
 			$name = pathinfo($file, PATHINFO_FILENAME);
