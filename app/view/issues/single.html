@@ -253,6 +253,7 @@
 								</div>
 							</div>
 							<div class="text-right">
+								<button type="button" class="btn btn-default btn-sm has-tooltip" title="{{ @dict.upload_a_file }}" data-placement="top" data-toggle="modal" data-target="#upload" id="btn-attach-file"><span class="fa fa-file"></span></button>
 								<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_comment }}</button>
 							</div>
 						</form>
@@ -571,24 +572,24 @@ $(function() {
 	});
 
 	// Handle file deletion
-	$(".file-list").on("click", ".delete", function(e) {
-		var $file = $(this).parents("li, tr");
-		$file.fadeTo(100, 0.5).popover("hide");
-		$.post(BASE + "/issues/file/delete", {id: $file.data("id")}, function(data) {
-			$("#alert span").html('{{ @dict.file_deleted }} <a href="{{ @BASE }}/javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
-			$("#alert").show();
+	$('.file-list').on('click', '.delete', function(e) {
+		var $file = $(this).parents('li, tr');
+		$file.fadeTo(100, 0.5).popover('hide');
+		$.post(BASE + '/issues/file/delete', {id: $file.data('id')}, function(data) {
+			$('#alert span').html('{{ @dict.file_deleted }} <a href="{{ @BASE }}/javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
+			$('#alert').show();
 			$(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();
-		}, "json");
+		}, 'json');
 	});
 
 	// Handle alert hide
-	$("#alert .close").click(function(e) {
-		$("#alert span").empty();
-		$("#alert").hide();
+	$('#alert .close').click(function(e) {
+		$('#alert span').empty();
+		$('#alert').hide();
 	});
 
 	// Handle comment deletion
-	$(".comments").on("click", ".comment-delete", function(e) {
+	$('.comments').on('click', '.comment-delete', function(e) {
 		if(confirm("{{ @dict.comment_delete_confirm }}")) {
 			var $comment = $(this).parents(".media");
 			$comment.css("text-decoration", "line-through");
@@ -596,6 +597,16 @@ $(function() {
 				$comment.remove();
 			});
 		}
+	});
+
+	// Handle attachment adding button
+	$('#btn-attach-file').click(function(e) {
+		$('#file_comment_textarea').val($('#comment_textarea').val());
+	});
+
+	// Reset file upload form on close
+	$('#upload').on('hidden.bs.modal', function() {
+		$('#upload')[0].reset();
 	});
 
 	$('input[name="parent_id"]').typeahead({
