@@ -77,7 +77,7 @@ class Issues extends \Controller {
 		// Build SQL ORDER BY string
 		$orderby = !empty($args['orderby']) ? $args['orderby'] : "priority";
 		$filter["orderby"] = $orderby;
-		$ascdesc = !empty($args['ascdesc']) && $args['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		$ascdesc = !empty($args['ascdesc']) && strtolower($args['ascdesc']) == 'asc' ? "ASC" : "DESC";
 		$filter["ascdesc"] = $ascdesc;
 		switch($orderby) {
 			case "id":
