@@ -30,14 +30,30 @@
 	<check if="{{ @project.description }}">
 		<div class="tex">{{ @project.description | parseText }}</div><br>
 	</check>
-	<h3 class="h4"><i>{{ @dict.project_overview }}</i></h3>
-	<set percentComplete="{{ round(@stats.complete / @stats.total * 100) }}" />
-	<div class="progress" style="max-width: 400px; margin: 15px 0 0;">
-		<div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ @percentComplete }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ @percentComplete }}%;">
-			<span class="sr-only">{{ @dict.n_complete, @percentComplete.'%' | format }}</span>
+
+	<div class="row">
+		<div class="col-md-6">
+			<h3 class="h4"><i>{{ @dict.project_overview }}</i></h3>
+			<set percentComplete="{{ round(@stats.complete / @stats.total * 100) }}" />
+			<div class="progress" style="max-width: 400px; margin: 15px 0 0;">
+				<div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ @percentComplete }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ @percentComplete }}%;">
+					<span class="sr-only">{{ @dict.n_complete, @percentComplete.'%' | format }}</span>
+				</div>
+			</div>
+			{{ @dict.n_complete,@stats.complete.'/'.@stats.total | format }}
+		</div>
+		<div class="col-md-6 clearfix">
+			<div class="hidden-sm hidden-xs" style="margin-bottom: 1em;"></div>
+			<div class="pull-right text-center" style="margin-left: 1em;">
+				<b>{{ @dict.cols.hours_spent }}</b>
+				<div class="h4">{{ @stats.hours_spent }}</div>
+			</div>
+			<div class="pull-right text-center">
+				<b>{{ @dict.cols.planned_hours }}</b>
+				<div class="h4">{{ @stats.hours_total }}</div>
+			</div>
 		</div>
 	</div>
-	{{ @dict.n_complete,@stats.complete.'/'.@stats.total | format }}
 
 	<hr>
 
