@@ -1056,6 +1056,8 @@ class Issues extends \Controller {
 					$result = $projectStats($child);
 					$total += $result["total"];
 					$complete += $result["complete"];
+					$hoursSpent += $result["hours_spent"];
+					$hoursTotal += $result["hours_total"];
 				}
 			}
 			return array(
