@@ -25,7 +25,7 @@ if(!is_file("config.ini")) {
 
 // Get current Git revision
 if(is_file(".git/refs/heads/master")) {
-	$f3->set("revision", file_get_contents(".git/refs/heads/master"));
+	$f3->set("revision", trim(file_get_contents(".git/refs/heads/master")));
 } else {
 	$f3->set("revision", "");
 }
