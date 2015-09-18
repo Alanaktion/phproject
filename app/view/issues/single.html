@@ -555,11 +555,13 @@ $(function() {
 		$("#form-edit").slideToggle("fast");
 		if(!hasClickedEdit) {
 			hasClickedEdit = true;
-			var simplemde = new SimpleMDE({
-				element: $('input[name="description"]')[0],
-				toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide']
-			});
-			simplemde.render();
+			if(typeof window.SimpleMDE != 'undefined') {
+				var simplemde = new SimpleMDE({
+					element: $('input[name="description"]')[0],
+					toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide']
+				});
+				simplemde.render();
+			}
 		}
 		e.preventDefault();
 	});
