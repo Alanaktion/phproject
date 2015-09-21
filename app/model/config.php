@@ -66,7 +66,7 @@ class Config extends \Model {
 		$f3->set($key, $value);
 		$item = new static();
 		$item->load(array('attribute = ?', $key));
-		$item->attribute = $attribute;
+		$item->attribute = $key;
 		$item->value = $value;
 		$item->save();
 		return $item;

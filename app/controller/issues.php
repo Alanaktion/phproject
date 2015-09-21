@@ -77,7 +77,7 @@ class Issues extends \Controller {
 		// Build SQL ORDER BY string
 		$orderby = !empty($args['orderby']) ? $args['orderby'] : "priority";
 		$filter["orderby"] = $orderby;
-		$ascdesc = !empty($args['ascdesc']) && $args['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		$ascdesc = !empty($args['ascdesc']) && strtolower($args['ascdesc']) == 'asc' ? "ASC" : "DESC";
 		$filter["ascdesc"] = $ascdesc;
 		switch($orderby) {
 			case "id":
@@ -1031,31 +1031,43 @@ class Issues extends \Controller {
 		}
 
 		/**
-		 * Helper function to get a percentage of completed issues across the entire tree
+		 * Helper function to get a percentage of completed issues and some totals across the entire tree
 		 * @param   Issue $issue
 		 * @var     callable $completeCount This function, required for recursive calls
 		 * @return  array
 		 */
-		$completeCount = function(\Model\Issue &$issue) use(&$completeCount) {
+		$projectStats = function(\Model\Issue &$issue) use(&$projectStats) {
 			$total = 0;
 			$complete = 0;
+			$hoursSpent = 0;
+			$hoursTotal = 0;
 			if($issue->id) {
 				$total ++;
 				if($issue->closed_date) {
 					$complete ++;
 				}
+				if($issue->hours_spent > 0) {
+					$hoursSpent += $issue->hours_spent;
+				}
+				if($issue->hours_total > 0) {
+					$hoursTotal += $issue->hours_total;
+				}
 				foreach($issue->getChildren() as $child) {
-					$result = $completeCount($child);
+					$result = $projectStats($child);
 					$total += $result["total"];
 					$complete += $result["complete"];
+					$hoursSpent += $result["hours_spent"];
+					$hoursTotal += $result["hours_total"];
 				}
 			}
 			return array(
 				"total" => $total,
-				"complete" => $complete
+				"complete" => $complete,
+				"hours_spent" => $hoursSpent,
+				"hours_total" => $hoursTotal,
 			);
 		};
-		$f3->set("stats", $completeCount($project));
+		$f3->set("stats", $projectStats($project));
 
 		/**
 		 * Helper function for recursive tree rendering
