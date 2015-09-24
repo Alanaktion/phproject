@@ -5,6 +5,9 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 .navbar-fixed-top + .container {
 	margin-top: 81px;
 }
+.navbar-fixed-top + .alert-inline {
+	margin-top: 60px;
+}
 a.nolink {
 	color: inherit;
 	text-decoration: none;
