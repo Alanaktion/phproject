@@ -39,7 +39,7 @@
 								<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
 							</repeat>
 						</check>
-						<check if="{{ !empty(@issue) && !@issue.closed_date }}">
+						<check if="{{ !empty(@issue) }}">
 							<li role="presentation" class="divider"></li>
 							<check if="{{ @issue.type_id == @issue_type.project }}">
 								<true>

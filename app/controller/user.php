@@ -17,6 +17,9 @@ class User extends \Controller {
 			"pt" => \ISO::LC_pt . " (Português)",
 			"ru" => \ISO::LC_ru . " (Pу́сский)",
 			"nl" => \ISO::LC_nl . " (Nederlands)",
+			"de" => \ISO::LC_de . " (Deutsche)",
+			"cs" => \ISO::LC_cs . " (Češka)",
+			"zh" => \ISO::LC_zh . " (中国)",
 		);
 	}
 
@@ -100,7 +103,7 @@ class User extends \Controller {
 		$f3 = \Base::instance();
 
 		// Get theme list
-		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput", "emote");
+		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput", "emote", "fontawesome");
 		$themes = array();
 		foreach (glob("css/*.css") as $file) {
 			$name = pathinfo($file, PATHINFO_FILENAME);
