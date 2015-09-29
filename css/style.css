@@ -319,6 +319,9 @@ table a.btn {
 .tex del:hover {
 	opacity: 1;
 }
+.tex pre a {
+	color: inherit;
+}
 
 .popover-content {
 	text-overflow: ellipsis;
