@@ -75,8 +75,7 @@ class Notification extends \Prefab {
 			}
 
 			// Get recipient list and remove current user
-			$recipients = $this->_issue_watchers($issue_id);
-			$recipients = array_diff($recipients, array($comment->user_email));
+			$recipients = $this->_issue_watchers($issue_id, $comment->user_id);
 
 			// Render message body
 			$f3->set("issue", $issue);
@@ -88,8 +87,9 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
-				$log->write("Sent comment notification to: " . $recipient);
+				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "comment_id" => $comment_id, "action" => "comment"));
+				$this->_utf8mail($recipient['email'], $subject, $body, $text);
+				$log->write("Sent comment notification to: " . $recipient['email']);
 			}
 		}
 	}
@@ -127,8 +127,7 @@ class Notification extends \Prefab {
 			$f3->set("changes", $changes->find(array("issue_update_id = ?", $update->id)));
 
 			// Get recipient list and remove update user
-			$recipients = $this->_issue_watchers($issue_id);
-			$recipients = array_diff($recipients, array($update->user_email));
+			$recipients = $this->_issue_watchers($issue_id, $update->user_id);
 
 			// Render message body
 			$f3->set("issue", $issue);
@@ -147,8 +146,9 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
-				$log->write("Sent update notification to: " . $recipient);
+				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "update_id" => $update_id, "action" => "update"));
+				$this->_utf8mail($recipient['email'], $subject, $body, $text);
+				$log->write("Sent update notification to: " . $recipient['email']);
 			}
 		}
 	}
@@ -188,8 +188,9 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
-				$log->write("Sent create notification to: " . $recipient);
+				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "action" => "issue"));
+				$this->_utf8mail($recipient['email'], $subject, $body, $text);
+				$log->write("Sent create notification to: " . $recipient['email']);
 			}
 		}
 	}
@@ -223,8 +224,7 @@ class Notification extends \Prefab {
 			}
 
 			// Get recipient list and remove current user
-			$recipients = $this->_issue_watchers($issue_id);
-			$recipients = array_diff($recipients, array($file->user_email));
+			$recipients = $this->_issue_watchers($issue_id, $file->user_id);
 
 			// Render message body
 			$f3->set("issue", $issue);
@@ -236,8 +236,9 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
-				$log->write("Sent file notification to: " . $recipient);
+				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "file_id" => $file_id, "action" => "file"));
+				$this->_utf8mail($recipient['email'], $subject, $body, $text);
+				$log->write("Sent file notification to: " . $recipient['email']);
 			}
 		}
 	}
@@ -288,43 +289,68 @@ class Notification extends \Prefab {
 	/**
 	 * Get array of email addresses of all watchers on an issue
 	 * @param  int $issue_id
+	 * @param  int $exclude_id  A user ID to exclude from the result
 	 * @return array
 	 */
-	protected function _issue_watchers($issue_id) {
+	protected function _issue_watchers($issue_id, $exclude_id = null) {
 		$db = \Base::instance()->get("db.instance");
 		$recipients = array();
 
 		// Add issue author and owner
-		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.author_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
-		if(!empty($result[0]["email"])) {
-			$recipients[] = $result[0]["email"];
+		$result = $db->exec("SELECT u.id, u.email FROM issue i INNER JOIN `user` u on i.author_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
+		if(!empty($result[0]["email"]) && $result[0]['id'] != $exclude_id) {
+			$recipients[] = $result[0];
 		}
 
 
-		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.owner_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
-		if(!empty($result[0]["email"])) {
-			$recipients[] = $result[0]["email"];
+		$result = $db->exec("SELECT u.id, u.email FROM issue i INNER JOIN `user` u on i.owner_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
+		if(!empty($result[0]["email"]) && $result[0]['id'] != $exclude_id) {
+			$recipients[] = $result[0];
 		}
 
 		// Add whole group
 		$result = $db->exec("SELECT u.role, u.id FROM issue i INNER JOIN `user` u on i.owner_id = u.id  WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
 		if($result && $result[0]["role"] == 'group') {
-			$group_users = $db->exec("SELECT g.user_email FROM user_group_user g  WHERE g.group_id = ?", $result[0]["id"]);
+			$group_users = $db->exec("SELECT g.user_id, g.user_email FROM user_group_user g  WHERE g.group_id = ?", $result[0]["id"]);
 			foreach($group_users as $group_user) {
-				if(!empty($group_user["user_email"])) {
-					$recipients[] = $group_user["user_email"];
+				if(!empty($group_user["user_email"]) && $group_user['id'] != $exclude_id) {
+					$recipients[] = $group_user;
 				}
 			}
 		}
 
 		// Add watchers
-		$watchers = $db->exec("SELECT u.email FROM issue_watcher w INNER JOIN `user` u ON w.user_id = u.id WHERE u.deleted_date IS NULL AND issue_id = ?", $issue_id);
+		$watchers = $db->exec("SELECT u.id, u.email FROM issue_watcher w INNER JOIN `user` u ON w.user_id = u.id WHERE u.deleted_date IS NULL AND issue_id = ?", $issue_id);
 		foreach($watchers as $watcher) {
-			$recipients[] = $watcher["email"];
+			if($watcher['id'] != $exclude_id) {
+				$recipients[] = $watcher;
+			}
 		}
 
 		// Remove duplicate users
-		return array_unique($recipients);
+		return $this->_multiArrayUnique($recipients);
+	}
+
+	/**
+	 * Filter a multidimensional array to unique items by a key in the array
+	 * @param  array  $array
+	 * @param  string $key
+	 * @return array
+	 */
+	protected function _multiArrayUnique(array $array, $key = 'id') {
+		$temp_array = array();
+		$key_array = array();
+
+		$i = 0;
+		foreach($array as $val) {
+			if(!in_array($val[$key], $key_array)) {
+				$key_array[$i] = $val[$key];
+				$temp_array[$i] = $val;
+			}
+			$i++;
+		}
+
+		return $temp_array;
 	}
 
 	/**
