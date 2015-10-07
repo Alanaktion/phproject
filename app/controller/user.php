@@ -152,6 +152,11 @@ class User extends \Controller {
 				$f3->set("error", "Current password entered is not valid.");
 			}
 
+		} elseif(!empty($post["action"]) && $post["action"] == "options") {
+
+			// Update option values
+			$user->option("disable_mde", !empty($post["disable_mde"]));
+
 		} else {
 
 			// Update profile

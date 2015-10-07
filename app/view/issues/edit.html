@@ -16,7 +16,7 @@
 <check if="{{ @user_obj->date_picker()->js }}">
 	<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
 </check>
-<check if="{{ @parse.markdown }}">
+<check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
 	<script src="{{ @BASE }}/js/simplemde.min.js"></script>
 </check>
 <script type="text/javascript">
@@ -56,12 +56,13 @@ $(function() {
 		}
 	});
 });
-
-var simplemde = new SimpleMDE({
-	element: $('input[name="description"]')[0],
-	toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide']
-});
-simplemde.render();
+if(typeof window.SimpleMDE != 'undefined') {
+	var simplemde = new SimpleMDE({
+		element: $('input[name="description"]')[0],
+		toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide']
+	});
+	simplemde.render();
+}
 </script>
 </body>
 </html>

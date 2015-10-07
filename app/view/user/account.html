@@ -10,6 +10,7 @@
 		<div class="col-md-12">
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#profile" data-toggle="tab">{{ @dict.profile }}</a></li>
+				<li><a href="#settings" data-toggle="tab">{{ @dict.settings }}</a></li>
 				<li><a href="#password" data-toggle="tab">{{ @dict.password }}</a></li>
 			</ul>
 			<div class="tab-content">
@@ -96,6 +97,18 @@
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class="tab-pane fade" id="settings">
+					<form role="form" action="{{ @BASE }}/user" method="post">
+						<input type="hidden" name="action" value="options">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" name="disable_mde" value="1" {{ @user_obj->option('disable_mde') ? 'checked' : '' }}>
+								{{ @dict.disable_editor }}
+							</label>
+						</div>
+						<button type="submit" class="btn btn-success btn-sm">{{ @dict.save }}</button>
+					</form>
 				</div>
 				<div class="tab-pane fade" id="password">
 					<form class="form-horizontal" role="form" action="{{ @BASE }}/user" method="post">

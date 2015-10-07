@@ -2,7 +2,7 @@
 <html lang="{{ @this->lang() }}">
 <head>
 	<include href="blocks/head.html" />
-	<check if="{{ @parse.markdown }}">
+	<check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
 		<link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/simplemde.min.css">
 	</check>
 </head>
@@ -376,7 +376,7 @@
 <check if="{{ @user_obj->date_picker()->js }}">
 	<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
 </check>
-<check if="{{ @parse.markdown }}">
+<check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
 	<script src="{{ @BASE }}/js/simplemde.min.js"></script>
 </check>
 <script type="text/javascript">
