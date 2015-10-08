@@ -7,6 +7,7 @@ CREATE TABLE `user_notification` (
 	`update_id` int(10) unsigned DEFAULT NULL,
 	`file_id` int(10) unsigned DEFAULT NULL,
 	`action` varbinary(40) NOT NULL,
+	`text` tinytext NOT NULL,
 	`created_date` datetime NOT NULL,
 	`read_date` datetime DEFAULT NULL,
 	PRIMARY KEY (`id`),

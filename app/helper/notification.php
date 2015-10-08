@@ -87,7 +87,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "comment_id" => $comment_id, "action" => "comment"));
+				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "comment_id" => $comment_id, "action" => "comment", "text" => "{$comment->user_name} commented on #{$issue->id} {$issue->name}"));
 				$this->_utf8mail($recipient['email'], $subject, $body, $text);
 				$log->write("Sent comment notification to: " . $recipient['email']);
 			}
@@ -142,11 +142,9 @@ class Notification extends \Prefab {
 				$subject =  "[#{$issue->id}] - {$issue->name} updated";
 			}
 
-
-
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "update_id" => $update_id, "action" => "update"));
+				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "update_id" => $update_id, "action" => "update", "text" => "{$update->user_name} updated #{$issue->id} {$issue->name}"));
 				$this->_utf8mail($recipient['email'], $subject, $body, $text);
 				$log->write("Sent update notification to: " . $recipient['email']);
 			}
@@ -188,7 +186,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "action" => "issue"));
+				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "action" => "issue", "text" => "#{$issue->id} {$issue->name} created by {$issue->author_name}"));
 				$this->_utf8mail($recipient['email'], $subject, $body, $text);
 				$log->write("Sent create notification to: " . $recipient['email']);
 			}
@@ -236,7 +234,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "file_id" => $file_id, "action" => "file"));
+				\Model\User\Notification::create(array("user_id" => $recipient['id'], "issue_id" => $issue_id, "file_id" => $file_id, "action" => "file", "text" => "{$file->user_name} attached a file to #{$issue->id} {$issue->name}"));
 				$this->_utf8mail($recipient['email'], $subject, $body, $text);
 				$log->write("Sent file notification to: " . $recipient['email']);
 			}

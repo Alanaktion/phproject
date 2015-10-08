@@ -618,6 +618,12 @@ class Issues extends \Controller {
 			return;
 		}
 
+		// Clear any notifications for this issue
+		if($user && $user->id) {
+			$notif = new  \Model\User\Notification;
+			$notif->markRead($issue->id);
+		}
+
 		$type = new \Model\Issue\Type();
 		$type->load($issue->type_id);
 

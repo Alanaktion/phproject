@@ -92,6 +92,28 @@
 			</ul>
 
 			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown {{ @menuitem == 'notifications' ? 'active':'' }}">
+					<a class="dropdown-toggle has-tooltip" href="{{ @BASE }}/notifications" data-toggle="dropdown" role="button" aria-expanded="false" data-placement="bottom" title="Notifications">
+						<span class="sr-only">Notifications</span>
+						<i class="fa fa-bell"></i>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<check if="{{ !empty(@nav_notifications) }}">
+							<true>
+								<repeat group="{{ @nav_notifications }}" value="{{ @item }}">
+									<li>
+										<a href="{{ @BASE }}/issues/{{ @item.issue_id }}">{{ @item.text }}</a>
+									</li>
+								</repeat>
+							</true>
+							<false>
+								<li class="dropdown-header">No unread notifications</li>
+							</false>
+						</check>
+						<li role="separator" class="divider"></li>
+						<li><a href="{{ @BASE }}/notifications">View all notifications</a></li>
+					</ul>
+				</li>
 				<check if="{{ @user.role=='admin' }}">
 					<li class="{{ @menuitem == 'admin' ? 'active':'' }}">
 						<a href="{{ @BASE }}/admin">
