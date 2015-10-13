@@ -152,10 +152,10 @@
 				</check>
 
 				<check if="{{ !empty(@issue.hours_total) }}">
-					<dt>{{ @dict.cols.planned_hours }}</dt>
+					<dt>{{ @dict.cols.hours_total }}</dt>
 					<dd>{{ @issue.hours_total ?: 0 }}</dd>
 
-					<dt>{{ @dict.cols.remaining_hours }}</dt>
+					<dt>{{ @dict.cols.hours_remaining }}</dt>
 					<dd>{{ @issue.hours_remaining ?: 0 }}</dd>
 				</check>
 
