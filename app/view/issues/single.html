@@ -452,15 +452,19 @@ $(function() {
 		});
 		$('#add-watcher').submit(function(e) {
 			$this = $(this);
-			$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
+			$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize(), function(data) {
+				if(data && data.error) {
+					return;
+				}
 
-			$select = $this.find('select');
-			$('<li />')
-				.attr('data-user-id', $select.val())
-				.html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $select.children('option:selected').text())
-				.appendTo('#watchers-list');
+				$select = $this.find('select');
+				$('<li />')
+					.attr('data-user-id', $select.val())
+					.html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $select.children('option:selected').text())
+					.appendTo('#watchers-list');
 
-			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) + 1);
+				$('#watchers-badge').text(parseInt($('#watchers-badge').text()) + 1);
+			});
 
 			e.preventDefault();
 		});

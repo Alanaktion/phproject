@@ -628,13 +628,17 @@ class Issues extends \Controller {
 				case "add_watcher":
 					$watching = new \Model\Issue\Watcher;
 					// Loads just in case the user is already a watcher
-					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
+					$watching_load_result = $watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
 					$watching->issue_id = $issue->id;
 					$watching->user_id = $post["user_id"];
 					$watching->save();
 
-					if($f3->get("AJAX"))
+					if($f3->get("AJAX")) {
+						if(is_object($watching_load_result)) {
+							$this->_printJson(array("error" => 1));
+						}
 						return;
+					}
 					break;
 
 				case "remove_watcher":
