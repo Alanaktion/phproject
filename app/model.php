@@ -94,7 +94,7 @@ abstract class Model extends \DB\SQL\Mapper {
 
 	/**
 	 * Load by ID directly if a string is passed
-	 * @param  string|array  $filter
+	 * @param  int|array  $filter
 	 * @param  array         $options
 	 * @param  integer       $ttl
 	 * @return mixed
@@ -102,9 +102,10 @@ abstract class Model extends \DB\SQL\Mapper {
 	function load($filter=NULL, array $options=NULL, $ttl=0) {
 		if(is_numeric($filter)) {
 			return parent::load(array("id = ?", $filter), $options, $ttl);
-		} else {
+		} elseif(is_array($filter)) {
 			return parent::load($filter, $options, $ttl);
 		}
+		throw new Exception("$filter must be either int or array.");
 	}
 
 	/**
