@@ -5,8 +5,8 @@
 </check>
 <form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form">
 	<check if="{{ !empty(@heading_links_enabled) }}">
-		<input type="hidden" name="orderby" value="{{ !empty(@GET.orderby) ? @GET.orderby : 'priority' }}" />
-		<input type="hidden" name="ascdesc" value="{{ !empty(@GET.ascdesc) ? @GET.ascdesc : 'desc' }}" />
+		<input type="hidden" name="orderby" value="{{ (!empty(@GET.orderby) ? @GET.orderby : 'priority') | esc }}" />
+		<input type="hidden" name="ascdesc" value="{{ (!empty(@GET.ascdesc) ? @GET.ascdesc : 'desc') | esc }}" />
 	</check>
 	<table class="table table-striped table-hover table-condensed issue-list">
 		<thead>
@@ -20,7 +20,7 @@
 						</check>
 					</td>
 					<td>
-						<input type="text" class="form-control input-sm" name="name" value="{{ !empty(@GET.name) ? @GET.name : '' }}">
+						<input type="text" class="form-control input-sm" name="name" value="{{ @@GET.name | esc }}">
 					</td>
 					<td>
 						<select class="form-control input-sm" name="type_id">
@@ -68,7 +68,7 @@
 						</select>
 					</td>
 					<td>
-						<input class="form-control input-sm" name="parent_id" value="{{ !empty(@GET.parent_id) ? @GET.parent_id : '' }}" />
+						<input class="form-control input-sm" name="parent_id" value="{{ @@GET.parent_id | esc }}" />
 					</td>
 					<td>
 						<select class="form-control input-sm" name="author_id">
