@@ -319,6 +319,9 @@ table a.btn {
 .tex del:hover {
 	opacity: 1;
 }
+.tex pre a {
+	color: inherit;
+}
 
 .popover-content {
 	text-overflow: ellipsis;
@@ -437,24 +440,29 @@ th[data-sort] {
 .twitter-typeahead {
 	display: block !important;
 }
-
 .twitter-typeahead .dropdown-menu {
 	min-width: 300px;
 	width: 100%;
 	padding: 0;
 }
-
 .twitter-typeahead .tt-suggestion {
 	padding: 6px 12px;
 	color: #404040;
 	font-size: 13px;
 }
-
 .twitter-typeahead .tt-suggestion:hover {
 	background-color: #00bc8c;
 	color: #fff;
 }
-
 .twitter-typeahead .tt-suggestion:hover .text-muted {
 	color: #eee;
+}
+
+.editor-toolbar {
+	background-color: #fff;
+	opacity: 0.75 !important;
+	transition: opacity .2s ease;
+}
+.editor-toolbar:hover {
+	opacity: 0.85 !important;
 }

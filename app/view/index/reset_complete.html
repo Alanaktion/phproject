@@ -12,10 +12,10 @@
 				<fieldset>
 					<legend>{{ @dict.reset_password }}</legend>
 					<check if="{{ !empty(@reset.success) }}">
-						<p class="alert alert-success">{{ @reset.success }}</p>
+						<p class="alert alert-success">{{ @reset.success | esc }}</p>
 					</check>
 					<check if="{{ !empty(@reset.error) }}">
-						<p class="alert alert-danger">{{ @reset.error }}</p>
+						<p class="alert alert-danger">{{ @reset.error | esc }}</p>
 					</check>
 					<div class="form-group">
 						<label for="inputPassword" class="col-md-4 control-label">{{ @dict.username }}</label>

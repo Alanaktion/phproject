@@ -16,7 +16,7 @@ class User extends \Model {
 		$f3 = \Base::instance();
 
 		// Load current session
-		$session = new \Model\Session;
+		$session = new Session;
 		$session->loadCurrent();
 
 		// Load user
@@ -90,6 +90,30 @@ class User extends \Model {
 	}
 
 	/**
+	 * Get all user options
+	 * @return array
+	 */
+	public function options() {
+		return $this->options ? json_decode($this->options, true) : array();
+	}
+
+	/**
+	 * Get or set a user option
+	 * @param  string $key
+	 * @param  mixed  $value
+	 * @return mixed
+	 */
+	public function option($key, $value = null) {
+		$options = $this->options();
+		if($value === null) {
+			return isset($options[$key]) ? $options[$key] : null;
+		}
+		$options[$key] = $value;
+		$this->options = json_encode($options);
+		return $this;
+	}
+
+	/**
 	 * Send an email alert with issues due on the given date
 	 * @param  string $date
 	 * @return bool
@@ -103,7 +127,7 @@ class User extends \Model {
 			$date = date("Y-m-d", \Helper\View::instance()->utc2local());
 		}
 
-		$issue = new \Model\Issue;
+		$issue = new Issue;
 		$issues = $issue->find(array("due_date = ? AND owner_id = ? AND closed_date IS NULL AND deleted_date IS NULL", $date, $this->id), array("order" => "priority DESC"));
 
 		if($issues) {
@@ -198,7 +222,7 @@ class User extends \Model {
 		if(!$this->id) {
 			throw new \Exception("User is not initialized.");
 		}
-		$issue_model = new \Model\Issue;
+		$issue_model = new Issue;
 		$issues = $issue_model->find(array("owner_id = ? AND deleted_date IS NULL AND closed_date IS NULL", $this->id));
 		foreach($issues as $issue) {
 			$issue->owner_id = $user_id;
@@ -210,5 +234,5 @@ class User extends \Model {
 	public function date_picker() {
 		return (object) array('language'=>$this->language, 'js'=>($this->language != 'en'));
 	}
-}
 
+}

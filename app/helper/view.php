@@ -43,6 +43,7 @@ class View extends \Template {
 				// Yes, this is hacky. Please open an issue on GitHub if you
 				// know of a better way of supporting Markdown and Textile :)
 				$str = html_entity_decode($str);
+				$str = preg_replace('/^<p>|<\/p>$/m', "\n", $str);
 			}
 			$str = $this->_parseTextile($str);
 		}

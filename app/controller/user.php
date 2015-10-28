@@ -17,6 +17,9 @@ class User extends \Controller {
 			"pt" => \ISO::LC_pt . " (Português)",
 			"ru" => \ISO::LC_ru . " (Pу́сский)",
 			"nl" => \ISO::LC_nl . " (Nederlands)",
+			"de" => \ISO::LC_de . " (Deutsch)",
+			"cs" => \ISO::LC_cs . " (Češka)",
+			"zh" => \ISO::LC_zh . " (中国)",
 		);
 	}
 
@@ -89,7 +92,7 @@ class User extends \Controller {
 
 		// Get current sprint if there is one
 		$sprint = new \Model\Sprint;
-		$sprint->load("NOW() BETWEEN start_date AND end_date");
+		$sprint->load(array("? BETWEEN start_date AND end_date", date("Y-m-d")));
 		$f3->set("sprint", $sprint);
 
 		$f3->set("menuitem", "index");
@@ -100,7 +103,7 @@ class User extends \Controller {
 		$f3 = \Base::instance();
 
 		// Get theme list
-		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput", "emote");
+		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput", "emote", "fontawesome");
 		$themes = array();
 		foreach (glob("css/*.css") as $file) {
 			$name = pathinfo($file, PATHINFO_FILENAME);
@@ -148,6 +151,11 @@ class User extends \Controller {
 			} else {
 				$f3->set("error", "Current password entered is not valid.");
 			}
+
+		} elseif(!empty($post["action"]) && $post["action"] == "options") {
+
+			// Update option values
+			$user->option("disable_mde", !empty($post["disable_mde"]));
 
 		} else {
 
