@@ -323,7 +323,7 @@ class Issue extends \Model {
 		} else {
 
 			// Set closed date if status is closed
-			if(!$this->closed_date) {
+			if(!$this->closed_date && $this->status) {
 				$status = new Issue\Status;
 				$status->load($this->status);
 				if($status->closed) {
