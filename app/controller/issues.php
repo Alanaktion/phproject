@@ -604,7 +604,7 @@ class Issues extends \Controller {
 			}
 
 		} else {
-			$f3->reroute("/issues/new/" . $post["type_id"]);
+			$f3->reroute("/issues/new/" . $f3->get("POST.type_id"));
 		}
 	}
 
