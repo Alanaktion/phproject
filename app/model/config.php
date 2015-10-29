@@ -63,10 +63,10 @@ class Config extends \Model {
 	 */
 	public static function setVal($key, $value) {
 		$f3 = \Base::instance();
-		$f3->set('config.'.$key, $value);
+		$f3->set($key, $value);
 		$item = new static();
 		$item->load(array('attribute = ?', $key));
-		$item->attribute = $attribute;
+		$item->attribute = $key;
 		$item->value = $value;
 		$item->save();
 		return $item;

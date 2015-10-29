@@ -77,7 +77,7 @@ class Issues extends \Controller {
 		// Build SQL ORDER BY string
 		$orderby = !empty($args['orderby']) ? $args['orderby'] : "priority";
 		$filter["orderby"] = $orderby;
-		$ascdesc = !empty($args['ascdesc']) && $args['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		$ascdesc = !empty($args['ascdesc']) && strtolower($args['ascdesc']) == 'asc' ? "ASC" : "DESC";
 		$filter["ascdesc"] = $ascdesc;
 		switch($orderby) {
 			case "id":
@@ -390,7 +390,7 @@ class Issues extends \Controller {
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
-		$f3->set("title", $f3->get("dist.new_n", $f3->get("dict.issue")));
+		$f3->set("title", $f3->get("dict.new_n", $f3->get("dict.issues")));
 		$f3->set("menuitem", "new");
 		$this->_render("issues/new.html");
 	}
@@ -908,8 +908,30 @@ class Issues extends \Controller {
 				OR author_username LIKE ? OR owner_username LIKE ?
 				OR author_email LIKE ? OR owner_email LIKE ?)
 			AND deleted_date IS NULL";
+
+		if(empty($args["closed"])) {
+			$where .= " AND status_closed = '0'";
+		}
+
 		$issue_page = $issues->paginate($args["page"], 50, array($where, $f3->get("GET.q"), $query, $query, $query, $query, $query, $query, $query, $query), array("order" => "created_date DESC"));
 		$f3->set("issues", $issue_page);
+
+		if($issue_page["count"] > 7) {
+			if($issue_page["pos"] <= 3) {
+				$min = 0;
+			} else {
+				$min = $issue_page["pos"] - 3;
+			}
+			if($issue_page["pos"] < $issue_page["count"] - 3) {
+				$max = $issue_page["pos"] + 3;
+			} else {
+				$max = $issue_page["count"] - 1;
+			}
+		} else {
+			$min = 0;
+			$max = $issue_page["count"] - 1;
+		}
+		$f3->set("pages", range($min, $max));
 
 		$f3->set("show_filters", false);
 		$this->_render("issues/search.html");
@@ -1009,31 +1031,43 @@ class Issues extends \Controller {
 		}
 
 		/**
-		 * Helper function to get a percentage of completed issues across the entire tree
+		 * Helper function to get a percentage of completed issues and some totals across the entire tree
 		 * @param   Issue $issue
 		 * @var     callable $completeCount This function, required for recursive calls
 		 * @return  array
 		 */
-		$completeCount = function(\Model\Issue &$issue) use(&$completeCount) {
+		$projectStats = function(\Model\Issue &$issue) use(&$projectStats) {
 			$total = 0;
 			$complete = 0;
+			$hoursSpent = 0;
+			$hoursTotal = 0;
 			if($issue->id) {
 				$total ++;
 				if($issue->closed_date) {
 					$complete ++;
 				}
+				if($issue->hours_spent > 0) {
+					$hoursSpent += $issue->hours_spent;
+				}
+				if($issue->hours_total > 0) {
+					$hoursTotal += $issue->hours_total;
+				}
 				foreach($issue->getChildren() as $child) {
-					$result = $completeCount($child);
+					$result = $projectStats($child);
 					$total += $result["total"];
 					$complete += $result["complete"];
+					$hoursSpent += $result["hours_spent"];
+					$hoursTotal += $result["hours_total"];
 				}
 			}
 			return array(
 				"total" => $total,
-				"complete" => $complete
+				"complete" => $complete,
+				"hours_spent" => $hoursSpent,
+				"hours_total" => $hoursTotal,
 			);
 		};
-		$f3->set("stats", $completeCount($project));
+		$f3->set("stats", $projectStats($project));
 
 		/**
 		 * Helper function for recursive tree rendering
