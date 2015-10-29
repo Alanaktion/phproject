@@ -390,7 +390,7 @@ class Issues extends \Controller {
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
-		$f3->set("title", $f3->get("dist.new_n", $f3->get("dict.issue")));
+		$f3->set("title", $f3->get("dict.new_n", $f3->get("dict.issues")));
 		$f3->set("menuitem", "new");
 		$this->_render("issues/new.html");
 	}

@@ -126,14 +126,14 @@
 	</check>
 	<check if="{{ !empty(@issue) }}">
 		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">{{ @dict.cols.planned_hours }}</label>
+			<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
 			<div class="col-md-6">
 				<input class="form-control input-sm" type="text" name="hours_total" autocomplete="off" value="{{ @issue.hours_total }}">
 			</div>
 		</div>
 	</check>
 	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">{{ empty(@issue) ? @dict.cols.planned_hours : @dict.cols.remaining_hours }}</label>
+		<label class="col-md-2 control-label label-sm">{{ empty(@issue) ? @dict.cols.hours_total : @dict.cols.hours_remaining }}</label>
 		<div class="col-md-6">
 			<input class="form-control input-sm" type="text" name="hours_remaining" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.hours_remaining }}">
 		</div>

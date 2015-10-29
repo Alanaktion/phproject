@@ -31,7 +31,7 @@ class Update extends \Prefab {
 
 		// Generate human readable field name
 		$name = $f3->get("dict.cols." . $field);
-		if(empty($name)) {
+		if($name === null) {
 			$name = ucwords(str_replace(
 					array("_", " id"), array(" ", ""), $field));
 		}
