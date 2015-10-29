@@ -196,6 +196,7 @@ class Issues extends \Controller\Api {
 		$issue->name = trim($post["name"]);
 		$issue->type_id = empty($post["type_id"]) ? 1 : $post["type_id"];
 		$issue->priority_id = empty($post["priority_id"]) ? $f3->get("issue_priority.default") : $post["priority_id"];
+		$issue->status = empty($status) ? 1 : $status->id;
 
 		// Set due date if valid
 		if(!empty($post["due_date"]) && preg_match("/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}( [0-9:]{8})?$/", $post["due_date"])) {
