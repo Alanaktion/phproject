@@ -95,8 +95,17 @@ class User extends \Controller {
 		$sprint->load(array("? BETWEEN start_date AND end_date", date("Y-m-d")));
 		$f3->set("sprint", $sprint);
 
+		$f3->set("dashboard", $f3->get("user_obj")->option("dashboard") ?: array("left" => array("projects", "subprojects", "bugs", "repeat-work", "watchlist"), "right" => array("tasks")));
 		$f3->set("menuitem", "index");
 		$this->_render("user/dashboard.html");
+	}
+
+	public function dashboardPost($f3) {
+		$user = $f3->get("user_obj");
+		$widgets = json_decode($f3->get("POST.widgets"));
+		$user->option('dashboard', $widgets);
+		$user->save();
+		$this->_printJson($widgets);
 	}
 
 	private function _loadThemes() {

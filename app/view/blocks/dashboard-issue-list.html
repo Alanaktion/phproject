@@ -39,4 +39,7 @@
 			</check>
 		</a>
 	</repeat>
+	<check if="{{ !count(@issues) }}">
+		<li class="list-group-item disabled">No matching issues</li>
+	</check>
 </div>

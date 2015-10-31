@@ -1,0 +1,14 @@
+<div class="dashboard-widget" data-widget="tasks">
+	<div class="clearfix">
+		<check if="{{ @sprint && @sprint.id }}">
+			<div class="h3 pull-right text-right">
+				<a class="btn btn-default btn-sm" href="{{ @BASE }}/taskboard/{{ @sprint.id }}/me"><span class="fa fa-list"></span>&ensp;{{ @dict.taskboard }}</a>
+			</div>
+		</check>
+		<h3 class="dashboard-widget-handle">{{ @dict.my_tasks }}&ensp;<small>{{ count(@tasks) }}</small>&ensp;
+			<a class="btn btn-sm btn-default has-tooltip" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}" title="{{ @dict.add_task }}"><span class="fa fa-plus"></span></a>
+		</h3>
+	</div>
+	<set issues="{{ @tasks }}" />
+	<include href="blocks/dashboard-issue-list.html" />
+</div>
