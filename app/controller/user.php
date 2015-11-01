@@ -28,74 +28,28 @@ class User extends \Controller {
 	}
 
 	public function dashboard($f3, $params) {
-		$issue = new \Model\Issue\Detail();
-
-		// Add user's group IDs to owner filter
-		$owner_ids = array($this->_userId);
-		$groups = new \Model\User\Group();
-		foreach($groups->find(array("user_id = ?", $this->_userId)) as $r) {
-			$owner_ids[] = $r->group_id;
+		$dashboard = $f3->get("user_obj")->option("dashboard");
+		if(!$dashboard) {
+			$dashboard = array(
+				"left" => array("projects", "subprojects", "bugs", "repeat_work", "watchlist"),
+				"right" => array("tasks")
+			);
 		}
-		$owner_ids = implode(",", $owner_ids);
 
-
-		$order = "priority DESC, has_due_date ASC, due_date ASC";
-		$projects = $issue->find(
-			array(
-				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-				":type" => $f3->get("issue_type.project"),
-			),array(
-				"order" => $order
-			)
-		);
-		$subprojects = array();
-		foreach($projects as $i=>$project) {
-			if($project->parent_id) {
-				$subprojects[] = $project;
-				unset($projects[$i]);
+		// Load dashboard widget data
+		$helper = \Helper\Dashboard::instance();
+		foreach($dashboard as $pos=>$widgets) {
+			foreach($widgets as $widget) {
+				$f3->set($widget, $helper->$widget());
 			}
 		}
-		$f3->set("projects", $projects);
-		$f3->set("subprojects", $subprojects);
-
-		$f3->set("bugs", $issue->find(
-			array(
-				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-				":type" => $f3->get("issue_type.bug"),
-			),array(
-				"order" => $order
-			)
-		));
-
-		$f3->set("repeat_issues", $issue->find(
-			array(
-				"owner_id IN ($owner_ids) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0 AND repeat_cycle NOT IN ('none', '')",
-				":type" => $f3->get("issue_type.bug"),
-			),array(
-				"order" => $order
-			)
-		));
-
-		$watchlist = new \Model\Issue\Watcher();
-		$f3->set("watchlist", $watchlist->findby_watcher($this->_userId, $order));
-
-
-		$tasks = new \Model\Issue\Detail();
-		$f3->set("tasks", $tasks->find(
-			array(
-				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-				":type" => $f3->get("issue_type.task"),
-			),array(
-				"order" => $order
-			)
-		));
 
 		// Get current sprint if there is one
 		$sprint = new \Model\Sprint;
 		$sprint->load(array("? BETWEEN start_date AND end_date", date("Y-m-d")));
 		$f3->set("sprint", $sprint);
 
-		$f3->set("dashboard", $f3->get("user_obj")->option("dashboard") ?: array("left" => array("projects", "subprojects", "bugs", "repeat-work", "watchlist"), "right" => array("tasks")));
+		$f3->set("dashboard", $dashboard);
 		$f3->set("menuitem", "index");
 		$this->_render("user/dashboard.html");
 	}
