@@ -37,11 +37,15 @@ class User extends \Controller {
 		}
 
 		// Load dashboard widget data
-		$allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist");
+		$allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments");
 		$helper = \Helper\Dashboard::instance();
 		foreach($dashboard as $pos=>$widgets) {
 			foreach($widgets as $widget) {
-				$f3->set($widget, $helper->$widget());
+				if(is_callable(array($helper, $widget))) {
+					$f3->set($widget, $helper->$widget());
+				} else {
+					$f3->set("error", "Widget '{$widget}' is not available.");
+				}
 				unset($allWidgets[array_search($widget, $allWidgets)]);
 			}
 		}
