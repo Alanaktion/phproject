@@ -37,12 +37,15 @@ class User extends \Controller {
 		}
 
 		// Load dashboard widget data
+		$allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist");
 		$helper = \Helper\Dashboard::instance();
 		foreach($dashboard as $pos=>$widgets) {
 			foreach($widgets as $widget) {
 				$f3->set($widget, $helper->$widget());
+				unset($allWidgets[array_search($widget, $allWidgets)]);
 			}
 		}
+		$f3->set("unused_widgets", $allWidgets);
 
 		// Get current sprint if there is one
 		$sprint = new \Model\Sprint;
@@ -56,10 +59,21 @@ class User extends \Controller {
 
 	public function dashboardPost($f3) {
 		$user = $f3->get("user_obj");
-		$widgets = json_decode($f3->get("POST.widgets"));
-		$user->option('dashboard', $widgets);
+		if($f3->get("POST.action") == "add") {
+			$widgets = $user->option("dashboard");
+			foreach($f3->get("POST.widgets") as $widget) {
+				$widgets["left"][] = $widget;
+			}
+		} else {
+			$widgets = json_decode($f3->get("POST.widgets"));
+		}
+		$user->option("dashboard", $widgets);
 		$user->save();
-		$this->_printJson($widgets);
+		if($f3->get("AJAX")) {
+			$this->_printJson($widgets);
+		} else {
+			$f3->reroute("/");
+		}
 	}
 
 	private function _loadThemes() {

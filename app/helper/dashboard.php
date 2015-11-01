@@ -4,7 +4,6 @@ namespace Helper;
 
 class Dashboard extends \Prefab {
 
-
 	protected
 		$_issue,
 		$_ownerIds,

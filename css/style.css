@@ -74,7 +74,23 @@ a.nolink:hover {
 	padding-bottom: 100px;
 }
 .dashboard-widget-handle {
+	position: relative;
 	cursor: move;
+}
+.dashboard-widget-handle .close {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	color: inherit;
+	visibility: hidden;
+}
+.dashboard-widget:hover .dashboard-widget-handle .close {
+	visibility: visible;
+}
+@media screen and (max-width: 767px) {
+	.dashboard-widget-handle .close {
+		visibility: visible;
+	}
 }
 
 textarea {
