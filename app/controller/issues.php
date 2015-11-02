@@ -104,6 +104,9 @@ class Issues extends \Controller {
 			case "created":
 				$filter_str .= " ORDER BY created_date {$ascdesc}, priority DESC, due_date DESC ";
 				break;
+			case "due":
+				$filter_str .= " ORDER BY due_date {$ascdesc}, priority DESC";
+				break;
 			case "sprint":
 				$filter_str .= " ORDER BY sprint_start_date {$ascdesc}, priority DESC, due_date DESC ";
 				break;
