@@ -28,75 +28,56 @@ class User extends \Controller {
 	}
 
 	public function dashboard($f3, $params) {
-		$issue = new \Model\Issue\Detail();
-
-		// Add user's group IDs to owner filter
-		$owner_ids = array($this->_userId);
-		$groups = new \Model\User\Group();
-		foreach($groups->find(array("user_id = ?", $this->_userId)) as $r) {
-			$owner_ids[] = $r->group_id;
+		$dashboard = $f3->get("user_obj")->option("dashboard");
+		if(!$dashboard) {
+			$dashboard = array(
+				"left" => array("projects", "subprojects", "bugs", "repeat_work", "watchlist"),
+				"right" => array("tasks")
+			);
 		}
-		$owner_ids = implode(",", $owner_ids);
 
-
-		$order = "priority DESC, has_due_date ASC, due_date ASC";
-		$projects = $issue->find(
-			array(
-				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-				":type" => $f3->get("issue_type.project"),
-			),array(
-				"order" => $order
-			)
-		);
-		$subprojects = array();
-		foreach($projects as $i=>$project) {
-			if($project->parent_id) {
-				$subprojects[] = $project;
-				unset($projects[$i]);
+		// Load dashboard widget data
+		$allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments");
+		$helper = \Helper\Dashboard::instance();
+		foreach($dashboard as $pos=>$widgets) {
+			foreach($widgets as $widget) {
+				if(is_callable(array($helper, $widget))) {
+					$f3->set($widget, $helper->$widget());
+				} else {
+					$f3->set("error", "Widget '{$widget}' is not available.");
+				}
+				unset($allWidgets[array_search($widget, $allWidgets)]);
 			}
 		}
-		$f3->set("projects", $projects);
-		$f3->set("subprojects", $subprojects);
-
-		$f3->set("bugs", $issue->find(
-			array(
-				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-				":type" => $f3->get("issue_type.bug"),
-			),array(
-				"order" => $order
-			)
-		));
-
-		$f3->set("repeat_issues", $issue->find(
-			array(
-				"owner_id IN ($owner_ids) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0 AND repeat_cycle NOT IN ('none', '')",
-				":type" => $f3->get("issue_type.bug"),
-			),array(
-				"order" => $order
-			)
-		));
-
-		$watchlist = new \Model\Issue\Watcher();
-		$f3->set("watchlist", $watchlist->findby_watcher($this->_userId, $order));
-
-
-		$tasks = new \Model\Issue\Detail();
-		$f3->set("tasks", $tasks->find(
-			array(
-				"owner_id IN ($owner_ids) AND type_id=:type AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-				":type" => $f3->get("issue_type.task"),
-			),array(
-				"order" => $order
-			)
-		));
+		$f3->set("unused_widgets", $allWidgets);
 
 		// Get current sprint if there is one
 		$sprint = new \Model\Sprint;
 		$sprint->load(array("? BETWEEN start_date AND end_date", date("Y-m-d")));
 		$f3->set("sprint", $sprint);
 
+		$f3->set("dashboard", $dashboard);
 		$f3->set("menuitem", "index");
 		$this->_render("user/dashboard.html");
+	}
+
+	public function dashboardPost($f3) {
+		$user = $f3->get("user_obj");
+		if($f3->get("POST.action") == "add") {
+			$widgets = $user->option("dashboard");
+			foreach($f3->get("POST.widgets") as $widget) {
+				$widgets["left"][] = $widget;
+			}
+		} else {
+			$widgets = json_decode($f3->get("POST.widgets"));
+		}
+		$user->option("dashboard", $widgets);
+		$user->save();
+		if($f3->get("AJAX")) {
+			$this->_printJson($widgets);
+		} else {
+			$f3->reroute("/");
+		}
 	}
 
 	private function _loadThemes() {

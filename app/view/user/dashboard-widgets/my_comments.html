@@ -1,0 +1,10 @@
+<div class="dashboard-widget" data-widget="my_comments">
+	<h3 class="dashboard-widget-handle">{{ @dict.my_comments }}</h3>
+	<div class="comments">
+		{~ @issue = new \Model\Issue() ~}
+		<repeat group="{{ @my_comments }}" value="{{ @comment }}">
+			{~ @issue->load(@comment.issue_id) ~}
+			<include href="blocks/issue-comment.html" />
+		</repeat>
+	</div>
+</div>

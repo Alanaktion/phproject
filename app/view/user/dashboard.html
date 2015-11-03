@@ -11,57 +11,111 @@
 <body class="dashboard">
 <set fullwidth="{{ true }}" />
 <include href="blocks/navbar.html" />
-<div class="container-fluid">
+<div class="container-fluid dashboard-container">
+
+	<a class="btn btn-default btn-xs" id="btn-add-widgets" data-toggle="modal" data-target="#mdl-add-widgets">
+		<span class="fa fa-plus"></span>&ensp;Add Widgets
+	</a>
+	<check if="{{ @sprint && @sprint.id }}">
+		<a class="btn btn-default btn-xs" href="{{ @BASE }}/taskboard/{{ @sprint.id }}/me">
+			<span class="fa fa-list"></span>&ensp;{{ @dict.taskboard }}
+		</a>
+	</check>
+
 	<div class="row">
-		<div class="col-sm-5">
-			<h3>{{ @dict.my_projects }}&ensp;<small>{{ count(@projects) }}</small>&ensp;
-				<a class="btn btn-sm btn-default has-tooltip" href="{{ @BASE }}/issues/new/{{ @issue_type.project }}" title="{{ @dict.add_project }}"><span class="fa fa-plus"></span></a>
-			</h3>
-			<set issues="{{ @projects }}" />
-			<include href="blocks/dashboard-issue-list.html" />
-
-			<check if="{{ count(@subprojects) }}">
-				<h3>{{ @dict.my_subprojects }}&ensp;<small>{{ count(@subprojects) }}</small></h3>
-				<set issues="{{ @subprojects }}" />
-				<include href="blocks/dashboard-issue-list.html" />
-			</check>
-
-			<check if="{{ count(@bugs) }}">
-				<h3>{{ @dict.my_bugs }}&ensp;<small>{{ count(@bugs) }}</small>&ensp;
-					<a class="btn btn-sm btn-default has-tooltip" href="{{ @BASE }}/issues/new/{{ @issue_type.bug }}" title="{{ @dict.add_bug }}"><span class="fa fa-plus"></span></a>
-				</h3>
-				<set issues="{{ @bugs }}" />
-				<include href="blocks/dashboard-issue-list.html" />
-			</include>
-
-			<check if="{{ count(@repeat_issues) }}">
-				<h3>{{ @dict.repeat_work }}&ensp;<small>{{ count(@repeat_issues) }}</small>&ensp;</h3>
-				<set issues="{{ @repeat_issues }}" />
-				<include href="blocks/dashboard-issue-list.html" />
-			</check>
-
-			<check if="{{ count(@watchlist) }}">
-				<h3>{{ @dict.my_watchlist }}&ensp;<small>{{ count(@watchlist) }}</small>&ensp;</h3>
-				<set issues="{{ @watchlist }}" />
-				<include href="blocks/dashboard-issue-list.html" />
-			</check>
+		<div class="col-sm-5 dashboard-widget-box">
+			<repeat group="{{ @dashboard.left }}" value="{{ @widget }}">
+				<include href="{{ 'user/dashboard-widgets/' . @widget . '.html' }}" />
+			</repeat>
 		</div>
-		<div class="col-sm-7">
-			<div class="clearfix">
-				<h3 class="pull-left">{{ @dict.my_tasks }}&ensp;<small>{{ count(@tasks) }}</small>&ensp;
-					<a class="btn btn-sm btn-default has-tooltip" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}" title="{{ @dict.add_task }}"><span class="fa fa-plus"></span></a>
-				</h3>
-				<check if="{{ @sprint && @sprint.id }}">
-					<div class="h3 pull-right text-right">
-						<a class="btn btn-default btn-sm" href="{{ @BASE }}/taskboard/{{ @sprint.id }}/me"><span class="fa fa-list"></span>&ensp;{{ @dict.taskboard }}</a>
-					</div>
-				</check>
-			</div>
-			<set issues="{{ @tasks }}" />
-			<include href="blocks/dashboard-issue-list.html" />
+		<div class="col-sm-7 dashboard-widget-box">
+			<repeat group="{{ @dashboard.right }}" value="{{ @widget }}">
+				<include href="{{ 'user/dashboard-widgets/' . @widget . '.html' }}" />
+			</repeat>
 		</div>
 	</div>
+
+	<div class="modal fade" id="mdl-add-widgets">
+		<div class="modal-dialog">
+			<form class="modal-content" action="{{ @BASE }}/user/dashboard" method="post">
+				<input type="hidden" name="action" value="add">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title">Add Widgets</h4>
+				</div>
+				<div class="modal-body add-widgets-list" style="text-transform: capitalize;">
+					<repeat group="{{ @unused_widgets }}" value="{{ @widget }}">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" name="widgets[]" value="{{ @widget }}">
+								{{ str_replace('_', ' ', @widget) }}
+							</label>
+						</div>
+					</repeat>
+					<check if="{{ !@unused_widgets }}">
+						<div class="add-widgets-empty">
+							No more widgets available
+						</div>
+					</check>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{ @dict.cancel }}</button>
+					<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save }}</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
 	<include href="blocks/footer.html" />
+	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+
+		// Save widget layout to user options
+		var saveWidgets = function() {
+			var items = {left: [], right: []};
+			$('.dashboard-widget-box').each(function(i, el) {
+				$(el).find('.dashboard-widget').each(function() {
+					items[i ? 'right' : 'left'].push($(this).attr('data-widget'));
+				});
+			});
+
+			$.post(BASE + '/user/dashboard', {
+				widgets: JSON.stringify(items)
+			}).error(function() {
+				alert('An error occurred saving the dashboard layout.');
+			});
+		};
+
+		// Enable widget arranging
+		$('.dashboard-widget-box').sortable({
+			items: '.dashboard-widget',
+			connectWith: '.dashboard-widget-box',
+			handle: '.dashboard-widget-handle',
+			cursor: "move",
+			stop: function(event, ui) {
+				saveWidgets();
+			},
+			distance: 10
+		}).disableSelection();
+
+		// Add close buttons to widgets
+		$('<a />').html('&times;').addClass('close').appendTo('.dashboard-widget-handle');
+
+		// Handle close button clicks
+		$('.dashboard-container').on('click', '.dashboard-widget-handle .close', function(e) {
+			var widget = $(this).parents('.dashboard-widget'),
+				widgetName = widget.attr('data-widget');
+			$('.add-widgets-empty').remove();
+			$('.add-widgets-list').append('<div class="checkbox"><label><input type="checkbox" name="widgets[]" value="' + widgetName + '">' + widgetName.replace('_', ' ') + '</label></div>');
+			widget.remove();
+			saveWidgets();
+		});
+
+	});
+	</script>
 </div>
 </body>
 </html>
