@@ -333,9 +333,9 @@ class Issue extends \Model {
 
 		}
 
+		$return = empty($issue) ? parent::save() : $issue;
 		$this->saveTags();
-
-		return empty($issue) ? parent::save() : $issue;
+		return $return;
 	}
 
 	/**
