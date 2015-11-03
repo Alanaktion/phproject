@@ -47,7 +47,7 @@ Phproject includes a number of hotkeys which can be used to quickly perform comm
 	</div>
 </div>
 
-Note that the alt hotkeys for creating new issues are dependant on the issue_types table. If your Phproject installation has modified values, the hotkeys will be different.
+Note that the alt hotkeys for creating new issues are dependant on the `issue_types` table. If your Phproject installation has modified values, the hotkeys will be different.
 
 <hr>
 
@@ -55,15 +55,15 @@ Note that the alt hotkeys for creating new issues are dependant on the issue_typ
 Phproject includes some advanced features that allow users to integrate other systems with their Phproject site, including email and other software applications.
 
 #### Incoming Mail
-To allow users to create issues and comment on existing issues via email, set up an email inbox with remote IMAP access. You can then add the IMAP connection settings to your `config.ini` file, and add a cron job to your server that runs `cron/checkmail.php`, which imports emails as issues and comments from the email inbox.
+To allow users to create issues and comment on existing issues via email, set up an email inbox with remote IMAP access. You can then add the IMAP connection settings in your Administration > Configuration tab, and add a cron job to your server that runs `cron/checkmail.php`, which imports emails as issues and comments from the email inbox.
 
 Example configuration for Gmail:
 
-{% highlight ini %}
-imap.hostname={imap.gmail.com:993/imap/ssl}INBOX
-imap.username=phproject@example.com
-imap.password=Passw0rd1
-{% endhighlight %}
+```
+Hostname: {imap.gmail.com:993/imap/ssl}INBOX
+Username: phproject@example.com
+Password: Passw0rd1
+```
 
 #### Atom Feeds
 Phproject generates Atom feeds for issues assigned to and created by each user. These feeds can be subscribed to from user pages or the Dashboard in browsers that support them.

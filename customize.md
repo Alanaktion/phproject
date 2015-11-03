@@ -13,11 +13,11 @@ Issues also have a Status and Priority value, which uses options from the `issue
 
 ## Appearance
 
-Phproject's UI is built around [Twitter Bootstrap 3](http://getbootstrap.com), and is compatible with customized Bootstrap styles including Bootswatch. Adding a `site.theme` entry in `config.ini` set to the web path of a Bootstrap CSS file will replace the main CSS. Phproject already includes all of the themes from Bootswatch as well as a few custom ones we've built ourselves based on Bootswatch's Flatly. Phproject's additions to the Bootstrap core are designed to add features without breaking any existing components, so unless your customized Bootstrap is very heavily modified, everything should continue to work consistently. Dark themes are known to have a few issues, if you need to use a dark theme, include [the CSS below](#dark-css) to ensure everything looks right.
+Phproject's UI is built around [Twitter Bootstrap 3](http://getbootstrap.com), and is compatible with customized Bootstrap styles including Bootswatch. Changing the 'Default Theme' option in Administration > Configuration to the web path of a Bootstrap CSS file will replace the main CSS. Phproject already includes all of the themes from Bootswatch as well as a few custom ones we've built ourselves based on Bootswatch's Flatly. Phproject's additions to the Bootstrap core are designed to add features without breaking any existing components, so unless your customized Bootstrap is very heavily modified, everything should continue to work consistently. Dark themes are known to have a few issues, if you need to use a dark theme, include [the CSS below](#dark-css) to ensure everything looks right.
 
-To give your site a custom title and meta description, update the `site.name` and `site.description` entries in `config.ini`. Phproject also allows using an image for the logo in the top navigation. Adding `site.logo` to an image URL.
+Your site name and meta description can also be updated in the Administration > Configuration tab. Phproject also allows using an image for the logo in the top navigation. Adding an image URL under the 'Logo' option on the Site Basics configuration will replace the text logo in the navbar with your logo image.
 
-You can also customize the default user image that is shown when a user does not have a Gravatar (Phproject uses `mm` by default) as well as the maximum content rating of Gravatars to show (`pg` by default). The `gravatar.default` and `gravatar.rating` entries in config.ini can be updated to change these.
+You can also customize the default user image that is shown when a user does not have a Gravatar (Phproject uses `mm` by default) as well as the maximum content rating of Gravatars to show (`pg` by default). The `gravatar.default` and `gravatar.rating` entries in the `config` database table can be added/updated to change these.
 
 ### CSS for dark themes
 
@@ -47,4 +47,4 @@ If you want to use a custom Bootstrap theme that uses light text on a dark backg
 
 ## Demo Mode
 
-While not a necessary feature for most installations, Phproject includes a demo mode which causes the site to automatically log in as a specific user, as well as display a demo alert at the top of each page. This can be enabled by setting `site.demo` in `config.ini` to the ID of the user you want to auto-login as.
+While not a necessary feature for most installations, Phproject includes a demo mode which causes the site to automatically log in as a specific user, as well as display a demo alert at the top of each page. This can be enabled by setting `site.demo` in the `config` database table to the ID of the user you want to auto-login as.

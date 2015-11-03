@@ -25,7 +25,7 @@ The installation process for Phproject should be reasonably simple compared with
 4. Navigate to the application and complete the installation
 
 ## Additional Setup
-Additional configuation options not available from the installer can be found in `config-base.ini`. These options can be copied to `config.ini` and edited. You should avoid changing the `config-base.ini` file to make updating easier.
+Once installed, many additional options for configuring your site can be found in the Administration panel, under the Configuration tab. Advanced users can add entries to the `config` database table to modify additional configuration, using options from the `config-base.ini` file.
 
 To see performance information and additional details about errors, change `DEBUG` in `config.ini`. This option supports levels 0-3, with 3 being the most verbose.
 <span class="text-danger">You should always use 0 in a production environment!</span>
