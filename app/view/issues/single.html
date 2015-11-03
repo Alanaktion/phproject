@@ -438,7 +438,7 @@ $(function() {
 
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
-			$li = $(this).parents('li');
+			var $li = $(this).parents('li');
 			$.post(BASE + '/issues/{{ @issue.id }}', {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
@@ -451,20 +451,18 @@ $(function() {
 			e.preventDefault();
 		});
 		$('#add-watcher').submit(function(e) {
-			$this = $(this);
-			$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize(), function(data) {
-				if(data && data.error) {
-					return;
-				}
+			var $this = $(this);
+			$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
 
-				$select = $this.find('select');
+			var $select = $this.find('select');
+			if(!$('#watchers-list li').filter('[data-user-id=' + $select.val() + ']').length) {
 				$('<li />')
 					.attr('data-user-id', $select.val())
 					.html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $select.children('option:selected').text())
 					.appendTo('#watchers-list');
 
 				$('#watchers-badge').text(parseInt($('#watchers-badge').text()) + 1);
-			});
+			}
 
 			e.preventDefault();
 		});
@@ -532,7 +530,7 @@ $(function() {
 
 	// Add/remove dependencies from tab
 	$('#dependencies').on('click', 'a.delete', function(e) {
-		$tr = $(this).parents('tr');
+		var $tr = $(this).parents('tr');
 		$.post(BASE + '/issues/{{ @issue.id }}', {
 			action: 'remove_dependency',
 			id: $tr.data('id')
@@ -546,7 +544,7 @@ $(function() {
 		e.preventDefault();
 	});
 	$('#dependencies').on('submit', 'form', function(e) {
-		$this = $(this);
+		var $this = $(this);
 		$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
 
 		e.preventDefault();
