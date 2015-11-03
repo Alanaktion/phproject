@@ -3,7 +3,7 @@
 <check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
 {~ @headings[] = 'closed' ~}
 </check>
-<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form">
+<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form" id="form-filter-issues">
 	<check if="{{ !empty(@heading_links_enabled) }}">
 		<input type="hidden" name="orderby" value="{{ (!empty(@GET.orderby) ? @GET.orderby : 'priority') | esc }}" />
 		<input type="hidden" name="ascdesc" value="{{ (!empty(@GET.ascdesc) ? @GET.ascdesc : 'desc') | esc }}" />
@@ -68,7 +68,7 @@
 						</select>
 					</td>
 					<td>
-						<input class="form-control input-sm" name="parent_id" value="{{ @@GET.parent_id | esc }}" />
+						<input class="form-control input-sm" name="parent_id" id="filter-input-parent-id" value="{{ @@GET.parent_id | esc }}" />
 					</td>
 					<td>
 						<select class="form-control input-sm" name="author_id">
@@ -367,7 +367,7 @@
 </check>
 <script src="{{ @BASE }}/minify/js/jquery-1.11.3.min.js,typeahead.jquery.js"></script>
 <script type="text/javascript">
-	$('table.issue-list input[name="parent_id"]').typeahead({
+	$('input#filter-input-parent-id').typeahead({
 		classNames: {
 			menu: 'dropdown-menu'
 		}
@@ -394,6 +394,6 @@
 			}
 		}
 	}).bind('typeahead:select', function() {
-		$('form.filter-form').submit();
+		$('#form-filter-issues').submit();
 	});
 </script>
