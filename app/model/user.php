@@ -2,6 +2,26 @@
 
 namespace Model;
 
+/**
+ * Class User
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $email
+ * @property string $name
+ * @property string $password
+ * @property string $salt
+ * @property string $role
+ * @property int $rank
+ * @property string $task_color
+ * @property string $theme
+ * @property string $language
+ * @property string $avatar_filename
+ * @property string $options
+ * @property string $api_key
+ * @property string $created_date
+ * @property string $deleted_date
+ */
 class User extends \Model {
 
 	protected
