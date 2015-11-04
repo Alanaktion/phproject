@@ -2,6 +2,26 @@
 
 namespace Model;
 
+/**
+ * Class User
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $email
+ * @property string $name
+ * @property string $password
+ * @property string $salt
+ * @property string $role
+ * @property int $rank
+ * @property string $task_color
+ * @property string $theme
+ * @property string $language
+ * @property string $avatar_filename
+ * @property string $options
+ * @property string $api_key
+ * @property string $created_date
+ * @property string $deleted_date
+ */
 class User extends \Model {
 
 	protected
@@ -78,6 +98,7 @@ class User extends \Model {
 				return $this->_groupUsers;
 			}
 			$ug = new User\Group;
+			/** @var User\Group[] $users */
 			$users = $ug->find(array("group_id = ?", $this->id));
 			$user_ids = array();
 			foreach($users as $user) {
@@ -217,6 +238,7 @@ class User extends \Model {
 	 * Reassign assigned issues
 	 * @param  int $user_id
 	 * @return int Number of issues affected
+	 * @throws \Exception
 	 */
 	public function reassignIssues($user_id) {
 		if(!$this->id) {

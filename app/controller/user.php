@@ -24,10 +24,20 @@ class User extends \Controller {
 		);
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function index($f3) {
 		$f3->reroute("/user");
 	}
 
+	/**
+	 * GET /user/dashboard User dashboard
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function dashboard($f3, $params) {
 		$dashboard = $f3->get("user_obj")->option("dashboard");
 		if(!$dashboard) {
@@ -62,6 +72,11 @@ class User extends \Controller {
 		$this->_render("user/dashboard.html");
 	}
 
+	/**
+	 * POST /user/dashboard
+	 *
+	 * @param \Base $f3
+	 */
 	public function dashboardPost($f3) {
 		$user = $f3->get("user_obj");
 		if($f3->get("POST.action") == "add") {
@@ -98,6 +113,12 @@ class User extends \Controller {
 		return $themes;
 	}
 
+	/**
+	 * GET /user
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 */
 	public function account($f3, $params) {
 		$f3->set("title", $f3->get("dict.my_account"));
 		$f3->set("menuitem", "user");
@@ -106,6 +127,13 @@ class User extends \Controller {
 		$this->_render("user/account.html");
 	}
 
+	/**
+	 * POST /user
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function save($f3, $params) {
 		$f3 = \Base::instance();
 		$post = array_map("trim", $f3->get("POST"));
@@ -191,6 +219,13 @@ class User extends \Controller {
 		$this->_render("user/account.html");
 	}
 
+	/**
+	 * POST /user/avatar
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function avatar($f3, $params) {
 		$f3 = \Base::instance();
 
@@ -238,6 +273,13 @@ class User extends \Controller {
 		$f3->reroute("/user");
 	}
 
+	/**
+	 * GET /user/@username
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single($f3, $params) {
 		$this->_requireLogin();
 
@@ -309,6 +351,13 @@ class User extends \Controller {
 		return $tree;
 	}
 
+	/**
+	 * GET /user/@username/tree
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single_tree($f3, $params) {
 		$this->_requireLogin();
 
@@ -355,7 +404,7 @@ class User extends \Controller {
 
 			/**
 			 * Helper function for recursive tree rendering
-			 * @param   Issue $issue
+			 * @param   array $issue
 			 * @var     callable $renderTree This function, required for recursive calls
 			 */
 			$renderTree = function(&$issue, $level = 0) use(&$renderTree) {

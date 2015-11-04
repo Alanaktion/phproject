@@ -2,6 +2,15 @@
 
 namespace Model;
 
+/**
+ * Class Session
+ *
+ * @property int $id
+ * @property string $token
+ * @property string $ip
+ * @property int $user_id
+ * @property string $created
+ */
 class Session extends \Model {
 
 	protected
