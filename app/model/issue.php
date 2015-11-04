@@ -14,7 +14,7 @@ class Issue extends \Model {
 	 * Create and save a new issue
 	 * @param  array $data
 	 * @param  bool  $notify
-	 * @return Comment
+	 * @return Issue
 	 */
 	public static function create(array $data, $notify = true) {
 		// Normalize data
@@ -29,7 +29,7 @@ class Issue extends \Model {
 			}
 			if (empty($data["sprint_id"])) {
 				$sprint = new Sprint();
-				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $issue->due_date));
+				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $data["due_date"]));
 				$data["sprint_id"] = $sprint->id;
 			}
 		}
@@ -38,6 +38,7 @@ class Issue extends \Model {
 		}
 
 		// Create issue
+		/** @var Issue $item */
 		$item = parent::create($data);
 
 		// Send creation notifications
