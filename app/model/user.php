@@ -98,6 +98,7 @@ class User extends \Model {
 				return $this->_groupUsers;
 			}
 			$ug = new User\Group;
+			/** @var User\Group[] $users */
 			$users = $ug->find(array("group_id = ?", $this->id));
 			$user_ids = array();
 			foreach($users as $user) {
@@ -237,6 +238,7 @@ class User extends \Model {
 	 * Reassign assigned issues
 	 * @param  int $user_id
 	 * @return int Number of issues affected
+	 * @throws \Exception
 	 */
 	public function reassignIssues($user_id) {
 		if(!$this->id) {

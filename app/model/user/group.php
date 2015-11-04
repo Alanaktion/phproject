@@ -2,12 +2,21 @@
 
 namespace Model\User;
 
+/**
+ * Class Group
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $group_id
+ * @property int $manager
+ */
 class Group extends \Model {
 
 	protected $_table_name = "user_group";
 
 	/**
 	 * Get complete group list for user
+	 * @param int $user_id
 	 * @return array
 	 */
 	public function getUserGroups($user_id = 0) {
