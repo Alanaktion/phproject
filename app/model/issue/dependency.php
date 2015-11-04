@@ -2,6 +2,14 @@
 
 namespace Model\Issue;
 
+/**
+ * Class Dependency
+ *
+ * @property int $id
+ * @property int $issue_id
+ * @property int $dependency_id
+ * @property string $dependency_type
+ */
 class Dependency extends \Model {
 
 	protected $_table_name = "issue_dependency";

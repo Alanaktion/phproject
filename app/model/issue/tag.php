@@ -2,6 +2,13 @@
 
 namespace Model\Issue;
 
+/**
+ * Class Tag
+ *
+ * @property int $id
+ * @property string $tag
+ * @property int $issue_id
+ */
 class Tag extends \Model {
 
 	protected $_table_name = "issue_tag";

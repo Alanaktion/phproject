@@ -2,6 +2,16 @@
 
 namespace Model\Issue;
 
+/**
+ * Class Comment
+ *
+ * @property int $id
+ * @property int $issue_id
+ * @property int $user_id
+ * @property string $text
+ * @property int $file_id
+ * @property string $created_date
+ */
 class Comment extends \Model {
 
 	protected $_table_name = "issue_comment";
@@ -12,11 +22,13 @@ class Comment extends \Model {
 	 * @param  array $data
 	 * @param  bool  $notify
 	 * @return Comment
+	 * @throws \Exception
 	 */
 	public static function create(array $data, $notify = true) {
 		if(empty($data['text'])) {
 			throw new \Exception("Comment text cannot be empty.");
 		}
+		/** @var Comment $item */
 		$item = parent::create($data);
 		if($notify) {
 			$notification = \Helper\Notification::instance();
