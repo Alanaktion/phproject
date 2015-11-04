@@ -32,7 +32,7 @@ class User extends \Controller {
 	}
 
 	/**
-	 * User dashboard
+	 * GET /user/dashboard User dashboard
 	 *
 	 * @param \Base $f3
 	 * @param array $params
@@ -73,6 +73,8 @@ class User extends \Controller {
 	}
 
 	/**
+	 * POST /user/dashboard
+	 *
 	 * @param \Base $f3
 	 */
 	public function dashboardPost($f3) {
@@ -112,6 +114,8 @@ class User extends \Controller {
 	}
 
 	/**
+	 * GET /user
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 */
@@ -123,6 +127,13 @@ class User extends \Controller {
 		$this->_render("user/account.html");
 	}
 
+	/**
+	 * POST /user
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function save($f3, $params) {
 		$f3 = \Base::instance();
 		$post = array_map("trim", $f3->get("POST"));
@@ -208,6 +219,13 @@ class User extends \Controller {
 		$this->_render("user/account.html");
 	}
 
+	/**
+	 * POST /user/avatar
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function avatar($f3, $params) {
 		$f3 = \Base::instance();
 
@@ -256,6 +274,8 @@ class User extends \Controller {
 	}
 
 	/**
+	 * GET /user/@username
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -332,6 +352,8 @@ class User extends \Controller {
 	}
 
 	/**
+	 * GET /user/@username/tree
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
