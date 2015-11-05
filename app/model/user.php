@@ -148,8 +148,18 @@ class User extends \Model {
 			$date = date("Y-m-d", \Helper\View::instance()->utc2local());
 		}
 
+		// Get group owner IDs
+		$f3 = \Base::instance();
+		$ownerIds = array($this->id);
+		$groups = new \Model\User\Group();
+		foreach($groups->find(array("user_id = ?", $this->id)) as $r) {
+			$ownerIds[] = $r->group_id;
+		}
+		$ownerStr = implode(",", $ownerIds);
+
+		// Find issues assigned to user or user's group
 		$issue = new Issue;
-		$issues = $issue->find(array("due_date = ? AND owner_id = ? AND closed_date IS NULL AND deleted_date IS NULL", $date, $this->id), array("order" => "priority DESC"));
+		$issues = $issue->find(array("due_date = ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date), array("order" => "priority DESC"));
 
 		if($issues) {
 			$notif = new \Helper\Notification;
