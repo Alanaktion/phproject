@@ -11,6 +11,9 @@ class Admin extends \Controller {
 		\Base::instance()->set("menuitem", "admin");
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function index($f3) {
 		$f3->set("title", $f3->get("dict.administration"));
 		$f3->set("menuitem", "admin");
@@ -41,11 +44,18 @@ class Admin extends \Controller {
 		$this->_render("admin/index.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function config($f3) {
 		$f3->set("title", $f3->get("dict.configuration"));
 		$this->_render("admin/config.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
 	public function config_post_saveattribute($f3) {
 		$attribute = str_replace("-", ".", $f3->get("POST.attribute"));
 		$value = $f3->get("POST.value");
@@ -91,11 +101,18 @@ class Admin extends \Controller {
 		$this->_printJson($response);
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function plugins($f3) {
 		$f3->set("title", $f3->get("dict.plugins"));
 		$this->_render("admin/plugins.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 */
 	public function plugin_single($f3, $params) {
 		$this->_userId = $this->_requireAdmin(5);
 		$plugins = $f3->get("plugins");
@@ -108,6 +125,9 @@ class Admin extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function users($f3) {
 		$f3->set("title", $f3->get("dict.users"));
 
@@ -118,6 +138,9 @@ class Admin extends \Controller {
 		$this->_render("admin/users.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function deleted_users($f3) {
 		$f3->set("title", $f3->get("dict.users"));
 
@@ -127,6 +150,11 @@ class Admin extends \Controller {
 		$this->_render("admin/users/deleted.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function user_edit($f3, $params) {
 		$f3->set("title", $f3->get("dict.edit_user"));
 
@@ -146,12 +174,19 @@ class Admin extends \Controller {
 
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function user_new($f3) {
 		$f3->set("title", $f3->get("dict.new_user"));
 		$f3->set("rand_color", sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF)));
 		$this->_render("admin/users/edit.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
 	public function user_save($f3) {
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
@@ -230,6 +265,11 @@ class Admin extends \Controller {
 		$f3->reroute("/admin/users#" . $user->id);
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function user_delete($f3, $params) {
 		$user = new \Model\User();
 		$user->load($params["id"]);
@@ -258,6 +298,11 @@ class Admin extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function user_undelete($f3, $params) {
 		$user = new \Model\User();
 		$user->load($params["id"]);
@@ -276,6 +321,9 @@ class Admin extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function groups($f3) {
 		$f3->set("title", $f3->get("dict.groups"));
 
@@ -299,6 +347,9 @@ class Admin extends \Controller {
 		$this->_render("admin/groups.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function group_new($f3) {
 		$f3->set("title", $f3->get("dict.groups"));
 
@@ -316,6 +367,11 @@ class Admin extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function group_edit($f3, $params) {
 		$f3->set("title", $f3->get("dict.groups"));
 
@@ -332,6 +388,11 @@ class Admin extends \Controller {
 		$this->_render("admin/groups/edit.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function group_delete($f3, $params) {
 		$group = new \Model\User();
 		$group->load($params["id"]);
@@ -343,6 +404,10 @@ class Admin extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
 	public function group_ajax($f3) {
 		if(!$f3->get("AJAX")) {
 			$f3->error(400);
@@ -385,6 +450,11 @@ class Admin extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function group_setmanager($f3, $params) {
 		$db = $f3->get("db.instance");
 
@@ -403,6 +473,9 @@ class Admin extends \Controller {
 		$f3->reroute("/admin/groups/" . $group->id);
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function sprints($f3) {
 		$f3->set("title", $f3->get("dict.sprints"));
 
@@ -412,6 +485,9 @@ class Admin extends \Controller {
 		$this->_render("admin/sprints.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function sprint_new($f3) {
 		$f3->set("title", $f3->get("dict.sprints"));
 
@@ -443,6 +519,11 @@ class Admin extends \Controller {
 		$this->_render("admin/sprints/new.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function sprint_edit($f3, $params) {
 		$f3->set("title", $f3->get("dict.sprints"));
 

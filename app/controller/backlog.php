@@ -10,6 +10,10 @@ class Backlog extends \Controller {
 		$this->_userId = $this->_requireLogin();
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 */
 	public function index($f3, $params) {
 
 		if(empty($params["filter"])) {
@@ -88,7 +92,10 @@ class Backlog extends \Controller {
 	}
 
 
-
+	/**
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
 	public function edit($f3) {
 		$post = $f3->get("POST");
 		$issue = new \Model\Issue();
@@ -98,6 +105,9 @@ class Backlog extends \Controller {
 		$this->_printJson($issue);
 	}
 
+	/**
+	 * @param \Base $f3
+	 */
 	public function index_old($f3) {
 
 		$sprint_model = new \Model\Sprint();

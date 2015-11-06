@@ -47,6 +47,11 @@ class Files extends \Controller {
 		return $size;
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function thumb($f3, $params) {
 		$this->_useFileCache();
 		$cache = \Cache::instance();
@@ -156,6 +161,11 @@ class Files extends \Controller {
 
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function avatar($f3, $params) {
 
 		// Ensure proper content-type for JPEG images
@@ -184,6 +194,11 @@ class Files extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function preview($f3, $params) {
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);
@@ -212,6 +227,11 @@ class Files extends \Controller {
 		$f3->reroute("/files/{$file->id}/{$file->filename}");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function file($f3, $params) {
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);
