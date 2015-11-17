@@ -58,8 +58,8 @@ var Taskboard = {
 
 		// Initialize add buttons on stories
 		$(".add-task").click(function(e) {
-			Taskboard.modalAdd($(this).parents('.tb-row').data("story-id"));
 			e.preventDefault();
+			Taskboard.modalAdd($(this).parents('.tb-row').data("story-id"));
 		});
 
 		// Handle add/edit form submission

@@ -258,33 +258,7 @@
 							</div>
 						</form>
 						<repeat group="{{ @comments }}" value="{{ @comment }}">
-							<div class="media" id="c-{{ @comment.id }}" data-id="{{ @comment.id }}">
-								<a class="pull-left" href="{{ @BASE }}/user/{{ @comment.user_username }}">
-									<img class="profile-picture media-object img-rounded" src="{{ @BASE }}/avatar/48-{{ @comment.user_id }}.png" alt>
-								</a>
-								<div class="media-body">
-									<p class="media-heading clearfix">
-										<a href="{{ @BASE }}/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
-										<check if="{{ @user.role == 'admin' || @user.rank >= 3 }}">
-											<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
-										</check>
-									</p>
-									<div class="tex">{{ @comment.text, array('hashtags' => false) | parseText }}</div>
-									<check if="{{ @comment.file_id }}">
-										<check if="{{ @comment.file_deleted_date }}">
-											<true>
-												<div><b>{{ @dict.attached_file }}:</b> <span style="text-decoration: line-through;">{{ @comment.file_filename | esc }}</span> <span class="text-danger">[{{ @dict.deleted }}]</span></div>
-											</true>
-											<false>
-												<div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="{{ @BASE }}/files/{{ @comment.file_id }}/{{ @comment.file_filename | esc }}" target="_blank">{{ @comment.file_filename | esc }}</a></div>
-											</false>
-										</check>
-									</check>
-									<p class="text-muted">
-										<small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@comment.created_date))) }}</small>
-									</p>
-								</div>
-							</div>
+							<include href="blocks/issue-comment.html" />
 						</repeat>
 					</div>
 				</div>
@@ -438,7 +412,7 @@ $(function() {
 
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
-			$li = $(this).parents('li');
+			var $li = $(this).parents('li');
 			$.post(BASE + '/issues/{{ @issue.id }}', {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
@@ -451,16 +425,18 @@ $(function() {
 			e.preventDefault();
 		});
 		$('#add-watcher').submit(function(e) {
-			$this = $(this);
+			var $this = $(this);
 			$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
 
-			$select = $this.find('select');
-			$('<li />')
-				.attr('data-user-id', $select.val())
-				.html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $select.children('option:selected').text())
-				.appendTo('#watchers-list');
+			var $select = $this.find('select');
+			if(!$('#watchers-list li').filter('[data-user-id=' + $select.val() + ']').length) {
+				$('<li />')
+					.attr('data-user-id', $select.val())
+					.html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $select.children('option:selected').text())
+					.appendTo('#watchers-list');
 
-			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) + 1);
+				$('#watchers-badge').text(parseInt($('#watchers-badge').text()) + 1);
+			}
 
 			e.preventDefault();
 		});
@@ -528,7 +504,7 @@ $(function() {
 
 	// Add/remove dependencies from tab
 	$('#dependencies').on('click', 'a.delete', function(e) {
-		$tr = $(this).parents('tr');
+		var $tr = $(this).parents('tr');
 		$.post(BASE + '/issues/{{ @issue.id }}', {
 			action: 'remove_dependency',
 			id: $tr.data('id')
@@ -542,7 +518,7 @@ $(function() {
 		e.preventDefault();
 	});
 	$('#dependencies').on('submit', 'form', function(e) {
-		$this = $(this);
+		var $this = $(this);
 		$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
 
 		e.preventDefault();

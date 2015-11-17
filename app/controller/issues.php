@@ -104,6 +104,9 @@ class Issues extends \Controller {
 			case "created":
 				$filter_str .= " ORDER BY created_date {$ascdesc}, priority DESC, due_date DESC ";
 				break;
+			case "due":
+				$filter_str .= " ORDER BY due_date {$ascdesc}, priority DESC";
+				break;
 			case "sprint":
 				$filter_str .= " ORDER BY sprint_start_date {$ascdesc}, priority DESC, due_date DESC ";
 				break;
@@ -390,7 +393,7 @@ class Issues extends \Controller {
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
-		$f3->set("title", $f3->get("dist.new_n", $f3->get("dict.issue")));
+		$f3->set("title", $f3->get("dict.new_n", $f3->get("dict.issues")));
 		$f3->set("menuitem", "new");
 		$this->_render("issues/new.html");
 	}
@@ -604,7 +607,7 @@ class Issues extends \Controller {
 			}
 
 		} else {
-			$f3->reroute("/issues/new/" . $post["type_id"]);
+			$f3->reroute("/issues/new/" . $f3->get("POST.type_id"));
 		}
 	}
 
@@ -629,9 +632,11 @@ class Issues extends \Controller {
 					$watching = new \Model\Issue\Watcher;
 					// Loads just in case the user is already a watcher
 					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
-					$watching->issue_id = $issue->id;
-					$watching->user_id = $post["user_id"];
-					$watching->save();
+					if(!$watching->id) {
+						$watching->issue_id = $issue->id;
+						$watching->user_id = $post["user_id"];
+						$watching->save();
+					}
 
 					if($f3->get("AJAX"))
 						return;
