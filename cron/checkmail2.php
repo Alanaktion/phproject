@@ -14,8 +14,7 @@ if($inbox === false) {
 	throw new Exception($err);
 }
 
-// @todo: replace search with 'ALL UNSEEN'
-$emails = imap_search($inbox,'SUBJECT "testing" SEEN SINCE "15 July 2015"');
+$emails = imap_search($inbox,'ALL UNSEEN');
 if(!$emails) {
 	exit;
 }
@@ -32,7 +31,7 @@ foreach($emails as $msg_number) {
 
 		// Handle plaintext
 		if($part->type === 0 && !trim($text)) {
-			$text = imap_fetchbody($inbox, $msg_number, $part_number);
+			$text = imap_fetchbody($inbox, $msg_number, $part_number + 1);
 
 			// Decode body
 			if($part->encoding == 4) {
@@ -88,9 +87,6 @@ foreach($emails as $msg_number) {
 				}
 			}
 
-			$bodystruct = imap_bodystruct($inbox, $msg_number, $part_number);
-			// print_r($bodystruct);
-
 			// Store attachment metadata
 			$attachments[] = array(
 				'part_number' => $part_number,
@@ -102,9 +98,6 @@ foreach($emails as $msg_number) {
 		}
 	}
 
-	echo $text;
-	exit;
-
 	$from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
 	$from_user = new \Model\User;
 	$from_user->load(array('email = ? AND deleted_date IS NULL', $from));
@@ -115,9 +108,9 @@ foreach($emails as $msg_number) {
 
 	$to_user = new \Model\User;
 	foreach($header->to as $to_email) {
-		$to = $to_email->mailbox . "@" . $to_email->host ;
-		$user->load(array('email = ? AND deleted_date IS NULL', $to));
-		if(!empty($user->id)) {
+		$to = $to_email->mailbox . "@" . $to_email->host;
+		$to_user->load(array('email = ? AND deleted_date IS NULL', $to));
+		if(!empty($to_user->id)) {
 			$owner = $to_user->id;
 			break;
 		} else {
@@ -153,12 +146,35 @@ foreach($emails as $msg_number) {
 			'description' => $text,
 			'author_id' => $from_user->id,
 			'owner_id' => $owner,
+			'status' => 1,
 			'type_id' => 1
 		));
 		$log->write("Created issue {$issue->id}");
 	}
 
-	// @todo: Add other recipients as watchers
+	// Add other recipients as watchers
+	if(!empty($header->cc) || count($header->to) > 1) {
+		if(!empty($header->cc)) {
+			$watchers = array_merge($header->to, $header->cc);
+		} else {
+			$watchers = $header->to;
+		}
+
+		foreach($watchers as $more_people) {
+			$watcher_email = $more_people->mailbox . '@' . $more_people->host;
+			$watcher = new \Model\User();
+			$watcher->load(array('email=? AND deleted_date IS NULL', $watcher_email));
+
+			if(!empty($watcher->id)){
+				$watching = new \Model\Issue\Watcher();
+				// Loads just in case the user is already a watcher
+				$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $watcher->id));
+				$watching->issue_id = $issue->id;
+				$watching->user_id =  $watcher->id;
+				$watching->save();
+			}
+		}
+	}
 
 	foreach($attachments as $item) {
 
@@ -168,7 +184,7 @@ foreach($emails as $msg_number) {
 		}
 
 		// Load file contents
-		$data = imap_fetchbody($inbox, $msg_number, $item['part_number']);
+		$data = imap_fetchbody($inbox, $msg_number, $item['part_number'] + 1);
 
 		// Decode contents
 		if($item['encoding'] == 4) {
@@ -181,6 +197,9 @@ foreach($emails as $msg_number) {
 		$dir = 'uploads/' . date('Y/m/');
 		$item['filename'] = preg_replace("/[^A-Z0-9._-]/i", "_", $item['filename']);
 		$disk_filename = $dir . time() . "_" . $item['filename'];
+		if(!is_dir($f3->get('ROOT') . '/' . $dir)) {
+			mkdir($f3->get('ROOT') . '/' . $dir, 0777, true);
+		}
 		file_put_contents($f3->get('ROOT') . '/' . $disk_filename, $data);
 
 		// @todo: Find a way to parse the Content-type header from the message
