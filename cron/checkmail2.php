@@ -7,7 +7,7 @@ if(!isset($imap["hostname"])) {
 	throw new Exception("No IMAP hostname specified in configuration");
 }
 
-$inbox = imap_open($imap['hostname'],$imap['username'],$imap['password'], OP_READONLY);
+$inbox = imap_open($imap['hostname'],$imap['username'],$imap['password']);
 if($inbox === false) {
 	$err = 'Cannot connect to IMAP: ' . imap_last_error();
 	$log->write($err);
