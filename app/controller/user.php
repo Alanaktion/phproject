@@ -147,7 +147,8 @@ class User extends \Controller {
 
 			// Update password
 			if($security->hash($post["old_pass"], $user->salt) == $user->password) {
-				if(strlen($post["new_pass"]) >= 6) {
+				$min = $f3->get("security.min_pass_len");
+				if(strlen($post["new_pass"]) >= $min) {
 					if($post["new_pass"] == $post["new_pass_confirm"]) {
 						$user->salt = $security->salt();
 						$user->password = $security->hash($post["new_pass"], $user->salt);
@@ -156,7 +157,7 @@ class User extends \Controller {
 						$f3->set("error", "New passwords do not match");
 					}
 				} else {
-					$f3->set("error", "New password must be at least 6 characters.");
+					$f3->set("error", "New password must be at least {$min} characters.");
 				}
 			} else {
 				$f3->set("error", "Current password entered is not valid.");

@@ -42,15 +42,6 @@
 						<label class="control-label" for="site-logo">{{ @dict.logo }}</label>
 						<input type="text" class="form-control input-sm" name="site-logo" placeholder="(Site Name)" value="{{ @site.logo }}">
 					</div>
-					<div class="form-group">
-						<div class="checkbox">
-							<label>
-								<!-- TODO: Set checked attribute on current value, rather than default -->
-								<input type="checkbox" name="site-public_registration" value="1" {{ @site.public_registration ? 'checked' : '' }}>
-								{{ @dict.allow_public_registration }}
-							</label>
-						</div>
-					</div>
 				</div>
 
 				<div role="tabpanel" class="tab-pane fade" id="config-parse">
@@ -131,11 +122,50 @@
 							<label class="control-label" for="imap-password">{{ @dict.password }}</label>
 							<input type="text" class="form-control input-sm" name="imap-password" value="{{ str_repeat('*', strlen(@imap.password)) }}">
 						</div>
+						<div class="form-group">
+							<label class="control-label" for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
+							<textarea class="form-control input-sm" name="mail-truncate_lines" rows="4">{{ implode("\n", is_array(@mail.truncate_lines) ? @mail.truncate_lines : \Base::instance()->split(@mail.truncate_lines)) | esc }}</textarea>
+						</div>
 						<p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.imap_settings_note, '<code>checkmail.php</code>' | format }}</p>
 					</fieldset>
 				</div>
 
 				<div role="tabpanel" class="tab-pane fade" id="config-advanced">
+					<h3>{{ @dict.security }}</h3>
+					<div class="form-group">
+						<label class="control-label">{{ @dict.min_pass_len }}</label>
+						<input type="number" class="form-control input-sm" name="security-min_pass_len" value="{{ @security.min_pass_len }}">
+					</div>
+					<div class="form-group">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" name="security-block_ccs" value="1" {{ @security.block_ccs ? 'checked' : '' }}>
+								{{ @dict.censor_credit_card_numbers }}
+							</label>
+						</div>
+					</div>
+
+					<h3>{{ @dict.general }}</h3>
+					<div class="form-group">
+						<label class="control-label">{{ @dict.cookie_expiration }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @JAR.expire }}">
+					</div>
+					<div class="form-group">
+						<label class="control-label">{{ @dict.max_upload_size }}</label>
+						<input type="text" class="form-control input-sm" value="{{ @files.maxsize }}">
+					</div>
+					<div class="form-group">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" name="site-public_registration" value="1" {{ @site.public_registration ? 'checked' : '' }}>
+								{{ @dict.allow_public_registration }}
+							</label>
+						</div>
+					</div>
+
+					<hr>
+
+					<h3>{{ @dict.core }}</h3>
 					<div class="form-group">
 						<label class="control-label">{{ @dict.debug_level }}</label>
 						<input type="text" class="form-control input-sm" value="{{ @DEBUG }}" readonly>
@@ -145,24 +175,8 @@
 						<input type="text" class="form-control input-sm" value="{{ @CACHE }}" readonly>
 					</div>
 					<div class="form-group">
-						<label class="control-label">{{ @dict.cookie_expiration }}</label>
-						<input type="text" class="form-control input-sm" value="{{ @JAR.expire }}" readonly>
-					</div>
-					<div class="form-group">
-						<label class="control-label">{{ @dict.max_upload_size }}</label>
-						<input type="text" class="form-control input-sm" value="{{ @files.maxsize }}" readonly>
-					</div>
-					<div class="form-group">
-						<label class="control-label">{{ @dict.censor_credit_card_numbers }}</label>
-						<input type="text" class="form-control input-sm" value="{{ @security.block_ccs ? 'Enabled' : 'Disabled' }}" readonly>
-					</div>
-					<div class="form-group">
 						<label class="control-label">{{ @dict.demo_user }}</label>
 						<input type="text" class="form-control input-sm" value="{{ @site.demo ?: 'Disabled' }}" readonly>
-					</div>
-					<div class="form-group">
-						<label class="control-label" for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
-						<textarea class="form-control input-sm" rows="4" readonly>{{ implode("\n", is_array(@mail.truncate_lines) ? @mail.truncate_lines : \Base::instance()->split(@mail.truncate_lines)) | esc }}</textarea>
 					</div>
 					<p class="alert alert-info">{{ @dict.advanced_config_note,'<code>config</code>' | format }}</p>
 				</div>

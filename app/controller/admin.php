@@ -198,8 +198,9 @@ class Admin extends \Controller {
 				$this->_render("admin/users/edit.html");
 				return;
 			}
-			if(strlen($f3->get("POST.password")) < 6) {
-				$f3->set("error", "Passwords must be at least 6 characters");
+			$min = $f3->get("security.min_pass_len");
+			if(strlen($f3->get("POST.password")) < $min) {
+				$f3->set("error", "Passwords must be at least {$min} characters");
 				$this->_render("admin/users/edit.html");
 				return;
 			}
