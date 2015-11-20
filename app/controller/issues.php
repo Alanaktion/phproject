@@ -125,7 +125,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Display a sortable, filterable issue list
-	 * @param  Base  $f3
+	 * @param  \Base  $f3
 	 * @param  array $params
 	 */
 	public function index($f3, $params) {
@@ -203,7 +203,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Update a list of issues
-	 * @param  Base  $f3
+	 * @param  \Base  $f3
 	 * @param  array $params from form
 	 */
 	public function bulk_update($f3, $params) {
@@ -283,7 +283,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Export a list of issues
-	 * @param  Base  $f3
+	 * @param  \Base  $f3
 	 * @param  array $params
 	 */
 	public function export($f3, $params) {
@@ -333,7 +333,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Export a single issue
-	 * @param  Base  $f3
+	 * @param  \Base  $f3
 	 * @param  array $params
 	 */
 	public function export_single($f3, $params) {
@@ -342,7 +342,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Create a new issue
-	 * @param  Base  $f3
+	 * @param  \Base  $f3
 	 * @param  array $params
 	 */
 	public function add($f3, $params) {
@@ -389,6 +389,10 @@ class Issues extends \Controller {
 		$this->_render("issues/edit.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 */
 	public function add_selecttype($f3, $params) {
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
@@ -398,6 +402,11 @@ class Issues extends \Controller {
 		$this->_render("issues/new.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function edit($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($f3->get("PARAMS.id"));
@@ -434,6 +443,11 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function close($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($f3->get("PARAMS.id"));
@@ -454,6 +468,11 @@ class Issues extends \Controller {
 		$f3->reroute("/issues/" . $issue->id);
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function reopen($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($f3->get("PARAMS.id"));
@@ -474,6 +493,11 @@ class Issues extends \Controller {
 		$f3->reroute("/issues/" . $issue->id);
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function copy($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($f3->get("PARAMS.id"));
@@ -495,7 +519,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Save an updated issue
-	 * @return Issue
+	 * @return \Model\Issue
 	 */
 	protected function _saveUpdate() {
 		$f3 = \Base::instance();
@@ -578,13 +602,17 @@ class Issues extends \Controller {
 
 	/**
 	 * Create a new issue from $_POST
-	 * @return Issue
+	 * @return \Model\Issue
 	 */
 	protected function _saveNew() {
 		$f3 = \Base::instance();
 		return \Model\Issue::create($f3->get("POST"), !!$f3->get("POST.notify"));
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 */
 	public function save($f3, $params) {
 		if($f3->get("POST.id")) {
 
@@ -611,6 +639,11 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single($f3, $params) {
 		$issue = new \Model\Issue\Detail;
 		$issue->load(array("id=?", $f3->get("PARAMS.id")));
@@ -738,6 +771,10 @@ class Issues extends \Controller {
 
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 */
 	public function single_history($f3, $params) {
 		// Build updates array
 		$updates_array = array();
@@ -758,6 +795,11 @@ class Issues extends \Controller {
 		));
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single_related($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
@@ -783,6 +825,10 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 */
 	public function single_watchers($f3, $params) {
 		$watchers = new \Model\Custom("issue_watcher_user");
 		$f3->set("watchers", $watchers->find(array("issue_id = ?", $params["id"])));
@@ -795,6 +841,11 @@ class Issues extends \Controller {
 		));
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single_dependencies($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
@@ -813,6 +864,11 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single_delete($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
@@ -825,6 +881,11 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single_undelete($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
@@ -837,6 +898,11 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function comment_save($f3, $params) {
 		$post = $f3->get("POST");
 		if(empty($post["text"])) {
@@ -872,6 +938,11 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function comment_delete($f3, $params) {
 		$this->_requireAdmin();
 		$comment = new \Model\Issue\Comment;
@@ -880,6 +951,11 @@ class Issues extends \Controller {
 		$this->_printJson(array("id" => $f3->get("POST.id")) + $comment->cast());
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function file_delete($f3, $params) {
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
@@ -887,6 +963,11 @@ class Issues extends \Controller {
 		$this->_printJson($file->cast());
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function file_undelete($f3, $params) {
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
@@ -895,6 +976,10 @@ class Issues extends \Controller {
 		$this->_printJson($file->cast());
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 */
 	public function search($f3, $params) {
 		$query = "%" . $f3->get("GET.q") . "%";
 		if(preg_match("/^#([0-9]+)$/", $f3->get("GET.q"), $matches)){
@@ -942,6 +1027,11 @@ class Issues extends \Controller {
 		$this->_render("issues/search.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function upload($f3, $params) {
 		$user_id = $this->_userId;
 
@@ -1018,7 +1108,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Project Overview action
-	 * @param  Base $f3
+	 * @param  \Base $f3
 	 * @param  array $params
 	 */
 	public function project_overview($f3, $params) {
@@ -1037,7 +1127,7 @@ class Issues extends \Controller {
 
 		/**
 		 * Helper function to get a percentage of completed issues and some totals across the entire tree
-		 * @param   Issue $issue
+		 * @param   \Model\Issue $issue
 		 * @var     callable $completeCount This function, required for recursive calls
 		 * @return  array
 		 */
@@ -1076,7 +1166,7 @@ class Issues extends \Controller {
 
 		/**
 		 * Helper function for recursive tree rendering
-		 * @param   Issue $issue
+		 * @param   \Model\Issue $issue
 		 * @var     callable $renderTree This function, required for recursive calls
 		 */
 		$renderTree = function(\Model\Issue &$issue, $level = 0) use(&$renderTree) {
@@ -1112,7 +1202,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Load all matching issues
-	 * @param  Base $f3
+	 * @param  \Base $f3
 	 */
 	public function parent_ajax($f3) {
 		if(!$f3->get("AJAX")) {

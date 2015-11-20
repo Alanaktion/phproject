@@ -75,6 +75,9 @@ class Taskboard extends \Controller {
 
 	/**
 	 * View a taskboard
+	 *
+	 * @param \Base $f3
+	 * @param array $params
 	 */
 	public function index($f3, $params) {
 
@@ -190,6 +193,9 @@ class Taskboard extends \Controller {
 
 	/**
 	 * Load the burndown chart data
+	 *
+	 * @param \Base $f3
+	 * @param array $params
 	 */
 	public function burndown($f3, $params) {
 		$sprint = new \Model\Sprint;
@@ -308,6 +314,9 @@ class Taskboard extends \Controller {
 
 	/**
 	 * Add a new task
+	 *
+	 * @param \Base $f3
+	 * @param array $params
 	 */
 	public function add($f3, $params) {
 		$post = $f3->get("POST");
@@ -322,6 +331,9 @@ class Taskboard extends \Controller {
 
 	/**
 	 * Update an existing task
+	 *
+	 * @param \Base $f3
+	 * @param array $params
 	 */
 	public function edit($f3, $params) {
 		$post = $f3->get("POST");
