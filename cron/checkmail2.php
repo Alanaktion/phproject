@@ -194,13 +194,13 @@ foreach($emails as $msg_number) {
 		}
 
 		// Store file
-		$dir = 'uploads/' . date('Y/m/');
+		$dir = '/uploads/' . date('Y/m/');
 		$item['filename'] = preg_replace("/[^A-Z0-9._-]/i", "_", $item['filename']);
 		$disk_filename = $dir . time() . "_" . $item['filename'];
-		if(!is_dir($f3->get('ROOT') . '/' . $dir)) {
-			mkdir($f3->get('ROOT') . '/' . $dir, 0777, true);
+		if(!is_dir(dirname(__DIR__) . '/' . $dir)) {
+			mkdir(dirname(__DIR__) . '/' . $dir, 0777, true);
 		}
-		file_put_contents($f3->get('ROOT') . '/' . $disk_filename, $data);
+		file_put_contents(dirname(__DIR__) . '/' . $disk_filename, $data);
 
 		// @todo: Find a way to parse the Content-type header from the message
 		$file = \Model\Issue\File::create(array(

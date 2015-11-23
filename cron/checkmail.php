@@ -209,7 +209,7 @@ if($emails) {
 						 */
 
 						// don't forget to set an Upload directory, and make it writable!
-						$f3->set("UPLOADS",'uploads/'.date("Y")."/".date("m")."/");
+						$f3->set("UPLOADS",dirname(__DIR__).'uploads/'.date("Y")."/".date("m")."/");
 						if(!is_dir($f3->get("UPLOADS"))) {
 							mkdir($f3->get("UPLOADS"), 0777, true);
 						}
