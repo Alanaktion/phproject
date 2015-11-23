@@ -194,7 +194,7 @@ foreach($emails as $msg_number) {
 		}
 
 		// Store file
-		$dir = '/uploads/' . date('Y/m/');
+		$dir = 'uploads/' . date('Y/m/');
 		$item['filename'] = preg_replace("/[^A-Z0-9._-]/i", "_", $item['filename']);
 		$disk_filename = $dir . time() . "_" . $item['filename'];
 		if(!is_dir(dirname(__DIR__) . '/' . $dir)) {
