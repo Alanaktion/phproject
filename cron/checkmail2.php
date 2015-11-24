@@ -15,9 +15,6 @@ if($inbox === false) {
 }
 
 $emails = imap_search($inbox,'ALL UNSEEN');
-if(!$emails) {
-	exit;
-}
 
 foreach($emails as $msg_number) {
 	$header = imap_headerinfo($inbox, $msg_number);
@@ -218,3 +215,5 @@ foreach($emails as $msg_number) {
 	}
 
 }
+
+imap_close($inbox);
