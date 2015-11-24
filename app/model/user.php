@@ -24,6 +24,14 @@ namespace Model;
  */
 class User extends \Model {
 
+	const
+		RANK_GUEST = 0,
+		RANK_CLIENT = 1,
+		RANK_USER = 2,
+		RANK_MANAGER = 3,
+		RANK_ADMIN = 4,
+		RANK_SUPER = 5;
+
 	protected
 		$_table_name = "user",
 		$_groupUsers = null;
