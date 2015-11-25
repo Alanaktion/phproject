@@ -8,7 +8,7 @@
 			<check if="{{ @menuitem == 'index' }}">
 				&gt; <a href="{{ @BASE }}/issues/{{ @comment.issue_id }}">{{ @issue.name }}</a>
 			</check>
-			<check if="{{ (@user.role == 'admin' || @user.rank >= 3) && @menuitem != 'index' }}">
+			<check if="{{ (@user.role == 'admin' || @user.rank >= \Model\User::RANK_MANAGER) && @menuitem != 'index' }}">
 				<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
 			</check>
 		</p>

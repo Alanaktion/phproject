@@ -258,7 +258,7 @@ class Admin extends \Controller {
 			// Don't allow user to change own rank
 			$user->rank = $f3->get("POST.rank");
 		}
-		$user->role = $user->rank < 4 ? 'user' : 'admin';
+		$user->role = $user->rank < \Model\User::RANK_ADMIN ? 'user' : 'admin';
 		$user->task_color = ltrim($f3->get("POST.task_color"), "#");
 
 		// Save user

@@ -14,7 +14,7 @@
 					<th>{{ @dict.name }}</th>
 					<th>{{ @dict.cols.author }}</th>
 					<th>{{ @dict.version }}</th>
-					<check if="{{ @user.rank >= 5 }}">
+					<check if="{{ @user.rank >= \Model\User::RANK_SUPER }}">
 						<th></th>
 					</check>
 				</tr>
@@ -27,7 +27,7 @@
 						<td>{{ @meta.author | esc }}</td>
 						<td>{{ @meta.version }}</td>
 						<td>
-							<check if="{{ @user.rank >= 5 && is_callable(array(@plugin, '_admin')) }}">
+							<check if="{{ @user.rank >= \Model\User::RANK_SUPER && is_callable(array(@plugin, '_admin')) }}">
 								<a href="{{ @BASE }}/admin/plugins/{{ @key }}">Details</a>
 							</check>
 						</td>

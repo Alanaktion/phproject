@@ -649,7 +649,7 @@ class Issues extends \Controller {
 		$issue->load(array("id=?", $f3->get("PARAMS.id")));
 		$user = $f3->get("user_obj");
 
-		if(!$issue->id || ($issue->deleted_date && !($user->role == 'admin' || $user->rank >= 3 || $issue->author_id == $user->id))) {
+		if(!$issue->id || ($issue->deleted_date && !($user->role == 'admin' || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id))) {
 			$f3->error(404);
 			return;
 		}
@@ -873,7 +873,7 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$user = $f3->get("user_obj");
-		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
+		if($user->role == "admin" || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id) {
 			$issue->delete();
 			$f3->reroute("/issues/{$issue->id}");
 		} else {
@@ -890,7 +890,7 @@ class Issues extends \Controller {
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$user = $f3->get("user_obj");
-		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
+		if($user->role == "admin" || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id) {
 			$issue->restore();
 			$f3->reroute("/issues/{$issue->id}");
 		} else {

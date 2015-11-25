@@ -78,7 +78,7 @@
 			<a id="btn-edit" href="{{ @BASE }}/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
 				<span class="fa fa-pencil"></span>&ensp;{{ @dict.edit }}
 			</a>
-			<check if="{{ @user.role == 'admin' || @user.rank >= 3 || @user.id == @issue.author_id }}">
+			<check if="{{ @user.role == 'admin' || @user.rank >= \Model\User::RANK_MANAGER || @user.id == @issue.author_id }}">
 				<a href="{{ @BASE }}/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
 					<span class="fa fa-remove"></span><span class="hidden-xs">&ensp;{{ @dict.delete }}</span>
 				</a>
