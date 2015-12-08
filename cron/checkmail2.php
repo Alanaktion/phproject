@@ -120,8 +120,8 @@ foreach($emails as $msg_number) {
 
 	// Get issue instance
 	$issue = new \Model\Issue;
-	if(!empty($matches[0])) {
-		$issue->load(intval($matches[0]));
+	if(!empty($matches[1])) {
+		$issue->load(intval($matches[1]));
 	}
 	if(!$issue->id) {
 		$subject = trim(preg_replace("/^((Re|Fwd?):\s)*/i", "", $header->subject));
