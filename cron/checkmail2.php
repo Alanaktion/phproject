@@ -95,6 +95,16 @@ foreach($emails as $msg_number) {
 		}
 	}
 
+	// Truncate text to prevent long chains from being included
+	$truncate = $f3->get("mail.truncate_lines");
+	if(is_string($truncate)) {
+		$truncate = $f3->split($truncate);
+	}
+	foreach ($truncate as $truncator) {
+		$parts = explode($truncator, $text);
+		$text = $parts[0];
+	}
+
 	$from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
 	$from_user = new \Model\User;
 	$from_user->load(array('email = ? AND deleted_date IS NULL', $from));
