@@ -24,7 +24,7 @@ class Notification extends \Prefab {
 		if($text) {
 			// Generate message breaking hash
 			$hash = md5(date("r"));
-			$headers .= "Content-type: multipart/alternative; boundary=\"$hash\"\r\n";
+			$headers .= "Content-Type: multipart/alternative; boundary=\"$hash\"\r\n";
 
 			// Normalize line endings
 			$body = str_replace("\r\n", "\n", $body);
@@ -32,20 +32,25 @@ class Notification extends \Prefab {
 			$text = str_replace("\r\n", "\n", $text);
 			$text = str_replace("\n", "\r\n", $text);
 
+			// escape first char dots per line
+			$body = preg_replace('/^\.(.+)/m','..$1',
+					quoted_printable_encode($body));
+			$text = preg_replace('/^\.(.+)/m','..$1',
+					quoted_printable_encode($text));
+
 			// Build final message
 			$msg = "--$hash\r\n";
-			$msg .= "Content-type: text/plain; charset=utf-8\r\n";
+			$msg .= "Content-Type: text/plain; charset=utf-8\r\n";
 			$msg .= "Content-Transfer-Encoding: quoted-printable\r\n";
-			$msg .="\r\n" . quoted_printable_encode($text) . "\r\n";
+			$msg .= "\r\n" . $text . "\r\n";
 			$msg .= "--$hash\r\n";
-			$msg .= "Content-type: text/html; charset=utf-8\r\n";
+			$msg .= "Content-Type: text/html; charset=utf-8\r\n";
 			$msg .= "Content-Transfer-Encoding: quoted-printable\r\n";
-			$msg .="\r\n" . quoted_printable_encode($body) . "\r\n";
-			$msg .= "--$hash\r\n";
+			$msg .= "\r\n" . $body . "\r\n";
 
 			$body = $msg;
 		} else {
-			$headers .= "Content-type: text/html; charset=utf-8\r\n";
+			$headers .= "Content-Type: text/html; charset=utf-8\r\n";
 		}
 
 		return mail($to, $subject, $body, $headers);
