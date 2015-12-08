@@ -48,7 +48,7 @@ class User extends \Controller {
 		}
 
 		// Load dashboard widget data
-		$allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments");
+		$allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments", "open_comments");
 		$helper = \Helper\Dashboard::instance();
 		foreach($dashboard as $pos=>$widgets) {
 			foreach($widgets as $widget) {

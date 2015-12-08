@@ -117,4 +117,20 @@ class Dashboard extends \Prefab {
 		return $comment->find(array("issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 15));
 	}
 
+	public function open_comments() {
+		$f3 = \Base::instance();
+
+		$issue = new \Model\Issue;
+		$ownerString = implode(",", $this->getOwnerIds());
+		$issues = $issue->find(array("(owner_id IN ($ownerString) OR author_id = ?) AND closed_date IS NULL", $f3->get("user.id")));
+		$ids = array();
+		foreach($issues as $item) {
+			$ids[] = $item->id;
+		}
+
+		$comment = new \Model\Issue\Comment\Detail;
+		$issueIds = implode(",", $ids);
+		return $comment->find(array("issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 15));
+	}
+
 }
