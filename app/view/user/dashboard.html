@@ -50,7 +50,7 @@
 						<div class="checkbox">
 							<label>
 								<input type="checkbox" name="widgets[]" value="{{ @widget }}">
-								{{ str_replace('_', ' ', @widget) }}
+								{{ isset(@dict[@widget]) ? @dict[@widget] : str_replace('_', ' ', @widget) }}
 							</label>
 						</div>
 					</repeat>
