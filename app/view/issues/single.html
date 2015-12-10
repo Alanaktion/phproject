@@ -88,7 +88,7 @@
 	<div class="row">
 		<div class="col-lg-5">
 			<div class="issue-head clearfix">
-				<img src="{{ @author->avatar(48) | esc }}" srcset="{{ @this_user->avatar(96) | esc }} 2x" class="profile-picture img-rounded" alt>
+				<img src="{{ @author->avatar(48) | esc }}" srcset="{{ @author->avatar(96) | esc }} 2x" class="profile-picture img-rounded" alt>
 				<p class="pull-left">
 					<check if="{{ @author.username }}">
 						<true>
