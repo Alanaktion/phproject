@@ -267,9 +267,13 @@ class User extends \Controller {
 
 		// Clear cached profile picture data
 		$cache = \Cache::instance();
+		// @1x
 		$cache->clear($f3->hash("GET /avatar/48/{$user->id}.png") . ".url");
 		$cache->clear($f3->hash("GET /avatar/96/{$user->id}.png") . ".url");
 		$cache->clear($f3->hash("GET /avatar/128/{$user->id}.png") . ".url");
+		// @2x
+		$cache->clear($f3->hash("GET /avatar/192/{$user->id}.png") . ".url");
+		$cache->clear($f3->hash("GET /avatar/256/{$user->id}.png") . ".url");
 
 		$f3->reroute("/user");
 	}

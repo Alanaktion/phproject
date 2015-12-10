@@ -23,7 +23,7 @@
 		<check if="{{ @issue.parent_id }}">
 			<p><small>Under: <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name | esc }}</a></small></p>
 		</check>
-		<img src="{{ @site.url }}avatar/48-{{ @file.user_id }}.png" alt style="float: left; margin-right: 10px;">
+		<img src="{{ @site.url }}avatar/48-{{ @file.user_id }}.png" srcset="{{ @site.url }}/avatar/96-{{ @file.user_id }}.png 2x" alt style="float: left; margin-right: 10px;">
 
 		<a href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" target="_blank">{{ @file.filename | esc }}</a>
 		({{ \Helper\View::instance()->formatFilesize(@file.filesize) }})

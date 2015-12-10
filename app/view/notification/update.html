@@ -23,7 +23,7 @@
 		<check if="{{ @issue.parent_id }}">
 			<p><small>Under: <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name | esc }}</a></small></p>
 		</check>
-		<img src="{{ @site.url }}avatar/48-{{ @update.user_id }}.png" alt="" style="float: left; margin-right: 10px;">
+		<img src="{{ @site.url }}avatar/48-{{ @update.user_id }}.png" srcset="{{ @site.url }}/avatar/96-{{ @update.user_id }}.png 2x" alt style="float: left; margin-right: 10px;">
 		<div style="float: left">
 			<ul style="padding: 0;">
 				<repeat group="{{ @changes }}" value="{{ @change }}">
