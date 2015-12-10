@@ -382,7 +382,7 @@ $(function() {
 					.after(
 						'<div class="media" id="c-' + data.id + '" data-id="' + data.id + '">' +
 							'<a class="pull-left" href="{{ @BASE }}/user/' + data.user_username + '">' +
-								'<img src="{{ @user_obj->avatar(48) | esc }}" srcset="{{ @this_user->avatar(96) | esc }} 2x" class="media-object profile-picture img-rounded" alt>' +
+								'<img src="{{ @user_obj->avatar(48) | esc }}" srcset="{{ @user_obj->avatar(96) | esc }} 2x" class="media-object profile-picture img-rounded" alt>' +
 							'</a>' +
 							'<div class="media-body">' +
 								'<p class="media-heading"><a href="{{ @BASE }}/user/' + data.user_username + '">' + data.user_name + '</a></p>' +
