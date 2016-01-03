@@ -216,6 +216,12 @@ select[multiple] {
 	margin-left: 10px;
 }
 
+.modal-footer .checkbox-container-inline {
+	display: inline-block;
+	padding-top: 5px;
+	margin: 0;
+}
+
 textarea.form-control {
 	padding-right: 5px;
 }

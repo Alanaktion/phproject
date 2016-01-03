@@ -918,7 +918,7 @@ class Issues extends \Controller {
 			"issue_id" => $post["issue_id"],
 			"user_id" => $this->_userId,
 			"text" => trim($post["text"])
-		));
+		), !!$f3->get("POST.notify"));
 
 		if($f3->get("AJAX")) {
 			$this->_printJson(
@@ -1095,10 +1095,11 @@ class Issues extends \Controller {
 			$comment->created_date = $this->now();
 			$comment->file_id = $f3->get('file_id');
 			$comment->save();
-
-			$notification = \Helper\Notification::instance();
-			$notification->issue_comment($issue->id, $comment->id);
-		} elseif($newfile->id) {
+			if(!!$f3->get("POST.notify")) {
+				$notification = \Helper\Notification::instance();
+				$notification->issue_comment($issue->id, $comment->id);
+			}
+		} elseif($newfile->id && !!$f3->get("POST.notify")) {
 			$notification = \Helper\Notification::instance();
 			$notification->issue_file($issue->id, $f3->get("file_id"));
 		}
