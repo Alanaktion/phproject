@@ -94,8 +94,8 @@ class Admin extends \Controller {
 		}
 
 		if(!$response["error"]) {
-			$repsonse["attribute"] = $attribute;
-			$repsonse["value"] = $value;
+			$response["attribute"] = $attribute;
+			$response["value"] = $value;
 		}
 
 		$this->_printJson($response);

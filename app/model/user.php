@@ -157,7 +157,6 @@ class User extends \Model {
 		}
 
 		// Get group owner IDs
-		$f3 = \Base::instance();
 		$ownerIds = array($this->id);
 		$groups = new \Model\User\Group();
 		foreach($groups->find(array("user_id = ?", $this->id)) as $r) {

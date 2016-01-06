@@ -209,7 +209,6 @@ foreach($emails as $msg_number) {
 		}
 		file_put_contents(dirname(__DIR__) . '/' . $disk_filename, $data);
 
-		// @todo: Find a way to parse the Content-type header from the message
 		$file = \Model\Issue\File::create(array(
 			"issue_id" => $issue->id,
 			"user_id" => $from_user->id,

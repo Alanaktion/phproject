@@ -1,4 +1,8 @@
 <?php
+/*
+	checkmail2.php is now preferred over this script! You should use it instead if possible.
+*/
+
 require_once "base.php";
 $log = new \Log("checkmail.log");
 
