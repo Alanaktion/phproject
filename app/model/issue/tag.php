@@ -28,7 +28,7 @@ class Tag extends \Model {
 	 * @return array
 	 */
 	public function cloud() {
-		return $this->db->exec("SELECT tag, COUNT(*) AS freq FROM {$this->_table_name} GROUP BY tag");
+		return $this->db->exec("SELECT tag, COUNT(*) AS freq FROM {$this->_table_name} GROUP BY tag ORDER BY freq DESC");
 	}
 
 	/**
