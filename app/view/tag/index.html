@@ -23,8 +23,8 @@
 				<table class="table table-compact table-striped tag-list">
 					<thead>
 						<tr>
-							<th>Tag</th>
-							<th>Count</th>
+							<th data-sort="string">{{ @dict.name }}</th>
+							<th data-sort="int">{{ @dict.count }}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -46,6 +46,12 @@
 			</div>
 		</div>
 		<include href="blocks/footer.html" />
+		<script src="{{ @BASE }}/minify/js/stupidtable.min.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function() {
+			$('.table').stupidtable();
+		});
+		</script>
 	</div>
 </body>
 </html>
