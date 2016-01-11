@@ -1,8 +1,9 @@
-$(document).ready(function() {
+/* globals $ Intercom */
+$(function() {
 
 	// Tooltips and popovers
-	$(".has-tooltip").tooltip();
-	$(".has-popover").popover({delay: {show: 500, hide: 100}});
+	$('.has-tooltip').tooltip();
+	$('.has-popover').popover({delay: {show: 500, hide: 100}});
 
 	// Correctly scroll to a given ID, accounting for fixed navigation
 	if(window.location.hash) {
@@ -22,6 +23,7 @@ $(document).ready(function() {
 		} else {
 			$('.issue-list tbody tr').removeClass('active');
 		}
+		e.stopPropagation();
 	});
 	$('.issue-list tbody tr input').click(function(e) {
 		var checked = $(this).prop('checked');
@@ -36,7 +38,7 @@ $(document).ready(function() {
 		e.stopPropagation();
 	});
 	$('.issue-list tbody tr').click(function(e) {
-		if(e.which != 1) {
+		if(e.which !== 1) {
 			return;
 		}
 		var $checkbox = $(this).find('input'),
@@ -64,7 +66,7 @@ $(document).ready(function() {
 	});
 
 	// Add double click on issue listing
-	$('.issue-list tbody tr').dblclick(function(e) {
+	$('.issue-list tbody tr').dblclick(function() {
 		var id = $(this).data('id');
 		if(id) {
 			self.location = BASE + '/issues/' + id;
@@ -72,31 +74,31 @@ $(document).ready(function() {
 	});
 
 	// Auto-submit filters when select box is changed
-	$('.issue-filters').on('change', 'select, input', function(e) {
+	$('.issue-filters').on('change', 'select, input', function() {
 		$(this).parents('form').submit();
 	});
 
 	// Submit issue sorting options
-	$(".issue-sort").on("click", function(e) {
-		$form = $(this).parents('form');
+	$('.issue-sort').on('click', function(e) {
+		var $form = $(this).parents('form');
 		e.preventDefault();
 
-		if($form.find("input[name=orderby]").val() == $(this).attr('id')) {
-			if($form.find("input[name=ascdesc]").val() == "desc") {
-				$form.find("input[name=ascdesc]").val("asc");
+		if($form.find('input[name=orderby]').val() == $(this).attr('id')) {
+			if($form.find('input[name=ascdesc]').val() == 'desc') {
+				$form.find('input[name=ascdesc]').val('asc');
 			} else {
-				$form.find("input[name=ascdesc]").val("desc");
+				$form.find('input[name=ascdesc]').val('desc');
 			}
 		} else {
-			$form.find("input[name=orderby]").val($(this).attr('id'));
-			$form.find("input[name=ascdesc]").val("desc");
+			$form.find('input[name=orderby]').val($(this).attr('id'));
+			$form.find('input[name=ascdesc]').val('desc');
 		}
 		$(this).parents('form').submit();
 	});
 
 	// Show Mac hotkeys on Macs
 	if(navigator.platform.indexOf('Mac') >= 0) {
-		var $modalBody = $("#modal-hotkeys .modal-body");
+		var $modalBody = $('#modal-hotkeys .modal-body');
 		$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8997;').replace(/ctrl\+/g, '&#8984;').replace(/enter/g, '&#8617;').replace(/shift\+/g, '&#8679;'));
 	}
 
@@ -130,24 +132,24 @@ $(document).ready(function() {
 					break;
 				case 87: // Watch/unwatch issue
 					if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						$("#watch-btn").click();
+						$('#watch-btn').click();
 					}
 					break;
 				case 69: // Edit issue
 					if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						$("#btn-edit").click();
+						$('#btn-edit').click();
 					}
 					break;
 				case 67:
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $("#btn-issue-close").length) { // Close issue
-						window.location = $("#btn-issue-close").attr("href");
+					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $('#btn-issue-close').length) { // Close issue
+						window.location = $('#btn-issue-close').attr('href');
 					} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Comment on issue
-						$("#comment_textarea").focus();
+						$('#comment_textarea').focus();
 					}
 					break;
 				case 82:
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $("#btn-issue-reopen").length) { // Reopen issue
-						window.location = $("#btn-issue-reopen").attr("href");
+					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $('#btn-issue-reopen').length) { // Reopen issue
+						window.location = $('#btn-issue-reopen').attr('href');
 					} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Reload
 						window.location.reload();
 					}

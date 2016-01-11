@@ -1,13 +1,16 @@
+/* globals $ */
 function oSize(obj) {
 	var size = 0,
 		key;
 	for (key in obj) {
-		if (obj.hasOwnProperty(key)) size++;
+		if (obj.hasOwnProperty(key)) {
+			size++;
+		}
 	}
 	return size;
 }
 
-Burndown = {
+var Burndown = {
 	chart: {},
 	initialized: false,
 	data: {
@@ -15,35 +18,35 @@ Burndown = {
 		datasets: []
 	},
 	targetVelocity: {
-		fillColor: "rgba(0,0,0,0)",
-		strokeColor: "#9b59b6",
-		pointColor: "#9b59b6",
-		pointStrokeColor: "#9b59b6",
-		pointHighlightFill: "#fff",
-		pointHighlightStroke: "#9b59b6",
+		fillColor: 'rgba(0,0,0,0)',
+		strokeColor: '#9b59b6',
+		pointColor: '#9b59b6',
+		pointStrokeColor: '#9b59b6',
+		pointHighlightFill: '#fff',
+		pointHighlightStroke: '#9b59b6',
 		data: []
 	},
 	actualVelocity: {
-		fillColor: "rgba(42,204,113,0.1)",
-		strokeColor: "#2ecc71",
-		pointColor: "#2ecc71",
-		pointStrokeColor: "#2ecc71",
-		pointHighlightFill: "#fff",
-		pointHighlightStroke: "#2ecc71",
+		fillColor: 'rgba(42,204,113,0.1)',
+		strokeColor: '#2ecc71',
+		pointColor: '#2ecc71',
+		pointStrokeColor: '#2ecc71',
+		pointHighlightFill: '#fff',
+		pointHighlightStroke: '#2ecc71',
 		data: []
 	},
 	hoursDay: {
-		fillColor: "rgba(52,152,219,0.1)",
-		strokeColor: "#3498db",
-		pointColor: "#3498db",
-		pointStrokeColor: "#3498db",
-		pointHighlightFill: "#fff",
-		pointHighlightStroke: "#3498db",
+		fillColor: 'rgba(52,152,219,0.1)',
+		strokeColor: '#3498db',
+		pointColor: '#3498db',
+		pointStrokeColor: '#3498db',
+		pointHighlightFill: '#fff',
+		pointHighlightStroke: '#3498db',
 		data: []
 	},
 	days: 0,
 	initialHours: 0,
-	canvasId: "burndown",
+	canvasId: 'burndown',
 	init: function(data) {
 		if(!data) {
 			return false;
@@ -61,7 +64,7 @@ Burndown = {
 		Burndown.data.datasets.push(Burndown.hoursDay);
 
 		// Generate chart
-		var ctx = document.getElementById(Burndown.canvasId).getContext("2d");
+		var ctx = document.getElementById(Burndown.canvasId).getContext('2d');
 		Burndown.chart = new Chart(ctx).Line(Burndown.data, Burndown.options);
 
 		Burndown.initialized = true;
@@ -74,8 +77,8 @@ Burndown = {
 
 		// Set burndown days
 		Burndown.days = oSize(data);
-		var i = 0;
-		sum = 0;
+		var i = 0,
+			sum = 0;
 
 		// Strip down to initial daty and set initial hours
 		$.each(data, function(key, val) {
@@ -121,7 +124,7 @@ Burndown = {
 		animation: false,
 		responsive: true,
 		maintainAspectRatio: false,
-		scaleLineColor: "rgba(127,127,127,.2)",
-		scaleGridLineColor : "rgba(127,127,127,.1)"
+		scaleLineColor: 'rgba(127,127,127,.2)',
+		scaleGridLineColor : 'rgba(127,127,127,.1)'
 	}
 };

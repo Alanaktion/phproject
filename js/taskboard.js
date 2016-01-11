@@ -120,7 +120,7 @@ var Taskboard = {
 		$("#task-dialog input#dueDate").val(date);
 		$("#task-dialog").find("#dueDate").datepicker({
 			format: 'mm/dd/yyyy',
-			language: datepicker_language,
+			language: datepickerLanguage,
 			autoclose: true
 		});
 		Taskboard.setOptionByVal("#task-dialog", user);
@@ -140,7 +140,7 @@ var Taskboard = {
 		$("#task-dialog").modal("show");
 		$("#task-dialog").find("#dueDate").datepicker({
 			format: 'mm/dd/yyyy',
-			language: datepicker_language,
+			language: datepickerLanguage,
 			autoclose: true
 		});
 	},
