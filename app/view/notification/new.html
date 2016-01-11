@@ -31,7 +31,7 @@
 			<check if="{{ @issue.hours_total }}">
 				<li><b>Planned Hours:</b> {{ @issue.hours_total }}</li>
 			</check>
-			<check if="{{ @strtotime(@issue.due_date) }}">
+			<check if="{{ strtotime(@issue.due_date) }}">
 				<li><b>Due Date:</b> {{ date("D, M j, Y", @this->utc2local(@issue.due_date)) }}</li>
 			</check>
 		</ul>
