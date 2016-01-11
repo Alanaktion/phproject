@@ -47,6 +47,7 @@ class Notification extends \Prefab {
 			$msg .= "Content-Type: text/html; charset=utf-8\r\n";
 			$msg .= "Content-Transfer-Encoding: quoted-printable\r\n";
 			$msg .= "\r\n" . $body . "\r\n";
+			$msg .= "--$hash--\r\n";
 
 			$body = $msg;
 		} else {
