@@ -275,6 +275,9 @@ class View extends \Template {
 	 * @return int
 	 */
 	function utc2local($timestamp = null) {
+		if($timestamp && !is_numeric($timestamp)) {
+			$timestamp = @strtotime($timestamp);
+		}
 		if(!$timestamp) {
 			$timestamp = time();
 		}

@@ -13,7 +13,7 @@
 						{{ @update.user_name }}
 					</false>
 				</check>
-				on {{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@update.created_date))) }}
+				on {{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@update.created_date)) }}
 				<check if="{{ @update.notify }}">
 					&ensp;<span class="fa fa-envelope text-success" title="{{ @dict.notifications_sent }}"></span>
 				</check>
