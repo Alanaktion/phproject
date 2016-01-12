@@ -1,10 +1,6 @@
 /* jslint browser: true */
 /* globals BASE */
 
-$(function() {
-	Backlog.init();
-});
-
 function cleanId(identifier, id) {
 	return (id.replace(identifier + '_', ''));
 }
@@ -24,7 +20,7 @@ var Backlog = {
 	projectReceived: 0,
 	init: function() {
 		Backlog.makeSortable('.sortable');
-		$('.sortable').on('dblclick', 'li', function(e) {
+		$('.sortable').on('dblclick', 'li', function() {
 			window.open(BASE + '/issues/' + $(this).data('id'));
 		});
 	},
@@ -117,3 +113,7 @@ var Backlog = {
 		Backlog.makeSortable('.sortable'); //redo this so it is disabled
 	}
 };
+
+$(function() {
+	Backlog.init();
+});

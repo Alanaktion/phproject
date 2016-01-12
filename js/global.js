@@ -162,9 +162,6 @@ $(function() {
 		}
 	});
 
-	// Start session helper
-	Session.init();
-
 });
 
 
@@ -222,3 +219,8 @@ var Session = {
 	}
 
 };
+
+$(function() {
+	// Start session helper
+	Session.init();
+});

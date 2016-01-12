@@ -1,9 +1,5 @@
 /*jslint browser: true, ass: true, debug: true, eqeq: true, newcap: true, nomen: true, plusplus: true, unparam: true, sloppy: true, sub: true, vars: true, white: true */
 
-$(function() {
-	Taskboard.init();
-});
-
 var Taskboard = {
 	updateURL: BASE + '/taskboard/edit', // AJAX Update Route (id is added dynamically)
 	addURL: BASE + '/taskboard/add', // AJAX Add Route
@@ -328,42 +324,6 @@ function isNumber(n) {
 	return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-function checkLength(o, n, min, max) {
-	if (o.val().length > max || o.val().length < min) {
-		if(o.parents(".form-group").length) {
-			o.parents(".form-group").addClass("has-error");
-		} else {
-			o.addClass("has-error");
-		}
-		return false;
-	} else {
-		if(o.parents(".form-group").length) {
-			o.parents(".form-group").removeClass("has-error");
-		} else {
-			o.removeClass("has-error");
-		}
-	}
-	return true;
-}
-
-function checkRegexp(o, regexp, n) {
-	if (!(regexp.test(o.val()))) {
-		if(o.parents(".form-group").length) {
-			o.parents(".form-group").addClass("has-error");
-		} else {
-			o.addClass("has-error");
-		}
-		return false;
-	} else {
-		if(o.parents(".form-group").length) {
-			o.parents(".form-group").removeClass("has-error");
-		} else {
-			o.removeClass("has-error");
-		}
-	}
-	return true;
-}
-
 $.fn.serializeObject = function() {
 	var o = {};
 	var a = this.serializeArray();
@@ -379,3 +339,7 @@ $.fn.serializeObject = function() {
 	});
 	return o;
 };
+
+$(function() {
+	Taskboard.init();
+});

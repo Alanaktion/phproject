@@ -77,11 +77,10 @@ var Burndown = {
 
 		// Set burndown days
 		Burndown.days = oSize(data);
-		var i = 0,
-			sum = 0;
 
 		// Strip down to initial daty and set initial hours
-		$.each(data, function(key, val) {
+		var i = 0;
+		$.each(data, function() {
 			if (i === 0) {
 				Burndown.initialHours = this.remaining;
 			} else {
