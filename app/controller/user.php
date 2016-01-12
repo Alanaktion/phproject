@@ -35,10 +35,9 @@ class User extends \Controller {
 	 * GET /user/dashboard User dashboard
 	 *
 	 * @param \Base $f3
-	 * @param array $params
 	 * @throws \Exception
 	 */
-	public function dashboard($f3, $params) {
+	public function dashboard($f3) {
 		$dashboard = $f3->get("user_obj")->option("dashboard");
 		if(!$dashboard) {
 			$dashboard = array(
@@ -50,7 +49,7 @@ class User extends \Controller {
 		// Load dashboard widget data
 		$allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments", "open_comments");
 		$helper = \Helper\Dashboard::instance();
-		foreach($dashboard as $pos=>$widgets) {
+		foreach($dashboard as $widgets) {
 			foreach($widgets as $widget) {
 				if(is_callable(array($helper, $widget))) {
 					$f3->set($widget, $helper->$widget());
@@ -117,9 +116,8 @@ class User extends \Controller {
 	 * GET /user
 	 *
 	 * @param \Base $f3
-	 * @param array $params
 	 */
-	public function account($f3, $params) {
+	public function account($f3) {
 		$f3->set("title", $f3->get("dict.my_account"));
 		$f3->set("menuitem", "user");
 		$f3->set("languages", $this->_languages);
@@ -131,10 +129,9 @@ class User extends \Controller {
 	 * POST /user
 	 *
 	 * @param \Base $f3
-	 * @param array $params
 	 * @throws \Exception
 	 */
-	public function save($f3, $params) {
+	public function save($f3) {
 		$f3 = \Base::instance();
 		$post = array_map("trim", $f3->get("POST"));
 
@@ -224,10 +221,9 @@ class User extends \Controller {
 	 * POST /user/avatar
 	 *
 	 * @param \Base $f3
-	 * @param array $params
 	 * @throws \Exception
 	 */
-	public function avatar($f3, $params) {
+	public function avatar($f3) {
 		$f3 = \Base::instance();
 
 		$user = new \Model\User();

@@ -316,9 +316,8 @@ class Taskboard extends \Controller {
 	 * Add a new task
 	 *
 	 * @param \Base $f3
-	 * @param array $params
 	 */
-	public function add($f3, $params) {
+	public function add($f3) {
 		$post = $f3->get("POST");
 		$post['sprint_id'] = $post['sprintId'];
 		$post['name'] = $post['title'];
@@ -333,9 +332,8 @@ class Taskboard extends \Controller {
 	 * Update an existing task
 	 *
 	 * @param \Base $f3
-	 * @param array $params
 	 */
-	public function edit($f3, $params) {
+	public function edit($f3) {
 		$post = $f3->get("POST");
 		$issue = new \Model\Issue();
 		$issue->load($post["taskId"]);
