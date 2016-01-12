@@ -275,10 +275,10 @@ var Taskboard = {
 			type: 'POST',
 			url: Taskboard.updateURL + '/' + taskId,
 			data: data,
-			success: function(data, textStatus, jqXHR) {
+			success: function() {
 				Taskboard.unBlock(taskId);
 			},
-			error: function(jqXHR, textStatus, errorThrown) {
+			error: function() {
 				Taskboard.unBlock(taskId);
 				Taskboard.showError(taskId);
 				$('#task_' + taskId).draggable('option', 'disabled', true);
@@ -292,10 +292,10 @@ var Taskboard = {
 			type: 'POST',
 			url: Taskboard.updateURL + '/' + taskId,
 			data: data,
-			success: function(data, textStatus, jqXHR) {
+			success: function() {
 				Taskboard.unBlock(taskId);
 			},
-			error: function(jqXHR, textStatus, errorThrown) {
+			error: function() {
 				Taskboard.unBlock(taskId);
 				Taskboard.showError(taskId);
 				$('#task_' + taskId).draggable('option', 'disabled', true);
@@ -309,13 +309,13 @@ var Taskboard = {
 			type: 'POST',
 			url: Taskboard.addURL,
 			data: data,
-			success: function(data, textStatus, jqXHR) {
+			success: function() {
 				Taskboard.newUnBlock(taskId);
 				$(card).find('.task-id').html('<a href="/issues/' + data.taskId + '" target="_blank">' + data.taskId + '</a>');
 				$(card).attr('id', 'task_' + data.taskId);
 				Taskboard.makeDraggable(card);
 			},
-			error: function(jqXHR, textStatus, errorThrown) {
+			error: function() {
 				Taskboard.newUnBlock(taskId);
 				Taskboard.showError(taskId);
 				$(card).draggable('option', 'disabled', true);
