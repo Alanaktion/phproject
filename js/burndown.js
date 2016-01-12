@@ -1,15 +1,4 @@
 /* globals $ */
-function oSize(obj) {
-	var size = 0,
-		key;
-	for (key in obj) {
-		if (obj.hasOwnProperty(key)) {
-			size++;
-		}
-	}
-	return size;
-}
-
 var Burndown = {
 	chart: {},
 	initialized: false,
@@ -76,7 +65,7 @@ var Burndown = {
 		}
 
 		// Set burndown days
-		Burndown.days = oSize(data);
+		Burndown.days = Object.keys(data).length;
 
 		// Strip down to initial daty and set initial hours
 		var i = 0;

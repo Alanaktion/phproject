@@ -1,4 +1,4 @@
-/* globals $ Intercom */
+/* globals $ Intercom BASE */
 $(function() {
 
 	// Tooltips and popovers

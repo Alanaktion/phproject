@@ -1,5 +1,5 @@
 /* jslint browser: true */
-/* globals BASE */
+/* globals $ BASE */
 
 function cleanId(identifier, id) {
 	return (id.replace(identifier + '_', ''));

@@ -1,4 +1,4 @@
-/* globals $ */
+/* globals $ datepickerLanguage */
 $(function() {
 	$('#bulk-submit').click(function() {
 		$('#form1 :input[isacopy]').remove();
