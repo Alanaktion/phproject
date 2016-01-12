@@ -1,5 +1,5 @@
 /*jslint browser: true, ass: true, debug: true, eqeq: true, newcap: true, nomen: true, plusplus: true, unparam: true, sloppy: true, sub: true, vars: true, white: true */
-/* globals $ BASE */
+/* globals $ BASE datepickerLanguage */
 
 function isNumber(n) {
 	return !isNaN(parseFloat(n)) && isFinite(n);
@@ -125,7 +125,7 @@ var Taskboard = {
 			hours = $(data).find('.hours').text().trim(),
 			date = $(data).find('.dueDate').text().trim(),
 			priority = $(data).find('.priority').data('val'),
-			repeat_cycle = $(data).find('.repeat_cycle').text();
+			repeatCycle = $(data).find('.repeat_cycle').text();
 
 		$('#task-dialog input#taskId').val(taskId);
 		$('#task-dialog input#title').val(title);
@@ -133,7 +133,7 @@ var Taskboard = {
 		$('#task-dialog input#hours').val(hours);
 		$('#task-dialog input#hours_spent').val('');
 		$('#task-dialog input#comment').val('');
-		$('#task-dialog select#repeat_cycle').val(repeat_cycle);
+		$('#task-dialog select#repeat_cycle').val(repeatCycle);
 		$('#task-dialog input#dueDate').val(date);
 		$('#task-dialog').find('#dueDate').datepicker({
 			format: 'mm/dd/yyyy',
