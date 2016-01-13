@@ -107,6 +107,10 @@ class Dashboard extends \Prefab {
 		$issue = new \Model\Issue;
 		$ownerString = implode(",", $this->getOwnerIds());
 		$issues = $issue->find(array("owner_id IN ($ownerString) OR author_id = ?", $f3->get("user.id")));
+		if(!$issues) {
+			return array();
+		}
+
 		$ids = array();
 		foreach($issues as $item) {
 			$ids[] = $item->id;
@@ -123,6 +127,10 @@ class Dashboard extends \Prefab {
 		$issue = new \Model\Issue;
 		$ownerString = implode(",", $this->getOwnerIds());
 		$issues = $issue->find(array("(owner_id IN ($ownerString) OR author_id = ?) AND closed_date IS NULL", $f3->get("user.id")));
+		if(!$issues) {
+			return array();
+		}
+
 		$ids = array();
 		foreach($issues as $item) {
 			$ids[] = $item->id;
