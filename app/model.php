@@ -105,7 +105,7 @@ abstract class Model extends \DB\SQL\Mapper {
 		} elseif(is_array($filter)) {
 			return parent::load($filter, $options, $ttl);
 		}
-		throw new Exception("$filter must be either int or array.");
+		throw new Exception("\$filter must be either int or array.");
 	}
 
 	/**

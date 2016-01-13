@@ -19,10 +19,10 @@
 
 		/* Reference images within <base> context */
 		#taskboard .completed .spinner {
-			background-image: url(img/taskboard/burn.gif);
+			background-image: url({{ @BASE }}/img/taskboard/burn.gif);
 		}
 		#taskboard .spinner {
-			background-image: url(img/ajax-loader.gif);
+			background-image: url({{ @BASE }}/img/ajax-loader.gif);
 		}
 		</style>
 	</check>
@@ -197,7 +197,7 @@
 								</div>
 								<div class="form-group">
 									<label for="description">{{ @dict.cols.description }}</label>
-									<textarea name="description" id="description" class="form-control input-sm" rows="8"></textarea>
+									<textarea name="description" id="description" class="form-control input-sm" rows="12"></textarea>
 								</div>
 							</div>
 							<div class="col-md-5">
@@ -309,7 +309,7 @@
 	<check if="{{ @user_obj->date_picker()->js }}">
 	<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
 	<script>
-		var datepicker_language='{{ @user_obj->date_picker()->language }}';
+		var datepickerLanguage='{{ @user_obj->date_picker()->language }}';
 	</script>
 	</check>
 	<script src="{{ @BASE }}/js/chart.js"></script>

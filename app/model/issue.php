@@ -2,6 +2,29 @@
 
 namespace Model;
 
+/**
+ * Class Issue
+ *
+ * @property int $id
+ * @property int $status
+ * @property int $type_id
+ * @property string $name
+ * @property string $description
+ * @property int $parent_id
+ * @property int $author_id
+ * @property int $owner_id
+ * @property int $priority
+ * @property float $hours_total
+ * @property float $hours_remaining
+ * @property float $hours_spent
+ * @property string $created_date
+ * @property string $closed_date
+ * @property string $deleted_date
+ * @property string $start_date
+ * @property string $due_date
+ * @property string $repeat_cycle
+ * @property int $sprint_id
+ */
 class Issue extends \Model {
 
 	protected
@@ -14,7 +37,7 @@ class Issue extends \Model {
 	 * Create and save a new issue
 	 * @param  array $data
 	 * @param  bool  $notify
-	 * @return Comment
+	 * @return Issue
 	 */
 	public static function create(array $data, $notify = true) {
 		// Normalize data
@@ -29,7 +52,7 @@ class Issue extends \Model {
 			}
 			if (empty($data["sprint_id"])) {
 				$sprint = new Sprint();
-				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $issue->due_date));
+				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $data["due_date"]));
 				$data["sprint_id"] = $sprint->id;
 			}
 		}
@@ -38,6 +61,7 @@ class Issue extends \Model {
 		}
 
 		// Create issue
+		/** @var Issue $item */
 		$item = parent::create($data);
 
 		// Send creation notifications
@@ -323,7 +347,7 @@ class Issue extends \Model {
 		} else {
 
 			// Set closed date if status is closed
-			if(!$this->closed_date) {
+			if(!$this->closed_date && $this->status) {
 				$status = new Issue\Status;
 				$status->load($this->status);
 				if($status->closed) {
@@ -333,9 +357,9 @@ class Issue extends \Model {
 
 		}
 
+		$return = empty($issue) ? parent::save() : $issue;
 		$this->saveTags();
-
-		return empty($issue) ? parent::save() : $issue;
+		return $return;
 	}
 
 	/**

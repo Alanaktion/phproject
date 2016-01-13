@@ -2,7 +2,35 @@
 
 namespace Model;
 
+/**
+ * Class User
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $email
+ * @property string $name
+ * @property string $password
+ * @property string $salt
+ * @property string $role
+ * @property int $rank
+ * @property string $task_color
+ * @property string $theme
+ * @property string $language
+ * @property string $avatar_filename
+ * @property string $options
+ * @property string $api_key
+ * @property string $created_date
+ * @property string $deleted_date
+ */
 class User extends \Model {
+
+	const
+		RANK_GUEST = 0,
+		RANK_CLIENT = 1,
+		RANK_USER = 2,
+		RANK_MANAGER = 3,
+		RANK_ADMIN = 4,
+		RANK_SUPER = 5;
 
 	protected
 		$_table_name = "user",
@@ -78,6 +106,7 @@ class User extends \Model {
 				return $this->_groupUsers;
 			}
 			$ug = new User\Group;
+			/** @var User\Group[] $users */
 			$users = $ug->find(array("group_id = ?", $this->id));
 			$user_ids = array();
 			foreach($users as $user) {
@@ -127,8 +156,17 @@ class User extends \Model {
 			$date = date("Y-m-d", \Helper\View::instance()->utc2local());
 		}
 
+		// Get group owner IDs
+		$ownerIds = array($this->id);
+		$groups = new \Model\User\Group();
+		foreach($groups->find(array("user_id = ?", $this->id)) as $r) {
+			$ownerIds[] = $r->group_id;
+		}
+		$ownerStr = implode(",", $ownerIds);
+
+		// Find issues assigned to user or user's group
 		$issue = new Issue;
-		$issues = $issue->find(array("due_date = ? AND owner_id = ? AND closed_date IS NULL AND deleted_date IS NULL", $date, $this->id), array("order" => "priority DESC"));
+		$issues = $issue->find(array("due_date = ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date), array("order" => "priority DESC"));
 
 		if($issues) {
 			$notif = new \Helper\Notification;
@@ -217,6 +255,7 @@ class User extends \Model {
 	 * Reassign assigned issues
 	 * @param  int $user_id
 	 * @return int Number of issues affected
+	 * @throws \Exception
 	 */
 	public function reassignIssues($user_id) {
 		if(!$this->id) {

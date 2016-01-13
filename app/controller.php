@@ -7,7 +7,7 @@ abstract class Controller {
 	 * @param  int $rank
 	 * @return int|bool
 	 */
-	protected function _requireLogin($rank = 1) {
+	protected function _requireLogin($rank = \Model\User::RANK_CLIENT) {
 		$f3 = \Base::instance();
 		if($id = $f3->get("user.id")) {
 			if($f3->get("user.rank") >= $rank) {
@@ -45,7 +45,7 @@ abstract class Controller {
 	 * @param  int $rank
 	 * @return int|bool
 	 */
-	protected function _requireAdmin($rank = 4) {
+	protected function _requireAdmin($rank = \Model\User::RANK_ADMIN) {
 		$id = $this->_requireLogin();
 
 		$f3 = \Base::instance();

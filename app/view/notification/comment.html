@@ -23,7 +23,7 @@
 		<check if="{{ @issue.parent_id }}">
 			<p><small>Under: <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name | esc }}</a></small></p>
 		</check>
-		<img src="{{ @site.url }}avatar/48-{{ @comment.user_id }}.png" alt style="float: left; margin-right: 10px;">
+		<img src="{{ @site.url }}avatar/48-{{ @comment.user_id }}.png" srcset="{{ @site.url }}/avatar/96-{{ @comment.user_id }}.png 2x" alt style="float: left; margin-right: 10px;">
 		<div style="float: left" class="tex">
 			{{ @comment.text | parseText }}
 		</div>
@@ -34,7 +34,7 @@
 	</div>
 	<div style="padding: 0 10px;">
 		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @site.url }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
-		<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@comment.created_date))) }}</small></span>
+		<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@comment.created_date)) }}</small></span>
 	</div>
 
 </body>

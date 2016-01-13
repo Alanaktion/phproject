@@ -114,10 +114,6 @@ foreach($pluginDir as $pluginName) {
 }
 $f3->set("plugins", $plugins);
 
-// register filter
-\Helper\View::instance()->filter('parseText','$this->parseText');
-\Helper\View::instance()->filter('formatFilesize','$this->formatFilesize');
-
 // Set up user session
 $user = new Model\User();
 $user->loadCurrent();

@@ -17,9 +17,11 @@ class Tag extends \Controller {
 	public function index($f3) {
 		$tag = new \Model\Issue\Tag;
 		$cloud = $tag->cloud();
+		$f3->set("list", $cloud);
 		shuffle($cloud);
-		$f3->set("title", $f3->get("dict.issue_tags"));
 		$f3->set("cloud", $cloud);
+
+		$f3->set("title", $f3->get("dict.issue_tags"));
 		$this->_render("tag/index.html");
 	}
 

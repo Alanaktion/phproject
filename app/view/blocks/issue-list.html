@@ -3,7 +3,7 @@
 <check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
 {~ @headings[] = 'closed' ~}
 </check>
-<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form">
+<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form" id="form-filter-issues">
 	<check if="{{ !empty(@heading_links_enabled) }}">
 		<input type="hidden" name="orderby" value="{{ (!empty(@GET.orderby) ? @GET.orderby : 'priority') | esc }}" />
 		<input type="hidden" name="ascdesc" value="{{ (!empty(@GET.ascdesc) ? @GET.ascdesc : 'desc') | esc }}" />
@@ -68,7 +68,7 @@
 						</select>
 					</td>
 					<td>
-						<input class="form-control input-sm" name="parent_id" value="{{ @@GET.parent_id | esc }}" />
+						<input class="form-control input-sm" name="parent_id" id="filter-input-parent-id" value="{{ @@GET.parent_id | esc }}" />
 					</td>
 					<td>
 						<select class="form-control input-sm" name="author_id">
@@ -119,8 +119,8 @@
 							<option value="">--</option>
 							<repeat group="{{ @sprints }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
-									<true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
-									<false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
+									<true><option value="{{ @item.id }}" selected>{{ date("M j, Y", @this->utc2local(@item.start_date)) }}</option></true>
+									<false><option value="{{ @item.id }}">{{ date("M j, Y", @this->utc2local(@item.start_date)) }}</option></false>
 								</check>
 							</repeat>
 						</select>
@@ -223,12 +223,12 @@
 							<td>{{ @item.owner_name | esc }}</td>
 						</false>
 					</check>
-					<td>{{ !empty(@item.sprint_start_date) ? date("n/j/y", strtotime(@item.sprint_start_date)) : "" }}</td>
+					<td>{{ !empty(@item.sprint_start_date) ? date("n/j/y", @this->utc2local(@item.sprint_start_date)) : "" }}</td>
 					<td>{{ ucwords(@item.repeat_cycle) ?: 'None' }}</td>
-					<td>{{ date("n/j/y", strtotime(@item.created_date)) }}</td>
-					<td>{{ !empty(@item.due_date) ? date("n/j/y", strtotime(@item.due_date)) : "" }}</td>
+					<td>{{ date("n/j/y", @this->utc2local(@item.created_date)) }}</td>
+					<td>{{ !empty(@item.due_date) ? date("n/j/y", @this->utc2local(@item.due_date)) : "" }}</td>
 					<check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
-						<td>{{ !empty(@item.closed_date) ? date("n/j/y", strtotime(@item.closed_date)) : "" }}</td>
+						<td>{{ !empty(@item.closed_date) ? date("n/j/y", @this->utc2local(@item.closed_date)) : "" }}</td>
 					</check>
 				</tr>
 			</repeat>
@@ -328,7 +328,7 @@
 										<option value="">{{ @dict.choose_option }}</option>
 										<option value="-1">{{ @dict.no_sprint }}</option>
 										<repeat group="{{ @sprints }}" value="{{ @item }}">
-											<option value="{{ @item.id }}" >{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+											<option value="{{ @item.id }}" >{{ @item.name }} {{ date('n/j', @this->utc2local(@item.start_date)) }}-{{ date('n/j', @this->utc2local(@item.end_date)) }}</option>
 										</repeat>
 									</select>
 								</div>
@@ -365,3 +365,35 @@
 		</form>
 	</div>
 </check>
+<script src="{{ @BASE }}/minify/js/jquery-1.11.3.min.js,typeahead.jquery.js"></script>
+<script type="text/javascript">
+	$('input#filter-input-parent-id').typeahead({
+		classNames: {
+			menu: 'dropdown-menu'
+		}
+	}, {
+		async: true,
+		limit: 10,
+		source: function(query, syncResults, asyncResults) {
+			$.ajax({
+				url: BASE + '/issues/parent_ajax',
+				data: { 'q': query },
+				success: function(data) {
+					asyncResults(data.results);
+				},
+				dataType: 'json',
+				cache: false
+			});
+		},
+		display: function(element) {
+			return element.id;
+		},
+		templates: {
+			suggestion: function(element) {
+				return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
+			}
+		}
+	}).bind('typeahead:select', function() {
+		$('#form-filter-issues').submit();
+	});
+</script>

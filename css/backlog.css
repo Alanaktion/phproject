@@ -3,6 +3,7 @@
 	margin: 0;
 }
 #backlog li.list-group-item {
+	-webkit-box-sizing: content-box;
 	-moz-box-sizing: content-box;
 	box-sizing: content-box;
 	cursor: move;
@@ -42,7 +43,7 @@
 #backlog .panel-heading {
 	position: relative
 }
-#backlog .panel-heading > span.glyphicon {
+#backlog .panel-heading > .glyphicon {
 	font-size: 20px;
 	position: absolute;
 	right: 7px;

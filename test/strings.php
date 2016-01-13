@@ -8,12 +8,6 @@
 require_once "base.php";
 $test = new Test;
 
-$inflector = Helper\Inflector::instance();
-$test->expect(
-	$inflector->pluralize("task") == "tasks",
-	"Inflector->pluralize()"
-);
-
 $security = Helper\Security::instance();
 $test->expect(
 	$security->rot8($security->rot8("0af")) == "0af",
