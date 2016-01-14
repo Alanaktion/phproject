@@ -201,6 +201,17 @@ class Base extends \Helper\Diff\Renderer\Base
 	}
 
 	/**
+	 * Replace tabs in a single line with a number of spaces as defined by the tabSize option.
+	 *
+	 * @param string $line The containing tabs to convert.
+	 * @return string The line with the tabs converted to spaces.
+	 */
+	private function expandTabs($line)
+	{
+		return str_replace("\t", str_repeat(' ', $this->options['tabSize']), $line);
+	}
+
+	/**
 	 * Make a string containing HTML safe for output on a page.
 	 *
 	 * @param string $string The string.

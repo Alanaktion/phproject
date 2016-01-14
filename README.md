@@ -1,4 +1,4 @@
-[![Crowdin Chat](https://img.shields.io/badge/Gitter-Join%20Chat-3498DB.svg)](https://gitter.im/Alanaktion/phproject?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Gitter Chat](https://img.shields.io/badge/Gitter-Join%20Chat-3498DB.svg)](https://gitter.im/Alanaktion/phproject?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/2e382a33465448868ca2c0d4b1c937db)](https://www.codacy.com/app/alanaktion/phproject)
 ![Stability: Releasesd](https://img.shields.io/badge/stability-release-18BC9C.svg)
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/phproject/localized.png)](https://crowdin.com/project/phproject)

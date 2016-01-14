@@ -612,6 +612,18 @@ class Sequencematcher
 	}
 
 	/**
+	 * Helper function to calculate the number of matches for Ratio().
+	 *
+	 * @param int $sum The running total for the number of matches.
+	 * @param array $triple Array containing the matching block triple to add to the running total.
+	 * @return int The new running total for the number of matches.
+	 */
+	private function ratioReduce($sum, $triple)
+	{
+		return $sum + ($triple[count($triple) - 1]);
+	}
+
+	/**
 	 * Quickly return an upper bound ratio for the similarity of the strings.
 	 * This is quicker to compute than Ratio().
 	 *
@@ -700,4 +712,33 @@ class Sequencematcher
 		}
 	}
 
+	/**
+	 * Sort an array by the nested arrays it contains. Helper function for getMatchingBlocks
+	 *
+	 * @param array $a First array to compare.
+	 * @param array $b Second array to compare.
+	 * @return int -1, 0 or 1, as expected by the usort function.
+	 */
+	private function tupleSort($a, $b)
+	{
+		$max = max(count($a), count($b));
+		for($i = 0; $i < $max; ++$i) {
+			if($a[$i] < $b[$i]) {
+				return -1;
+			}
+			else if($a[$i] > $b[$i]) {
+				return 1;
+			}
+		}
+
+		if(count($a) == $count($b)) {
+			return 0;
+		}
+		else if(count($a) < count($b)) {
+			return -1;
+		}
+		else {
+			return 1;
+		}
+	}
 }
