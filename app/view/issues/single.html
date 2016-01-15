@@ -105,7 +105,7 @@
 			<dl class="dl-inline">
 				<check if="{{ @issue.sprint_id }}">
 					<dt>{{ @dict.cols.sprint }}</dt>
-					<dd><a href="{{ @BASE }}/taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', @this->utc2local(@sprint.start_date)) }}-{{ date('n/j', @this->utc2local(@sprint.end_date)) }}</a></dd>
+					<dd><a href="{{ @BASE }}/taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
 				</check>
 
 				<dt>{{ @dict.cols.type }}</dt>
