@@ -156,9 +156,11 @@ class Issues extends \Controller {
 
 		$sprint = new \Model\Sprint;
 		$f3->set("sprints", $sprint->find(array("end_date >= ?", date("Y-m-d")), array("order" => "start_date ASC")));
+		$f3->set("old_sprints", $sprint->find(array("end_date < ?", date("Y-m-d")), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->getAll());
+		$f3->set("deleted_users", $users->getAllDeleted());
 		$f3->set("groups", $users->getAllGroups());
 
 		if(empty($args["page"])) {

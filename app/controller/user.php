@@ -285,12 +285,11 @@ class User extends \Controller {
 		$this->_requireLogin();
 
 		$user = new \Model\User;
-		$user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
+		$user->load(array("username = ?", $params["username"]));
 
-		if($user->id) {
+		if($user->id && (!$user->deleted_date || $f3->get("user.rank") >= 3)) {
 			$f3->set("title", $user->name);
 			$f3->set("this_user", $user);
-
 
 			// Extra arrays required for bulk update
 			$status = new \Model\Issue\Status;

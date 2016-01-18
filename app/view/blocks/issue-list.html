@@ -74,14 +74,6 @@
 						<select class="form-control input-sm" name="author_id">
 							<option value="">--</option>
 							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
-							<optgroup label="{{ @dict.groups }}">
-								<repeat group="{{ @groups }}" value="{{ @item }}">
-									<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
-										<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
-										<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
-									</check>
-								</repeat>
-							</optgroup>
 							<optgroup label="{{ @dict.users }}">
 								<repeat group="{{ @users }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
@@ -112,6 +104,16 @@
 									</check>
 								</repeat>
 							</optgroup>
+							<check if="{{ @user.rank >= 3 && !empty(@deleted_users) }}">
+								<optgroup label="{{ @dict.deactivated_users }}">
+									<repeat group="{{ @deleted_users }}" value="{{ @item }}">
+										<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
+											<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+											<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
+										</check>
+									</repeat>
+								</optgroup>
+							</check>
 						</select>
 					</td>
 					<td>
@@ -123,6 +125,16 @@
 									<false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
 								</check>
 							</repeat>
+							<check if="{{ !empty(@old_sprints) }}">
+								<optgroup label="Previous Sprints">
+									<repeat group="{{ @old_sprints }}" value="{{ @item }}">
+										<check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
+											<true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
+											<false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
+										</check>
+									</repeat>
+								</optgroup>
+							</check>
 						</select>
 					</td>
 					<td>

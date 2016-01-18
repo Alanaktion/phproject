@@ -89,6 +89,14 @@ class User extends \Model {
 	}
 
 	/**
+	 * Load all deleted users
+	 * @return array
+	 */
+	public function getAllDeleted() {
+		return $this->find("deleted_date IS NOT NULL AND role != 'group'", array("order" => "name ASC"));
+	}
+
+	/**
 	 * Load all active groups
 	 * @return array
 	 */
