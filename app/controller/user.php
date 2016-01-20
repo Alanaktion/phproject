@@ -15,6 +15,7 @@ class User extends \Controller {
 			"en-GB" => \ISO::LC_en . " (Great Britain)",
 			"es" => \ISO::LC_es . " (Español)",
 			"pt" => \ISO::LC_pt . " (Português)",
+			"it" => \ISO::LC_it . " (Italiano)",
 			"ru" => \ISO::LC_ru . " (Pу́сский)",
 			"nl" => \ISO::LC_nl . " (Nederlands)",
 			"de" => \ISO::LC_de . " (Deutsch)",
