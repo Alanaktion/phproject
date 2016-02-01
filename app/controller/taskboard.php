@@ -153,7 +153,7 @@ class Taskboard extends \Controller {
 			"id IN ($parent_ids_str) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
 				. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
 			$sprint->id, $f3->get("issue_type.project")
-		), array("order" => "owner_id ASC"));
+		), array("order" => "owner_id ASC, priority DESC"));
 
 		// Build multidimensional array of all tasks and projects
 		$taskboard = array();
