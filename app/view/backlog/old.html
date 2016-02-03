@@ -11,7 +11,7 @@
 		<div class="col-md-6">
 		<p>
 			<a href="{{ @BASE }}/backlog" class="btn btn-default btn-sm">
-			<span class="fa fa-chevron-left"></span>&ensp;{{ @dict.future_sprints }}
+			<span class="fa fa-chevron-left"></span>&ensp;{{ @dict.show_future_sprints }}
 			</a>
 		</p>
 			 <div class="panel panel-default">
@@ -40,11 +40,11 @@
 						<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
 							<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
 								<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
+									<span class="badge">{{ @project.status_name }}</span>
 									<span class="title">
 										<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
 										{{ @project.name | esc }}
 									</span>
-									<span class="badge">{{ @project.status_name }}</span>
 								</li>
 							</repeat>
 						</ul>

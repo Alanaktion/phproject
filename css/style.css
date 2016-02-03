@@ -2,7 +2,7 @@ body {
 	padding: 80px 0 0;
 	font-size: 14px;
 }
-body.login {
+.login {
 	padding-top: 20px;
 }
 @media (max-width: 767px) {
@@ -198,15 +198,15 @@ select[multiple] {
 }
 .file-list li .delete {
 	position: absolute;
-	top: 0px;
-	left: 0px;
+	top: 0;
+	left: 0;
 	visibility: hidden;
 }
 .file-list li:hover .delete {
 	visibility: visible;
 }
 
-.issue-list tr.closed {
+.issue-list .closed {
 	text-decoration: line-through;
 }
 
@@ -214,6 +214,12 @@ select[multiple] {
 	display: inline-block;
 	padding-top: 5px;
 	margin-left: 10px;
+}
+
+.modal-footer .checkbox-container-inline {
+	display: inline-block;
+	padding-top: 5px;
+	margin: 0;
 }
 
 textarea.form-control {
@@ -253,16 +259,16 @@ textarea.form-control {
 }
 
 
-dl.dl-inline dt {
+.dl-inline dt {
 	float: left;
 	clear: left;
 	margin-right: .5em;
 }
-dl.dl-inline dt:after {
+.dl-inline dt:after {
 	content: ':';
 }
 
-dl.dl-horizontal-left dt {
+.dl-horizontal-left dt {
 	text-align: left;
 }
 
@@ -270,7 +276,7 @@ dl.dl-horizontal-left dt {
 	content: '\25bc';
 	margin-right: 5px;
 }
-.panel-heading a[data-toggle='collapse'].collapsed:before {
+.panel-heading .collapsed:before {
 	content: '\25b6';
 }
 .panel-heading a[data-toggle='collapse']:hover,
@@ -439,7 +445,7 @@ th[data-sort] {
 	}
 }
 @media (min-width: 768px) and (max-width: 992px) {
-	.navbar-form[role=search] .form-control:not(:focus)-webkit-input-placeholder {
+	.navbar-form[role=search] .form-control:not(:focus):-webkit-input-placeholder {
 		color: transparent;
 	}
 	.navbar-form[role=search] .form-control:not(:focus)::-moz-placeholder {

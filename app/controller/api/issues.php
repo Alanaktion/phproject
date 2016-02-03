@@ -322,7 +322,7 @@ class Issues extends \Controller\Api {
 	}
 
 	// List issue tags
-	public function tag($f3) {
+	public function tag() {
 		$tag = new \Model\Issue\Tag;
 		$tags = $tag->cloud();
 		$this->_printJson($tags);
@@ -345,7 +345,7 @@ class Issues extends \Controller\Api {
 	}
 
 	// List sprints
-	public function sprints($f3) {
+	public function sprints() {
 		$sprint_model = new \Model\Sprint;
 		$sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
 		$return = array();
@@ -356,7 +356,7 @@ class Issues extends \Controller\Api {
 	}
 
 	// List past sprints
-	public function sprints_old($f3) {
+	public function sprints_old() {
 		$sprint_model = new \Model\Sprint;
 		$sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date ASC"));
 		$return = array();

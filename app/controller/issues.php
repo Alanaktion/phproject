@@ -126,9 +126,8 @@ class Issues extends \Controller {
 	/**
 	 * Display a sortable, filterable issue list
 	 * @param  \Base  $f3
-	 * @param  array $params
 	 */
-	public function index($f3, $params) {
+	public function index($f3) {
 		$issues = new \Model\Issue\Detail;
 
 		// Get filter
@@ -140,7 +139,7 @@ class Issues extends \Controller {
 		if(!empty($args["type_id"])) {
 			$type->load($args["type_id"]);
 			if($type->id) {
-				$f3->set("title", \Helper\Inflector::instance()->pluralize($type->name));
+				$f3->set("title", $f3->get("dict.issues") . " - " . $f3->get("dict.by_type") . ": " . $type->name);
 				$f3->set("type", $type);
 			}
 		} else {
@@ -157,9 +156,11 @@ class Issues extends \Controller {
 
 		$sprint = new \Model\Sprint;
 		$f3->set("sprints", $sprint->find(array("end_date >= ?", date("Y-m-d")), array("order" => "start_date ASC")));
+		$f3->set("old_sprints", $sprint->find(array("end_date < ?", date("Y-m-d")), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->getAll());
+		$f3->set("deleted_users", $users->getAllDeleted());
 		$f3->set("groups", $users->getAllGroups());
 
 		if(empty($args["page"])) {
@@ -204,9 +205,8 @@ class Issues extends \Controller {
 	/**
 	 * Update a list of issues
 	 * @param  \Base  $f3
-	 * @param  array $params from form
 	 */
-	public function bulk_update($f3, $params) {
+	public function bulk_update($f3) {
 		$post = $f3->get("POST");
 
 		$issue = new \Model\Issue;
@@ -284,9 +284,8 @@ class Issues extends \Controller {
 	/**
 	 * Export a list of issues
 	 * @param  \Base  $f3
-	 * @param  array $params
 	 */
-	public function export($f3, $params) {
+	public function export($f3) {
 		$issue = new \Model\Issue\Detail;
 
 		// Get filter data and load issues
@@ -332,20 +331,10 @@ class Issues extends \Controller {
 	}
 
 	/**
-	 * Export a single issue
-	 * @param  \Base  $f3
-	 * @param  array $params
-	 */
-	public function export_single($f3, $params) {
-
-	}
-
-	/**
 	 * Create a new issue
-	 * @param  \Base  $f3
-	 * @param  array $params
+	 * @param \Base $f3
 	 */
-	public function add($f3, $params) {
+	public function add($f3) {
 		if($f3->get("PARAMS.type")) {
 			$type_id = $f3->get("PARAMS.type");
 		} else {
@@ -391,9 +380,8 @@ class Issues extends \Controller {
 
 	/**
 	 * @param \Base $f3
-	 * @param array $params
 	 */
-	public function add_selecttype($f3, $params) {
+	public function add_selecttype($f3) {
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
@@ -409,7 +397,7 @@ class Issues extends \Controller {
 	 */
 	public function edit($f3, $params) {
 		$issue = new \Model\Issue;
-		$issue->load($f3->get("PARAMS.id"));
+		$issue->load($params["id"]);
 
 		if(!$issue->id) {
 			$f3->error(404, "Issue does not exist");
@@ -450,7 +438,7 @@ class Issues extends \Controller {
 	 */
 	public function close($f3, $params) {
 		$issue = new \Model\Issue;
-		$issue->load($f3->get("PARAMS.id"));
+		$issue->load($params["id"]);
 
 		if(!$issue->id) {
 			$f3->error(404, "Issue does not exist");
@@ -475,7 +463,7 @@ class Issues extends \Controller {
 	 */
 	public function reopen($f3, $params) {
 		$issue = new \Model\Issue;
-		$issue->load($f3->get("PARAMS.id"));
+		$issue->load($params["id"]);
 
 		if(!$issue->id) {
 			$f3->error(404, "Issue does not exist");
@@ -500,7 +488,7 @@ class Issues extends \Controller {
 	 */
 	public function copy($f3, $params) {
 		$issue = new \Model\Issue;
-		$issue->load($f3->get("PARAMS.id"));
+		$issue->load($params["id"]);
 
 		if(!$issue->id) {
 			$f3->error(404, "Issue does not exist");
@@ -611,9 +599,8 @@ class Issues extends \Controller {
 
 	/**
 	 * @param \Base $f3
-	 * @param array $params
 	 */
-	public function save($f3, $params) {
+	public function save($f3) {
 		if($f3->get("POST.id")) {
 
 			// Updating existing issue.
@@ -646,7 +633,7 @@ class Issues extends \Controller {
 	 */
 	public function single($f3, $params) {
 		$issue = new \Model\Issue\Detail;
-		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		$issue->load(array("id=?", $params["id"]));
 		$user = $f3->get("user_obj");
 
 		if(!$issue->id || ($issue->deleted_date && !($user->role == 'admin' || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id))) {
@@ -900,10 +887,9 @@ class Issues extends \Controller {
 
 	/**
 	 * @param \Base $f3
-	 * @param array $params
 	 * @throws \Exception
 	 */
-	public function comment_save($f3, $params) {
+	public function comment_save($f3) {
 		$post = $f3->get("POST");
 		if(empty($post["text"])) {
 			if($f3->get("AJAX")) {
@@ -918,7 +904,7 @@ class Issues extends \Controller {
 			"issue_id" => $post["issue_id"],
 			"user_id" => $this->_userId,
 			"text" => trim($post["text"])
-		));
+		), !!$f3->get("POST.notify"));
 
 		if($f3->get("AJAX")) {
 			$this->_printJson(
@@ -940,10 +926,9 @@ class Issues extends \Controller {
 
 	/**
 	 * @param \Base $f3
-	 * @param array $params
 	 * @throws \Exception
 	 */
-	public function comment_delete($f3, $params) {
+	public function comment_delete($f3) {
 		$this->_requireAdmin();
 		$comment = new \Model\Issue\Comment;
 		$comment->load($f3->get("POST.id"));
@@ -953,10 +938,9 @@ class Issues extends \Controller {
 
 	/**
 	 * @param \Base $f3
-	 * @param array $params
 	 * @throws \Exception
 	 */
-	public function file_delete($f3, $params) {
+	public function file_delete($f3) {
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
 		$file->delete();
@@ -965,10 +949,9 @@ class Issues extends \Controller {
 
 	/**
 	 * @param \Base $f3
-	 * @param array $params
 	 * @throws \Exception
 	 */
-	public function file_undelete($f3, $params) {
+	public function file_undelete($f3) {
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
 		$file->deleted_date = null;
@@ -978,9 +961,8 @@ class Issues extends \Controller {
 
 	/**
 	 * @param \Base $f3
-	 * @param array $params
 	 */
-	public function search($f3, $params) {
+	public function search($f3) {
 		$query = "%" . $f3->get("GET.q") . "%";
 		if(preg_match("/^#([0-9]+)$/", $f3->get("GET.q"), $matches)){
 			$f3->reroute("/issues/{$matches[1]}");
@@ -1095,10 +1077,11 @@ class Issues extends \Controller {
 			$comment->created_date = $this->now();
 			$comment->file_id = $f3->get('file_id');
 			$comment->save();
-
-			$notification = \Helper\Notification::instance();
-			$notification->issue_comment($issue->id, $comment->id);
-		} elseif($newfile->id) {
+			if(!!$f3->get("POST.notify")) {
+				$notification = \Helper\Notification::instance();
+				$notification->issue_comment($issue->id, $comment->id);
+			}
+		} elseif($newfile->id && !!$f3->get("POST.notify")) {
 			$notification = \Helper\Notification::instance();
 			$notification->issue_file($issue->id, $f3->get("file_id"));
 		}
@@ -1188,15 +1171,6 @@ class Issues extends \Controller {
 		$f3->set("project", $project);
 		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - " . $f3->get("dict.project_overview"));
 		$this->_render("issues/project.html");
-
-	}
-
-
-	/**
-	 * decide if the user can view a private issue or project
-	 * @return array
-	 */
-	protected function _checkPrivate() {
 
 	}
 

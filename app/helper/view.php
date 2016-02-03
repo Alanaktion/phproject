@@ -4,6 +4,15 @@ namespace Helper;
 
 class View extends \Template {
 
+	public function __construct() {
+
+		// Register filters
+		$this->filter('parseText','$this->parseText');
+		$this->filter('formatFilesize','$this->formatFilesize');
+
+		parent::__construct();
+	}
+
 	/**
 	 * Convert Textile or Markdown to HTML, adding hashtags
 	 * @param  string $str
@@ -266,6 +275,9 @@ class View extends \Template {
 	 * @return int
 	 */
 	function utc2local($timestamp = null) {
+		if($timestamp && !is_numeric($timestamp)) {
+			$timestamp = @strtotime($timestamp);
+		}
 		if(!$timestamp) {
 			$timestamp = time();
 		}

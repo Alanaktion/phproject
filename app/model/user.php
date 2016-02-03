@@ -89,6 +89,14 @@ class User extends \Model {
 	}
 
 	/**
+	 * Load all deleted users
+	 * @return array
+	 */
+	public function getAllDeleted() {
+		return $this->find("deleted_date IS NOT NULL AND role != 'group'", array("order" => "name ASC"));
+	}
+
+	/**
 	 * Load all active groups
 	 * @return array
 	 */
@@ -157,7 +165,6 @@ class User extends \Model {
 		}
 
 		// Get group owner IDs
-		$f3 = \Base::instance();
 		$ownerIds = array($this->id);
 		$groups = new \Model\User\Group();
 		foreach($groups->find(array("user_id = ?", $this->id)) as $r) {

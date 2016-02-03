@@ -12,7 +12,7 @@ class Notification extends \Prefab {
 	 * @param  string $text     The plaintext body part (optional)
 	 * @return bool
 	 */
-	protected function _utf8mail($to, $subject, $body, $text = null) {
+	public function utf8mail($to, $subject, $body, $text = null) {
 		$f3 = \Base::instance();
 
 		// Add basic headers
@@ -47,6 +47,7 @@ class Notification extends \Prefab {
 			$msg .= "Content-Type: text/html; charset=utf-8\r\n";
 			$msg .= "Content-Transfer-Encoding: quoted-printable\r\n";
 			$msg .= "\r\n" . $body . "\r\n";
+			$msg .= "--$hash--\r\n";
 
 			$body = $msg;
 		} else {
@@ -93,7 +94,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
+				$this->utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent comment notification to: " . $recipient);
 			}
 		}
@@ -152,7 +153,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
+				$this->utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent update notification to: " . $recipient);
 			}
 		}
@@ -193,7 +194,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
+				$this->utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent create notification to: " . $recipient);
 			}
 		}
@@ -241,7 +242,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
+				$this->utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent file notification to: " . $recipient);
 			}
 		}
@@ -268,7 +269,7 @@ class Notification extends \Prefab {
 
 			// Send email to user
 			$subject = "Reset your password - " . $f3->get("site.name");
-			$this->_utf8mail($user->email, $subject, $body, $text);
+			$this->utf8mail($user->email, $subject, $body, $text);
 		}
 	}
 
@@ -285,7 +286,7 @@ class Notification extends \Prefab {
 			$subject = "Due Today - " . $f3->get("site.name");
 			$text = $this->_render("notification/user_due_issues.txt");
 			$body = $this->_render("notification/user_due_issues.html");
-			return $this->_utf8mail($user->email, $subject, $body, $text);
+			return $this->utf8mail($user->email, $subject, $body, $text);
 		}
 		return false;
 	}

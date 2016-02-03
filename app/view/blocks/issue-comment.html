@@ -24,7 +24,7 @@
 			</check>
 		</check>
 		<p class="text-muted">
-			<small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@comment.created_date))) }}</small>
+			<small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@comment.created_date)) }}</small>
 		</p>
 	</div>
 </div>

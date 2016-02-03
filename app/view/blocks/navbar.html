@@ -71,9 +71,9 @@
 						<li><a href="{{ @BASE }}/issues/?status=open&amp;author_id={{ @user.id }}">{{ @dict.created_by_me }}</a></li>
 						<li><a href="{{ @BASE }}/issues/?status=open&amp;owner_id={{ @user.id }}">{{ @dict.assigned_to_me }}</a></li>
 						<li role="presentation" class="divider"></li>
-						<set inflector="{{ \Helper\Inflector::instance() }}" />
+						<li role="presentation" class="dropdown-header">{{ @dict.by_type }}</li>
 						<repeat group="{{ @issue_types }}" value="{{ @type }}">
-							<li><a href="{{ @BASE }}/issues?type_id={{ @type.id }}&amp;status=open">{{ @inflector->pluralize(@type.name) }}</a></li>
+							<li><a href="{{ @BASE }}/issues?type_id={{ @type.id }}&amp;status=open">{{ @type.name }}</a></li>
 						</repeat>
 						<check if="{{ @nav.browse }}">
 							<li role="presentation" class="divider"></li>

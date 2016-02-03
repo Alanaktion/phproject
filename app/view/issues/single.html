@@ -98,7 +98,7 @@
 							<span class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</span>
 						</false>
 					</check>
-					<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@issue.created_date))) }}
+					<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}
 				</p>
 			</div>
 
@@ -253,6 +253,12 @@
 								</div>
 							</div>
 							<div class="text-right">
+								<div class="checkbox checkbox-container-inline">
+									<label>
+										<input type="checkbox" name="notify" value="1" checked>
+										{{ @dict.send_notifications }}
+									</label>
+								</div>&ensp;
 								<button type="button" class="btn btn-default btn-sm has-tooltip" title="{{ @dict.upload_a_file }}" data-placement="top" data-toggle="modal" data-target="#upload" id="btn-attach-file"><span class="fa fa-file"></span></button>
 								<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_comment }}</button>
 							</div>
@@ -321,6 +327,12 @@
 				<textarea class="form-control input-sm" id="file_comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}"></textarea>
 			</div>
 			<div class="modal-footer">
+				<div class="checkbox checkbox-container-inline">
+					<label>
+						<input type="checkbox" name="notify" value="1" checked>
+						{{ @dict.send_notifications }}
+					</label>
+				</div>&ensp;
 				<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ @dict.cancel }}</button>
 				<button type="submit" class="btn btn-sm btn-primary">{{ @dict.upload }}</button>
 			</div>
