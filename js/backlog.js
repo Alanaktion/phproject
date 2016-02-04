@@ -38,6 +38,7 @@ var Backlog = {
 				} else {
 					Backlog.projectReceived = false;
 				}
+				Backlog.saveSortOrder();
 			}
 		}).disableSelection();
 	},
@@ -89,6 +90,24 @@ var Backlog = {
 				Backlog.unBlock(projectId, item);
 				Backlog.showError(projectId, item);
 			}
+		});
+	},
+	saveSortOrder: function() {
+		var user = $('#panel-0 .list-group').attr('data-user-id'),
+			items = [];
+
+		if(!user)
+			return;
+
+		$('#panel-0 .list-group-item').each(function() {
+			items.push(parseInt($(this).attr('data-id')));
+		});
+
+		$.post(BASE + '/backlog/sort', {
+			user: $('#panel-0 .list-group').attr('data-user-id'),
+			items: JSON.stringify(items)
+		}).error(function() {
+			alert('An error occurred saving the sort order.');
 		});
 	},
 	block: function(projectId, item) {

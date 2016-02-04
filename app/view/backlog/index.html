@@ -33,9 +33,9 @@
 					</a>
 				</div>
 				<div class="panel-body in" id="panel-0">
-					<ul class="list-group sortable" data-list-id="0">
+					<ul class="list-group sortable" data-list-id="0" data-user-id="{{ @@groupid }}">
 						<repeat group="{{ @backlog }}" value="{{ @project }}">
-							<li class="list-group-item" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
+							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 								<span class="badge">{{ @project.priority_name }}</span>
 								<span class="title">
 									<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
@@ -48,32 +48,53 @@
 			</div>
 		</div>
 		<div class="col-md-6">
-			<repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
-				<div class="panel panel-default">
-					<div class="panel-heading has-buttons">
-						<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
-						<a href="{{ @BASE }}/taskboard/{{ @sprint.id }}/{{ @filter }}" class="btn btn-default btn-xs pull-right">
-							<span class="fa fa-list"></span> {{ @dict.taskboard }}
-						</a>
-					</div>
-					<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
-						<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
-							<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
-								<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
-									<span class="badge">{{ @project.priority_name }}</span>
-									<span class="title">
-										<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-										{{ @project.name | esc }}
-									</span>
-								</li>
-							</repeat>
-						</ul>
-					</div>
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#tab-sprints" data-toggle="tab">{{ @dict.sprints }}</a></li>
+				<li><a href="#tab-unsorted" data-toggle="tab">{{ @dict.unsorted_projects }}</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="tab-sprints">
+					<repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
+						<div class="panel panel-default">
+							<div class="panel-heading has-buttons">
+								<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
+								<a href="{{ @BASE }}/taskboard/{{ @sprint.id }}/{{ @filter }}" class="btn btn-default btn-xs pull-right">
+									<span class="fa fa-list"></span> {{ @dict.taskboard }}
+								</a>
+							</div>
+							<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
+								<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
+									<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
+										<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
+											<span class="badge">{{ @project.priority_name }}</span>
+											<span class="title">
+												<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
+												{{ @project.name | esc }}
+											</span>
+										</li>
+									</repeat>
+								</ul>
+							</div>
+						</div>
+					</repeat>
+					<p class="text-center">
+						<a href="{{ @BASE }}/backlog/old">{{ @dict.show_previous_sprints }}</a>
+					</p>
 				</div>
-			</repeat>
-			<p class="text-center">
-				<a href="{{ @BASE }}/backlog/old">{{ @dict.show_previous_sprints }}</a>
-			</p>
+				<div class="tab-pane" id="tab-unsorted">
+					<ul class="list-group sortable">
+						<repeat group="{{ @unsorted }}" value="{{ @project }}" data-list-id="0">
+							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
+								<span class="badge">{{ @project.priority_name }}</span>
+								<span class="title">
+									<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
+									{{ @project.name | esc }}
+								</span>
+							</li>
+						</repeat>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />
