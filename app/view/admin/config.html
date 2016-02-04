@@ -13,6 +13,7 @@
 			<div class="col-sm-3">
 				<ul class="nav nav-pills nav-stacked">
 					<li class="active"><a href="#config-site" data-toggle="tab">{{ @dict.site_basics }}</a></li>
+					<li><a href="#config-ts" data-toggle="tab">{{ @dict.issue_types_and_statuses }}</a></li>
 					<li><a href="#config-parse" data-toggle="tab">{{ @dict.text_parsing }}</a></li>
 					<li><a href="#config-email" data-toggle="tab">{{ @dict.email_smtp_imap }}</a></li>
 					<li><a href="#config-advanced" data-toggle="tab">{{ @dict.advanced }}</a></li>
@@ -42,6 +43,56 @@
 						<label class="control-label" for="site-logo">{{ @dict.logo }}</label>
 						<input type="text" class="form-control input-sm" name="site-logo" placeholder="(Site Name)" value="{{ @site.logo }}">
 					</div>
+				</div>
+
+				<div role="tabpanel" class="tab-pane fade" id="config-ts">
+					<fieldset>
+						<legend>{{ @dict.issue_types }}</legend>
+						<table class="table table-condensed table-striped">
+							<thead>
+								<tr>
+									<th>{{ @dict.cols.id }}</th>
+									<th>{{ @dict.name }}</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<repeat group="{{ @issue_types }}" value="{{ @item }}">
+									<tr>
+										<td>{{ @item.id }}</td>
+										<td>{{ @item.name | esc }}</td>
+									</tr>
+								</repeat>
+							</tbody>
+						</table>
+					</fieldset>
+					<br>
+					<fieldset>
+						<legend>{{ @dict.issue_statuses }}</legend>
+						<table class="table table-condensed table-striped">
+							<thead>
+								<tr>
+									<th>{{ @dict.cols.id }}</th>
+									<th>{{ @dict.name }}</th>
+									<th>{{ @dict.closed }}</th>
+									<th>{{ @dict.taskboard_columns }}</th>
+									<th>{{ @dict.taskboard_sort }}</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<repeat group="{{ @issue_statuses }}" value="{{ @item }}">
+									<tr>
+										<td>{{ @item.id }}</td>
+										<td>{{ @item.name | esc }}</td>
+										<td>{{ @item.closed ? 'Yes' : 'No' }}</td>
+										<td>{{ @item.taskboard ?: '' }}</td>
+										<td>{{ @item.taskboard_sort ?: '' }}</td>
+									</tr>
+								</repeat>
+							</tbody>
+						</table>
+					</fieldset>
 				</div>
 
 				<div role="tabpanel" class="tab-pane fade" id="config-parse">

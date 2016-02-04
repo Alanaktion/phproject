@@ -48,6 +48,9 @@ class Admin extends \Controller {
 	 * @param \Base $f3
 	 */
 	public function config($f3) {
+		$status = new \Model\Issue\Status;
+		$f3->set("issue_statuses", $status->find());
+
 		$f3->set("title", $f3->get("dict.configuration"));
 		$this->_render("admin/config.html");
 	}
