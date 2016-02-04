@@ -123,14 +123,15 @@ CREATE TABLE `issue_status` (
 	`name` varchar(32) NOT NULL,
 	`closed` tinyint(1) NOT NULL DEFAULT '0',
 	`taskboard` tinyint(1) NOT NULL DEFAULT '1',
+	`taskboard_sort` INT UNSIGNED NULL
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `issue_status` (`id`, `name`, `closed`, `taskboard`) VALUES
-(1, 'New', 0, 2),
-(2, 'Active', 0, 2),
-(3, 'Completed', 1, 2),
-(4, 'On Hold', 0, 1);
+(1, 'New', 0, 2, 1),
+(2, 'Active', 0, 2, 2),
+(3, 'Completed', 1, 2, 3),
+(4, 'On Hold', 0, 1, 4);
 
 DROP TABLE IF EXISTS `issue_type`;
 CREATE TABLE `issue_type` (
