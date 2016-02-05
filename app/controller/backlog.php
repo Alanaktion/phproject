@@ -11,6 +11,10 @@ class Backlog extends \Controller {
 	}
 
 	/**
+	 * GET /backlog
+	 * GET /backlog/@filter
+	 * GET /backlog/@filter/@groupid
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 */
@@ -71,28 +75,63 @@ class Backlog extends \Controller {
 		foreach($large_projects as $p) {
 			$large_project_ids[] = $p["parent_id"];
 		}
+
+		// Load backlog
 		if(!empty($large_project_ids)) {
 			$large_project_ids = implode(",", $large_project_ids);
-			$unset_projects = $issue->find(array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND status_closed = '0' AND id NOT IN ({$large_project_ids}) $filter_string", $f3->get("issue_type.project")),
-						array('order' => 'priority DESC, due_date')
-					);
+			$unset_projects = $issue->find(
+				array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND status_closed = '0' AND id NOT IN ({$large_project_ids}) $filter_string", $f3->get("issue_type.project")),
+				array('order' => 'priority DESC, due_date')
+			);
 		} else {
-			$unset_projects = array();
+			$unset_projects = $issue->find(
+				array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND status_closed = '0' $filter_string", $f3->get("issue_type.project")),
+				array('order' => 'priority DESC, due_date')
+			);
+		}
+
+		// Filter projects into sorted and unsorted arrays if filtering by group
+		if(!empty($params["groupid"])) {
+			// Add sorted projects
+			$backlog = array();
+			$sortModel = new \Model\Issue\Backlog;
+			$sortModel->load(array("user_id = ?", $params["groupid"]));
+			if($sortModel) {
+				$sortArray = json_decode($sortModel->issues);
+				foreach($sortArray as $id) {
+					foreach($unset_projects as $p) {
+						if($p->id == $id) {
+							$backlog[] = $p;
+						}
+					}
+				}
+			}
+
+			// Add remaining projects
+			$unsorted = array();
+			foreach($unset_projects as $p) {
+				if(!in_array($p->id, $sortArray)) {
+					$unsorted[] = $p;
+				}
+			}
+		} else {
+			$backlog = $unset_projects;
 		}
 
 		$groups = new \Model\User();
 		$f3->set("groups", $groups->getAllGroups());
 		$f3->set("groupid", $params["groupid"]);
 		$f3->set("sprints", $sprint_details);
-		$f3->set("backlog", $unset_projects);
+		$f3->set("backlog", $backlog);
+		$f3->set("unsorted", $unsorted);
 
 		$f3->set("title", $f3->get("dict.backlog"));
 		$f3->set("menuitem", "backlog");
 		$this->_render("backlog/index.html");
 	}
 
-
 	/**
+	 * POST /edit
 	 * @param \Base $f3
 	 * @throws \Exception
 	 */
@@ -106,6 +145,21 @@ class Backlog extends \Controller {
 	}
 
 	/**
+	 * POST /sort
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
+	public function sort($f3) {
+		$this->_requireAdmin();
+		$backlog = new \Model\Issue\Backlog;
+		$backlog->load(array("user_id = ?", $f3->get("POST.user")));
+		$backlog->user_id = $f3->get("POST.user");
+		$backlog->issues = $f3->get("POST.items");
+		$backlog->save();
+	}
+
+	/**
+	 * GET /backlog/old
 	 * @param \Base $f3
 	 */
 	public function index_old($f3) {
