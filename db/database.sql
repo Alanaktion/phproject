@@ -69,6 +69,19 @@ CREATE TABLE `issue` (
 	CONSTRAINT `issue_status` FOREIGN KEY (`status`) REFERENCES `issue_status`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `issue_backlog`;
+CREATE TABLE `issue_backlog` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`user_id` int(10) unsigned NOT NULL,
+	`sprint_id` int(10) unsigned DEFAULT NULL,
+	`issues` blob NOT NULL,
+	PRIMARY KEY (`id`),
+	KEY `issue_backlog_user_id` (`user_id`),
+	KEY `issue_backlog_sprint_id` (`sprint_id`),
+	CONSTRAINT `issue_backlog_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `issue_backlog_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `issue_comment`;
 CREATE TABLE `issue_comment` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
