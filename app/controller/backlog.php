@@ -96,6 +96,7 @@ class Backlog extends \Controller {
 			$backlog = array();
 			$sortModel = new \Model\Issue\Backlog;
 			$sortModel->load(array("user_id = ?", $params["groupid"]));
+			$sortArray = array();
 			if($sortModel->id) {
 				$sortArray = json_decode($sortModel->issues);
 				foreach($sortArray as $id) {
