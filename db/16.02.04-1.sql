@@ -4,7 +4,7 @@ CREATE TABLE `issue_backlog`(
 	`user_id` INT UNSIGNED NOT NULL,
 	`issues` BLOB NOT NULL,
 	PRIMARY KEY (`id`),
-	CONSTRAINT `issue_backlog_user_id` FOREIGN KEY (`user_id`) REFERENCES `phproject`.`user`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+	CONSTRAINT `issue_backlog_user_id` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=INNODB CHARSET=utf8;
 
 # Update version
