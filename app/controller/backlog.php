@@ -153,7 +153,12 @@ class Backlog extends \Controller {
 	public function sort($f3) {
 		$this->_requireAdmin();
 		$backlog = new \Model\Issue\Backlog;
-		$backlog->load(array("user_id = ?", $f3->get("POST.user")));
+		if($f3->get("POST.sprint_id")) {
+			$backlog->load(array("user_id = ? AND sprint_id = ?", $f3->get("POST.user"), $f3->get("POST.sprint_id")));
+			$backlog->sprint_id = $f3->get("POST.sprint_id");
+		} else {
+			$backlog->load(array("user_id = ?", $f3->get("POST.user")));
+		}
 		$backlog->user_id = $f3->get("POST.user");
 		$backlog->issues = $f3->get("POST.items");
 		$backlog->save();
