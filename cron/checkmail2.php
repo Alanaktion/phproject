@@ -23,6 +23,13 @@ foreach($emails as $msg_number) {
 	$text = "";
 	$attachments = array();
 
+	// Skip broken messages
+	if(empty($structure->parts)) {
+		$err = 'Got message without any structure info. ' . imap_last_error();
+		$log->write($err);
+		continue;
+	}
+
 	// Load message parts
 	foreach($structure->parts as $part_number=>$part) {
 
