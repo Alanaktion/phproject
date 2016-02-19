@@ -245,7 +245,7 @@ class User extends \Controller {
 
 		//Make a good name
 		$parts = pathinfo($_FILES['avatar']['name']);
-		$_FILES['avatar']['name'] = $user->id . "-" . substr(sha1($user->id), 0, 4)  . "." . $parts["extension"];
+		$_FILES['avatar']['name'] = $user->id . "-" . substr(uniqid(), 0, 4)  . "." . $parts["extension"];
 		$f3->set("avatar_filename", $_FILES['avatar']['name']);
 
 		$web->receive(
