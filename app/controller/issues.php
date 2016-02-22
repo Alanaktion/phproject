@@ -960,11 +960,42 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * Build an issue search query WHERE clause
+	 * @param  string $q User query string
+	 * @return array  [string, keyword, ...]
+	 */
+	protected function _buildSearchWhere($q) {
+		if(!$q) {
+			return array("deleted_date IS NULL");
+		}
+		$return = array();
+
+		// Build WHERE string
+		$keywordParts = array();
+		foreach(explode(" ", $q) as $w) {
+			$keywordParts[] = "CONCAT(name, description, author_name, owner_name,
+				author_username, owner_username) LIKE ?";
+			$return[] = "%$w%";
+		}
+		if(is_numeric($q)) {
+			$where = "id = ? OR ";
+			array_unshift($return, $q);
+		} else {
+			$where = "";
+		}
+		$where .= "(" . implode(" AND ", $keywordParts) . ") AND deleted_date IS NULL";
+
+		// Add WHERE string to return array
+		array_unshift($return, $where);
+		return $return;
+	}
+
+	/**
 	 * @param \Base $f3
 	 */
 	public function search($f3) {
-		$query = "%" . $f3->get("GET.q") . "%";
-		if(preg_match("/^#([0-9]+)$/", $f3->get("GET.q"), $matches)){
+		$q = $f3->get("GET.q");
+		if(preg_match("/^#([0-9]+)$/", $q, $matches)){
 			$f3->reroute("/issues/{$matches[1]}");
 		}
 
@@ -975,17 +1006,12 @@ class Issues extends \Controller {
 			$args["page"] = 0;
 		}
 
-		$where = "(id = ? OR name LIKE ? OR description LIKE ?
-				OR author_name LIKE ? OR owner_name LIKE ?
-				OR author_username LIKE ? OR owner_username LIKE ?
-				OR author_email LIKE ? OR owner_email LIKE ?)
-			AND deleted_date IS NULL";
-
+		$where = $this->_buildSearchWhere($q);
 		if(empty($args["closed"])) {
-			$where .= " AND status_closed = '0'";
+			$where[0] .= " AND status_closed = '0'";
 		}
 
-		$issue_page = $issues->paginate($args["page"], 50, array($where, $f3->get("GET.q"), $query, $query, $query, $query, $query, $query, $query, $query), array("order" => "created_date DESC"));
+		$issue_page = $issues->paginate($args["page"], 50, $where, array("order" => "created_date DESC"));
 		$f3->set("issues", $issue_page);
 
 		if($issue_page["count"] > 7) {
