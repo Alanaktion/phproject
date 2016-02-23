@@ -185,7 +185,17 @@
 
 				<dt>{{ @dict.cols.type }}</dt>
 				<dd>
-					{{ @issue.type_name }}
+					<span data-edit-field="type_id">{{ @issue.type_name }}</span>
+					<div class="btn-group btn-group-xs btn-edit-inline">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="glyphicon glyphicon-edit"></span>
+						</button>
+						<ul class="dropdown-menu" data-field="type_id">
+							<repeat group="{{ @issue_types }}" value="{{ @item }}">
+								<li><a href="#" data-value="{{ @item.id }}">{{ @item.name }}</a></li>
+							</repeat>
+						</ul>
+					</div>
 				</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
