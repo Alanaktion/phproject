@@ -627,6 +627,34 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * Save a field on an issue via AJAX
+	 * @param \Base $f3
+	 */
+	public function saveField($f3, $params) {
+		if(empty($params["id"])) {
+			$f3->error(404);
+		}
+
+		$issue = new \Model\Issue;
+		$issue->load($params["id"]);
+		if(!$issue->id) {
+			$f3->error(404);
+		}
+
+		if($issue->exists($f3->get("POST.field"))) {
+			$issue->set($f3->get("POST.field"), $f3->get("POST.value"));
+			$issue->save();
+			$this->_printJson(array(
+				"field" => $f3->get("POST.field"),
+				"value" => $f3->get("POST.value"),
+				"issue" => $issue->cast()
+			));
+		} else {
+			$f3->error(400);
+		}
+	}
+
+	/**
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
