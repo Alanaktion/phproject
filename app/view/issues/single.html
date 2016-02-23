@@ -47,9 +47,6 @@
 		<h3 class="pull-left issue-heading">
 			<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="nolink">{{ @issue.name | esc }}</a> <small>#{{ @issue.id }}</small>
 		</h3>
-		<check if="{{ @issue.type_id == @issue_type.project }}">
-			<a href="{{ @BASE }}/issues/project/{{ @issue.id }}" class="btn btn-default btn-sm">{{ @dict.project_overview }}</a>
-		</check>
 		<div class="pull-right">
 			<check if="{{ @issue.status_closed }}">
 				<false>
@@ -90,12 +87,17 @@
 	</div>
 	<div class="row">
 		<div class="col-lg-5">
+			<check if="{{ @issue.type_id == @issue_type.project }}">
+				<p><a href="{{ @BASE }}/issues/project/{{ @issue.id }}" class="btn btn-default btn-sm">{{ @dict.project_overview }}</a></p>
+			</check>
+
+			<b>{{ @dict.cols.author }}</b>
 			<div class="issue-head clearfix">
 				<img src="{{ @author->avatar(48) | esc }}" srcset="{{ @author->avatar(96) | esc }} 2x" class="profile-picture img-rounded" alt>
 				<p class="pull-left">
 					<check if="{{ @author.username }}">
 						<true>
-							<a href="{{ @BASE }}/user/{{ @author.username }}" class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</a>
+							<a href="{{ @BASE }}/user/{{ @author.username }}">{{ @author.name | esc }}</a>
 						</true>
 						<false>
 							<span class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</span>
@@ -104,13 +106,15 @@
 					<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}
 				</p>
 			</div>
+
 			<check if="{{ @owner.id }}">
+				<b>{{ @dict.cols.assignee }}</b>
 				<div class="issue-head clearfix">
 					<img src="{{ @owner->avatar(48) | esc }}" srcset="{{ @owner->avatar(96) | esc }} 2x" class="profile-picture img-rounded" alt>
 					<p class="pull-left">
 						<check if="{{ @owner.username }}">
 							<true>
-								<a href="{{ @BASE }}/user/{{ @owner.username }}" class="has-tooltip" title="{{ @dict.cols.owner }}" data-placement="right">{{ @owner.name | esc }}</a>
+								<a href="{{ @BASE }}/user/{{ @owner.username }}">{{ @owner.name | esc }}</a>
 							</true>
 							<false>
 								<span class="has-tooltip" title="{{ @dict.cols.owner }}" data-placement="right">{{ @owner.name | esc }}</span>

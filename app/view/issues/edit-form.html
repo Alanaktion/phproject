@@ -109,27 +109,35 @@
 	</div>
 
 	<check if="{{ !empty(@issue) }}">
-		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">{{ @dict.cols.total_spent_hours }}</label>
-			<div class="col-md-6">
-				<input class="form-control input-sm" type="text" name="hours_spent" autocomplete="off" value="{{ @issue.hours_spent }}">
+		<true>
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.total_spent_hours }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours_spent" autocomplete="off" value="{{ @issue.hours_spent }}">
+				</div>
 			</div>
-		</div>
-	</check>
-	<check if="{{ !empty(@issue) }}">
-		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
-			<div class="col-md-6">
-				<input class="form-control input-sm" type="text" name="hours_total" autocomplete="off" value="{{ @issue.hours_total }}">
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours_total" autocomplete="off" value="{{ @issue.hours_total }}">
+				</div>
 			</div>
-		</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_remaining }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours_remaining" autocomplete="off" value="{{ @issue.hours_remaining }}">
+				</div>
+			</div>
+		</true>
+		<false>
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours" autocomplete="off">
+				</div>
+			</div>
+		</false>
 	</check>
-	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">{{ empty(@issue) ? @dict.cols.hours_total : @dict.cols.hours_remaining }}</label>
-		<div class="col-md-6">
-			<input class="form-control input-sm" type="text" name="hours_remaining" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.hours_remaining }}">
-		</div>
-	</div>
 
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.start_date }}</label>
