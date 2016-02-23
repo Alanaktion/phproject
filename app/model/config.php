@@ -2,6 +2,13 @@
 
 namespace Model;
 
+/**
+ * Class Config
+ *
+ * @property int $id
+ * @property string $attribute
+ * @property string $value
+ */
 class Config extends \Model {
 
 	protected $_table_name = "config";
@@ -66,7 +73,7 @@ class Config extends \Model {
 		$f3->set($key, $value);
 		$item = new static();
 		$item->load(array('attribute = ?', $key));
-		$item->attribute = $attribute;
+		$item->attribute = $key;
 		$item->value = $value;
 		$item->save();
 		return $item;

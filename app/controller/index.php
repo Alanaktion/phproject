@@ -4,6 +4,13 @@ namespace Controller;
 
 class Index extends \Controller {
 
+	/**
+	 * GET /
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function index($f3, $params) {
 		if($f3->get("user.id")) {
 			$user_controller = new \Controller\User();
@@ -29,6 +36,11 @@ class Index extends \Controller {
 		}
 	}
 
+	/**
+	 * GET /login
+	 *
+	 * @param \Base $f3
+	 */
 	public function login($f3) {
 		if($f3->get("user.id")) {
 			if(!$f3->get("GET.to")) {
@@ -44,6 +56,12 @@ class Index extends \Controller {
 		}
 	}
 
+	/**
+	 * POST /login
+	 *
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
 	public function loginpost($f3) {
 		$user = new \Model\User();
 
@@ -82,6 +100,12 @@ class Index extends \Controller {
 		}
 	}
 
+	/**
+	 * POST /register
+	 *
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
 	public function registerpost($f3) {
 
 		// Exit immediately if public registrations are disabled
@@ -133,6 +157,7 @@ class Index extends \Controller {
 			$user->password = $hash;
 			$user->salt = $salt;
 			$user->task_color = sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
+			$user->rank = \Model\User::RANK_CLIENT;
 			$user->save();
 
 			// Create a session and use it
@@ -143,6 +168,12 @@ class Index extends \Controller {
 		}
 	}
 
+	/**
+	 * GET|POST /reset
+	 *
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
 	public function reset($f3) {
 		if($f3->get("user.id")) {
 			$f3->reroute("/");
@@ -163,6 +194,13 @@ class Index extends \Controller {
 		}
 	}
 
+	/**
+	 * GET|POST /reset/@hash
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function reset_complete($f3, $params) {
 		if($f3->get("user.id")) {
 			$f3->reroute("/");
@@ -195,6 +233,11 @@ class Index extends \Controller {
 		}
 	}
 
+	/**
+	 * GET|POST /reset/forced
+	 *
+	 * @param \Base $f3
+	 */
 	public function reset_forced($f3) {
 		$user = new \Model\User;
 		$user->loadCurrent();
@@ -215,6 +258,11 @@ class Index extends \Controller {
 		$this->_render("index/reset_forced.html");
 	}
 
+	/**
+	 * GET|POST /logout
+	 *
+	 * @param \Base $f3
+	 */
 	public function logout($f3) {
 		$session = new \Model\Session;
 		$session->loadCurrent();
@@ -222,6 +270,11 @@ class Index extends \Controller {
 		$f3->reroute("/");
 	}
 
+	/**
+	 * GET|POST /ping
+	 *
+	 * @param \Base $f3
+	 */
 	public function ping($f3) {
 		if($f3->get("user.id")) {
 			$this->_printJson(array("user_id" => $f3->get("user.id"), "is_logged_in" => true));
@@ -230,6 +283,12 @@ class Index extends \Controller {
 		}
 	}
 
+	/**
+	 * GET /atom.xml
+	 *
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
 	public function atom($f3) {
 		// Authenticate user
 		if($f3->get("GET.key")) {

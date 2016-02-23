@@ -13,12 +13,45 @@
 		<p>{{ @dict.tag_help_1 }}<br>
 			<small>{{ @dict.tag_help_2 }}</small>
 		</p>
-		<div class="tag-cloud">
-			<repeat group="{{ @cloud }}" value="{{ @item }}">
-				<a href="{{ @BASE }}/tag/{{ @item.tag }}" style="font-size: {{ 14 + (@item.freq * 2) }}px;">{{ @item.tag }}</a>&ensp;
-			</repeat>
+
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#tag-list" data-toggle="tab">{{ @dict.list }}</a></li>
+			<li><a href="#tag-cloud" data-toggle="tab">{{ @dict.cloud }}</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="tag-list">
+				<table class="table table-compact table-striped tag-list">
+					<thead>
+						<tr>
+							<th data-sort="string">{{ @dict.name }}</th>
+							<th data-sort="int">{{ @dict.count }}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<repeat group="{{ @list }}" value="{{ @item }}">
+							<tr>
+								<td><a href="{{ @BASE }}/tag/{{ @item.tag }}">{{ @item.tag }}</a></td>
+								<td>{{ @item.freq }}</td>
+							</tr>
+						</repeat>
+					</tbody>
+				</table>
+			</div>
+			<div class="tab-pane fade" id="tag-cloud">
+				<div class="tag-cloud">
+					<repeat group="{{ @cloud }}" value="{{ @item }}">
+						<a href="{{ @BASE }}/tag/{{ @item.tag }}" style="font-size: {{ 14 + (@item.freq * 2) }}px;">{{ @item.tag }}</a>&ensp;
+					</repeat>
+				</div>
+			</div>
 		</div>
 		<include href="blocks/footer.html" />
+		<script src="{{ @BASE }}/minify/js/stupidtable.min.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function() {
+			$('.table').stupidtable();
+		});
+		</script>
 	</div>
 </body>
 </html>

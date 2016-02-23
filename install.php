@@ -65,37 +65,32 @@ if($_POST) {
 		$user->api_key = $security->salt_sha1();
 		$user->save();
 
-	} catch(PDOException $e) {
-		$f3->set("warning", $e->getMessage());
-		return false;
-	}
-
-	// Ensure required directories exist
-	if(!is_dir("tmp/cache")) {
-		mkdir("tmp/cache", 0777, true);
-	}
-	if(!is_dir("log")) {
-		mkdir("log", 0777, true);
-	}
-
-	// Build custom config string
-	$config = "[globals]";
-	if(!empty($post["language"])) {
-		$config .= "\nLANGUAGE={$post['language']}";
-	}
-
-	if($post["parser"] != "both") {
-		$config .= "\n\n; Parser options";
-		if($post["parser"] != "markdown") {
-			$config .= "\nparse.markdown=false";
+		// Ensure required directories exist
+		if(!is_dir("tmp/cache")) {
+			mkdir("tmp/cache", 0777, true);
 		}
-		if($post["parser"] != "textile") {
-			$config .= "\nparse.textile=false";
+		if(!is_dir("log")) {
+			mkdir("log", 0777, true);
 		}
-	}
 
-	// Write configuration file
-	file_put_contents("config.ini",
+		// Build custom config string
+		$config = "[globals]";
+		if(!empty($post["language"])) {
+			$config .= "\nLANGUAGE={$post['language']}";
+		}
+
+		if($post["parser"] != "both") {
+			$config .= "\n\n; Parser options";
+			if($post["parser"] != "markdown") {
+				$config .= "\nparse.markdown=false";
+			}
+			if($post["parser"] != "textile") {
+				$config .= "\nparse.textile=false";
+			}
+		}
+
+		// Write configuration file
+		file_put_contents("config.ini",
 "$config
 
 ; Database
@@ -113,9 +108,12 @@ site.db_sessions=1
 
 ; Email
 mail.from={$post['mail-from']}
-");
+	");
 
-	$f3->set("success", "Installation complete.");
+		$f3->set("success", "Installation complete.");
+	} catch(PDOException $e) {
+		$f3->set("warning", $e->getMessage());
+	}
 }
 
 // Render installer template

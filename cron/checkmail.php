@@ -1,4 +1,8 @@
 <?php
+/*
+	checkmail2.php is now preferred over this script! You should use it instead if possible.
+*/
+
 require_once "base.php";
 $log = new \Log("checkmail.log");
 
@@ -210,8 +214,8 @@ if($emails) {
 
 						// don't forget to set an Upload directory, and make it writable!
 						$f3->set("UPLOADS",'uploads/'.date("Y")."/".date("m")."/");
-						if(!is_dir($f3->get("UPLOADS"))) {
-							mkdir($f3->get("UPLOADS"), 0777, true);
+						if(!is_dir(dirname(__DIR__).'/'.$f3->get("UPLOADS"))) {
+							mkdir(dirname(__DIR__).'/'.$f3->get("UPLOADS"), 0777, true);
 						}
 
 						// Make a good name
@@ -220,7 +224,7 @@ if($emails) {
 
 						$i = 0;
 						$parts = pathinfo($filename);
-						while (file_exists($f3->get("UPLOADS") . $filename)) {
+						while (file_exists(dirname(__DIR__).'/'.$f3->get("UPLOADS") . $filename)) {
 							$i++;
 							$filename= $parts["filename"] . "-" . $i . "." . $parts["extension"];
 						}
@@ -234,11 +238,11 @@ if($emails) {
 						$newfile->disk_directory = $f3->get("UPLOADS");
 						$newfile->filesize = $file['size'];
 						$newfile->content_type = $file['type'];
-						$newfile->digest = md5_file($f3->get("UPLOADS").$filename);
+						$newfile->digest = md5($attachment['attachment']);
 						$newfile->created_date = date("Y-m-d H:i:s");
 						$newfile->save();
 
-						$fp = fopen($f3->get("UPLOADS")  . $filename, "w+");
+						$fp = fopen(dirname(__DIR__).'/'.$f3->get("UPLOADS")  . $filename, "w+");
 						fwrite($fp, $attachment['attachment']);
 						fclose($fp);
 						}

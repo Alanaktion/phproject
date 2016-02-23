@@ -75,6 +75,9 @@ class Taskboard extends \Controller {
 
 	/**
 	 * View a taskboard
+	 *
+	 * @param \Base $f3
+	 * @param array $params
 	 */
 	public function index($f3, $params) {
 
@@ -106,7 +109,7 @@ class Taskboard extends \Controller {
 
 		// Load issue statuses
 		$status = new \Model\Issue\Status();
-		$statuses = $status->find(array('taskboard > 0'), null, $f3->get("cache_expire.db"));
+		$statuses = $status->find(array('taskboard > 0'), array('order' => 'taskboard_sort ASC'));
 		$mapped_statuses = array();
 		$visible_status_ids = array();
 		$column_count = 0;
@@ -150,7 +153,7 @@ class Taskboard extends \Controller {
 			"id IN ($parent_ids_str) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
 				. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
 			$sprint->id, $f3->get("issue_type.project")
-		), array("order" => "owner_id ASC"));
+		), array("order" => "owner_id ASC, priority DESC"));
 
 		// Build multidimensional array of all tasks and projects
 		$taskboard = array();
@@ -190,6 +193,9 @@ class Taskboard extends \Controller {
 
 	/**
 	 * Load the burndown chart data
+	 *
+	 * @param \Base $f3
+	 * @param array $params
 	 */
 	public function burndown($f3, $params) {
 		$sprint = new \Model\Sprint;
@@ -308,8 +314,10 @@ class Taskboard extends \Controller {
 
 	/**
 	 * Add a new task
+	 *
+	 * @param \Base $f3
 	 */
-	public function add($f3, $params) {
+	public function add($f3) {
 		$post = $f3->get("POST");
 		$post['sprint_id'] = $post['sprintId'];
 		$post['name'] = $post['title'];
@@ -322,8 +330,10 @@ class Taskboard extends \Controller {
 
 	/**
 	 * Update an existing task
+	 *
+	 * @param \Base $f3
 	 */
-	public function edit($f3, $params) {
+	public function edit($f3) {
 		$post = $f3->get("POST");
 		$issue = new \Model\Issue();
 		$issue->load($post["taskId"]);

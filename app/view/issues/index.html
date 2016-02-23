@@ -11,9 +11,11 @@
 		<p class="alert alert-success">{{ @dict.deleted_success,@GET.deleted | format }}&ensp;<a href="{{ @BASE }}/issues/undelete/{{ @GET.deleted }}">{{ @dict.restore_issue }}</a></p>
 	</check>
 	<include href="blocks/issue-list.html" />
-	<p class="pull-right hidden-xs">
-		<span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
-	</p>
+	<div class="clearfix">
+		<p class="pull-right hidden-xs">
+			<span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
+		</p>
+	</div>
 	<check if="{{ @issues.count }}">
 		<div class="text-center">
 			<ul class="pagination pagination-sm" style="margin: 15px 0;">
@@ -31,7 +33,7 @@
 <check if="{{ @user_obj->date_picker()->js }}">
 <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
 <script>
-	var datepicker_language='{{ @user_obj->date_picker()->language }}';
+	var datepickerLanguage='{{ @user_obj->date_picker()->language }}';
 </script>
 </check>
 <script src="{{ @BASE }}/minify/js/bulkissues.js"></script>

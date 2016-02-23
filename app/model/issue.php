@@ -2,19 +2,42 @@
 
 namespace Model;
 
+/**
+ * Class Issue
+ *
+ * @property int $id
+ * @property int $status
+ * @property int $type_id
+ * @property string $name
+ * @property string $description
+ * @property int $parent_id
+ * @property int $author_id
+ * @property int $owner_id
+ * @property int $priority
+ * @property float $hours_total
+ * @property float $hours_remaining
+ * @property float $hours_spent
+ * @property string $created_date
+ * @property string $closed_date
+ * @property string $deleted_date
+ * @property string $start_date
+ * @property string $due_date
+ * @property string $repeat_cycle
+ * @property int $sprint_id
+ */
 class Issue extends \Model {
 
 	protected
-	$_table_name = "issue",
-	$_heirarchy = null,
-	$_children = null;
+		$_table_name = "issue",
+		$_heirarchy = null,
+		$_children = null;
 	protected static $requiredFields = array("type_id", "status", "name", "author_id");
 
 	/**
 	 * Create and save a new issue
 	 * @param  array $data
 	 * @param  bool  $notify
-	 * @return Comment
+	 * @return Issue
 	 */
 	public static function create(array $data, $notify = true) {
 		// Normalize data
@@ -29,7 +52,7 @@ class Issue extends \Model {
 			}
 			if (empty($data["sprint_id"])) {
 				$sprint = new Sprint();
-				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $issue->due_date));
+				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $data["due_date"]));
 				$data["sprint_id"] = $sprint->id;
 			}
 		}
@@ -38,6 +61,7 @@ class Issue extends \Model {
 		}
 
 		// Create issue
+		/** @var Issue $item */
 		$item = parent::create($data);
 
 		// Send creation notifications
@@ -322,22 +346,20 @@ class Issue extends \Model {
 
 		} else {
 
-			// Move task to a sprint if the parent is in a sprint
-			if ($this->get("parent_id") && !$this->get("sprint_id")) {
-				$parent = new \Model\Issue;
-				$parent->load($this->get("parent_id"));
-				if ($parent->sprint_id) {
-					$this->set("sprint_id", $parent->sprint_id);
+			// Set closed date if status is closed
+			if(!$this->closed_date && $this->status) {
+				$status = new Issue\Status;
+				$status->load($this->status);
+				if($status->closed) {
+					$this->closed_date = date("Y-m-d H:i:s");
 				}
 			}
 
-			$issue = parent::save();
-			return $issue;
 		}
 
+		$return = empty($issue) ? parent::save() : $issue;
 		$this->saveTags();
-
-		return empty($issue) ? parent::save() : $issue;
+		return $return;
 	}
 
 	/**
@@ -349,11 +371,13 @@ class Issue extends \Model {
 		$issue_id = $this->get("id");
 		$str = $this->get("description");
 		$count = preg_match_all("/(?<=\W#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=\W|$)/i", $str, $matches);
-		$tag->deleteByIssueId($issue_id);
+		if($issue_id) {
+			$tag->deleteByIssueId($issue_id);
+		}
 		if ($count) {
 			foreach ($matches[0] as $match) {
 				$tag->reset();
-				$tag->tag = str_replace("_", "-", $match);
+				$tag->tag = preg_replace("/[_-]+/", "-", $match);
 				$tag->issue_id = $issue_id;
 				$tag->save();
 			}

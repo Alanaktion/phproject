@@ -4,6 +4,15 @@ namespace Helper;
 
 class View extends \Template {
 
+	public function __construct() {
+
+		// Register filters
+		$this->filter('parseText','$this->parseText');
+		$this->filter('formatFilesize','$this->formatFilesize');
+
+		parent::__construct();
+	}
+
 	/**
 	 * Convert Textile or Markdown to HTML, adding hashtags
 	 * @param  string $str
@@ -43,6 +52,7 @@ class View extends \Template {
 				// Yes, this is hacky. Please open an issue on GitHub if you
 				// know of a better way of supporting Markdown and Textile :)
 				$str = html_entity_decode($str);
+				$str = preg_replace('/^<p>|<\/p>$/m', "\n", $str);
 			}
 			$str = $this->_parseTextile($str);
 		}
@@ -80,8 +90,11 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseHashtags($str) {
-		$url = \Base::instance()->get("site.url");
-		return preg_replace("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}tag/$1\">#$1</a>", $str);
+		return preg_replace_callback("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", function($matches) {
+			$url = \Base::instance()->get("site.url");
+			$tag = preg_replace("/[_-]+/", "-", $matches[1]);
+			return "<a href=\"{$url}tag/$tag\">#$tag</a>";
+		}, $str);
 	}
 
 	/**
@@ -262,6 +275,9 @@ class View extends \Template {
 	 * @return int
 	 */
 	function utc2local($timestamp = null) {
+		if($timestamp && !is_numeric($timestamp)) {
+			$timestamp = @strtotime($timestamp);
+		}
 		if(!$timestamp) {
 			$timestamp = time();
 		}

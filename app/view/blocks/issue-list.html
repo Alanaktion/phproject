@@ -3,10 +3,10 @@
 <check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
 {~ @headings[] = 'closed' ~}
 </check>
-<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form">
+<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form" id="form-filter-issues">
 	<check if="{{ !empty(@heading_links_enabled) }}">
-		<input type="hidden" name="orderby" value="{{ !empty(@GET.orderby) ? @GET.orderby : 'priority' }}" />
-		<input type="hidden" name="ascdesc" value="{{ !empty(@GET.ascdesc) ? @GET.ascdesc : 'desc' }}" />
+		<input type="hidden" name="orderby" value="{{ (!empty(@GET.orderby) ? @GET.orderby : 'priority') | esc }}" />
+		<input type="hidden" name="ascdesc" value="{{ (!empty(@GET.ascdesc) ? @GET.ascdesc : 'desc') | esc }}" />
 	</check>
 	<table class="table table-striped table-hover table-condensed issue-list">
 		<thead>
@@ -15,12 +15,12 @@
 					<td colspan="{{ @bulkUpdate ? 2 : 1 }}">
 						<check if="{{ !empty(@show_export) }}">
 							<a class="btn btn-default btn-xs" href="{{ @BASE }}/issues/export?{{ http_build_query($_GET) }}">
-								<span class="glyphicon glyphicon-save"></span>&ensp;{{ @dict.export }}
+								<span class="fa fa-save"></span>&ensp;{{ @dict.export }}
 							</a>
 						</check>
 					</td>
 					<td>
-						<input type="text" class="form-control input-sm" name="name" value="{{ !empty(@GET.name) ? @GET.name : '' }}">
+						<input type="text" class="form-control input-sm" name="name" value="{{ @@GET.name | esc }}">
 					</td>
 					<td>
 						<select class="form-control input-sm" name="type_id">
@@ -68,20 +68,12 @@
 						</select>
 					</td>
 					<td>
-						<input class="form-control input-sm" name="parent_id" value="{{ !empty(@GET.parent_id) ? @GET.parent_id : '' }}" />
+						<input class="form-control input-sm" name="parent_id" id="filter-input-parent-id" value="{{ @@GET.parent_id | esc }}" />
 					</td>
 					<td>
 						<select class="form-control input-sm" name="author_id">
 							<option value="">--</option>
 							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
-							<optgroup label="{{ @dict.groups }}">
-								<repeat group="{{ @groups }}" value="{{ @item }}">
-									<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
-										<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
-										<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
-									</check>
-								</repeat>
-							</optgroup>
 							<optgroup label="{{ @dict.users }}">
 								<repeat group="{{ @users }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
@@ -112,6 +104,16 @@
 									</check>
 								</repeat>
 							</optgroup>
+							<check if="{{ @user.rank >= 3 && !empty(@deleted_users) }}">
+								<optgroup label="{{ @dict.deactivated_users }}">
+									<repeat group="{{ @deleted_users }}" value="{{ @item }}">
+										<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
+											<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+											<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
+										</check>
+									</repeat>
+								</optgroup>
+							</check>
 						</select>
 					</td>
 					<td>
@@ -123,6 +125,16 @@
 									<false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
 								</check>
 							</repeat>
+							<check if="{{ !empty(@old_sprints) }}">
+								<optgroup label="Previous Sprints">
+									<repeat group="{{ @old_sprints }}" value="{{ @item }}">
+										<check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
+											<true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
+											<false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
+										</check>
+									</repeat>
+								</optgroup>
+							</check>
 						</select>
 					</td>
 					<td>
@@ -178,8 +190,8 @@
 								<check if="{{ !empty(@GET.orderby) && @GET.orderby == @heading }}">
 									<true>
 										<check if="{{ !empty(@GET.ascdesc) && @GET.ascdesc == 'asc' }}">
-											<true><span class="glyphicon glyphicon-chevron-up"></span></true>
-											<false><span class="glyphicon glyphicon-chevron-down"></span></false>
+											<true><span class="fa fa-chevron-up"></span></true>
+											<false><span class="fa fa-chevron-down"></span></false>
 										</check>
 									</true>
 								</check>
@@ -225,10 +237,10 @@
 					</check>
 					<td>{{ !empty(@item.sprint_start_date) ? date("n/j/y", strtotime(@item.sprint_start_date)) : "" }}</td>
 					<td>{{ ucwords(@item.repeat_cycle) ?: 'None' }}</td>
-					<td>{{ date("n/j/y", strtotime(@item.created_date)) }}</td>
+					<td>{{ date("n/j/y", @this->utc2local(@item.created_date)) }}</td>
 					<td>{{ !empty(@item.due_date) ? date("n/j/y", strtotime(@item.due_date)) : "" }}</td>
 					<check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
-						<td>{{ !empty(@item.closed_date) ? date("n/j/y", strtotime(@item.closed_date)) : "" }}</td>
+						<td>{{ !empty(@item.closed_date) ? date("n/j/y", @this->utc2local(@item.closed_date)) : "" }}</td>
 					</check>
 				</tr>
 			</repeat>
@@ -365,3 +377,35 @@
 		</form>
 	</div>
 </check>
+<script src="{{ @BASE }}/minify/js/jquery-1.11.3.min.js,typeahead.jquery.js"></script>
+<script type="text/javascript">
+	$('input#filter-input-parent-id').typeahead({
+		classNames: {
+			menu: 'dropdown-menu'
+		}
+	}, {
+		async: true,
+		limit: 10,
+		source: function(query, syncResults, asyncResults) {
+			$.ajax({
+				url: BASE + '/issues/parent_ajax',
+				data: { 'q': query },
+				success: function(data) {
+					asyncResults(data.results);
+				},
+				dataType: 'json',
+				cache: false
+			});
+		},
+		display: function(element) {
+			return element.id;
+		},
+		templates: {
+			suggestion: function(element) {
+				return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
+			}
+		}
+	}).bind('typeahead:select', function() {
+		$('#form-filter-issues').submit();
+	});
+</script>

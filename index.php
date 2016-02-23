@@ -25,7 +25,7 @@ if(!is_file("config.ini")) {
 
 // Get current Git revision
 if(is_file(".git/refs/heads/master")) {
-	$f3->set("revision", file_get_contents(".git/refs/heads/master"));
+	$f3->set("revision", trim(file_get_contents(".git/refs/heads/master")));
 } else {
 	$f3->set("revision", "");
 }
@@ -43,7 +43,7 @@ $f3->set("ONERROR", function(Base $f3) {
 		case 404:
 			$f3->set("title", "Not Found");
 			$f3->set("ESCAPE", false);
-			echo Template::instance()->render("error/404.html");
+			echo \Helper\View::instance()->render("error/404.html");
 			break;
 		case 403:
 			echo "You do not have access to this page.";
@@ -114,19 +114,13 @@ foreach($pluginDir as $pluginName) {
 }
 $f3->set("plugins", $plugins);
 
-// register filter
-\Helper\View::instance()->filter('parseText','$this->parseText');
-\Helper\View::instance()->filter('formatFilesize','$this->formatFilesize');
-
 // Set up user session
 $user = new Model\User();
 $user->loadCurrent();
 
-// Load issue types if user is logged in
-if($f3->get("user")) {
-	$types = new \Model\Issue\Type();
-	$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
-}
+// Load issue types
+$types = new \Model\Issue\Type();
+$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
 
 // Run the application
 $f3->set("menuitem", false);

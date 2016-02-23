@@ -18,7 +18,7 @@
 				<div class="clearfix">
 					<h3 class="col-md-8 col-md-offset-4">{{ @dict.log_in }}</h3>
 				</div>
-				<input type="hidden" name="to" value="{{ empty(@to) ? '/' : @to }}">
+				<input type="hidden" name="to" value="{{ (empty(@to) ? '/' : @to) | esc }}">
 				<check if="{{ !empty(@login.error) }}">
 					<p class="alert alert-danger">{{ @login.error }}</p>
 				</check>
@@ -27,7 +27,7 @@
 					<div class="col-md-8">
 						<check if="{{ !empty(@POST.username) }}">
 							<true>
-								<input class="form-control" placeholder="{{ @dict.username }}" id="username" name="username" type="text" value="{{ @POST.username }}" required>
+								<input class="form-control" placeholder="{{ @dict.username }}" id="username" name="username" type="text" value="{{ @POST.username | esc }}" required>
 							</true>
 							<false>
 								<input class="form-control" placeholder="{{ @dict.username }}" id="username" name="username" type="text" required autofocus>

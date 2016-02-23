@@ -8,12 +8,12 @@
 <div class="container">
 	<div class="clearfix">
 		<div class="pull-right">
-			<a href="{{ @BASE }}/admin/users/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span>&ensp;{{ @dict.new_user }}</a>
+			<a href="{{ @BASE }}/admin/users/new" class="btn btn-default btn-sm"><span class="fa fa-plus"></span>&ensp;{{ @dict.new_user }}</a>
 		</div>
 		<include href="blocks/admin/tabs.html" />
 	</div>
 	<p>
-		<a class="btn btn-default btn-sm" href="{{ @BASE }}/admin/users"><span class="glyphicon glyphicon-chevron-left"></span>&ensp;Show Active Users</a>
+		<a class="btn btn-default btn-sm" href="{{ @BASE }}/admin/users"><span class="fa fa-chevron-left"></span>&ensp;Show Active Users</a>
 	</p>
 	<table class="table table-striped table-condensed">
 		<thead>
@@ -36,7 +36,7 @@
 					<td>{{ @user.name }}</td>
 					<td>{{ ucfirst(@user.role) }}</td>
 					<td><span class="badge" style="background-color: #{{ @user.task_color }};">&ensp;</span>&ensp;#{{ @user.task_color }}</td>
-					<td><a href="{{ @BASE }}/admin/users/{{ @user.id }}/undelete" class="has-tooltip" title="{{ @dict.reactivate }}"><span class="glyphicon glyphicon-repeat" style="transform: scaleX(-1);"></span></a></td>
+					<td><a href="{{ @BASE }}/admin/users/{{ @user.id }}/undelete" class="has-tooltip" title="{{ @dict.reactivate }}"><span class="fa fa-repeat" style="transform: scaleX(-1);"></span></a></td>
 				</tr>
 			</repeat>
 		</tbody>

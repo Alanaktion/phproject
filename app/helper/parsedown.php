@@ -728,7 +728,7 @@ class Parsedown
 			$Block['depth'] ++;
 		}
 
-		if (preg_match('/(.*?)<\/'.$Block['name'].'>[ ]*$/i', $Line['text'], $matches)) # close
+		if (preg_match('/(.*?)<\/'.$Block['name'].'>[ ]*$/i', $Line['text'])) # close
 		{
 			if ($Block['depth'] > 0)
 			{

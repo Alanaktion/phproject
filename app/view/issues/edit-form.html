@@ -16,7 +16,7 @@
 	<div class="form-group">
 		<label class="col-md-2 control-label">{{ @dict.cols.title }}</label>
 		<div class="col-md-10">
-			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : @issue.name | esc }}" required>
+			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : @issue.name | esc }}" autocomplete="off" required>
 		</div>
 	</div>
 	<div class="form-group">
@@ -70,14 +70,6 @@
 			<div class="col-md-10">
 				<select class="form-control input-sm" name="author_id">
 					<option value="{{ @user.id }}" {{ empty(@issue) ? 'selected' : '' }}>{{ @user.name | esc }}</option>
-					<optgroup label="Groups">
-						<repeat group="{{ @groups }}" value="{{ @group }}">
-							<check if="{{ !empty(@issue) && @issue.author_id == @group.id }}">
-								<true><option value="{{ @group.id }}" selected>{{ @group.name | esc }}</option></true>
-								<false><option value="{{ @group.id }}">{{ @group.name | esc }}</option></false>
-							</check>
-						</repeat>
-					</optgroup>
 					<optgroup label="Users">
 						<repeat group="{{ @users }}" value="{{ @item }}">
 							<check if="{{ !empty(@issue) && @issue.author_id == @item.id }}">
@@ -117,39 +109,47 @@
 	</div>
 
 	<check if="{{ !empty(@issue) }}">
-		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">{{ @dict.cols.total_spent_hours }}</label>
-			<div class="col-md-6">
-				<input class="form-control input-sm" type="text" name="hours_spent" value="{{ @issue.hours_spent }}">
+		<true>
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.total_spent_hours }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours_spent" autocomplete="off" value="{{ @issue.hours_spent }}">
+				</div>
 			</div>
-		</div>
-	</check>
-	<check if="{{ !empty(@issue) }}">
-		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">{{ @dict.cols.planned_hours }}</label>
-			<div class="col-md-6">
-				<input class="form-control input-sm" type="text" name="hours_total" value="{{ @issue.hours_total }}">
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours_total" autocomplete="off" value="{{ @issue.hours_total }}">
+				</div>
 			</div>
-		</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_remaining }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours_remaining" autocomplete="off" value="{{ @issue.hours_remaining }}">
+				</div>
+			</div>
+		</true>
+		<false>
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours" autocomplete="off">
+				</div>
+			</div>
+		</false>
 	</check>
-	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">{{ empty(@issue) ? @dict.cols.planned_hours : @dict.cols.remaining_hours }}</label>
-		<div class="col-md-6">
-			<input class="form-control input-sm" type="text" name="hours_remaining" value="{{ empty(@issue) ? "" : @issue.hours_remaining }}">
-		</div>
-	</div>
 
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.start_date }}</label>
 		<div class="col-md-6">
-			<input class="form-control input-sm" id="start_date" type="text" name="start_date"  value="{{ empty(@issue) ? "" : @issue.start_date }}">
+			<input class="form-control input-sm" id="start_date" type="text" name="start_date" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.start_date }}">
 		</div>
 	</div>
 
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.due_date }}</label>
 		<div class="col-md-6">
-			<input class="form-control input-sm" id="due_date" type="text" name="due_date"  value="{{ empty(@issue) ? "" : @issue.due_date }}">
+			<input class="form-control input-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.due_date }}">
 		</div>
 	</div>
 	<div class="form-group">
@@ -169,10 +169,10 @@
 		<div class="col-md-6">
 			<check if="{{ !empty(@issue) }}">
 				<true>
-					<input class="form-control input-sm" type="text" name="parent_id" value="{{ empty(@issue) ? "" : @issue.parent_id }}">
+					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.parent_id }}">
 				</true>
 				<false>
-					<input class="form-control input-sm" type="text" name="parent_id" value="{{ empty(@parent) ? "" : @parent }}">
+					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@parent) ? "" : @parent }}">
 				</false>
 			</check>
 		</div>

@@ -1,7 +1,7 @@
 <repeat group="{{ @updates }}" value="{{ @update }}">
 	<div class="media" id="u-{{ @update.id }}">
 		<a class="pull-left" href="{{ @BASE }}/user/{{ @update.user_username }}">
-			<img src="{{ @BASE }}/avatar/48-{{ @update.user_id }}.png" class="media-object profile-picture img-rounded" alt>
+			<img src="{{ @BASE }}/avatar/48-{{ @update.user_id }}.png" srcset="{{ @BASE }}/avatar/96-{{ @update.user_id }}.png 2x" class="media-object profile-picture img-rounded" alt>
 		</a>
 		<div class="media-body">
 			<p class="media-heading">
@@ -13,12 +13,12 @@
 						{{ @update.user_name }}
 					</false>
 				</check>
-				on {{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@update.created_date))) }}
+				on {{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@update.created_date)) }}
 				<check if="{{ @update.notify }}">
-					&ensp;<span class="glyphicon glyphicon-envelope text-success" title="{{ @dict.notifications_sent }}"></span>
+					&ensp;<span class="fa fa-envelope text-success" title="{{ @dict.notifications_sent }}"></span>
 				</check>
 				<check if="{{ @update.notify === 0 }}">
-					&ensp;<span class="glyphicon glyphicon-envelope text-danger" title="{{ @dict.notifications_not_sent }}"></span>
+					&ensp;<span class="fa fa-envelope text-danger" title="{{ @dict.notifications_not_sent }}"></span>
 				</check>
 			</p>
 			<ul>
