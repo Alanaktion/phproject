@@ -101,6 +101,22 @@
 					<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}
 				</p>
 			</div>
+			<check if="{{ @owner.id }}">
+				<div class="issue-head clearfix">
+					<img src="{{ @owner->avatar(48) | esc }}" srcset="{{ @owner->avatar(96) | esc }} 2x" class="profile-picture img-rounded" alt>
+					<p class="pull-left">
+						<check if="{{ @owner.username }}">
+							<true>
+								<a href="{{ @BASE }}/user/{{ @owner.username }}" class="has-tooltip" title="{{ @dict.cols.owner }}" data-placement="right">{{ @owner.name | esc }}</a>
+							</true>
+							<false>
+								<span class="has-tooltip" title="{{ @dict.cols.owner }}" data-placement="right">{{ @owner.name | esc }}</span>
+							</false>
+						</check>
+						<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}
+					</p>
+				</div>
+			</check>
 
 			<dl class="dl-inline">
 				<check if="{{ @issue.sprint_id }}">
@@ -121,25 +137,6 @@
 
 				<dt>{{ @dict.cols.status }}</dt>
 				<dd>{{ @issue.status_name }}</dd>
-
-				<dt>{{ @dict.cols.assignee }}</dt>
-				<dd>
-					<check if="{{ @owner.id }}">
-						<true>
-							<check if="{{ @owner.username }}">
-								<true>
-									<a href="{{ @BASE }}/user/{{ @owner.username }}">{{ @owner.name | esc }}</a>
-								</true>
-								<false>
-									{{ @owner.name | esc }}
-								</false>
-							</check>
-						</true>
-						<false>
-							{{ @dict.not_assigned }}
-						</false>
-					</check>
-				</dd>
 
 				<check if="{{ @issue.repeat_cycle && @issue.repeat_cycle != 'none' }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>
