@@ -47,6 +47,9 @@
 		<h3 class="pull-left issue-heading">
 			<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="nolink">{{ @issue.name | esc }}</a> <small>#{{ @issue.id }}</small>
 		</h3>
+		<check if="{{ @issue.type_id == @issue_type.project }}">
+			<a href="{{ @BASE }}/issues/project/{{ @issue.id }}" class="btn btn-default btn-sm">{{ @dict.project_overview }}</a>
+		</check>
 		<div class="pull-right">
 			<check if="{{ @issue.status_closed }}">
 				<false>
@@ -127,9 +130,6 @@
 				<dt>{{ @dict.cols.type }}</dt>
 				<dd>
 					{{ @issue.type_name }}
-					<check if="{{ @issue.type_id == @issue_type.project }}">
-						&ndash; <a href="{{ @BASE }}/issues/project/{{ @issue.id }}">{{ @dict.project_overview }}</a>
-					</check>
 				</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
