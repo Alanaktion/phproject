@@ -11,9 +11,11 @@
 		<a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;closed={{ empty(@GET.closed) }}">{{ empty(@GET.closed) ? 'Include closed issues' : 'Exclude closed issues' }}</a>
 	</p>
 	<include href="blocks/issue-list.html" />
-	<p class="pull-right hidden-xs">
-		<span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
-	</p>
+	<div class="clearfix">
+		<p class="pull-right hidden-xs">
+			<span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
+		</p>
+	</div>
 	<check if="{{ @issues.count }}">
 		<div class="text-center">
 			<ul class="pagination pagination-sm" style="margin: 15px 0;">
