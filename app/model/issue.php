@@ -28,9 +28,9 @@ namespace Model;
 class Issue extends \Model {
 
 	protected
-	$_table_name = "issue",
-	$_heirarchy = null,
-	$_children = null;
+		$_table_name = "issue",
+		$_heirarchy = null,
+		$_children = null;
 	protected static $requiredFields = array("type_id", "status", "name", "author_id");
 
 	/**

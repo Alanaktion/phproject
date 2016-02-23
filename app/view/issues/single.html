@@ -100,10 +100,10 @@
 							<a href="{{ @BASE }}/user/{{ @author.username }}">{{ @author.name | esc }}</a>
 						</true>
 						<false>
-							<span class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</span>
+							{{ @author.name | esc }}
 						</false>
 					</check>
-					<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}
+					<br><em>{{ @@author.username }}</em>
 				</p>
 			</div>
 
@@ -117,10 +117,10 @@
 								<a href="{{ @BASE }}/user/{{ @owner.username }}">{{ @owner.name | esc }}</a>
 							</true>
 							<false>
-								<span class="has-tooltip" title="{{ @dict.cols.owner }}" data-placement="right">{{ @owner.name | esc }}</span>
+								{{ @owner.name | esc }}
 							</false>
 						</check>
-						<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}
+						<br><em>{{ @@owner.username }}</em>
 					</p>
 				</div>
 			</check>
@@ -130,6 +130,9 @@
 					<dt>{{ @dict.cols.sprint }}</dt>
 					<dd><a href="{{ @BASE }}/taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
 				</check>
+
+				<dt>{{ @dict.cols.created }}</dt>
+				<dd>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}</dd>
 
 				<dt>{{ @dict.cols.type }}</dt>
 				<dd>
