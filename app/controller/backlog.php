@@ -68,27 +68,31 @@ class Backlog extends \Controller {
 					array('order' => 'priority DESC, due_date')
 				);
 
-			// Add sorted projects
-			$sprintBacklog = array();
-			$sortModel = new \Model\Issue\Backlog;
-			$sortModel->load(array("user_id = ? AND sprint_id = ?", $params["groupid"], $sprint->id));
-			$sortArray = array();
-			if($sortModel->id) {
-				$sortArray = json_decode($sortModel->issues);
-				foreach($sortArray as $id) {
-					foreach($projects as $p) {
-						if($p->id == $id) {
-							$sprintBacklog[] = $p;
+			if(!empty($params["groupid"])) {
+				// Add sorted projects
+				$sprintBacklog = array();
+				$sortModel = new \Model\Issue\Backlog;
+				$sortModel->load(array("user_id = ? AND sprint_id = ?", $params["groupid"], $sprint->id));
+				$sortArray = array();
+				if($sortModel->id) {
+					$sortArray = json_decode($sortModel->issues);
+					foreach($sortArray as $id) {
+						foreach($projects as $p) {
+							if($p->id == $id) {
+								$sprintBacklog[] = $p;
+							}
 						}
 					}
 				}
-			}
 
-			// Add remaining projects
-			foreach($projects as $p) {
-				if(!in_array($p->id, $sortArray)) {
-					$sprintBacklog[] = $p;
+				// Add remaining projects
+				foreach($projects as $p) {
+					if(!in_array($p->id, $sortArray)) {
+						$sprintBacklog[] = $p;
+					}
 				}
+			} else {
+				$sprintBacklog = $projects;
 			}
 
 			$sprint_details[] = $sprint->cast() + array("projects" => $sprintBacklog);
