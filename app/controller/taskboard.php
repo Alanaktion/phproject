@@ -155,6 +155,36 @@ class Taskboard extends \Controller {
 			$sprint->id, $f3->get("issue_type.project")
 		), array("order" => "owner_id ASC, priority DESC"));
 
+		// Sort projects if a filter is given
+		if(!empty($params["filter"]) && is_numeric($params["filter"])) {
+			$sprintBacklog = array();
+			$sortModel = new \Model\Issue\Backlog;
+			$sortModel->load(array("user_id = ? AND sprint_id = ?", $params["filter"], $sprint->id));
+			$sortArray = array();
+			if($sortModel->id) {
+				$sortArray = json_decode($sortModel->issues);
+				usort($projects, function($a, $b) use($sortArray) {
+					$ka = array_search($a->id, $sortArray);
+					$kb = array_search($b->id, $sortArray);
+					if($ka === false && $kb !== false) {
+						return -1;
+					}
+					if($ka !== false && $kb === false) {
+						return 1;
+					}
+					if($ka === $kb) {
+						return 0;
+					}
+					if($ka > $kb) {
+						return 1;
+					}
+					if($ka < $kb) {
+						return -1;
+					}
+				});
+			}
+		}
+
 		// Build multidimensional array of all tasks and projects
 		$taskboard = array();
 		foreach($projects as $project) {
