@@ -185,7 +185,7 @@ class Backlog extends \Controller {
 			$backlog->load(array("user_id = ? AND sprint_id = ?", $f3->get("POST.user"), $f3->get("POST.sprint_id")));
 			$backlog->sprint_id = $f3->get("POST.sprint_id");
 		} else {
-			$backlog->load(array("user_id = ?", $f3->get("POST.user")));
+			$backlog->load(array("user_id = ? AND sprint_id IS NULL", $f3->get("POST.user")));
 		}
 		$backlog->user_id = $f3->get("POST.user");
 		$backlog->issues = $f3->get("POST.items");
