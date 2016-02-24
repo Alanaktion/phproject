@@ -67,7 +67,31 @@ class Backlog extends \Controller {
 			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND type_id = ? $filter_string", $sprint->id, $f3->get("issue_type.project")),
 					array('order' => 'priority DESC, due_date')
 				);
-			$sprint_details[] = $sprint->cast() + array("projects" => $projects);
+
+			// Add sorted projects
+			$sprintBacklog = array();
+			$sortModel = new \Model\Issue\Backlog;
+			$sortModel->load(array("user_id = ? AND sprint_id = ?", $params["groupid"], $sprint->id));
+			$sortArray = array();
+			if($sortModel->id) {
+				$sortArray = json_decode($sortModel->issues);
+				foreach($sortArray as $id) {
+					foreach($projects as $p) {
+						if($p->id == $id) {
+							$sprintBacklog[] = $p;
+						}
+					}
+				}
+			}
+
+			// Add remaining projects
+			foreach($projects as $p) {
+				if(!in_array($p->id, $sortArray)) {
+					$sprintBacklog[] = $p;
+				}
+			}
+
+			$sprint_details[] = $sprint->cast() + array("projects" => $sprintBacklog);
 		}
 
 		$large_projects = $f3->get("db.instance")->exec("SELECT parent_id FROM issue WHERE parent_id IS NOT NULL AND type_id = ?", $f3->get("issue_type.project"));
@@ -95,7 +119,7 @@ class Backlog extends \Controller {
 			// Add sorted projects
 			$backlog = array();
 			$sortModel = new \Model\Issue\Backlog;
-			$sortModel->load(array("user_id = ?", $params["groupid"]));
+			$sortModel->load(array("user_id = ? AND sprint_id IS NULL", $params["groupid"]));
 			$sortArray = array();
 			if($sortModel->id) {
 				$sortArray = json_decode($sortModel->issues);
