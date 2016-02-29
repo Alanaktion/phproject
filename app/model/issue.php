@@ -493,4 +493,19 @@ class Issue extends \Model {
 		return $result;
 	}
 
+	/**
+	 * Close the issue
+	 * @return Issue $this
+	 */
+	public function close() {
+		if($this->id && !$this->closed_date) {
+			$status = new \Model\Issue\Status;
+			$status->load(array("closed = ?", 1));
+			$this->status = $status->id;
+			$this->closed_date = date("Y-m-d H:i:s");
+			$this->save();
+		}
+		return $this;
+	}
+
 }
