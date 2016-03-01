@@ -64,7 +64,8 @@ class User extends \Controller {
 
 		// Get current sprint if there is one
 		$sprint = new \Model\Sprint;
-		$sprint->load(array("? BETWEEN start_date AND end_date", date("Y-m-d")));
+		$localDate = date('Y-m-d', \Helper\View::instance()->utc2local());
+		$sprint->load(array("? BETWEEN start_date AND end_date", $localDate));
 		$f3->set("sprint", $sprint);
 
 		$f3->set("dashboard", $dashboard);

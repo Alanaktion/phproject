@@ -80,11 +80,16 @@ class Taskboard extends \Controller {
 	 * @param array $params
 	 */
 	public function index($f3, $params) {
+		$sprint = new \Model\Sprint();
 
-		// Require a valid numeric sprint ID
+		// Load current sprint if no sprint ID is given
 		if(!intval($params["id"])) {
-			$f3->error(404);
-			return;
+			$localDate = date('Y-m-d', \Helper\View::instance()->utc2local());
+			$sprint->load(array("? BETWEEN start_date AND end_date", $localDate));
+			if(!$sprint->id) {
+				$f3->error(404);
+				return;
+			}
 		}
 
 		// Default to showing group tasks
@@ -93,11 +98,12 @@ class Taskboard extends \Controller {
 		}
 
 		// Load the requested sprint
-		$sprint = new \Model\Sprint();
-		$sprint->load($params["id"]);
 		if(!$sprint->id) {
-			$f3->error(404);
-			return;
+			$sprint->load($params["id"]);
+			if(!$sprint->id) {
+				$f3->error(404);
+				return;
+			}
 		}
 
 		$f3->set("sprint", $sprint);
