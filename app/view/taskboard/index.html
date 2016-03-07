@@ -187,7 +187,7 @@
 					<h4 class="modal-title" id="task-dialog-title">{{ @dict.edit }}</h4>
 				</div>
 				<fieldset class="modal-body">
-					<input type="hidden" name="sprintId" id="sprintId" value="{{ @PARAMS.id }}">
+					<input type="hidden" name="sprintId" id="sprintId" value="{{ @sprint.id }}">
 					<input type="hidden" name="taskId" id="taskId" value="">
 					<div class="container-fluid">
 						<div class="row">
@@ -328,7 +328,7 @@
 
 			// Preload burndown data
 			$.ajax({
-				url: BASE + '/taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}',
+				url: BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @tasks }}',
 				success: function(data) {
 					BurndownData = data;
 					BurndownReady = true;
