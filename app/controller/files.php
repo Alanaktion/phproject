@@ -189,6 +189,7 @@ class Files extends \Controller {
 		} else {
 
 			// Send user to Gravatar
+			header("Cache-Control: max-age=" . (3600 * 24));
 			$f3->reroute($f3->get("SCHEME") . ":" . \Helper\View::instance()->gravatar($user->email, $params["size"]), true);
 
 		}
