@@ -24,7 +24,8 @@ abstract class Controller {
 				if($user->id) {
 					$session = new \Model\Session($user->id);
 					$session->setCurrent();
-					$f3->reroute("/");
+					$f3->set("user", $user->cast());
+					$f3->set("user_obj", $user);
 					return;
 				} else {
 					$f3->set("error", "Auto-login failed, demo user was not found.");
