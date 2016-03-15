@@ -120,9 +120,13 @@ class Admin extends \Controller {
 		$this->_userId = $this->_requireAdmin(5);
 		$plugins = $f3->get("plugins");
 		if($plugin = $plugins[$params["id"]]) {
-			$f3->set("title", $plugin->_package());
 			$f3->set("plugin", $plugin);
-			$this->_render("admin/plugins/single.html");
+			if($f3->get("AJAX")) {
+				$plugin->_admin();
+			} else {
+				$f3->set("title", $plugin->_package());
+				$this->_render("admin/plugins/single.html");
+			}
 		} else {
 			$f3->error(404);
 		}
