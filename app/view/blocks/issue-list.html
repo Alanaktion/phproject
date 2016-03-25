@@ -76,7 +76,7 @@
 							<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
 							<optgroup label="{{ @dict.groups }}">
 								<repeat group="{{ @groups }}" value="{{ @item }}">
-									<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
+									<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
 										<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
 										<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
 									</check>
