@@ -308,11 +308,11 @@
 
 	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js,bootstrap-datepicker.js"></script>
 	<check if="{{ @user_obj->date_picker()->js }}">
-	<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+		<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+	</check>
 	<script>
 		var datepickerLanguage='{{ @user_obj->date_picker()->language }}';
 	</script>
-	</check>
 	<script src="{{ @BASE }}/js/chart.js"></script>
 	<script src="{{ @BASE }}/minify/js/taskboard.js,burndown.js"></script>
 	<script>
