@@ -31,11 +31,11 @@
 </div>
 <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js"></script>
 <check if="{{ @user_obj->date_picker()->js }}">
-<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+	<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+</check>
 <script>
 	var datepickerLanguage='{{ @user_obj->date_picker()->language }}';
 </script>
-</check>
 <script src="{{ @BASE }}/minify/js/bulkissues.js"></script>
 </body>
 </html>
