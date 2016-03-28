@@ -316,7 +316,7 @@ Ordered list start and continuation:
         # Item 8
 */
 
-namespace Helper\Textile;
+namespace Textile;
 
 /**
  * Textile parser.

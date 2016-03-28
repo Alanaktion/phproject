@@ -40,7 +40,7 @@
  * @link http://github.com/chrisboulton/php-diff
  */
 
-namespace Helper\Diff;
+namespace Diff;
 
 class Sequencematcher
 {

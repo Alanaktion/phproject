@@ -220,7 +220,7 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseTextile($str) {
-		$tex = new Textile\Parser('html5');
+		$tex = new \Textile\Parser('html5');
 		$tex->setDimensionlessImages(true);
 		return $tex->parse($str);
 	}
@@ -231,7 +231,7 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseMarkdown($str) {
-		$mkd = new Parsedown();
+		$mkd = new \Parsedown();
 		$mkd->setUrlsLinked(false);
 		return $mkd->text($str);
 	}
