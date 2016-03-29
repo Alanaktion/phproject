@@ -43,8 +43,6 @@
  * @link http://github.com/chrisboulton/php-diff
  */
 
-namespace Helper;
-
 class Diff
 {
 	/**
