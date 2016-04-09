@@ -21,6 +21,9 @@ class View extends \Template {
 	 * @return string
 	 */
 	public function parseText($str, $options = array(), $ttl = null) {
+		if($options === null) {
+			$options = array();
+		}
 		$options = $options + \Base::instance()->get("parse");
 
 		// Check for cached value if $ttl is set
