@@ -641,7 +641,7 @@ $(function() {
 		formSerialized = $editForm.serialize();
 	$(window).on('beforeunload', function() {
 		if($editForm.length && $editForm.serialize() !== formSerialized) {
-			return true;
+			return '{{ @dict.unsaved_changes }}';
 		}
 	});
 
