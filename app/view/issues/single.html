@@ -544,7 +544,7 @@ $(function() {
 	// Handle inline edit form
 	var hasClickedEdit = false;
 	$("#btn-edit, #form-edit .close, #form-edit .btn-cancel").click(function(e) {
-		if(e.which == 1) {
+		if(!e.which || e.which == 1) {
 			$("#form-edit").slideToggle("fast");
 			if(!hasClickedEdit) {
 				hasClickedEdit = true;
