@@ -67,6 +67,9 @@ $(function() {
 			return '{{ @dict.unsaved_changes }}';
 		}
 	});
+	$editForm.submit(function() {
+		$(window).off('beforeunload');
+	});
 });
 if('SimpleMDE' in window) {
 	var simplemde = new SimpleMDE({

@@ -644,6 +644,9 @@ $(function() {
 			return '{{ @dict.unsaved_changes }}';
 		}
 	});
+	$editForm.submit(function() {
+		$(window).off('beforeunload');
+	});
 
 });
 function restoreFile(file_id) {
