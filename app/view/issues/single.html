@@ -544,21 +544,24 @@ $(function() {
 	// Handle inline edit form
 	var hasClickedEdit = false;
 	$("#btn-edit, #form-edit .close, #form-edit .btn-cancel").click(function(e) {
-		$("#form-edit").slideToggle("fast");
-		if(!hasClickedEdit) {
-			hasClickedEdit = true;
-			if(typeof window.SimpleMDE != 'undefined') {
-				var simplemde = new SimpleMDE({
-					element: $('input[name="description"]')[0],
-					toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide']
-				});
-				simplemde.render();
+		if(e.which == 1) {
+			$("#form-edit").slideToggle("fast");
+			if(!hasClickedEdit) {
+				hasClickedEdit = true;
+				if('SimpleMDE' in window) {
+					var simplemde = new SimpleMDE({
+						element: $('input[name="description"]')[0],
+						toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
+						forceSync: true
+					});
+					simplemde.render();
+				}
 			}
+			e.preventDefault();
 		}
-		e.preventDefault();
 	});
 
-	// Due date picker
+	// Enable datepickers
 	$('#due_date, #start_date').datepicker({
 		format: 'yyyy-mm-dd',
 		language: '{{ @user_obj->date_picker()->language }}',
@@ -603,6 +606,7 @@ $(function() {
 		$('#upload')[0].reset();
 	});
 
+	// Enable typeahead
 	$('input[name="parent_id"]').typeahead({
 		classNames: {
 			menu: 'dropdown-menu',
@@ -629,6 +633,15 @@ $(function() {
 			suggestion: function(element) {
 				return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
 			}
+		}
+	});
+
+	// Prevent navigation with unsaved changes
+	var $editForm = $('#edit-form'),
+		formSerialized = $editForm.serialize();
+	$(window).on('beforeunload', function() {
+		if($editForm.length && $editForm.serialize() !== formSerialized) {
+			return true;
 		}
 	});
 
