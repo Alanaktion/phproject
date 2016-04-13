@@ -63,6 +63,14 @@
 					</label>
 				</div>
 			</form>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label for="task_color" class="col-xs-4 control-label label-sm">{{ @dict.task_color }}</label>
+					<div class="col-xs-6">
+						<input class="form-control input-sm" id="task_color" type="color" name="task_color" value="#{{ @group.task_color }}" maxlength="7">
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />
@@ -111,6 +119,13 @@ $(function(){
 			action: 'change_api_visibility',
 			group_id: '{{ @group.id }}',
 			value: $(this).prop('checked') + 0
+		}, function() {}, 'json');
+	});
+	$('#task_color').change(function(e) {
+		$.post('{{ @BASE }}/admin/groups/ajax',{
+			action: 'change_task_color',
+			group_id: '{{ @group.id }}',
+			value: $(this).val()
 		}, function() {}, 'json');
 	});
 });

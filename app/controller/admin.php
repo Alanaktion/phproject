@@ -456,7 +456,7 @@ class Admin extends \Controller {
 				$this->_printJson(array("changed" => 1));
 				break;
 			case "change_task_color":
-				$group->task_color = trim($f3->get("POST.value"));
+				$group->task_color = ltrim($f3->get("POST.value"), '#');
 				$group->save();
 				$this->_printJson(array("changed" => 1));
 				break;
