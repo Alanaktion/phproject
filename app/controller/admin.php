@@ -455,6 +455,16 @@ class Admin extends \Controller {
 				$group->save();
 				$this->_printJson(array("changed" => 1));
 				break;
+			case "change_task_color":
+				$group->task_color = trim($f3->get("POST.value"));
+				$group->save();
+				$this->_printJson(array("changed" => 1));
+				break;
+			case "change_api_visibility":
+				$group->api_visible = (int)!!$f3->get("POST.value");
+				$group->save();
+				$this->_printJson(array("changed" => 1));
+				break;
 		}
 	}
 

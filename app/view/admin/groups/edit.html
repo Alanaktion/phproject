@@ -48,6 +48,21 @@
 					<button type="submit" class="btn btn-sm btn-primary">{{ @dict.add_to_group }}</button>
 				</div>
 			</form>
+			<form>
+				<div class="checkbox">
+					<label>
+						<check if="{{ @group.api_visible }}">
+							<true>
+								<input type="checkbox" id="chk-api-visibility" name="value" value="1" checked>
+							</true>
+							<false>
+								<input type="checkbox" id="chk-api-visibility" name="value" value="1">
+							</false>
+						</check>
+						{{ @dict.api_visible }}
+					</label>
+				</div>
+			</form>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />
@@ -58,7 +73,7 @@ $(function(){
 		if($(this).val().length > 0) {
 			$.post('{{ @BASE }}/admin/groups/ajax',{
 				action: 'change_title',
-				group_id: parseInt('{{ @group.id }}'),
+				group_id: '{{ @group.id }}',
 				name: $(this).val()
 			}, function(data) {
 				$('.saved').show();
@@ -73,7 +88,7 @@ $(function(){
 		if(confirm('Are you sure you want to remove this user?')) {
 			$.post('{{ @BASE }}/admin/groups/ajax', {
 				action: 'remove_member',
-				group_id: parseInt('{{ @group.id }}'),
+				group_id: '{{ @group.id }}',
 				user_id: $li.data('user-id')
 			}, function(data) {
 				if(data.deleted) {
@@ -90,6 +105,13 @@ $(function(){
 			$('<li />').data('user-id', $this.val()).html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $this.text()).appendTo('#members');
 		});
 		e.preventDefault();
+	});
+	$('#chk-api-visibility').change(function(e) {
+		$.post('{{ @BASE }}/admin/groups/ajax',{
+			action: 'change_api_visibility',
+			group_id: '{{ @group.id }}',
+			value: $(this).prop('checked') + 0
+		}, function() {}, 'json');
 	});
 });
 </script>
