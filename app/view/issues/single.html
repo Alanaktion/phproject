@@ -78,7 +78,7 @@
 			<a id="btn-edit" href="{{ @BASE }}/issues/edit/{{ @issue.id }}" class="btn btn-default btn-xs">
 				<span class="fa fa-pencil"></span>&ensp;{{ @dict.edit }}
 			</a>
-			<check if="{{ @user.role == 'admin' || @user.rank >= 3 || @user.id == @issue.author_id }}">
+			<check if="{{ @user.role == 'admin' || @user.rank >= \Model\User::RANK_MANAGER || @user.id == @issue.author_id }}">
 				<a href="{{ @BASE }}/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
 					<span class="fa fa-remove"></span><span class="hidden-xs">&ensp;{{ @dict.delete }}</span>
 				</a>
@@ -87,20 +87,43 @@
 	</div>
 	<div class="row">
 		<div class="col-lg-5">
+			<check if="{{ @issue.type_id == @issue_type.project }}">
+				<p><a href="{{ @BASE }}/issues/project/{{ @issue.id }}" class="btn btn-default btn-sm">{{ @dict.project_overview }}</a></p>
+			</check>
+
+			<b>{{ @dict.cols.author }}</b>
 			<div class="issue-head clearfix">
-				<img src="{{ @author->avatar(48) | esc }}" class="profile-picture img-rounded" alt>
+				<img src="{{ @author->avatar(48) | esc }}" srcset="{{ @author->avatar(96) | esc }} 2x" class="profile-picture img-rounded" alt>
 				<p class="pull-left">
 					<check if="{{ @author.username }}">
 						<true>
-							<a href="{{ @BASE }}/user/{{ @author.username }}" class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</a>
+							<a href="{{ @BASE }}/user/{{ @author.username }}">{{ @author.name | esc }}</a>
 						</true>
 						<false>
-							<span class="has-tooltip" title="{{ @dict.cols.author }}" data-placement="right">{{ @author.name | esc }}</span>
+							{{ @author.name | esc }}
 						</false>
 					</check>
-					<br>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@issue.created_date))) }}
+					<br><em>{{ @@author.username }}</em>
 				</p>
 			</div>
+
+			<check if="{{ @owner.id }}">
+				<b>{{ @dict.cols.assignee }}</b>
+				<div class="issue-head clearfix">
+					<img src="{{ @owner->avatar(48) | esc }}" srcset="{{ @owner->avatar(96) | esc }} 2x" class="profile-picture img-rounded" alt>
+					<p class="pull-left">
+						<check if="{{ @owner.username }}">
+							<true>
+								<a href="{{ @BASE }}/user/{{ @owner.username }}">{{ @owner.name | esc }}</a>
+							</true>
+							<false>
+								{{ @owner.name | esc }}
+							</false>
+						</check>
+						<br><em>{{ @@owner.username }}</em>
+					</p>
+				</div>
+			</check>
 
 			<dl class="dl-inline">
 				<check if="{{ @issue.sprint_id }}">
@@ -108,12 +131,12 @@
 					<dd><a href="{{ @BASE }}/taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
 				</check>
 
+				<dt>{{ @dict.cols.created }}</dt>
+				<dd>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}</dd>
+
 				<dt>{{ @dict.cols.type }}</dt>
 				<dd>
 					{{ @issue.type_name }}
-					<check if="{{ @issue.type_id == @issue_type.project }}">
-						&ndash; <a href="{{ @BASE }}/issues/project/{{ @issue.id }}">{{ @dict.project_overview }}</a>
-					</check>
 				</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
@@ -121,25 +144,6 @@
 
 				<dt>{{ @dict.cols.status }}</dt>
 				<dd>{{ @issue.status_name }}</dd>
-
-				<dt>{{ @dict.cols.assignee }}</dt>
-				<dd>
-					<check if="{{ @owner.id }}">
-						<true>
-							<check if="{{ @owner.username }}">
-								<true>
-									<a href="{{ @BASE }}/user/{{ @owner.username }}">{{ @owner.name | esc }}</a>
-								</true>
-								<false>
-									{{ @owner.name | esc }}
-								</false>
-							</check>
-						</true>
-						<false>
-							{{ @dict.not_assigned }}
-						</false>
-					</check>
-				</dd>
 
 				<check if="{{ @issue.repeat_cycle && @issue.repeat_cycle != 'none' }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>
@@ -191,7 +195,7 @@
 							<repeat group="{{ @files }}" value="{{ @file }}">
 								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @file.filesize | formatFilesize }}">
 									<a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" data-mime="{{ @file.content_type }}" target="_blank">
-										<img class src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" /><br />
+										<img src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" srcset="{{ @BASE }}/files/thumb/192-{{ @file.id }}.png 2x" /><br />
 										{{ @file.filename | esc }}
 									</a>
 									<button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
@@ -253,38 +257,18 @@
 								</div>
 							</div>
 							<div class="text-right">
+								<div class="checkbox checkbox-container-inline">
+									<label>
+										<input type="checkbox" name="notify" value="1" checked>
+										{{ @dict.send_notifications }}
+									</label>
+								</div>&ensp;
 								<button type="button" class="btn btn-default btn-sm has-tooltip" title="{{ @dict.upload_a_file }}" data-placement="top" data-toggle="modal" data-target="#upload" id="btn-attach-file"><span class="fa fa-file"></span></button>
 								<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_comment }}</button>
 							</div>
 						</form>
 						<repeat group="{{ @comments }}" value="{{ @comment }}">
-							<div class="media" id="c-{{ @comment.id }}" data-id="{{ @comment.id }}">
-								<a class="pull-left" href="{{ @BASE }}/user/{{ @comment.user_username }}">
-									<img class="profile-picture media-object img-rounded" src="{{ @BASE }}/avatar/48-{{ @comment.user_id }}.png" alt>
-								</a>
-								<div class="media-body">
-									<p class="media-heading clearfix">
-										<a href="{{ @BASE }}/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
-										<check if="{{ @user.role == 'admin' || @user.rank >= 3 }}">
-											<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
-										</check>
-									</p>
-									<div class="tex">{{ @comment.text, array('hashtags' => false) | parseText }}</div>
-									<check if="{{ @comment.file_id }}">
-										<check if="{{ @comment.file_deleted_date }}">
-											<true>
-												<div><b>{{ @dict.attached_file }}:</b> <span style="text-decoration: line-through;">{{ @comment.file_filename | esc }}</span> <span class="text-danger">[{{ @dict.deleted }}]</span></div>
-											</true>
-											<false>
-												<div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="{{ @BASE }}/files/{{ @comment.file_id }}/{{ @comment.file_filename | esc }}" target="_blank">{{ @comment.file_filename | esc }}</a></div>
-											</false>
-										</check>
-									</check>
-									<p class="text-muted">
-										<small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@comment.created_date))) }}</small>
-									</p>
-								</div>
-							</div>
+							<include href="blocks/issue-comment.html" />
 						</repeat>
 					</div>
 				</div>
@@ -347,6 +331,12 @@
 				<textarea class="form-control input-sm" id="file_comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}"></textarea>
 			</div>
 			<div class="modal-footer">
+				<div class="checkbox checkbox-container-inline">
+					<label>
+						<input type="checkbox" name="notify" value="1" checked>
+						{{ @dict.send_notifications }}
+					</label>
+				</div>&ensp;
 				<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ @dict.cancel }}</button>
 				<button type="submit" class="btn btn-sm btn-primary">{{ @dict.upload }}</button>
 			</div>
@@ -408,7 +398,7 @@ $(function() {
 					.after(
 						'<div class="media" id="c-' + data.id + '" data-id="' + data.id + '">' +
 							'<a class="pull-left" href="{{ @BASE }}/user/' + data.user_username + '">' +
-								'<img src="{{ @user_obj->avatar(48) | esc }}" class="media-object profile-picture img-rounded" alt>' +
+								'<img src="{{ @user_obj->avatar(48) | esc }}" srcset="{{ @user_obj->avatar(96) | esc }} 2x" class="media-object profile-picture img-rounded" alt>' +
 							'</a>' +
 							'<div class="media-body">' +
 								'<p class="media-heading"><a href="{{ @BASE }}/user/' + data.user_username + '">' + data.user_name + '</a></p>' +
@@ -438,7 +428,7 @@ $(function() {
 
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
-			$li = $(this).parents('li');
+			var $li = $(this).parents('li');
 			$.post(BASE + '/issues/{{ @issue.id }}', {
 				action: 'remove_watcher',
 				user_id: $li.data('user-id')
@@ -451,16 +441,18 @@ $(function() {
 			e.preventDefault();
 		});
 		$('#add-watcher').submit(function(e) {
-			$this = $(this);
+			var $this = $(this);
 			$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
 
-			$select = $this.find('select');
-			$('<li />')
-				.attr('data-user-id', $select.val())
-				.html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $select.children('option:selected').text())
-				.appendTo('#watchers-list');
+			var $select = $this.find('select');
+			if(!$('#watchers-list li').filter('[data-user-id=' + $select.val() + ']').length) {
+				$('<li />')
+					.attr('data-user-id', $select.val())
+					.html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $select.children('option:selected').text())
+					.appendTo('#watchers-list');
 
-			$('#watchers-badge').text(parseInt($('#watchers-badge').text()) + 1);
+				$('#watchers-badge').text(parseInt($('#watchers-badge').text()) + 1);
+			}
 
 			e.preventDefault();
 		});
@@ -528,7 +520,7 @@ $(function() {
 
 	// Add/remove dependencies from tab
 	$('#dependencies').on('click', 'a.delete', function(e) {
-		$tr = $(this).parents('tr');
+		var $tr = $(this).parents('tr');
 		$.post(BASE + '/issues/{{ @issue.id }}', {
 			action: 'remove_dependency',
 			id: $tr.data('id')
@@ -542,7 +534,7 @@ $(function() {
 		e.preventDefault();
 	});
 	$('#dependencies').on('submit', 'form', function(e) {
-		$this = $(this);
+		var $this = $(this);
 		$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
 
 		e.preventDefault();
@@ -552,21 +544,24 @@ $(function() {
 	// Handle inline edit form
 	var hasClickedEdit = false;
 	$("#btn-edit, #form-edit .close, #form-edit .btn-cancel").click(function(e) {
-		$("#form-edit").slideToggle("fast");
-		if(!hasClickedEdit) {
-			hasClickedEdit = true;
-			if(typeof window.SimpleMDE != 'undefined') {
-				var simplemde = new SimpleMDE({
-					element: $('input[name="description"]')[0],
-					toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide']
-				});
-				simplemde.render();
+		if(!e.which || e.which == 1) {
+			$("#form-edit").slideToggle("fast");
+			if(!hasClickedEdit) {
+				hasClickedEdit = true;
+				if('SimpleMDE' in window) {
+					var simplemde = new SimpleMDE({
+						element: $('input[name="description"]')[0],
+						toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
+						forceSync: true
+					});
+					simplemde.render();
+				}
 			}
+			e.preventDefault();
 		}
-		e.preventDefault();
 	});
 
-	// Due date picker
+	// Enable datepickers
 	$('#due_date, #start_date').datepicker({
 		format: 'yyyy-mm-dd',
 		language: '{{ @user_obj->date_picker()->language }}',
@@ -611,6 +606,7 @@ $(function() {
 		$('#upload')[0].reset();
 	});
 
+	// Enable typeahead
 	$('input[name="parent_id"]').typeahead({
 		classNames: {
 			menu: 'dropdown-menu',
@@ -638,6 +634,18 @@ $(function() {
 				return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
 			}
 		}
+	});
+
+	// Prevent navigation with unsaved changes
+	var $editForm = $('#edit-form'),
+		formSerialized = $editForm.serialize();
+	$(window).on('beforeunload', function() {
+		if($editForm.length && $editForm.serialize() !== formSerialized) {
+			return '{{ @dict.unsaved_changes }}';
+		}
+	});
+	$editForm.submit(function() {
+		$(window).off('beforeunload');
 	});
 
 });

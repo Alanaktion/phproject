@@ -36,81 +36,63 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Helper\Textile;
+namespace Textile;
 
 /**
- * Renders HTML elements.
+ * Simple data storage.
  *
- * This class can be used to HTML elements. It
- * does not sanitise attribute values, but can be
- * used to construct tags with nice object oriented
- * syntax.
+ * This class allows storing assignments in an internal
+ * data array.
  *
- * bc. use Netcarver\Textile\Tag;
- * $img = new Tag('img');
- * echo (string) $img->class('big blue')->src('images/elephant.jpg');
+ * bc. use Netcarver\Textile\DataBag;
+ * $plant = new DataBag(array('key' => 'value'));
+ * $plant->flower('rose')->color('red');
  *
  * @internal
  */
 
-class Tag extends DataBag
+class DataBag
 {
 	/**
-	 * The name of the tag.
+	 * The data array stored in the bag.
 	 *
-	 * @var string
+	 * @var array
 	 */
 
-	protected $tag;
-
-	/**
-	 * Whether the tag is self-closing.
-	 *
-	 * @var bool
-	 */
-
-	protected $selfclose;
+	protected $data;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param string $name        The tag name
-	 * @param array  $attributes  An array of attributes
-	 * @param bool   $selfclosing Whether the tag is self-closing
+	 * @param array|null $data The initial data array stored in the bag
 	 */
 
-	public function __construct($name, array $attributes = null, $selfclosing = true)
+	public function __construct(array $data = null)
 	{
-		parent::__construct($attributes);
-		$this->tag = $name;
-		$this->selfclose = $selfclosing;
+		$this->data = (array) $data;
 	}
 
 	/**
-	 * Returns the tag as HTML.
+	 * Adds a value to the bag.
 	 *
-	 * bc. $img = new Tag('img');
-	 * $img->src('images/example.jpg')->alt('Example image');
-	 * echo (string) $img;
+	 * Empty values are rejected, unless the
+	 * second argument is set TRUE.
 	 *
-	 * @return string A HTML element
+	 * bc. use Netcarver\Textile\DataBag;
+	 * $plant = new DataBag(array('key' => 'value'));
+	 * $plant->flower('rose')->color('red')->emptyValue(false, true);
+	 *
+	 * @param   string $name   The name
+	 * @param   array  $params Arguments
+	 * @return  DataBag
 	 */
 
-	public function __toString()
+	public function __call($name, array $params)
 	{
-		$attributes = '';
-
-		if ($this->data) {
-			ksort($this->data);
-			foreach ($this->data as $name => $value) {
-				$attributes .= " $name=\"$value\"";
-			}
+		if (!empty($params[1]) || !empty($params[0])) {
+			$this->data[$name] = $params[0];
 		}
 
-		if ($this->tag) {
-			return '<' . $this->tag . $attributes . (($this->selfclose) ? " />" : '>');
-		}
-
-		return $attributes;
+		return $this;
 	}
 }

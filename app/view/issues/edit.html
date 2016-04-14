@@ -21,12 +21,14 @@
 </check>
 <script type="text/javascript">
 $(function() {
+	// Enable datepickers
 	$('#due_date, #start_date').datepicker({
 		format: 'yyyy-mm-dd',
 		language: '{{ @user_obj->date_picker()->language }}',
 		autoclose: true
 	});
 
+	// Enable typeahead
 	$('input[name="parent_id"]').typeahead({
 		classNames: {
 			menu: 'dropdown-menu',
@@ -55,11 +57,25 @@ $(function() {
 			}
 		}
 	});
+
+	// Prevent navigation with unsaved changes
+	var $editForm = $('#edit-form'),
+		formSerialized = $editForm.serialize();
+	console.log(formSerialized);
+	$(window).on('beforeunload', function() {
+		if($editForm.length && $editForm.serialize() !== formSerialized) {
+			return '{{ @dict.unsaved_changes }}';
+		}
+	});
+	$editForm.submit(function() {
+		$(window).off('beforeunload');
+	});
 });
-if(typeof window.SimpleMDE != 'undefined') {
+if('SimpleMDE' in window) {
 	var simplemde = new SimpleMDE({
 		element: $('input[name="description"]')[0],
-		toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide']
+		toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
+		forceSync: true
 	});
 	simplemde.render();
 }

@@ -36,63 +36,81 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Helper\Textile;
+namespace Textile;
 
 /**
- * Simple data storage.
+ * Renders HTML elements.
  *
- * This class allows storing assignments in an internal
- * data array.
+ * This class can be used to HTML elements. It
+ * does not sanitise attribute values, but can be
+ * used to construct tags with nice object oriented
+ * syntax.
  *
- * bc. use Netcarver\Textile\DataBag;
- * $plant = new DataBag(array('key' => 'value'));
- * $plant->flower('rose')->color('red');
+ * bc. use Netcarver\Textile\Tag;
+ * $img = new Tag('img');
+ * echo (string) $img->class('big blue')->src('images/elephant.jpg');
  *
  * @internal
  */
 
-class DataBag
+class Tag extends DataBag
 {
 	/**
-	 * The data array stored in the bag.
+	 * The name of the tag.
 	 *
-	 * @var array
+	 * @var string
 	 */
 
-	protected $data;
+	protected $tag;
+
+	/**
+	 * Whether the tag is self-closing.
+	 *
+	 * @var bool
+	 */
+
+	protected $selfclose;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param array|null $data The initial data array stored in the bag
+	 * @param string $name        The tag name
+	 * @param array  $attributes  An array of attributes
+	 * @param bool   $selfclosing Whether the tag is self-closing
 	 */
 
-	public function __construct(array $data = null)
+	public function __construct($name, array $attributes = null, $selfclosing = true)
 	{
-		$this->data = (array) $data;
+		parent::__construct($attributes);
+		$this->tag = $name;
+		$this->selfclose = $selfclosing;
 	}
 
 	/**
-	 * Adds a value to the bag.
+	 * Returns the tag as HTML.
 	 *
-	 * Empty values are rejected, unless the
-	 * second argument is set TRUE.
+	 * bc. $img = new Tag('img');
+	 * $img->src('images/example.jpg')->alt('Example image');
+	 * echo (string) $img;
 	 *
-	 * bc. use Netcarver\Textile\DataBag;
-	 * $plant = new DataBag(array('key' => 'value'));
-	 * $plant->flower('rose')->color('red')->emptyValue(false, true);
-	 *
-	 * @param   string $name   The name
-	 * @param   array  $params Arguments
-	 * @return  DataBag
+	 * @return string A HTML element
 	 */
 
-	public function __call($name, array $params)
+	public function __toString()
 	{
-		if (!empty($params[1]) || !empty($params[0])) {
-			$this->data[$name] = $params[0];
+		$attributes = '';
+
+		if ($this->data) {
+			ksort($this->data);
+			foreach ($this->data as $name => $value) {
+				$attributes .= " $name=\"$value\"";
+			}
 		}
 
-		return $this;
+		if ($this->tag) {
+			return '<' . $this->tag . $attributes . (($this->selfclose) ? " />" : '>');
+		}
+
+		return $attributes;
 	}
 }

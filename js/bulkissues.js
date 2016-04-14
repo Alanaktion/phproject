@@ -1,12 +1,13 @@
+/* globals $ datepickerLanguage */
 $(function() {
-	$("#bulk-submit").click(function() {
+	$('#bulk-submit').click(function() {
 		$('#form1 :input[isacopy]').remove();
-		$('.filter-form :checkbox:checked').not(':submit').clone().hide().attr('isacopy','y').appendTo('#bulk-form');
+		$('.filter-form :checkbox:checked').not(':submit').clone().hide().attr('isacopy','y').appendTo('#bulk-actions');
 	});
 
 	$('#due_date, #start_date').datepicker({
 		format: 'yyyy-mm-dd',
-		language: datepicker_language,
+		language: datepickerLanguage,
 		orientation: 'top auto',
 		clearBtn: true,
 		autoclose: true

@@ -2,6 +2,13 @@
 
 namespace Model\Issue;
 
+/**
+ * Class Watcher
+ *
+ * @property int $id
+ * @property int $issue_id
+ * @property int $user_id
+ */
 class Watcher extends \Model {
 
 	protected $_table_name = "issue_watcher";

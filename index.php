@@ -11,7 +11,7 @@ $f3->mset(array(
 	"LOCALES" => "app/dict/",
 	"FALLBACK" => "en",
 	"CACHE" => true,
-	"AUTOLOAD" => "app/",
+	"AUTOLOAD" => "app/;lib/vendor/",
 	"PACKAGE" => "Phproject",
 	"microtime" => microtime(true),
 	"site.url" => $f3->get("SCHEME") . "://" . $f3->get("HOST") . $f3->get("BASE") . "/"
@@ -113,10 +113,6 @@ foreach($pluginDir as $pluginName) {
 	}
 }
 $f3->set("plugins", $plugins);
-
-// register filter
-\Helper\View::instance()->filter('parseText','$this->parseText');
-\Helper\View::instance()->filter('formatFilesize','$this->formatFilesize');
 
 // Set up user session
 $user = new Model\User();

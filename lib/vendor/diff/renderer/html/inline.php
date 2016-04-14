@@ -40,9 +40,9 @@
  * @link http://github.com/chrisboulton/php-diff
  */
 
-namespace Helper\Diff\Renderer\Html;
+namespace Diff\Renderer\Html;
 
-class Inline extends \Helper\Diff\Renderer\Html\Base
+class Inline extends \Diff\Renderer\Html\Base
 {
 	/**
 	 * Render a and return diff with changes between the two sequences

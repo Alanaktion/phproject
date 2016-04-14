@@ -75,13 +75,21 @@ class Taskboard extends \Controller {
 
 	/**
 	 * View a taskboard
+	 *
+	 * @param \Base $f3
+	 * @param array $params
 	 */
 	public function index($f3, $params) {
+		$sprint = new \Model\Sprint();
 
-		// Require a valid numeric sprint ID
+		// Load current sprint if no sprint ID is given
 		if(!intval($params["id"])) {
-			$f3->error(404);
-			return;
+			$localDate = date('Y-m-d', \Helper\View::instance()->utc2local());
+			$sprint->load(array("? BETWEEN start_date AND end_date", $localDate));
+			if(!$sprint->id) {
+				$f3->error(404);
+				return;
+			}
 		}
 
 		// Default to showing group tasks
@@ -90,11 +98,12 @@ class Taskboard extends \Controller {
 		}
 
 		// Load the requested sprint
-		$sprint = new \Model\Sprint();
-		$sprint->load($params["id"]);
 		if(!$sprint->id) {
-			$f3->error(404);
-			return;
+			$sprint->load($params["id"]);
+			if(!$sprint->id) {
+				$f3->error(404);
+				return;
+			}
 		}
 
 		$f3->set("sprint", $sprint);
@@ -106,7 +115,7 @@ class Taskboard extends \Controller {
 
 		// Load issue statuses
 		$status = new \Model\Issue\Status();
-		$statuses = $status->find(array('taskboard > 0'), null, $f3->get("cache_expire.db"));
+		$statuses = $status->find(array('taskboard > 0'), array('order' => 'taskboard_sort ASC'));
 		$mapped_statuses = array();
 		$visible_status_ids = array();
 		$column_count = 0;
@@ -150,7 +159,37 @@ class Taskboard extends \Controller {
 			"id IN ($parent_ids_str) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
 				. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
 			$sprint->id, $f3->get("issue_type.project")
-		), array("order" => "owner_id ASC"));
+		), array("order" => "owner_id ASC, priority DESC"));
+
+		// Sort projects if a filter is given
+		if(!empty($params["filter"]) && is_numeric($params["filter"])) {
+			$sprintBacklog = array();
+			$sortModel = new \Model\Issue\Backlog;
+			$sortModel->load(array("user_id = ? AND sprint_id = ?", $params["filter"], $sprint->id));
+			$sortArray = array();
+			if($sortModel->id) {
+				$sortArray = json_decode($sortModel->issues);
+				usort($projects, function($a, $b) use($sortArray) {
+					$ka = array_search($a->id, $sortArray);
+					$kb = array_search($b->id, $sortArray);
+					if($ka === false && $kb !== false) {
+						return -1;
+					}
+					if($ka !== false && $kb === false) {
+						return 1;
+					}
+					if($ka === $kb) {
+						return 0;
+					}
+					if($ka > $kb) {
+						return 1;
+					}
+					if($ka < $kb) {
+						return -1;
+					}
+				});
+			}
+		}
 
 		// Build multidimensional array of all tasks and projects
 		$taskboard = array();
@@ -190,6 +229,9 @@ class Taskboard extends \Controller {
 
 	/**
 	 * Load the burndown chart data
+	 *
+	 * @param \Base $f3
+	 * @param array $params
 	 */
 	public function burndown($f3, $params) {
 		$sprint = new \Model\Sprint;
@@ -308,8 +350,10 @@ class Taskboard extends \Controller {
 
 	/**
 	 * Add a new task
+	 *
+	 * @param \Base $f3
 	 */
-	public function add($f3, $params) {
+	public function add($f3) {
 		$post = $f3->get("POST");
 		$post['sprint_id'] = $post['sprintId'];
 		$post['name'] = $post['title'];
@@ -322,8 +366,10 @@ class Taskboard extends \Controller {
 
 	/**
 	 * Update an existing task
+	 *
+	 * @param \Base $f3
 	 */
-	public function edit($f3, $params) {
+	public function edit($f3) {
 		$post = $f3->get("POST");
 		$issue = new \Model\Issue();
 		$issue->load($post["taskId"]);

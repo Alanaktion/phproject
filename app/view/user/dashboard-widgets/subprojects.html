@@ -1,0 +1,5 @@
+<div class="dashboard-widget" data-widget="subprojects">
+	<h3 class="dashboard-widget-handle">{{ @dict.my_subprojects }}&ensp;<small>{{ count(@subprojects) }}</small></h3>
+	<set issues="{{ @subprojects }}" />
+	<include href="blocks/dashboard-issue-list.html" />
+</div>

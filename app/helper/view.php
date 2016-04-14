@@ -4,6 +4,15 @@ namespace Helper;
 
 class View extends \Template {
 
+	public function __construct() {
+
+		// Register filters
+		$this->filter('parseText','$this->parseText');
+		$this->filter('formatFilesize','$this->formatFilesize');
+
+		parent::__construct();
+	}
+
 	/**
 	 * Convert Textile or Markdown to HTML, adding hashtags
 	 * @param  string $str
@@ -12,6 +21,9 @@ class View extends \Template {
 	 * @return string
 	 */
 	public function parseText($str, $options = array(), $ttl = null) {
+		if($options === null) {
+			$options = array();
+		}
 		$options = $options + \Base::instance()->get("parse");
 
 		// Check for cached value if $ttl is set
@@ -211,7 +223,7 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseTextile($str) {
-		$tex = new Textile\Parser('html5');
+		$tex = new \Textile\Parser('html5');
 		$tex->setDimensionlessImages(true);
 		return $tex->parse($str);
 	}
@@ -222,7 +234,7 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseMarkdown($str) {
-		$mkd = new Parsedown();
+		$mkd = new \Parsedown();
 		$mkd->setUrlsLinked(false);
 		return $mkd->text($str);
 	}
@@ -266,6 +278,9 @@ class View extends \Template {
 	 * @return int
 	 */
 	function utc2local($timestamp = null) {
+		if($timestamp && !is_numeric($timestamp)) {
+			$timestamp = @strtotime($timestamp);
+		}
 		if(!$timestamp) {
 			$timestamp = time();
 		}

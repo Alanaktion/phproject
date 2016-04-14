@@ -8,12 +8,6 @@
 require_once "base.php";
 $test = new Test;
 
-$inflector = Helper\Inflector::instance();
-$test->expect(
-	$inflector->pluralize("task") == "tasks",
-	"Inflector->pluralize()"
-);
-
 $security = Helper\Security::instance();
 $test->expect(
 	$security->rot8($security->rot8("0af")) == "0af",
@@ -49,7 +43,7 @@ $test->expect(
 
 
 date_default_timezone_set("Etc/UTC");
-$f3->set("site.timezone", "America/Denver");
+$f3->set("site.timezone", "America/Phoenix");
 $test->expect(
 	$view->utc2local(1420498500) == 1420473300,
 	"View->utc2local()"

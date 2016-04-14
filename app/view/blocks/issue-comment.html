@@ -1,0 +1,30 @@
+<div class="media" id="c-{{ @comment.id }}" data-id="{{ @comment.id }}">
+	<a class="pull-left" href="{{ @BASE }}/user/{{ @comment.user_username }}">
+		<img class="profile-picture media-object img-rounded" src="{{ @BASE }}/avatar/48-{{ @comment.user_id }}.png" srcset="{{ @BASE }}/avatar/96-{{ @comment.user_id }}.png 2x" alt>
+	</a>
+	<div class="media-body">
+		<p class="media-heading clearfix">
+			<a href="{{ @BASE }}/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
+			<check if="{{ @menuitem == 'index' }}">
+				&gt; <a href="{{ @BASE }}/issues/{{ @comment.issue_id }}">{{ @issue.name }}</a>
+			</check>
+			<check if="{{ (@user.role == 'admin' || @user.rank >= \Model\User::RANK_MANAGER) && @menuitem != 'index' }}">
+				<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>
+			</check>
+		</p>
+		<div class="tex">{{ @comment.text, array('hashtags' => false) | parseText }}</div>
+		<check if="{{ @comment.file_id }}">
+			<check if="{{ @comment.file_deleted_date }}">
+				<true>
+					<div><b>{{ @dict.attached_file }}:</b> <span style="text-decoration: line-through;">{{ @comment.file_filename | esc }}</span> <span class="text-danger">[{{ @dict.deleted }}]</span></div>
+				</true>
+				<false>
+					<div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="{{ @BASE }}/files/{{ @comment.file_id }}/{{ @comment.file_filename | esc }}" target="_blank">{{ @comment.file_filename | esc }}</a></div>
+				</false>
+			</check>
+		</check>
+		<p class="text-muted">
+			<small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@comment.created_date)) }}</small>
+		</p>
+	</div>
+</div>

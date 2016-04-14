@@ -3,7 +3,7 @@
 <check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
 {~ @headings[] = 'closed' ~}
 </check>
-<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form">
+<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form" id="form-filter-issues">
 	<check if="{{ !empty(@heading_links_enabled) }}">
 		<input type="hidden" name="orderby" value="{{ (!empty(@GET.orderby) ? @GET.orderby : 'priority') | esc }}" />
 		<input type="hidden" name="ascdesc" value="{{ (!empty(@GET.ascdesc) ? @GET.ascdesc : 'desc') | esc }}" />
@@ -68,7 +68,7 @@
 						</select>
 					</td>
 					<td>
-						<input class="form-control input-sm" name="parent_id" value="{{ @@GET.parent_id | esc }}" />
+						<input type="test" class="form-control input-sm" name="parent_id" id="filter-input-parent-id" value="{{ @@GET.parent_id | esc }}" />
 					</td>
 					<td>
 						<select class="form-control input-sm" name="author_id">
@@ -112,6 +112,16 @@
 									</check>
 								</repeat>
 							</optgroup>
+							<check if="{{ @user.rank >= 3 && !empty(@deleted_users) }}">
+								<optgroup label="{{ @dict.deactivated_users }}">
+									<repeat group="{{ @deleted_users }}" value="{{ @item }}">
+										<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
+											<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+											<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
+										</check>
+									</repeat>
+								</optgroup>
+							</check>
 						</select>
 					</td>
 					<td>
@@ -123,6 +133,16 @@
 									<false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
 								</check>
 							</repeat>
+							<check if="{{ !empty(@old_sprints) }}">
+								<optgroup label="Previous Sprints">
+									<repeat group="{{ @old_sprints }}" value="{{ @item }}">
+										<check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
+											<true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
+											<false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
+										</check>
+									</repeat>
+								</optgroup>
+							</check>
 						</select>
 					</td>
 					<td>
@@ -225,10 +245,10 @@
 					</check>
 					<td>{{ !empty(@item.sprint_start_date) ? date("n/j/y", strtotime(@item.sprint_start_date)) : "" }}</td>
 					<td>{{ ucwords(@item.repeat_cycle) ?: 'None' }}</td>
-					<td>{{ date("n/j/y", strtotime(@item.created_date)) }}</td>
+					<td>{{ date("n/j/y", @this->utc2local(@item.created_date)) }}</td>
 					<td>{{ !empty(@item.due_date) ? date("n/j/y", strtotime(@item.due_date)) : "" }}</td>
 					<check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
-						<td>{{ !empty(@item.closed_date) ? date("n/j/y", strtotime(@item.closed_date)) : "" }}</td>
+						<td>{{ !empty(@item.closed_date) ? date("n/j/y", @this->utc2local(@item.closed_date)) : "" }}</td>
 					</check>
 				</tr>
 			</repeat>
@@ -239,129 +259,159 @@
 
 <check if="{{ @bulkUpdate }}">
 	<a class="btn btn-default btn-sm" data-toggle="modal" href="javascript:void(0)" data-target="#bulk-actions">{{ @dict.bulk_actions }}</a>
-	<div class="contatiner modal fade in" id="bulk-actions">
-		<form action="{{ @BASE }}/issues/bulk_update" method="post" id="bulk-form">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
-						<h4 class="modal-title">{{ @dict.bulk_update }}</h4>
+	<form class="modal fade" id="bulk-actions" action="{{ @BASE }}/issues/bulk_update" method="post" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
+					<h4 class="modal-title">{{ @dict.bulk_update }}</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<div class="row">
+							<label class="col-xs-3 control-label label-sm">{{ @dict.cols.status }}</label>
+							<div class="col-xs-9">
+								<select class="form-control input-sm bulk-input" name="status">
+									<option value="">{{ @dict.choose_option }}</option>
+									<repeat group="{{ @statuses }}" value="{{ @item }}">
+										<option value="{{ @item.id }}" >{{ @item.name }}</option>
+									</repeat>
+								</select>
+							</div>
+						</div>
 					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<div class="row">
-								<label class="col-xs-3 control-label label-sm">{{ @dict.cols.status }}</label>
-								<div class="col-xs-9">
-									<select class="form-control input-sm bulk-input" name="status">
-										<option value="">{{ @dict.choose_option }}</option>
-										<repeat group="{{ @statuses }}" value="{{ @item }}">
-											<option value="{{ @item.id }}" >{{ @item.name }}</option>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-xs-3 control-label label-sm">{{ @dict.cols.assignee }}</label>
+							<div class="col-xs-9">
+								<select class="form-control input-sm bulk-input" name="owner_id">
+									<option value="">{{ @dict.choose_option }}</option>
+									<option value="-1">{{ @dict.not_assigned }}</option>
+									<option value="{{ @user.id }}">{{ @user.name }}</option>
+									<optgroup label="Groups">
+										<repeat group="{{ @groups }}" value="{{ @group }}">
+											<option value="{{ @group.id }}">{{ @group.name }}</option>
 										</repeat>
-									</select>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<label class="col-xs-3 control-label label-sm">{{ @dict.cols.assignee }}</label>
-								<div class="col-xs-9">
-									<select class="form-control input-sm bulk-input" name="owner_id">
-										<option value="">{{ @dict.choose_option }}</option>
-										<option value="-1">{{ @dict.not_assigned }}</option>
-										<option value="{{ @user.id }}">{{ @user.name }}</option>
-										<optgroup label="Groups">
-											<repeat group="{{ @groups }}" value="{{ @group }}">
-												<option value="{{ @group.id }}">{{ @group.name }}</option>
-											</repeat>
-										</optgroup>
-										<optgroup label="Users">
-											<repeat group="{{ @users }}" value="{{ @item }}">
-												<option value="{{ @item.id }}">{{ @item.name }}</option>
-											</repeat>
-										</optgroup>
-									</select>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<label class="col-xs-3 control-label label-sm">{{ @dict.cols.start_date }}</label>
-								<div class="col-xs-9">
-									<input class="form-control input-sm bulk-input" id="start_date" type="text" name="start_date"  value="">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<label class="col-xs-3 control-label label-sm">{{ @dict.cols.due_date }}</label>
-								<div class="col-xs-9">
-									<input class="form-control input-sm bulk-input" id="due_date" type="text" name="due_date"  value="">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<label class="col-xs-3 control-label label-sm">{{ @dict.cols.parent_id }}</label>
-								<div class="col-xs-9">
-									<input class="form-control input-sm bulk-input" type="text" name="parent_id" value="">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<label class="col-xs-3 control-label label-sm">{{ @dict.cols.priority }}</label>
-								<div class="col-xs-9">
-									<select class="form-control input-sm bulk-input" name="priority">
-										<option value="">{{ @dict.choose_option }}</option>
-										<repeat group="{{ @priorities }}" value="{{ @item }}">
-											<option value="{{ @item.value }}">{{ @item.name }}</option>
-										</repeat>
-									</select>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<label class="col-xs-3 control-label label-sm">{{ @dict.cols.sprint }}</label>
-								<div class="col-xs-9">
-									<select class="form-control input-sm bulk-input" name="sprint_id">
-										<option value="">{{ @dict.choose_option }}</option>
-										<option value="-1">{{ @dict.no_sprint }}</option>
-										<repeat group="{{ @sprints }}" value="{{ @item }}">
-											<option value="{{ @item.id }}" >{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
-										</repeat>
-									</select>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<label class="col-xs-3 control-label label-sm">{{ @dict.cols.type }}</label>
-								<div class="col-xs-9">
-									<select class="form-control input-sm bulk-input" name="type_id">
-										<option value="">{{ @dict.choose_option }}</option>
-										<repeat group="{{ @issue_types }}" value="{{ @item }}">
+									</optgroup>
+									<optgroup label="Users">
+										<repeat group="{{ @users }}" value="{{ @item }}">
 											<option value="{{ @item.id }}">{{ @item.name }}</option>
 										</repeat>
-									</select>
-								</div>
+									</optgroup>
+								</select>
 							</div>
 						</div>
 					</div>
-					<div class="modal-footer form-group">
-						<div class="checkbox checkbox-container-inline">
-							<label>
-								<input type="checkbox" name="notify" value="1" checked>
-								{{ @dict.send_notifications }}&nbsp;
-							</label>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-xs-3 control-label label-sm">{{ @dict.cols.start_date }}</label>
+							<div class="col-xs-9">
+								<input class="form-control input-sm bulk-input" id="start_date" type="text" name="start_date"  value="">
+							</div>
 						</div>
-						<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ @dict.cancel }}</button>
-						<button type="submit" id="bulk-submit" class="btn btn-sm btn-primary">{{ @dict.submit }}</button>
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-xs-3 control-label label-sm">{{ @dict.cols.due_date }}</label>
+							<div class="col-xs-9">
+								<input class="form-control input-sm bulk-input" id="due_date" type="text" name="due_date"  value="">
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-xs-3 control-label label-sm">{{ @dict.cols.parent_id }}</label>
+							<div class="col-xs-9">
+								<input class="form-control input-sm bulk-input" type="text" name="parent_id" value="">
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-xs-3 control-label label-sm">{{ @dict.cols.priority }}</label>
+							<div class="col-xs-9">
+								<select class="form-control input-sm bulk-input" name="priority">
+									<option value="">{{ @dict.choose_option }}</option>
+									<repeat group="{{ @priorities }}" value="{{ @item }}">
+										<option value="{{ @item.value }}">{{ @item.name }}</option>
+									</repeat>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-xs-3 control-label label-sm">{{ @dict.cols.sprint }}</label>
+							<div class="col-xs-9">
+								<select class="form-control input-sm bulk-input" name="sprint_id">
+									<option value="">{{ @dict.choose_option }}</option>
+									<option value="-1">{{ @dict.no_sprint }}</option>
+									<repeat group="{{ @sprints }}" value="{{ @item }}">
+										<option value="{{ @item.id }}" >{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+									</repeat>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<label class="col-xs-3 control-label label-sm">{{ @dict.cols.type }}</label>
+							<div class="col-xs-9">
+								<select class="form-control input-sm bulk-input" name="type_id">
+									<option value="">{{ @dict.choose_option }}</option>
+									<repeat group="{{ @issue_types }}" value="{{ @item }}">
+										<option value="{{ @item.id }}">{{ @item.name }}</option>
+									</repeat>
+								</select>
+							</div>
+						</div>
 					</div>
 				</div>
+				<div class="modal-footer form-group">
+					<div class="checkbox checkbox-container-inline">
+						<label>
+							<input type="checkbox" name="notify" value="1" checked>
+							{{ @dict.send_notifications }}&nbsp;
+						</label>
+					</div>
+					<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ @dict.cancel }}</button>
+					<button type="submit" id="bulk-submit" class="btn btn-sm btn-primary">{{ @dict.submit }}</button>
+				</div>
 			</div>
-			<input type="hidden" id="url_query" name="url_query" value="{{ http_build_query($_GET) | esc }}" />
-			<input type="hidden" id="url_path" name="url_path" value="{{ @PATH }}" />
-		</form>
-	</div>
+		</div>
+		<input type="hidden" id="url_query" name="url_query" value="{{ http_build_query($_GET) | esc }}" />
+		<input type="hidden" id="url_path" name="url_path" value="{{ @PATH }}" />
+	</form>
 </check>
+<script src="{{ @BASE }}/minify/js/jquery-1.11.3.min.js,typeahead.jquery.js"></script>
+<script type="text/javascript">
+	$('input#filter-input-parent-id').typeahead({
+		classNames: {
+			menu: 'dropdown-menu'
+		}
+	}, {
+		async: true,
+		limit: 10,
+		source: function(query, syncResults, asyncResults) {
+			$.ajax({
+				url: BASE + '/issues/parent_ajax',
+				data: { 'q': query },
+				success: function(data) {
+					asyncResults(data.results);
+				},
+				dataType: 'json',
+				cache: false
+			});
+		},
+		display: function(element) {
+			return element.id;
+		},
+		templates: {
+			suggestion: function(element) {
+				return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
+			}
+		}
+	}).bind('typeahead:select', function() {
+		$('#form-filter-issues').submit();
+	});
+</script>

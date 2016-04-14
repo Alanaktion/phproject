@@ -2,19 +2,28 @@
 
 namespace Model\User;
 
+/**
+ * Class Group
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $group_id
+ * @property int $manager
+ */
 class Group extends \Model {
 
 	protected $_table_name = "user_group";
 
 	/**
 	 * Get complete group list for user
+	 * @param int $user_id
 	 * @return array
 	 */
-	public function getUserGroups($user_id = 0) {
+	public static function getUserGroups($user_id = null) {
 		$f3 = \Base::instance();
 		$db = $f3->get("db.instance");
 
-		if(empty($user_id)) {
+		if($user_id === null) {
 			$user_id =  $f3->get("user.id");
 		}
 
@@ -25,7 +34,26 @@ class Group extends \Model {
 
 		$result = $db->exec($query_groups, array(":user" => $user_id));
 		return $result;
+	}
 
+	/**
+	 * Check if a user is in a group
+	 * @param int $group_id
+	 * @param int $user_id
+	 * @return bool
+	 */
+	public static function userIsInGroup($group_id, $user_id = null) {
+		$f3 = \Base::instance();
+		$db = $f3->get("db.instance");
+
+		if($user_id === null) {
+			$user_id =  $f3->get("user.id");
+		}
+
+		$group = new static();
+		$group->load(array('user_id = ? AND group_id = ?', $user_id, $group_id));
+
+		return $group->id ? true : false;
 	}
 
 }

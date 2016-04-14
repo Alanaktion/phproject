@@ -18,7 +18,7 @@
 
 	<div style="padding: 10px;">
 		<p style="margin: 0 0 10px;"><strong>
-			<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name | esc }}</a> created by <a href="{{ @site.url }}{{ @site.url  . '/' }}user/{{ @issue.author_username }}">{{ @issue.author_name | esc }}</a>:
+			<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name | esc }}</a> created by <a href="{{ @site.url }}user/{{ @issue.author_username }}">{{ @issue.author_name | esc }}</a>:
 		</strong></p>
 		<check if="{{ @issue.parent_id }}">
 			<p><small>Under: <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name | esc }}</a></small></p>
@@ -28,7 +28,7 @@
 			<li><b>Assigned to:</b> {{ @issue.owner_name | esc }}</li>
 			<li><b>Priority:</b> {{ @issue.priority_name }}</li>
 			<li><b>Status:</b> {{ @issue.status_name }}</li>
-			<check if="{{ strtotime(@issue.hours_total) }}">
+			<check if="{{ @issue.hours_total }}">
 				<li><b>Planned Hours:</b> {{ @issue.hours_total }}</li>
 			</check>
 			<check if="{{ strtotime(@issue.due_date) }}">
@@ -44,7 +44,7 @@
 	</div>
 	<div style="padding: 0 10px;">
 		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @site.url }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
-		<div style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@issue.created_date))) }}</small></div>
+		<div style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}</small></div>
 	</div>
 </body>
 </html>

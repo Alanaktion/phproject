@@ -15,14 +15,15 @@
 
 		#taskboard table {
 			width: {{ @column_count * $columnwidth + 252 }}px;
+			table-layout: fixed;
 		}
 
 		/* Reference images within <base> context */
 		#taskboard .completed .spinner {
-			background-image: url(img/taskboard/burn.gif);
+			background-image: url({{ @BASE }}/img/taskboard/burn.gif);
 		}
 		#taskboard .spinner {
-			background-image: url(img/ajax-loader.gif);
+			background-image: url({{ @BASE }}/img/ajax-loader.gif);
 		}
 		</style>
 	</check>
@@ -186,7 +187,7 @@
 					<h4 class="modal-title" id="task-dialog-title">{{ @dict.edit }}</h4>
 				</div>
 				<fieldset class="modal-body">
-					<input type="hidden" name="sprintId" id="sprintId" value="{{ @PARAMS.id }}">
+					<input type="hidden" name="sprintId" id="sprintId" value="{{ @sprint.id }}">
 					<input type="hidden" name="taskId" id="taskId" value="">
 					<div class="container-fluid">
 						<div class="row">
@@ -197,7 +198,7 @@
 								</div>
 								<div class="form-group">
 									<label for="description">{{ @dict.cols.description }}</label>
-									<textarea name="description" id="description" class="form-control input-sm" rows="8"></textarea>
+									<textarea name="description" id="description" class="form-control input-sm" rows="12"></textarea>
 								</div>
 							</div>
 							<div class="col-md-5">
@@ -307,11 +308,11 @@
 
 	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js,bootstrap-datepicker.js"></script>
 	<check if="{{ @user_obj->date_picker()->js }}">
-	<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
-	<script>
-		var datepicker_language='{{ @user_obj->date_picker()->language }}';
-	</script>
+		<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
 	</check>
+	<script>
+		var datepickerLanguage='{{ @user_obj->date_picker()->language }}';
+	</script>
 	<script src="{{ @BASE }}/js/chart.js"></script>
 	<script src="{{ @BASE }}/minify/js/taskboard.js,burndown.js"></script>
 	<script>
@@ -327,7 +328,7 @@
 
 			// Preload burndown data
 			$.ajax({
-				url: BASE + '/taskboard/{{ @PARAMS.id }}/burndown/{{ @tasks }}',
+				url: BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @tasks }}',
 				success: function(data) {
 					BurndownData = data;
 					BurndownReady = true;

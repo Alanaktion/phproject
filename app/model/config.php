@@ -2,6 +2,13 @@
 
 namespace Model;
 
+/**
+ * Class Config
+ *
+ * @property int $id
+ * @property string $attribute
+ * @property string $value
+ */
 class Config extends \Model {
 
 	protected $_table_name = "config";
@@ -73,4 +80,3 @@ class Config extends \Model {
 	}
 
 }
-
