@@ -1,0 +1,68 @@
+<!-- Hotkeys -->
+<div class="modal" id="modal-hotkeys" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
+				<h4 class="modal-title">Hotkeys</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-sm-6">
+						<p><b>Global</b></p>
+						<dl class="dl-inline">
+							<dt>?</dt>
+							<dd>Show hotkeys</dd>
+							<dt>/</dt>
+							<dd>Search</dd>
+							<dt>shift+b</dt>
+							<dd>{{ @dict.browse }}</dd>
+							<dt>r</dt>
+							<dd>Reload page</dd>
+							<repeat group="{{ @issue_types }}" value="{{ @type }}">
+								<check if="{{ @type.id > 0 && @type.id < 10 }}">
+									<dt>alt+{{ @type.id }}</dt>
+									<dd>{{ @dict.new_n,@type.name | format }}</dd>
+								</check>
+							</repeat>
+						</dl>
+					</div>
+					<div class="col-sm-6">
+						<p><b>{{ @dict.issues }}</b></p>
+						<dl class="dl-inline">
+							<dt>w</dt>
+							<dd>{{ @dict.watch }}/{{ @dict.unwatch }}</dd>
+							<dt>e</dt>
+							<dd>{{ @dict.edit }}</dd>
+							<dt>c</dt>
+							<dd>{{ @dict.write_a_comment }}</dd>
+							<dt>ctrl+enter</dt>
+							<dd>{{ @dict.save }}</dd>
+							<dt>shift+c</dt>
+							<dd>{{ @dict.mark_complete }}</dd>
+							<dt>shift+r</dt>
+							<dd>{{ @dict.reopen }}</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Session -->
+<div class="modal" id="modal-loggedout" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">{{ @dict.logged_out }}</h4>
+			</div>
+			<div class="modal-body">
+				{{ @dict.session_ended_message }}
+			</div>
+			<div class="modal-footer">
+				<button onclick="window.location=window.location" class="btn btn-primary btn-sm" type="button">{{ @dict.log_in }}</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ @this->lang() }}">
 <head>
 	<include href="blocks/head.html" />
 </head>
@@ -8,7 +8,7 @@
 <div class="container">
 	<include href="blocks/admin/tabs.html" />
 	<div class="row">
-		<div class="col-md-8">
+		<div class="col-sm-8">
 			<p class="alert alert-success alert-popup saved" style="display: none;">{{ @dict.group_name_saved }}</p>
 			<form role="form" onsubmit="return false;">
 				<div class="form-group">
@@ -19,13 +19,13 @@
 			<ul id="members" class="list-unstyled">
 				<repeat group="{{ @members }}" value="{{ @member }}">
 					<li data-user-id="{{ @member.user_id }}">
-						<a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+						<a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="fa fa-remove"></span></a>&nbsp;
 						<check if="{{ @member.manager }}">
 							<true>
-								<span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="glyphicon glyphicon-star"></span></span>&nbsp;
+								<span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="fa fa-star"></span></span>&nbsp;
 							</true>
 							<false>
-								<a href="{{ @site.url }}admin/groups/{{ @group.id }}/setmanager/{{ @member.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="glyphicon glyphicon-star-empty"></span></a>&nbsp;
+								<a href="{{ @BASE }}/admin/groups/{{ @group.id }}/setmanager/{{ @member.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="fa fa-star-o"></span></a>&nbsp;
 							</false>
 						</check>
 						{{ @member.user_name }}
@@ -33,7 +33,7 @@
 				</repeat>
 			</ul>
 		</div>
-		<div class="col-md-4">
+		<div class="col-sm-4">
 			<form role="form" id="adduser">
 				<input type="hidden" name="action" value="add_member">
 				<input type="hidden" name="group_id" value="{{ @group.id }}">
@@ -48,6 +48,29 @@
 					<button type="submit" class="btn btn-sm btn-primary">{{ @dict.add_to_group }}</button>
 				</div>
 			</form>
+			<form>
+				<div class="checkbox">
+					<label>
+						<check if="{{ @group.api_visible }}">
+							<true>
+								<input type="checkbox" id="chk-api-visibility" name="value" value="1" checked>
+							</true>
+							<false>
+								<input type="checkbox" id="chk-api-visibility" name="value" value="1">
+							</false>
+						</check>
+						{{ @dict.api_visible }}
+					</label>
+				</div>
+			</form>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label for="task_color" class="col-xs-4 control-label label-sm">{{ @dict.task_color }}</label>
+					<div class="col-xs-6">
+						<input class="form-control input-sm" id="task_color" type="color" name="task_color" value="#{{ @group.task_color }}" maxlength="7">
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 	<include href="blocks/footer.html" />
@@ -56,9 +79,9 @@
 $(function(){
 	$('#group-name').change(function(e) {
 		if($(this).val().length > 0) {
-			$.post('/admin/groups/ajax',{
+			$.post('{{ @BASE }}/admin/groups/ajax',{
 				action: 'change_title',
-				group_id: parseInt('{{ @group.id }}'),
+				group_id: '{{ @group.id }}',
 				name: $(this).val()
 			}, function(data) {
 				$('.saved').show();
@@ -71,9 +94,9 @@ $(function(){
 	$('#members').on('click', 'a.delete', function(e) {
 		$li = $(this).parents('li');
 		if(confirm('Are you sure you want to remove this user?')) {
-			$.post('/admin/groups/ajax', {
+			$.post('{{ @BASE }}/admin/groups/ajax', {
 				action: 'remove_member',
-				group_id: parseInt('{{ @group.id }}'),
+				group_id: '{{ @group.id }}',
 				user_id: $li.data('user-id')
 			}, function(data) {
 				if(data.deleted) {
@@ -84,12 +107,26 @@ $(function(){
 		e.preventDefault();
 	});
 	$('#adduser').submit(function(e) {
-		$.post('/admin/groups/ajax', $(this).serialize());
+		$.post('{{ @BASE }}/admin/groups/ajax', $(this).serialize());
 		$('#adduser select option:selected').each(function(i) {
 			$this = $(this);
-			$('<li />').data('user-id', $this.val()).html('<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&ensp;' + $this.text()).appendTo('#members');
+			$('<li />').data('user-id', $this.val()).html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $this.text()).appendTo('#members');
 		});
 		e.preventDefault();
+	});
+	$('#chk-api-visibility').change(function(e) {
+		$.post('{{ @BASE }}/admin/groups/ajax',{
+			action: 'change_api_visibility',
+			group_id: '{{ @group.id }}',
+			value: $(this).prop('checked') + 0
+		}, function() {}, 'json');
+	});
+	$('#task_color').change(function(e) {
+		$.post('{{ @BASE }}/admin/groups/ajax',{
+			action: 'change_task_color',
+			group_id: '{{ @group.id }}',
+			value: $(this).val()
+		}, function() {}, 'json');
 	});
 });
 </script>

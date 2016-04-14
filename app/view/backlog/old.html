@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ @this->lang() }}">
 <head>
 	<include href="blocks/head.html" />
-	<link rel="stylesheet" href="{{ @site.url }}css/backlog.css">
+	<link rel="stylesheet" href="{{ @BASE }}/css/backlog.css">
 </head>
 <body>
 <include href="blocks/navbar.html" />
 <div class="container">
 	<div class="row" id="backlog">
 		<div class="col-md-6">
-		<p>
-			<a href="{{ @site.url }}backlog" class="btn btn-default btn-sm">
-			<span class="glyphicon glyphicon-chevron-left"></span>&ensp;{{ @dict.future_sprints }}
-			</a>
-		</p>
-			 <div class="panel panel-default">
+			<p>
+				<a href="{{ @BASE }}/backlog" class="btn btn-default btn-sm">
+				<span class="fa fa-chevron-left"></span>&ensp;{{ @dict.show_future_sprints }}
+				</a>
+			</p>
+			<div class="panel panel-default">
 				<div class="panel-heading">
 					{{ @dict.backlog }}
 				</div>
@@ -32,19 +32,19 @@
 				<div class="panel panel-default">
 					<div class="panel-heading has-buttons">
 						<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
-						<a href="{{ @site.url }}taskboard/{{ @sprint.id }}" class="btn btn-default btn-xs pull-right">
-							<span class="glyphicon glyphicon-list"></span> {{ @dict.taskboard }}
+						<a href="{{ @BASE }}/taskboard/{{ @sprint.id }}" class="btn btn-default btn-xs pull-right">
+							<span class="fa fa-list"></span> {{ @dict.taskboard }}
 						</a>
 					</div>
 					<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
 						<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
 							<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
-								<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-category="department" data-status="new" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
+								<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
+									<span class="badge">{{ @project.status_name }}</span>
 									<span class="title">
-										<a href="{{ @site.url }}issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
+										<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
 										{{ @project.name | esc }}
 									</span>
-									<span class="badge">{{ @project.status_name }}</span>
 								</li>
 							</repeat>
 						</ul>
@@ -54,8 +54,8 @@
 		</div>
 	</div>
 	<include href="blocks/footer.html" />
-	<script src="{{ @site.url }}minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
-	<script src="{{ @site.url }}minify/js/backlog.js"></script>
+	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
+	<script src="{{ @BASE }}/minify/js/backlog.js"></script>
 </div>
 </body>
 </html>

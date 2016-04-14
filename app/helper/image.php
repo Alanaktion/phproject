@@ -42,10 +42,9 @@ class Image extends \Image {
 	function text($text, $size = 9.0, $angle = 0, $x = 0, $y = 0, $color = 0x000000, $font = "opensans-regular.ttf",
 		$overlay_color = null, $overlay_transparency = 0.5, $overlay_padding = 2
 	) {
-
 		$f3 = \Base::instance();
 
-		$font = "fonts/" . $font;
+		$font = $f3->get("ROOT") . "/fonts/" . $font;
 		if(!is_file($font)) {
 			$f3->error(500, "Font file not found");
 			return false;

@@ -1,5 +1,10 @@
 <?php
+/*
+	checkmail2.php is now preferred over this script! You should use it instead if possible.
+*/
+
 require_once "base.php";
+$log = new \Log("checkmail.log");
 
 // connect to gmail
 $hostname = $f3->get("imap.hostname");
@@ -8,7 +13,9 @@ $password = $f3->get("imap.password");
 
 $inbox = imap_open($hostname,$username,$password);
 if($inbox === false) {
-	throw new Exception('Cannot connect to IMAP: ' . imap_last_error());
+	$err = 'Cannot connect to IMAP: ' . imap_last_error();
+	$log->write($err);
+	throw new Exception($err);
 }
 
 $emails = imap_search($inbox,'ALL UNSEEN');
@@ -36,6 +43,9 @@ if($emails) {
 
 
 		$truncate = $f3->get("mail.truncate_lines");
+		if(is_string($truncate)) {
+			$truncate = $f3->split($truncate);
+		}
 		foreach ($truncate as $truncator) {
 			$parts = explode($truncator, $message);
 			$message = $parts[0];
@@ -105,6 +115,7 @@ if($emails) {
 					$issue->owner_id = $owner;
 					$issue->type_id = 1;
 					$issue->save();
+					$log->write('Saved issue ' . $issue->id);
 				}
 			}
 
@@ -203,8 +214,8 @@ if($emails) {
 
 						// don't forget to set an Upload directory, and make it writable!
 						$f3->set("UPLOADS",'uploads/'.date("Y")."/".date("m")."/");
-						if(!is_dir($f3->get("UPLOADS"))) {
-							mkdir($f3->get("UPLOADS"), 0777, true);
+						if(!is_dir(dirname(__DIR__).'/'.$f3->get("UPLOADS"))) {
+							mkdir(dirname(__DIR__).'/'.$f3->get("UPLOADS"), 0777, true);
 						}
 
 						// Make a good name
@@ -213,7 +224,7 @@ if($emails) {
 
 						$i = 0;
 						$parts = pathinfo($filename);
-						while (file_exists($f3->get("UPLOADS") . $filename)) {
+						while (file_exists(dirname(__DIR__).'/'.$f3->get("UPLOADS") . $filename)) {
 							$i++;
 							$filename= $parts["filename"] . "-" . $i . "." . $parts["extension"];
 						}
@@ -223,15 +234,15 @@ if($emails) {
 						$newfile->issue_id = $issue->id;
 						$newfile->user_id = $user->id;
 						$newfile->filename = $orig_name;
-						$newfile->disk_filename =$f3->get("UPLOADS").$filename;
+						$newfile->disk_filename = $f3->get("UPLOADS").$filename;
 						$newfile->disk_directory = $f3->get("UPLOADS");
 						$newfile->filesize = $file['size'];
 						$newfile->content_type = $file['type'];
-						$newfile->digest = md5_file($filename);
+						$newfile->digest = md5($attachment['attachment']);
 						$newfile->created_date = date("Y-m-d H:i:s");
 						$newfile->save();
 
-						$fp = fopen($f3->get("UPLOADS")  . $filename, "w+");
+						$fp = fopen(dirname(__DIR__).'/'.$f3->get("UPLOADS")  . $filename, "w+");
 						fwrite($fp, $attachment['attachment']);
 						fclose($fp);
 						}
