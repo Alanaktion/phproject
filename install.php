@@ -128,13 +128,5 @@ mail.from={$post['mail-from']}
 	}
 }
 
-<<<<<<< HEAD
-// Attempt installation if POST data received
-if($f3->get("POST") && !is_file("config.ini")) {
-	run_install();
-}
-
-=======
->>>>>>> master
 // Render installer template
 echo Template::instance()->render("install.html");
