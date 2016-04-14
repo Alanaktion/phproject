@@ -40,9 +40,9 @@
  * @link http://github.com/chrisboulton/php-diff
  */
 
-namespace Helper\Diff\Renderer\Html;
+namespace Diff\Renderer\Html;
 
-class Base extends \Helper\Diff\Renderer\Base
+class Base extends \Diff\Renderer\Base
 {
 	/**
 	 * @var array Array of the default options that apply to this renderer.

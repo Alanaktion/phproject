@@ -32,8 +32,8 @@
 										<true>
 											<li>
 												{{ @dict.a_changed,'<b>'.@humanreadable.field.'</b>' | format }}<br>
-												{~ @diff = new \Helper\Diff(explode("\n", @change.old_value), explode("\n", @change.new_value), array("ignoreWhitespace" => true)); ~}
-												{~ @diff_renderer = new \Helper\Diff\Renderer\Html\Inline ~}
+												{~ @diff = new \Diff(explode("\n", @change.old_value), explode("\n", @change.new_value), array("ignoreWhitespace" => true)); ~}
+												{~ @diff_renderer = new \Diff\Renderer\Html\Inline ~}
 												{{ @diff->render(@diff_renderer) }}
 											</li>
 										</true>

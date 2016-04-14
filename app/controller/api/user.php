@@ -19,7 +19,7 @@ class User extends \Controller\Api {
 		}
 
 		$result = array(
-				"id" =>$group_id,
+				"id" => $group_id,
 				"name" => $user->name,
 				"username" => $user->username,
 				"email" => $user->email
@@ -98,7 +98,7 @@ class User extends \Controller\Api {
 		$result = $user->paginate(
 				$f3->get("GET.offset") / $pagLimit,
 				$pagLimit,
-				"deleted_date IS NULL AND role = 'group'"
+				"deleted_date IS NULL AND role = 'group' AND api_visible != '0'"
 			);
 
 		$groups = array();

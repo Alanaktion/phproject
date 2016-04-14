@@ -1,6 +1,6 @@
 <?php
 /**
- * Abstract class for diff renderers in PHP DiffLib.
+ * Context diff generator for PHP DiffLib.
  *
  * PHP version 5
  *
@@ -40,45 +40,89 @@
  * @link http://github.com/chrisboulton/php-diff
  */
 
-namespace Helper\Diff\Renderer;
+namespace Diff\Renderer\Text;
 
-abstract class Base
+class context extends \Diff\Renderer\Base
 {
 	/**
-	 * @var object Instance of the diff class that this renderer is generating the rendered diff for.
+	 * @var array Array of the different opcode tags and how they map to the context diff equivalent.
 	 */
-	public $diff;
+	private $tagMap = array(
+		'insert' => '+',
+		'delete' => '-',
+		'replace' => '!',
+		'equal' => ' '
+	);
 
 	/**
-	 * @var array Array of the default options that apply to this renderer.
-	 */
-	protected $defaultOptions = array();
-
-	/**
-	 * @var array Array containing the user applied and merged default options for the renderer.
-	 */
-	protected $options = array();
-
-	/**
-	 * The constructor. Instantiates the rendering engine and if options are passed,
-	 * sets the options for the renderer.
+	 * Render and return a context formatted (old school!) diff file.
 	 *
-	 * @param array $options Optionally, an array of the options for the renderer.
+	 * @return string The generated context diff.
 	 */
-	public function __construct(array $options = array())
+	public function render()
 	{
-		$this->setOptions($options);
-	}
+		$diff = '';
+		$opCodes = $this->diff->getGroupedOpcodes();
+		foreach($opCodes as $group) {
+			$diff .= "***************\n";
+			$lastItem = count($group)-1;
+			$i1 = $group[0][1];
+			$i2 = $group[$lastItem][2];
+			$j1 = $group[0][3];
+			$j2 = $group[$lastItem][4];
 
-	/**
-	 * Set the options of the renderer to those supplied in the passed in array.
-	 * Options are merged with the default to ensure that there aren't any missing
-	 * options.
-	 *
-	 * @param array $options Array of options to set.
-	 */
-	public function setOptions(array $options)
-	{
-		$this->options = array_merge($this->defaultOptions, $options);
+			if($i2 - $i1 >= 2) {
+				$diff .= '*** '.($group[0][1] + 1).','.$i2." ****\n";
+			}
+			else {
+				$diff .= '*** '.$i2." ****\n";
+			}
+
+			if($j2 - $j1 >= 2) {
+				$separator = '--- '.($j1 + 1).','.$j2." ----\n";
+			}
+			else {
+				$separator = '--- '.$j2." ----\n";
+			}
+
+			$hasVisible = false;
+			foreach($group as $code) {
+				if($code[0] == 'replace' || $code[0] == 'delete') {
+					$hasVisible = true;
+					break;
+				}
+			}
+
+			if($hasVisible) {
+				foreach($group as $code) {
+					list($tag, $i1, $i2, $j1, $j2) = $code;
+					if($tag == 'insert') {
+						continue;
+					}
+					$diff .= $this->tagMap[$tag].' '.implode("\n".$this->tagMap[$tag].' ', $this->diff->GetA($i1, $i2))."\n";
+				}
+			}
+
+			$hasVisible = false;
+			foreach($group as $code) {
+				if($code[0] == 'replace' || $code[0] == 'insert') {
+					$hasVisible = true;
+					break;
+				}
+			}
+
+			$diff .= $separator;
+
+			if($hasVisible) {
+				foreach($group as $code) {
+					list($tag, $i1, $i2, $j1, $j2) = $code;
+					if($tag == 'delete') {
+						continue;
+					}
+					$diff .= $this->tagMap[$tag].' '.implode("\n".$this->tagMap[$tag].' ', $this->diff->GetB($j1, $j2))."\n";
+				}
+			}
+		}
+		return $diff;
 	}
 }

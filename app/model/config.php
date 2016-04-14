@@ -80,4 +80,3 @@ class Config extends \Model {
 	}
 
 }
-

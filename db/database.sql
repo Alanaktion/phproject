@@ -18,6 +18,7 @@ CREATE TABLE `user` (
 	`avatar_filename` varchar(64) DEFAULT NULL,
 	`options` blob NULL,
 	`api_key` varchar(40) NULL,
+	`api_visible` tinyint(1) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL,
 	`deleted_date` datetime DEFAULT NULL,
 	PRIMARY KEY (`id`),
@@ -305,4 +306,4 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 );
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '16.02.05');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '16.04.13');

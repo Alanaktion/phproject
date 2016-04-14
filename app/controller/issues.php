@@ -445,13 +445,7 @@ class Issues extends \Controller {
 			return;
 		}
 
-		if(!$issue->closed_date) {
-			$status = new \Model\Issue\Status;
-			$status->load(array("closed = ?", 1));
-			$issue->status = $status->id;
-			$issue->closed_date = $this->now();
-			$issue->save();
-		}
+		$issue->close();
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
@@ -919,13 +913,21 @@ class Issues extends \Controller {
 	 */
 	public function comment_save($f3) {
 		$post = $f3->get("POST");
-		if(empty($post["text"])) {
+
+		$issue = new \Model\Issue;
+		$issue->load($post["issue_id"]);
+
+		if(!$issue->id || empty($post["text"])) {
 			if($f3->get("AJAX")) {
 				$this->_printJson(array("error" => 1));
 			} else {
 				$f3->reroute("/issues/" . $post["issue_id"]);
 			}
 			return;
+		}
+
+		if($f3->get("POST.action") == "close") {
+			$issue->close();
 		}
 
 		$comment = \Model\Issue\Comment::create(array(

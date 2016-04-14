@@ -18,7 +18,7 @@
 
 	<div style="padding: 10px;">
 		<p style="margin: 0 0 10px;"><strong>
-			<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name | esc }}</a> created by <a href="{{ @site.url }}{{ @site.url  . '/' }}user/{{ @issue.author_username }}">{{ @issue.author_name | esc }}</a>:
+			<a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name | esc }}</a> created by <a href="{{ @site.url }}user/{{ @issue.author_username }}">{{ @issue.author_name | esc }}</a>:
 		</strong></p>
 		<check if="{{ @issue.parent_id }}">
 			<p><small>Under: <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name | esc }}</a></small></p>

@@ -294,7 +294,7 @@ dt:hover + dd > .btn-edit-inline,
 	content: '\25bc';
 	margin-right: 5px;
 }
-.panel-heading .collapsed:before {
+.panel-heading a.collapsed:before {
 	content: '\25b6';
 }
 .panel-heading a[data-toggle='collapse']:hover,

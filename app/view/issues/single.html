@@ -646,15 +646,16 @@ $(function() {
 			if(typeof window.SimpleMDE != 'undefined') {
 				var simplemde = new SimpleMDE({
 					element: $('input[name="description"]')[0],
-					toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide']
+					toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
+					forceSync: true
 				});
 				simplemde.render();
 			}
+			e.preventDefault();
 		}
-		e.preventDefault();
 	});
 
-	// Due date picker
+	// Enable datepickers
 	$('#due_date, #start_date').datepicker({
 		format: 'yyyy-mm-dd',
 		language: '{{ @user_obj->date_picker()->language }}',
@@ -711,6 +712,7 @@ $(function() {
 		$('#upload')[0].reset();
 	});
 
+	// Enable typeahead
 	$('input[name="parent_id"]').typeahead({
 		classNames: {
 			menu: 'dropdown-menu',
@@ -738,6 +740,18 @@ $(function() {
 				return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
 			}
 		}
+	});
+
+	// Prevent navigation with unsaved changes
+	var $editForm = $('#edit-form'),
+		formSerialized = $editForm.serialize();
+	$(window).on('beforeunload', function() {
+		if($editForm.length && $editForm.serialize() !== formSerialized) {
+			return '{{ @dict.unsaved_changes }}';
+		}
+	});
+	$editForm.submit(function() {
+		$(window).off('beforeunload');
 	});
 
 });

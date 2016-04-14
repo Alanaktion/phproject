@@ -120,9 +120,13 @@ class Admin extends \Controller {
 		$this->_userId = $this->_requireAdmin(5);
 		$plugins = $f3->get("plugins");
 		if($plugin = $plugins[$params["id"]]) {
-			$f3->set("title", $plugin->_package());
 			$f3->set("plugin", $plugin);
-			$this->_render("admin/plugins/single.html");
+			if($f3->get("AJAX")) {
+				$plugin->_admin();
+			} else {
+				$f3->set("title", $plugin->_package());
+				$this->_render("admin/plugins/single.html");
+			}
 		} else {
 			$f3->error(404);
 		}
@@ -448,6 +452,16 @@ class Admin extends \Controller {
 			case "change_title":
 				$group->name = trim($f3->get("POST.name"));
 				$group->username = \Web::instance()->slug($group->name);
+				$group->save();
+				$this->_printJson(array("changed" => 1));
+				break;
+			case "change_task_color":
+				$group->task_color = ltrim($f3->get("POST.value"), '#');
+				$group->save();
+				$this->_printJson(array("changed" => 1));
+				break;
+			case "change_api_visibility":
+				$group->api_visible = (int)!!$f3->get("POST.value");
 				$group->save();
 				$this->_printJson(array("changed" => 1));
 				break;

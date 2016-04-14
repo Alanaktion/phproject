@@ -404,6 +404,7 @@ class Issue extends \Model {
 		$new_issue->copyfrom("duplicating_issue");
 		$new_issue->clear("due_date");
 		$new_issue->author_id = $f3->get("user.id");
+		$new_issue->created_date = date("Y-m-d H:i:s");
 		$new_issue->save();
 
 		// Run the recursive function to duplicate the complete descendant tree
@@ -436,6 +437,7 @@ class Issue extends \Model {
 					$new_child->clear("due_date");
 					$new_child->author_id = $f3->get("user.id");
 					$new_child->set("parent_id", $new_id);
+					$new_child->created_date = date("Y-m-d H:i:s");
 					$new_child->save(false);
 
 					// Duplicate issue's children
@@ -491,6 +493,21 @@ class Issue extends \Model {
 			$value = md5($value);
 		}
 		return $result;
+	}
+
+	/**
+	 * Close the issue
+	 * @return Issue $this
+	 */
+	public function close() {
+		if($this->id && !$this->closed_date) {
+			$status = new \Model\Issue\Status;
+			$status->load(array("closed = ?", 1));
+			$this->status = $status->id;
+			$this->closed_date = date("Y-m-d H:i:s");
+			$this->save();
+		}
+		return $this;
 	}
 
 }

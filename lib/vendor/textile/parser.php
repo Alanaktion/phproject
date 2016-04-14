@@ -316,7 +316,7 @@ Ordered list start and continuation:
         # Item 8
 */
 
-namespace Helper\Textile;
+namespace Textile;
 
 /**
  * Textile parser.
@@ -1743,9 +1743,9 @@ class Parser
         $this->glyph_replace = array();
 
         // Dimension sign
-        $this->glyph_search[] = '/([0-9]+[\])]?[\'"]? ?)[xX]( ?[\[(]?)(?=[+-]?'.$cur.'[0-9]*\.?[0-9]+)/'.
+        /*$this->glyph_search[] = '/([0-9]+[\])]?[\'"]? ?)[xX]( ?[\[(]?)(?=[+-]?'.$cur.'[0-9]*\.?[0-9]+)/'.
             $this->regex_snippets['mod'];
-        $this->glyph_replace[] = '$1'.$this->symbols['dimension'].'$2';
+        $this->glyph_replace[] = '$1'.$this->symbols['dimension'].'$2';*/
 
         // Apostrophe
         /*$this->glyph_search[] = '/('.$this->regex_snippets['wrd'].'|\))\''.
