@@ -335,13 +335,9 @@ class Issues extends \Controller {
 	 * Create a new issue
 	 * @param \Base $f3
 	 */
-<<<<<<< HEAD
-	public function add($f3, $params) {
+	public function add($f3) {
 		$this->_requireLogin(2);
 
-=======
-	public function add($f3) {
->>>>>>> master
 		if($f3->get("PARAMS.type")) {
 			$type_id = $f3->get("PARAMS.type");
 		} else {
@@ -385,16 +381,12 @@ class Issues extends \Controller {
 		$this->_render("issues/edit.html");
 	}
 
-<<<<<<< HEAD
-	public function add_selecttype($f3, $params) {
-		$this->_requireLogin(2);
-
-=======
 	/**
 	 * @param \Base $f3
 	 */
 	public function add_selecttype($f3) {
->>>>>>> master
+		$this->_requireLogin(2);
+
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
@@ -612,16 +604,12 @@ class Issues extends \Controller {
 		return \Model\Issue::create($f3->get("POST"), !!$f3->get("POST.notify"));
 	}
 
-<<<<<<< HEAD
-	public function save($f3, $params) {
-		$this->_requireLogin(2);
-
-=======
 	/**
 	 * @param \Base $f3
 	 */
 	public function save($f3) {
->>>>>>> master
+		$this->_requireLogin(2);
+
 		if($f3->get("POST.id")) {
 
 			// Updating existing issue.
@@ -669,48 +657,6 @@ class Issues extends \Controller {
 		$post = $f3->get("POST");
 		if(!empty($post)) {
 			switch($post["action"]) {
-<<<<<<< HEAD
-				case "comment":
-					$this->_requireLogin(1);
-					$comment = new \Model\Issue\Comment;
-					if(empty($post["text"])) {
-						if($f3->get("AJAX")) {
-							$this->_printJson(array("error" => 1));
-						}
-						else {
-								$f3->reroute("/issues/" . $issue->id);
-						}
-						return;
-					}
-
-					$comment = new \Model\Issue\Comment();
-					$comment->user_id = $this->_userId;
-					$comment->issue_id = $issue->id;
-					$comment->text = $post["text"];
-					$comment->created_date = $this->now();
-					$comment->save();
-
-					$notification = \Helper\Notification::instance();
-					$notification->issue_comment($issue->id, $comment->id);
-
-					if($f3->get("AJAX")) {
-						$this->_printJson(
-							array(
-								"id" => $comment->id,
-								"text" => \Helper\View::instance()->parseText($comment->text, array("hashtags" => false)),
-								"date_formatted" => date("D, M j, Y \\a\\t g:ia", \Helper\View::instance()->utc2local(time())),
-								"user_name" => $f3->get('user.name'),
-								"user_username" => $f3->get('user.username'),
-								"user_email" => $f3->get('user.email'),
-								"user_email_md5" => md5(strtolower($f3->get('user.email'))),
-							)
-						);
-						return;
-					}
-					break;
-
-=======
->>>>>>> master
 				case "add_watcher":
 					$this->_requireLogin(1);
 					$watching = new \Model\Issue\Watcher;
@@ -957,15 +903,12 @@ class Issues extends \Controller {
 		}
 	}
 
-<<<<<<< HEAD
-	public function comment_delete($f3, $params) {
-		$this->_requireLogin(3);
-=======
 	/**
 	 * @param \Base $f3
 	 * @throws \Exception
 	 */
 	public function comment_save($f3) {
+		$this->_requireLogin(2);
 		$post = $f3->get("POST");
 
 		$issue = new \Model\Issue;
@@ -1013,40 +956,31 @@ class Issues extends \Controller {
 	 * @throws \Exception
 	 */
 	public function comment_delete($f3) {
-		$this->_requireAdmin();
->>>>>>> master
+		$this->_requireLogin(3);
 		$comment = new \Model\Issue\Comment;
 		$comment->load($f3->get("POST.id"));
 		$comment->delete();
 		$this->_printJson(array("id" => $f3->get("POST.id")) + $comment->cast());
 	}
 
-<<<<<<< HEAD
-	public function file_delete($f3, $params) {
-		$this->_requireLogin(2);
-=======
 	/**
 	 * @param \Base $f3
 	 * @throws \Exception
 	 */
 	public function file_delete($f3) {
->>>>>>> master
+		$this->_requireLogin(2);
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
 		$file->delete();
 		$this->_printJson($file->cast());
 	}
 
-<<<<<<< HEAD
-	public function file_undelete($f3, $params) {
-		$this->_requireLogin(2);
-=======
 	/**
 	 * @param \Base $f3
 	 * @throws \Exception
 	 */
 	public function file_undelete($f3) {
->>>>>>> master
+		$this->_requireLogin(2);
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
 		$file->deleted_date = null;
