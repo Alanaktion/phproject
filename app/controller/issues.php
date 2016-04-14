@@ -77,7 +77,7 @@ class Issues extends \Controller {
 		// Build SQL ORDER BY string
 		$orderby = !empty($args['orderby']) ? $args['orderby'] : "priority";
 		$filter["orderby"] = $orderby;
-		$ascdesc = !empty($args['ascdesc']) && $args['ascdesc'] == 'asc' ? "ASC" : "DESC";
+		$ascdesc = !empty($args['ascdesc']) && strtolower($args['ascdesc']) == 'asc' ? "ASC" : "DESC";
 		$filter["ascdesc"] = $ascdesc;
 		switch($orderby) {
 			case "id":
@@ -104,6 +104,9 @@ class Issues extends \Controller {
 			case "created":
 				$filter_str .= " ORDER BY created_date {$ascdesc}, priority DESC, due_date DESC ";
 				break;
+			case "due":
+				$filter_str .= " ORDER BY due_date {$ascdesc}, priority DESC";
+				break;
 			case "sprint":
 				$filter_str .= " ORDER BY sprint_start_date {$ascdesc}, priority DESC, due_date DESC ";
 				break;
@@ -122,10 +125,9 @@ class Issues extends \Controller {
 
 	/**
 	 * Display a sortable, filterable issue list
-	 * @param  Base  $f3
-	 * @param  array $params
+	 * @param  \Base  $f3
 	 */
-	public function index($f3, $params) {
+	public function index($f3) {
 		$issues = new \Model\Issue\Detail;
 
 		// Get filter
@@ -137,7 +139,7 @@ class Issues extends \Controller {
 		if(!empty($args["type_id"])) {
 			$type->load($args["type_id"]);
 			if($type->id) {
-				$f3->set("title", \Helper\Inflector::instance()->pluralize($type->name));
+				$f3->set("title", $f3->get("dict.issues") . " - " . $f3->get("dict.by_type") . ": " . $type->name);
 				$f3->set("type", $type);
 			}
 		} else {
@@ -154,9 +156,11 @@ class Issues extends \Controller {
 
 		$sprint = new \Model\Sprint;
 		$f3->set("sprints", $sprint->find(array("end_date >= ?", date("Y-m-d")), array("order" => "start_date ASC")));
+		$f3->set("old_sprints", $sprint->find(array("end_date < ?", date("Y-m-d")), array("order" => "start_date ASC")));
 
 		$users = new \Model\User;
 		$f3->set("users", $users->getAll());
+		$f3->set("deleted_users", $users->getAllDeleted());
 		$f3->set("groups", $users->getAllGroups());
 
 		if(empty($args["page"])) {
@@ -200,10 +204,9 @@ class Issues extends \Controller {
 
 	/**
 	 * Update a list of issues
-	 * @param  Base  $f3
-	 * @param  array $params from form
+	 * @param  \Base  $f3
 	 */
-	public function bulk_update($f3, $params) {
+	public function bulk_update($f3) {
 		$this->_requireLogin(2);
 		$post = $f3->get("POST");
 
@@ -220,10 +223,10 @@ class Issues extends \Controller {
 							$issue->exists($i)
 							&& $i != "id"
 							&& $issue->$i != $val
-							&& !empty($val)
+							&& (!empty($val) || $val === "0")
 						) {
 							// Allow setting to Not Assigned
-							if($i == "owner_id" && $val == -1) {
+							if(($i == "owner_id" || $i == "sprint_id") && $val == -1) {
 								$val = null;
 							}
 							$issue->$i = $val;
@@ -281,10 +284,9 @@ class Issues extends \Controller {
 
 	/**
 	 * Export a list of issues
-	 * @param  Base  $f3
-	 * @param  array $params
+	 * @param  \Base  $f3
 	 */
-	public function export($f3, $params) {
+	public function export($f3) {
 		$issue = new \Model\Issue\Detail;
 
 		// Get filter data and load issues
@@ -330,22 +332,16 @@ class Issues extends \Controller {
 	}
 
 	/**
-	 * Export a single issue
-	 * @param  Base  $f3
-	 * @param  array $params
-	 */
-	public function export_single($f3, $params) {
-
-	}
-
-	/**
 	 * Create a new issue
-	 * @param  Base  $f3
-	 * @param  array $params
+	 * @param \Base $f3
 	 */
+<<<<<<< HEAD
 	public function add($f3, $params) {
 		$this->_requireLogin(2);
 
+=======
+	public function add($f3) {
+>>>>>>> master
 		if($f3->get("PARAMS.type")) {
 			$type_id = $f3->get("PARAMS.type");
 		} else {
@@ -389,22 +385,34 @@ class Issues extends \Controller {
 		$this->_render("issues/edit.html");
 	}
 
+<<<<<<< HEAD
 	public function add_selecttype($f3, $params) {
 		$this->_requireLogin(2);
 
+=======
+	/**
+	 * @param \Base $f3
+	 */
+	public function add_selecttype($f3) {
+>>>>>>> master
 		$type = new \Model\Issue\Type;
 		$f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
-		$f3->set("title", $f3->get("dist.new_n", $f3->get("dict.issue")));
+		$f3->set("title", $f3->get("dict.new_n", $f3->get("dict.issues")));
 		$f3->set("menuitem", "new");
 		$this->_render("issues/new.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function edit($f3, $params) {
 		$this->_requireLogin(2);
 
 		$issue = new \Model\Issue;
-		$issue->load($f3->get("PARAMS.id"));
+		$issue->load($params["id"]);
 
 		if(!$issue->id) {
 			$f3->error(404, "Issue does not exist");
@@ -438,51 +446,64 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function close($f3, $params) {
 		$this->_requireLogin(2);
 
 		$issue = new \Model\Issue;
-		$issue->load($f3->get("PARAMS.id"));
+		$issue->load($params["id"]);
 
 		if(!$issue->id) {
 			$f3->error(404, "Issue does not exist");
 			return;
 		}
 
-		$status = new \Model\Issue\Status;
-		$status->load(array("closed = ?", 1));
-		$issue->status = $status->id;
-		$issue->closed_date = $this->now();
-		$issue->save();
+		$issue->close();
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function reopen($f3, $params) {
 		$this->_requireLogin(2);
 
 		$issue = new \Model\Issue;
-		$issue->load($f3->get("PARAMS.id"));
+		$issue->load($params["id"]);
 
 		if(!$issue->id) {
 			$f3->error(404, "Issue does not exist");
 			return;
 		}
 
-		$status = new \Model\Issue\Status;
-		$status->load(array("closed = ?", 0));
-		$issue->status = $status->id;
-		$issue->closed_date = null;
-		$issue->save();
+		if($issue->closed_date) {
+			$status = new \Model\Issue\Status;
+			$status->load(array("closed = ?", 0));
+			$issue->status = $status->id;
+			$issue->closed_date = null;
+			$issue->save();
+		}
 
 		$f3->reroute("/issues/" . $issue->id);
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function copy($f3, $params) {
 		$this->_requireLogin(2);
 
 		$issue = new \Model\Issue;
-		$issue->load($f3->get("PARAMS.id"));
+		$issue->load($params["id"]);
 
 		if(!$issue->id) {
 			$f3->error(404, "Issue does not exist");
@@ -501,7 +522,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Save an updated issue
-	 * @return Issue
+	 * @return \Model\Issue
 	 */
 	protected function _saveUpdate() {
 		$f3 = \Base::instance();
@@ -583,52 +604,24 @@ class Issues extends \Controller {
 	}
 
 	/**
-	 * Save a newly created issue
-	 * @return Issue
+	 * Create a new issue from $_POST
+	 * @return \Model\Issue
 	 */
 	protected function _saveNew() {
 		$f3 = \Base::instance();
-		$post = array_map("trim", $f3->get("POST"));
-		$issue = new \Model\Issue;
-
-		// Set all supported issue fields
-		$issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $f3->get("user.id");
-		$issue->type_id = $post["type_id"];
-		$issue->created_date = $this->now();
-		$issue->name = $post["name"];
-		$issue->description = $post["description"];
-		$issue->priority = $post["priority"];
-		$issue->status = $post["status"];
-		$issue->owner_id = $post["owner_id"] ?: null;
-		$issue->hours_total = $post["hours_remaining"] ?: null;
-		$issue->hours_remaining = $post["hours_remaining"] ?: null;
-		$issue->repeat_cycle = in_array($post["repeat_cycle"], array("none", "")) ? null : $post["repeat_cycle"];
-		$issue->sprint_id = $post["sprint_id"];
-
-		if(!empty($post["due_date"])) {
-			$issue->due_date = date("Y-m-d", strtotime($post["due_date"]));
-
-			// Save to the sprint of the due date if a sprint was not specified
-			if(!$issue->sprint_id) {
-				$sprint = new \Model\Sprint();
-				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
-				$issue->sprint_id = $sprint->id;
-			}
-		}
-		if(!empty($post["parent_id"])) {
-			$issue->parent_id = $post["parent_id"];
-		}
-
-		// Save issue, optionally send notifications
-		$notify = !empty($post["notify"]);
-		$issue->save($notify);
-
-		return $issue;
+		return \Model\Issue::create($f3->get("POST"), !!$f3->get("POST.notify"));
 	}
 
+<<<<<<< HEAD
 	public function save($f3, $params) {
 		$this->_requireLogin(2);
 
+=======
+	/**
+	 * @param \Base $f3
+	 */
+	public function save($f3) {
+>>>>>>> master
 		if($f3->get("POST.id")) {
 
 			// Updating existing issue.
@@ -650,16 +643,21 @@ class Issues extends \Controller {
 			}
 
 		} else {
-			$f3->reroute("/issues/new/" . $post["type_id"]);
+			$f3->reroute("/issues/new/" . $f3->get("POST.type_id"));
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single($f3, $params) {
 		$issue = new \Model\Issue\Detail;
-		$issue->load(array("id=?", $f3->get("PARAMS.id")));
+		$issue->load(array("id=?", $params["id"]));
 		$user = $f3->get("user_obj");
 
-		if(!$issue->id || ($issue->deleted_date && !($user->role == 'admin' || $user->rank >= 3 || $issue->author_id == $user->id))) {
+		if(!$issue->id || ($issue->deleted_date && !($user->role == 'admin' || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id))) {
 			$f3->error(404);
 			return;
 		}
@@ -671,6 +669,7 @@ class Issues extends \Controller {
 		$post = $f3->get("POST");
 		if(!empty($post)) {
 			switch($post["action"]) {
+<<<<<<< HEAD
 				case "comment":
 					$this->_requireLogin(1);
 					$comment = new \Model\Issue\Comment;
@@ -710,14 +709,18 @@ class Issues extends \Controller {
 					}
 					break;
 
+=======
+>>>>>>> master
 				case "add_watcher":
 					$this->_requireLogin(1);
 					$watching = new \Model\Issue\Watcher;
 					// Loads just in case the user is already a watcher
 					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
-					$watching->issue_id = $issue->id;
-					$watching->user_id = $post["user_id"];
-					$watching->save();
+					if(!$watching->id) {
+						$watching->issue_id = $issue->id;
+						$watching->user_id = $post["user_id"];
+						$watching->save();
+					}
 
 					if($f3->get("AJAX"))
 						return;
@@ -823,6 +826,10 @@ class Issues extends \Controller {
 
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 */
 	public function single_history($f3, $params) {
 		// Build updates array
 		$updates_array = array();
@@ -843,34 +850,22 @@ class Issues extends \Controller {
 		));
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single_related($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 
 		if($issue->id) {
-			$f3->set("issue", $issue);
+			$f3->set("parent", $issue);
+
 			$issues = new \Model\Issue\Detail;
-			if($f3->get("issue_type.project") == $issue->type_id || !$issue->parent_id) {
-				$searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
-				$orderparams = array("order" => "status_closed, priority DESC, due_date");
-				$found_issues = $issues->find($searchparams, $orderparams);
-				$f3->set("issues", $found_issues);
-				$f3->set("parent", $issue);
-			} else {
-				if($issue->parent_id) {
-					$searchparams = array("(parent_id = ? OR parent_id = ?) AND parent_id IS NOT NULL AND parent_id <> 0 AND deleted_date IS NULL AND id <> ?", $issue->parent_id, $issue->id, $issue->id);
-					$orderparams = array('order' => "status_closed, priority DESC, due_date");
-					$found_issues = $issues->find($searchparams, $orderparams);
-
-					$f3->set("issues", $found_issues);
-
-					$parent = new \Model\Issue;
-					$parent->load($issue->parent_id);
-					$f3->set("parent", $parent);
-				} else {
-					$f3->set("issues", array());
-				}
-			}
+			$searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
+			$orderparams = array("order" => "status_closed, priority DESC, due_date");
+			$f3->set("issues", $issues->find($searchparams, $orderparams));
 
 			$searchparams[0] = $searchparams[0]  . " AND status_closed = 0";
 			$openissues = $issues->count($searchparams);
@@ -885,6 +880,10 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 */
 	public function single_watchers($f3, $params) {
 		$watchers = new \Model\Custom("issue_watcher_user");
 		$f3->set("watchers", $watchers->find(array("issue_id = ?", $params["id"])));
@@ -897,6 +896,11 @@ class Issues extends \Controller {
 		));
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single_dependencies($f3, $params) {
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
@@ -915,13 +919,18 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single_delete($f3, $params) {
 		$this->_requireLogin(2);
 
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$user = $f3->get("user_obj");
-		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
+		if($user->role == "admin" || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id) {
 			$issue->delete();
 			$f3->reroute("/issues/{$issue->id}");
 		} else {
@@ -929,13 +938,18 @@ class Issues extends \Controller {
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function single_undelete($f3, $params) {
 		$this->_requireLogin(2);
 
 		$issue = new \Model\Issue;
 		$issue->load($params["id"]);
 		$user = $f3->get("user_obj");
-		if($user->role == "admin" || $user->rank >= 3 || $issue->author_id == $user->id) {
+		if($user->role == "admin" || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id) {
 			$issue->restore();
 			$f3->reroute("/issues/{$issue->id}");
 		} else {
@@ -943,24 +957,96 @@ class Issues extends \Controller {
 		}
 	}
 
+<<<<<<< HEAD
 	public function comment_delete($f3, $params) {
 		$this->_requireLogin(3);
+=======
+	/**
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
+	public function comment_save($f3) {
+		$post = $f3->get("POST");
+
+		$issue = new \Model\Issue;
+		$issue->load($post["issue_id"]);
+
+		if(!$issue->id || empty($post["text"])) {
+			if($f3->get("AJAX")) {
+				$this->_printJson(array("error" => 1));
+			} else {
+				$f3->reroute("/issues/" . $post["issue_id"]);
+			}
+			return;
+		}
+
+		if($f3->get("POST.action") == "close") {
+			$issue->close();
+		}
+
+		$comment = \Model\Issue\Comment::create(array(
+			"issue_id" => $post["issue_id"],
+			"user_id" => $this->_userId,
+			"text" => trim($post["text"])
+		), !!$f3->get("POST.notify"));
+
+		if($f3->get("AJAX")) {
+			$this->_printJson(
+				array(
+					"id" => $comment->id,
+					"text" => \Helper\View::instance()->parseText($comment->text, array("hashtags" => false)),
+					"date_formatted" => date("D, M j, Y \\a\\t g:ia", \Helper\View::instance()->utc2local(time())),
+					"user_name" => $f3->get('user.name'),
+					"user_username" => $f3->get('user.username'),
+					"user_email" => $f3->get('user.email'),
+					"user_email_md5" => md5(strtolower($f3->get('user.email'))),
+				)
+			);
+			return;
+		} else {
+			$f3->reroute("/issues/" . $comment->issue_id);
+		}
+	}
+
+	/**
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
+	public function comment_delete($f3) {
+		$this->_requireAdmin();
+>>>>>>> master
 		$comment = new \Model\Issue\Comment;
 		$comment->load($f3->get("POST.id"));
 		$comment->delete();
 		$this->_printJson(array("id" => $f3->get("POST.id")) + $comment->cast());
 	}
 
+<<<<<<< HEAD
 	public function file_delete($f3, $params) {
 		$this->_requireLogin(2);
+=======
+	/**
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
+	public function file_delete($f3) {
+>>>>>>> master
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
 		$file->delete();
 		$this->_printJson($file->cast());
 	}
 
+<<<<<<< HEAD
 	public function file_undelete($f3, $params) {
 		$this->_requireLogin(2);
+=======
+	/**
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
+	public function file_undelete($f3) {
+>>>>>>> master
 		$file = new \Model\Issue\File;
 		$file->load($f3->get("POST.id"));
 		$file->deleted_date = null;
@@ -968,9 +1054,43 @@ class Issues extends \Controller {
 		$this->_printJson($file->cast());
 	}
 
-	public function search($f3, $params) {
-		$query = "%" . $f3->get("GET.q") . "%";
-		if(preg_match("/^#([0-9]+)$/", $f3->get("GET.q"), $matches)){
+	/**
+	 * Build an issue search query WHERE clause
+	 * @param  string $q User query string
+	 * @return array  [string, keyword, ...]
+	 */
+	protected function _buildSearchWhere($q) {
+		if(!$q) {
+			return array("deleted_date IS NULL");
+		}
+		$return = array();
+
+		// Build WHERE string
+		$keywordParts = array();
+		foreach(explode(" ", $q) as $w) {
+			$keywordParts[] = "CONCAT(name, description, author_name, owner_name,
+				author_username, owner_username) LIKE ?";
+			$return[] = "%$w%";
+		}
+		if(is_numeric($q)) {
+			$where = "id = ? OR ";
+			array_unshift($return, $q);
+		} else {
+			$where = "";
+		}
+		$where .= "(" . implode(" AND ", $keywordParts) . ") AND deleted_date IS NULL";
+
+		// Add WHERE string to return array
+		array_unshift($return, $where);
+		return $return;
+	}
+
+	/**
+	 * @param \Base $f3
+	 */
+	public function search($f3) {
+		$q = $f3->get("GET.q");
+		if(preg_match("/^#([0-9]+)$/", $q, $matches)){
 			$f3->reroute("/issues/{$matches[1]}");
 		}
 
@@ -981,18 +1101,40 @@ class Issues extends \Controller {
 			$args["page"] = 0;
 		}
 
-		$where = "(id = ? OR name LIKE ? OR description LIKE ?
-				OR author_name LIKE ? OR owner_name LIKE ?
-				OR author_username LIKE ? OR owner_username LIKE ?
-				OR author_email LIKE ? OR owner_email LIKE ?)
-			AND deleted_date IS NULL";
-		$issue_page = $issues->paginate($args["page"], 50, array($where, $f3->get("GET.q"), $query, $query, $query, $query, $query, $query, $query, $query), array("order" => "created_date DESC"));
+		$where = $this->_buildSearchWhere($q);
+		if(empty($args["closed"])) {
+			$where[0] .= " AND status_closed = '0'";
+		}
+
+		$issue_page = $issues->paginate($args["page"], 50, $where, array("order" => "created_date DESC"));
 		$f3->set("issues", $issue_page);
+
+		if($issue_page["count"] > 7) {
+			if($issue_page["pos"] <= 3) {
+				$min = 0;
+			} else {
+				$min = $issue_page["pos"] - 3;
+			}
+			if($issue_page["pos"] < $issue_page["count"] - 3) {
+				$max = $issue_page["pos"] + 3;
+			} else {
+				$max = $issue_page["count"] - 1;
+			}
+		} else {
+			$min = 0;
+			$max = $issue_page["count"] - 1;
+		}
+		$f3->set("pages", range($min, $max));
 
 		$f3->set("show_filters", false);
 		$this->_render("issues/search.html");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function upload($f3, $params) {
 		$user_id = $this->_requireLogin(2);
 
@@ -1056,10 +1198,11 @@ class Issues extends \Controller {
 			$comment->created_date = $this->now();
 			$comment->file_id = $f3->get('file_id');
 			$comment->save();
-
-			$notification = \Helper\Notification::instance();
-			$notification->issue_comment($issue->id, $comment->id);
-		} else {
+			if(!!$f3->get("POST.notify")) {
+				$notification = \Helper\Notification::instance();
+				$notification->issue_comment($issue->id, $comment->id);
+			}
+		} elseif($newfile->id && !!$f3->get("POST.notify")) {
 			$notification = \Helper\Notification::instance();
 			$notification->issue_file($issue->id, $f3->get("file_id"));
 		}
@@ -1069,7 +1212,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Project Overview action
-	 * @param  Base $f3
+	 * @param  \Base $f3
 	 * @param  array $params
 	 */
 	public function project_overview($f3, $params) {
@@ -1087,42 +1230,54 @@ class Issues extends \Controller {
 		}
 
 		/**
-		 * Helper function to get a percentage of completed issues across the entire tree
-		 * @param   Issue $issue
+		 * Helper function to get a percentage of completed issues and some totals across the entire tree
+		 * @param   \Model\Issue $issue
 		 * @var     callable $completeCount This function, required for recursive calls
 		 * @return  array
 		 */
-		$completeCount = function(\Model\Issue &$issue) use(&$completeCount) {
+		$projectStats = function(\Model\Issue &$issue) use(&$projectStats) {
 			$total = 0;
 			$complete = 0;
+			$hoursSpent = 0;
+			$hoursTotal = 0;
 			if($issue->id) {
 				$total ++;
 				if($issue->closed_date) {
 					$complete ++;
 				}
+				if($issue->hours_spent > 0) {
+					$hoursSpent += $issue->hours_spent;
+				}
+				if($issue->hours_total > 0) {
+					$hoursTotal += $issue->hours_total;
+				}
 				foreach($issue->getChildren() as $child) {
-					$result = $completeCount($child);
+					$result = $projectStats($child);
 					$total += $result["total"];
 					$complete += $result["complete"];
+					$hoursSpent += $result["hours_spent"];
+					$hoursTotal += $result["hours_total"];
 				}
 			}
 			return array(
 				"total" => $total,
-				"complete" => $complete
+				"complete" => $complete,
+				"hours_spent" => $hoursSpent,
+				"hours_total" => $hoursTotal,
 			);
 		};
-		$f3->set("stats", $completeCount($project));
+		$f3->set("stats", $projectStats($project));
 
 		/**
 		 * Helper function for recursive tree rendering
-		 * @param   Issue $issue
+		 * @param   \Model\Issue $issue
 		 * @var     callable $renderTree This function, required for recursive calls
 		 */
 		$renderTree = function(\Model\Issue &$issue, $level = 0) use(&$renderTree) {
 			if($issue->id) {
 				$f3 = \Base::instance();
 				$children = $issue->getChildren();
-				$hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "site" => $f3->get("site"), "level" => $level, "issue_type" => $f3->get("issue_type"));
+				$hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "BASE" => $f3->get("BASE"), "level" => $level, "issue_type" => $f3->get("issue_type"));
 				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
 				if($children) {
 					foreach($children as $item) {
@@ -1140,13 +1295,43 @@ class Issues extends \Controller {
 
 	}
 
-
 	/**
-	 * decide if the user can view a private issue or project
-	 * @return array
+	 * Load all matching issues
+	 * @param  \Base $f3
 	 */
-	protected function _checkPrivate() {
+	public function parent_ajax($f3) {
+		if(!$f3->get("AJAX")) {
+			$f3->error(400);
+		}
 
+		$term = trim($f3->get('GET.q'));
+		$results = array();
+
+		$issue = new \Model\Issue;
+		if((substr($term, 0, 1) == '#') && is_numeric(substr($term, 1))) {
+			$id = (int) substr($term, 1);
+			$issues = $issue->find(array('id LIKE ?', $id. '%'), array('limit' => 20));
+
+			foreach($issues as $row) {
+				$results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+			}
+		}
+		elseif(is_numeric($term)) {
+			$id = (int) $term;
+			$issues = $issue->find(array('(id LIKE ?) OR (name LIKE ?)', $id . '%', '%' . $id . '%'), array('limit' => 20));
+
+			foreach($issues as $row) {
+				$results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+			}
+		}
+		else {
+			$issues = $issue->find(array('name LIKE ?', '%' . addslashes($term) . '%'), array('limit' => 20));
+
+			foreach($issues as $row) {
+				$results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+			}
+		}
+
+		$this->_printJson(array('results' => $results));
 	}
-
 }

@@ -11,7 +11,7 @@ abstract class Controller {
 	 * @param  int $rank
 	 * @return int|bool
 	 */
-	protected function _requireLogin($rank = 1) {
+	protected function _requireLogin($rank = \Model\User::RANK_CLIENT) {
 		$f3 = \Base::instance();
 		if($id = $f3->get("user.id")) {
 			if($f3->get("user.rank") >= $rank) {
@@ -28,6 +28,8 @@ abstract class Controller {
 				if($user->id) {
 					$session = new \Model\Session($user->id);
 					$session->setCurrent();
+					$f3->set("user", $user->cast());
+					$f3->set("user_obj", $user);
 					return $user->id;
 				} else {
 					$f3->set("error", "Auto-login failed, demo user was not found.");
@@ -46,7 +48,7 @@ abstract class Controller {
 	 * @param  int $rank
 	 * @return int|bool
 	 */
-	protected function _requireAdmin($rank = 4) {
+	protected function _requireAdmin($rank = \Model\User::RANK_ADMIN) {
 		return $this->_requireLogin($rank);
 	}
 

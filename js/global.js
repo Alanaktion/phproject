@@ -1,8 +1,9 @@
-$(document).ready(function() {
+/* globals $ Intercom BASE */
+$(function() {
 
 	// Tooltips and popovers
-	$(".has-tooltip").tooltip();
-	$(".has-popover").popover({delay: {show: 500, hide: 100}});
+	$('.has-tooltip').tooltip();
+	$('.has-popover').popover({delay: {show: 500, hide: 100}});
 
 	// Correctly scroll to a given ID, accounting for fixed navigation
 	if(window.location.hash) {
@@ -22,6 +23,7 @@ $(document).ready(function() {
 		} else {
 			$('.issue-list tbody tr').removeClass('active');
 		}
+		e.stopPropagation();
 	});
 	$('.issue-list tbody tr input').click(function(e) {
 		var checked = $(this).prop('checked');
@@ -36,6 +38,9 @@ $(document).ready(function() {
 		e.stopPropagation();
 	});
 	$('.issue-list tbody tr').click(function(e) {
+		if(e.which !== 1) {
+			return;
+		}
 		var $checkbox = $(this).find('input'),
 			checked = $checkbox.prop('checked');
 		if (e.ctrlKey || e.metaKey) {
@@ -61,46 +66,46 @@ $(document).ready(function() {
 	});
 
 	// Add double click on issue listing
-	$('.issue-list tbody tr').dblclick(function(e) {
+	$('.issue-list tbody tr').dblclick(function() {
 		var id = $(this).data('id');
 		if(id) {
-			self.location = site_url + 'issues/' + id;
+			self.location = BASE + '/issues/' + id;
 		}
 	});
 
 	// Auto-submit filters when select box is changed
-	$('.issue-filters').on('change', 'select, input', function(e) {
+	$('.issue-filters').on('change', 'select, input', function() {
 		$(this).parents('form').submit();
 	});
 
 	// Submit issue sorting options
-	$(".issue-sort").on("click", function(e) {
+	$('.issue-sort').on('click', function(e) {
+		var $form = $(this).parents('form');
 		e.preventDefault();
 
-		if($("#orderby").val() == $(this).attr('id')) {
-			if($("#ascdesc").val() == "desc") {
-				$("#ascdesc").val("asc");
+		if($form.find('input[name=orderby]').val() == $(this).attr('id')) {
+			if($form.find('input[name=ascdesc]').val() == 'desc') {
+				$form.find('input[name=ascdesc]').val('asc');
 			} else {
-				$("#ascdesc").val("desc");
+				$form.find('input[name=ascdesc]').val('desc');
 			}
-
 		} else {
-			$("#orderby").val($(this).attr('id'));
-			$("#ascdesc").val("desc");
+			$form.find('input[name=orderby]').val($(this).attr('id'));
+			$form.find('input[name=ascdesc]').val('desc');
 		}
 		$(this).parents('form').submit();
 	});
 
 	// Show Mac hotkeys on Macs
 	if(navigator.platform.indexOf('Mac') >= 0) {
-		var $modalBody = $("#modal-hotkeys .modal-body");
+		var $modalBody = $('#modal-hotkeys .modal-body');
 		$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8997;').replace(/ctrl\+/g, '&#8984;').replace(/enter/g, '&#8617;').replace(/shift\+/g, '&#8679;'));
 	}
 
 	// Submit from textarea if Ctrl+Enter or Cmd+Enter is pressed
 	$('body').on('keypress', 'textarea', function(e) {
 		if((e.keyCode == 13 || e.keyCode == 10) && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.metaKey)))) {
-			$(this).parents('form')[0].submit();
+			$(this).parents('form').first().submit();
 			e.preventDefault();
 		}
 	});
@@ -115,46 +120,47 @@ $(document).ready(function() {
 						$('.modal.in').not('#modal-hotkeys').modal('hide');
 						$('#modal-hotkeys').modal('toggle');
 					}
+					// Search
+					if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
+						$('.navbar-form input[type=search]').focus();
+					}
 					break;
 				case 66: // Browse
 					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						window.location = site_url + 'issues?status=open';
+						window.location = BASE + '/issues?status=open';
 					}
 					break;
 				case 87: // Watch/unwatch issue
 					if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						$("#watch-btn").click();
+						$('#watch-btn').click();
 					}
 					break;
 				case 69: // Edit issue
 					if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						$("#btn-edit").click();
+						$('#btn-edit').click();
 					}
 					break;
 				case 67:
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $("#btn-issue-close").length) { // Close issue
-						window.location = $("#btn-issue-close").attr("href");
+					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $('#btn-issue-close').length) { // Close issue
+						window.location = $('#btn-issue-close').attr('href');
 					} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Comment on issue
-						$("#comment_textarea").focus();
+						$('#comment_textarea').focus();
 					}
 					break;
 				case 82:
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $("#btn-issue-reopen").length) { // Reopen issue
-						window.location = $("#btn-issue-reopen").attr("href");
+					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $('#btn-issue-reopen').length) { // Reopen issue
+						window.location = $('#btn-issue-reopen').attr('href');
 					} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Reload
 						window.location.reload();
 					}
 					break;
 				default:
 					if(!e.shiftKey && !e.ctrlKey && e.altKey && issue_types.indexOf(e.which - 48) >= 0) {
-						window.location = site_url + 'issues/new/' + (e.which - 48);
+						window.location = BASE + '/issues/new/' + (e.which - 48);
 					}
 			}
 		}
 	});
-
-	// Start session helper
-	Session.init();
 
 });
 
@@ -190,7 +196,7 @@ var Session = {
 	 * Send Ping request
 	 */
 	ping: function() {
-		$.get(site_url + 'ping', function(data) {
+		$.get(BASE + '/ping', function(data) {
 			if(Intercom.supported) {
 				Intercom.getInstance().emit('pingResponse', data);
 			} else {
@@ -213,3 +219,8 @@ var Session = {
 	}
 
 };
+
+$(function() {
+	// Start session helper
+	Session.init();
+});

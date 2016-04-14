@@ -4,6 +4,15 @@ namespace Helper;
 
 class View extends \Template {
 
+	public function __construct() {
+
+		// Register filters
+		$this->filter('parseText','$this->parseText');
+		$this->filter('formatFilesize','$this->formatFilesize');
+
+		parent::__construct();
+	}
+
 	/**
 	 * Convert Textile or Markdown to HTML, adding hashtags
 	 * @param  string $str
@@ -12,6 +21,9 @@ class View extends \Template {
 	 * @return string
 	 */
 	public function parseText($str, $options = array(), $ttl = null) {
+		if($options === null) {
+			$options = array();
+		}
 		$options = $options + \Base::instance()->get("parse");
 
 		// Check for cached value if $ttl is set
@@ -24,6 +36,9 @@ class View extends \Template {
 				return $str;
 			}
 		}
+
+		// Pass to any plugin hooks
+		$str = \Helper\Plugin::instance()->callHook("text.parse.before", $str);
 
 		// Run through the parsers based on $options
 		if($options["ids"]) {
@@ -40,6 +55,7 @@ class View extends \Template {
 				// Yes, this is hacky. Please open an issue on GitHub if you
 				// know of a better way of supporting Markdown and Textile :)
 				$str = html_entity_decode($str);
+				$str = preg_replace('/^<p>|<\/p>$/m', "\n", $str);
 			}
 			$str = $this->_parseTextile($str);
 		}
@@ -49,6 +65,9 @@ class View extends \Template {
 		if($options["urls"]) {
 			$str = $this->_parseUrls($str);
 		}
+
+		// Pass to any plugin hooks
+		$str = \Helper\Plugin::instance()->callHook("text.parse.after", $str);
 
 		// Cache the value if $ttl is set
 		if($ttl !== null) {
@@ -74,8 +93,11 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseHashtags($str) {
-		$url = \Base::instance()->get("site.url");
-		return preg_replace("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}tag/$1\">#$1</a>", $str);
+		return preg_replace_callback("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", function($matches) {
+			$url = \Base::instance()->get("site.url");
+			$tag = preg_replace("/[_-]+/", "-", $matches[1]);
+			return "<a href=\"{$url}tag/$tag\">#$tag</a>";
+		}, $str);
 	}
 
 	/**
@@ -201,7 +223,7 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseTextile($str) {
-		$tex = new Textile\Parser('html5');
+		$tex = new \Textile\Parser('html5');
 		$tex->setDimensionlessImages(true);
 		return $tex->parse($str);
 	}
@@ -212,7 +234,7 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseMarkdown($str) {
-		$mkd = new Parsedown();
+		$mkd = new \Parsedown();
 		$mkd->setUrlsLinked(false);
 		return $mkd->text($str);
 	}
@@ -256,6 +278,9 @@ class View extends \Template {
 	 * @return int
 	 */
 	function utc2local($timestamp = null) {
+		if($timestamp && !is_numeric($timestamp)) {
+			$timestamp = @strtotime($timestamp);
+		}
 		if(!$timestamp) {
 			$timestamp = time();
 		}
@@ -273,6 +298,16 @@ class View extends \Template {
 		}
 
 		return $timestamp + $offset;
+	}
+
+	/**
+	 * Get the current primary language
+	 * @return string
+	 */
+	function lang() {
+		$f3 = \Base::instance();
+		$langs = $f3->split($f3->get("LANGUAGE"));
+		return isset($langs[0]) ? $langs[0] : $f3->get("FALLBACK");
 	}
 
 }

@@ -3,6 +3,7 @@
 abstract class Model extends \DB\SQL\Mapper {
 
 	protected $fields = array();
+	protected static $requiredFields = array();
 
 	function __construct($table_name = null) {
 		$f3 = \Base::instance();
@@ -19,16 +20,63 @@ abstract class Model extends \DB\SQL\Mapper {
 		return $this;
 	}
 
+	/**
+	 * Create and save a new item
+	 * @param  array $data
+	 * @return Comment
+	 */
+	public static function create(array $data) {
+		$item = new static();
+
+		// Check required fields
+		foreach(self::$requiredFields as $field) {
+			if(!isset($data[$field])) {
+				throw new Exception("Required field $field not specified.");
+			}
+		}
+
+		// Set field values
+		foreach($data as $key => $val) {
+			if($item->exists($key)) {
+				if(empty($val)) {
+					$val = null;
+				}
+				$item->set($key, $val);
+			}
+		}
+
+		// Set auto values if they exist
+		if($item->exists("created_date") && !isset($data["created_date"])) {
+			$item->set("created_date", date("Y-m-d H:i:s"));
+		}
+
+		$item->save();
+		return $item;
+	}
 
 	/**
-	 * Set object created date if possible
+	 * Save model, triggering plugin hooks and setting created_date
 	 * @return mixed
 	 */
 	function save() {
+		// Ensure created_date is set if possible
 		if(!$this->query && array_key_exists("created_date", $this->fields) && !$this->get("created_date")) {
 			$this->set("created_date", date("Y-m-d H:i:s"));
 		}
-		return parent::save();
+
+		// Call before_save hooks
+		$hookName = str_replace("\\", "/", strtolower(get_class($this)));
+		\Helper\Plugin::instance()->callHook("model.before_save", $this);
+		\Helper\Plugin::instance()->callHook($hookName.".before_save", $this);
+
+		// Save object
+		$result = parent::save();
+
+		// Call after save hooks
+		\Helper\Plugin::instance()->callHook("model.after_save", $this);
+		\Helper\Plugin::instance()->callHook($hookName.".after_save", $this);
+
+		return $result;
 	}
 
 	/**
@@ -46,7 +94,7 @@ abstract class Model extends \DB\SQL\Mapper {
 
 	/**
 	 * Load by ID directly if a string is passed
-	 * @param  string|array  $filter
+	 * @param  int|array  $filter
 	 * @param  array         $options
 	 * @param  integer       $ttl
 	 * @return mixed
@@ -54,9 +102,10 @@ abstract class Model extends \DB\SQL\Mapper {
 	function load($filter=NULL, array $options=NULL, $ttl=0) {
 		if(is_numeric($filter)) {
 			return parent::load(array("id = ?", $filter), $options, $ttl);
-		} else {
+		} elseif(is_array($filter)) {
 			return parent::load($filter, $options, $ttl);
 		}
+		throw new Exception("\$filter must be either int or array.");
 	}
 
 	/**

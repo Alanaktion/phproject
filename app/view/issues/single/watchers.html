@@ -2,7 +2,7 @@
 	<repeat group="{{ @watchers }}" value="{{ @watcher }}">
 		<li data-user-id="{{ @watcher.id }}">
 			<check if="{{ isset(@user.id) }}">
-				<a href="#" class="delete text-danger"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+				<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&nbsp;
 			</check>
 			{{ @watcher.name | esc }}
 		</li>

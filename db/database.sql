@@ -16,7 +16,9 @@ CREATE TABLE `user` (
 	`theme` varchar(64) DEFAULT NULL,
 	`language` varchar(5) DEFAULT NULL,
 	`avatar_filename` varchar(64) DEFAULT NULL,
+	`options` blob NULL,
 	`api_key` varchar(40) NULL,
+	`api_visible` tinyint(1) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL,
 	`deleted_date` datetime DEFAULT NULL,
 	PRIMARY KEY (`id`),
@@ -67,6 +69,19 @@ CREATE TABLE `issue` (
 	CONSTRAINT `issue_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
 	CONSTRAINT `issue_status` FOREIGN KEY (`status`) REFERENCES `issue_status`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `issue_backlog`;
+CREATE TABLE `issue_backlog` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`user_id` int(10) unsigned NOT NULL,
+	`sprint_id` int(10) unsigned DEFAULT NULL,
+	`issues` blob NOT NULL,
+	PRIMARY KEY (`id`),
+	KEY `issue_backlog_user_id` (`user_id`),
+	KEY `issue_backlog_sprint_id` (`sprint_id`),
+	CONSTRAINT `issue_backlog_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `issue_backlog_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_comment`;
 CREATE TABLE `issue_comment` (
@@ -122,14 +137,15 @@ CREATE TABLE `issue_status` (
 	`name` varchar(32) NOT NULL,
 	`closed` tinyint(1) NOT NULL DEFAULT '0',
 	`taskboard` tinyint(1) NOT NULL DEFAULT '1',
+	`taskboard_sort` INT UNSIGNED NULL,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `issue_status` (`id`, `name`, `closed`, `taskboard`) VALUES
-(1, 'New', 0, 2),
-(2, 'Active', 0, 2),
-(3, 'Completed', 1, 2),
-(4, 'On Hold', 0, 1);
+INSERT INTO `issue_status` (`id`, `name`, `closed`, `taskboard`, `taskboard_sort`) VALUES
+(1, 'New', 0, 2, 1),
+(2, 'Active', 0, 2, 2),
+(3, 'Completed', 1, 2, 3),
+(4, 'On Hold', 0, 1, 4);
 
 DROP TABLE IF EXISTS `issue_type`;
 CREATE TABLE `issue_type` (
@@ -290,4 +306,4 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 );
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '15.04.07');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '16.04.13');

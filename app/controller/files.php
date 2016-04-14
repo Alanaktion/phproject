@@ -47,6 +47,11 @@ class Files extends \Controller {
 		return $size;
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function thumb($f3, $params) {
 		$this->_useFileCache();
 		$cache = \Cache::instance();
@@ -105,7 +110,7 @@ class Files extends \Controller {
 			$img = new \Helper\Image();
 			$img->create($params["size"], $params["size"]);
 			$img->fill(0xFFFFFF);
-			$img->text($str, 5, 0, 2, 2, 0x777777);
+			$img->text($str, round(0.05 * $params["size"]), 0, round(0.03 * $params["size"]), round(0.03 * $params["size"]), 0x777777);
 
 			// Show file type icon if available
 			if($file->content_type == "text/csv" || $file->content_type == "text/tsv") {
@@ -142,8 +147,8 @@ class Files extends \Controller {
 		// Render file extension over image
 		if(empty($hide_ext)) {
 			$ext = strtoupper(pathinfo($file->disk_filename, PATHINFO_EXTENSION));
-			$img->text($ext, 12, 0, 5, 5, $bg);
-			$img->text($ext, 12, 0, 4, 4, $fg);
+			$img->text($ext, $params["size"]*0.125, 0, round(0.05 * $params["size"]), round(0.05 * $params["size"]), $bg);
+			$img->text($ext, $params["size"]*0.125, 0, round(0.05 * $params["size"]) - 1, round(0.05 * $params["size"]) - 1, $fg);
 		}
 
 		// Render and cache image
@@ -156,6 +161,11 @@ class Files extends \Controller {
 
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function avatar($f3, $params) {
 
 		// Ensure proper content-type for JPEG images
@@ -179,11 +189,17 @@ class Files extends \Controller {
 		} else {
 
 			// Send user to Gravatar
+			header("Cache-Control: max-age=" . (3600 * 24));
 			$f3->reroute($f3->get("SCHEME") . ":" . \Helper\View::instance()->gravatar($user->email, $params["size"]), true);
 
 		}
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function preview($f3, $params) {
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);
@@ -212,6 +228,11 @@ class Files extends \Controller {
 		$f3->reroute("/files/{$file->id}/{$file->filename}");
 	}
 
+	/**
+	 * @param \Base $f3
+	 * @param array $params
+	 * @throws \Exception
+	 */
 	public function file($f3, $params) {
 		$file = new \Model\Issue\File();
 		$file->load($params["id"]);

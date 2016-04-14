@@ -63,16 +63,38 @@ class Issues extends \Controller\Api {
 	// Get a list of issues
 	public function get($f3) {
 		$issue = new \Model\Issue\Detail();
+
+		// Build filter string
+		$filter = array();
+		$get = $f3->get("GET");
+		$db = $f3->get("db.instance");
+		foreach($issue->fields(false) as $i) {
+			if(isset($get[$i])) {
+				$filter[] = "`$i` = " . $db->quote($get[$i]);
+			}
+		}
+		$filter_str = $filter ? implode(' AND ', $filter) : null;
+
+		// Build options
+		$options = array();
+		if($f3->get("GET.order")) {
+			$options["order"] = $f3->get("GET.order") . " " . $f3->get("GET.ascdesc");
+		}
+
+		// Load issues
 		$result = $issue->paginate(
 			$f3->get("GET.offset") / ($f3->get("GET.limit") ?: 30),
-			$f3->get("GET.limit") ?: 30
+			$f3->get("GET.limit") ?: 30,
+			$filter_str, $options
 		);
 
+		// Build result objects
 		$issues = array();
 		foreach($result["subset"] as $iss) {
 			$issues[] = $this->_issueMultiArray($iss);
 		}
 
+		// Output response
 		$this->_printJson(array(
 			"total_count" => $result["total"],
 			"limit" => $result["limit"],
@@ -173,7 +195,8 @@ class Issues extends \Controller\Api {
 		$issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $this->_userId;
 		$issue->name = trim($post["name"]);
 		$issue->type_id = empty($post["type_id"]) ? 1 : $post["type_id"];
-		$issue->priority_id = empty($post["priority_id"]) ? 0 : $post["priority_id"];
+		$issue->priority_id = empty($post["priority_id"]) ? $f3->get("issue_priority.default") : $post["priority_id"];
+		$issue->status = empty($status) ? 1 : $status->id;
 
 		// Set due date if valid
 		if(!empty($post["due_date"]) && preg_match("/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}( [0-9:]{8})?$/", $post["due_date"])) {
@@ -193,6 +216,10 @@ class Issues extends \Controller\Api {
 		}
 
 		$issue->save();
+
+		$notification = \Helper\Notification::instance();
+		$notification->issue_create($issue->id);
+
 		$this->_printJson(array(
 			"issue" => $issue->cast()
 		));
@@ -248,6 +275,95 @@ class Issues extends \Controller\Api {
 		$this->_printJson(array(
 			"deleted" => $params["id"]
 		));
+	}
+
+	// List issue comments
+	public function single_comments($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load($params["id"]);
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$comment = new \Model\Issue\Comment\Detail;
+		$comments = $comment->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC"));
+
+		$return = array();
+		foreach($comments as $item) {
+			$return[] = $item->cast();
+		}
+
+		$this->_printJson($return);
+	}
+
+	// Add a comment on an issue
+	public function single_comments_post($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load($params["id"]);
+		if(!$issue->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$data = array("issue_id" => $issue->id, "user_id" => $this->_userId, "text" => $f3->get("POST.text"));
+		$comment = \Model\Issue\Comment::create($data);
+		$this->_printJson($comment->cast());
+	}
+
+	// List issue types
+	public function types($f3) {
+		$types = $f3->get("issue_types");
+		$return = array();
+		foreach($types as $type) {
+			$return[] = $type->cast();
+		}
+		$this->_printJson($return);
+	}
+
+	// List issue tags
+	public function tag() {
+		$tag = new \Model\Issue\Tag;
+		$tags = $tag->cloud();
+		$this->_printJson($tags);
+	}
+
+	// List issues by tag
+	public function tag_single($f3, $params) {
+		$tag = new \Model\Issue\Tag;
+		$issueIds = $tag->issues($params['tag']);
+		$return = array();
+		if($issueIds) {
+			$issue = new \Model\Issue\Detail;
+			$issues = $issue->find(array("id IN (" . implode(",", $issueIds) . ") AND deleted_date IS NULL"));
+			foreach($issues as $item) {
+				$return[] = $this->_issueMultiArray($item);
+			}
+		}
+
+		$this->_printJson($return);
+	}
+
+	// List sprints
+	public function sprints() {
+		$sprint_model = new \Model\Sprint;
+		$sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
+		$return = array();
+		foreach($sprints as $sprint) {
+			$return[] = $sprint->cast();
+		}
+		$this->_printJson($return);
+	}
+
+	// List past sprints
+	public function sprints_old() {
+		$sprint_model = new \Model\Sprint;
+		$sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date ASC"));
+		$return = array();
+		foreach($sprints as $sprint) {
+			$return[] = $sprint->cast();
+		}
+		$this->_printJson($return);
 	}
 
 }

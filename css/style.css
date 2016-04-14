@@ -2,13 +2,16 @@ body {
 	padding: 80px 0 0;
 	font-size: 14px;
 }
-body.login {
+.login {
 	padding-top: 20px;
 }
 @media (max-width: 767px) {
 	.navbar-fixed-top > .navbar-btn {
 		float: right;
 		margin-right: 8px;
+	}
+	.navbar-nav, .navbar-nav .dropdown.open {
+		text-align: right;
 	}
 }
 
@@ -65,6 +68,29 @@ a.nolink:hover {
 }
 .dashboard .list-group-item .badge-sibling {
 	margin: 2px 10px 0 0;
+}
+.dashboard-widget-box {
+	min-height: 300px;
+	padding-bottom: 100px;
+}
+.dashboard-widget-handle {
+	position: relative;
+	cursor: move;
+}
+.dashboard-widget-handle .close {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	color: inherit;
+	visibility: hidden;
+}
+.dashboard-widget:hover .dashboard-widget-handle .close {
+	visibility: visible;
+}
+@media screen and (max-width: 767px) {
+	.dashboard-widget-handle .close {
+		visibility: visible;
+	}
 }
 
 textarea {
@@ -131,8 +157,10 @@ ol.issue-heading.breadcrumb {
 	line-height: 16px;
 }
 .comments,
-.comments > .media p,
-#history .media p,
+.comments > .media p.media-heading,
+.comments > .media p:last-child,
+#history .media p.media-heading,
+#history .media p:last-child,
 .comments .form-group:last-child {
 	margin-bottom: 0;
 }
@@ -170,22 +198,28 @@ select[multiple] {
 }
 .file-list li .delete {
 	position: absolute;
-	top: 0px;
-	left: 0px;
+	top: 0;
+	left: 0;
 	visibility: hidden;
 }
 .file-list li:hover .delete {
 	visibility: visible;
 }
 
-.issue-list tr.closed {
+.issue-list .closed {
 	text-decoration: line-through;
 }
 
-.form-horizontal .checkbox-inline {
+.form-horizontal .checkbox-container-inline {
 	display: inline-block;
-	padding-top: 2px;
+	padding-top: 5px;
 	margin-left: 10px;
+}
+
+.modal-footer .checkbox-container-inline {
+	display: inline-block;
+	padding-top: 5px;
+	margin: 0;
 }
 
 textarea.form-control {
@@ -225,16 +259,16 @@ textarea.form-control {
 }
 
 
-dl.dl-inline dt {
+.dl-inline dt {
 	float: left;
 	clear: left;
 	margin-right: .5em;
 }
-dl.dl-inline dt:after {
+.dl-inline dt:after {
 	content: ':';
 }
 
-dl.dl-horizontal-left dt {
+.dl-horizontal-left dt {
 	text-align: left;
 }
 
@@ -242,7 +276,7 @@ dl.dl-horizontal-left dt {
 	content: '\25bc';
 	margin-right: 5px;
 }
-.panel-heading a[data-toggle='collapse'].collapsed:before {
+.panel-heading a.collapsed:before {
 	content: '\25b6';
 }
 .panel-heading a[data-toggle='collapse']:hover,
@@ -283,6 +317,7 @@ table a.btn {
 	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 	font-size: 11px;
 	overflow-x: auto;
+	white-space: pre;
 }
 
 /* Textile processed styles */
@@ -306,6 +341,16 @@ table a.btn {
 	padding: 0 0 0 5px;
 	margin-bottom: 5px;
 }
+.tex del {
+	opacity: 0.45;
+	transition: opacity .25s ease;
+}
+.tex del:hover {
+	opacity: 1;
+}
+.tex pre a {
+	color: inherit;
+}
 
 .popover-content {
 	text-overflow: ellipsis;
@@ -316,6 +361,12 @@ table a.btn {
 .dropdown-menu {
 	max-height: 400px;
 	overflow-y: auto;
+}
+
+.dropdown-menu.datepicker {
+	overflow-y: visible;
+	font-size: 14px;
+	max-height: none;
 }
 
 .nowrap {
@@ -389,12 +440,12 @@ th[data-sort] {
 @media (min-width: 768px) and (max-width: 1200px) {
 	.navbar-nav > li:nth-last-child(n+5) > a,
 	.navbar-nav > li:nth-last-child(n+5) ~ li > a {
-		padding-left: 10px;
-		padding-right: 10px;
+		padding-left: 8px;
+		padding-right: 8px;
 	}
 }
 @media (min-width: 768px) and (max-width: 992px) {
-	.navbar-form[role=search] .form-control:not(:focus)-webkit-input-placeholder {
+	.navbar-form[role=search] .form-control:not(:focus):-webkit-input-placeholder {
 		color: transparent;
 	}
 	.navbar-form[role=search] .form-control:not(:focus)::-moz-placeholder {
@@ -410,4 +461,38 @@ th[data-sort] {
 	.navbar-form[role=search] .form-control:focus {
 		width: 165px;
 	}
+	.navbar-form[role=search] .btn {
+		display: none;
+	}
+}
+
+.twitter-typeahead {
+	display: block !important;
+}
+.twitter-typeahead .dropdown-menu {
+	min-width: 300px;
+	width: 100%;
+	padding: 0;
+}
+.twitter-typeahead .tt-suggestion {
+	padding: 6px 12px;
+	color: #404040;
+	cursor: pointer;
+	font-size: 13px;
+}
+.twitter-typeahead .tt-suggestion:hover {
+	background-color: #00bc8c;
+	color: #fff;
+}
+.twitter-typeahead .tt-suggestion:hover .text-muted {
+	color: #eee;
+}
+
+.editor-toolbar {
+	background-color: #fff;
+	opacity: 0.75 !important;
+	transition: opacity .2s ease;
+}
+.editor-toolbar:hover {
+	opacity: 0.85 !important;
 }
