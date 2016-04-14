@@ -3,14 +3,15 @@
 // Initialize core
 $f3=require("lib/base.php");
 $f3->mset(array(
-	"UI" => "app/view/",
+	"UI" => "app/view/;app/plugin/",
 	"ESCAPE" => false,
 	"LOGS" => "log/",
 	"TEMP" => "tmp/",
+	"PREFIX" => "dict.",
 	"LOCALES" => "app/dict/",
 	"FALLBACK" => "en",
 	"CACHE" => true,
-	"AUTOLOAD" => "app/",
+	"AUTOLOAD" => "app/;lib/vendor/",
 	"PACKAGE" => "Phproject",
 	"microtime" => microtime(true),
 	"site.url" => $f3->get("SCHEME") . "://" . $f3->get("HOST") . $f3->get("BASE") . "/"
@@ -24,7 +25,7 @@ if(!is_file("config.ini")) {
 
 // Get current Git revision
 if(is_file(".git/refs/heads/master")) {
-	$f3->set("revision", file_get_contents(".git/refs/heads/master"));
+	$f3->set("revision", trim(file_get_contents(".git/refs/heads/master")));
 } else {
 	$f3->set("revision", "");
 }
@@ -42,7 +43,7 @@ $f3->set("ONERROR", function(Base $f3) {
 		case 404:
 			$f3->set("title", "Not Found");
 			$f3->set("ESCAPE", false);
-			echo Template::instance()->render("error/404.html");
+			echo \Helper\View::instance()->render("error/404.html");
 			break;
 		case 403:
 			echo "You do not have access to this page.";
@@ -63,6 +64,9 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.pass")
 ));
 
+// Load final configuration
+\Model\Config::loadAll();
+
 // Ensure database is up to date
 $version = \Helper\Security::instance()->checkDatabaseVersion();
 if($version !== true) {
@@ -81,7 +85,7 @@ $pluginDir = scandir("app/plugin");
 $plugins = array();
 $locales = "";
 foreach($pluginDir as $pluginName) {
-	if($pluginName != "." && $pluginName != ".." && is_file("app/plugin/$pluginName/base.php") && is_dir("app/plugin/$pluginName/dict/")) {
+	if($pluginName != "." && $pluginName != ".." && is_dir("app/plugin/$pluginName") && is_file("app/plugin/$pluginName/base.php") && is_dir("app/plugin/$pluginName/dict")) {
 		$locales .= ";app/plugin/$pluginName/dict/";
 	}
 }
@@ -89,7 +93,7 @@ if($locales) {
 	$f3->set("LOCALES", $f3->get("LOCALES") . $locales);
 }
 foreach($pluginDir as $pluginName) {
-	if($pluginName != "." && $pluginName != ".." && is_file("app/plugin/$pluginName/base.php")) {
+	if($pluginName != "." && $pluginName != ".." && is_dir("app/plugin/$pluginName") && is_file("app/plugin/$pluginName/base.php")) {
 		$pluginName = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $pluginName))) . "\\Base";
 		$plugin = $pluginName::instance();
 		$slug = \Web::instance()->slug($plugin->_package());
@@ -114,11 +118,9 @@ $f3->set("plugins", $plugins);
 $user = new Model\User();
 $user->loadCurrent();
 
-// Load issue types if user is logged in
-if($f3->get("user")) {
-	$types = new \Model\Issue\Type();
-	$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
-}
+// Load issue types
+$types = new \Model\Issue\Type();
+$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
 
 // Run the application
 $f3->set("menuitem", false);

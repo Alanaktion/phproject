@@ -7,7 +7,7 @@ abstract class Controller {
 	 * @param  int $rank
 	 * @return int|bool
 	 */
-	protected function _requireLogin($rank = 1) {
+	protected function _requireLogin($rank = \Model\User::RANK_CLIENT) {
 		$f3 = \Base::instance();
 		if($id = $f3->get("user.id")) {
 			if($f3->get("user.rank") >= $rank) {
@@ -18,6 +18,19 @@ abstract class Controller {
 				return false;
 			}
 		} else {
+			if($f3->get("site.demo") && is_numeric($f3->get("site.demo"))) {
+				$user = new \Model\User();
+				$user->load($f3->get("site.demo"));
+				if($user->id) {
+					$session = new \Model\Session($user->id);
+					$session->setCurrent();
+					$f3->set("user", $user->cast());
+					$f3->set("user_obj", $user);
+					return;
+				} else {
+					$f3->set("error", "Auto-login failed, demo user was not found.");
+				}
+			}
 			if(empty($_GET)) {
 				$f3->reroute("/login?to=" . urlencode($f3->get("PATH")));
 			} else {
@@ -33,18 +46,12 @@ abstract class Controller {
 	 * @param  int $rank
 	 * @return int|bool
 	 */
-	protected function _requireAdmin($rank = 4) {
+	protected function _requireAdmin($rank = \Model\User::RANK_ADMIN) {
 		$id = $this->_requireLogin();
 
 		$f3 = \Base::instance();
-		if($f3->get("user.role") == "admin") {
-			if($f3->get("user.rank") >= $rank) {
-				return $id;
-			} else {
-				$f3->error(403);
-				$f3->unload();
-				return false;
-			}
+		if($f3->get("user.role") == "admin" && $f3->get("user.rank") >= $rank) {
+			return $id;
 		} else {
 			$f3->error(403);
 			$f3->unload();

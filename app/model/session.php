@@ -2,11 +2,19 @@
 
 namespace Model;
 
+/**
+ * Class Session
+ *
+ * @property int $id
+ * @property string $token
+ * @property string $ip
+ * @property int $user_id
+ * @property string $created
+ */
 class Session extends \Model {
 
-	protected
-		$_table_name = "session",
-		$cookie_name = "phproj_token";
+	protected $_table_name = "session";
+	const COOKIE_NAME = "phproj_token";
 
 	/**
 	 * Create a new session
@@ -21,6 +29,7 @@ class Session extends \Model {
 		if($user_id !== null) {
 			$this->user_id = $user_id;
 			$this->token = \Helper\Security::instance()->salt_sha2();
+			$this->ip = \Base::instance()->get("IP");
 			$this->created = date("Y-m-d H:i:s");
 			if($auto_save) {
 				$this->save();
@@ -35,11 +44,11 @@ class Session extends \Model {
 	 */
 	public function loadCurrent() {
 		$f3 = \Base::instance();
-		$token = $f3->get("COOKIE.{$this->cookie_name}");
+		$ip = $f3->get("IP");
+		$token = $f3->get("COOKIE.".self::COOKIE_NAME);
 		if($token) {
-			$this->load(array("token = ?", $token));
+			$this->load(array("token = ? AND ip = ?", $token, $ip));
 			$expire = $f3->get("JAR.expire");
-
 
 			// Delete expired sessions
 			if(time() - $expire > strtotime($this->created)) {
@@ -49,7 +58,13 @@ class Session extends \Model {
 
 			// Update nearly expired sessions
 			if(time() - $expire / 2 > strtotime($this->created)) {
+				if($f3->get("DEBUG")) {
+					$log = new \Log("session.log");
+					$log->write("Updating expiration: " . json_encode($this->cast())
+							. "; new date: " . date("Y-m-d H:i:s"));
+				}
 				$this->created = date("Y-m-d H:i:s");
+				$this->save();
 				$this->setCurrent();
 			}
 		}
@@ -62,7 +77,13 @@ class Session extends \Model {
 	 */
 	public function setCurrent() {
 		$f3 = \Base::instance();
-		$f3->set("COOKIE.{$this->cookie_name}", $this->token, $f3->get("JAR.expire"));
+
+		if($f3->get("DEBUG")) {
+			$log = new \Log("session.log");
+			$log->write("Setting current session: " . json_encode($this->cast()));
+		}
+
+		$f3->set("COOKIE.".self::COOKIE_NAME, $this->token, $f3->get("JAR.expire"));
 		return $this;
 	}
 
@@ -71,11 +92,20 @@ class Session extends \Model {
 	 * @return Session
 	 */
 	public function delete() {
+		if(!$this->id) {
+			return $this;
+		}
+
+		$f3 = \Base::instance();
+
+		if($f3->get("DEBUG")) {
+			$log = new \Log("session.log");
+			$log->write("Deleting session: " . json_encode($this->cast()));
+		}
 
 		// Empty the session cookie if it matches the current token
-		$f3 = \Base::instance();
-		if($this->token = $f3->get("COOKIE.{$this->cookie_name}")) {
-			$f3->set("COOKIE.{$this->cookie_name}", "");
+		if($this->token == $f3->get("COOKIE.".self::COOKIE_NAME)) {
+			$f3->set("COOKIE.".self::COOKIE_NAME, "");
 		}
 
 		// Delete the session row

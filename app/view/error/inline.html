@@ -2,12 +2,9 @@
 	<p class="lead"><strong><?php echo $f3->get("ERROR.code"); ?></strong> <?php echo $f3->get("ERROR.status"); ?></p>
 	<p><?php echo $f3->get("ERROR.text"); ?></p>
 	<?php if($f3->get("DEBUG") >= 2) { ?>
-		<dl>
-			<?php foreach($f3->get("ERROR.trace") as $line) { ?>
-				<dt><?php echo $line["file"]; ?></dt>
-				<dd><?php echo $line["line"]; ?>: <?php echo $line["class"], $line["type"], $line["function"], "(", implode(", ", $line["args"]), ")"; ?></dd>
-			<?php } ?>
-		</dl>
+		<div>
+			<?php echo nl2br($f3->get("ERROR.trace")); ?>
+		</div>
 	<?php } ?>
 	<?php if($f3->get("DEBUG") >= 3) { ?>
 		<pre><?php echo $f3->get("db.instance")->log(); ?></pre>

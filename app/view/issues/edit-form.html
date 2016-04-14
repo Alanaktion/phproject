@@ -1,22 +1,22 @@
-<form class="form-horizontal well" role="form" action="{{ @site.url }}issues/save" method="post">
+<form id="edit-form" class="form-horizontal well" role="form" action="{{ @BASE }}/issues/save" method="post">
 	<check if="{{ !empty(@issue) }}">
-		<a href="{{ @site.url }}issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
+		<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
 		<input type="hidden" name="id" value="{{ @issue.id }}">
 		<input type="hidden" name="hash_state" value="{{ json_encode(@issue->hashState()) | esc }}">
 	</check>
+	<input type="hidden" name="type_id" value="{{ @type.id }}">
 	<check if="{{ empty(@issue) }}">
 		<true>
-			<legend>{{ @dict.new_n,@type.name | format }}</legend>
+			<h3>{{ @dict.new_n,@type.name | format }}</h3>
 		</true>
 		<false>
-			<legend>{{ @dict.edit_n,@type.name | format }}</legend>
+			<h3>{{ @dict.edit_n,@type.name | format }}</h3>
 		</false>
 	</check>
-	<input type="hidden" name="type_id" value="{{ @type.id }}">
 	<div class="form-group">
 		<label class="col-md-2 control-label">{{ @dict.cols.title }}</label>
 		<div class="col-md-10">
-			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : @issue.name | esc }}" required>
+			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : @issue.name | esc }}" autocomplete="off" required>
 		</div>
 	</div>
 	<div class="form-group">
@@ -42,9 +42,9 @@
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="priority">
 				<repeat group="{{ @priorities }}" value="{{ @item }}">
-					<check if="{{ empty(@issue) }}">
+					<check if="{{ empty(@issue) || empty(@issue.priority_id) }}">
 						<true>
-							<option value="{{ @item.value }}" {{ @item.value == 0 ? "selected" : "" }}>{{ @item.name }}</option>
+							<option value="{{ @item.value }}" {{ @item.value == @issue_priority.default ? "selected" : "" }}>{{ @item.name }}</option>
 						</true>
 						<false>
 							<option value="{{ @item.value }}" {{ @issue.priority == @item.value ? "selected" : "" }}>{{ @item.name }}</option>
@@ -70,7 +70,7 @@
 			<div class="col-md-10">
 				<select class="form-control input-sm" name="author_id">
 					<option value="{{ @user.id }}" {{ empty(@issue) ? 'selected' : '' }}>{{ @user.name | esc }}</option>
-					<optgroup label="Groups">
+					<optgroup label="{{ @dict.groups }}">
 						<repeat group="{{ @groups }}" value="{{ @group }}">
 							<check if="{{ !empty(@issue) && @issue.author_id == @group.id }}">
 								<true><option value="{{ @group.id }}" selected>{{ @group.name | esc }}</option></true>
@@ -78,7 +78,7 @@
 							</check>
 						</repeat>
 					</optgroup>
-					<optgroup label="Users">
+					<optgroup label="{{ @dict.users }}">
 						<repeat group="{{ @users }}" value="{{ @item }}">
 							<check if="{{ !empty(@issue) && @issue.author_id == @item.id }}">
 								<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
@@ -96,7 +96,7 @@
 			<select class="form-control input-sm" name="owner_id">
 				<option value="0">{{ @dict.not_assigned }}</option>
 				<option value="{{ @user.id }}" {{ empty(@issue) ? 'selected' : '' }}>{{ @user.name | esc }}</option>
-				<optgroup label="Groups">
+				<optgroup label="{{ @dict.groups }}">
 					<repeat group="{{ @groups }}" value="{{ @group }}">
 						<check if="{{ !empty(@issue) && @issue.owner_id == @group.id }}">
 							<true><option value="{{ @group.id }}" selected>{{ @group.name | esc }}</option></true>
@@ -104,7 +104,7 @@
 						</check>
 					</repeat>
 				</optgroup>
-				<optgroup label="Users">
+				<optgroup label="{{ @dict.users }}">
 					<repeat group="{{ @users }}" value="{{ @item }}">
 						<check if="{{ !empty(@issue) && @issue.owner_id == @item.id }}">
 							<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
@@ -117,39 +117,47 @@
 	</div>
 
 	<check if="{{ !empty(@issue) }}">
-		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">{{ @dict.cols.total_spent_hours }}</label>
-			<div class="col-md-6">
-				<input class="form-control input-sm" type="text" name="hours_spent" value="{{ @issue.hours_spent }}">
+		<true>
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.total_spent_hours }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours_spent" autocomplete="off" value="{{ @issue.hours_spent }}">
+				</div>
 			</div>
-		</div>
-	</check>
-	<check if="{{ !empty(@issue) }}">
-		<div class="form-group">
-			<label class="col-md-2 control-label label-sm">{{ @dict.cols.planned_hours }}</label>
-			<div class="col-md-6">
-				<input class="form-control input-sm" type="text" name="hours_total" value="{{ @issue.hours_total }}">
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours_total" autocomplete="off" value="{{ @issue.hours_total }}">
+				</div>
 			</div>
-		</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_remaining }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours_remaining" autocomplete="off" value="{{ @issue.hours_remaining }}">
+				</div>
+			</div>
+		</true>
+		<false>
+			<div class="form-group">
+				<label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
+				<div class="col-md-6">
+					<input class="form-control input-sm" type="text" name="hours" autocomplete="off">
+				</div>
+			</div>
+		</false>
 	</check>
-	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">{{ empty(@issue) ? @dict.cols.planned_hours : @dict.cols.remaining_hours }}</label>
-		<div class="col-md-6">
-			<input class="form-control input-sm" type="text" name="hours_remaining" value="{{ empty(@issue) ? "" : @issue.hours_remaining }}">
-		</div>
-	</div>
 
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.start_date }}</label>
 		<div class="col-md-6">
-			<input class="form-control input-sm" id="start_date" type="text" name="start_date"  value="{{ empty(@issue) ? "" : @issue.start_date }}">
+			<input class="form-control input-sm" id="start_date" type="text" name="start_date" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.start_date }}">
 		</div>
 	</div>
 
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.due_date }}</label>
 		<div class="col-md-6">
-			<input class="form-control input-sm" id="due_date" type="text" name="due_date"  value="{{ empty(@issue) ? "" : @issue.due_date }}">
+			<input class="form-control input-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.due_date }}">
 		</div>
 	</div>
 	<div class="form-group">
@@ -169,10 +177,10 @@
 		<div class="col-md-6">
 			<check if="{{ !empty(@issue) }}">
 				<true>
-					<input class="form-control input-sm" type="text" name="parent_id" value="{{ empty(@issue) ? "" : @issue.parent_id }}">
+					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.parent_id }}">
 				</true>
 				<false>
-					<input class="form-control input-sm" type="text" name="parent_id" value="{{ empty(@parent) ? "" : @parent }}">
+					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@parent) ? "" : @parent }}">
 				</false>
 			</check>
 		</div>
@@ -196,32 +204,38 @@
 		</div>
 	</div>
 	<hr>
-	<div class="form-group">
-		<label class="col-md-2 control-label label-sm">{{ @dict.comment }}</label>
-		<div class="col-md-10">
-			<textarea class="form-control input-sm" name="comment" rows="3">{{ !empty(@comment) && is_string(@comment) ? @comment : "" | esc }}</textarea>
-		</div>
-	</div>
-	<div class="form-group">
-		<div class="col-md-offset-2 col-md-10 text-right">
-			<div class="checkbox checkbox-inline">
-				<label>
-					<input type="checkbox" name="notify" value="1" checked>
-					{{ @dict.send_notifications }}
-				</label>
+	<check if="{{ !empty(@issue) }}">
+		<div class="form-group">
+			<label class="col-md-2 control-label label-sm">{{ @dict.comment }}</label>
+			<div class="col-md-10">
+				<textarea class="form-control input-sm" name="comment" rows="3">{{ !empty(@comment) && is_string(@comment) ? @comment : "" | esc }}</textarea>
 			</div>
-			<check if="{{ !empty(@issue) }}">
-				<a href="{{ @site.url }}issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
-				<button type="reset" class="btn btn-default btn-sm">{{ @dict.reset }}</button>
-			</check>
-			<check if="{{ empty(@issue) }}">
-				<true>
-					<button type="submit" class="btn btn-primary btn-sm">{{ @dict.create_n,@type.name | format }}</button>
-				</true>
-				<false>
-					<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_n,@type.name | format }}</button>
-				</false>
-			</check>
+		</div>
+	</check>
+	<div class="row">
+		<div class="col-md-offset-2 col-md-10 clearfix">
+			<div class="pull-right" style="margin-left: 15px;">
+				<check if="{{ !empty(@issue) }}">
+					<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
+					<button type="reset" class="btn btn-default btn-sm">{{ @dict.reset }}</button>
+				</check>
+				<check if="{{ empty(@issue) }}">
+					<true>
+						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.create_n,@type.name | format }}</button>
+					</true>
+					<false>
+						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_n,@type.name | format }}</button>
+					</false>
+				</check>
+			</div>
+			<div class="pull-right">
+				<div class="checkbox checkbox-container-inline">
+					<label>
+						<input type="checkbox" name="notify" value="1" checked>
+						{{ @dict.send_notifications }}
+					</label>
+				</div>
+			</div>
 		</div>
 	</div>
 </form>

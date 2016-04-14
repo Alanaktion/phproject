@@ -12,7 +12,7 @@ class Notification extends \Prefab {
 	 * @param  string $text     The plaintext body part (optional)
 	 * @return bool
 	 */
-	protected function _utf8mail($to, $subject, $body, $text = null) {
+	public function utf8mail($to, $subject, $body, $text = null) {
 		$f3 = \Base::instance();
 
 		// Add basic headers
@@ -24,7 +24,7 @@ class Notification extends \Prefab {
 		if($text) {
 			// Generate message breaking hash
 			$hash = md5(date("r"));
-			$headers .= "Content-type: multipart/alternative; boundary=\"$hash\"\r\n";
+			$headers .= "Content-Type: multipart/alternative; boundary=\"$hash\"\r\n";
 
 			// Normalize line endings
 			$body = str_replace("\r\n", "\n", $body);
@@ -32,20 +32,26 @@ class Notification extends \Prefab {
 			$text = str_replace("\r\n", "\n", $text);
 			$text = str_replace("\n", "\r\n", $text);
 
+			// escape first char dots per line
+			$body = preg_replace('/^\.(.+)/m','..$1',
+					quoted_printable_encode($body));
+			$text = preg_replace('/^\.(.+)/m','..$1',
+					quoted_printable_encode($text));
+
 			// Build final message
 			$msg = "--$hash\r\n";
-			$msg .= "Content-type: text/plain; charset=utf-8\r\n";
+			$msg .= "Content-Type: text/plain; charset=utf-8\r\n";
 			$msg .= "Content-Transfer-Encoding: quoted-printable\r\n";
-			$msg .="\r\n" . quoted_printable_encode($text) . "\r\n";
+			$msg .= "\r\n" . $text . "\r\n";
 			$msg .= "--$hash\r\n";
-			$msg .= "Content-type: text/html; charset=utf-8\r\n";
+			$msg .= "Content-Type: text/html; charset=utf-8\r\n";
 			$msg .= "Content-Transfer-Encoding: quoted-printable\r\n";
-			$msg .="\r\n" . quoted_printable_encode($body) . "\r\n";
-			$msg .= "--$hash\r\n";
+			$msg .= "\r\n" . $body . "\r\n";
+			$msg .= "--$hash--\r\n";
 
 			$body = $msg;
 		} else {
-			$headers .= "Content-type: text/html; charset=utf-8\r\n";
+			$headers .= "Content-Type: text/html; charset=utf-8\r\n";
 		}
 
 		return mail($to, $subject, $body, $headers);
@@ -88,7 +94,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
+				$this->utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent comment notification to: " . $recipient);
 			}
 		}
@@ -147,7 +153,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
+				$this->utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent update notification to: " . $recipient);
 			}
 		}
@@ -184,11 +190,11 @@ class Notification extends \Prefab {
 			$text = $this->_render("notification/new.txt");
 			$body = $this->_render("notification/new.html");
 
-			$subject =  "[#{$issue->id}] - {$issue->name} created by {$issue->author_name}";
+			$subject = "[#{$issue->id}] - {$issue->name} created by {$issue->author_name}";
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
+				$this->utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent create notification to: " . $recipient);
 			}
 		}
@@ -209,6 +215,11 @@ class Notification extends \Prefab {
 			$issue->load($issue_id);
 			$file = new \Model\Issue\File\Detail;
 			$file->load($file_id);
+
+			// This should catch a bug I can't currently find the source of. --Alan
+			if($file->issue_id != $issue->id) {
+				return;
+			}
 
 			// Get issue parent if set
 			if($issue->parent_id) {
@@ -231,7 +242,7 @@ class Notification extends \Prefab {
 
 			// Send to recipients
 			foreach($recipients as $recipient) {
-				$this->_utf8mail($recipient, $subject, $body, $text);
+				$this->utf8mail($recipient, $subject, $body, $text);
 				$log->write("Sent file notification to: " . $recipient);
 			}
 		}
@@ -258,7 +269,7 @@ class Notification extends \Prefab {
 
 			// Send email to user
 			$subject = "Reset your password - " . $f3->get("site.name");
-			$this->_utf8mail($user->email, $subject, $body, $text);
+			$this->utf8mail($user->email, $subject, $body, $text);
 		}
 	}
 
@@ -275,7 +286,7 @@ class Notification extends \Prefab {
 			$subject = "Due Today - " . $f3->get("site.name");
 			$text = $this->_render("notification/user_due_issues.txt");
 			$body = $this->_render("notification/user_due_issues.html");
-			return $this->_utf8mail($user->email, $subject, $body, $text);
+			return $this->utf8mail($user->email, $subject, $body, $text);
 		}
 		return false;
 	}
@@ -291,13 +302,13 @@ class Notification extends \Prefab {
 
 		// Add issue author and owner
 		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.author_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
-		if(!empty( $result[0]["email"])) {
+		if(!empty($result[0]["email"])) {
 			$recipients[] = $result[0]["email"];
 		}
 
 
 		$result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.owner_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
-		if(!empty( $result[0]["email"])) {
+		if(!empty($result[0]["email"])) {
 			$recipients[] = $result[0]["email"];
 		}
 
@@ -306,7 +317,7 @@ class Notification extends \Prefab {
 		if($result && $result[0]["role"] == 'group') {
 			$group_users = $db->exec("SELECT g.user_email FROM user_group_user g  WHERE g.group_id = ?", $result[0]["id"]);
 			foreach($group_users as $group_user) {
-				if(!empty( $group_user["user_email"])) {
+				if(!empty($group_user["user_email"])) {
 					$recipients[] = $group_user["user_email"];
 				}
 			}

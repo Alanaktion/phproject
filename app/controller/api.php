@@ -17,7 +17,7 @@ abstract class Api extends \Controller {
 				"error" => $f3->get("ERROR.text")
 			);
 			if($f3->get("DEBUG") >= 2) {
-				$out["trace"] = $f3->get("ERROR.trace");
+				$out["trace"] = strip_tags($f3->get("ERROR.trace"));
 			}
 			echo json_encode($out);
 		});
@@ -52,7 +52,7 @@ abstract class Api extends \Controller {
 			$key = $f3->get("HEADERS.X-Api-Key");
 		}
 
-		$user->load(array("api_key", $key));
+		$user->load(array("api_key = ?", $key));
 
 		if($key && $user->id && $user->api_key) {
 			$f3->set("user", $user->cast());

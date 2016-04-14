@@ -1,0 +1,5 @@
+<div class="dashboard-widget" data-widget="repeat_work">
+	<h3 class="dashboard-widget-handle">{{ @dict.repeat_work }}&ensp;<small>{{ count(@repeat_work) }}</small>&ensp;</h3>
+	<set issues="{{ @repeat_work }}" />
+	<include href="blocks/dashboard-issue-list.html" />
+</div>

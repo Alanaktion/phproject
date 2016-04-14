@@ -30,3 +30,6 @@ $f3->set("db.instance", new DB\SQL(
 	$f3->get("db.user"),
 	$f3->get("db.pass")
 ));
+
+// Load database-backed config
+\Model\Config::loadAll();

@@ -8,12 +8,6 @@
 require_once "base.php";
 $test = new Test;
 
-$inflector = Helper\Inflector::instance();
-$test->expect(
-	$inflector->pluralize("task") == "tasks",
-	"Inflector->pluralize()"
-);
-
 $security = Helper\Security::instance();
 $test->expect(
 	$security->rot8($security->rot8("0af")) == "0af",
@@ -47,24 +41,9 @@ $test->expect(
 	"View->gravatar()"
 );
 
-$f3->set("site.theme", "css/bootstrap-phproject.css");
-$test->expect(
-	$view->parseTextile("Hi :) _codez_") == '<p>Hi <span class="emote'
-		. ' emote-smiley"></span> <em>codez</em></p>',
-	"View->parseTextile()"
-);
-
-$test->expect(
-	$view->make_clickable("Test http://www.phproject.org/")
-		== 'Test <a href="http://www.phproject.org/" rel="nofollow"'
-			. ' target="_blank">http://www.phproject.org/</a>',
-	"View->make_clickable()"
-);
-
-
 
 date_default_timezone_set("Etc/UTC");
-$f3->set("site.timezone", "America/Denver");
+$f3->set("site.timezone", "America/Phoenix");
 $test->expect(
 	$view->utc2local(1420498500) == 1420473300,
 	"View->utc2local()"

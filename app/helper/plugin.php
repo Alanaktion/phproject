@@ -11,16 +11,33 @@ class Plugin extends \Prefab {
 			$_jsFiles = array();
 
 	/**
-	 * Add a hook entry
+	 * Register a hook function
 	 * @param string   $hook
 	 * @param callable $action
 	 */
 	public function addHook($hook, callable $action) {
 		if(isset($this->_hooks[$hook])) {
-			$this->_hooks[$hook][] = $callable;
+			$this->_hooks[$hook][] = $action;
 		} else {
-			$this->_hooks[$hook] = array($callable);
+			$this->_hooks[$hook] = array($action);
 		}
+	}
+
+	/**
+	 * Call registered hook functions, passing data
+	 * @param  string $hook
+	 * @param  mixed  $data
+	 * @return mixed
+	 */
+	public function callHook($hook, $data = null) {
+		if(empty($this->_hooks[$hook])) {
+			return $data;
+		}
+
+		foreach($this->_hooks[$hook] as $cb) {
+			$data = $cb($data);
+		}
+		return $data;
 	}
 
 	/**
@@ -92,6 +109,42 @@ class Plugin extends \Prefab {
 			"new" => $this->getNav($path, "new"),
 			"browse" => $this->getNav($path, "browse")
 		);
+	}
+
+	/**
+	 * Get an array of matching JS files to include
+	 * @param  string $path
+	 * @return array
+	 */
+	public function getJsFiles($path = null) {
+		$return = array();
+		foreach($this->_jsFiles as $item) {
+			if(
+				!$item['match'] || !$path ||
+				($item['match'] && $path && preg_match($item['match'], $path))
+			) {
+				$return[] = $item['file'];
+			}
+		}
+		return $return;
+	}
+
+	/**
+	 * Get an array of matching JS code to include
+	 * @param  string $path
+	 * @return array
+	 */
+	public function getJsCode($path = null) {
+		$return = array();
+		foreach($this->_jsCode as $item) {
+			if(
+				!$item['match'] || !$path ||
+				($item['match'] && $path && preg_match($item['match'], $path))
+			) {
+				$return[] = $item['code'];
+			}
+		}
+		return $return;
 	}
 
 }
