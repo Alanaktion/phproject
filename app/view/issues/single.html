@@ -461,7 +461,7 @@ $(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
 	});
 	if(parseInt('{{ @issue.parent_id }}')) {
-		$.get(BASE + '/issues/{{ @issue.parent_id }}/related', {}, function(data) {
+		$.get(BASE + '/issues/{{ @issue.parent_id }}/related?exclude={{ @issue.id }}', {}, function(data) {
 			$('#related-sibling').empty().append(data.html);
 			$('#tab_related-sibling').html($('#tab_related-sibling').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 			$('#related-sibling table').stupidtable();

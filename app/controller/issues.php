@@ -789,7 +789,11 @@ class Issues extends \Controller {
 			$f3->set("parent", $issue);
 
 			$issues = new \Model\Issue\Detail;
-			$searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
+			if($exclude = $f3->get("GET.exclude")) {
+				$searchparams = array("parent_id = ? AND id != ? AND deleted_date IS NULL", $issue->id, $exclude);
+			} else {
+				$searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
+			}
 			$orderparams = array("order" => "status_closed, priority DESC, due_date");
 			$f3->set("issues", $issues->find($searchparams, $orderparams));
 
