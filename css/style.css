@@ -258,6 +258,14 @@ textarea.form-control {
 	padding-top: 8px;
 }
 
+@media (min-width: 768px) {
+	.dashboard-widget .issue-tree tbody td {
+		max-width: 25vw;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
 
 .dl-inline dt {
 	float: left;

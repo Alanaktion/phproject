@@ -141,4 +141,100 @@ class Dashboard extends \Prefab {
 		return $comment->find(array("issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 15));
 	}
 
+	/**
+	 * Get data for Issue Tree widget
+	 * @return array
+	 */
+	public function issue_tree() {
+		$f3 = \Base::instance();
+
+		// Load assigned issues
+		$issue = new \Model\Issue\Detail;
+		$assigned = $issue->find(array("closed_date IS NULL AND deleted_date IS NULL AND owner_id = ?", $f3->get("user.id")));
+
+		// Build issue list
+		$issues = array();
+		$assigned_ids = array();
+		$missing_ids = array();
+		foreach($assigned as $iss) {
+			$issues[] = $iss->cast();
+			$assigned_ids[] = $iss->id;
+		}
+		foreach($issues as $iss) {
+			if($iss["parent_id"] && !in_array($iss["parent_id"], $assigned_ids)) {
+				$missing_ids[] = $iss["parent_id"];
+			}
+		}
+		while(!empty($missing_ids)) {
+			$parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
+			foreach($parents as $iss) {
+				if (($key = array_search($iss->id, $missing_ids)) !== false) {
+					unset($missing_ids[$key]);
+				}
+				$issues[] = $iss->cast();
+				$assigned_ids[] = $iss->id;
+				if($iss->parent_id && !in_array($iss->parent_id, $assigned_ids)) {
+					$missing_ids[] = $iss->parent_id;
+				}
+			}
+		}
+
+		// Convert list to tree
+		$tree = $this->_buildTree($issues);
+
+		/**
+		 * Helper function for recursive tree rendering
+		 * @param   array $issue
+		 * @var     callable $renderTree This function, required for recursive calls
+		 */
+		$renderTree = function(&$issue, $level = 0) use(&$renderTree) {
+			if(!empty($issue['id'])) {
+				$f3 = \Base::instance();
+				$hive = array("issue" => $issue, "dict" => $f3->get("dict"), "BASE" => $f3->get("BASE"), "level" => $level, "issue_type" => $f3->get("issue_type"));
+				echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
+				if(!empty($issue['children'])) {
+					foreach($issue['children'] as $item) {
+						$renderTree($item, $level + 1);
+					}
+				}
+			}
+		};
+		$f3->set("renderTree", $renderTree);
+
+		return $tree;
+	}
+
+	/**
+	 * Convert a flat issue array to a tree array. Child issues are added to
+	 * the 'children' key in each issue.
+	 * @param  array $array Flat array of issues, including all parents needed
+	 * @return array Tree array where each issue contains its child issues
+	 */
+	protected function _buildTree($array) {
+		$tree = array();
+
+		// Create an associative array with each key being the ID of the item
+		foreach($array as $k => &$v) {
+			$tree[$v['id']] = &$v;
+		}
+
+		// Loop over the array and add each child to their parent
+		foreach($tree as $k => &$v) {
+			if(empty($v['parent_id'])) {
+				continue;
+			}
+			$tree[$v['parent_id']]['children'][] = &$v;
+		}
+
+		// Loop over the array again and remove any items that don't have a parent of 0;
+		foreach($tree as $k => &$v) {
+			if(empty($v['parent_id'])) {
+				continue;
+			}
+			unset($tree[$k]);
+		}
+
+		return $tree;
+	}
+
 }
