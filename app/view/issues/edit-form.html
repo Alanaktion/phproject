@@ -69,6 +69,12 @@
 			<label class="col-md-2 control-label label-sm">{{ @dict.cols.author }}</label>
 			<div class="col-md-10">
 				<select class="form-control input-sm" name="author_id">
+					<check if="{{ @@issue.author_id }}">
+						{~ @author = new \Model\User; @author->load(@issue.author_id); ~}
+						<check if="{{ @author.deleted_date }}">
+							<option value="{{ @author.id }}" style="text-decoration: line-through;" selected>{{ @author.name | esc }}</option>
+						</check>
+					</check>
 					<option value="{{ @user.id }}" {{ empty(@issue) ? 'selected' : '' }}>{{ @user.name | esc }}</option>
 					<optgroup label="{{ @dict.groups }}">
 						<repeat group="{{ @groups }}" value="{{ @group }}">
@@ -95,6 +101,12 @@
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="owner_id">
 				<option value="0">{{ @dict.not_assigned }}</option>
+				<check if="{{ @@issue.author_id }}">
+					{~ @owner = new \Model\User; @owner->load(@issue.owner_id); ~}
+					<check if="{{ @owner.deleted_date }}">
+						<option value="{{ @owner.id }}" style="text-decoration: line-through;" selected>{{ @owner.name | esc }}</option>
+					</check>
+				</check>
 				<option value="{{ @user.id }}" {{ empty(@issue) ? 'selected' : '' }}>{{ @user.name | esc }}</option>
 				<optgroup label="{{ @dict.groups }}">
 					<repeat group="{{ @groups }}" value="{{ @group }}">
