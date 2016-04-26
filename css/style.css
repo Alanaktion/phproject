@@ -466,6 +466,13 @@ th[data-sort] {
 	}
 }
 
+/* Clean up admin tabs on mobile */
+@media (max-width: 767px) {
+	.pull-right + .nav-tabs {
+		float: left;
+	}
+}
+
 .twitter-typeahead {
 	display: block !important;
 }
