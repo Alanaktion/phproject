@@ -13,6 +13,7 @@ $f3->mset(array(
 	"CACHE" => true,
 	"AUTOLOAD" => "app/;lib/vendor/",
 	"PACKAGE" => "Phproject",
+	"TZ" => "UTC",
 	"microtime" => microtime(true),
 	"site.url" => $f3->get("SCHEME") . "://" . $f3->get("HOST") . $f3->get("BASE") . "/"
 ));
