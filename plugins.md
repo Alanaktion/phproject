@@ -11,15 +11,17 @@ Most plugins can be installed by simply cloning their repository in your `app/pl
 
 Phproject includes several officially supported plugins that are maintained along with the core code.
 
+[Wiki](https://github.com/phproject-plugins/wiki) - A minimal but powerful Wiki for your projects
+
+[Stats](https://github.com/phproject-plugins/stats) - Show advanced site stats and report anonymous usage statistics
+
 [Bitbucket](https://github.com/phproject-plugins/bitbucket) - Integrate Bitbucket commits into your Phproject issues
 
-[Team Daily](https://github.com/phproject-plugins/teamdaily) - A specialized dashboard to show the status of individual team members.
+[Team Daily](https://github.com/phproject-plugins/teamdaily) - A specialized dashboard to show the status of individual team members
 
-[Dev Stickers](https://github.com/phproject-plugins/devstickers) - Add the "Yes We Code" sticker set for issue descriptions and comments.
+[Dev Stickers](https://github.com/phproject-plugins/devstickers) - Add the "Yes We Code" sticker set for issue descriptions and comments
 
-[Porter](https://github.com/phproject-plugins/porter) - Keeps your Phproject instance clean
-
-[Wiki](https://github.com/phproject-plugins/wiki) - A minimal but powerful Wiki for your projects
+[Porter](https://github.com/phproject-plugins/porter) - Keeps your Phproject instance clean, deleting orphaned items
 
 [All Official Plugins &rsaquo;](https://github.com/phproject-plugins)
 
@@ -27,7 +29,7 @@ Phproject includes several officially supported plugins that are maintained alon
 
 ## Plugin development
 
-<p class="text-warning">Plugin support is still under development, and may include significant changes to the API with future updates.</p>
+**Plugin support is still under development, and may include significant changes to the API with future updates.**
 
 Plugins are made up of one or more PHP classes installed the `app/plugin/` directory. As a minimum, all plugins must have a `base.php` file within their own directory.
 
@@ -52,33 +54,31 @@ Plugins are made up of one or more PHP classes installed the `app/plugin/` direc
 
 If your plugin adds additional routes, they should point to a separate class outside of `base.php`, which should extend `\Controller`. Routes can be added in your `Base->_load()` method by getting the F3 Base class and calling the [`route()`](http://fatfreeframework.com/base#route) method on it:
 
-{% highlight php %}
+```php
 <?php
-    // ...
-    public function _load() {
-        $f3 = \Base::instance();
-        $f3->route("GET /yourplugin/action", "Plugin\Yourplugin\Controller->action");
-    }
-    // ...
-?>
-{% endhighlight %}
+// ...
+public function _load() {
+    $f3 = \Base::instance();
+    $f3->route("GET /yourplugin/action", "Plugin\Yourplugin\Controller->action");
+}
+// ...
+```
 
 
 ### Hooks
 
 Hooks allow your plugin to extend core Phproject functionality while avoiding conflicts. Hooks are callback functions that are called automatically when certain events happen, such as an `Issue` being saved or a text block being rendered. Your callback function will be passed an object or value which it can then manipulate and return to the core.
 
-{% highlight php %}
+```php
 <?php
-    // ...
-    public function _load() {
-        $this->_hook("view.parse", function($str) {
-            return str_replace("asdf", "jkl;", $str);
-        });
-    }
-    // ...
-?>
-{% endhighlight %}
+// ...
+public function _load() {
+    $this->_hook("view.parse", function($str) {
+        return str_replace("asdf", "jkl;", $str);
+    });
+}
+// ...
+```
 
 #### Available hooks
 
@@ -93,15 +93,15 @@ Hooks allow your plugin to extend core Phproject functionality while avoiding co
 
 Menu items can be added to the main navigation with a simple call to `$this->_addNav($href, $title, $match = null)` from your `Base->_load()` method. The third parameter is optional, and if present will be run through `preg_match()` with the current F3 `@PATH` to determine whether the menu item is active.
 
-{% highlight php %}
+```php
 <?php
-    // ...
-    public function _load() {
-        $this->_addNav("myplugin/page", "My Plugin", "/^myplugin\/page/");
-    }
-    // ...
-?>
-{% endhighlight %}
+// ...
+public function _load() {
+    $this->_addNav("myplugin/page", "My Plugin", "/^myplugin\/page/");
+}
+// ...
+
+```
 
 
 ### Scripts
@@ -113,15 +113,15 @@ Plugins can add javascript code and files by
 
 Plugins can provide additional localized strings by adding a `dict` directory to the plugin, with `*.ini` files for each language supported. These files must follow the same structure as the Phproject core `dict/*.ini` files, with the addition of a plugin namespace. For example:
 
-{% highlight ini %}
+```ini
 dict.yourplugin.my_button=My Button
-{% endhighlight %}
+```
 
 These can be called within templates using the standard syntax found in all the core views.
 
 ### Example Base Class
 
-{% highlight php %}
+```php
 <?php
 /**
  * @package YourPlugin
@@ -142,13 +142,14 @@ class Base extends \Plugin {
     }
 
 }
-?>
-{% endhighlight %}
+```
 
 ### Example folder structure
 
-    app/
-        plugin/
-            yourplugin/
-                base.php
-                ...
+```
+app/
+    plugin/
+        yourplugin/
+            base.php
+            ...
+```

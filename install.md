@@ -19,7 +19,7 @@ title: Install
 
 The installation process for Phproject should be reasonably simple compared with Redmine or other project management systems.
 
-1. Download the [latest stable release](https://github.com/Alanaktion/phproject/zipball/release) or clone the git repository and optionally checkout the release branch
+1. Download the [latest stable release](https://github.com/Alanaktion/phproject/releases/latest) or clone the git repository and optionally checkout the release branch
 2. Extract the zip archive to a web-accessible directory with write access
 3. Create a database on your MySQL server
 4. Navigate to the application and complete the installation
@@ -34,7 +34,7 @@ Phproject is designed to be fast, but you can still increase performance by inst
 
 
 ## Updating
-If you installed Phproject with git, simply run `git pull` to update. Otherwise, updates can be manually installed by [downloading the latest release](https://github.com/Alanaktion/phproject/zipball/release) and extracting it over your existing installation.
+If you installed Phproject with git, simply run `git pull` to update. Otherwise, updates can be manually installed by downloading the [latest release](https://github.com/Alanaktion/phproject/releases/latest) and extracting it over your existing installation.
 
 If there is a change to the database needed after you've updated, you will see an alert in the Administration on your Phproject installation, and can update the database from there.
 

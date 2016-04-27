@@ -8,6 +8,7 @@ url: "http://www.phproject.org"
 github_username:  Alanaktion
 
 # Build settings
+highlighter: rouge
 markdown: kramdown
 kramdown:
   input: GFM

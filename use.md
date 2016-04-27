@@ -18,6 +18,8 @@ Users can upload files to issues, and include a comment on each file. Files have
 #### Sprints
 Sprints are a collection of projects, containing tasks and bugs, which are going to be worked on in a specific period of time. Users can see the list of sprints as well as the project backlog by clicking Sprints in the top navigation. For an interactive sprint-specific task board, click the Taskboard button on a specific sprint. Sprints can only be created by Administrators.
 
+While infinitely-nested projects are allowed, only bottom-level projects are shown on the backlog. The backlog and sprints can be sorted on a per-group basis, based on the group selected in the filter.
+
 #### Administration
 Administrators can see an overview of everything on the site. They can create new users and user groups, as well as manage sprints. Administrators are also able to delete issues and comments.
 

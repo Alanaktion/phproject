@@ -23,7 +23,7 @@ You can also customize the default user image that is shown when a user does not
 
 If you want to use a custom Bootstrap theme that uses light text on a dark background, you'll find that some of the custom componants don't look great. Use the CSS below to make the components display properly, making adjustments where necessary to match your design.
 
-{% highlight css %}
+```css
 /* This CSS fixes display issues when using a dark Bootstrap theme */
 #taskboard table.taskboard-head {
 	background-color: transparent;
@@ -42,7 +42,7 @@ If you want to use a custom Bootstrap theme that uses light text on a dark backg
 .datepicker {
 	color: #111;
 }
-{% endhighlight %}
+```
 
 
 ## Demo Mode
