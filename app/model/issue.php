@@ -370,14 +370,14 @@ class Issue extends \Model {
 		$tag = new \Model\Issue\Tag;
 		$issue_id = $this->get("id");
 		$str = $this->get("description");
-		$count = preg_match_all("/(?<=\W#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=\W|$)/i", $str, $matches);
+		$count = preg_match_all("/(?<=[^a-z\\/&]#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=[^a-z\\/]|$)/i", $str, $matches);
 		if($issue_id) {
 			$tag->deleteByIssueId($issue_id);
 		}
 		if ($count) {
 			foreach ($matches[0] as $match) {
 				$tag->reset();
-				$tag->tag = preg_replace("/[_-]+/", "-", $match);
+				$tag->tag = preg_replace("/[_-]+/", "-", ltrim($match, "#"));
 				$tag->issue_id = $issue_id;
 				$tag->save();
 			}
