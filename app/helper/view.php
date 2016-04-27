@@ -84,7 +84,37 @@ class View extends \Template {
 	 */
 	protected function _parseIds($str) {
 		$url = \Base::instance()->get("site.url");
-		return preg_replace("/(?<=[^a-z\\/&]|^)#([0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}issues/$1\">#$1</a>", $str);
+
+		// Find all IDs
+		$count = preg_match_all("/(?<=[^a-z\\/&]#|^#)[0-9]+(?=[^a-z\\/]|$)/i", $str, $matches);
+		if(!$count) {
+			return $str;
+		}
+
+		// Load IDs
+		$ids = array();
+		foreach($matches[0] as $match) {
+			$ids[] = $match;
+		}
+		$idsStr = implode(",", array_unique($ids));
+		$issue = new \Model\Issue;
+		$issues = $issue->find(array("id IN ($idsStr)"));
+
+		return preg_replace_callback("/(?<=[^a-z\\/&]|^)#[0-9]+(?=[^a-z\\/]|$)/i", function($matches) use($url, $issues) {
+			$id = ltrim($matches[0], "#");
+			foreach($issues as $i) {
+				if($i->id == $id) {
+					$issue = $i;
+				}
+			}
+			if($issue) {
+				if($issue->deleted_date) {
+					return "<a href=\"{$url}issues/{$matches[0]}\" style=\"text-decoration: line-through;\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
+				}
+				return "<a href=\"{$url}issues/{$matches[0]}\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
+			}
+			return "<a href=\"{$url}issues/$id\">#$id</a>";
+		}, $str);
 	}
 
 	/**
