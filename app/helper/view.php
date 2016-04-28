@@ -83,7 +83,7 @@ class View extends \Template {
 	 * @return string
 	 */
 	protected function _parseIds($str) {
-		$url = \Base::instance()->get("site.url");
+		$base = \Base::instance()->get("BASE");
 
 		// Find all IDs
 		$count = preg_match_all("/(?<=[^a-z\\/&]#|^#)[0-9]+(?=[^a-z\\/]|$)/i", $str, $matches);
@@ -100,7 +100,7 @@ class View extends \Template {
 		$issue = new \Model\Issue;
 		$issues = $issue->find(array("id IN ($idsStr)"));
 
-		return preg_replace_callback("/(?<=[^a-z\\/&]|^)#[0-9]+(?=[^a-z\\/]|$)/i", function($matches) use($url, $issues) {
+		return preg_replace_callback("/(?<=[^a-z\\/&]|^)#[0-9]+(?=[^a-z\\/]|$)/i", function($matches) use($base, $issues) {
 			$id = ltrim($matches[0], "#");
 			foreach($issues as $i) {
 				if($i->id == $id) {
@@ -109,11 +109,11 @@ class View extends \Template {
 			}
 			if($issue) {
 				if($issue->deleted_date) {
-					return "<a href=\"{$url}issues/$id\" style=\"text-decoration: line-through;\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
+					return "<a href=\"{$base}/issues/$id\" style=\"text-decoration: line-through;\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
 				}
-				return "<a href=\"{$url}issues/$id\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
+				return "<a href=\"{$base}/issues/$id\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
 			}
-			return "<a href=\"{$url}issues/$id\">#$id</a>";
+			return "<a href=\"{$base}/issues/$id\">#$id</a>";
 		}, $str);
 	}
 
