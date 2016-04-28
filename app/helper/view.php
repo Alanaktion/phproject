@@ -109,9 +109,9 @@ class View extends \Template {
 			}
 			if($issue) {
 				if($issue->deleted_date) {
-					return "<a href=\"{$url}issues/{$matches[0]}\" style=\"text-decoration: line-through;\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
+					return "<a href=\"{$url}issues/$id\" style=\"text-decoration: line-through;\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
 				}
-				return "<a href=\"{$url}issues/{$matches[0]}\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
+				return "<a href=\"{$url}issues/$id\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
 			}
 			return "<a href=\"{$url}issues/$id\">#$id</a>";
 		}, $str);
