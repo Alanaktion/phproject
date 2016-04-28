@@ -101,7 +101,7 @@
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="owner_id">
 				<option value="0">{{ @dict.not_assigned }}</option>
-				<check if="{{ @@issue.author_id }}">
+				<check if="{{ @@issue.owner_id }}">
 					{~ @owner = new \Model\User; @owner->load(@issue.owner_id); ~}
 					<check if="{{ @owner.deleted_date }}">
 						<option value="{{ @owner.id }}" style="text-decoration: line-through;" selected>{{ @owner.name | esc }}</option>
