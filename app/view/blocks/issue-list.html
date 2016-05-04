@@ -3,7 +3,8 @@
 <check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
 {~ @headings[] = 'closed' ~}
 </check>
-<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form" id="form-filter-issues">
+<set randid="{{ rand() }}" />
+<form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form" id="form-filter-issues-{{ @randid }}">
 	<check if="{{ !empty(@heading_links_enabled) }}">
 		<input type="hidden" name="orderby" value="{{ (!empty(@GET.orderby) ? @GET.orderby : 'priority') | esc }}" />
 		<input type="hidden" name="ascdesc" value="{{ (!empty(@GET.ascdesc) ? @GET.ascdesc : 'desc') | esc }}" />
@@ -68,7 +69,7 @@
 						</select>
 					</td>
 					<td>
-						<input type="test" class="form-control input-sm" name="parent_id" id="filter-input-parent-id" value="{{ @@GET.parent_id | esc }}" />
+						<input type="text" class="form-control input-sm" name="parent_id" id="filter-input-parent-id" value="{{ @@GET.parent_id | esc }}" />
 					</td>
 					<td>
 						<select class="form-control input-sm" name="author_id">
@@ -179,7 +180,9 @@
 						</select>
 					</td>
 					<td></td>
-					<td></td>
+					<check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
+						<td></td>
+					</check>
 					<td class="text-right">
 						<noscript>
 							<button type="submit" class="btn btn-xs btn-primary">{{ @dict.submit }}</button>
@@ -259,7 +262,7 @@
 
 <check if="{{ @bulkUpdate }}">
 	<a class="btn btn-default btn-sm" data-toggle="modal" href="javascript:void(0)" data-target="#bulk-actions">{{ @dict.bulk_actions }}</a>
-	<form class="modal fade" id="bulk-actions" action="{{ @BASE }}/issues/bulk_update" method="post" tabindex="-1" role="dialog" aria-hidden="true">
+	<form class="modal fade" id="bulk-actions" action="{{ @BASE }}/issues/bulk_update" method="post" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -412,6 +415,6 @@
 			}
 		}
 	}).bind('typeahead:select', function() {
-		$('#form-filter-issues').submit();
+		$('#form-filter-issues-{{ @randid }}').submit();
 	});
 </script>

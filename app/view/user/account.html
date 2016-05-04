@@ -13,7 +13,7 @@
 	</ul>
 	<div class="tab-content">
 		<div class="tab-pane fade in active" id="profile">
-			<form class="form-horizontal" role="form" action="{{ @BASE }}/user" method="post">
+			<form class="form-horizontal" action="{{ @BASE }}/user" method="post">
 				<div class="row">
 					<div class="col-md-6">
 						<div class="form-group">
@@ -97,7 +97,7 @@
 			</div>
 		</div>
 		<div class="tab-pane fade" id="settings">
-			<form role="form" action="{{ @BASE }}/user" method="post">
+			<form action="{{ @BASE }}/user" method="post">
 				<input type="hidden" name="action" value="options">
 				<div class="checkbox">
 					<label>
@@ -109,7 +109,7 @@
 			</form>
 		</div>
 		<div class="tab-pane fade" id="password">
-			<form class="form-horizontal" role="form" action="{{ @BASE }}/user" method="post">
+			<form class="form-horizontal" action="{{ @BASE }}/user" method="post">
 				<div class="form-group">
 					<label for="opass" class="col-lg-4 col-sm-2 control-label label-sm">{{ @dict.current_password }}</label>
 					<div class="col-lg-6 col-sm-10">

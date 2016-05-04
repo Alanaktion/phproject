@@ -1,4 +1,4 @@
-<form id="dependency_form" role="form" class="form-horizontal">
+<form id="dependency_form" class="form-horizontal">
 <input type="hidden" name="action" value="add_dependency">
 <div class="form-group">
 		<label class="col-md-4"><strong>{{ @dict.task_depends }}</strong></label>
@@ -10,7 +10,7 @@
 				<option>{{ @dict.fs }}</option>
 				<option>{{ @dict.ff }}</option>
 				<option>{{ @dict.ss }}</option>
-				<option>{{ @dict.sf }}</option> 
+				<option>{{ @dict.sf }}</option>
 			</select>
 		</div>
 		<div class="col-md-2">
@@ -54,7 +54,7 @@
 	</div>
 </check>
 <hr>
-<form id="dependent_form" role="form" class="form-horizontal">
+<form id="dependent_form" class="form-horizontal">
 <input type="hidden" name="action" value="add_dependent">
 <div class="form-group">
 		<label class="col-md-4"><strong>{{ @dict.task_dependency }}</strong></label>

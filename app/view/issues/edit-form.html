@@ -1,4 +1,4 @@
-<form id="edit-form" class="form-horizontal well" role="form" action="{{ @BASE }}/issues/save" method="post">
+<form id="edit-form" class="form-horizontal well" action="{{ @BASE }}/issues/save" method="post">
 	<check if="{{ !empty(@issue) }}">
 		<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
 		<input type="hidden" name="id" value="{{ @issue.id }}">
