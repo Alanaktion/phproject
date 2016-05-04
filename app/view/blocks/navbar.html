@@ -10,9 +10,9 @@
 			</button>
 			<a class="navbar-brand" href="{{ @BASE }}/">
 				<check if="{{ empty(@site.logo) }}">
-					<true>{{ @site.name }}</true>
+					<true>{{ @site.name | esc }}</true>
 					<false>
-						<img src="{{ @site.logo }}" />
+						<img src="{{ @site.logo }}" alt="{{ @site.name | esc }}">
 					</false>
 				</check>
 			</a>
