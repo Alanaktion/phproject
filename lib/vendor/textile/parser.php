@@ -3051,10 +3051,10 @@ class Parser
             // Turn footnote references into supers or links.
             // As footnote blocks are banned in lite mode there is no point
             // generating links for them.
-            $text = $this->footnoteRefs($text);
+            // $text = $this->footnoteRefs($text);
 
             // Turn note references into links
-            $text = $this->noteRefs($text);
+            // $text = $this->noteRefs($text);
         }
 
         // Glyph level substitutions (mainly typographic -- " & ' => curly quotes, -- => em-dash etc.
