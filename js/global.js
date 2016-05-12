@@ -102,6 +102,13 @@ $(function() {
 		$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8997;').replace(/ctrl\+/g, '&#8984;').replace(/enter/g, '&#8617;').replace(/shift\+/g, '&#8679;'));
 	}
 
+	// Show correct accesskey modifier
+	if(navigator.platform.indexOf('Mac') >= 0) {
+		$('.accesskey-modifier').html('&#8984;&#8997;');
+	} else if(navigator.userAgent.indexOf('Firefox') >= 0) {
+		$('.accesskey-modifier').text('alt+shift');
+	}
+
 	// Submit from textarea if Ctrl+Enter or Cmd+Enter is pressed
 	$('body').on('keypress', 'textarea', function(e) {
 		if((e.keyCode == 13 || e.keyCode == 10) && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.metaKey)))) {

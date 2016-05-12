@@ -63,9 +63,6 @@
 					<button type="button" id="btn-burndown" class="btn btn-default btn-xs" data-toggle="modal" data-target="#burndown-modal">
 						<span class="fa fa-fire"></span> {{ @dict.burndown }}
 					</button>
-					<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Reload taskboard">
-						<span class="fa fa-repeat"></span>
-					</a>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
 					<th class="column column-{{ @key + 1 }}">{{ @value.name }}</th>
