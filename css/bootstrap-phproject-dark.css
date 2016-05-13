@@ -1380,6 +1380,7 @@ pre code {
 	white-space: pre-wrap;
 	background-color: transparent;
 	border-radius: 0;
+	border: 0;
 }
 .pre-scrollable {
 	max-height: 340px;
