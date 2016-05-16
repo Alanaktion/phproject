@@ -243,9 +243,13 @@ class Files extends \Controller {
 		}
 
 		$force = true;
-		if(substr($file->content_type, 0, 5) == "image" || $file->content_type == "text/plain") {
+		if(substr($file->content_type, 0, 5) == "image" ||
+			$file->content_type == "text/plain" ||
+			$file->content_type == "application/pdf"
+		) {
 			// Don't force download on image and plain text files
-			// Eventually I'd like to have previews of files some way (more than the existing thumbnails), but for now this is how we do it - Alan
+			// Eventually I'd like to have previews of files some way (more than
+			// the existing thumbnails), but for now this is how we do it - Alan
 			$force = false;
 		}
 
