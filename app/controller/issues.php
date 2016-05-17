@@ -43,7 +43,7 @@ class Issues extends \Controller {
 		$filter_str = "";
 		foreach($filter as $i => $val) {
 			if($i == "name") {
-				$filter_str .= "`$i` LIKE '%" . $db->quote($val) . "%' AND ";
+				$filter_str .= "`$i` LIKE " . $db->quote("%$val%") . " AND ";
 			} elseif($i == "status" && $val == "open") {
 				$filter_str .= "status_closed = 0 AND ";
 			} elseif($i == "status" && $val == "closed") {
@@ -66,10 +66,10 @@ class Issues extends \Controller {
 					$filter_str .= "$i in (". implode(",",$garray) .") AND ";
 				} else {
 					// Just select by user
-					$filter_str .= "$i = '". $db->quote($val) ."' AND ";
+					$filter_str .= "$i = ". $db->quote($val) ." AND ";
 				}
 			} else {
-				$filter_str .= "`$i` = '" . $db->quote($val) . "' AND ";
+				$filter_str .= "`$i` = " . $db->quote($val) . " AND ";
 			}
 		}
 		unset($val);
