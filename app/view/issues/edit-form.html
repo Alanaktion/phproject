@@ -7,10 +7,10 @@
 	<input type="hidden" name="type_id" value="{{ @type.id }}">
 	<check if="{{ empty(@issue) }}">
 		<true>
-			<h3>{{ @dict.new_n,@type.name | format }}</h3>
+			<h3>{{ @dict.new_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</h3>
 		</true>
 		<false>
-			<h3>{{ @dict.edit_n,@type.name | format }}</h3>
+			<h3>{{ @dict.edit_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</h3>
 		</false>
 	</check>
 	<div class="form-group">
@@ -31,7 +31,7 @@
 			<div class="col-md-10">
 				<select class="form-control input-sm" name="type_id">
 					<repeat group="{{ @issue_types }}" value="{{ @item }}">
-						<option value="{{ @item.id }}" {{ @issue.type_id == @item.id ? "selected" : "" }}>{{ @item.name }}</option>
+						<option value="{{ @item.id }}" {{ @issue.type_id == @item.id ? "selected" : "" }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 					</repeat>
 				</select>
 			</div>
@@ -44,10 +44,10 @@
 				<repeat group="{{ @priorities }}" value="{{ @item }}">
 					<check if="{{ empty(@issue) || empty(@issue.priority_id) }}">
 						<true>
-							<option value="{{ @item.value }}" {{ @item.value == @issue_priority.default ? "selected" : "" }}>{{ @item.name }}</option>
+							<option value="{{ @item.value }}" {{ @item.value == @issue_priority.default ? "selected" : "" }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 						</true>
 						<false>
-							<option value="{{ @item.value }}" {{ @issue.priority == @item.value ? "selected" : "" }}>{{ @item.name }}</option>
+							<option value="{{ @item.value }}" {{ @issue.priority == @item.value ? "selected" : "" }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 						</false>
 					</check>
 				</repeat>
@@ -59,7 +59,7 @@
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="status">
 				<repeat group="{{ @statuses }}" value="{{ @item }}">
-					<option value="{{ @item.id }}" {{ !empty(@issue) && @issue.status == @item.id ? "selected" : "" }}>{{ @item.name }}</option>
+					<option value="{{ @item.id }}" {{ !empty(@issue) && @issue.status == @item.id ? "selected" : "" }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 				</repeat>
 			</select>
 		</div>
@@ -233,10 +233,10 @@
 				</check>
 				<check if="{{ empty(@issue) }}">
 					<true>
-						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.create_n,@type.name | format }}</button>
+						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.create_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</button>
 					</true>
 					<false>
-						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_n,@type.name | format }}</button>
+						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</button>
 					</false>
 				</check>
 			</div>

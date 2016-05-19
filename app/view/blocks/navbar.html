@@ -22,7 +22,7 @@
 
 			<ul class="nav navbar-nav">
 				<li class="dropdown {{ @menuitem == 'new' ? 'active':'' }}">
-					<a href="{{ @BASE }}/issues/new" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" accesskey="n">
+					<a href="{{ @BASE }}/issues/new" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						{{ @dict.new }} <b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu" role="menu">
@@ -31,7 +31,7 @@
 							<li role="presentation" class="divider"></li>
 						</check>
 						<repeat group="{{ @issue_types }}" value="{{ @type }}">
-							<li><a href="{{ @BASE }}/issues/new/{{ @type.id }}">{{ @type.name }}</a></li>
+							<li><a href="{{ @BASE }}/issues/new/{{ @type.id }}">{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</a></li>
 						</repeat>
 						<check if="{{ @nav.new }}">
 							<li role="presentation" class="divider"></li>
@@ -44,14 +44,14 @@
 							<check if="{{ @issue.type_id == @issue_type.project }}">
 								<true>
 									<li role="presentation" class="dropdown-header">{{ @dict.related }}</li>
-									<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">Task</a></li>
+									<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.task }}</a></li>
 									<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.project }}/{{ @issue.id }}">{{ @dict.subproject }}</a></li>
 								</true>
 								<false>
 									<li role="presentation" class="dropdown-header">{{ @dict.current_issue }}</li>
-									<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">Child Task</a></li>
+									<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.child_task }}</a></li>
 									<check if="{{ @issue.parent_id }}">
-										<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.parent_id }}">Related Task</a></li>
+										<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.parent_id }}">{{ @dict.related_task }}</a></li>
 									</check>
 								</false>
 							</check>
@@ -73,7 +73,7 @@
 						<li role="presentation" class="divider"></li>
 						<li role="presentation" class="dropdown-header">{{ @dict.by_type }}</li>
 						<repeat group="{{ @issue_types }}" value="{{ @type }}">
-							<li><a href="{{ @BASE }}/issues?type_id={{ @type.id }}&amp;status=open">{{ @type.name }}</a></li>
+							<li><a href="{{ @BASE }}/issues?type_id={{ @type.id }}&amp;status=open">{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</a></li>
 						</repeat>
 						<check if="{{ @nav.browse }}">
 							<li role="presentation" class="divider"></li>

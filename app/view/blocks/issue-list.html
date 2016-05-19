@@ -28,8 +28,8 @@
 							<option value="">--</option>
 							<repeat group="{{ @types }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.type_id) && @GET.type_id == @item.id }}">
-									<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
-									<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
+									<true><option value="{{ @item.id }}" selected>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></true>
+									<false><option value="{{ @item.id }}">{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></false>
 								</check>
 							</repeat>
 						</select>
@@ -39,8 +39,8 @@
 							<option value="">--</option>
 							<repeat group="{{ @priorities }}" value="{{ @item }}">
 								<check if="{{ !empty(@GET.priority) && @GET.priority == @item.value }}">
-									<true><option value="{{ @item.value }}" selected>{{ @item.name }}</option></true>
-									<false><option value="{{ @item.value }}">{{ @item.name }}</option></false>
+									<true><option value="{{ @item.value }}" selected>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></true>
+									<false><option value="{{ @item.value }}">{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></false>
 								</check>
 							</repeat>
 						</select>
@@ -61,8 +61,8 @@
 							<optgroup label="{{ @dict.exact_match }}">
 								<repeat group="{{ @statuses }}" value="{{ @item }}">
 									<check if="{{ !empty(@GET.status) && @GET.status == @item.id }}">
-										<true><option value="{{ @item.id }}" selected>{{ @item.name }}</option></true>
-										<false><option value="{{ @item.id }}">{{ @item.name }}</option></false>
+										<true><option value="{{ @item.id }}" selected>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></true>
+										<false><option value="{{ @item.id }}">{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></false>
 									</check>
 								</repeat>
 							</optgroup>
@@ -135,7 +135,7 @@
 								</check>
 							</repeat>
 							<check if="{{ !empty(@old_sprints) }}">
-								<optgroup label="Previous Sprints">
+								<optgroup label="@dict.previous_sprints">
 									<repeat group="{{ @old_sprints }}" value="{{ @item }}">
 										<check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
 											<true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
@@ -226,9 +226,9 @@
 					</check>
 					<td><a href="{{ @BASE }}/issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.id }}</a></td>
 					<td><a href="{{ @BASE }}/issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.name | esc }}</a></td>
-					<td>{{ @item.type_name }}</td>
-					<td>{{ @item.priority_name }}</td>
-					<td>{{ @item.status_name }}</td>
+					<td>{{ isset(@dict[@item.type_name]) ? @dict[@item.type_name] : str_replace('_', ' ', @item.type_name) }}</td>
+					<td>{{ isset(@dict[@item.priority_name]) ? @dict[@item.priority_name] : str_replace('_', ' ', @item.priority_name) }}</td>
+					<td>{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) }}</td>
 					<td>{{ @item.parent_id ?: '' }}</td>
 					<check if="{{ @item.author_username }}">
 						<true>
@@ -247,7 +247,7 @@
 						</false>
 					</check>
 					<td>{{ !empty(@item.sprint_start_date) ? date("n/j/y", strtotime(@item.sprint_start_date)) : "" }}</td>
-					<td>{{ ucwords(@item.repeat_cycle) ?: 'None' }}</td>
+					<td>{{ ucwords(@dict[@item.repeat_cycle]) ?: @dict.not_repeating }}</td>
 					<td>{{ date("n/j/y", @this->utc2local(@item.created_date)) }}</td>
 					<td>{{ !empty(@item.due_date) ? date("n/j/y", strtotime(@item.due_date)) : "" }}</td>
 					<check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">

@@ -37,60 +37,60 @@
 
 	<div class="row">
 		<div class="col-md-3 col-sm-6">
-			<h4>Database</h4>
-			<b>Host:</b> {{ @db.host }}:{{ @db.port }}<br>
-			<b>Schema:</b> {{ @db.name }}<br>
+			<h4>{{ @dict.database }}</h4>
+			<b>{{ @dict.hostname }}:</b> {{ @db.host }}:{{ @db.port }}<br>
+			<b>{{ @dict.schema }}:</b> {{ @db.name }}<br>
 			<b>{{ @dict.username }}:</b> {{ @db.user }}<br>
 			<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
 			<b>{{ @dict.current_version }}:</b> {{@version}}<br>
 		</div>
 		<div class="col-md-3 col-sm-6">
 			<div class="clearfix">
-				<h4 class="pull-left">Cache</h4>
+				<h4 class="pull-left">{{ @dict.cache }}</h4>
 				<form class="pull-right" action="{{ @BASE }}/admin" method="post" style="margin-top: 10px;">
 					<input type="hidden" name="action" value="clearcache">
-					<button type="submit" class="btn btn-warning btn-xs">Clear Cache</button>
+					<button type="submit" class="btn btn-warning btn-xs">{{ @dict.clear_cache }}</button>
 				</form>
 			</div>
-			<p><b>Mode:</b> {{ @CACHE }}</p>
-			<small>Timeouts</small><br>
-			<b>Queries:</b> {{ @cache_expire.db }}<br>
-			<b>Minify:</b> {{ @cache_expire.minify }}<br>
-			<b>Attachments:</b> {{ @cache_expire.attachments }}<br>
+			<p><b>{{ @dict.cache_mode }}:</b> {{ @CACHE }}</p>
+			<small>{{ @dict.timeouts }}</small><br>
+			<b>{{ @dict.queries }}:</b> {{ @cache_expire.db }}<br>
+			<b>{{ @dict.minify }}:</b> {{ @cache_expire.minify }}<br>
+			<b>{{ @dict.attachments }}:</b> {{ @cache_expire.attachments }}<br>
 		</div>
 		<div class="col-md-3 col-sm-6">
-			<h4>SMTP <small>(Outgoing mail)</small></h4>
+			<h4>{{ @dict.outgoing_mail }}</h4>
 			<check if="{{ @mail.from }}">
 				<true>
-					<p><b>From:</b> {{ @mail.from }}</p>
+					<p><b>{{ @dict.from_address }}:</b> {{ @mail.from }}</p>
 				</true>
 				<false>
-					SMTP is not enabled.
+					{{ @dict.smtp_not_enabled }}
 				</false>
 			</check>
-			<h4>IMAP <small>(Incoming mail)</small></h4>
+			<h4>{{ @dict.incoming_mail }}</h4>
 			<check if="{{ @imap.hostname }}">
 				<true>
-					<b>Hostname:</b> {{ @imap.hostname }}<br>
+					<b>{{ @dict.hostname }}:</b> {{ @imap.hostname }}<br>
 					<b>{{ @dict.username }}:</b> {{ @imap.username }}<br>
 					<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
 				</true>
 				<false>
-					IMAP is not enabled.
+					{{ @dict.imap_not_enabled }}
 				</false>
 			</check>
 		</div>
 		<div class="col-md-3 col-sm-6">
-			<h4>Miscellaneous</h4>
+			<h4>{{ @dict.miscellaneous }}</h4>
 			<p>
-				<b>Debug level:</b> {{ @DEBUG }}<br>
-				<b>Session Lifetime:</b> {{ gmdate("z\\d G\\h", @JAR.expire) }}<br>
-				<b>Max upload:</b> {{ round(@files.maxsize/1024/1024, 2) }}MB
+				<b>{{ @dict.debug_level }}:</b> {{ @DEBUG }}<br>
+				<b>{{ @dict.session_lifetime }}:</b> {{ gmdate("z\\d G\\h", @JAR.expire) }}<br>
+				<b>{{ @dict.max_upload_size }}:</b> {{ round(@files.maxsize/1024/1024, 2) }}MB
 			</p>
 			<p>
 				<small>Gravatar</small><br>
-				<b>Max rating:</b> {{ @gravatar.rating }}<br>
-				<b>Default:</b> {{ @gravatar.default }}<br>
+				<b>{{ @dict.max_rating }}:</b> {{ @gravatar.rating }}<br>
+				<b>{{ @dict.default }}:</b> {{ @gravatar.default }}<br>
 			</p>
 		</div>
 	</div>

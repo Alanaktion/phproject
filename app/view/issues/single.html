@@ -136,14 +136,14 @@
 
 				<dt>{{ @dict.cols.type }}</dt>
 				<dd>
-					{{ @issue.type_name }}
+					{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
 				</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
-				<dd>{{ @issue.priority_name }}</dd>
+				<dd>{{ isset(@dict[@issue.priority_name]) ? @dict[@issue.priority_name] : str_replace('_', ' ', @issue.priority_name) }}</dd>
 
 				<dt>{{ @dict.cols.status }}</dt>
-				<dd>{{ @issue.status_name }}</dd>
+				<dd>{{ isset(@dict[@issue.status_name]) ? @dict[@issue.status_name] : str_replace('_', ' ', @issue.status_name) }}</dd>
 
 				<check if="{{ @issue.repeat_cycle && @issue.repeat_cycle != 'none' }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>
@@ -193,9 +193,9 @@
 					<div class="tab-pane fade in active" id="files-tiles">
 						<ul class="list-inline file-list">
 							<repeat group="{{ @files }}" value="{{ @file }}">
-								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @file.filesize | formatFilesize }}">
+								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>{{ @dict.uploaded_by }}: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @file.filesize | formatFilesize }}">
 									<a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" data-mime="{{ @file.content_type }}" target="_blank">
-										<img src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" srcset="{{ @BASE }}/files/thumb/192-{{ @file.id }}.png 2x" alt><br>
+										<img src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" srcset="{{ @BASE }}/files/thumb/192-{{ @file.id }}.png 2x" /><br />
 										{{ @file.filename | esc }}
 									</a>
 									<button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
