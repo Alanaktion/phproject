@@ -179,7 +179,7 @@ class Backlog extends \Controller {
 	 * @throws \Exception
 	 */
 	public function sort($f3) {
-		$this->_requireAdmin();
+		$this->_requireLogin(\Model\User::RANK_MANAGER);
 		$backlog = new \Model\Issue\Backlog;
 		if($f3->get("POST.sprint_id")) {
 			$backlog->load(array("user_id = ? AND sprint_id = ?", $f3->get("POST.user"), $f3->get("POST.sprint_id")));

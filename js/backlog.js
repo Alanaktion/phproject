@@ -109,7 +109,7 @@ var Backlog = {
 				sprint_id: $(this).attr('data-list-id'),
 				items: JSON.stringify(items)
 			}).error(function() {
-				alert('An error occurred saving the sort order.');
+				console.error('An error occurred saving the sort order.');
 			});
 		});
 	},
