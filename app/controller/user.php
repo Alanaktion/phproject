@@ -26,13 +26,6 @@ class User extends \Controller {
 	}
 
 	/**
-	 * @param \Base $f3
-	 */
-	public function index($f3) {
-		$f3->reroute("/user");
-	}
-
-	/**
 	 * GET /user/dashboard User dashboard
 	 *
 	 * @param \Base $f3
