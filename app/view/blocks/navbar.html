@@ -66,8 +66,6 @@
 						<li><a href="{{ @BASE }}/issues/?status=open">{{ @dict.open }}</a></li>
 						<li><a href="{{ @BASE }}/issues/?status=closed">{{ @dict.closed }}</a></li>
 						<li role="presentation" class="divider"></li>
-						<li><a href="{{ @BASE }}/tag">{{ @dict.issue_tags }}</a></li>
-						<li role="presentation" class="divider"></li>
 						<li><a href="{{ @BASE }}/issues/?status=open&amp;author_id={{ @user.id }}">{{ @dict.created_by_me }}</a></li>
 						<li><a href="{{ @BASE }}/issues/?status=open&amp;owner_id={{ @user.id }}">{{ @dict.assigned_to_me }}</a></li>
 						<li role="presentation" class="divider"></li>
@@ -75,12 +73,11 @@
 						<repeat group="{{ @issue_types }}" value="{{ @type }}">
 							<li><a href="{{ @BASE }}/issues?type_id={{ @type.id }}&amp;status=open">{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</a></li>
 						</repeat>
-						<check if="{{ @nav.browse }}">
-							<li role="presentation" class="divider"></li>
-							<repeat group="{{ @nav.browse }}" value="{{ @navitem }}">
-								<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
-							</repeat>
-						</check>
+						<li role="presentation" class="divider"></li>
+						<li><a href="{{ @BASE }}/tag">{{ @dict.issue_tags }}</a></li>
+						<repeat group="{{ @nav.browse }}" value="{{ @navitem }}">
+							<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
+						</repeat>
 					</ul>
 				</li>
 				<li class="{{ @menuitem == 'backlog' ? 'active':'' }}">
