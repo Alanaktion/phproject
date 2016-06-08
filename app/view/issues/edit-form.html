@@ -216,7 +216,9 @@
 		</div>
 	</div>
 
-	{~ \Helper\Plugin::instance()->callHook('render.issue_edit.after_fields', @issue) ~}
+	<check if="{{ !empty(@issue) }}">
+		{~ \Helper\Plugin::instance()->callHook('render.issue_edit.after_fields', @issue) ~}
+	</check>
 
 	<hr>
 	<check if="{{ !empty(@issue) }}">
@@ -227,7 +229,9 @@
 			</div>
 		</div>
 
-		{~ \Helper\Plugin::instance()->callHook('render.issue_edit.after_comments', @issue) ~}
+		<check if="{{ !empty(@issue) }}">
+			{~ \Helper\Plugin::instance()->callHook('render.issue_edit.after_comments', @issue) ~}
+		</check>
 	</check>
 
 	<div class="row">
