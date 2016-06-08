@@ -1154,30 +1154,6 @@ mark,
 a.text-primary:hover {
 	color: #28415b;
 }
-.text-success {
-	color: #ffffff;
-}
-a.text-success:hover {
-	color: #e6e6e6;
-}
-.text-info {
-	color: #ffffff;
-}
-a.text-info:hover {
-	color: #e6e6e6;
-}
-.text-warning {
-	color: #ffffff;
-}
-a.text-warning:hover {
-	color: #e6e6e6;
-}
-.text-danger {
-	color: #ffffff;
-}
-a.text-danger:hover {
-	color: #e6e6e6;
-}
 .bg-primary {
 	color: #fff;
 	background-color: #375a7f;
