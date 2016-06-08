@@ -215,6 +215,9 @@
 			</select>
 		</div>
 	</div>
+
+	{~ \Helper\Plugin::instance()->callHook('render.issue_edit.after_fields', @issue) ~}
+
 	<hr>
 	<check if="{{ !empty(@issue) }}">
 		<div class="form-group">
@@ -223,7 +226,10 @@
 				<textarea class="form-control input-sm" name="comment" rows="3">{{ !empty(@comment) && is_string(@comment) ? @comment : "" | esc }}</textarea>
 			</div>
 		</div>
+
+		{~ \Helper\Plugin::instance()->callHook('render.issue_edit.after_comments', @issue) ~}
 	</check>
+
 	<div class="row">
 		<div class="col-md-offset-2 col-md-10 clearfix">
 			<div class="pull-right" style="margin-left: 15px;">

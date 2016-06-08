@@ -371,7 +371,7 @@ table a.btn {
 
 /* Make huge dropdowns usable */
 .dropdown-menu {
-	max-height: 400px;
+	max-height: 60vh;
 	overflow-y: auto;
 }
 
