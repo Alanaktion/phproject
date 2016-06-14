@@ -6,6 +6,7 @@
  * Copyright 2012-2014 Thomas Park
  * Licensed under MIT
  * Based on Bootstrap
+ * Modified for Phproject
 */
 
 /*! normalize.css v3.0.1 | MIT License | git.io/normalize */
@@ -1344,9 +1345,9 @@ pre {
 	line-height: 1.42857143;
 	word-break: break-all;
 	word-wrap: break-word;
-	color: #303030;
-	background-color: #ebebeb;
-	border: 1px solid #cccccc;
+	color: #f5f5f5;
+	background-color: #333;
+	border: 1px solid #444;
 	border-radius: 4px;
 }
 pre code {
