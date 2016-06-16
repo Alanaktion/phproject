@@ -8,6 +8,9 @@
 	<check if="{{ empty(@issue) }}">
 		<true>
 			<h3>{{ @dict.new_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</h3>
+			<check if="{{ !empty(@parent) }}">
+				<h6>{{ @dict.under_n, @parent.name | format }}</h6>
+			</check>
 		</true>
 		<false>
 			<h3>{{ @dict.edit_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</h3>
@@ -16,7 +19,7 @@
 	<div class="form-group">
 		<label class="col-md-2 control-label">{{ @dict.cols.title }}</label>
 		<div class="col-md-10">
-			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : @issue.name | esc }}" autocomplete="off" required>
+			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? '' : @issue.name | esc }}" autocomplete="off" required>
 		</div>
 	</div>
 	<div class="form-group">
@@ -31,7 +34,7 @@
 			<div class="col-md-10">
 				<select class="form-control input-sm" name="type_id">
 					<repeat group="{{ @issue_types }}" value="{{ @item }}">
-						<option value="{{ @item.id }}" {{ @issue.type_id == @item.id ? "selected" : "" }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
+						<option value="{{ @item.id }}" {{ @issue.type_id == @item.id ? "selected" : '' }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 					</repeat>
 				</select>
 			</div>
@@ -44,10 +47,10 @@
 				<repeat group="{{ @priorities }}" value="{{ @item }}">
 					<check if="{{ empty(@issue) || empty(@issue.priority_id) }}">
 						<true>
-							<option value="{{ @item.value }}" {{ @item.value == @issue_priority.default ? "selected" : "" }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
+							<option value="{{ @item.value }}" {{ @item.value == @issue_priority.default ? "selected" : '' }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 						</true>
 						<false>
-							<option value="{{ @item.value }}" {{ @issue.priority == @item.value ? "selected" : "" }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
+							<option value="{{ @item.value }}" {{ @issue.priority == @item.value ? "selected" : '' }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 						</false>
 					</check>
 				</repeat>
@@ -162,14 +165,14 @@
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.start_date }}</label>
 		<div class="col-md-6">
-			<input class="form-control input-sm" id="start_date" type="text" name="start_date" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.start_date }}">
+			<input class="form-control input-sm" id="start_date" type="text" name="start_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.start_date }}">
 		</div>
 	</div>
 
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.due_date }}</label>
 		<div class="col-md-6">
-			<input class="form-control input-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.due_date }}">
+			<input class="form-control input-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.due_date }}">
 		</div>
 	</div>
 	<div class="form-group">
@@ -189,10 +192,10 @@
 		<div class="col-md-6">
 			<check if="{{ !empty(@issue) }}">
 				<true>
-					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.parent_id }}">
+					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.parent_id }}">
 				</true>
 				<false>
-					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@parent) ? "" : @parent }}">
+					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@parent) ? '' : @parent.id }}">
 				</false>
 			</check>
 		</div>
@@ -203,12 +206,12 @@
 			<select class="form-control input-sm" name="sprint_id">
 				<option value="">{{ @dict.no_sprint }}</option>
 				<repeat group="{{ @sprints }}" value="{{ @item }}">
-					<check if="{{ !empty(@issue) && @issue.sprint_id == @item.id }}">
+					<check if="{{ !empty(@issue) && @issue.sprint_id == @item.id || empty(@issue) && !empty(@parent) && @parent.sprint_id == @item.id }}">
 						<true>
-							<option value="{{ @item.id }}" selected>{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+							<option value="{{ @item.id }}" selected>{{ @item.name }} &ndash; {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
 						</true>
 						<false>
-							<option value="{{ @item.id }}">{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+							<option value="{{ @item.id }}">{{ @item.name }} &ndash; {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
 						</false>
 					</check>
 				</repeat>

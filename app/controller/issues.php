@@ -351,10 +351,10 @@ class Issues extends \Controller {
 		}
 
 		if($f3->get("PARAMS.parent")) {
-			$parent = $f3->get("PARAMS.parent");
-			$parent_issue = new \Model\Issue;
-			$parent_issue->load(array("id=? AND (closed_date IS NULL OR closed_date = '0000-00-00 00:00:00')", $parent));
-			if($parent_issue->id){
+			$parent_id = $f3->get("PARAMS.parent");
+			$parent = new \Model\Issue;
+			$parent->load(array("id = ? AND closed_date IS NULL", $parent_id));
+			if($parent->id) {
 				$f3->set("parent", $parent);
 			}
 		}
@@ -552,16 +552,6 @@ class Issues extends \Controller {
 						}
 					}
 				}
-			}
-		}
-
-		// If it's a child issue and the parent is in a sprint,
-		// use that sprint if another has not been set already
-		if(!$issue->sprint_id && $issue->parent_id) {
-			$parent = new \Model\Issue;
-			$parent->load($issue->parent_id);
-			if($parent->sprint_id) {
-				$issue->sprint_id = $parent->sprint_id;
 			}
 		}
 
