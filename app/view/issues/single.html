@@ -217,11 +217,11 @@
 							<table class="table table-striped table-condensed file-list">
 								<thead>
 									<tr>
-										<th>{{ @dict.cols.id }}</th>
-										<th>{{ @dict.file_name }}</th>
-										<th>{{ @dict.uploaded_by }}</th>
-										<th>{{ @dict.upload_date }}</th>
-										<th>{{ @dict.file_size }}</th>
+										<th data-sort="int">{{ @dict.cols.id }}</th>
+										<th data-sort="string">{{ @dict.file_name }}</th>
+										<th data-sort="string">{{ @dict.uploaded_by }}</th>
+										<th data-sort="int">{{ @dict.upload_date }}</th>
+										<th data-sort="int">{{ @dict.file_size }}</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -231,8 +231,8 @@
 											<td>{{ @file.id }}</td>
 											<td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename | esc }}</a></td>
 											<td>{{ @file.user_name | esc }}</td>
-											<td>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
-											<td>{{ @file.filesize | formatFilesize }}</td>
+											<td data-sort-value="{{ strtotime(@file.created_date) }}">{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
+											<td data-sort-value="{{ @file.filesize }}">{{ @file.filesize | formatFilesize }}</td>
 											<td><button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button></td>
 										</tr>
 									</repeat>
@@ -646,6 +646,9 @@ $(function() {
 			}
 		}
 	});
+
+	// Make file table sortable
+	$('#files-table table').stupidtable();
 
 	// Prevent navigation with unsaved changes
 	var $editForm = $('#edit-form'),
