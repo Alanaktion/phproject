@@ -399,9 +399,10 @@ class Issue extends \Model {
 
 	/**
 	 * Duplicate issue and all sub-issues
-	 * @return Issue
+	 * @param  bool  $recursive
+	 * @return Issue New issue
 	 */
-	function duplicate() {
+	function duplicate($recursive = true) {
 		if (!$this->id) {
 			return false;
 		}
@@ -419,8 +420,10 @@ class Issue extends \Model {
 		$new_issue->created_date = date("Y-m-d H:i:s");
 		$new_issue->save();
 
-		// Run the recursive function to duplicate the complete descendant tree
-		$this->_duplicateTree($this->id, $new_issue->id);
+		if($recursive) {
+			// Run the recursive function to duplicate the complete descendant tree
+			$this->_duplicateTree($this->id, $new_issue->id);
+		}
 
 		return $new_issue;
 	}

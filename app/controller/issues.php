@@ -211,11 +211,15 @@ class Issues extends \Controller {
 		$post = $f3->get("POST");
 
 		$issue = new \Model\Issue;
-		if( !empty($post["id"] ) && is_array($post["id"] )) {
+		if(!empty($post["id"]) && is_array($post["id"] )) {
 			foreach($post["id"] as $id) {
 				// Updating existing issue.
 				$issue->load($id);
 				if($issue->id) {
+
+					if(!empty($post["update_copy"])) {
+						$issue = $issue->duplicate(false);
+					}
 
 					// Diff contents and save what's changed.
 					foreach($post as $i=>$val) {

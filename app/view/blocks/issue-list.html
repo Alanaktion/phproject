@@ -55,37 +55,43 @@
 	<include href="blocks/issue-list/bulk-update.html" />
 </check>
 
-<script src="{{ @BASE }}/minify/js/typeahead.jquery.js"></script>
 <script type="text/javascript">
-document.addEventListener("DOMContentLoaded", function(event) {
-	$('input#filter-input-parent-id').typeahead({
-		classNames: {
-			menu: 'dropdown-menu'
-		}
-	}, {
-		async: true,
-		limit: 10,
-		source: function(query, syncResults, asyncResults) {
-			$.ajax({
-				url: BASE + '/issues/parent_ajax',
-				data: { 'q': query },
-				success: function(data) {
-					asyncResults(data.results);
+document.addEventListener("DOMContentLoaded", function() {
+	$.ajax({
+		url: BASE + '/minify/js/typeahead.jquery.js',
+		cache: true,
+		dataType: "script",
+		success: function() {
+			$('input[name="parent_id"]').typeahead({
+				classNames: {
+					menu: 'dropdown-menu'
+				}
+			}, {
+				async: true,
+				limit: 10,
+				source: function(query, syncResults, asyncResults) {
+					$.ajax({
+						url: BASE + '/issues/parent_ajax',
+						data: { 'q': query },
+						success: function(data) {
+							asyncResults(data.results);
+						},
+						dataType: 'json',
+						cache: false
+					});
 				},
-				dataType: 'json',
-				cache: false
+				display: function(element) {
+					return element.id;
+				},
+				templates: {
+					suggestion: function(element) {
+						return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
+					}
+				}
+			}).bind('typeahead:select', function() {
+				$('#form-filter-issues-{{ @randid }}').submit();
 			});
-		},
-		display: function(element) {
-			return element.id;
-		},
-		templates: {
-			suggestion: function(element) {
-				return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
-			}
 		}
-	}).bind('typeahead:select', function() {
-		$('#form-filter-issues-{{ @randid }}').submit();
 	});
 });
 </script>
