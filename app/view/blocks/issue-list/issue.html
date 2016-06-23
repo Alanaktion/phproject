@@ -1,0 +1,34 @@
+<tr data-id="{{ @item.id }}" class="{{ @item.status_closed ? 'closed' : '' }}">
+	<check if="{{ @bulkUpdate }}">
+		<td><input type="checkbox" name="id[]" value="{{ @item.id }}"></td>
+	</check>
+	<td><a href="{{ @BASE }}/issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.id }}</a></td>
+	<td><a href="{{ @BASE }}/issues/{{ @item.id }}" class="{{ @item.status_closed ? 'text-muted' : '' }}">{{ @item.name | esc }}</a></td>
+	<td>{{ isset(@dict[@item.type_name]) ? @dict[@item.type_name] : str_replace('_', ' ', @item.type_name) }}</td>
+	<td>{{ isset(@dict[@item.priority_name]) ? @dict[@item.priority_name] : str_replace('_', ' ', @item.priority_name) }}</td>
+	<td>{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) }}</td>
+	<td>{{ @item.parent_id ?: '' }}</td>
+	<check if="{{ @item.author_username }}">
+		<true>
+			<td><a href="{{ @BASE }}/user/{{ @item.author_username }}" rel="author">{{ @item.author_name | esc }}</a></td>
+		</true>
+		<false>
+			<td>{{ @item.author_name | esc }}</td>
+		</false>
+	</check>
+	<check if="{{ @item.owner_username }}">
+		<true>
+			<td><a href="{{ @BASE }}/user/{{ @item.owner_username }}">{{ @item.owner_name | esc }}</a></td>
+		</true>
+		<false>
+			<td>{{ @item.owner_name | esc }}</td>
+		</false>
+	</check>
+	<td>{{ !empty(@item.sprint_start_date) ? date("n/j/y", strtotime(@item.sprint_start_date)) : "" }}</td>
+	<td>{{ ucwords(@dict[@item.repeat_cycle]) ?: @dict.not_repeating }}</td>
+	<td>{{ date("n/j/y", @this->utc2local(@item.created_date)) }}</td>
+	<td>{{ !empty(@item.due_date) ? date("n/j/y", strtotime(@item.due_date)) : "" }}</td>
+	<check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
+		<td>{{ !empty(@item.closed_date) ? date("n/j/y", @this->utc2local(@item.closed_date)) : "" }}</td>
+	</check>
+</tr>
