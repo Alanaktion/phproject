@@ -353,7 +353,7 @@ class Issues extends \Controller {
 		if($f3->get("PARAMS.parent")) {
 			$parent_id = $f3->get("PARAMS.parent");
 			$parent = new \Model\Issue;
-			$parent->load(array("id = ? AND closed_date IS NULL", $parent_id));
+			$parent->load(array("id = ?", $parent_id));
 			if($parent->id) {
 				$f3->set("parent", $parent);
 			}

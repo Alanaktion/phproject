@@ -190,14 +190,7 @@
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.parent_id }}</label>
 		<div class="col-md-6">
-			<check if="{{ !empty(@issue) }}">
-				<true>
-					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.parent_id }}">
-				</true>
-				<false>
-					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@parent) ? '' : @parent.id }}">
-				</false>
-			</check>
+			<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ @@issue.parent_id ?: @@parent.id }}">
 		</div>
 	</div>
 	<div class="form-group">
