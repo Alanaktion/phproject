@@ -257,8 +257,11 @@ class Issue extends \Model {
 		}
 		$update->save();
 
-		// Set hours_total to the hours_remaining value if it's 0 or null
-		if ($this->hours_remaining && !$this->hours_total) {
+		// Set hours_total to the hours_remaining value under certain conditions
+		if ($this->hours_remaining && !$this->hours_total &&
+			!$this->_getPrev('hours_remaining') &&
+			!$this->_getPrev('hours_total')
+		) {
 			$this->hours_total = $this->hours_remaining;
 		}
 
