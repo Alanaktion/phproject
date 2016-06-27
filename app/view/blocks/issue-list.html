@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		cache: true,
 		dataType: "script",
 		success: function() {
-			$('input[name="parent_id"]').typeahead({
+			$('input[data-typeahead="issues"]').typeahead({
 				classNames: {
 					menu: 'dropdown-menu'
 				}
