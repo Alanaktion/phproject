@@ -271,7 +271,7 @@ class Issue extends \Model {
 		}
 
 		// Create a new issue if repeating
-		if ($this->closed_date && $this->repeat_cycle && $this->repeat_cycle != "none") {
+		if ($this->closed_date && $this->repeat_cycle) {
 			$this->repeat($notify);
 			$this->repeat_cycle = null;
 		}

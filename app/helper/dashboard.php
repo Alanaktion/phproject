@@ -72,7 +72,7 @@ class Dashboard extends \Prefab {
 	public function repeat_work() {
 		$ownerString = implode(",", $this->getOwnerIds());
 		return $this->getIssue()->find(
-			"owner_id IN ($ownerString) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0 AND repeat_cycle NOT IN ('none', '')",
+			"owner_id IN ($ownerString) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0 AND repeat_cycle IS NOT NULL",
 			array("order" => $this->_order)
 		);
 	}

@@ -7,7 +7,7 @@
 					<span class="fa fa-user"></span>&ensp;{{ @item.owner_name | esc }}
 				</p>
 			</check>
-			<check if="{{ @item.repeat_cycle && @item.repeat_cycle != 'none' }}">
+			<check if="{{ @item.repeat_cycle }}">
 				<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="{{ @dict.cols.repeat_cycle }}">
 					<span class="fa fa-repeat"></span>&ensp;{{ @dict[@item.repeat_cycle] ?: @item.repeat_cycle }}
 				</p>

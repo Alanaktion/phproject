@@ -145,7 +145,7 @@
 				<dt>{{ @dict.cols.status }}</dt>
 				<dd>{{ isset(@dict[@issue.status_name]) ? @dict[@issue.status_name] : str_replace('_', ' ', @issue.status_name) }}</dd>
 
-				<check if="{{ @issue.repeat_cycle && @issue.repeat_cycle != 'none' }}">
+				<check if="{{ @issue.repeat_cycle }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>
 					<dd>{{ ucfirst(@issue.repeat_cycle) }}</dd>
 				</check>

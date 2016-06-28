@@ -49,9 +49,9 @@ class Issues extends \Controller {
 			} elseif($i == "status" && $val == "closed") {
 				$filter_str .= "status_closed = 1 AND ";
 			} elseif($i == "repeat_cycle" && $val == "repeat") {
-				$filter_str .= "repeat_cycle NOT IN ('none', '') AND ";
+				$filter_str .= "repeat_cycle IS NOT NULL AND ";
 			} elseif($i == "repeat_cycle" && $val == "none") {
-				$filter_str .= "repeat_cycle IN ('none', '') AND ";
+				$filter_str .= "repeat_cycle IS NULL AND ";
 			} elseif(($i == "author_id" || $i== "owner_id") && !empty($val) && is_numeric($val)) {
 				// Find all users in a group if necessary
 				$user = new \Model\User;
