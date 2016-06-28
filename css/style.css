@@ -346,6 +346,8 @@ table a.btn {
 .tex ul,
 .tex ol {
 	padding-left: 20px;
+}
+.tex ul:last-child, .tex ol:last-child {
 	margin-bottom: 0;
 }
 .tex blockquote {
