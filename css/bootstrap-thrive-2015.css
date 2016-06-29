@@ -3725,8 +3725,8 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
-	color: #ffffff;
-	background-color: #7ac143;
+	color: #7ac143;
+	background-color: transparent;
 }
 .navbar-default .navbar-nav > .disabled > a,
 .navbar-default .navbar-nav > .disabled > a:hover,
@@ -3742,6 +3742,10 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 	background-color: #7ac143;
 }
 .navbar-default .navbar-toggle .icon-bar {
+	background-color: #7ac143;
+}
+.navbar-default .navbar-toggle:hover .icon-bar,
+.navbar-default .navbar-toggle:focus .icon-bar {
 	background-color: #ffffff;
 }
 .navbar-default .navbar-collapse,
@@ -3751,12 +3755,12 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
-	background-color: #7ac143;
-	color: #ffffff;
+	color: #7ac143;
+	background-color: transparent;
 }
 @media (max-width: 767px) {
 	.navbar-default .navbar-nav .open .dropdown-menu > li > a {
-		color: #ffffff;
+		/*color: #ffffff;*/
 	}
 	.navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
 	.navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
@@ -3766,8 +3770,8 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 	.navbar-default .navbar-nav .open .dropdown-menu > .active > a,
 	.navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
 	.navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-		color: #ffffff;
-		background-color: #7ac143;
+		color: #7ac143;
+		background-color: transparent;
 	}
 	.navbar-default .navbar-nav .open .dropdown-menu > .disabled > a,
 	.navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover,
@@ -3777,13 +3781,13 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 	}
 }
 .navbar-default .navbar-link {
-	color: #ffffff;
+	/*color: #ffffff;*/
 }
 .navbar-default .navbar-link:hover {
 	color: #7ac143;
 }
 .navbar-default .btn-link {
-	color: #ffffff;
+	/*color: #ffffff;*/
 }
 .navbar-default .btn-link:hover,
 .navbar-default .btn-link:focus {
@@ -6207,6 +6211,10 @@ a.list-group-item-danger.active:focus {
 .navbar-form .input-sm,
 .navbar-form .btn-sm {
 	margin-top: 5px;
+}
+#taskboard .btn {
+	margin-bottom: -2px;
+	height: 24px;
 }
 
 .datepicker td.day:hover,
