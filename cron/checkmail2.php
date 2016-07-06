@@ -7,10 +7,10 @@ if(!isset($imap["hostname"])) {
 	throw new Exception("No IMAP hostname specified in configuration");
 }
 
-$inbox = imap_open($imap['hostname'],$imap['username'],$imap['password']);
+$inbox = imap_open($imap['hostname'], $imap['username'], $imap['password']);
 if($inbox === false) {
-	$err = 'Cannot connect to IMAP: ' . imap_last_error();
-	$log->write($err);
+	$err = 'Cannot connect to IMAP: %s';
+	$log->write(sprintf($err, imap_last_error()));
 	throw new Exception($err);
 }
 
@@ -25,8 +25,8 @@ foreach($emails as $msg_number) {
 
 	// Skip broken messages
 	if(empty($structure->parts)) {
-		$err = 'Got message without any structure info. ' . imap_last_error();
-		$log->write($err);
+		$err = 'Skipping message, no structure info - Subject: %s; From: %s';
+		$log->write(sprintf($err, $header->subject, $header->from[0]->mailbox . '@' . $header->from[0]->host));
 		continue;
 	}
 
@@ -116,7 +116,7 @@ foreach($emails as $msg_number) {
 	$from_user = new \Model\User;
 	$from_user->load(array('email = ? AND deleted_date IS NULL', $from));
 	if(!$from_user->id) {
-		$log->write('Unable to find user for ' . $header->subject);
+		$log->write(sprintf('Skipping message, no matching user - From: %s; Subject: %s', $from, $header->subject));
 		continue;
 	}
 
@@ -152,7 +152,7 @@ foreach($emails as $msg_number) {
 				'issue_id' => $issue->id,
 				'text' => $text,
 			));
-			$log->write("Added comment {$comment->id} on issue {$issue->id}");
+			$log->write(sprintf("Added comment %s on issue #%s - %s", $comment->id, $issue->id, $issue->name));
 		}
 	} else {
 		$issue = \Model\Issue::create(array(
@@ -163,7 +163,7 @@ foreach($emails as $msg_number) {
 			'status' => 1,
 			'type_id' => 1
 		));
-		$log->write("Created issue {$issue->id}");
+		$log->write(sprintf("Created issue #%s - %s", $issue->id, $issue->name));
 	}
 
 	// Add other recipients as watchers
@@ -227,7 +227,7 @@ foreach($emails as $msg_number) {
 			"digest" => md5($data),
 		));
 
-		$log->write("Saved file {$file->id} on issue {$issue->id}");
+		$log->write(sprintf("Saved file %s on issue #%s - %s", $file->id, $issue->id, $issue->name));
 	}
 
 }
