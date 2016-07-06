@@ -14,7 +14,10 @@ if($inbox === false) {
 	throw new Exception($err);
 }
 
-$emails = imap_search($inbox,'ALL UNSEEN');
+$emails = imap_search($inbox, 'ALL UNSEEN');
+if(!$emails) {
+	return;
+}
 
 foreach($emails as $msg_number) {
 	$header = imap_headerinfo($inbox, $msg_number);
@@ -25,7 +28,16 @@ foreach($emails as $msg_number) {
 
 	// Use text from non-multipart messages directly
 	if(empty($structure->parts)) {
+		// Get message body
 		$text = imap_fetchbody($inbox, $msg_number, 1);
+		$part = imap_bodystruct($inbox, $msg_number, 1);
+
+		// Decode body
+		if($part->encoding == 4) {
+			$text = imap_qprint($text);
+		} elseif($part->encoding == 3) {
+			$text = imap_base64($text);
+		}
 	}
 
 	// Load message parts for multipart messages
