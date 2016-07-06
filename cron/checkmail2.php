@@ -128,8 +128,13 @@ foreach($emails as $msg_number) {
 	$from_user = new \Model\User;
 	$from_user->load(array('email = ? AND deleted_date IS NULL', $from));
 	if(!$from_user->id) {
-		$log->write(sprintf('Skipping message, no matching user - From: %s; Subject: %s', $from, $header->subject));
-		continue;
+		if(isset($imap['default_user'])) {
+			$from_user->load($imap['default_user']);
+			$log->write(sprintf('No matching user, using default - From: %s; Subject: %s', $from, $header->subject));
+		} else {
+			$log->write(sprintf('Skipping message, no matching user - From: %s; Subject: %s', $from, $header->subject));
+			continue;
+		}
 	}
 
 	$to_user = new \Model\User;
