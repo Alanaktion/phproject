@@ -109,7 +109,12 @@ class View extends \Template {
 			}
 			if($issue) {
 				if($issue->deleted_date) {
-					return "<a href=\"{$base}/issues/$id\" style=\"text-decoration: line-through;\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
+					$f3 = \Base::instance();
+					if($f3->get("user.role") == "admin" || $f3->get("user.rank") >= \Model\User::RANK_MANAGER || $f3->get("user.id") == $issue->author_id) {
+						return "<a href=\"{$base}/issues/$id\" style=\"text-decoration: line-through;\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
+					} else {
+						return "#$id";
+					}
 				}
 				return "<a href=\"{$base}/issues/$id\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
 			}
