@@ -71,21 +71,19 @@
 																	<ul style="padding-left: 20px; margin: 5px 0 5px 0;">
 																		<repeat group="{{ @changes }}" value="{{ @change }}">
 																			<set human_readable="{{ \Helper\Update::instance()->humanReadableValues(@change.field, @change.old_value, @change.new_value) }}" />
-																			<check if="{{ @change.old_value }}">
-																				<true>
-																					<check if="{{ @change.new_value !== '' }}">
-																						<true>
-																							<check if="{{ @change.field == 'description' }}">
-																								<true>
-																									<li style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
+																			<li style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5; margin-left: 0;">
+																				<check if="{{ @change.old_value }}">
+																					<true>
+																						<check if="{{ @change.new_value !== '' }}">
+																							<true>
+																								<check if="{{ @change.field == 'description' }}">
+																									<true>
 																										<span style="font-weight: bold; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
 																											{{ @human_readable.field }}
 																										</span>
 																										changed
-																									</li>
-																								</true>
-																								<false>
-																									<li style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
+																									</true>
+																									<false>
 																										<span style="font-weight: bold; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
 																											{{ @human_readable.field }}
 																										</span>
@@ -97,22 +95,18 @@
 																										<span style="font-style: italic; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
 																											{{ @human_readable.new | esc }}
 																										</span>
-																									</li>
-																								</false>
-																							</check>
-																						</true>
-																						<false>
-																							<li style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
+																									</false>
+																								</check>
+																							</true>
+																							<false>
 																								<span style="font-weight: bold; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
 																									{{ @human_readable.field }}
 																								</span>
 																								removed
-																							</li>
-																						</false>
-																					</check>
-																				</true>
-																				<false>
-																					<li style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
+																							</false>
+																						</check>
+																					</true>
+																					<false>
 																						<span style="font-weight: bold; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
 																							{{ @human_readable.field }}
 																						</span>
@@ -120,8 +114,8 @@
 																						<span style="font-style: italic; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
 																							{{ @human_readable.new | esc }}
 																						</span>
-																					</li>
-																				</false>
+																					</false>
+																				</li>
 																			</check>
 																		</repeat>
 																	</ul>
