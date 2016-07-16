@@ -47,7 +47,7 @@
 										<td>
 											<ul style="padding-left: 20px; margin: 5px 0 5px 0;">
 												<repeat group="{{ @issues }}" value="{{ @issue }}">
-													<li>
+													<li style="margin-left: 0;">
 														<a href="{{ @site.url }}issues/{{ @issue.id }}" style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #15bc9c; line-height: 1.5;">
 															#{{ @issue.id }} &ndash; {{ @issue.name | esc }}
 														</a>

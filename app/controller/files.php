@@ -184,6 +184,7 @@ class Files extends \Controller {
 
 			// Render and output image
 			header("Content-type: image/" . $params["format"]);
+			header("Cache-Control: private, max-age=" . (3600 / 2));
 			$img->render($params["format"]);
 
 		} else {
