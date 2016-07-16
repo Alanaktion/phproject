@@ -440,8 +440,7 @@ $(function() {
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
 			var $li = $(this).parents('li');
-			$.post(BASE + '/issues/{{ @issue.id }}', {
-				action: 'remove_watcher',
+			$.post(BASE + '/issues/{{ @issue.id }}/watchers/delete', {
 				user_id: $li.data('user-id')
 			});
 
@@ -453,7 +452,7 @@ $(function() {
 		});
 		$('#add-watcher').submit(function(e) {
 			var $this = $(this);
-			$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
+			$.post(BASE + '/issues/{{ @issue.id }}/watchers', $this.serialize());
 
 			var $select = $this.find('select');
 			if(!$('#watchers-list li').filter('[data-user-id=' + $select.val() + ']').length) {
@@ -495,7 +494,7 @@ $(function() {
 			$('#dependencies_badge').text(data.total);
 			$('#dependencies table').stupidtable();
 
-			$('#dependency_form input[name="id"],#dependent_form input[name="id"]').typeahead({
+			$('#dependency_form input[name="dependency_id"],#dependent_form input[name="issue_id"]').typeahead({
 				classNames: {
 					menu: 'dropdown-menu',
 				}
@@ -508,7 +507,6 @@ $(function() {
 						data: { 'q': query },
 						success: function(data) {
 							asyncResults(data.results);
-
 						},
 						dataType: 'json',
 						cache: false,
@@ -532,8 +530,7 @@ $(function() {
 	// Add/remove dependencies from tab
 	$('#dependencies').on('click', 'a.delete', function(e) {
 		var $tr = $(this).parents('tr');
-		$.post(BASE + '/issues/{{ @issue.id }}', {
-			action: 'remove_dependency',
+		$.post(BASE + '/issues/{{ @issue.id }}/dependencies/delete', {
 			id: $tr.data('id')
 		});
 
@@ -546,7 +543,7 @@ $(function() {
 	});
 	$('#dependencies').on('submit', 'form', function(e) {
 		var $this = $(this);
-		$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
+		$.post(BASE + '/issues/{{ @issue.id }}/dependencies', $this.serialize());
 
 		e.preventDefault();
 		load_dependencies();
@@ -670,11 +667,11 @@ function restoreFile(file_id) {
 	});
 }
 function watch_issue() {
-	$.post(BASE + '/issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
+	$.post(BASE + '/issues/{{ @issue.id }}/watchers', {user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="fa fa-eye-slash"></span>&ensp;{{ @dict.unwatch }}');
 }
 function unwatch_issue() {
-	$.post(BASE + '/issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
+	$.post(BASE + '/issues/{{ @issue.id }}/watchers/delete', {user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="fa fa-eye"></span>&ensp;{{ @dict.watch }}');
 }
 </script>
