@@ -561,6 +561,7 @@ $(function() {
 				hasClickedEdit = true;
 				if('SimpleMDE' in window) {
 					var simplemde = new SimpleMDE({
+						autoDownloadFontAwesome: false,
 						element: $('input[name="description"]')[0],
 						toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
 						forceSync: true
