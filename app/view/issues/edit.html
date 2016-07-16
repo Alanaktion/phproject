@@ -61,7 +61,6 @@ $(function() {
 	// Prevent navigation with unsaved changes
 	var $editForm = $('#edit-form'),
 		formSerialized = $editForm.serialize();
-	console.log(formSerialized);
 	$(window).on('beforeunload', function() {
 		if($editForm.length && $editForm.serialize() !== formSerialized) {
 			return '{{ @dict.unsaved_changes }}';
