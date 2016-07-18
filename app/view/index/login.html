@@ -62,6 +62,7 @@
 					</div>
 				</div>
 			</form>
+			{~ \Helper\Plugin::instance()->callHook('render.login.after_login') ~}
 		</div>
 		<check if="{{ @site.public_registration }}">
 			<div class="col-sm-4">
@@ -107,5 +108,7 @@
 		</check>
 	</div>
 </div>
+<include href="blocks/footer-scripts.html" />
+{~ \Helper\Plugin::instance()->callHook('render.login.after_footer') ~}
 </body>
 </html>

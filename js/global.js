@@ -219,7 +219,7 @@ var Session = {
 		if(data.is_logged_in && $('#modal-loggedout.in').length) {
 			$('#modal-loggedout').modal('hide');
 		}
-		if(!data.is_logged_in && !$('#modal-loggedout.in').length) {
+		if(!data.is_logged_in && $('#modal-loggedout').length && !$('#modal-loggedout.in').length) {
 			$('.modal.in').modal('hide');
 			$('#modal-loggedout').modal('show');
 		}
