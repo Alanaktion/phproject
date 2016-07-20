@@ -419,7 +419,10 @@ $(function() {
 						'</div>');
 				$('#comment_textarea').val('').html('');
 				$('#comment_badge').text(parseInt($('#comment_badge').text()) + 1);
-			}, 'json');
+			}, 'json').fail(function() {
+				$('#comment_form .btn').prop('disabled', false);
+				alert('An error occurred saving this comment.');
+			});
 
 			$this.prop('disabled', true);
 		}
