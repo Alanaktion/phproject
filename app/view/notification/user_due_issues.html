@@ -1,25 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<style type="text/css">
-		body {
-			margin: 0;
-			padding: 0;
-			font-family: 'Open Sans','Helvetica Neue',Arial,sans-serif;
-			font-size: 14px;
-			line-height: 16px;
-			color: #000;
-		}
-	</style>
+	<meta charset="utf-8">
+	<title>Issues due today</title>
+	<include href="notification/blocks/_head.html" />
 </head>
-<body>
-	<div style="padding: 0 10px;">
-		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @site.url }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
-		<h4>Issues due today:</h4>
-		<repeat group="{{ @issues }}" value="{{ @issue }}">
-			<p><a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }}: {{ @issue.name | esc }}</a></p>
-		</repeat>
-	</div>
+<body style="margin: 0; padding: 0;">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td bgcolor="#ffffff">
+				<div align="center" style="padding: 0px 15px 0px 15px;">
+					<table width="600" class="wrapper">
+
+						<include href="notification/blocks/logo.html" />
+
+						<!-- Header -->
+						<tr>
+							<td bgcolor="#2c3e50" style="border-radius: 4px 4px 0 0;" class="header">
+								<table width="100%">
+									<tr>
+										<td colspan="3" height="45"></td>
+									</tr>
+									<tr>
+										<td width="15"></td>
+										<td style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 18px; color: #ffffff; line-height: 1.5;">
+											Issues due today
+										</td>
+										<td width="15"></td>
+									</tr>
+									<tr>
+										<td colspan="3" height="15"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
+						<!-- Message -->
+						<tr>
+							<td class="body">
+								<table style="border: 1px solid #ecf0f1; border-top: 0;" width="100%">
+									<tr>
+										<td colspan="3" height="15"></td>
+									</tr>
+									<tr>
+										<td width="15"></td>
+										<td>
+											<ul style="padding-left: 20px; margin: 5px 0 5px 0;">
+												<repeat group="{{ @issues }}" value="{{ @issue }}">
+													<li style="margin-left: 0;">
+														<a href="{{ @site.url }}issues/{{ @issue.id }}" style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #15bc9c; line-height: 1.5;">
+															#{{ @issue.id }} &ndash; {{ @issue.name | esc }}
+														</a>
+													</li>
+												</repeat>
+											</ul>
+										</td>
+										<td width="15"></td>
+									</tr>
+									<tr>
+										<td colspan="3" height="15"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
+						<!-- Actions -->
+						<tr>
+							<td class="actions">
+								<table bgcolor="#ecf0f1" style="border-radius: 0 0 4px 4px;" width="100%">
+									<tr>
+										<td colspan="3" height="15"></td>
+									</tr>
+									<tr>
+										<td width="15"></td>
+										<td>
+											<a href="{{ @site.url }}" style="color: #ffffff; text-decoration: none;">
+												<table bgcolor="#2c3e50" class="btn" style="border-radius: 5px;">
+													<tr>
+														<td height="5"></td>
+													</tr>
+													<tr>
+														<td width="10"></td>
+														<td align="center" style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none;">
+															View Dashboard
+														</td>
+														<td width="10"></td>
+													</tr>
+													<tr>
+														<td height="5"></td>
+													</tr>
+												</table>
+											</a>
+										</td>
+										<td width="15"></td>
+									</tr>
+									<tr>
+										<td colspan="3" height="15"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
+						<include href="notification/blocks/footer.html" with="footer_msg='You receieved this message because you are assigned to issues due today'" />
+
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
 </body>
 </html>

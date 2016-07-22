@@ -258,6 +258,18 @@ textarea.form-control {
 	padding-top: 8px;
 }
 
+.table-scrollbox {
+	overflow-x: auto;
+}
+
+@media (min-width: 768px) {
+	.dashboard-widget .issue-tree tbody td {
+		max-width: 25vw;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
 
 .dl-inline dt {
 	float: left;
@@ -334,6 +346,8 @@ table a.btn {
 .tex ul,
 .tex ol {
 	padding-left: 20px;
+}
+.tex ul:last-child, .tex ol:last-child {
 	margin-bottom: 0;
 }
 .tex blockquote {
@@ -359,7 +373,7 @@ table a.btn {
 
 /* Make huge dropdowns usable */
 .dropdown-menu {
-	max-height: 400px;
+	max-height: 60vh;
 	overflow-y: auto;
 }
 
@@ -463,6 +477,13 @@ th[data-sort] {
 	}
 	.navbar-form[role=search] .btn {
 		display: none;
+	}
+}
+
+/* Clean up admin tabs on mobile */
+@media (max-width: 767px) {
+	.pull-right + .nav-tabs {
+		float: left;
 	}
 }
 

@@ -1,0 +1,18 @@
+{~
+	@types = array();
+	foreach(@issue_types as @type) {
+		if(@type.id > 0 && @type.id < 10) {
+			array_push(@types, @type.id);
+		}
+	}
+~}
+<script>var BASE = '{{ @BASE }}', issue_types = {{ json_encode(@types) }};</script>
+<script src="{{ @BASE }}/minify/js/jquery-1.11.3.min.js,bootstrap.min.js,modernizr.custom.js,intercom.min.js,global.js"></script>
+<script src="{{ @BASE }}/js/respond.min.js"></script>
+
+<repeat group="{{ \Helper\Plugin::instance()->getJsFiles(@PATH) }}" value="{{ @file }}">
+	<script src="{{ @file }}"></script>
+</repeat>
+<repeat group="{{ \Helper\Plugin::instance()->getJsCode(@PATH) }}" value="{{ @code }}">
+	{{ @code }}
+</repeat>

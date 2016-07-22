@@ -63,12 +63,9 @@
 					<button type="button" id="btn-burndown" class="btn btn-default btn-xs" data-toggle="modal" data-target="#burndown-modal">
 						<span class="fa fa-fire"></span> {{ @dict.burndown }}
 					</button>
-					<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Reload taskboard">
-						<span class="fa fa-repeat"></span>
-					</a>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
-					<th class="column column-{{ @key + 1 }}">{{ @value.name }}</th>
+					<th class="column column-{{ @key + 1 }}">{{ isset(@dict[@value.name]) ? @dict[@value.name] : str_replace('_', ' ', @value.name) }}</th>
 				</repeat>
 			</tr>
 		</table>
@@ -132,15 +129,15 @@
 									</check>
 									<check if="{{ @task.priority == 0 }}">
 										<true>
-											<div class="priority normal" data-val="{{ @task.priority }}">{{ @task.priority_name }}</div>
+											<div class="priority normal" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
 										</true>
 										<false>
 											<check if="{{ @task.priority < 0 }}">
 												<true>
-													<div class="priority low" data-val="{{ @task.priority }}">{{ @task.priority_name }}</div>
+													<div class="priority low" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
 												</true>
 												<false>
-													<div class="priority high" data-val="{{ @task.priority }}">{{ @task.priority_name }}</div>
+													<div class="priority high" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
 												</false>
 											</check>
 										</false>
@@ -243,7 +240,7 @@
 									<label for="priority">{{ @dict.cols.priority }}</label>
 									<select id="priority" name="priority" class="form-control input-sm" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
 										<repeat group="{{ @priorities }}" value="{{ @priority }}">
-											<option value="{{ @priority.value }}">{{ @priority.name }}</option>
+											<option value="{{ @priority.value }}">{{ isset(@dict[@priority.name]) ? @dict[@priority.name] : str_replace('_', ' ', @priority.name) }}</option>
 										</repeat>
 									</select>
 								</div>

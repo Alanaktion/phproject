@@ -43,14 +43,6 @@
 #backlog .panel-heading {
 	position: relative
 }
-#backlog .panel-heading > .glyphicon {
-	font-size: 20px;
-	position: absolute;
-	right: 7px;
-	top: 6px;
-	cursor: pointer;
-	color: #1E2A36;
-}
 #backlog .panel-heading > a:first-child {
 	cursor: pointer;
 	font-weight: bold;

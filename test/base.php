@@ -16,6 +16,7 @@ $f3->mset(array(
 	"AUTOLOAD" => $homedir."app/",
 	"TEMP" => $homedir."tmp/",
 	"ESCAPE" => false,
+	"TZ" => "UTC",
 ));
 
 // Load local configuration

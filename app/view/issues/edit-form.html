@@ -1,4 +1,4 @@
-<form id="edit-form" class="form-horizontal well" role="form" action="{{ @BASE }}/issues/save" method="post">
+<form id="edit-form" class="form-horizontal well" action="{{ @BASE }}/issues/save" method="post">
 	<check if="{{ !empty(@issue) }}">
 		<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></a>
 		<input type="hidden" name="id" value="{{ @issue.id }}">
@@ -7,16 +7,19 @@
 	<input type="hidden" name="type_id" value="{{ @type.id }}">
 	<check if="{{ empty(@issue) }}">
 		<true>
-			<h3>{{ @dict.new_n,@type.name | format }}</h3>
+			<h3>{{ @dict.new_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</h3>
+			<check if="{{ !empty(@parent) }}">
+				<h6>{{ @dict.under_n, @parent.name | format }}</h6>
+			</check>
 		</true>
 		<false>
-			<h3>{{ @dict.edit_n,@type.name | format }}</h3>
+			<h3>{{ @dict.edit_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</h3>
 		</false>
 	</check>
 	<div class="form-group">
 		<label class="col-md-2 control-label">{{ @dict.cols.title }}</label>
 		<div class="col-md-10">
-			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? "" : @issue.name | esc }}" autocomplete="off" required>
+			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? '' : @issue.name | esc }}" autocomplete="off" required>
 		</div>
 	</div>
 	<div class="form-group">
@@ -31,7 +34,7 @@
 			<div class="col-md-10">
 				<select class="form-control input-sm" name="type_id">
 					<repeat group="{{ @issue_types }}" value="{{ @item }}">
-						<option value="{{ @item.id }}" {{ @issue.type_id == @item.id ? "selected" : "" }}>{{ @item.name }}</option>
+						<option value="{{ @item.id }}" {{ @issue.type_id == @item.id ? "selected" : '' }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 					</repeat>
 				</select>
 			</div>
@@ -44,10 +47,10 @@
 				<repeat group="{{ @priorities }}" value="{{ @item }}">
 					<check if="{{ empty(@issue) || empty(@issue.priority_id) }}">
 						<true>
-							<option value="{{ @item.value }}" {{ @item.value == @issue_priority.default ? "selected" : "" }}>{{ @item.name }}</option>
+							<option value="{{ @item.value }}" {{ @item.value == @issue_priority.default ? "selected" : '' }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 						</true>
 						<false>
-							<option value="{{ @item.value }}" {{ @issue.priority == @item.value ? "selected" : "" }}>{{ @item.name }}</option>
+							<option value="{{ @item.value }}" {{ @issue.priority == @item.value ? "selected" : '' }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 						</false>
 					</check>
 				</repeat>
@@ -59,7 +62,7 @@
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="status">
 				<repeat group="{{ @statuses }}" value="{{ @item }}">
-					<option value="{{ @item.id }}" {{ !empty(@issue) && @issue.status == @item.id ? "selected" : "" }}>{{ @item.name }}</option>
+					<option value="{{ @item.id }}" {{ !empty(@issue) && @issue.status == @item.id ? "selected" : "" }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option>
 				</repeat>
 			</select>
 		</div>
@@ -69,6 +72,12 @@
 			<label class="col-md-2 control-label label-sm">{{ @dict.cols.author }}</label>
 			<div class="col-md-10">
 				<select class="form-control input-sm" name="author_id">
+					<check if="{{ @@issue.author_id }}">
+						{~ @author = new \Model\User; @author->load(@issue.author_id); ~}
+						<check if="{{ @author.deleted_date }}">
+							<option value="{{ @author.id }}" style="text-decoration: line-through;" selected>{{ @author.name | esc }}</option>
+						</check>
+					</check>
 					<option value="{{ @user.id }}" {{ empty(@issue) ? 'selected' : '' }}>{{ @user.name | esc }}</option>
 					<optgroup label="{{ @dict.groups }}">
 						<repeat group="{{ @groups }}" value="{{ @group }}">
@@ -95,6 +104,12 @@
 		<div class="col-md-10">
 			<select class="form-control input-sm" name="owner_id">
 				<option value="0">{{ @dict.not_assigned }}</option>
+				<check if="{{ @@issue.owner_id }}">
+					{~ @owner = new \Model\User; @owner->load(@issue.owner_id); ~}
+					<check if="{{ @owner.deleted_date }}">
+						<option value="{{ @owner.id }}" style="text-decoration: line-through;" selected>{{ @owner.name | esc }}</option>
+					</check>
+				</check>
 				<option value="{{ @user.id }}" {{ empty(@issue) ? 'selected' : '' }}>{{ @user.name | esc }}</option>
 				<optgroup label="{{ @dict.groups }}">
 					<repeat group="{{ @groups }}" value="{{ @group }}">
@@ -150,14 +165,14 @@
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.start_date }}</label>
 		<div class="col-md-6">
-			<input class="form-control input-sm" id="start_date" type="text" name="start_date" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.start_date }}">
+			<input class="form-control input-sm" id="start_date" type="text" name="start_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.start_date }}">
 		</div>
 	</div>
 
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.due_date }}</label>
 		<div class="col-md-6">
-			<input class="form-control input-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.due_date }}">
+			<input class="form-control input-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.due_date }}">
 		</div>
 	</div>
 	<div class="form-group">
@@ -175,14 +190,7 @@
 	<div class="form-group">
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.parent_id }}</label>
 		<div class="col-md-6">
-			<check if="{{ !empty(@issue) }}">
-				<true>
-					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@issue) ? "" : @issue.parent_id }}">
-				</true>
-				<false>
-					<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ empty(@parent) ? "" : @parent }}">
-				</false>
-			</check>
+			<input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ @@issue.parent_id ?: @@parent.id }}">
 		</div>
 	</div>
 	<div class="form-group">
@@ -191,18 +199,23 @@
 			<select class="form-control input-sm" name="sprint_id">
 				<option value="">{{ @dict.no_sprint }}</option>
 				<repeat group="{{ @sprints }}" value="{{ @item }}">
-					<check if="{{ !empty(@issue) && @issue.sprint_id == @item.id }}">
+					<check if="{{ !empty(@issue) && @issue.sprint_id == @item.id || empty(@issue) && !empty(@parent) && @parent.sprint_id == @item.id }}">
 						<true>
-							<option value="{{ @item.id }}" selected>{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+							<option value="{{ @item.id }}" selected>{{ @item.name }} &ndash; {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
 						</true>
 						<false>
-							<option value="{{ @item.id }}">{{ @item.name }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+							<option value="{{ @item.id }}">{{ @item.name }} &ndash; {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
 						</false>
 					</check>
 				</repeat>
 			</select>
 		</div>
 	</div>
+
+	<check if="{{ !empty(@issue) }}">
+		{~ \Helper\Plugin::instance()->callHook('render.issue_edit.after_fields', @issue) ~}
+	</check>
+
 	<hr>
 	<check if="{{ !empty(@issue) }}">
 		<div class="form-group">
@@ -211,7 +224,12 @@
 				<textarea class="form-control input-sm" name="comment" rows="3">{{ !empty(@comment) && is_string(@comment) ? @comment : "" | esc }}</textarea>
 			</div>
 		</div>
+
+		<check if="{{ !empty(@issue) }}">
+			{~ \Helper\Plugin::instance()->callHook('render.issue_edit.after_comments', @issue) ~}
+		</check>
 	</check>
+
 	<div class="row">
 		<div class="col-md-offset-2 col-md-10 clearfix">
 			<div class="pull-right" style="margin-left: 15px;">
@@ -221,10 +239,10 @@
 				</check>
 				<check if="{{ empty(@issue) }}">
 					<true>
-						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.create_n,@type.name | format }}</button>
+						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.create_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</button>
 					</true>
 					<false>
-						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_n,@type.name | format }}</button>
+						<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</button>
 					</false>
 				</check>
 			</div>

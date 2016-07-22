@@ -43,16 +43,16 @@ class StringTest extends PHPUnit_Framework_TestCase {
 
 	public function testUtc2local() {
 		$helper = \Helper\View::instance();
-
-		$tz = date_default_timezone_set("Etc/UTC");
-		\Base::instance()->set("site.timezone", "America/Phoenix");
-
 		$time = 1420498500;
 		$result = $helper->utc2local($time);
-
-		date_default_timezone_set($tz);
-
 		$this->assertEquals(1420473300, $result);
+	}
+
+	public function testConvertClosedDate() {
+		$helper = \Helper\Update::instance();
+		$time = '2016-01-01 12:34:56';
+		$result = $helper->convertClosedDate($time);
+		$this->assertEquals('Fri, Jan 1, 2016 5:34am', $result);
 	}
 
 }

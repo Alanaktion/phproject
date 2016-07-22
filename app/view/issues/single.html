@@ -136,16 +136,16 @@
 
 				<dt>{{ @dict.cols.type }}</dt>
 				<dd>
-					{{ @issue.type_name }}
+					{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
 				</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
-				<dd>{{ @issue.priority_name }}</dd>
+				<dd>{{ isset(@dict[@issue.priority_name]) ? @dict[@issue.priority_name] : str_replace('_', ' ', @issue.priority_name) }}</dd>
 
 				<dt>{{ @dict.cols.status }}</dt>
-				<dd>{{ @issue.status_name }}</dd>
+				<dd>{{ isset(@dict[@issue.status_name]) ? @dict[@issue.status_name] : str_replace('_', ' ', @issue.status_name) }}</dd>
 
-				<check if="{{ @issue.repeat_cycle && @issue.repeat_cycle != 'none' }}">
+				<check if="{{ @issue.repeat_cycle }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>
 					<dd>{{ ucfirst(@issue.repeat_cycle) }}</dd>
 				</check>
@@ -174,28 +174,37 @@
 				</check>
 			</dl>
 
+			{~ \Helper\Plugin::instance()->callHook('render.issue_single.before_description', @issue) ~}
+
 			<dl>
 				<dt>{{ @dict.cols.description }}:</dt>
 				<dd class="tex">{{ @issue.description | parseText }}</dd>
 			</dl>
 
+			{~ \Helper\Plugin::instance()->callHook('render.issue_single.after_description', @issue) ~}
+
 			<hr class="hidden-lg">
 		</div>
 
 		<div class="col-lg-7">
+			{~ \Helper\Plugin::instance()->callHook('render.issue_single.before_files', @issue) ~}
+
 			<ul class="nav nav-tabs" role="tablist">
 				<li class="disabled"><a>{{ @dict.files }}</a></li>
 				<li class="active"><a href="#files-tiles" data-toggle="tab"><span class="fa fa-th-large"></span></a></li>
 				<li><a href="#files-table" data-toggle="tab"><span class="fa fa-list"></span></a></li>
 			</ul>
+
+			{~ \Helper\Plugin::instance()->callHook('render.issue_single.before_comments', @issue) ~}
+
 			<div class="tab-content">
 				<check if="{{ !empty(@files) }}">
 					<div class="tab-pane fade in active" id="files-tiles">
 						<ul class="list-inline file-list">
 							<repeat group="{{ @files }}" value="{{ @file }}">
-								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>Uploaded by: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @file.filesize | formatFilesize }}">
+								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>{{ @dict.uploaded_by }}: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @file.filesize | formatFilesize }}">
 									<a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" data-mime="{{ @file.content_type }}" target="_blank">
-										<img src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" srcset="{{ @BASE }}/files/thumb/192-{{ @file.id }}.png 2x" /><br />
+										<img src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" srcset="{{ @BASE }}/files/thumb/192-{{ @file.id }}.png 2x" alt><br>
 										{{ @file.filename | esc }}
 									</a>
 									<button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
@@ -207,12 +216,14 @@
 						<div class="table-responsive">
 							<table class="table table-striped table-condensed file-list">
 								<thead>
-									<th>{{ @dict.cols.id }}</th>
-									<th>{{ @dict.file_name }}</th>
-									<th>{{ @dict.uploaded_by }}</th>
-									<th>{{ @dict.upload_date }}</th>
-									<th>{{ @dict.file_size }}</th>
-									<th></th>
+									<tr>
+										<th data-sort="int">{{ @dict.cols.id }}</th>
+										<th data-sort="string">{{ @dict.file_name }}</th>
+										<th data-sort="string">{{ @dict.uploaded_by }}</th>
+										<th data-sort="int">{{ @dict.upload_date }}</th>
+										<th data-sort="int">{{ @dict.file_size }}</th>
+										<th></th>
+									</tr>
 								</thead>
 								<tbody>
 									<repeat group="{{ @files }}" value="{{ @file }}">
@@ -220,8 +231,8 @@
 											<td>{{ @file.id }}</td>
 											<td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename | esc }}</a></td>
 											<td>{{ @file.user_name | esc }}</td>
-											<td>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
-											<td>{{ @file.filesize | formatFilesize }}</td>
+											<td data-sort-value="{{ strtotime(@file.created_date) }}">{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
+											<td data-sort-value="{{ @file.filesize }}">{{ @file.filesize | formatFilesize }}</td>
 											<td><button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button></td>
 										</tr>
 									</repeat>
@@ -249,11 +260,11 @@
 			<div class="tab-content">
 				<div class="tab-pane fade in active" id="comments">
 					<div class="comments">
-						<form action="{{ @BASE }}/issues/comment/save" method="POST" id="comment_form" role="form" class="form-horizontal">
+						<form action="{{ @BASE }}/issues/comment/save" method="POST" id="comment_form" class="form-horizontal">
 							<input type="hidden" name="issue_id" value="{{ @issue.id }}">
 							<div class="form-group">
 								<div class="col-md-12">
-									<textarea class="form-control input-sm" id="comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}" autocomplete="off"></textarea>
+									<textarea class="form-control input-sm" id="comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}"></textarea>
 								</div>
 							</div>
 							<div class="text-right">
@@ -408,7 +419,10 @@ $(function() {
 						'</div>');
 				$('#comment_textarea').val('').html('');
 				$('#comment_badge').text(parseInt($('#comment_badge').text()) + 1);
-			}, 'json');
+			}, 'json').fail(function() {
+				$('#comment_form .btn').prop('disabled', false);
+				alert('An error occurred saving this comment.');
+			});
 
 			$this.prop('disabled', true);
 		}
@@ -429,8 +443,7 @@ $(function() {
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
 			var $li = $(this).parents('li');
-			$.post(BASE + '/issues/{{ @issue.id }}', {
-				action: 'remove_watcher',
+			$.post(BASE + '/issues/{{ @issue.id }}/watchers/delete', {
 				user_id: $li.data('user-id')
 			});
 
@@ -442,7 +455,7 @@ $(function() {
 		});
 		$('#add-watcher').submit(function(e) {
 			var $this = $(this);
-			$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
+			$.post(BASE + '/issues/{{ @issue.id }}/watchers', $this.serialize());
 
 			var $select = $this.find('select');
 			if(!$('#watchers-list li').filter('[data-user-id=' + $select.val() + ']').length) {
@@ -461,7 +474,7 @@ $(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
 	});
 	if(parseInt('{{ @issue.parent_id }}')) {
-		$.get(BASE + '/issues/{{ @issue.parent_id }}/related', {}, function(data) {
+		$.get(BASE + '/issues/{{ @issue.parent_id }}/related?exclude={{ @issue.id }}', {}, function(data) {
 			$('#related-sibling').empty().append(data.html);
 			$('#tab_related-sibling').html($('#tab_related-sibling').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 			$('#related-sibling table').stupidtable();
@@ -484,7 +497,7 @@ $(function() {
 			$('#dependencies_badge').text(data.total);
 			$('#dependencies table').stupidtable();
 
-			$('#dependency_form input[name="id"],#dependent_form input[name="id"]').typeahead({
+			$('#dependency_form input[name="dependency_id"],#dependent_form input[name="issue_id"]').typeahead({
 				classNames: {
 					menu: 'dropdown-menu',
 				}
@@ -497,7 +510,6 @@ $(function() {
 						data: { 'q': query },
 						success: function(data) {
 							asyncResults(data.results);
-
 						},
 						dataType: 'json',
 						cache: false,
@@ -521,8 +533,7 @@ $(function() {
 	// Add/remove dependencies from tab
 	$('#dependencies').on('click', 'a.delete', function(e) {
 		var $tr = $(this).parents('tr');
-		$.post(BASE + '/issues/{{ @issue.id }}', {
-			action: 'remove_dependency',
+		$.post(BASE + '/issues/{{ @issue.id }}/dependencies/delete', {
 			id: $tr.data('id')
 		});
 
@@ -535,7 +546,7 @@ $(function() {
 	});
 	$('#dependencies').on('submit', 'form', function(e) {
 		var $this = $(this);
-		$.post(BASE + '/issues/{{ @issue.id }}', $this.serialize());
+		$.post(BASE + '/issues/{{ @issue.id }}/dependencies', $this.serialize());
 
 		e.preventDefault();
 		load_dependencies();
@@ -550,6 +561,7 @@ $(function() {
 				hasClickedEdit = true;
 				if('SimpleMDE' in window) {
 					var simplemde = new SimpleMDE({
+						autoDownloadFontAwesome: false,
 						element: $('input[name="description"]')[0],
 						toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
 						forceSync: true
@@ -636,6 +648,9 @@ $(function() {
 		}
 	});
 
+	// Make file table sortable
+	$('#files-table table').stupidtable();
+
 	// Prevent navigation with unsaved changes
 	var $editForm = $('#edit-form'),
 		formSerialized = $editForm.serialize();
@@ -655,11 +670,11 @@ function restoreFile(file_id) {
 	});
 }
 function watch_issue() {
-	$.post(BASE + '/issues/{{ @issue.id }}', {action: 'add_watcher', user_id: '{{ @user.id }}'});
+	$.post(BASE + '/issues/{{ @issue.id }}/watchers', {user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="fa fa-eye-slash"></span>&ensp;{{ @dict.unwatch }}');
 }
 function unwatch_issue() {
-	$.post(BASE + '/issues/{{ @issue.id }}', {action: 'remove_watcher', user_id: '{{ @user.id }}'});
+	$.post(BASE + '/issues/{{ @issue.id }}/watchers/delete', {user_id: '{{ @user.id }}'});
 	$('#watch-btn').attr('onclick','watch_issue()').html('<span class="fa fa-eye"></span>&ensp;{{ @dict.watch }}');
 }
 </script>

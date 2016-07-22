@@ -14,7 +14,7 @@
 <div class="container-fluid dashboard-container">
 
 	<a class="btn btn-default btn-xs" id="btn-add-widgets" data-toggle="modal" data-target="#mdl-add-widgets">
-		<span class="fa fa-plus"></span>&ensp;Add Widgets
+		<span class="fa fa-plus"></span>&ensp;{{ @dict.add_widgets }}
 	</a>
 	<check if="{{ @sprint && @sprint.id }}">
 		<a class="btn btn-default btn-xs" href="{{ @BASE }}/taskboard/0/me">
@@ -43,7 +43,7 @@
 					<button type="button" class="close" data-dismiss="modal" aria-label="">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title">Add Widgets</h4>
+					<h4 class="modal-title">{{ @dict.add_widgets }}</h4>
 				</div>
 				<div class="modal-body add-widgets-list" style="text-transform: capitalize;">
 					<repeat group="{{ @unused_widgets }}" value="{{ @widget }}">
@@ -56,7 +56,7 @@
 					</repeat>
 					<check if="{{ !@unused_widgets }}">
 						<div class="add-widgets-empty">
-							No more widgets available
+							{{ @dict.no_more_widgets}}
 						</div>
 					</check>
 				</div>

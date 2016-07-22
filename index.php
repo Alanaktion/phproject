@@ -13,6 +13,7 @@ $f3->mset(array(
 	"CACHE" => true,
 	"AUTOLOAD" => "app/;lib/vendor/",
 	"PACKAGE" => "Phproject",
+	"TZ" => "UTC",
 	"microtime" => microtime(true),
 	"site.url" => $f3->get("SCHEME") . "://" . $f3->get("HOST") . $f3->get("BASE") . "/"
 ));
@@ -39,21 +40,31 @@ $f3->config("app/routes.ini");
 
 // Set up error handling
 $f3->set("ONERROR", function(Base $f3) {
-	switch($f3->get("ERROR.code")) {
-		case 404:
-			$f3->set("title", "Not Found");
-			$f3->set("ESCAPE", false);
-			echo \Helper\View::instance()->render("error/404.html");
-			break;
-		case 403:
-			echo "You do not have access to this page.";
-			break;
-		default:
-			if(ob_get_level()) {
-				include "app/view/error/inline.html";
-			} else {
-				include "app/view/error/500.html";
-			}
+	if($f3->get("AJAX")) {
+		if(!headers_sent()) {
+			header("Content-type: application/json");
+		}
+		echo json_encode(array(
+			"error" => $f3->get("ERROR.title"),
+			"text" => $f3->get("ERROR.text")
+		));
+	} else {
+		switch($f3->get("ERROR.code")) {
+			case 404:
+				$f3->set("title", "Not Found");
+				$f3->set("ESCAPE", false);
+				echo \Helper\View::instance()->render("error/404.html");
+				break;
+			case 403:
+				echo "You do not have access to this page.";
+				break;
+			default:
+				if(ob_get_level()) {
+					include "app/view/error/inline.html";
+				} else {
+					include "app/view/error/500.html";
+				}
+		}
 	}
 });
 

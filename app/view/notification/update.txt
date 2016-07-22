@@ -1,5 +1,8 @@
 --- ---
-#{{ @issue.id }} {{ @issue.name }} updated by {{ @update.user_name }}:
+{{ @site.name }}
+Issue #{{ @issue.id }} {{ @issue.name }} updated
+
+{{ @update.user_name }}:
 
 {~
 	foreach(@changes as @change) {

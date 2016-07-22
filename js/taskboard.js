@@ -326,7 +326,7 @@ var Taskboard = {
 		$('#task_' + taskId).append('<div class="spinner"></div>');
 	},
 	unBlock: function(taskId) {
-		setTimeout(function(){$('#task_' + taskId).find('.spinner').remove();}, 500);
+		$('#task_' + taskId).find('.spinner').remove();
 	},
 	newBlock: function(taskId) {
 		$('#new_task_' + taskId).append('<div class="spinner"></div>');

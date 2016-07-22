@@ -18,6 +18,7 @@
 					<li><a href="#config-email" data-toggle="tab">{{ @dict.email_smtp_imap }}</a></li>
 					<li><a href="#config-advanced" data-toggle="tab">{{ @dict.advanced }}</a></li>
 				</ul>
+				<br>
 			</div>
 
 			<div class="col-sm-9 tab-content">
@@ -60,7 +61,7 @@
 								<repeat group="{{ @issue_types }}" value="{{ @item }}">
 									<tr>
 										<td>{{ @item.id }}</td>
-										<td>{{ @item.name | esc }}</td>
+										<td>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) | esc }}</td>
 									</tr>
 								</repeat>
 							</tbody>
@@ -84,8 +85,8 @@
 								<repeat group="{{ @issue_statuses }}" value="{{ @item }}">
 									<tr>
 										<td>{{ @item.id }}</td>
-										<td>{{ @item.name | esc }}</td>
-										<td>{{ @item.closed ? 'Yes' : 'No' }}</td>
+										<td>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) | esc }}</td>
+										<td>{{ @item.closed ? @dict.yes : @dict.no }}</td>
 										<td>{{ @item.taskboard ?: '' }}</td>
 										<td>{{ @item.taskboard_sort ?: '' }}</td>
 									</tr>

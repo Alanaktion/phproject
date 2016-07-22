@@ -8,11 +8,11 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="{{ @BASE }}/">
+			<a class="navbar-brand" href="{{ @BASE }}/" accesskey="h">
 				<check if="{{ empty(@site.logo) }}">
-					<true>{{ @site.name }}</true>
+					<true>{{ @site.name | esc }}</true>
 					<false>
-						<img src="{{ @site.logo }}" />
+						<img src="{{ @site.logo }}" alt="{{ @site.name | esc }}">
 					</false>
 				</check>
 			</a>
@@ -22,7 +22,7 @@
 
 			<ul class="nav navbar-nav">
 				<li class="dropdown {{ @menuitem == 'new' ? 'active':'' }}">
-					<a href="{{ @BASE }}/issues/new" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+					<a href="{{ @BASE }}/issues/new" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" accesskey="n">
 						{{ @dict.new }} <b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu" role="menu">
@@ -31,7 +31,7 @@
 							<li role="presentation" class="divider"></li>
 						</check>
 						<repeat group="{{ @issue_types }}" value="{{ @type }}">
-							<li><a href="{{ @BASE }}/issues/new/{{ @type.id }}">{{ @type.name }}</a></li>
+							<li><a href="{{ @BASE }}/issues/new/{{ @type.id }}">{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</a></li>
 						</repeat>
 						<check if="{{ @nav.new }}">
 							<li role="presentation" class="divider"></li>
@@ -44,14 +44,14 @@
 							<check if="{{ @issue.type_id == @issue_type.project }}">
 								<true>
 									<li role="presentation" class="dropdown-header">{{ @dict.related }}</li>
-									<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">Task</a></li>
+									<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.task }}</a></li>
 									<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.project }}/{{ @issue.id }}">{{ @dict.subproject }}</a></li>
 								</true>
 								<false>
 									<li role="presentation" class="dropdown-header">{{ @dict.current_issue }}</li>
-									<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">Child Task</a></li>
+									<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.child_task }}</a></li>
 									<check if="{{ @issue.parent_id }}">
-										<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.parent_id }}">Related Task</a></li>
+										<li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.parent_id }}">{{ @dict.related_task }}</a></li>
 									</check>
 								</false>
 							</check>
@@ -59,32 +59,29 @@
 					</ul>
 				</li>
 				<li class="dropdown {{ @menuitem == 'browse' ? 'active':'' }}">
-					<a href="{{ @BASE }}/issues" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+					<a href="{{ @BASE }}/issues" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" accesskey="b">
 						{{ @dict.browse }} <b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li><a href="{{ @BASE }}/issues/?status=open">{{ @dict.open }}</a></li>
 						<li><a href="{{ @BASE }}/issues/?status=closed">{{ @dict.closed }}</a></li>
 						<li role="presentation" class="divider"></li>
-						<li><a href="{{ @BASE }}/tag">{{ @dict.issue_tags }}</a></li>
-						<li role="presentation" class="divider"></li>
 						<li><a href="{{ @BASE }}/issues/?status=open&amp;author_id={{ @user.id }}">{{ @dict.created_by_me }}</a></li>
 						<li><a href="{{ @BASE }}/issues/?status=open&amp;owner_id={{ @user.id }}">{{ @dict.assigned_to_me }}</a></li>
 						<li role="presentation" class="divider"></li>
 						<li role="presentation" class="dropdown-header">{{ @dict.by_type }}</li>
 						<repeat group="{{ @issue_types }}" value="{{ @type }}">
-							<li><a href="{{ @BASE }}/issues?type_id={{ @type.id }}&amp;status=open">{{ @type.name }}</a></li>
+							<li><a href="{{ @BASE }}/issues?type_id={{ @type.id }}&amp;status=open">{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</a></li>
 						</repeat>
-						<check if="{{ @nav.browse }}">
-							<li role="presentation" class="divider"></li>
-							<repeat group="{{ @nav.browse }}" value="{{ @navitem }}">
-								<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
-							</repeat>
-						</check>
+						<li role="presentation" class="divider"></li>
+						<li><a href="{{ @BASE }}/tag">{{ @dict.issue_tags }}</a></li>
+						<repeat group="{{ @nav.browse }}" value="{{ @navitem }}">
+							<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
+						</repeat>
 					</ul>
 				</li>
 				<li class="{{ @menuitem == 'backlog' ? 'active':'' }}">
-					<a href="{{ @BASE }}/backlog">{{ @dict.sprints }}</a>
+					<a href="{{ @BASE }}/backlog" accesskey="s">{{ @dict.sprints }}</a>
 				</li>
 				<repeat group="{{ @nav.root }}" value="{{ @navitem }}">
 					<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
@@ -116,14 +113,14 @@
 				</li>
 				<check if="{{ @user.role=='admin' }}">
 					<li class="{{ @menuitem == 'admin' ? 'active':'' }}">
-						<a href="{{ @BASE }}/admin">
+						<a href="{{ @BASE }}/admin" accesskey="a">
 							<span class="hidden-sm">{{ @dict.administration }}</span>
 							<span class="fa fa-cog visible-sm"></span>
 						</a>
 					</li>
 				</check>
 				<li class="dropdown {{ @menuitem == 'user' ? 'active':'' }}">
-					<a href="{{ @BASE }}/user/{{ @user.username }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+					<a href="{{ @BASE }}/user/{{ @user.username }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" accesskey="u">
 						<span class="hidden-sm">{{ @user.name | esc }} <b class="caret"></b></span>
 						<span class="fa fa-user visible-sm"></span>
 					</a>
