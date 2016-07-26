@@ -159,6 +159,7 @@ class User extends \Controller {
 
 			// Update option values
 			$user->option("disable_mde", !empty($post["disable_mde"]));
+			$user->option("disable_due_alerts", !empty($post["disable_due_alerts"]));
 
 		} else {
 
