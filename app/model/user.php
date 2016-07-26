@@ -174,11 +174,12 @@ class User extends \Model {
 
 		// Find issues assigned to user or user's group
 		$issue = new Issue;
-		$issues = $issue->find(array("due_date = ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date), array("order" => "priority DESC"));
+		$due = $issue->find(array("due_date = ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date), array("order" => "priority DESC"));
+		$overdue = $issue->find(array("due_date < ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date), array("order" => "priority DESC"));
 
-		if($issues) {
+		if($due || $overdue) {
 			$notif = new \Helper\Notification;
-			return $notif->user_due_issues($this, $issues);
+			return $notif->user_due_issues($this, $due, $overdue);
 		} else {
 			return false;
 		}
