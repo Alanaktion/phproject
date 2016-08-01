@@ -309,10 +309,10 @@ var Taskboard = {
 			type: 'POST',
 			url: Taskboard.addURL,
 			data: data,
-			success: function() {
+			success: function(result) {
 				Taskboard.newUnBlock(taskId);
-				$(card).find('.task-id').html('<a href="/issues/' + data.taskId + '" target="_blank">' + data.taskId + '</a>');
-				$(card).attr('id', 'task_' + data.taskId);
+				$(card).find('.task-id').html('<a href="/issues/' + result.id + '" target="_blank">' + result.id + '</a>');
+				$(card).attr('id', 'task_' + result.id);
 				Taskboard.makeDraggable(card);
 			},
 			error: function() {
