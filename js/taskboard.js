@@ -127,6 +127,18 @@ var Taskboard = {
 			priority = $(data).find('.priority').data('val'),
 			repeatCycle = $(data).find('.repeat_cycle').text();
 
+		console.log({
+user: user,
+userColor: userColor,
+taskId: taskId,
+title: title,
+description: description,
+hours: hours,
+date: date,
+priority: priority,
+repeatCycle: repeatCycle,
+			});
+
 		$('#task-dialog input#taskId').val(taskId);
 		$('#task-dialog input#title').val(title);
 		$('#task-dialog textarea#description').val(description);
@@ -192,6 +204,7 @@ var Taskboard = {
 	},
 	updateCard: function(card, data) {
 		$(card).find('.title').text(data.title);
+		$(card).find('.repeat_cycle').text(data.repeat_cycle);
 
 		if (isNumber(data.hours_spent) && data.burndown && data.hours > 0) {
 			$(card).find('.hours').text(parseFloat(data.hours).toFixed(1) - parseFloat(data.hours_spent));

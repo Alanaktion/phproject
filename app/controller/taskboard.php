@@ -395,7 +395,7 @@ class Taskboard extends \Controller {
 			if(!empty($post["hours_spent"]) && !empty($post["burndown"])) {
 				$issue->hours_remaining -=  $post["hours_spent"];
 			}
-			if($issue->hours_remaining < 0) {
+			if(!$issue->hours_remaining || $issue->hours_remaining < 0) {
 				$issue->hours_remaining = 0;
 			}
 			if(!empty($post["dueDate"])) {
@@ -403,8 +403,8 @@ class Taskboard extends \Controller {
 			} else {
 				$issue->due_date = null;
 			}
-			if(!empty($post["repeat_cycle"])) {
-				$issue->repeat_cycle = $post["repeat_cycle"];
+			if(isset($post["repeat_cycle"])) {
+				$issue->repeat_cycle = $post["repeat_cycle"] ?: null;
 			}
 			$issue->priority = $post["priority"];
 			if(!empty($post["storyId"])) {
