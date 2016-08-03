@@ -127,18 +127,6 @@ var Taskboard = {
 			priority = $(data).find('.priority').data('val'),
 			repeatCycle = $(data).find('.repeat_cycle').text();
 
-		console.log({
-user: user,
-userColor: userColor,
-taskId: taskId,
-title: title,
-description: description,
-hours: hours,
-date: date,
-priority: priority,
-repeatCycle: repeatCycle,
-			});
-
 		$('#task-dialog input#taskId').val(taskId);
 		$('#task-dialog input#title').val(title);
 		$('#task-dialog textarea#description').val(description);
@@ -206,11 +194,11 @@ repeatCycle: repeatCycle,
 		$(card).find('.title').text(data.title);
 		$(card).find('.repeat_cycle').text(data.repeat_cycle);
 
-		if (isNumber(data.hours_spent) && data.burndown && data.hours > 0) {
-			$(card).find('.hours').text(parseFloat(data.hours).toFixed(1) - parseFloat(data.hours_spent));
+		if (isNumber(data.hours_spent) && parseInt(data.burndown) && data.hours > 0) {
+			$(card).find('.hours').text(parseFloat(data.hours) - parseFloat(data.hours_spent));
 			$(card).find('.hours').show();
 		} else if (isNumber(data.hours) && data.hours > 0) {
-			$(card).find('.hours').text(parseFloat(data.hours).toFixed(1));
+			$(card).find('.hours').text(parseFloat(data.hours));
 			$(card).find('.hours').show();
 		} else {
 			$(card).find('.hours').hide();
@@ -233,7 +221,7 @@ repeatCycle: repeatCycle,
 		$(card).find('.repeat_cycle').text(data.repeat_cycle);
 
 		if (isNumber(data.hours) && data.hours > 0) {
-			$(card).find('.hours').text(parseFloat(data.hours).toFixed(1));
+			$(card).find('.hours').text(parseFloat(data.hours));
 			$(card).find('.hours').show();
 		} else {
 			$(card).find('.hours').hide();

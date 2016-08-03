@@ -393,7 +393,7 @@ class Taskboard extends \Controller {
 			$issue->hours_remaining = $post["hours"];
 			$issue->hours_spent += $post["hours_spent"];
 			if(!empty($post["hours_spent"]) && !empty($post["burndown"])) {
-				$issue->hours_remaining -=  $post["hours_spent"];
+				$issue->hours_remaining -= $post["hours_spent"];
 			}
 			if(!$issue->hours_remaining || $issue->hours_remaining < 0) {
 				$issue->hours_remaining = 0;
