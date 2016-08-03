@@ -412,11 +412,12 @@ class Issue extends \Model {
 		$this->copyto("duplicating_issue");
 		$f3->clear("duplicating_issue.id");
 		$f3->clear("duplicating_issue.due_date");
+		$f3->clear("duplicating_issue.hours_spent");
 
 		$new_issue = new Issue;
 		$new_issue->copyfrom("duplicating_issue");
-		$new_issue->clear("due_date");
 		$new_issue->author_id = $f3->get("user.id");
+		$new_issue->hours_remaining = $new_issue->hours_total;
 		$new_issue->created_date = date("Y-m-d H:i:s");
 		$new_issue->save();
 
@@ -445,13 +446,13 @@ class Issue extends \Model {
 					$child->copyto("duplicating_issue");
 					$f3->clear("duplicating_issue.id");
 					$f3->clear("duplicating_issue.due_date");
+					$f3->clear("duplicating_issue.hours_spent");
 
 					$new_child = new Issue;
 					$new_child->copyfrom("duplicating_issue");
-					$new_child->clear("id");
-					$new_child->clear("due_date");
 					$new_child->author_id = $f3->get("user.id");
-					$new_child->set("parent_id", $new_id);
+					$new_child->hours_remaining = $new_child->hours_total;
+					$new_child->parent_id = $new_id;
 					$new_child->created_date = date("Y-m-d H:i:s");
 					$new_child->save(false);
 
