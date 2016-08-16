@@ -17,7 +17,6 @@ class Notification extends \Prefab {
 
 		// Add basic headers
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
-		$headers .= 'To: '. $to . "\r\n";
 		$headers .= 'From: '. $f3->get("mail.from") . "\r\n";
 
 		// Build multipart message if necessary
