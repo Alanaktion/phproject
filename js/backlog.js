@@ -44,7 +44,7 @@ var Backlog = {
 	},
 	projectReceive: function(item, sender, receiverSerialized) {
 		var itemId = cleanId('project', $(item).attr('id')),
-			receiverId = cleanId('sprint', $(item).parent().attr('data-list-id')),
+			receiverId = $(item).parent().attr('data-list-id'),
 			senderId = $(sender).attr('data-list-id');
 		if (typeof($(sender).attr('data-list-id') !== 'undefined')) {
 			var senderSerialized = sanitizeSortableArray('project', $(sender).sortable('serialize')),
@@ -65,7 +65,7 @@ var Backlog = {
 	},
 	sameReceive: function(item, receiverSerialized) {
 		var itemId = cleanId('project', $(item).attr('id')),
-			receiverId = cleanId('sprint', $(item).parent().attr('data-list-id')),
+			receiverId = $(item).parent().attr('data-list-id'),
 			data = {
 				itemId: itemId,
 				reciever: {
