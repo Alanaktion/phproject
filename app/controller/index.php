@@ -323,7 +323,7 @@ class Index extends \Controller {
 		if($get["type"] == "assigned") {
 			$issues = $issue->find(array("author_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
 		} elseif($get["type"] == "created") {
-			$issues = $issue->find(array("owner = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
+			$issues = $issue->find(array("owner_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
 		} elseif($get["type"] == "all") {
 			$issues = $issue->find("status_closed = 0 AND deleted_date IS NULL", $options + array("limit" => 50));
 		} else {
