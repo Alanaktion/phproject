@@ -257,6 +257,26 @@ class Admin extends \Controller {
 			}
 		}
 
+		// Validate fields
+		$error = null;
+		if(!$f3->get("POST.name")) {
+			$error = "Please enter a name.";
+		}
+		if(!preg_match("/#?[0-9a-f]{3,6}/i", $f3->get("POST.task_color"))) {
+			$error = "Please enter a valid hex color.";
+		}
+		if(!preg_match("/[0-9a-z_-]+/i", $f3->get("POST.username"))) {
+			$error = "Usernames can only contain letters, numbers, hyphens, and underscores.";
+		}
+		if(!filter_var($f3->get("POST.email"), FILTER_VALIDATE_EMAIL)) {
+			$error = "Please enter a valid email address";
+		}
+		if($error) {
+			$f3->set("error", $error);
+			$this->_render("admin/users/edit.html");
+			return;
+		}
+
 		// Set basic fields
 		$user->username = $f3->get("POST.username");
 		$user->email = $f3->get("POST.email");
@@ -518,6 +538,12 @@ class Admin extends \Controller {
 
 			$start = strtotime($post["start_date"]);
 			$end = strtotime($post["end_date"]);
+
+			if(!$start || !$end) {
+				$f3->set("error", "Please enter a valid start and end date");
+				$this->_render("admin/sprints/new.html");
+				return;
+			}
 
 			if($end <= $start) {
 				$f3->set("error", "End date must be after start date");

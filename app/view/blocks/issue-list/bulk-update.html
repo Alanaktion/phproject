@@ -114,7 +114,6 @@
 				<button type="submit" id="bulk-submit" class="btn btn-sm btn-primary">{{ @dict.submit }}</button>
 			</div>
 			<input type="hidden" id="url_query" name="url_query" value="{{ http_build_query($_GET) | esc }}" />
-			<input type="hidden" id="url_path" name="url_path" value="{{ @PATH | esc }}" />
 		</form>
 	</div>
 </div>

@@ -66,6 +66,9 @@ class View extends \Template {
 			$str = $this->_parseUrls($str);
 		}
 
+		// Simplistic XSS protection
+		$str = preg_replace("#</?script>#i", "", $str);
+
 		// Pass to any plugin hooks
 		$str = \Helper\Plugin::instance()->callHook("text.parse.after", $str);
 

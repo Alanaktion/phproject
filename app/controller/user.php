@@ -48,7 +48,7 @@ class User extends \Controller {
 				if(is_callable(array($helper, $widget))) {
 					$f3->set($widget, $helper->$widget());
 				} else {
-					$f3->set("error", "Widget '{$widget}' is not available.");
+					$f3->set("error", "Widget '" . strip_tags($widget) . "' is not available.");
 				}
 				unset($allWidgets[array_search($widget, $allWidgets)]);
 			}

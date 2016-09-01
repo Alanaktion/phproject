@@ -283,16 +283,9 @@ class Issues extends \Controller {
 					return;
 				}
 			}
-
-		} else {
-			$f3->reroute($post["url_path"] . "?" . $post["url_query"]);
 		}
 
-		if (!empty($post["url_path"]))	{
-			$f3->reroute($post["url_path"] . "?" . $post["url_query"]);
-		} else {
-			$f3->reroute("/issues?" . $post["url_query"]);
-		}
+		$f3->reroute("/issues?" . $post["url_query"]);
 	}
 
 	/**
