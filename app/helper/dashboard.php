@@ -10,6 +10,8 @@ class Dashboard extends \Prefab {
 		$_projects,
 		$_order = "priority DESC, has_due_date ASC, due_date ASC";
 
+	public $allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments", "open_comments", "issue_tree");
+
 	public function getIssue() {
 		return $this->_issue === null ? $this->_issue = new \Model\Issue\Detail : $this->_issue;
 	}

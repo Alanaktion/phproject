@@ -41,17 +41,22 @@ class User extends \Controller {
 		}
 
 		// Load dashboard widget data
-		$allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments", "open_comments", "issue_tree");
 		$helper = \Helper\Dashboard::instance();
-		foreach($dashboard as $widgets) {
-			foreach($widgets as $widget) {
+		$allWidgets = $helper->allWidgets;
+		$missing = array();
+		foreach($dashboard as $k=>$widgets) {
+			foreach($widgets as $l=>$widget) {
 				if(is_callable(array($helper, $widget))) {
 					$f3->set($widget, $helper->$widget());
 				} else {
 					$f3->set("error", "Widget '" . strip_tags($widget) . "' is not available.");
+					$missing[] = array($k, $l);
 				}
 				unset($allWidgets[array_search($widget, $allWidgets)]);
 			}
+		}
+		foreach($missing as $kl) {
+			unset($dashboard[$k][$l]);
 		}
 		$f3->set("unused_widgets", $allWidgets);
 
@@ -68,15 +73,19 @@ class User extends \Controller {
 
 	/**
 	 * POST /user/dashboard
+	 * Save dashboard widget selections
 	 *
 	 * @param \Base $f3
 	 */
 	public function dashboardPost($f3) {
+		$helper = \Helper\Dashboard::instance();
 		$user = $f3->get("user_obj");
 		if($f3->get("POST.action") == "add") {
 			$widgets = $user->option("dashboard");
 			foreach($f3->get("POST.widgets") as $widget) {
-				$widgets["left"][] = $widget;
+				if(in_array($widget, $helper->allWidgets)) {
+					$widgets["left"][] = $widget;
+				}
 			}
 		} else {
 			$widgets = json_decode($f3->get("POST.widgets"));

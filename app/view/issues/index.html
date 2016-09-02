@@ -8,7 +8,7 @@
 	<include href="blocks/navbar.html" />
 	<div class="container-fluid">
 		<check if="{{ !empty(@GET.deleted) }}">
-			<p class="alert alert-success">{{ @dict.deleted_success,@GET.deleted | format }}&ensp;<a href="{{ @BASE }}/issues/undelete/{{ @GET.deleted }}">{{ @dict.restore_issue }}</a></p>
+			<p class="alert alert-success">{{ @dict.deleted_success,intval(@GET.deleted) | format }}&ensp;<a href="{{ @BASE }}/issues/undelete/{{ @GET.deleted }}">{{ @dict.restore_issue }}</a></p>
 		</check>
 		<include href="blocks/issue-list.html" />
 		<div class="clearfix">
