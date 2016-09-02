@@ -49,14 +49,14 @@ class User extends \Controller {
 				if(is_callable(array($helper, $widget))) {
 					$f3->set($widget, $helper->$widget());
 				} else {
-					$f3->set("error", "Widget '" . strip_tags($widget) . "' is not available.");
+					$f3->set("error", "Some dashboard widgets cannot be displayed.");
 					$missing[] = array($k, $l);
 				}
 				unset($allWidgets[array_search($widget, $allWidgets)]);
 			}
 		}
 		foreach($missing as $kl) {
-			unset($dashboard[$k][$l]);
+			unset($dashboard[$kl[0]][$kl[1]]);
 		}
 		$f3->set("unused_widgets", $allWidgets);
 
