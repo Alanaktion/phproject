@@ -380,18 +380,18 @@ class Issue extends \Model {
 	 */
 	function saveTags() {
 		$tag = new \Model\Issue\Tag;
-		$issue_id = $this->id;
-		$str = $this->description;
-		$count = preg_match_all("/(?<=[^a-z\\/&]#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=[^a-z\\/]|$)/i", $str, $matches);
-		if($issue_id) {
-			$tag->deleteByIssueId($issue_id);
+		if ($this->id) {
+			$tag->deleteByIssueId($this->id);
 		}
-		if ($count) {
-			foreach ($matches[0] as $match) {
-				$tag->reset();
-				$tag->tag = preg_replace("/[_-]+/", "-", ltrim($match, "#"));
-				$tag->issue_id = $issue_id;
-				$tag->save();
+		if (!$this->deleted_date) {
+			$count = preg_match_all("/(?<=[^a-z\\/&]#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=[^a-z\\/]|$)/i", $this->description, $matches);
+			if ($count) {
+				foreach ($matches[0] as $match) {
+					$tag->reset();
+					$tag->tag = preg_replace("/[_-]+/", "-", ltrim($match, "#"));
+					$tag->issue_id = $this->id;
+					$tag->save();
+				}
 			}
 		}
 		return $this;
