@@ -5,7 +5,7 @@ namespace Controller;
 class Files extends \Controller {
 
 	/**
-	 * Forces the framework to use the local filesystem cache method if possible
+	 * Force the framework to use the local filesystem cache method if possible
 	 */
 	protected function _useFileCache() {
 		$f3 = \Base::instance();
@@ -14,6 +14,7 @@ class Files extends \Controller {
 
 	/**
 	 * Send a file to the browser
+	 *
 	 * @param  string $file
 	 * @param  string $mime
 	 * @param  string $filename
@@ -48,6 +49,8 @@ class Files extends \Controller {
 	}
 
 	/**
+	 * GET /files/thumb/@size-@id.@format
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -62,11 +65,13 @@ class Files extends \Controller {
 		}
 
 		// Output cached image if one exists
-		$hash = $f3->hash($f3->get('VERB') . " " . $f3->get('URI')) . ".thm";
-		if($cache->exists($hash, $data)) {
-			header("Content-type: image/" . $params["format"]);
-			echo $data;
-			return;
+		if($f3->get("DEBUG") < 2) {
+			$hash = $f3->hash($f3->get('VERB') . " " . $f3->get('URI')) . ".thm";
+			if($cache->exists($hash, $data)) {
+				header("Content-type: image/" . $params["format"]);
+				echo $data;
+				return;
+			}
 		}
 
 		$file = new \Model\Issue\File();
@@ -77,83 +82,24 @@ class Files extends \Controller {
 			return;
 		}
 
-		$fg = 0x000000;
-		$bg = 0xFFFFFF;
-
 		// Generate thumbnail of image file
-		if(substr($file->content_type, 0, 6) == "image/") {
-			if(is_file($file->disk_filename)) {
-				$img = new \Helper\Image($file->disk_filename);
-				$hide_ext = true;
-			} else {
-				$protocol = isset($_SERVER["SERVER_PROTOCOL"]) ? $_SERVER["SERVER_PROTOCOL"] : "HTTP/1.0";
-				header($protocol . " 404 Not Found");
-				$img = new \Helper\Image("img/404.png");
-			}
-			$img->resize($params["size"], $params["size"]);
-
-			$fg = 0xFFFFFF;
-			$bg = 0x000000;
+		/* @todo: Replace with hacky imagefillrectangle and imagecopyresampled
+			code to render a nice _image.svg-style frame around the thumbnail */
+		if(is_file($file->disk_filename)) {
+			$img = new \Helper\Image($file->disk_filename);
+			$hide_ext = true;
+		} else {
+			header("Content-Type: image/svg+xml");
+			readfile("img/mime/96/_404.svg");
+			return;
 		}
-
-		// Generate thumbnail of text contents
-		elseif(substr($file->content_type, 0, 5) == "text/") {
-
-			// Get first 2KB of file
-			$fh = fopen($file->disk_filename, "r");
-			$str = fread($fh, 2048);
-			fclose($fh);
-
-			// Replace tabs with spaces
-			$str = str_replace("\t", "  ", $str);
-
-			$img = new \Helper\Image();
-			$img->create($params["size"], $params["size"]);
-			$img->fill(0xFFFFFF);
-			$img->text($str, round(0.05 * $params["size"]), 0, round(0.03 * $params["size"]), round(0.03 * $params["size"]), 0x777777);
-
-			// Show file type icon if available
-			if($file->content_type == "text/csv" || $file->content_type == "text/tsv") {
-				$icon = new \Image("img/mime/table.png");
-				$img->overlay($icon);
-			}
-		}
-
-		// Generate thumbnail of MS Office document
-		elseif(extension_loaded("zip")
-			&& $file->content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-			$zip = zip_open($file->disk_filename);
-			while(($entry = zip_read($zip)) !== false) {
-				if(preg_match("/word\/media\/image[0-9]+\.(png|jpe?g|gif|bmp|dib)/i", zip_entry_name($entry))) {
-					$idata = zip_entry_read($entry, zip_entry_filesize($entry));
-					$img = new \Helper\Image();
-					$img->load($idata);
-					break;
-				}
-			}
-
-			if(!isset($img)) {
-				$img = new \Helper\Image("img/mime/base.png");
-			}
-			$img->resize($params["size"], $params["size"]);
-		}
-
-		// Use generic file icon if type is not supported
-		else {
-			$img = new \Helper\Image("img/mime/base.png");
-			$img->resize($params["size"], $params["size"]);
-		}
-
-		// Render file extension over image
-		if(empty($hide_ext)) {
-			$ext = strtoupper(pathinfo($file->disk_filename, PATHINFO_EXTENSION));
-			$img->text($ext, $params["size"]*0.125, 0, round(0.05 * $params["size"]), round(0.05 * $params["size"]), $bg);
-			$img->text($ext, $params["size"]*0.125, 0, round(0.05 * $params["size"]) - 1, round(0.05 * $params["size"]) - 1, $fg);
-		}
+		$img->resize($params["size"], $params["size"]);
 
 		// Render and cache image
 		$data = $img->dump($params["format"]);
-		$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
+		if($f3->get("DEBUG") < 2) {
+			$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
+		}
 
 		// Output image
 		header("Content-type: image/" . $params["format"]);
@@ -162,6 +108,8 @@ class Files extends \Controller {
 	}
 
 	/**
+	 * GET /avatar/@size-@id.@format
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -197,6 +145,8 @@ class Files extends \Controller {
 	}
 
 	/**
+	 * GET /files/preview/@id
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -230,6 +180,8 @@ class Files extends \Controller {
 	}
 
 	/**
+	 * GET /files/@id/@name
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -248,9 +200,6 @@ class Files extends \Controller {
 			$file->content_type == "text/plain" ||
 			$file->content_type == "application/pdf"
 		) {
-			// Don't force download on image and plain text files
-			// Eventually I'd like to have previews of files some way (more than
-			// the existing thumbnails), but for now this is how we do it - Alan
 			$force = false;
 		}
 

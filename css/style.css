@@ -194,7 +194,9 @@ select[multiple] {
 	white-space: nowrap;
 }
 .file-list li img {
+	display: block;
 	width: 96px;
+	height: 96px;
 }
 .file-list li .delete {
 	position: absolute;
@@ -204,6 +206,14 @@ select[multiple] {
 }
 .file-list li:hover .delete {
 	visibility: visible;
+}
+.file-list th:first-child,
+.file-list td:first-child {
+	width: 26px;
+}
+.file-list td:first-child img {
+	width: 16px;
+	height: 16px;
 }
 
 .issue-list .closed {
