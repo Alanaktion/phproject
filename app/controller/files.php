@@ -96,6 +96,7 @@ class Files extends \Controller {
 		$alpha = (imagecolorat($img->data(), 0, 0) & 0x7F000000) >> 24;
 
 		// 1.1 fits perfectly but crops shadow, so we compare width vs height
+		$size = intval($params["size"]) ?: 96;
 		if($alpha) {
 			$thumbSize = $size;
 		} elseif($img->width() > $img->height()) {
@@ -114,7 +115,6 @@ class Files extends \Controller {
 		$fb = round($fs * 0.75);
 
 		// Initialize frame image
-		$size = intval($params["size"]) ?: 96;
 		$frame = imagecreatetruecolor($size, $size);
 		imagesavealpha($frame, true);
 		$transparent = imagecolorallocatealpha($frame, 0, 0, 0, 127);
