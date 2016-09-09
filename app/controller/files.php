@@ -82,19 +82,23 @@ class Files extends \Controller {
 			return;
 		}
 
+		// Load 404 image if original file is missing
 		if(!is_file($file->disk_filename)) {
 			header("Content-Type: image/svg+xml");
 			readfile("img/mime/96/_404.svg");
 			return;
 		}
 
-		// Generate thumbnail of image file
+		// Initialize thumbnail image
 		$img = new \Helper\Image($file->disk_filename);
 
-		$size = intval($params["size"]);
+		// Render thumbnail directly if no alpha
+		$alpha = (imagecolorat($img->data(), 0, 0) & 0x7F000000) >> 24;
 
 		// 1.1 fits perfectly but crops shadow, so we compare width vs height
-		if($img->width() > $img->height()) {
+		if($alpha) {
+			$thumbSize = $size;
+		} elseif($img->width() > $img->height()) {
 			$thumbSize = round($size / 1.1);
 		} else {
 			$thumbSize = round($size / 1.2);
@@ -110,35 +114,40 @@ class Files extends \Controller {
 		$fb = round($fs * 0.75);
 
 		// Initialize frame image
+		$size = intval($params["size"]) ?: 96;
 		$frame = imagecreatetruecolor($size, $size);
 		imagesavealpha($frame, true);
 		$transparent = imagecolorallocatealpha($frame, 0, 0, 0, 127);
 		imagefill($frame, 0, 0, $transparent);
 
-		// Draw drop shadow
-		$cs = imagecolorallocatealpha($frame, 0, 0, 0, 120);
-		imagefilledrectangle($frame, $ox - $fb, $size - $oy + $fb, $size - $ox + $fb, $size - $oy + round($fb * 1.5), $cs);
-		imagefilledrectangle($frame, $ox - round($fb / 2), $size - $oy + $fb, $size - $ox + round($fb / 2), $size - $oy + round($fb * 1.625), $cs);
-		imagefilledrectangle($frame, $ox, $size - $oy + $fb, $size - $ox, $size - $oy + round($fb * 2), $cs);
+		if(!$alpha) {
+			// Draw drop shadow
+			$cs = imagecolorallocatealpha($frame, 0, 0, 0, 120);
+			imagefilledrectangle($frame, $ox - $fb, $size - $oy + $fb, $size - $ox + $fb, $size - $oy + round($fb * 1.5), $cs);
+			imagefilledrectangle($frame, $ox - round($fb / 2), $size - $oy + $fb, $size - $ox + round($fb / 2), $size - $oy + round($fb * 1.625), $cs);
+			imagefilledrectangle($frame, $ox, $size - $oy + $fb, $size - $ox, $size - $oy + round($fb * 2), $cs);
 
-		// Draw frame
-		$c0 = imagecolorallocatealpha($frame, 193, 193, 193, 16);
-		imagefilledrectangle($frame, $ox - $fs, $oy - $fs, $size - $ox + $fs, $size - $oy + $fs, $c0);
-		$c1 = imagecolorallocate($frame, 243, 243, 243);
-		imagefilledrectangle($frame, $ox - $fb, $oy - $fb, $size - $ox + $fb, $size - $oy + $fb, $c1);
-		$c2 = imagecolorallocate($frame, 230, 230, 230);
-		imagefilledpolygon($frame, array(
-			$size - $ox + $fb, $oy - $fb,
-			$size - $ox + $fb, $size - $oy + $fb,
-			$ox - $fb, $size - $oy + $fb,
-		), 3, $c2);
+			// Draw frame
+			$c0 = imagecolorallocatealpha($frame, 193, 193, 193, 16);
+			imagefilledrectangle($frame, $ox - $fs, $oy - $fs, $size - $ox + $fs, $size - $oy + $fs, $c0);
+			$c1 = imagecolorallocate($frame, 243, 243, 243);
+			imagefilledrectangle($frame, $ox - $fb, $oy - $fb, $size - $ox + $fb, $size - $oy + $fb, $c1);
+			$c2 = imagecolorallocate($frame, 230, 230, 230);
+			imagefilledpolygon($frame, array(
+				$size - $ox + $fb, $oy - $fb,
+				$size - $ox + $fb, $size - $oy + $fb,
+				$ox - $fb, $size - $oy + $fb,
+			), 3, $c2);
+		}
 
 		// Copy thumbnail onto frame
 		imagecopy($frame, $img->data(), $ox, $oy, 0, 0, $tw, $th);
 
-		// Draw inner shadow thumbnail
-		$c3 = imagecolorallocatealpha($frame, 0, 0, 0, 100);
-		imagerectangle($frame, $ox, $oy, $size - $ox, $size - $oy, $c3);
+		if(!$alpha) {
+			// Draw inner shadow thumbnail
+			$c3 = imagecolorallocatealpha($frame, 0, 0, 0, 100);
+			imagerectangle($frame, $ox, $oy, $size - $ox, $size - $oy, $c3);
+		}
 
 		// Render and cache image
 		$data = call_user_func_array('image' . $params["format"], array($frame));
