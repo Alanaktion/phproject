@@ -202,13 +202,7 @@
 					<div class="tab-pane fade in active" id="files-tiles">
 						<ul class="list-inline file-list">
 							<repeat group="{{ @files }}" value="{{ @file }}">
-								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>{{ @dict.uploaded_by }}: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @file.filesize | formatFilesize }}">
-									<a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" data-mime="{{ @file.content_type }}" target="_blank">
-										<img src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" srcset="{{ @BASE }}/files/thumb/192-{{ @file.id }}.png 2x" alt><br>
-										{{ @file.filename | esc }}
-									</a>
-									<button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
-								</li>
+								<include href="blocks/file/thumb.html" />
 							</repeat>
 						</ul>
 					</div>
@@ -217,7 +211,7 @@
 							<table class="table table-striped table-condensed file-list">
 								<thead>
 									<tr>
-										<th data-sort="int">{{ @dict.cols.id }}</th>
+										<th></th>
 										<th data-sort="string">{{ @dict.file_name }}</th>
 										<th data-sort="string">{{ @dict.uploaded_by }}</th>
 										<th data-sort="int">{{ @dict.upload_date }}</th>
@@ -228,8 +222,10 @@
 								<tbody>
 									<repeat group="{{ @files }}" value="{{ @file }}">
 										<tr id="ft-{{ @file.id }}" data-id="{{ @file.id }}">
-											<td>{{ @file.id }}</td>
-											<td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename | esc }}</a></td>
+											<td data-sort-value="{{ @file.content_type | esc }}">
+												<img src="{{ @BASE }}/img/mime/16/{{ \Helper\Image::mimeIcon(@file.content_type) }}.svg" alt>
+											</td>
+											<td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" target="_blank">{{ @file.filename | esc }}</a></td>
 											<td>{{ @file.user_name | esc }}</td>
 											<td data-sort-value="{{ strtotime(@file.created_date) }}">{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
 											<td data-sort-value="{{ @file.filesize }}">{{ @file.filesize | formatFilesize }}</td>
@@ -578,6 +574,22 @@ $(function() {
 		format: 'yyyy-mm-dd',
 		language: '{{ @user_obj->date_picker()->language }}',
 		autoclose: true
+	});
+
+	// Add file thumbnail popovers
+	$('#files-tiles li').each(function() {
+		$el = $(this);
+		$el.popover({
+			trigger: 'hover',
+			html: true,
+			delay: {
+				show: 250,
+				hide: 50
+			},
+			container: 'body',
+			placement: 'auto right',
+			content: '<b>' + $el.attr('data-name') + '</b><br>' + $el.attr('data-user') + '<br>' + $el.attr('data-date') + '<br>' +$el.attr('data-size')
+		});
 	});
 
 	// Handle file deletion
