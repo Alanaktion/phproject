@@ -41,7 +41,7 @@
 			<b>{{ @dict.hostname }}:</b> {{ @db.host }}:{{ @db.port }}<br>
 			<b>{{ @dict.schema }}:</b> {{ @db.name }}<br>
 			<b>{{ @dict.username }}:</b> {{ @db.user }}<br>
-			<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@db.pass)) }}<br>
+			<b>{{ @dict.password }}:</b> {{ str_repeat("*", 8) }}<br>
 			<b>{{ @dict.current_version }}:</b> {{@version}}<br>
 		</div>
 		<div class="col-md-3 col-sm-6">
