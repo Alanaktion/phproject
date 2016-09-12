@@ -38,7 +38,6 @@ var Backlog = {
 				} else {
 					Backlog.projectReceived = false;
 				}
-				Backlog.saveSortOrder();
 			}
 		}).disableSelection();
 	},
@@ -61,6 +60,9 @@ var Backlog = {
 				};
 
 			Backlog.ajaxUpdateBacklog(data, item);
+			Backlog.saveSortOrder([sender, $(item).parents('.sortable')]);
+		} else {
+			Backlog.saveSortOrder([$(item).parents('.sortable')]);
 		}
 	},
 	sameReceive: function(item, receiverSerialized) {
@@ -75,6 +77,7 @@ var Backlog = {
 			};
 
 		Backlog.ajaxUpdateBacklog(data, item);
+		Backlog.saveSortOrder([$(item).parents('.sortable')]);
 	},
 	ajaxUpdateBacklog: function(data, item) {
 		var projectId = data.itemId;
@@ -92,13 +95,13 @@ var Backlog = {
 			}
 		});
 	},
-	saveSortOrder: function() {
+	saveSortOrder: function(elements) {
 		var userId = $('#panel-0 .list-group').attr('data-user-id');
 
 		if(!userId)
 			return;
 
-		$('.panel-body > .list-group.sortable').each(function() {
+		$(elements).each(function() {
 			var items = [];
 			$(this).find('.list-group-item').each(function() {
 				items.push(parseInt($(this).attr('data-id')));
