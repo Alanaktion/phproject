@@ -7,7 +7,7 @@
 	<a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" target="_blank">
 		<check if="{{ in_array(@file.content_type, \Helper\Image::@mimeMap.image) }}">
 			<true>
-				<img src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" srcset="{{ @BASE }}/files/thumb/192-{{ @file.id }}.png 2x" alt>
+				<img src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" srcset="{{ @BASE }}/files/thumb/192-{{ @file.id }}.png 2x, {{ @BASE }}/files/thumb/288-{{ @file.id }}.png 3x" alt>
 			</true>
 			<false>
 				<img src="{{ @BASE }}/img/mime/96/{{ \Helper\Image::mimeIcon(@file.content_type) }}.svg" alt>
