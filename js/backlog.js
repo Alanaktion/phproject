@@ -38,7 +38,6 @@ var Backlog = {
 				} else {
 					Backlog.projectReceived = false;
 				}
-				Backlog.saveSortOrder();
 			}
 		}).disableSelection();
 	},
@@ -61,6 +60,9 @@ var Backlog = {
 				};
 
 			Backlog.ajaxUpdateBacklog(data, item);
+			Backlog.saveSortOrder([sender, $(item).parents('.sortable')]);
+		} else {
+			Backlog.saveSortOrder([$(item).parents('.sortable')]);
 		}
 	},
 	sameReceive: function(item, receiverSerialized) {
@@ -75,6 +77,7 @@ var Backlog = {
 			};
 
 		Backlog.ajaxUpdateBacklog(data, item);
+		Backlog.saveSortOrder([$(item).parents('.sortable')]);
 	},
 	ajaxUpdateBacklog: function(data, item) {
 		var projectId = data.itemId;
@@ -92,13 +95,14 @@ var Backlog = {
 			}
 		});
 	},
-	saveSortOrder: function() {
-		var userId = $('#panel-0 .list-group').attr('data-user-id');
+	saveSortOrder: function(elements) {
+		var userId = $('#panel-0 .list-group').attr('data-user-id'),
+			typeId = $('#panel-0 .list-group').attr('data-type-id');
 
 		if(!userId)
 			return;
 
-		$('.panel-body > .list-group.sortable').each(function() {
+		$(elements).each(function() {
 			var items = [];
 			$(this).find('.list-group-item').each(function() {
 				items.push(parseInt($(this).attr('data-id')));
@@ -107,6 +111,7 @@ var Backlog = {
 			$.post(BASE + '/backlog/sort', {
 				user: userId,
 				sprint_id: $(this).attr('data-list-id'),
+				type_id: typeId,
 				items: JSON.stringify(items)
 			}).error(function() {
 				console.error('An error occurred saving the sort order.');

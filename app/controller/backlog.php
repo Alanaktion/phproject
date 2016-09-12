@@ -19,24 +19,16 @@ class Backlog extends \Controller {
 	 * @param array $params
 	 */
 	public function index($f3, $params) {
-
-		if(empty($params["filter"])) {
-			$params["filter"] = "groups";
-		}
-
-		if(empty($params["groupid"])) {
-			$params["groupid"] = "";
-		}
+		$groupId = $f3->get("GET.group_id");
 
 		// Get list of all users in the user's groups
-		if($params["filter"] == "groups") {
+		if($groupId != "all" && $groupId != "me") {
 			$group_model = new \Model\User\Group();
-			if(!empty($params["groupid"]) && is_numeric($params["groupid"])) {
-				//Get users list from a specific Group
-				$users_result = $group_model->find(array("group_id = ?", $params["groupid"]));
-
+			if($groupId && is_numeric($groupId)) {
+				// Get users list from a specific group
+				$users_result = $group_model->find(array("group_id = ?", $groupId));
 			} else {
-				//Get users list from all groups that you are in
+				// Get users list from all groups that you are in
 				$groups_result = $group_model->find(array("user_id = ?", $this->_userId));
 				$filter_users = array($this->_userId);
 				foreach($groups_result as $g) {
@@ -49,8 +41,8 @@ class Backlog extends \Controller {
 			foreach($users_result as $u) {
 				$filter_users[] = $u["user_id"];
 			}
-		} elseif($params["filter"] == "me") {
-			//Just get your own id
+		} elseif($groupId == "me") {
+			// Just get your own id
 			$filter_users = array($this->_userId);
 		}
 
@@ -60,19 +52,25 @@ class Backlog extends \Controller {
 		$sprint_model = new \Model\Sprint();
 		$sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
 
+		$typeIds = $f3->get("GET.type_id")
+			? array_filter($f3->split($f3->get("GET.type_id")), "is_numeric")
+			: array($f3->get("issue_type.project"));
+		sort($typeIds, SORT_NUMERIC);
+		$typeStr = implode(",", $typeIds);
 		$issue = new \Model\Issue\Detail();
 
 		$sprint_details = array();
 		foreach($sprints as $sprint) {
-			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND type_id = ? $filter_string", $sprint->id, $f3->get("issue_type.project")),
-					array('order' => 'priority DESC, due_date')
-				);
+			$projects = $issue->find(
+				array("deleted_date IS NULL AND sprint_id = ? AND type_id IN ($typeStr) $filter_string", $sprint->id),
+				array('order' => 'priority DESC, due_date')
+			);
 
-			if(!empty($params["groupid"])) {
+			if(!empty($groupId)) {
 				// Add sorted projects
 				$sprintBacklog = array();
 				$sortModel = new \Model\Issue\Backlog;
-				$sortModel->load(array("user_id = ? AND sprint_id = ?", $params["groupid"], $sprint->id));
+				$sortModel->load(array("user_id = ? AND sprint_id = ? AND type_id = ?", $groupId, $sprint->id, $typeStr));
 				$sortArray = array();
 				if($sortModel->id) {
 					$sortArray = json_decode($sortModel->issues);
@@ -98,7 +96,7 @@ class Backlog extends \Controller {
 			$sprint_details[] = $sprint->cast() + array("projects" => $sprintBacklog);
 		}
 
-		$large_projects = $f3->get("db.instance")->exec("SELECT parent_id FROM issue WHERE parent_id IS NOT NULL AND type_id = ?", $f3->get("issue_type.project"));
+		$large_projects = $f3->get("db.instance")->exec("SELECT parent_id FROM issue WHERE parent_id IS NOT NULL AND type_id IN ($typeStr)");
 		$large_project_ids = array();
 		foreach($large_projects as $p) {
 			$large_project_ids[] = $p["parent_id"];
@@ -108,22 +106,22 @@ class Backlog extends \Controller {
 		if(!empty($large_project_ids)) {
 			$large_project_ids = implode(",", $large_project_ids);
 			$unset_projects = $issue->find(
-				array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND status_closed = '0' AND id NOT IN ({$large_project_ids}) $filter_string", $f3->get("issue_type.project")),
+				array("deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ($typeStr) AND status_closed = '0' AND id NOT IN ({$large_project_ids}) $filter_string"),
 				array('order' => 'priority DESC, due_date')
 			);
 		} else {
 			$unset_projects = $issue->find(
-				array("deleted_date IS NULL AND sprint_id IS NULL AND type_id = ? AND status_closed = '0' $filter_string", $f3->get("issue_type.project")),
+				array("deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ($typeStr) AND status_closed = '0' $filter_string"),
 				array('order' => 'priority DESC, due_date')
 			);
 		}
 
 		// Filter projects into sorted and unsorted arrays if filtering by group
-		if(!empty($params["groupid"])) {
+		if($groupId && $groupId != "all") {
 			// Add sorted projects
 			$backlog = array();
 			$sortModel = new \Model\Issue\Backlog;
-			$sortModel->load(array("user_id = ? AND sprint_id IS NULL", $params["groupid"]));
+			$sortModel->load(array("user_id = ? AND sprint_id IS NULL AND type_id = ?", $groupId, $typeStr));
 			$sortArray = array();
 			if($sortModel->id) {
 				$sortArray = json_decode($sortModel->issues);
@@ -149,7 +147,8 @@ class Backlog extends \Controller {
 
 		$groups = new \Model\User();
 		$f3->set("groups", $groups->getAllGroups());
-		$f3->set("groupid", $params["groupid"]);
+		$f3->set("groupid", $groupId);
+		$f3->set("type_ids", $typeIds);
 		$f3->set("sprints", $sprint_details);
 		$f3->set("backlog", $backlog);
 		$f3->set("unsorted", $unsorted);
@@ -188,6 +187,7 @@ class Backlog extends \Controller {
 			$backlog->load(array("user_id = ? AND sprint_id IS NULL", $f3->get("POST.user")));
 		}
 		$backlog->user_id = $f3->get("POST.user");
+		$backlog->type_id = $f3->get("POST.type_id");
 		$backlog->issues = $f3->get("POST.items");
 		$backlog->save();
 	}

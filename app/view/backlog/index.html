@@ -12,32 +12,84 @@
 			 <div class="panel panel-default">
 				<div class="panel-heading has-buttons">
 					{{ @dict.backlog }}&ensp;
-					<div class="btn-group">
-						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
-							<span class="fa fa-filter"></span> {{ @dict.filter_projects }} <span class="caret"></span>
+					<div class="btn-group btn-group-xs">
+						<button type="button" class="btn" disabled>
+							<span class="fa fa-filter"></span>
 						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/all">{{ @dict.all_projects }}</a></li>
-							<li class="{{ @filter == 'groups' && empty(@groupid) ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/groups">{{ @dict.my_groups }}</a></li>
-							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/me">{{ @dict.my_projects }}</a></li>
-							<check if="{{ count(@groups) }}">
-								<li class="divider"></li>
-								<repeat group="{{ @groups }}" value="{{ @group }}">
-									<li class="{{ @groupid == @group.id ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/groups/{{ @group.id }}">{{ @group.name | esc }}</a></li>
-								</repeat>
-							</check>
-						</ul>
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+								{{ @dict.groups }} <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li class="{{ @@GET.group_id == 'all' ? 'active' : '' }}">
+									<a href="{{ @BASE }}/backlog/?group_id=all">
+										{{ @dict.all_projects }}
+									</a>
+								</li>
+								<li class="{{ empty(@GET.group_id) ? 'active' : '' }}">
+									<a href="{{ @BASE }}/backlog/">
+										{{ @dict.my_groups }}
+									</a>
+								</li>
+								<li class="{{ @GET.group_id == 'me' ? 'active' : '' }}">
+									<a href="{{ @BASE }}/backlog/?group_id=me">
+										{{ @dict.my_projects }}
+									</a>
+								</li>
+								<check if="{{ count(@groups) }}">
+									<li class="divider"></li>
+									<repeat group="{{ @groups }}" value="{{ @group }}">
+										<li class="{{ @@GET.group_id == @group.id ? 'active' : '' }}">
+											<a href="{{ @BASE }}/backlog/?{{ http_build_query(array_merge(@GET,  array('group_id' => @group.id))) | esc }}">
+												{{ @group.name | esc }}
+											</a>
+										</li>
+									</repeat>
+								</check>
+							</ul>
+						</div>
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+								{{ @dict.cols.type }} <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<F3:repeat group="{{ @issue_types }}" value="{{ @type }}">
+									{~
+										@active = in_array(@type.id, @type_ids);
+										if (@active) {
+											if (@GET.type_id) {
+												@idStr = implode(',', array_diff(@type_ids, array(@type.id)));
+											} else {
+												@idStr = null;
+											}
+										} else {
+											if (@GET.type_id) {
+												@idStr = implode(',', array_unique(array_merge(array(@type.id), @type_ids)));
+											} else {
+												@idStr = @type.id;
+											}
+										}
+									~}
+									<li class="{{ @active ? 'active' : '' }}">
+										<a href="{{ @BASE }}/backlog/?{{ http_build_query(array_merge(@GET, array('type_id' => @idStr))) | esc }}">
+											{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
+										</a>
+									</li>
+								</F3:repeat>
+							</ul>
+						</div>
 					</div>
 					<a href="{{ @BASE }}/issues/new/{{ @issue_type.project }}" class="btn btn-default btn-xs pull-right">
 						<span class="fa fa-plus"></span> {{ @dict.add_project }}
 					</a>
 				</div>
 				<div class="panel-body in" id="panel-0">
-					<ul class="list-group sortable" data-list-id="0" data-user-id="{{ @@groupid }}">
+					<ul class="list-group sortable" data-list-id="0" data-user-id="{{ @@groupid }}" data-type-id="{{ implode(',', @type_ids) }}">
 						<repeat group="{{ @backlog }}" value="{{ @project }}">
 							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 								<span class="badge">{{ @project.priority_name }}</span>
 								<span class="title">
+									{{ @project.type_name }}
 									<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
 									{{ @project.name | esc }}
 								</span>
@@ -68,6 +120,7 @@
 										<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 											<span class="badge">{{ @project.priority_name }}</span>
 											<span class="title">
+												{{ @project.type_name }}
 												<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
 												{{ @project.name | esc }}
 											</span>
@@ -87,6 +140,7 @@
 							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
 								<span class="badge">{{ @project.priority_name }}</span>
 								<span class="title">
+									{{ @project.type_name }}
 									<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
 									{{ @project.name | esc }}
 								</span>
