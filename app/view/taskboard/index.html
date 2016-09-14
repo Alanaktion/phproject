@@ -45,50 +45,52 @@
 			<tr class="tb-row">
 				<th class="column column-1">
 					<div class="btn-group">
-						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
-							<span class="fa fa-filter"></span> {{ @dict.groups }} <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/all">{{ @dict.all_tasks }}</a></li>
-							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/groups">{{ @dict.my_groups }}</a></li>
-							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/me">{{ @dict.my_tasks }}</a></li>
-							<check if="{{ count(@groups) }}">
-								<li class="divider"></li>
-								<repeat group="{{ @groups }}" value="{{ @group }}">
-									<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @group.id }}">{{ @group.name | esc }}</a></li>
-								</repeat>
-							</check>
-						</ul>
-					</div>
-					<div class="btn-group">
-						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
-							<span class="fa fa-filter"></span> {{ @dict.cols.type }} <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<F3:repeat group="{{ @issue_types }}" value="{{ @type }}">
-								{~
-									@active = in_array(@type.id, @type_ids);
-									if (@active) {
-										if (@GET.type_id) {
-											@idStr = implode(',', array_diff(@type_ids, array(@type.id)));
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+								<span class="fa fa-filter"></span> {{ @dict.groups }} <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/all">{{ @dict.all_tasks }}</a></li>
+								<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/groups">{{ @dict.my_groups }}</a></li>
+								<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/me">{{ @dict.my_tasks }}</a></li>
+								<check if="{{ count(@groups) }}">
+									<li class="divider"></li>
+									<repeat group="{{ @groups }}" value="{{ @group }}">
+										<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @group.id }}">{{ @group.name | esc }}</a></li>
+									</repeat>
+								</check>
+							</ul>
+						</div>
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+								{{ @dict.cols.type }} <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<F3:repeat group="{{ @issue_types }}" value="{{ @type }}">
+									{~
+										@active = in_array(@type.id, @type_ids);
+										if (@active) {
+											if (@GET.type_id) {
+												@idStr = implode(',', array_diff(@type_ids, array(@type.id)));
+											} else {
+												@idStr = null;
+											}
 										} else {
-											@idStr = null;
+											if (@GET.type_id) {
+												@idStr = implode(',', array_unique(array_merge(array(@type.id), @type_ids)));
+											} else {
+												@idStr = @type.id;
+											}
 										}
-									} else {
-										if (@GET.type_id) {
-											@idStr = implode(',', array_unique(array_merge(array(@type.id), @type_ids)));
-										} else {
-											@idStr = @type.id;
-										}
-									}
-								~}
-								<li class="{{ @active ? 'active' : '' }}">
-									<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @PARAMS.filter ? @PARAMS.filter . '/' : '' }}?{{ http_build_query(array_merge(@GET, array('type_id' => @idStr))) | esc }}">
-										{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
-									</a>
-								</li>
-							</F3:repeat>
-						</ul>
+									~}
+									<li class="{{ @active ? 'active' : '' }}">
+										<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @PARAMS.filter ? @PARAMS.filter . '/' : '' }}?{{ http_build_query(array_merge(@GET, array('type_id' => @idStr))) | esc }}">
+											{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
+										</a>
+									</li>
+								</F3:repeat>
+							</ul>
+						</div>
 					</div>
 					<button type="button" id="btn-burndown" class="btn btn-default btn-xs" data-toggle="modal" data-target="#burndown-modal">
 						<span class="fa fa-fire"></span> {{ @dict.burndown }}

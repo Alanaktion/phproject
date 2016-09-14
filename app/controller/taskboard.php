@@ -179,10 +179,13 @@ class Taskboard extends \Controller {
 		// Sort projects if a filter is given
 		if(!empty($params["filter"]) && is_numeric($params["filter"])) {
 			$sortModel = new \Model\Issue\Backlog;
-			$sortModel->load(array("user_id = ? AND sprint_id = ?", $params["filter"], $sprint->id));
-			$sortArray = array();
-			if($sortModel->id) {
-				$sortArray = json_decode($sortModel->issues);
+			$sortOrders = $sortModel->find(array("user_id = ? AND sprint_id = ?", $params["filter"], $sprint->id));
+			if($sortModel) {
+				$orders = array();
+				foreach($sortOrders as $order) {
+					$orders[] = json_decode($order->issues) ?: array();
+				}
+				$sortArray = \Helper\Matrix::instance()->mergeSorted($orders);
 				usort($projects, function(\Model\Issue $a, \Model\Issue $b) use($sortArray) {
 					$ka = array_search($a->id, $sortArray);
 					$kb = array_search($b->id, $sortArray);

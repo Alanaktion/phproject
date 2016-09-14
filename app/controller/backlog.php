@@ -14,9 +14,8 @@ class Backlog extends \Controller {
 	 * GET /backlog
 	 *
 	 * @param \Base $f3
-	 * @param array $params
 	 */
-	public function index($f3, $params) {
+	public function index($f3) {
 		$groupId = $f3->get("GET.group_id");
 
 		// Get list of all users in the user's groups
@@ -45,7 +44,6 @@ class Backlog extends \Controller {
 		}
 
 		$filter_string = empty($filter_users) ? "" : "AND owner_id IN (" . implode(",", $filter_users) . ")";
-		$f3->set("filter", $params["filter"]);
 
 		$sprint_model = new \Model\Sprint();
 		$sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));

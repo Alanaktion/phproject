@@ -56,13 +56,17 @@
 										@active = in_array(@type.id, @type_ids);
 										if (@active) {
 											if (@GET.type_id) {
-												@idStr = implode(',', array_diff(@type_ids, array(@type.id)));
+												@arr = array_diff(@type_ids, array(@type.id));
+												sort(@arr);
+												@idStr = implode(',', @arr);
 											} else {
 												@idStr = null;
 											}
 										} else {
 											if (@GET.type_id) {
-												@idStr = implode(',', array_unique(array_merge(array(@type.id), @type_ids)));
+												@arr = array_unique(array_merge(array(@type.id), @type_ids));
+												sort(@arr);
+												@idStr = implode(',', @arr);
 											} else {
 												@idStr = @type.id;
 											}
