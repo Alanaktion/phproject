@@ -1,5 +1,8 @@
 # Update issue_backlog table structure
-ALTER TABLE issue_backlog ADD COLUMN type_id VARCHAR(30) NULL AFTER user_id;
+ALTER TABLE issue_backlog
+	ADD COLUMN type_id INT(10) UNSIGNED NOT NULL AFTER user_id,
+	ADD CONSTRAINT issue_backlog_type_id FOREIGN KEY (type_id)
+		REFERENCES issue_type(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 UPDATE issue_backlog b
 JOIN config c ON c.attribute = 'issue_type.project'
