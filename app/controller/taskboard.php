@@ -215,6 +215,14 @@ class Taskboard extends \Controller {
 
 		}
 
+		$typeIds = $f3->get("GET.type_id")
+			? array_filter($f3->split($f3->get("GET.type_id")), "is_numeric")
+			: array($f3->get("issue_type.project"));
+		sort($typeIds, SORT_NUMERIC);
+		$typeStr = implode(",", $typeIds);
+		$issue = new \Model\Issue\Detail();
+
+		$f3->set("type_ids", $typeIds);
 		$f3->set("taskboard", array_values($taskboard));
 		$f3->set("filter", $params["filter"]);
 
