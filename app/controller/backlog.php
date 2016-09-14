@@ -11,9 +11,30 @@ class Backlog extends \Controller {
 	}
 
 	/**
+	 * Merge n sorted arrays into a single array with the same sort order
+	 *
+	 * @param  array $arrays  Array of sorted arrays to merge
+	 * @return array
+	 */
+	protected function _mergeSorted(array $arrays) {
+		$lengths = array();
+		foreach ($arrays as $k=>$v) {
+			$lengths[$k] = count($v);
+		}
+		$max = max($lengths);
+		$result = array();
+		for ($i = 0; $i < $max; $i++) {
+			foreach ($lengths as $k=>$l) {
+				if ($l > $i) {
+					$result[] = $arrays[$k][$i];
+				}
+			}
+		}
+		return $result;
+	}
+
+	/**
 	 * GET /backlog
-	 * GET /backlog/@filter
-	 * GET /backlog/@filter/@groupid
 	 *
 	 * @param \Base $f3
 	 * @param array $params
@@ -70,10 +91,14 @@ class Backlog extends \Controller {
 				// Add sorted projects
 				$sprintBacklog = array();
 				$sortModel = new \Model\Issue\Backlog;
-				$sortModel->load(array("user_id = ? AND sprint_id = ? AND type_id = ?", $groupId, $sprint->id, $typeStr));
+				$sortOrders = $sortModel->find(array("user_id = ? AND sprint_id = ? AND type_id IN ($typeStr)", $groupId, $sprint->id), array("order" => "type_id ASC"));
 				$sortArray = array();
-				if($sortModel->id) {
-					$sortArray = json_decode($sortModel->issues);
+				if($sortOrders) {
+					$orders = array();
+					foreach($sortOrders as $order) {
+						$orders[] = json_decode($order->issues) ?: array();
+					}
+					$sortArray = $this->_mergeSorted($orders);
 					foreach($sortArray as $id) {
 						foreach($projects as $p) {
 							if($p->id == $id) {
@@ -121,10 +146,14 @@ class Backlog extends \Controller {
 			// Add sorted projects
 			$backlog = array();
 			$sortModel = new \Model\Issue\Backlog;
-			$sortModel->load(array("user_id = ? AND sprint_id IS NULL AND type_id = ?", $groupId, $typeStr));
+			$sortOrders = $sortModel->find(array("user_id = ? AND sprint_id IS NULL AND type_id IN ($typeStr)", $groupId), array("order" => "type_id ASC"));
 			$sortArray = array();
-			if($sortModel->id) {
-				$sortArray = json_decode($sortModel->issues);
+			if($sortOrders) {
+				$orders = array();
+				foreach($sortOrders as $order) {
+					$orders[] = json_decode($order->issues) ?: array();
+				}
+				$sortArray = $this->_mergeSorted($orders);
 				foreach($sortArray as $id) {
 					foreach($unset_projects as $p) {
 						if($p->id == $id) {
@@ -159,6 +188,22 @@ class Backlog extends \Controller {
 	}
 
 	/**
+	 * GET /backlog/@filter
+	 * GET /backlog/@filter/@groupid
+	 * @param \Base $f3
+	 * @param array $params
+	 */
+	public function redirect(\Base $f3, array $params) {
+		if (isset($params["groupid"]) && intval($params["groupid"]) == $params["groupid"]) {
+			$f3->reroute("/backlog?group_id=" . $params["groupid"]);
+		} elseif(in_array($params["filter"], array("me", "all"))) {
+			$f3->reroute("/backlog?group_id=" . $params["filter"]);
+		} else {
+			$f3->reroute("/backlog");
+		}
+	}
+
+	/**
 	 * POST /edit
 	 * @param \Base $f3
 	 * @throws \Exception
@@ -181,12 +226,12 @@ class Backlog extends \Controller {
 		$this->_requireLogin(\Model\User::RANK_MANAGER);
 		$backlog = new \Model\Issue\Backlog;
 		if($f3->get("POST.sprint_id")) {
-			$backlog->load(array("user_id = ? AND sprint_id = ?", $f3->get("POST.user"), $f3->get("POST.sprint_id")));
+			$backlog->load(array("user_id = ? AND type_id = ? AND sprint_id = ?", $f3->get("POST.user_id"), $f3->get("POST.type_id"), $f3->get("POST.sprint_id")));
 			$backlog->sprint_id = $f3->get("POST.sprint_id");
 		} else {
-			$backlog->load(array("user_id = ? AND sprint_id IS NULL", $f3->get("POST.user")));
+			$backlog->load(array("user_id = ? AND type_id = ? AND sprint_id IS NULL", $f3->get("POST.user_id"), $f3->get("POST.type_id")));
 		}
-		$backlog->user_id = $f3->get("POST.user");
+		$backlog->user_id = $f3->get("POST.user_id");
 		$backlog->type_id = $f3->get("POST.type_id");
 		$backlog->issues = $f3->get("POST.items");
 		$backlog->save();

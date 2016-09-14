@@ -84,9 +84,9 @@
 					</a>
 				</div>
 				<div class="panel-body in" id="panel-0">
-					<ul class="list-group sortable" data-list-id="0" data-user-id="{{ @@groupid }}" data-type-id="{{ implode(',', @type_ids) }}">
+					<ul class="list-group sortable" data-list-id="0" data-user-id="{{ @@groupid }}">
 						<repeat group="{{ @backlog }}" value="{{ @project }}">
-							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
+							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}" data-type-id="{{ @project.type_id }}">
 								<span class="badge">{{ @project.priority_name }}</span>
 								<span class="title">
 									{{ @project.type_name }}
@@ -117,7 +117,7 @@
 							<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
 								<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
 									<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
-										<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
+										<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" id="project_{{ @project.id }}" data-id="{{ @project.id }}" data-type-id="{{ @project.type_id }}">
 											<span class="badge">{{ @project.priority_name }}</span>
 											<span class="title">
 												{{ @project.type_name }}
@@ -137,7 +137,7 @@
 				<div class="tab-pane" id="tab-unsorted">
 					<ul class="list-group sortable">
 						<repeat group="{{ @unsorted }}" value="{{ @project }}" data-list-id="0">
-							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
+							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}" data-type-id="{{ @project.type_id }}">
 								<span class="badge">{{ @project.priority_name }}</span>
 								<span class="title">
 									{{ @project.type_name }}
