@@ -11,29 +11,6 @@ class Backlog extends \Controller {
 	}
 
 	/**
-	 * Merge n sorted arrays into a single array with the same sort order
-	 *
-	 * @param  array $arrays  Array of sorted arrays to merge
-	 * @return array
-	 */
-	protected function _mergeSorted(array $arrays) {
-		$lengths = array();
-		foreach ($arrays as $k=>$v) {
-			$lengths[$k] = count($v);
-		}
-		$max = max($lengths);
-		$result = array();
-		for ($i = 0; $i < $max; $i++) {
-			foreach ($lengths as $k=>$l) {
-				if ($l > $i) {
-					$result[] = $arrays[$k][$i];
-				}
-			}
-		}
-		return $result;
-	}
-
-	/**
 	 * GET /backlog
 	 *
 	 * @param \Base $f3
@@ -98,7 +75,7 @@ class Backlog extends \Controller {
 					foreach($sortOrders as $order) {
 						$orders[] = json_decode($order->issues) ?: array();
 					}
-					$sortArray = $this->_mergeSorted($orders);
+					$sortArray = \Helper\Matrix::instance()->mergeSorted($orders);
 					foreach($sortArray as $id) {
 						foreach($projects as $p) {
 							if($p->id == $id) {
@@ -153,7 +130,7 @@ class Backlog extends \Controller {
 				foreach($sortOrders as $order) {
 					$orders[] = json_decode($order->issues) ?: array();
 				}
-				$sortArray = $this->_mergeSorted($orders);
+				$sortArray = \Helper\Matrix::instance()->mergeSorted($orders);
 				foreach($sortArray as $id) {
 					foreach($unset_projects as $p) {
 						if($p->id == $id) {
