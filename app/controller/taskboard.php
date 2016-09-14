@@ -154,12 +154,27 @@ class Taskboard extends \Controller {
 		$parent_ids_str = implode(",", $parent_ids);
 		$f3->set("tasks", $task_ids_str);
 
-		// Find all visible projects or parent tasks
-		$projects = $issue->find(array(
-			"id IN ($parent_ids_str) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
-				. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
-			$sprint->id, $f3->get("issue_type.project")
-		), array("order" => "owner_id ASC, priority DESC"));
+		$typeIds = $f3->get("GET.type_id")
+			? array_filter($f3->split($f3->get("GET.type_id")), "is_numeric")
+			: array($f3->get("issue_type.project"));
+		sort($typeIds, SORT_NUMERIC);
+		$typeStr = implode(",", $typeIds);
+
+		// Find all visible projects or parent tasks if no type filter is given
+		if ($typeStr == $f3->get("issue_type.project")) {
+			$queryArray = array(
+				"id IN ($parent_ids_str) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
+					. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
+				$sprint->id, $f3->get("issue_type.project")
+			);
+		} else {
+			$queryArray = array(
+				"sprint_id = ? AND type_id IN (" . $typeStr . ") AND deleted_date IS NULL"
+					. (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
+				$sprint->id
+			);
+		}
+		$projects = $issue->find($queryArray, array("order" => "owner_id ASC, priority DESC"));
 
 		// Sort projects if a filter is given
 		if(!empty($params["filter"]) && is_numeric($params["filter"])) {
@@ -214,13 +229,6 @@ class Taskboard extends \Controller {
 			);
 
 		}
-
-		$typeIds = $f3->get("GET.type_id")
-			? array_filter($f3->split($f3->get("GET.type_id")), "is_numeric")
-			: array($f3->get("issue_type.project"));
-		sort($typeIds, SORT_NUMERIC);
-		$typeStr = implode(",", $typeIds);
-		$issue = new \Model\Issue\Detail();
 
 		$f3->set("type_ids", $typeIds);
 		$f3->set("taskboard", array_values($taskboard));
