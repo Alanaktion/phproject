@@ -180,7 +180,7 @@ class Taskboard extends \Controller {
 		if(!empty($params["filter"]) && is_numeric($params["filter"])) {
 			$sortModel = new \Model\Issue\Backlog;
 			$sortOrders = $sortModel->find(array("user_id = ? AND sprint_id = ?", $params["filter"], $sprint->id));
-			if($sortModel) {
+			if($sortOrders) {
 				$orders = array();
 				foreach($sortOrders as $order) {
 					$orders[] = json_decode($order->issues) ?: array();

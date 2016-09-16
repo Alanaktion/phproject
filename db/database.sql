@@ -56,7 +56,7 @@ CREATE TABLE `issue` (
 	`deleted_date` datetime DEFAULT NULL,
 	`start_date` date DEFAULT NULL,
 	`due_date` date DEFAULT NULL,
-	`repeat_cycle` varchar(10) NOT NULL DEFAULT 'none',
+	`repeat_cycle` varchar(10) NULL,
 	`sprint_id` int(10) unsigned DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `sprint_id` (`sprint_id`),
@@ -74,14 +74,16 @@ DROP TABLE IF EXISTS `issue_backlog`;
 CREATE TABLE `issue_backlog` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`user_id` int(10) unsigned NOT NULL,
+	`type_id` INT(10) unsigned NOT NULL,
 	`sprint_id` int(10) unsigned DEFAULT NULL,
 	`issues` blob NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `issue_backlog_user_id` (`user_id`),
 	KEY `issue_backlog_sprint_id` (`sprint_id`),
 	CONSTRAINT `issue_backlog_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `issue_backlog_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+	CONSTRAINT `issue_backlog_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `issue_backlog_type_id` FOREIGN KEY (`type_id`) REFERENCES `issue_type`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_comment`;
 CREATE TABLE `issue_comment` (
@@ -306,4 +308,4 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 );
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '16.04.13');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '16.09.12');
