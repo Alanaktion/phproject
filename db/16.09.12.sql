@@ -9,7 +9,7 @@ SET b.type_id = c.value;
 ALTER TABLE issue_backlog
 	CHANGE type_id type_id INT(10) UNSIGNED NOT NULL,
 	ADD CONSTRAINT issue_backlog_type_id FOREIGN KEY (type_id)
-		REFERENCES issue_type(id) ON UPDATE CASCADE ON DELETE CASCADE
+		REFERENCES issue_type(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 # Update version
 UPDATE `config` SET `value` = '16.09.12' WHERE `attribute` = 'version';
