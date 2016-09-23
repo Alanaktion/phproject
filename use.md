@@ -56,7 +56,7 @@ Note that the alt hotkeys for creating new issues are dependant on the `issue_ty
 ## Advanced
 Phproject includes some advanced features that allow users to integrate other systems with their Phproject site, including email and other software applications.
 
-#### Incoming Mail
+#### Incoming mail
 To allow users to create issues and comment on existing issues via email, set up an email inbox with remote IMAP access. You can then add the IMAP connection settings in your Administration > Configuration tab, and add a cron job to your server that runs `cron/checkmail.php`, which imports emails as issues and comments from the email inbox.
 
 Example configuration for Gmail:
@@ -67,7 +67,10 @@ Username: phproject@example.com
 Password: Passw0rd1
 ```
 
-#### Atom Feeds
+#### Due issue alerts
+Phproject can send alert emails to users with issues that are overdue or due on the current date. This can be enabled by setting up a cron job to run `cron/due_alerts.php`. Users can opt-out of these emails in their settings.
+
+#### Atom feeds
 Phproject generates Atom feeds for issues assigned to and created by each user. These feeds can be subscribed to from user pages or the Dashboard in browsers that support them.
 
 #### REST API
