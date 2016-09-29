@@ -255,115 +255,107 @@ class Taskboard extends \Controller {
 		$sprint = new \Model\Sprint;
 		$sprint->load($params["id"]);
 
-		if(!$sprint->id) {
+		if (!$sprint->id) {
 			$f3->error(404);
 			return;
 		}
 
-		$visible_tasks = explode(",", $params["tasks"]);
-
-		// Visible tasks must have at least one key
-		if (empty($visible_tasks)) {
-			$visible_tasks = array(0);
-		}
-
-		// Get today's date
-		$today = date('Y-m-d');
-		$today = $today . " 23:59:59";
-
-		// Check to see if the sprint is completed
-		if ($today < strtotime($sprint->end_date . ' + 1 day')) {
-			$burnComplete = 0;
-			$burnDates = $this->_createDateRangeArray($sprint->start_date, $today);
-			$remainingDays = $this->_createDateRangeArray($today, $sprint->end_date);
-		} else {
-			$burnComplete = 1;
-			$burnDates = $this->_createDateRangeArray($sprint->start_date, $sprint->end_date);
-			$remainingDays = array();
-		}
-
-		$burnDays = array();
-		$burnDatesCount = count($burnDates);
-
 		$db = $f3->get("db.instance");
-		$visible_tasks_str = implode(",", $visible_tasks);
-		$query_initial =
-				"SELECT SUM(IFNULL(i.hours_total, i.hours_remaining)) AS remaining
+		if (isset($params["filter"])) {
+			$user = new \Model\User;
+			$user->load(array("id = ?", $params["filter"]));
+			if (!$user->id) {
+				$f3->error(404);
+				return;
+			}
+
+			$plannedHours = $db->exec(
+				"SELECT GREATEST(i.created_date, :start) AS ts,
+					SUM(i.hours_total) AS hours
 				FROM issue i
-				WHERE i.created_date < :date
-				AND i.id IN (" . implode(",", $visible_tasks) . ")";
-		$query_daily =
-				"SELECT SUM(IF(f.id IS NULL, IFNULL(i.hours_total, i.hours_remaining), f.new_value)) AS remaining
+				JOIN user_group g ON g.`user_id` = i.`owner_id` OR g.`group_id` = i.`owner_id`
+				WHERE i.sprint_id = :sprint
+					AND g.`group_id` = :user
+					AND i.`hours_total` > 0
+				GROUP BY ts
+				ORDER BY ts ASC",
+				array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $sprint->start_date . " 00:00:00")
+			);
+			$updatedHours = $db->exec(
+				"SELECT GREATEST(u.created_date, :start) AS ts,
+					SUM(IFNULL(f.`old_value`, 0)) `old`,
+					SUM(f.`new_value`) `new`,
+					(SUM(f.new_value) - SUM(IFNULL(f.old_value, 0))) diff
 				FROM issue_update_field f
-				JOIN issue_update u ON u.id = f.issue_update_id
-				JOIN (
-					SELECT MAX(u.id) AS max_id
-					FROM issue_update u
-					JOIN issue_update_field f ON f.issue_update_id = u.id
-					WHERE f.field = 'hours_remaining'
-					AND u.created_date < :date
-					AND u.issue_id IN ($visible_tasks_str)
-					GROUP BY u.issue_id
-				) a ON a.max_id = u.id
-				RIGHT JOIN issue i ON i.id = u.issue_id
-				WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
-				AND i.created_date < :date
-				AND i.id IN ($visible_tasks_str)";
-
-		$i = 1;
-		foreach($burnDates as $date) {
-
-			// Get total_hours, which is the initial amount entered on each task, and cache this query
-			if($i == 1) {
-				$result = $db->exec($query_initial, array(":date" => $sprint->start_date), 2592000);
-				$burnDays[$date] = $result[0];
-			}
-
-			// Get between day values and cache them... this also will get the last day of completed sprints so they will be cached
-			elseif ($i < ($burnDatesCount - 1) || $burnComplete) {
-				$result = $db->exec($query_daily, array(":date" => $date . " 23:59:59"), 2592000);
-				$burnDays[$date] = $result[0];
-			}
-
-			// Get the today's info and don't cache it
-			else {
-				$result = $db->exec($query_daily, array(":date" => $date . " 23:59:59"));
-				$burnDays[$date] = $result[0];
-			}
-
-			$i++;
+				JOIN issue_update u ON f.`issue_update_id` = u.`id`
+				JOIN issue i ON i.id = u.`issue_id`
+				JOIN user_group g ON g.`user_id` = i.`owner_id`
+					OR g.`group_id` = i.`owner_id`
+				WHERE i.sprint_id = :sprint
+					AND g.`group_id` = :user
+					AND u.`created_date` < :end
+					AND f.`field` = 'hours_remaining'
+					AND IFNULL(f.`old_value`, 0) != f.`new_value`
+				GROUP BY ts
+				ORDER BY ts ASC",
+				array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $sprint->start_date . " 00:00:00", ":end" => $sprint->end_date)
+			);
+		} else {
+			$plannedHours = $db->exec(
+				"SELECT GREATEST(i.created_date, :start) AS ts,
+					SUM(i.hours_total) AS hours
+				FROM issue i
+				JOIN sprint s ON s.id = i.sprint_id
+				WHERE s.id = :sprint AND i.`hours_total` > 0
+				GROUP BY ts
+				ORDER BY ts ASC",
+				array(":sprint" => $sprint->id, ":start" => $sprint->start_date . " 00:00:00")
+			);
+			$updatedHours = $db->exec(
+				"SELECT GREATEST(u.created_date, :start) AS ts,
+					SUM(IFNULL(f.`old_value`, 0)) `old`,
+					SUM(f.`new_value`) `new`,
+					(SUM(f.new_value) - SUM(IFNULL(f.old_value, 0))) diff
+				FROM issue_update_field f
+				JOIN issue_update u ON f.`issue_update_id` = u.`id`
+				JOIN issue i ON i.id = u.`issue_id`
+				JOIN sprint s ON s.id = i.`sprint_id`
+				JOIN user_group g ON g.`user_id` = i.`owner_id`
+					OR g.`group_id` = i.`owner_id`
+				WHERE i.sprint_id = :sprint
+					AND u.`created_date` < :end
+					AND f.`field` = 'hours_remaining'
+					AND IFNULL(f.`old_value`, 0) != f.`new_value`
+				GROUP BY ts
+				ORDER BY ts ASC",
+				array(":sprint" => $sprint->id, ":start" => $sprint->start_date . " 00:00:00", ":end" => $sprint->end_date)
+			);
 		}
 
-		// Add in empty days
-		if(!$burnComplete) {
-			$i = 0;
-			foreach($remainingDays as $day) {
-				if($i != 0){
-					$burnDays[$day] = NULL;
-				}
-				$i++;
+		$diffs = array();
+		foreach($plannedHours as $h) {
+			$diffs[$h["ts"]] = $h["hours"];
+		}
+		foreach($updatedHours as $h) {
+			if (array_key_exists($h["ts"], $diffs)) {
+				$diffs[$h["ts"]] += $h["diff"];
+			} else {
+				$diffs[$h["ts"]] = $h["diff"];
 			}
 		}
+		ksort($diffs);
 
-		// Reformat the date and remove weekends
-		$i = 0;
-		foreach($burnDays as $burnKey => $burnDay) {
-
-			$weekday = date("D", strtotime($burnKey));
-			$weekendDays = array("Sat","Sun");
-
-			if(!in_array($weekday, $weekendDays)) {
-				$newDate = date("M j", strtotime($burnKey));
-				$burnDays[$newDate] = $burnDays[$burnKey];
-				unset($burnDays[$burnKey]);
-			} else { // Remove weekend days
-				unset($burnDays[$burnKey]);
-			}
-
-			$i++;
+		$totals = array();
+		$current = 0;
+		foreach($diffs as $ts=>$diff) {
+			$totals[$ts] = $current = $current + $diff;
 		}
 
-		$this->_printJson($burnDays);
+		$totalsRounded = array_map(function($val) {
+			return round($val, 2);
+		}, $totals);
+
+		$this->_printJson($totalsRounded);
 	}
 
 	/**

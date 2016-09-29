@@ -103,7 +103,7 @@
 							{{ @author.name | esc }}
 						</false>
 					</check>
-					<br><em>{{ @@author.username }}</em>
+					<br><em>{{ @author.email ?: @author.username }}</em>
 				</p>
 			</div>
 
@@ -120,7 +120,7 @@
 								{{ @owner.name | esc }}
 							</false>
 						</check>
-						<br><em>{{ @@owner.username }}</em>
+						<br><em>{{ @owner.email ?: @owner.username }}</em>
 					</p>
 				</div>
 			</check>
@@ -135,9 +135,7 @@
 				<dd>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}</dd>
 
 				<dt>{{ @dict.cols.type }}</dt>
-				<dd>
-					{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
-				</dd>
+				<dd>{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
 				<dd>{{ isset(@dict[@issue.priority_name]) ? @dict[@issue.priority_name] : str_replace('_', ' ', @issue.priority_name) }}</dd>

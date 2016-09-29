@@ -1,118 +1,82 @@
-/* globals $ */
+/* globals $ Chart */
 var Burndown = {
-	chart: {},
 	initialized: false,
 	data: {
-		labels: [],
-		datasets: []
-	},
-	targetVelocity: {
-		fillColor: 'rgba(0,0,0,0)',
-		strokeColor: '#9b59b6',
-		pointColor: '#9b59b6',
-		pointStrokeColor: '#9b59b6',
-		pointHighlightFill: '#fff',
-		pointHighlightStroke: '#9b59b6',
-		data: []
-	},
-	actualVelocity: {
-		fillColor: 'rgba(42,204,113,0.1)',
-		strokeColor: '#2ecc71',
-		pointColor: '#2ecc71',
-		pointStrokeColor: '#2ecc71',
-		pointHighlightFill: '#fff',
-		pointHighlightStroke: '#2ecc71',
-		data: []
-	},
-	hoursDay: {
-		fillColor: 'rgba(52,152,219,0.1)',
-		strokeColor: '#3498db',
-		pointColor: '#3498db',
-		pointStrokeColor: '#3498db',
-		pointHighlightFill: '#fff',
-		pointHighlightStroke: '#3498db',
-		data: []
-	},
-	days: 0,
-	initialHours: 0,
-	canvasId: 'burndown',
-	init: function(data) {
-		if(!data) {
-			return false;
-		}
-
-		// Apply labels to datasets
-		Burndown.actualVelocity.label = BurndownLegendDict.hours_remaining;
-		Burndown.targetVelocity.label = BurndownLegendDict.target_velocity;
-		Burndown.hoursDay.label = BurndownLegendDict.actual_velocity;
-
-		// Populate datsets
-		Burndown.createData(data);
-		Burndown.data.datasets.push(Burndown.actualVelocity);
-		Burndown.data.datasets.push(Burndown.targetVelocity);
-		Burndown.data.datasets.push(Burndown.hoursDay);
-
-		// Generate chart
-		var ctx = document.getElementById(Burndown.canvasId).getContext('2d');
-		Burndown.chart = new Chart(ctx).Line(Burndown.data, Burndown.options);
-
-		Burndown.initialized = true;
-
-	},
-	createData: function(data) {
-		if(!data) {
-			return false;
-		}
-
-		// Set burndown days
-		Burndown.days = Object.keys(data).length;
-
-		// Strip down to initial daty and set initial hours
-		var i = 0;
-		$.each(data, function() {
-			if (i === 0) {
-				Burndown.initialHours = this.remaining;
-			} else {
-				return;
-			}
-			i++;
-		});
-
-		var target = Burndown.initialHours,
-			ratio = Burndown.initialHours / (Burndown.days - 1);
-		i = Burndown.days; // Tick days down for daily hours needed
-
-		$.each(data, function(key, val) {
-			// Set labels for each day
-			Burndown.data.labels.push(key);
-
-			// Set actual velocity
-			if (val) { // Check if it's null for actual velocity
-				Burndown.actualVelocity.data.push(this.remaining);
-				Burndown.hoursDay.data.push(this.remaining / i);
-			}
-
-			// Set target data
-			Burndown.targetVelocity.data.push(target);
-			target = target - ratio;
-
-			i--;
-
-		});
+		labels: [BurndownLegendDict.hours_remaining],
+		datasets: [{
+			data: null,
+			label: BurndownLegendDict.hours_remaining,
+			borderColor: "#2ecc71",
+			pointBackgroundColor: "#2ecc71",
+			pointBorderColor: "#2ecc71",
+		}]
 	},
 	options: {
-		scaleBeginAtZero: true,
-		bezierCurve: false,
-		pointDot: true,
-		pointDotRadius: 2,
-		pointDotStrokeWidth: 1,
-		datasetStroke: true,
-		datasetStrokeWidth: 2,
-		datasetFill: true,
-		animation: false,
-		responsive: true,
 		maintainAspectRatio: false,
-		scaleLineColor: 'rgba(127,127,127,.2)',
-		scaleGridLineColor : 'rgba(127,127,127,.1)'
+		legend: {
+			position: 'right'
+		},
+		animation: {
+			duration: 250
+		},
+		hover: {
+			mode: 'x-axis'
+		},
+		scales: {
+			xAxes: [{
+				type: "time",
+				time: {
+					min: BurndownRange.start,
+					max: BurndownRange.end,
+					// format: timeFormat,
+					// round: 'day'
+					// tooltipFormat: 'll HH:mm'
+				},
+				/*scaleLabel: {
+					display: true,
+					labelString: 'Date'
+				}*/
+			}, ],
+			yAxes: [{
+				ticks: {
+					beginAtZero: true
+				}
+			}]
+		},
+		elements: {
+			line: {
+				tension: 0.3,
+				borderWidth: 2,
+			},
+			point: {
+				radius: 0,
+				hoverRadius: 2,
+			}
+		}
+	},
+	init: function(canvasId, dataUrl) {
+		Chart.defaults.global.defaultFontColor = "rgba(127,127,127,1)";
+		Chart.defaults.scale.gridLines.color = "rgba(127,127,127,.3)";
+		Chart.defaults.scale.gridLines.zeroLineColor = "rgba(127,127,127,.3)";
+		this.initialized = true;
+
+		$.get(dataUrl, function(data) {
+			var finalData = [];
+			$.each(data, function(key, val) {
+				finalData.push({
+					x: new Date(key),
+					y: val
+				});
+			});
+
+			Burndown.data.datasets[0].data = finalData;
+
+			var ctx = document.getElementById(canvasId).getContext('2d');
+			new Chart(ctx, {
+				type: 'line',
+				data: Burndown.data,
+				options: Burndown.options
+			});
+		}, 'json');
 	}
 };

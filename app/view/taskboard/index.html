@@ -317,18 +317,7 @@
 					<h4 class="modal-title">{{ @dict.burndown }}</h4>
 				</div>
 				<div class="modal-body">
-					<div class="container-fluid">
-						<div class="row">
-							<div class="col-md-9">
-								<div>
-									<canvas id="burndown" width="666" height="320"></canvas>
-								</div>
-							</div>
-							<div class="col-md-3">
-								<div id="burndown-legend" class="hidden-xs hidden-sm"></div>
-							</div>
-						</div>
-					</div>
+					<canvas id="burndown" width="850" height="320"></canvas>
 				</div>
 			</div>
 		</div>
@@ -339,45 +328,26 @@
 		<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
 	</check>
 	<script>
-		var datepickerLanguage='{{ @user_obj->date_picker()->language }}';
+		var datepickerLanguage='{{ @user_obj->date_picker()->language }}',
+			BurndownUrl = BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @@filter }}',
+			BurndownLegendDict = {
+				hours_remaining: '{{ @dict.hours_remaining }}',
+				// target_velocity: '{{ @dict.ideal_hours_remaining }}',
+				// actual_velocity: '{{ @dict.daily_hours_remaining }}',
+			},
+			BurndownRange = {
+				start: new Date('{{ @sprint.start_date }} 00:00:00'),
+				end: new Date('{{ @sprint.end_date }} 23:59:59')
+			};
 	</script>
 	<script src="{{ @BASE }}/js/chart.js"></script>
 	<script src="{{ @BASE }}/minify/js/taskboard.js,burndown.js"></script>
 	<script>
-		var BurndownData,
-			BurndownReady = false,
-			BurndownLegendDict = {
-				hours_remaining: '{{ @dict.hours_remaining }}',
-				target_velocity: '{{ @dict.ideal_hours_remaining }}',
-				actual_velocity: '{{ @dict.daily_hours_remaining }}',
-			};
-
 		$(document).ready(function() {
 
-			// Preload burndown data
-			$.ajax({
-				url: BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @tasks }}',
-				success: function(data) {
-					BurndownData = data;
-					BurndownReady = true;
-				},
-				dataType: 'json',
-				cache: false
-			});
-
-			// Initialize burndown when requested
-			$("#btn-burndown").click(function(e) {
-				if(BurndownReady) {
-					$("#burndown-modal").on("shown.bs.modal", function(e) {
-						if(Burndown.initialized === false) {
-							Burndown.init(BurndownData);
-							$("#burndown-legend").html(Burndown.chart.generateLegend());
-						}
-					});
-				} else {
-					alert("Burndown data is not ready yet, click again in a few seconds.");
-					e.preventDefault();
-					e.stopPropagation();
+			$("#burndown-modal").on("shown.bs.modal", function(e) {
+				if(Burndown.initialized === false) {
+					Burndown.init('burndown', BurndownUrl);
 				}
 			});
 
