@@ -69,11 +69,12 @@ $f3->set("ONERROR", function(Base $f3) {
 });
 
 // Connect to database
-$f3->set("db.instance", new DB\SQL(
+/*$f3->set("db.instance", new DB\SQL(
 	"mysql:host=" . $f3->get("db.host") . ";port=" . $f3->get("db.port") . ";dbname=" . $f3->get("db.name"),
 	$f3->get("db.user"),
 	$f3->get("db.pass")
-));
+));*/
+$f3->set("db.instance", new DB\SQL("sqlite:db2.sqlite"));
 
 // Load final configuration
 \Model\Config::loadAll();
@@ -92,7 +93,7 @@ $f3->route("GET /minify/@type/@files", function(Base $f3, $args) {
 }, $f3->get("cache_expire.minify"));
 
 // Initialize plugins and any included locales
-$pluginDir = scandir("app/plugin");
+/*$pluginDir = scandir("app/plugin");
 $plugins = array();
 $locales = "";
 foreach($pluginDir as $pluginName) {
@@ -123,7 +124,7 @@ foreach($pluginDir as $pluginName) {
 		}
 	}
 }
-$f3->set("plugins", $plugins);
+$f3->set("plugins", $plugins);*/
 
 // Set up user session
 $user = new Model\User();

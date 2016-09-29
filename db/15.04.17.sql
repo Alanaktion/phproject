@@ -1,4 +1,4 @@
-# Add Issue dependency
+-- Add Issue dependency
 DROP TABLE IF EXISTS `issue_dependency`;
 CREATE TABLE `issue_dependency` (
 	  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -12,5 +12,5 @@ CREATE TABLE `issue_dependency` (
 	  CONSTRAINT `issue_dependency_ibfk_3` FOREIGN KEY (`dependency_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-# Update Version
+-- Update Version
 UPDATE `config` SET `value` = '15.04.17' WHERE `attribute` = 'version';

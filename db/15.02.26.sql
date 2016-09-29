@@ -1,4 +1,4 @@
-# Update issue_detail view
+-- Update issue_detail view
 ALTER VIEW `issue_detail` AS
 SELECT
     `issue`.`id`              AS `id`,
@@ -47,5 +47,5 @@ LEFT JOIN `issue_type` `type` ON `issue`.`type_id` = `type`.`id`
 LEFT JOIN `sprint` ON `issue`.`sprint_id` = `sprint`.`id`
 LEFT JOIN `issue` `parent` ON `issue`.`parent_id` = `parent`.`id`;
 
-# Update Version
+-- Update Version
 UPDATE `config` SET `value` = '15.02.26' WHERE `attribute` = 'version';

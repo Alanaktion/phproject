@@ -1,7 +1,7 @@
-# This database update occured after commit 58697b3b04
+-- This database update occured after commit 58697b3b04
 
-# Add language field to users
+-- Add language field to users
 ALTER TABLE `user` ADD COLUMN `language` VARCHAR(5) NULL AFTER `theme`;
 
-# Update Version
+-- Update Version
 UPDATE `config` SET `value` = '14.12.21' WHERE `attribute` = 'version';

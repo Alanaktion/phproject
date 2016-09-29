@@ -1,4 +1,4 @@
-# Update issue_backlog table structure
+-- Update issue_backlog table structure
 ALTER TABLE issue_backlog
 	ADD COLUMN type_id INT(10) UNSIGNED NULL AFTER user_id;
 
@@ -11,5 +11,5 @@ ALTER TABLE issue_backlog
 	ADD CONSTRAINT issue_backlog_type_id FOREIGN KEY (type_id)
 		REFERENCES issue_type(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
-# Update version
+-- Update version
 UPDATE `config` SET `value` = '16.09.12' WHERE `attribute` = 'version';

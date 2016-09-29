@@ -1,4 +1,4 @@
-# Update issue update detail view
+-- Update issue update detail view
 ALTER VIEW `issue_update_detail` AS (
 	select
 		`i`.`id` AS `id`,
@@ -16,5 +16,5 @@ ALTER VIEW `issue_update_detail` AS (
 		left join `issue_comment` `c` on `i`.`comment_id` = `c`.`id`
 );
 
-# Update Version
+-- Update Version
 UPDATE `config` SET `value` = '15.06.12' WHERE `attribute` = 'version';
