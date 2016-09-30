@@ -295,7 +295,7 @@ class Taskboard extends \Controller {
 					AND g.`group_id` = :user
 					AND u.`created_date` < :end
 					AND f.`field` = 'hours_remaining'
-					AND IFNULL(f.`old_value`, 0) != f.`new_value`
+					AND IFNULL(f.`old_value`, 0) != IFNULL(f.`new_value`, 0)
 				GROUP BY ts
 				ORDER BY ts ASC",
 				array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $sprint->start_date . " 00:00:00", ":end" => $sprint->end_date)
@@ -325,7 +325,7 @@ class Taskboard extends \Controller {
 				WHERE i.sprint_id = :sprint
 					AND u.`created_date` < :end
 					AND f.`field` = 'hours_remaining'
-					AND IFNULL(f.`old_value`, 0) != f.`new_value`
+					AND IFNULL(f.`old_value`, 0) != IFNULL(f.`new_value`, 0)
 				GROUP BY ts
 				ORDER BY ts ASC",
 				array(":sprint" => $sprint->id, ":start" => $sprint->start_date . " 00:00:00", ":end" => $sprint->end_date)
