@@ -1,14 +1,20 @@
 /* globals $ Chart */
 var Burndown = {
 	initialized: false,
+	chart: null,
 	data: {
-		labels: [BurndownLegendDict.hours_remaining],
 		datasets: [{
 			data: null,
 			label: BurndownLegendDict.hours_remaining,
 			borderColor: "#2ecc71",
 			pointBackgroundColor: "#2ecc71",
 			pointBorderColor: "#2ecc71",
+		}, {
+			data: null,
+			label: BurndownLegendDict.man_hours_remaining,
+			borderColor: "#9b59b6",
+			pointBackgroundColor: "#9b59b6",
+			pointBorderColor: "#9b59b6",
 		}]
 	},
 	options: {
@@ -19,23 +25,17 @@ var Burndown = {
 		animation: {
 			duration: 250
 		},
-		hover: {
-			mode: 'x-axis'
-		},
 		scales: {
 			xAxes: [{
 				type: "time",
 				time: {
 					min: BurndownRange.start,
 					max: BurndownRange.end,
-					// format: timeFormat,
-					// round: 'day'
-					// tooltipFormat: 'll HH:mm'
+					minUnit: 'day',
+					displayFormats: {
+						day: 'ddd MMM D',
+					},
 				},
-				/*scaleLabel: {
-					display: true,
-					labelString: 'Date'
-				}*/
 			}, ],
 			yAxes: [{
 				ticks: {
@@ -45,12 +45,13 @@ var Burndown = {
 		},
 		elements: {
 			line: {
-				tension: 0.3,
+				tension: 0.05,
 				borderWidth: 2,
 			},
 			point: {
 				radius: 0,
-				hoverRadius: 2,
+				hitRadius: 5,
+				hoverRadius: 3,
 			}
 		}
 	},
@@ -64,15 +65,19 @@ var Burndown = {
 			var finalData = [];
 			$.each(data, function(key, val) {
 				finalData.push({
-					x: new Date(key),
+					x: key,
 					y: val
 				});
 			});
 
 			Burndown.data.datasets[0].data = finalData;
+			Burndown.data.datasets[1].data = [
+				{x: BurndownRange.start, y: 99}, // @todo: replace with actual man hours
+				{x: BurndownRange.end, y: 0}
+			];
 
 			var ctx = document.getElementById(canvasId).getContext('2d');
-			new Chart(ctx, {
+			Burndown.chart = new Chart(ctx, {
 				type: 'line',
 				data: Burndown.data,
 				options: Burndown.options

@@ -332,12 +332,11 @@
 			BurndownUrl = BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @@filter }}',
 			BurndownLegendDict = {
 				hours_remaining: '{{ @dict.hours_remaining }}',
-				// target_velocity: '{{ @dict.ideal_hours_remaining }}',
-				// actual_velocity: '{{ @dict.daily_hours_remaining }}',
+				man_hours_remaining: '{{ @dict.man_hours_remaining }}',
 			},
 			BurndownRange = {
-				start: new Date('{{ @sprint.start_date }} 00:00:00'),
-				end: new Date('{{ @sprint.end_date }} 23:59:59')
+				start: '{{ @sprint.start_date }} 00:00:00',
+				end: '{{ @sprint.end_date }} 23:59:59'
 			};
 	</script>
 	<script src="{{ @BASE }}/js/chart.js"></script>
