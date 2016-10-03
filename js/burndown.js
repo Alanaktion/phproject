@@ -11,6 +11,12 @@ var Burndown = {
 			pointBorderColor: "#2ecc71",
 		}, {
 			data: null,
+			label: BurndownLegendDict.hours_remaining + ' (Precise)',
+			borderColor: "#3498db",
+			pointBackgroundColor: "#3498db",
+			pointBorderColor: "#3498db",
+		}, {
+			data: null,
 			label: BurndownLegendDict.man_hours_remaining,
 			borderColor: "#9b59b6",
 			pointBackgroundColor: "#9b59b6",
@@ -43,7 +49,7 @@ var Burndown = {
 						day: 'ddd MMM D',
 					},
 				},
-			}, ],
+			}],
 			yAxes: [{
 				ticks: {
 					beginAtZero: true
@@ -78,18 +84,32 @@ var Burndown = {
 			});
 
 			Burndown.data.datasets[0].data = finalData;
-			Burndown.data.datasets[1].data = [
+			Burndown.data.datasets[2].data = [
 				{x: BurndownRange.start, y: 126}, // @todo: replace with actual man hours
 				{x: BurndownRange.end, y: 0}
 			];
 
-			$('#' + canvasId).parents('.modal-body').removeAttr('data-loading');
+			$.get(BASE + '/taskboard/80/burndownPrecise/192', function(data) {
+				var preciseData = [];
+				$.each(data, function(key, val) {
+					preciseData.push({
+						x: key,
+						y: val
+					});
+				});
+				Burndown.data.datasets[1].data = preciseData;
 
-			var ctx = document.getElementById(canvasId).getContext('2d');
-			Burndown.chart = new Chart(ctx, {
-				type: 'line',
-				data: Burndown.data,
-				options: Burndown.options
+				$('#' + canvasId).parents('.modal-body').removeAttr('data-loading');
+
+				var ctx = document.getElementById(canvasId).getContext('2d');
+				Burndown.chart = new Chart(ctx, {
+					type: 'line',
+					data: Burndown.data,
+					options: Burndown.options
+				});
+			}, 'json').fail(function() {
+				$('#' + canvasId).parents('.modal-body').removeAttr('data-loading')
+					.html('<p class="alert alert-danger">Failed to load burndown data!</p>');
 			});
 		}, 'json').fail(function() {
 			$('#' + canvasId).parents('.modal-body').removeAttr('data-loading')
