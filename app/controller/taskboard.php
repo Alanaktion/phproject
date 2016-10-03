@@ -246,12 +246,47 @@ class Taskboard extends \Controller {
 	}
 
 	/**
-	 * Load the burndown chart data
+	 * Load the hourly burndown chart data
+	 *
+	 * @param  \Base $f3
+	 * @param  array $params
+	 */
+	public function burndown($f3, $params) {
+		$query = "
+			SELECT SUM(IFNULL(f.new_value, IFNULL(i.hours_total, i.hours_remaining))) AS remaining
+			FROM issue_update_field f
+			JOIN issue_update u ON u.id = f.issue_update_id
+			JOIN (
+				SELECT MAX(u.id) AS max_id
+				FROM issue_update u
+				JOIN issue_update_field f ON f.issue_update_id = u.id
+				JOIN issue i ON i.id = u.issue_id
+				JOIN user_group g ON g.user_id = i.owner_id OR g.group_id = i.owner_id
+				WHERE f.field = 'hours_remaining'
+					AND u.created_date < :date
+					AND g.group_id = :user
+				GROUP BY u.issue_id
+			) a ON a.max_id = u.id
+			RIGHT JOIN (
+				SELECT i.*
+				FROM issue i
+				JOIN user_group g ON g.user_id = i.owner_id OR g.group_id = i.owner_id
+				AND g.group_id = :user
+			) i ON i.id = u.issue_id
+			WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
+				AND i.created_date < :date";
+		// @todo: Determine if duplicate parameters is causing issues. They're
+		// already in use on the current burndown so they may be affecting it
+		// now, causing some of the weirdness we've seen.
+	}
+
+	/**
+	 * Load the precise burndown chart data
 	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 */
-	public function burndown($f3, $params) {
+	public function burndownPrecise($f3, $params) {
 		$sprint = new \Model\Sprint;
 		$sprint->load($params["id"]);
 
