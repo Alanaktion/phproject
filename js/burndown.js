@@ -25,6 +25,12 @@ var Burndown = {
 		animation: {
 			duration: 250
 		},
+		tooltips: {
+			mode: 'x-axis'
+		},
+		hover: {
+			mode: 'x-axis'
+		},
 		scales: {
 			xAxes: [{
 				type: "time",
@@ -32,6 +38,7 @@ var Burndown = {
 					min: BurndownRange.start,
 					max: BurndownRange.end,
 					minUnit: 'day',
+					tooltipFormat: 'ddd MMM D, hA',
 					displayFormats: {
 						day: 'ddd MMM D',
 					},
@@ -72,9 +79,11 @@ var Burndown = {
 
 			Burndown.data.datasets[0].data = finalData;
 			Burndown.data.datasets[1].data = [
-				{x: BurndownRange.start, y: 99}, // @todo: replace with actual man hours
+				{x: BurndownRange.start, y: 126}, // @todo: replace with actual man hours
 				{x: BurndownRange.end, y: 0}
 			];
+
+			$('#' + canvasId).parents('.modal-body').removeAttr('data-loading');
 
 			var ctx = document.getElementById(canvasId).getContext('2d');
 			Burndown.chart = new Chart(ctx, {
@@ -82,6 +91,9 @@ var Burndown = {
 				data: Burndown.data,
 				options: Burndown.options
 			});
-		}, 'json');
+		}, 'json').fail(function() {
+			$('#' + canvasId).parents('.modal-body').removeAttr('data-loading')
+				.html('<p class="alert alert-danger">Failed to load burndown data!</p>');
+		});
 	}
 };

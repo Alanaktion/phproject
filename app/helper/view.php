@@ -311,6 +311,27 @@ class View extends \Template {
 	}
 
 	/**
+	 * Get UTC time offset in seconds
+	 *
+	 * @return int
+	 */
+	function timeoffset() {
+		$f3 = \Base::instance();
+
+		if($f3->exists("site.timeoffset")) {
+			return $f3->get("site.timeoffset");
+		} else {
+			$tz = $f3->get("site.timezone");
+			$dtzLocal = new \DateTimeZone($tz);
+			$dtLocal = new \DateTime("now", $dtzLocal);
+			$offset = $dtzLocal->getOffset($dtLocal);
+			$f3->set("site.timeoffset", $offset);
+		}
+
+		return $offset;
+	}
+
+	/**
 	 * Convert a UTC timestamp to local time
 	 * @param  int $timestamp
 	 * @return int
@@ -323,17 +344,7 @@ class View extends \Template {
 			$timestamp = time();
 		}
 
-		$f3 = \Base::instance();
-
-		if($f3->exists("site.timeoffset")) {
-			$offset = $f3->get("site.timeoffset");
-		} else {
-			$tz = $f3->get("site.timezone");
-			$dtzLocal = new \DateTimeZone($tz);
-			$dtLocal = new \DateTime("now", $dtzLocal);
-			$offset = $dtzLocal->getOffset($dtLocal);
-			$f3->set("site.timeoffset", $offset);
-		}
+		$offset = $this->timeoffset();
 
 		return $timestamp + $offset;
 	}
@@ -349,3 +360,4 @@ class View extends \Template {
 	}
 
 }
+

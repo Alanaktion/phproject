@@ -25,6 +25,21 @@
 		#taskboard .spinner {
 			background-image: url({{ @BASE }}/img/ajax-loader.gif);
 		}
+
+		#burndown-modal .modal-body {
+			position: relative;
+		}
+		#burndown-modal .modal-body[data-loading]::after {
+			content: attr(data-loading);
+			position: absolute;
+			top: 50%;
+			left: 0;
+			right: 0;
+			transform: translateY(-50%);
+			text-align: center;
+			font-size: 28px;
+			opacity: 0.4;
+		}
 		</style>
 	</check>
 	<!--[if lte IE 9]>
@@ -84,7 +99,7 @@
 										}
 									~}
 									<li class="{{ @active ? 'active' : '' }}">
-										<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @PARAMS.filter ? @PARAMS.filter . '/' : '' }}?{{ http_build_query(array_merge(@GET, array('type_id' => @idStr))) | esc }}">
+										<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @filter ? @filter . '/' : '' }}?{{ http_build_query(array_merge(@GET, array('type_id' => @idStr))) | esc }}">
 											{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
 										</a>
 									</li>
@@ -92,9 +107,11 @@
 							</ul>
 						</div>
 					</div>
-					<button type="button" id="btn-burndown" class="btn btn-default btn-xs" data-toggle="modal" data-target="#burndown-modal">
-						<span class="fa fa-fire"></span> {{ @dict.burndown }}
-					</button>
+					<check if="{{ is_numeric(@filter) }}">
+						<button type="button" id="btn-burndown" class="btn btn-default btn-xs" data-toggle="modal" data-target="#burndown-modal">
+							<span class="fa fa-fire"></span> {{ @dict.burndown }}
+						</button>
+					</check>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
 					<th class="column column-{{ @key + 1 }}">{{ isset(@dict[@value.name]) ? @dict[@value.name] : str_replace('_', ' ', @value.name) }}</th>
@@ -316,7 +333,7 @@
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
 					<h4 class="modal-title">{{ @dict.burndown }}</h4>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body" data-loading="{{ @dict.loading }}">
 					<canvas id="burndown" width="850" height="320"></canvas>
 				</div>
 			</div>
@@ -328,27 +345,8 @@
 		<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
 	</check>
 	<script>
-		var datepickerLanguage='{{ @user_obj->date_picker()->language }}',
-			BurndownUrl = BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @@filter }}',
-			BurndownLegendDict = {
-				hours_remaining: '{{ @dict.hours_remaining }}',
-				man_hours_remaining: '{{ @dict.man_hours_remaining }}',
-			},
-			BurndownRange = {
-				start: '{{ @sprint.start_date }} 00:00:00',
-				end: '{{ @sprint.end_date }} 23:59:59'
-			};
-	</script>
-	<script src="{{ @BASE }}/js/chart.js"></script>
-	<script src="{{ @BASE }}/minify/js/taskboard.js,burndown.js"></script>
-	<script>
+		var datepickerLanguage='{{ @user_obj->date_picker()->language }}';
 		$(document).ready(function() {
-
-			$("#burndown-modal").on("shown.bs.modal", function(e) {
-				if(Burndown.initialized === false) {
-					Burndown.init('burndown', BurndownUrl);
-				}
-			});
 
 			// Taskboard header horizontal scrolling
 			$(window).scroll(function(e) {
@@ -361,5 +359,34 @@
 
 		});
 	</script>
+	<check if="{{ is_numeric(@filter) }}">
+		<true>
+			<script>
+				var BurndownUrl = BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @@filter }}',
+					BurndownLegendDict = {
+						hours_remaining: '{{ @dict.hours_remaining }}',
+						man_hours_remaining: '{{ @dict.man_hours_remaining }}',
+					},
+					BurndownRange = {
+						start: '{{ @sprint.start_date }} 00:00:00',
+						end: '{{ @sprint.end_date }} 23:59:59'
+					};
+			</script>
+			<script src="{{ @BASE }}/js/chart.js"></script>
+			<script src="{{ @BASE }}/minify/js/taskboard.js,burndown.js"></script>
+			<script>
+				$(document).ready(function() {
+					$("#burndown-modal").on("shown.bs.modal", function(e) {
+						if(Burndown.initialized === false) {
+							Burndown.init('burndown', BurndownUrl);
+						}
+					});
+				});
+			</script>
+		</true>
+		<false>
+			<script src="{{ @BASE }}/minify/js/taskboard.js"></script>
+		</false>
+	</check>
 </body>
 </html>

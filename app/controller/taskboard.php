@@ -252,36 +252,82 @@ class Taskboard extends \Controller {
 	 * @param  array $params
 	 */
 	public function burndown($f3, $params) {
-		$query = "
-			SELECT SUM(IFNULL(f.new_value, IFNULL(i.hours_total, i.hours_remaining))) AS remaining
-			FROM issue_update_field f
-			JOIN issue_update u ON u.id = f.issue_update_id
-			JOIN (
-				SELECT MAX(u.id) AS max_id
-				FROM issue_update u
-				JOIN issue_update_field f ON f.issue_update_id = u.id
-				JOIN issue i ON i.id = u.issue_id
-				JOIN user_group g ON g.user_id = i.owner_id OR g.group_id = i.owner_id
-				WHERE f.field = 'hours_remaining'
-					AND u.created_date < :date
-					AND g.group_id = :user
-				GROUP BY u.issue_id
-			) a ON a.max_id = u.id
-			RIGHT JOIN (
-				SELECT i.*
-				FROM issue i
-				JOIN user_group g ON g.user_id = i.owner_id OR g.group_id = i.owner_id
-				AND g.group_id = :user
-			) i ON i.id = u.issue_id
-			WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
-				AND i.created_date < :date";
-		// @todo: Determine if duplicate parameters is causing issues. They're
-		// already in use on the current burndown so they may be affecting it
-		// now, causing some of the weirdness we've seen.
+		$sprint = new \Model\Sprint;
+		$sprint->load($params["id"]);
+
+		if (!$sprint->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$db = $f3->get("db.instance");
+
+		$user = new \Model\User;
+		if (isset($params["filter"])) {
+			$user->load(array("id = ?", $params["filter"]));
+			if (!$user->id) {
+				$f3->error(404);
+				return;
+			}
+
+			$query = "
+				SELECT SUM(IFNULL(f.new_value, IFNULL(i.hours_total, i.hours_remaining))) AS remaining
+				FROM issue_update_field f
+				JOIN issue_update u ON u.id = f.issue_update_id
+				JOIN (
+					SELECT MAX(u.id) AS max_id
+					FROM issue_update u
+					JOIN issue_update_field f ON f.issue_update_id = u.id
+					JOIN issue i ON i.id = u.issue_id
+					JOIN user_group g ON g.user_id = i.owner_id OR g.group_id = i.owner_id
+					WHERE f.field = 'hours_remaining'
+						AND i.sprint_id = :sprint1
+						AND u.created_date < :date1
+						AND g.group_id = :user1
+					GROUP BY u.issue_id
+				) a ON a.max_id = u.id
+				RIGHT JOIN (
+					SELECT i.*
+					FROM issue i
+					JOIN user_group g ON g.user_id = i.owner_id OR g.group_id = i.owner_id
+					WHERE i.sprint_id = :sprint2
+					AND g.group_id = :user2
+				) i ON i.id = u.issue_id
+				WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
+					AND i.created_date < :date2";
+		}
+
+		$start = strtotime($sprint->start_date);
+		$end = min(strtotime($sprint->end_date . " 23:59:59"), time());
+
+		$return = [];
+		$cur = $start;
+		$helper = \Helper\View::instance();
+		$offset = $helper->timeoffset();
+		while($cur < $end) {
+			$date = date("Y-m-d H:i:00", $cur);
+			$utc = date("Y-m-d H:i:s", $cur - $offset);
+			$return[$date] = round($db->exec($query, [
+				":date1" => $utc,
+				":date2" => $utc,
+				":sprint1" => $sprint->id,
+				":sprint2" => $sprint->id,
+				":user1" => $user->id,
+				":user2" => $user->id,
+			])[0]["remaining"], 2);
+			$cur += 3600;
+		}
+
+		$this->_printJson($return);
 	}
 
 	/**
 	 * Load the precise burndown chart data
+	 *
+	 * This function is not currently used due to calculation issues. It's been
+	 * replaced with the burndown() function above.
+	 *
+	 * @todo  Find and fix calculation issues
 	 *
 	 * @param \Base $f3
 	 * @param array $params
@@ -295,77 +341,45 @@ class Taskboard extends \Controller {
 			return;
 		}
 
-		$db = $f3->get("db.instance");
-		if (isset($params["filter"])) {
-			$user = new \Model\User;
-			$user->load(array("id = ?", $params["filter"]));
-			if (!$user->id) {
-				$f3->error(404);
-				return;
-			}
-
-			$plannedHours = $db->exec(
-				"SELECT GREATEST(i.created_date, :start) AS ts,
-					SUM(i.hours_total) AS hours
-				FROM issue i
-				JOIN user_group g ON g.`user_id` = i.`owner_id` OR g.`group_id` = i.`owner_id`
-				WHERE i.sprint_id = :sprint
-					AND g.`group_id` = :user
-					AND i.`hours_total` > 0
-				GROUP BY ts
-				ORDER BY ts ASC",
-				array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $sprint->start_date . " 00:00:00")
-			);
-			$updatedHours = $db->exec(
-				"SELECT GREATEST(u.created_date, :start) AS ts,
-					SUM(IFNULL(f.`old_value`, 0)) `old`,
-					SUM(f.`new_value`) `new`,
-					(SUM(f.new_value) - SUM(IFNULL(f.old_value, 0))) diff
-				FROM issue_update_field f
-				JOIN issue_update u ON f.`issue_update_id` = u.`id`
-				JOIN issue i ON i.id = u.`issue_id`
-				JOIN user_group g ON g.`user_id` = i.`owner_id`
-					OR g.`group_id` = i.`owner_id`
-				WHERE i.sprint_id = :sprint
-					AND g.`group_id` = :user
-					AND u.`created_date` < :end
-					AND f.`field` = 'hours_remaining'
-					AND IFNULL(f.`old_value`, 0) != IFNULL(f.`new_value`, 0)
-				GROUP BY ts
-				ORDER BY ts ASC",
-				array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $sprint->start_date . " 00:00:00", ":end" => $sprint->end_date)
-			);
-		} else {
-			$plannedHours = $db->exec(
-				"SELECT GREATEST(i.created_date, :start) AS ts,
-					SUM(i.hours_total) AS hours
-				FROM issue i
-				JOIN sprint s ON s.id = i.sprint_id
-				WHERE s.id = :sprint AND i.`hours_total` > 0
-				GROUP BY ts
-				ORDER BY ts ASC",
-				array(":sprint" => $sprint->id, ":start" => $sprint->start_date . " 00:00:00")
-			);
-			$updatedHours = $db->exec(
-				"SELECT GREATEST(u.created_date, :start) AS ts,
-					SUM(IFNULL(f.`old_value`, 0)) `old`,
-					SUM(f.`new_value`) `new`,
-					(SUM(f.new_value) - SUM(IFNULL(f.old_value, 0))) diff
-				FROM issue_update_field f
-				JOIN issue_update u ON f.`issue_update_id` = u.`id`
-				JOIN issue i ON i.id = u.`issue_id`
-				JOIN sprint s ON s.id = i.`sprint_id`
-				JOIN user_group g ON g.`user_id` = i.`owner_id`
-					OR g.`group_id` = i.`owner_id`
-				WHERE i.sprint_id = :sprint
-					AND u.`created_date` < :end
-					AND f.`field` = 'hours_remaining'
-					AND IFNULL(f.`old_value`, 0) != IFNULL(f.`new_value`, 0)
-				GROUP BY ts
-				ORDER BY ts ASC",
-				array(":sprint" => $sprint->id, ":start" => $sprint->start_date . " 00:00:00", ":end" => $sprint->end_date)
-			);
+		$user = new \Model\User;
+		$user->load(array("id = ?", $params["filter"]));
+		if (!$user->id) {
+			$f3->error(404);
+			return;
 		}
+
+		$db = $f3->get("db.instance");
+		$plannedHours = $db->exec(
+			"SELECT GREATEST(i.created_date, :start) AS ts,
+				SUM(i.hours_total) AS hours
+			FROM issue i
+			JOIN user_group g ON g.`user_id` = i.`owner_id` OR g.`group_id` = i.`owner_id`
+			WHERE i.sprint_id = :sprint
+				AND g.`group_id` = :user
+				AND i.`hours_total` > 0
+			GROUP BY ts
+			ORDER BY ts ASC",
+			array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $sprint->start_date . " 00:00:00")
+		);
+		$updatedHours = $db->exec(
+			"SELECT GREATEST(u.created_date, :start) AS ts,
+				SUM(IFNULL(f.`old_value`, 0)) `old`,
+				SUM(f.`new_value`) `new`,
+				(SUM(f.new_value) - SUM(IFNULL(f.old_value, 0))) diff
+			FROM issue_update_field f
+			JOIN issue_update u ON f.`issue_update_id` = u.`id`
+			JOIN issue i ON i.id = u.`issue_id`
+			JOIN user_group g ON g.`user_id` = i.`owner_id`
+				OR g.`group_id` = i.`owner_id`
+			WHERE i.sprint_id = :sprint
+				AND g.`group_id` = :user
+				AND u.`created_date` < :end
+				AND f.`field` = 'hours_remaining'
+				AND IFNULL(f.`old_value`, 0) != IFNULL(f.`new_value`, 0)
+			GROUP BY ts
+			ORDER BY ts ASC",
+			array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $sprint->start_date . " 00:00:00", ":end" => $sprint->end_date)
+		);
 
 		$diffs = array();
 		foreach($plannedHours as $h) {
