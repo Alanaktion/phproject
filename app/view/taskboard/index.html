@@ -382,8 +382,8 @@
 					},
 					BurndownManHours = parseFloat('{{ @filterGroup->option("man_hours") }}'),
 					BurndownRange = {
-						start: '{{ @sprint.start_date }} 00:00:00',
-						end: '{{ @sprint.end_date }} 23:59:59'
+						start: '{{ @sprint->getFirstWeekday() }} 00:00:00',
+						end: '{{ @sprint->getLastWeekday() }} 23:59:59'
 					};
 			</script>
 			<script src="{{ @BASE }}/js/chart.js"></script>

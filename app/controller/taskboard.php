@@ -296,8 +296,8 @@ class Taskboard extends \Controller {
 			WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
 				AND i.created_date < :date2";
 
-		$start = strtotime($sprint->start_date);
-		$end = min(strtotime($sprint->end_date . " 23:59:59"), time());
+		$start = strtotime($sprint->getFirstWeekday());
+		$end = min(strtotime($sprint->getLastWeekday() . " 23:59:59"), time());
 
 		$return = [];
 		$cur = $start;
