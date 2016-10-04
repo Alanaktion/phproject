@@ -338,4 +338,14 @@ class Index extends \Controller {
 		$this->_render("index/atom.xml", "application/atom+xml");
 	}
 
+	/**
+	 * GET /opensearch.xml
+	 *
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
+	public function opensearch($f3) {
+		$this->_render("index/opensearch.xml", "application/opensearchdescription+xml");
+	}
+
 }

@@ -1,0 +1,7 @@
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>{{ @site.name | esc }}</ShortName>
+  <Description>{{ @site.description | esc }}</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Url type="text/html" method="get" template="{{ @site.url }}search?q={searchTerms}"/>
+  <moz:SearchForm>{{ @site.url }}search</moz:SearchForm>
+</OpenSearchDescription>

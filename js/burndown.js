@@ -20,7 +20,10 @@ var Burndown = {
 	options: {
 		maintainAspectRatio: false,
 		legend: {
-			position: 'right'
+			position: 'bottom',
+			labels: {
+				boxWidth: 1
+			}
 		},
 		animation: {
 			duration: 250

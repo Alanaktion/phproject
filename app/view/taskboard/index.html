@@ -107,7 +107,7 @@
 							</ul>
 						</div>
 					</div>
-					<check if="{{ is_numeric(@filter) }}">
+					<check if="{{ @@filterGroup }}">
 						<button type="button" id="btn-burndown" class="btn btn-default btn-xs" data-toggle="modal" data-target="#burndown-modal">
 							<span class="fa fa-fire"></span> {{ @dict.burndown }}
 						</button>
@@ -325,20 +325,33 @@
 		</div>
 	</div>
 
-	<!-- Burndown Modal -->
-	<div class="modal fade" id="burndown-modal" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
-					<h4 class="modal-title">{{ @dict.burndown }}</h4>
-				</div>
-				<div class="modal-body" data-loading="{{ @dict.loading }}">
-					<canvas id="burndown" width="850" height="320"></canvas>
+	<check if="{{ @@filterGroup }}">
+		<div class="modal fade" id="burndown-modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span>
+							<span class="sr-only">{{ @dict.close }}</span>
+						</button>
+						<form class="form-inline pull-right" id="frm-man-hours" style="margin-top: -5px;">
+							<input type="hidden" name="user_id" value="{{ @filterGroup->id }}">
+							<label class="control-label input-sm">{{ @dict.man_hours }}</label>
+							<span class="does-toggle man-hours">{{ @filterGroup->option('man_hours') }}</span>
+							&nbsp;
+							<a class="fa fa-edit does-toggle" href="#input-man-hours"></a>
+							<input type="number" style="width: 80px;" class="form-control input-sm hidden" name="man_hours" id="input-man-hours" value="{{ @filterGroup->option('man_hours') }}">
+							&emsp;
+						</form>
+						<h4 class="modal-title">{{ @dict.burndown }}</h4>
+					</div>
+					<div class="modal-body" data-loading="{{ @dict.loading }}">
+						<canvas id="burndown" width="850" height="320"></canvas>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</check>
 
 	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js,bootstrap-datepicker.js"></script>
 	<check if="{{ @user_obj->date_picker()->js }}">
@@ -359,14 +372,15 @@
 
 		});
 	</script>
-	<check if="{{ is_numeric(@filter) }}">
+	<check if="{{ @@filterGroup }}">
 		<true>
 			<script>
-				var BurndownUrl = BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @@filter }}',
+				var BurndownUrl = BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @filter }}',
 					BurndownLegendDict = {
 						hours_remaining: '{{ @dict.hours_remaining }}',
 						man_hours_remaining: '{{ @dict.man_hours_remaining }}',
 					},
+					BurndownManHours = parseFloat('{{ @filterGroup->option("man_hours") }}'),
 					BurndownRange = {
 						start: '{{ @sprint.start_date }} 00:00:00',
 						end: '{{ @sprint.end_date }} 23:59:59'
@@ -380,6 +394,20 @@
 						if(Burndown.initialized === false) {
 							Burndown.init('burndown', BurndownUrl);
 						}
+					});
+					$("#burndown-modal .fa-edit").click(function(e) {
+						e.preventDefault();
+						$('#input-man-hours, #burndown-modal .does-toggle').toggleClass('hidden');
+						$('#input-man-hours').focus().select();
+					});
+					$("#frm-man-hours").submit(function(e) {
+						e.preventDefault();
+						$.post(BASE + '/taskboard/saveManHours', $(this).serialize());
+						BurndownManHours = $('#input-man-hours').val();
+						$("#burndown-modal .man-hours").text(BurndownManHours);
+						$('#input-man-hours, #burndown-modal .does-toggle').toggleClass('hidden');
+						Burndown.chart.data.datasets[1].data[0].y = BurndownManHours;
+						Burndown.chart.update();
 					});
 				});
 			</script>

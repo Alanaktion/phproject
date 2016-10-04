@@ -56,6 +56,7 @@ class Taskboard extends \Controller {
 			$user = new \Model\User();
 			$user->load($params["filter"]);
 			if ($user->role == 'group') {
+				\Base::instance()->set("filterGroup", $user);
 				$group_model = new \Model\User\Group();
 				$users_result = $group_model->find(array("group_id = ?", $user->id));
 				$filter_users = array(intval($params["filter"]));
@@ -303,7 +304,8 @@ class Taskboard extends \Controller {
 		$helper = \Helper\View::instance();
 		$offset = $helper->timeoffset();
 		while($cur < $end) {
-			/*if (in_array(date("w", $cur), [0, 6])) {
+			/*// Weekdays only
+			if (in_array(date("w", $cur), [0, 6])) {
 				continue;
 			}*/
 			$date = date("Y-m-d H:i:00", $cur);
@@ -411,6 +413,24 @@ class Taskboard extends \Controller {
 		}, $totals);
 
 		$this->_printJson($totalsRounded);
+	}
+
+	/**
+	 * Save man hours for a group/user
+	 *
+	 * @param  \Base $f3
+	 */
+	public function saveManHours($f3) {
+		$user = new \Model\User;
+		$user->load(array("id = ?", $f3->get("POST.user_id")));
+		if (!$user->id) {
+			$f3->error(404);
+		}
+		if ($user->id != $this->_userId && $user->role != "group") {
+			$f3->error(403);
+		}
+		$user->option("man_hours", floatval($f3->get("POST.man_hours")));
+		$user->save();
 	}
 
 	/**
