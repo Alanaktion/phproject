@@ -82,7 +82,7 @@ var Burndown = {
 
 			Burndown.data.datasets[0].data = finalData;
 			Burndown.data.datasets[1].data = [
-				{x: BurndownRange.start, y: 126}, // @todo: replace with actual man hours
+				{x: BurndownRange.start, y: BurndownManHours || 0},
 				{x: BurndownRange.end, y: 0}
 			];
 
