@@ -41,7 +41,7 @@ var Burndown = {
 					min: BurndownRange.start,
 					max: BurndownRange.end,
 					minUnit: 'day',
-					tooltipFormat: 'ddd MMM D, hA',
+					tooltipFormat: 'ddd MMM D, h A',
 					displayFormats: {
 						day: 'ddd MMM D',
 					},
