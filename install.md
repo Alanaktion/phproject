@@ -6,7 +6,7 @@ title: Install
 
 ## Requirements
 
-* PHP 5.3.3 or later
+* PHP 5.4 or later
     * MySQL PDO extension
     * GD extension (recommended)
 * MySQL 5 Server
