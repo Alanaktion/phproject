@@ -70,6 +70,8 @@ Password: Passw0rd1
 #### Due issue alerts
 Phproject can send alert emails to users with issues that are overdue or due on the current date. This can be enabled by setting up a cron job to run `cron/due_alerts.php`. Users can opt-out of these emails in their settings.
 
+In order for emails to include correct URLs, make sure your site's base URL (e.g. `http://example.com/phproject/`) is set as `site.url` in either config.ini or the config database table.
+
 #### Atom feeds
 Phproject generates Atom feeds for issues assigned to and created by each user. These feeds can be subscribed to from user pages or the Dashboard in browsers that support them.
 
