@@ -97,52 +97,61 @@
 		};
 		var charts = {
 			data: {
-				labels: $.parseJSON(jsonData.labels),
+				labels: JSON.parse(jsonData.labels),
 				datasets: [{
-					data: $.parseJSON(jsonData.spent),
+					data: JSON.parse(jsonData.spent),
 					label: "{{ @dict.cols.total_spent_hours }}",
-					fillColor: "rgba(42,204,113,0.1)",
-					strokeColor: "#2ecc71",
-					pointColor: "#2ecc71",
-					pointStrokeColor: "#2ecc71",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "#2ecc71"
+					borderColor: "#2ecc71",
+					pointBackgroundColor: "#2ecc71",
+					pointBorderColor: "#2ecc71",
 				},{
-					data: $.parseJSON(jsonData.closed),
+					data: JSON.parse(jsonData.closed),
 					label: "{{ @dict.closed }}",
-					fillColor: "rgba(52,152,219,0.1)",
-					strokeColor: "#3498db",
-					pointColor: "#3498db",
-					pointStrokeColor: "#3498db",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "#3498db",
+					borderColor: "#3498db",
+					pointBackgroundColor: "#3498db",
+					pointBorderColor: "#3498db",
 				},{
-					data: $.parseJSON(jsonData.created),
+					data: JSON.parse(jsonData.created),
 					label: "{{ @dict.cols.created }}",
-					fillColor: "rgba(155,89,152,0.1)",
-					strokeColor: "#9b59b6",
-					pointColor: "#9b59b6",
-					pointStrokeColor: "#9b59b6",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "#9b59b6",
+					borderColor: "#9b59b6",
+					pointBackgroundColor: "#9b59b6",
+					pointBorderColor: "#9b59b6",
 				}]
 			},
 			options: {
-				scaleBeginAtZero: true,
-				bezierCurve: false,
-				pointDot: true,
-				pointDotRadius: 2,
-				pointDotStrokeWidth: 1,
-				datasetStroke: true,
-				datasetStrokeWidth: 2,
-				datasetFill: true,
-				animation: false,
-				responsive: true,
 				maintainAspectRatio: false,
-				scaleLineColor: "rgba(127,127,127,.2)",
-				scaleGridLineColor : "rgba(127,127,127,.1)"
+				legend: {
+					display: false
+				},
+				animation: {
+					duration: 250
+				},
+				hover: {
+					mode: 'x-axis'
+				},
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				},
+				elements: {
+					line: {
+						tension: 0.3,
+						borderWidth: 2,
+					},
+					point: {
+						radius: 2,
+						hoverRadius: 3,
+					}
+				}
 			}
 		};
+
+		Chart.defaults.global.defaultFontColor = "rgba(127,127,127,1)";
+		Chart.defaults.scale.gridLines.color = "rgba(127,127,127,.3)";
+		Chart.defaults.scale.gridLines.zeroLineColor = "rgba(127,127,127,.3)";
 
 		$(document).ready(function() {
 
@@ -155,7 +164,11 @@
 
 			// Render chart
 			var ctx = document.getElementById("stats").getContext("2d");
-			charts.chart = new Chart(ctx).Line(charts.data, charts.options);
+			charts.chart = new Chart(ctx, {
+				type: 'line',
+				data: charts.data,
+				options: charts.options
+			});
 
 		});
 		</script>
