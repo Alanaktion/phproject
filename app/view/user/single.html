@@ -6,19 +6,6 @@
 		<link rel="alternate" type="application/atom+xml" title="{{ @dict.assigned_issues }}" href="{{ @site.url }}atom.xml?type=assigned&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
 		<link rel="alternate" type="application/atom+xml" title="{{ @dict.created_issues }}" href="{{ @site.url }}atom.xml?type=created&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
 	</check>
-	<style type="text/css">
-	.chart-legend div {
-		float: left;
-		margin-right: 1em;
-	}
-	.chart-legend span {
-		display: inline-block;
-		width: 1em;
-		height: 1em;
-		margin-right: .5em;
-		border-radius: 2px;
-	}
-	</style>
 </head>
 <body>
 	<set fullwidth="{{ true }}" />
@@ -42,18 +29,11 @@
 					</check>
 				</div>
 			</div>
-			<div class="col-md-8 hidden-xs">
-				<check if="{{ @this_user.role != 'group' }}">
-					<div>
-						<canvas id="stats" width="600" height="100"></canvas>
-					</div>
-					<div class="chart-legend clearfix">
-						<div><span style="background-color: #2ecc71;"></span>{{ @dict.cols.total_spent_hours }}</div>
-						<div><span style="background-color: #3498db;"></span>{{ @dict.closed }}</div>
-						<div><span style="background-color: #9b59b6;"></span>{{ @dict.cols.created }}</div>
-					</div>
-				</check>
-			</div>
+			<check if="{{ @this_user.role != 'group' }}">
+				<div class="col-md-8 hidden-xs">
+					<canvas id="stats" width="600" height="130"></canvas>
+				</div>
+			</check>
 		</div>
 		<br>
 
@@ -121,10 +101,19 @@
 			options: {
 				maintainAspectRatio: false,
 				legend: {
-					display: false
+					position: 'left',
+					labels: {
+						boxWidth: 1
+					}
 				},
 				animation: {
 					duration: 250
+				},
+				tooltips: {
+					mode: 'x-axis',
+					titleSpacing: 0,
+					titleMarginBottom: 3,
+					yPadding: 4,
 				},
 				hover: {
 					mode: 'x-axis'
@@ -144,6 +133,7 @@
 					point: {
 						radius: 2,
 						hoverRadius: 3,
+						hitRadius: 15,
 					}
 				}
 			}
