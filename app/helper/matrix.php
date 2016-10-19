@@ -27,4 +27,14 @@ class Matrix extends \Matrix {
 		return $result;
 	}
 
+	/**
+	 * Run array_merge on an array of arrays
+	 *
+	 * @param  array  $arrays
+	 * @return array
+	 */
+	public function merge(array $arrays) {
+		return call_user_func_array("array_merge", $arrays);
+	}
+
 }

@@ -73,7 +73,7 @@ class Backlog extends \Controller {
 					foreach($sortOrders as $order) {
 						$orders[] = json_decode($order->issues) ?: array();
 					}
-					$sortArray = \Helper\Matrix::instance()->mergeSorted($orders);
+					$sortArray = \Helper\Matrix::instance()->merge($orders);
 					foreach($sortArray as $id) {
 						foreach($projects as $p) {
 							if($p->id == $id) {
@@ -128,7 +128,7 @@ class Backlog extends \Controller {
 				foreach($sortOrders as $order) {
 					$orders[] = json_decode($order->issues) ?: array();
 				}
-				$sortArray = \Helper\Matrix::instance()->mergeSorted($orders);
+				$sortArray = \Helper\Matrix::instance()->merge($orders);
 				foreach($sortArray as $id) {
 					foreach($unset_projects as $p) {
 						if($p->id == $id) {
