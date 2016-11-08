@@ -51,13 +51,18 @@ class View extends \Template {
 			$str = $this->_parseMarkdown($str);
 		}
 		if($options["textile"]) {
+			$escape = true;
 			if($options["markdown"]) {
 				// Yes, this is hacky. Please open an issue on GitHub if you
 				// know of a better way of supporting Markdown and Textile :)
 				$str = html_entity_decode($str);
 				$str = preg_replace('/^<p>|<\/p>$/m', "\n", $str);
+				$escape = false;
 			}
-			$str = $this->_parseTextile($str);
+			$str = $this->_parseTextile($str, $escape);
+		}
+		if(!$options["markdown"] && !$options['textile']) {
+			$str = nl2br(\Base::instance()->encode($str), false);
 		}
 		if($options["emoticons"]) {
 			$str = $this->_parseEmoticons($str);
@@ -260,9 +265,10 @@ class View extends \Template {
 	 * @param  string $str
 	 * @return string
 	 */
-	protected function _parseTextile($str) {
+	protected function _parseTextile($str, $escape = true) {
 		$tex = new \Textile\Parser('html5');
 		$tex->setDimensionlessImages(true);
+		$tex->setRestricted($escape);
 		return $tex->parse($str);
 	}
 
@@ -271,9 +277,10 @@ class View extends \Template {
 	 * @param  string $str
 	 * @return string
 	 */
-	protected function _parseMarkdown($str) {
+	protected function _parseMarkdown($str, $escape = true) {
 		$mkd = new \Parsedown();
 		$mkd->setUrlsLinked(false);
+		$mkd->setMarkupEscaped($escape);
 		return $mkd->text($str);
 	}
 
