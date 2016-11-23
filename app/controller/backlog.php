@@ -149,8 +149,12 @@ class Backlog extends \Controller {
 			$backlog = $unset_projects;
 		}
 
-		$groups = new \Model\User();
-		$f3->set("groups", $groups->getAllGroups());
+		$type = new \Model\Issue\Type;
+		$f3->set("project_types", $type->find(["role = ?", "project"]));
+
+		$user = new \Model\User();
+		$f3->set("groups", $user->getAllGroups());
+
 		$f3->set("groupid", $groupId);
 		$f3->set("type_ids", $typeIds);
 		$f3->set("sprints", $sprint_details);
@@ -225,7 +229,7 @@ class Backlog extends \Controller {
 
 		$sprint_details = array();
 		foreach($sprints as $sprint) {
-			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND type_id = ?", $sprint->id, $f3->get("issue_type.project")));
+			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND role = ?", $sprint->id, "project"));
 			$sprint_details[] = $sprint->cast() + array("projects" => $projects);
 		}
 

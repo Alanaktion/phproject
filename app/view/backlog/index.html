@@ -51,7 +51,7 @@
 								{{ @dict.cols.type }} <span class="caret"></span>
 							</button>
 							<ul class="dropdown-menu" role="menu">
-								<F3:repeat group="{{ @issue_types }}" value="{{ @type }}">
+								<F3:repeat group="{{ @project_types }}" value="{{ @type }}">
 									{~
 										@active = in_array(@type.id, @type_ids);
 										if (@active) {
