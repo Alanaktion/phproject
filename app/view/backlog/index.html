@@ -3,6 +3,12 @@
 <head>
 	<include href="blocks/head.html" />
 	<link rel="stylesheet" href="{{ @BASE }}/css/backlog.css">
+	<style type="text/css">
+		.hidden-group, .hidden-type {
+			display: none;
+			visibility: hidden;
+		}
+	</style>
 </head>
 <body>
 <include href="blocks/navbar.html" />
@@ -19,26 +25,26 @@
 								{{ @dict.groups }} <span class="caret"></span>
 							</button>
 							<ul class="dropdown-menu" role="menu">
-								<li class="{{ @@GET.group_id == 'all' ? 'active' : '' }}">
-									<a href="{{ @BASE }}/backlog/?group_id=all">
+								<li>
+									<a href="#" data-group-id="all" data-user-ids="all">
 										{{ @dict.all_projects }}
 									</a>
 								</li>
-								<li class="{{ empty(@GET.group_id) ? 'active' : '' }}">
-									<a href="{{ @BASE }}/backlog/">
+								<li class="active">
+									<a href="#" data-my-groups data-user-ids="{{ implode(',', @user_obj->getSharedGroupUserIds()) }}">
 										{{ @dict.my_groups }}
 									</a>
 								</li>
-								<li class="{{ @GET.group_id == 'me' ? 'active' : '' }}">
-									<a href="{{ @BASE }}/backlog/?group_id=me">
+								<li>
+									<a href="#" data-group-id="{{ @user.id }}" data-user-ids="{{ @user.id }}">
 										{{ @dict.my_projects }}
 									</a>
 								</li>
 								<check if="{{ count(@groups) }}">
 									<li class="divider"></li>
 									<repeat group="{{ @groups }}" value="{{ @group }}">
-										<li class="{{ @@GET.group_id == @group.id ? 'active' : '' }}">
-											<a href="{{ @BASE }}/backlog/?{{ http_build_query(array_merge(@GET,  array('group_id' => @group.id))) | esc }}">
+										<li>
+											<a href="#" data-group-id="{{ @group->id }}" data-user-ids="{{ implode(',', @group->getGroupUserIds()) }}">
 												{{ @group.name | esc }}
 											</a>
 										</li>
@@ -52,28 +58,8 @@
 							</button>
 							<ul class="dropdown-menu" role="menu">
 								<F3:repeat group="{{ @project_types }}" value="{{ @type }}">
-									{~
-										@active = in_array(@type.id, @type_ids);
-										if (@active) {
-											if (@GET.type_id) {
-												@arr = array_diff(@type_ids, array(@type.id));
-												sort(@arr);
-												@idStr = implode(',', @arr);
-											} else {
-												@idStr = null;
-											}
-										} else {
-											if (@GET.type_id) {
-												@arr = array_unique(array_merge(array(@type.id), @type_ids));
-												sort(@arr);
-												@idStr = implode(',', @arr);
-											} else {
-												@idStr = @type.id;
-											}
-										}
-									~}
-									<li class="{{ @active ? 'active' : '' }}">
-										<a href="{{ @BASE }}/backlog/?{{ http_build_query(array_merge(@GET, array('type_id' => @idStr))) | esc }}">
+									<li class="active">
+										<a href="#" data-type-id="{{ @type.id }}">
 											{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
 										</a>
 									</li>
@@ -86,16 +72,9 @@
 					</a>
 				</div>
 				<div class="panel-body in" id="panel-0">
-					<ul class="list-group sortable" data-list-id="0" data-user-id="{{ @@groupid }}">
+					<ul class="list-group sortable" data-list-id="0">
 						<repeat group="{{ @backlog }}" value="{{ @project }}">
-							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}" data-type-id="{{ @project.type_id }}">
-								<span class="badge">{{ @project.priority_name }}</span>
-								<span class="title">
-									{{ @project.type_name }}
-									<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-									{{ @project.name | esc }}
-								</span>
-							</li>
+							<include href="backlog/item.html" />
 						</repeat>
 					</ul>
 				</div>
@@ -119,14 +98,7 @@
 							<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
 								<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
 									<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
-										<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" id="project_{{ @project.id }}" data-id="{{ @project.id }}" data-type-id="{{ @project.type_id }}">
-											<span class="badge">{{ @project.priority_name }}</span>
-											<span class="title">
-												{{ @project.type_name }}
-												<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-												{{ @project.name | esc }}
-											</span>
-										</li>
+										<include href="backlog/item.html" />
 									</repeat>
 								</ul>
 							</div>
@@ -139,14 +111,7 @@
 				<div class="tab-pane" id="tab-unsorted">
 					<ul class="list-group sortable">
 						<repeat group="{{ @unsorted }}" value="{{ @project }}" data-list-id="0">
-							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}" data-type-id="{{ @project.type_id }}">
-								<span class="badge">{{ @project.priority_name }}</span>
-								<span class="title">
-									{{ @project.type_name }}
-									<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-									{{ @project.name | esc }}
-								</span>
-							</li>
+							<include href="backlog/item.html" />
 						</repeat>
 					</ul>
 				</div>
@@ -154,7 +119,8 @@
 		</div>
 	</div>
 	<include href="blocks/footer.html" />
-	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
+	<script src="{{ @BASE }}/js/jquery-ui-dragsort.min.js"></script>
+	<script src="{{ @BASE }}/js/jquery.ui.touch-punch.min.js"></script>
 	<script src="{{ @BASE }}/minify/js/backlog.js"></script>
 </div>
 </body>
