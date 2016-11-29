@@ -73,16 +73,11 @@ CREATE TABLE `issue` (
 DROP TABLE IF EXISTS `issue_backlog`;
 CREATE TABLE `issue_backlog` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`user_id` int(10) unsigned NOT NULL,
-	`type_id` INT(10) unsigned NOT NULL,
 	`sprint_id` int(10) unsigned DEFAULT NULL,
 	`issues` blob NOT NULL,
 	PRIMARY KEY (`id`),
-	KEY `issue_backlog_user_id` (`user_id`),
-	KEY `issue_backlog_sprint_id` (`sprint_id`),
-	CONSTRAINT `issue_backlog_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `issue_backlog_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `issue_backlog_type_id` FOREIGN KEY (`type_id`) REFERENCES `issue_type`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+	UNIQUE KEY `issue_backlog_sprint_id` (`sprint_id`),
+	CONSTRAINT `issue_backlog_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_comment`;
@@ -153,13 +148,15 @@ DROP TABLE IF EXISTS `issue_type`;
 CREATE TABLE `issue_type` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(32) NOT NULL,
-	PRIMARY KEY (`id`)
+	`role` ENUM('task','project','bug') DEFAULT 'task' NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY issue_backlog_sprint_id (sprint_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `issue_type` (`id`, `name`) VALUES
-(1, 'Task'),
-(2, 'Project'),
-(3, 'Bug');
+INSERT INTO `issue_type` (`id`, `name`, `role`) VALUES
+(1, 'Task', 'task'),
+(2, 'Project', 'project'),
+(3, 'Bug', 'bug');
 
 DROP TABLE IF EXISTS `issue_update`;
 CREATE TABLE `issue_update` (
@@ -208,15 +205,15 @@ CREATE TABLE `issue_tag`(
 
 DROP TABLE IF EXISTS `issue_dependency`;
 CREATE TABLE `issue_dependency` (
-	  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  `issue_id` int(10) unsigned NOT NULL,
-	  `dependency_id` int(11) unsigned NOT NULL,
-	  `dependency_type` char(2) COLLATE utf8_unicode_ci NOT NULL,
-	  PRIMARY KEY (`id`),
-	  UNIQUE KEY `issue_id_dependency_id` (`issue_id`,`dependency_id`),
-	  KEY `dependency_id` (`dependency_id`),
-	  CONSTRAINT `issue_dependency_ibfk_2` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `issue_dependency_ibfk_3` FOREIGN KEY (`dependency_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`issue_id` int(10) unsigned NOT NULL,
+	`dependency_id` int(11) unsigned NOT NULL,
+	`dependency_type` char(2) COLLATE utf8_unicode_ci NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `issue_id_dependency_id` (`issue_id`,`dependency_id`),
+	KEY `dependency_id` (`dependency_id`),
+	CONSTRAINT `issue_dependency_ibfk_2` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `issue_dependency_ibfk_3` FOREIGN KEY (`dependency_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `sprint`;
@@ -305,4 +302,4 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 );
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '16.09.12');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '16.11.29');

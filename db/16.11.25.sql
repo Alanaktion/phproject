@@ -21,4 +21,4 @@ SELECT * FROM issue_backlog_converting;
 
 DROP TEMPORARY TABLE issue_backlog_converting;
 
-UPDATE `config` SET `value` = '16.19.25' WHERE `attribute` = 'version';
+UPDATE `config` SET `value` = '16.11.25' WHERE `attribute` = 'version';

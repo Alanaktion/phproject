@@ -20,10 +20,29 @@ function getQueryVariable(variable) {
 }
 
 var Backlog = {
-	updateUrl: BASE + '/backlog/edit',
-	projectReceived: 0,
 	init: function() {
-		Backlog.makeSortable('.sortable');
+		// Initialize sorting
+		if (window.sortBacklog) {
+			$('.sortable').sortable({
+				group: 'backlog',
+				ghostClass: 'placeholder',
+				filter: '.hidden-group,.hidden-type',
+				onAdd: function(event) {
+					var $item = $(event.item);
+					$.post(BASE + '/backlog/edit', {
+						id: $item.attr('data-id'),
+						sprint_id: $item.parents('.list-group').attr('data-list-id')
+					}).fail(function() {
+						console.error('Failed to save new sprint assignment');
+					});
+				},
+				onSort: function(event) {
+					Backlog.saveSortOrder(event.target);
+				}
+			});
+		}
+
+		// Open issue in new window on double-click
 		$('.sortable').on('dblclick', 'li', function() {
 			window.open(BASE + '/issues/' + $(this).data('id'));
 		});
@@ -45,7 +64,7 @@ var Backlog = {
 				});
 			}
 
-			Backlog.replaceUrl();
+			Backlog.updateUrl();
 			e.preventDefault();
 		});
 
@@ -55,7 +74,7 @@ var Backlog = {
 				typeId = $this.attr('data-type-id');
 			$this.parents('li').toggleClass('active');
 			$('.list-group-item[data-type-id=' + typeId + ']').toggleClass('hidden-type');
-			Backlog.replaceUrl();
+			Backlog.updateUrl();
 			e.preventDefault();
 		});
 
@@ -75,8 +94,11 @@ var Backlog = {
 				$('.list-group-item[data-type-id=' + val + ']').removeClass('hidden-type');
 			});
 		}
+
+		// Un-hide backlog
+		$('body').removeClass('is-loading');
 	},
-	replaceUrl: function() {
+	updateUrl: function() {
 		if (window.history && history.replaceState) {
 			var state = {};
 			state.groupId = $('.dropdown-menu .active a[data-user-ids]').attr('data-group-id');
@@ -102,124 +124,24 @@ var Backlog = {
 			history.replaceState(state, '', BASE + path);
 		}
 	},
-	makeSortable: function(selector) {
-		$(selector).sortable({
-			items: 'li:not(.unsortable)',
-			connectWith: '.sortable',
-			start: function(event, ui) {
-				// Fade out non-matching types
-				/*if($(ui.item).attr('data-type-id')) {
-					$('.sortable .list-group-item')
-						.filter(':not([data-type-id="' + $(ui.item).attr('data-type-id') + '"])')
-						.fadeTo(200, 0.25);
-				}*/
-			},
-			receive: function(event, ui) {
-				Backlog.projectReceive($(ui.item), $(ui.sender));
-				Backlog.projectReceived = true; // keep from repeating if changed lists
-			},
-			stop: function(event, ui) {
-				// Fade in all items
-				/*$('.sortable .list-group-item').fadeTo(150, 1);
-				if (Backlog.projectReceived !== true) {
-					Backlog.sameReceive($(ui.item));
-				} else {
-					Backlog.projectReceived = false;
-				}*/
-			}
-		}).disableSelection();
-	},
-	projectReceive: function(item, sender) {
-		var itemId = $(item).attr('data-id'),
-			receiverId = $(item).parent().attr('data-list-id'),
-			senderId = $(sender).attr('data-list-id');
-		if ($(item).parent().attr('data-list-id') !== undefined) {
-			var data = {
-					itemId: itemId,
-					sender: {
-						senderId: senderId
-					},
-					reciever: {
-						receiverId: receiverId
-					}
-				};
+	saveSortOrder: function(element) {
+		var $el = $(element),
+			items = [];
 
-			Backlog.ajaxUpdateBacklog(data, item);
-			Backlog.saveSortOrder([sender, $(item).parents('.sortable')]);
+		if ($el.attr('data-list-id') === undefined) {
+			return;
 		}
-	},
-	sameReceive: function(item) {
-		var itemId = $(item).attr('data-id'),
-			receiverId = $(item).parent().attr('data-list-id'),
-			data = {
-				itemId: itemId,
-				reciever: {
-					receiverId: receiverId
-				}
-			};
 
-		Backlog.ajaxUpdateBacklog(data, item);
-		Backlog.saveSortOrder([$(item).parents('.sortable')]);
-	},
-	ajaxUpdateBacklog: function(data, item) {
-		var projectId = data.itemId;
-		Backlog.block(projectId, item);
-		$.ajax({
-			type: 'POST',
-			url: Backlog.updateUrl,
-			data: data,
-			success: function() {
-				Backlog.unBlock(projectId, item);
-			},
-			error: function() {
-				Backlog.unBlock(projectId, item);
-				Backlog.showError(projectId, item);
-			}
+		$el.find('.list-group-item').each(function() {
+			items.push(parseInt($(this).attr('data-id')));
 		});
-	},
-	saveSortOrder: function(elements) {
-		console.log(elements);
 
-		$(elements).each(function() {
-			var $el = $(this),
-				items = [];
-
-			if ($el.attr('data-list-id') === undefined) {
-				return;
-			}
-
-			$el.find('.list-group-item').each(function() {
-				items.push(parseInt($(this).attr('data-id')));
-			});
-
-			$.post(BASE + '/backlog/sort', {
-				sprint_id: $el.attr('data-list-id'),
-				items: JSON.stringify(items)
-			}).error(function() {
-				console.error('An error occurred saving the sort order.');
-			});
+		$.post(BASE + '/backlog/sort', {
+			sprint_id: $el.attr('data-list-id'),
+			items: JSON.stringify(items)
+		}).fail(function() {
+			console.error('An error occurred saving the sort order.');
 		});
-	},
-	block: function(projectId, item) {
-		var project = $('#project_' + projectId);
-		project.append('<div class="spinner"></div>');
-		item.addClass('unsortable');
-		Backlog.makeSortable('.sortable'); //redo this so it is disabled
-	},
-	unBlock: function(projectId, item) {
-		var project = $('#project_' + projectId);
-		project.find('.spinner').remove();
-		item.removeClass('unsortable');
-		Backlog.makeSortable('.sortable'); //redo this so it is disabled
-	},
-	showError: function(projectId, item) {
-		var project = $('#project_' + projectId);
-		project.css({
-			'opacity': '.8'
-		});
-		project.append('<div class="error" title="An error occured while saving the task!"></div>');
-		item.addClass('unsortable');
-		Backlog.makeSortable('.sortable'); //redo this so it is disabled
 	}
 };
 

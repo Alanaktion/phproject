@@ -16,7 +16,6 @@ class Backlog extends \Controller {
 	 * @param \Base $f3
 	 */
 	public function index($f3) {
-
 		$sprint_model = new \Model\Sprint();
 		$sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
 
@@ -31,49 +30,41 @@ class Backlog extends \Controller {
 
 		$issue = new \Model\Issue\Detail();
 
-		$sprint_details = array();
+		$sprint_details = [];
 		foreach($sprints as $sprint) {
 			$projects = $issue->find(
 				array("deleted_date IS NULL AND sprint_id = ? AND type_id IN ($typeStr)", $sprint->id),
 				array('order' => 'priority DESC, due_date')
 			);
 
-			if(!empty($groupId)) {
-				// Add sorted projects
-				$sprintBacklog = array();
-				$sortModel = new \Model\Issue\Backlog;
-				$sortOrders = $sortModel->find(array("user_id = ? AND sprint_id = ? AND type_id IN ($typeStr)", $groupId, $sprint->id));
-				$sortArray = array();
-				if($sortOrders) {
-					$orders = array();
-					foreach($sortOrders as $order) {
-						$orders[] = json_decode($order->issues) ?: array();
-					}
-					$sortArray = \Helper\Matrix::instance()->merge($orders);
-					foreach($sortArray as $id) {
-						foreach($projects as $p) {
-							if($p->id == $id) {
-								$sprintBacklog[] = $p;
-							}
+			// Add sorted projects
+			$sprintBacklog = [];
+			$sortOrder = new \Model\Issue\Backlog;
+			$sortOrder->load(array("sprint_id = ?", $sprint->id));
+			if($sortOrder->id) {
+				$sortArray = json_decode($sortOrder->issues) ?: [];
+				$sortArray = array_unique($sortArray);
+				foreach($sortArray as $id) {
+					foreach($projects as $p) {
+						if($p->id == $id) {
+							$sprintBacklog[] = $p;
 						}
 					}
 				}
+			}
 
-				// Add remaining projects
-				foreach($projects as $p) {
-					if(!in_array($p->id, $sortArray)) {
-						$sprintBacklog[] = $p;
-					}
+			// Add remaining projects
+			foreach($projects as $p) {
+				if(!in_array($p->id, $sortArray)) {
+					$sprintBacklog[] = $p;
 				}
-			} else {
-				$sprintBacklog = $projects;
 			}
 
 			$sprint_details[] = $sprint->cast() + array("projects" => $sprintBacklog);
 		}
 
 		$large_projects = $f3->get("db.instance")->exec("SELECT i.parent_id FROM issue i JOIN issue_type t ON t.id = i.type_id WHERE i.parent_id IS NOT NULL AND t.role = 'project'");
-		$large_project_ids = array();
+		$large_project_ids = [];
 		foreach($large_projects as $p) {
 			$large_project_ids[] = $p["parent_id"];
 		}
@@ -93,16 +84,12 @@ class Backlog extends \Controller {
 		}
 
 		// Add sorted projects
-		$backlog = array();
-		$sortModel = new \Model\Issue\Backlog;
-		$sortOrders = $sortModel->find("sprint_id IS NULL");
-		$sortArray = array();
-		if($sortOrders) {
-			$orders = array();
-			foreach($sortOrders as $order) {
-				$orders[] = json_decode($order->issues) ?: array();
-			}
-			$sortArray = \Helper\Matrix::instance()->merge($orders);
+		$backlog = [];
+		$sortOrder = new \Model\Issue\Backlog;
+		$sortOrder->load(array("sprint_id IS NULL"));
+		if($sortOrder->id) {
+			$sortArray = json_decode($sortOrder->issues) ?: [];
+			$sortArray = array_unique($sortArray);
 			foreach($sortArray as $id) {
 				foreach($unset_projects as $p) {
 					if($p->id == $id) {
@@ -113,7 +100,7 @@ class Backlog extends \Controller {
 		}
 
 		// Add remaining projects
-		$unsorted = array();
+		$unsorted = [];
 		foreach($unset_projects as $p) {
 			if(!in_array($p->id, $sortArray)) {
 				$unsorted[] = $p;
@@ -152,8 +139,8 @@ class Backlog extends \Controller {
 	public function edit($f3) {
 		$post = $f3->get("POST");
 		$issue = new \Model\Issue();
-		$issue->load($post["itemId"]);
-		$issue->sprint_id = empty($post["reciever"]["receiverId"]) ? null : $post["reciever"]["receiverId"];
+		$issue->load($post["id"]);
+		$issue->sprint_id = empty($post["sprint_id"]) ? null : $post["sprint_id"];
 		$issue->save();
 		$this->_printJson($issue);
 	}
