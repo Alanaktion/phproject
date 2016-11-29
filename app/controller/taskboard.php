@@ -83,6 +83,15 @@ class Taskboard extends \Controller {
 			}
 		}
 
+		$type = new \Model\Issue\Type;
+		$projectTypes = $type->find(["role = ?", "project"]);
+		$f3->set("project_types", $projectTypes);
+		$projectTypeIds = [];
+		foreach($projectTypes as $type) {
+			$projectTypeIds[] = $type->id;
+		}
+		$projectTypeIdStr = implode(",", $projectTypeIds);
+
 		$f3->set("sprint", $sprint);
 		$f3->set("title", $sprint->name . " " . date('n/j', strtotime($sprint->start_date)) . "-" . date('n/j', strtotime($sprint->end_date)));
 		$f3->set("menuitem", "backlog");
@@ -115,9 +124,9 @@ class Taskboard extends \Controller {
 
 		// Find all visible tasks
 		$tasks = $issue->find(array(
-			"sprint_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN ($visible_status_ids)"
+			"sprint_id = ? AND type_id NOT IN ($projectTypeIdStr) AND deleted_date IS NULL AND status IN ($visible_status_ids)"
 				. (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
-			$sprint->id, $f3->get("issue_type.project")
+			$sprint->id
 		), array("order" => "priority DESC"));
 		$task_ids = array();
 		$parent_ids = array(0);
@@ -133,7 +142,7 @@ class Taskboard extends \Controller {
 
 		$typeIds = $f3->get("GET.type_id")
 			? array_filter($f3->split($f3->get("GET.type_id")), "is_numeric")
-			: array($f3->get("issue_type.project"));
+			: $projectTypeIds;
 		sort($typeIds, SORT_NUMERIC);
 		$typeStr = implode(",", $typeIds);
 
@@ -156,13 +165,10 @@ class Taskboard extends \Controller {
 		// Sort projects if a filter is given
 		if(!empty($params["filter"]) && is_numeric($params["filter"])) {
 			$sortModel = new \Model\Issue\Backlog;
-			$sortOrders = $sortModel->find(array("user_id = ? AND sprint_id = ?", $params["filter"], $sprint->id));
+			$sortOrder = $sortModel->load(array("sprint_id = ?", $sprint->id));
 			if($sortOrders) {
-				$orders = array();
-				foreach($sortOrders as $order) {
-					$orders[] = json_decode($order->issues) ?: array();
-				}
-				$sortArray = \Helper\Matrix::instance()->merge($orders);
+				$sortArray = json_decode($sortOrder->issues) ?: array();
+				$sortArray = array_unique($sortArray);
 				usort($projects, function(\Model\Issue $a, \Model\Issue $b) use($sortArray) {
 					$ka = array_search($a->id, $sortArray);
 					$kb = array_search($b->id, $sortArray);
