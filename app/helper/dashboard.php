@@ -118,7 +118,7 @@ class Dashboard extends \Prefab {
 	public function my_comments() {
 		$f3 = \Base::instance();
 		$comment = new \Model\Issue\Comment\Detail;
-		return $comment->find(array("user_id = ?", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 10));
+		return $comment->find(array("user_id = ? AND issue_deleted_date IS NULL", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 10));
 	}
 
 	public function recent_comments() {
