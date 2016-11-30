@@ -84,7 +84,7 @@
 
 			$.post(BASE + '/user/dashboard', {
 				widgets: JSON.stringify(items)
-			}).error(function() {
+			}).fail(function() {
 				alert('An error occurred saving the dashboard layout.');
 			});
 		};
@@ -99,7 +99,7 @@
 				saveWidgets();
 			},
 			distance: 10
-		}).disableSelection();
+		});
 
 		// Add close buttons to widgets
 		$('<a />').html('&times;').addClass('close').appendTo('.dashboard-widget-handle');

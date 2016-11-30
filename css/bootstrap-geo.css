@@ -5370,6 +5370,7 @@ body {
 	}
 }
 
+/* Backported features from 3.2 and 3.3 */
 .embed-responsive{
 	position:relative;
 	display:block;
@@ -5392,7 +5393,48 @@ body {
 .embed-responsive.embed-responsive-4by3{
 	padding-bottom:75%
 }
+.media {
+	margin-top: 15px;
+}
+.media:first-child {
+	margin-top: 0;
+}
+.media,
+.media-body {
+	zoom: 1;
+	overflow: hidden;
+}
+.media-body {
+	width: 10000px;
+}
+.media-object {
+	display: block;
+}
+.media-object.img-thumbnail {
+	max-width: none;
+}
+.media-right,
+.media > .pull-right {
+	padding-left: 10px;
+}
+.media-left,
+.media > .pull-left {
+	padding-right: 10px;
+}
+.media-left,
+.media-right,
+.media-body {
+	display: table-cell;
+	vertical-align: top;
+}
+.media-middle {
+	vertical-align: middle;
+}
+.media-bottom {
+	vertical-align: bottom;
+}
 
+/* Phproject additions */
 #taskboard .completed .card {
 	background-image: url('../img/geo/seamlessfire-web.gif');
 }

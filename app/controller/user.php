@@ -26,7 +26,8 @@ class User extends \Controller {
 	}
 
 	/**
-	 * GET /user/dashboard User dashboard
+	 * GET /user/dashboard
+	 * User dashboard
 	 *
 	 * @param \Base $f3
 	 * @throws \Exception
@@ -99,20 +100,16 @@ class User extends \Controller {
 		}
 	}
 
+	/**
+	 * Get array of theme names
+	 * @return array
+	 */
 	private function _loadThemes() {
-		$f3 = \Base::instance();
-
-		// Get theme list
-		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput", "emote", "fontawesome", "font-awesome", "simplemde");
-		$themes = array();
-		foreach (glob("css/*.css") as $file) {
-			$name = pathinfo($file, PATHINFO_FILENAME);
-			if(!in_array($name, $hidden_themes)) {
-				$themes[] = $name;
-			}
+		$themes = array("bootstrap.min");
+		foreach (glob("css/bootstrap-*.css") as $file) {
+			$themes[] = pathinfo($file, PATHINFO_FILENAME);
 		}
-
-		$f3->set("themes", $themes);
+		\Base::instance()->set("themes", $themes);
 		return $themes;
 	}
 

@@ -8,4 +8,4 @@ CREATE TABLE `issue_backlog`(
 ) ENGINE=INNODB CHARSET=utf8;
 
 # Update version
-UPDATE `config` SET `value` = '16.02.04-1' WHERE `attribute` = 'version';
+UPDATE `config` SET `value` = '16.02.04.1' WHERE `attribute` = 'version';
