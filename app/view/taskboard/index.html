@@ -81,25 +81,26 @@
 								{{ @dict.cols.type }} <span class="caret"></span>
 							</button>
 							<ul class="dropdown-menu" role="menu">
-								<F3:repeat group="{{ @issue_types }}" value="{{ @type }}">
+								<F3:repeat group="{{ @project_types }}" value="{{ @type }}">
 									{~
 										@active = in_array(@type.id, @type_ids);
 										if (@active) {
-											if (@GET.type_id) {
-												@idStr = implode(',', array_diff(@type_ids, array(@type.id)));
-											} else {
-												@idStr = null;
-											}
+											@idStr = implode(',', array_diff(@type_ids, [@type.id]));
 										} else {
 											if (@GET.type_id) {
-												@idStr = implode(',', array_unique(array_merge(array(@type.id), @type_ids)));
+												@idStr = implode(',', array_unique(array_merge([@type.id], @type_ids)));
 											} else {
 												@idStr = @type.id;
 											}
 										}
+										if (@idStr) {
+											@query = http_build_query(array_merge(@GET, ['type_id' => @idStr]));
+										} else {
+											@query = http_build_query(['group_id' => @GET.group_id]);
+										}
 									~}
 									<li class="{{ @active ? 'active' : '' }}">
-										<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @filter ? @filter . '/' : '' }}?{{ http_build_query(array_merge(@GET, array('type_id' => @idStr))) | esc }}">
+										<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @filter ? @filter . '/' : '' }}{{ @query ? '?' . @query : '' | esc }}">
 											{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
 										</a>
 									</li>

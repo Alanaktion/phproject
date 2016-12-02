@@ -73,16 +73,11 @@ CREATE TABLE `issue` (
 DROP TABLE IF EXISTS `issue_backlog`;
 CREATE TABLE `issue_backlog` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`user_id` int(10) unsigned NOT NULL,
-	`type_id` INT(10) unsigned NOT NULL,
 	`sprint_id` int(10) unsigned DEFAULT NULL,
 	`issues` blob NOT NULL,
 	PRIMARY KEY (`id`),
-	KEY `issue_backlog_user_id` (`user_id`),
-	KEY `issue_backlog_sprint_id` (`sprint_id`),
-	CONSTRAINT `issue_backlog_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `issue_backlog_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `issue_backlog_type_id` FOREIGN KEY (`type_id`) REFERENCES `issue_type`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+	UNIQUE KEY `issue_backlog_sprint_id` (`sprint_id`),
+	CONSTRAINT `issue_backlog_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_comment`;
@@ -153,13 +148,15 @@ DROP TABLE IF EXISTS `issue_type`;
 CREATE TABLE `issue_type` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(32) NOT NULL,
-	PRIMARY KEY (`id`)
+	`role` ENUM('task','project','bug') DEFAULT 'task' NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY issue_backlog_sprint_id (sprint_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `issue_type` (`id`, `name`) VALUES
-(1, 'Task'),
-(2, 'Project'),
-(3, 'Bug');
+INSERT INTO `issue_type` (`id`, `name`, `role`) VALUES
+(1, 'Task', 'task'),
+(2, 'Project', 'project'),
+(3, 'Bug', 'bug');
 
 DROP TABLE IF EXISTS `issue_update`;
 CREATE TABLE `issue_update` (
@@ -208,15 +205,15 @@ CREATE TABLE `issue_tag`(
 
 DROP TABLE IF EXISTS `issue_dependency`;
 CREATE TABLE `issue_dependency` (
-	  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  `issue_id` int(10) unsigned NOT NULL,
-	  `dependency_id` int(11) unsigned NOT NULL,
-	  `dependency_type` char(2) COLLATE utf8_unicode_ci NOT NULL,
-	  PRIMARY KEY (`id`),
-	  UNIQUE KEY `issue_id_dependency_id` (`issue_id`,`dependency_id`),
-	  KEY `dependency_id` (`dependency_id`),
-	  CONSTRAINT `issue_dependency_ibfk_2` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `issue_dependency_ibfk_3` FOREIGN KEY (`dependency_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`issue_id` int(10) unsigned NOT NULL,
+	`dependency_id` int(11) unsigned NOT NULL,
+	`dependency_type` char(2) COLLATE utf8_unicode_ci NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `issue_id_dependency_id` (`issue_id`,`dependency_id`),
+	KEY `dependency_id` (`dependency_id`),
+	CONSTRAINT `issue_dependency_ibfk_2` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `issue_dependency_ibfk_3` FOREIGN KEY (`dependency_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `sprint`;
@@ -235,7 +232,7 @@ DROP VIEW IF EXISTS `issue_comment_user`;
 CREATE VIEW `issue_comment_user` AS (select `c`.`id` AS `id`,`c`.`issue_id` AS `issue_id`,`c`.`user_id` AS `user_id`,`c`.`text` AS `text`, `c`.`file_id` as `file_id`, `c`.`created_date` AS `created_date`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`issue_comment` `c` join `user` `u` on((`c`.`user_id` = `u`.`id`))));
 
 DROP VIEW IF EXISTS `issue_comment_detail`;
-CREATE VIEW `issue_comment_detail` AS (select `c`.`id` AS `id`, `c`.`issue_id` AS `issue_id`, `c`.`user_id` AS `user_id`, `c`.`text` AS `text`, `c`.`file_id` AS `file_id`, `c`.`created_date` AS `created_date`, `u`.`username` AS `user_username`, `u`.`email` AS `user_email`, `u`.`name` AS `user_name`, `u`.`role` AS `user_role`, `u`.`task_color` AS `user_task_color`, `f`.`filename` AS `file_filename`, `f`.`filesize` AS `file_filesize`, `f`.`content_type` AS `file_content_type`, `f`.`downloads` AS `file_downloads`, `f`.`created_date` AS `file_created_date`, `f`.`deleted_date` AS `file_deleted_date` from ((`issue_comment` `c` join `user` `u` on ((`c`.`user_id` = `u`.`id`))) left join `issue_file` `f` on ((`c`.`file_id` = `f`.`id`))));
+CREATE VIEW `issue_comment_detail` AS (select `c`.`id` AS `id`, `c`.`issue_id` AS `issue_id`, `c`.`user_id` AS `user_id`, `c`.`text` AS `text`, `c`.`file_id` AS `file_id`, `c`.`created_date` AS `created_date`, `u`.`username` AS `user_username`, `u`.`email` AS `user_email`, `u`.`name` AS `user_name`, `u`.`role` AS `user_role`, `u`.`task_color` AS `user_task_color`, `f`.`filename` AS `file_filename`, `f`.`filesize` AS `file_filesize`, `f`.`content_type` AS `file_content_type`, `f`.`downloads` AS `file_downloads`, `f`.`created_date` AS `file_created_date`, `f`.`deleted_date` AS `file_deleted_date`, `i`.`deleted_date` AS `issue_deleted_date` from `issue_comment` `c` join `user` `u` on `c`.`user_id` = `u`.`id` left join `issue_file` `f` on `c`.`file_id` = `f`.`id` JOIN `issue` `i` ON `i`.`id` = `c`.`issue_id`);
 
 DROP VIEW IF EXISTS `issue_detail`;
 CREATE VIEW `issue_detail` AS (select `issue`.`id` AS `id`,`issue`.`status` AS `status`,`issue`.`type_id` AS `type_id`,`issue`.`name` AS `name`,`issue`.`description` AS `description`,`issue`.`parent_id` AS `parent_id`,`issue`.`author_id` AS `author_id`,`issue`.`owner_id` AS `owner_id`,`issue`.`priority` AS `priority`,`issue`.`hours_total` AS `hours_total`,`issue`.`hours_remaining` AS `hours_remaining`,`issue`.`hours_spent` AS `hours_spent`,`issue`.`created_date` AS `created_date`,`issue`.`closed_date` AS `closed_date`,`issue`.`deleted_date` AS `deleted_date`,`issue`.`start_date` AS `start_date`,`issue`.`due_date` AS `due_date`,isnull(`issue`.`due_date`) AS `has_due_date`,`issue`.`repeat_cycle` AS `repeat_cycle`,`issue`.`sprint_id` AS `sprint_id`,`issue`.`due_date_sprint` AS `due_date_sprint`,`sprint`.`name` AS `sprint_name`,`sprint`.`start_date` AS `sprint_start_date`,`sprint`.`end_date` AS `sprint_end_date`,`type`.`name` AS `type_name`,`status`.`name` AS `status_name`,`status`.`closed` AS `status_closed`,`priority`.`id` AS `priority_id`,`priority`.`name` AS `priority_name`,`author`.`username` AS `author_username`,`author`.`name` AS `author_name`,`author`.`email` AS `author_email`,`author`.`task_color` AS `author_task_color`,`owner`.`username` AS `owner_username`,`owner`.`name` AS `owner_name`,`owner`.`email` AS `owner_email`,`owner`.`task_color` AS `owner_task_color` from ((((((`issue` left join `user` `author` on((`issue`.`author_id` = `author`.`id`))) left join `user` `owner` on((`issue`.`owner_id` = `owner`.`id`))) left join `issue_status` `status` on((`issue`.`status` = `status`.`id`))) left join `issue_priority` `priority` on((`issue`.`priority` = `priority`.`value`))) left join `issue_type` `type` on((`issue`.`type_id` = `type`.`id`))) left join `sprint` on((`issue`.`sprint_id` = `sprint`.`id`))));

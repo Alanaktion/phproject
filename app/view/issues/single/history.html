@@ -1,6 +1,6 @@
 <repeat group="{{ @updates }}" value="{{ @update }}">
 	<div class="media" id="u-{{ @update.id }}">
-		<a class="pull-left" href="{{ @BASE }}/user/{{ @update.user_username }}">
+		<a class="media-left" href="{{ @BASE }}/user/{{ @update.user_username }}">
 			<img src="{{ @BASE }}/avatar/48-{{ @update.user_id }}.png" srcset="{{ @BASE }}/avatar/96-{{ @update.user_id }}.png 2x" class="media-object profile-picture img-rounded" alt>
 		</a>
 		<div class="media-body">

@@ -148,7 +148,7 @@
 			// Preload issue tree
 			$.get(BASE + '/user/{{ @this_user.username }}/tree', {}, function(data) {
 				$('#user-tree').html(data);
-			}).error(function() {
+			}).fail(function() {
 				$('#user-tree').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.404_text }}'));
 			});
 

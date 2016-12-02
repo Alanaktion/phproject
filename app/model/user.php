@@ -127,6 +127,44 @@ class User extends \Model {
 	}
 
 	/**
+	 * Get array of IDs of users within a group
+	 * @return array|NULL
+	 */
+	public function getGroupUserIds() {
+		if($this->role == "group") {
+			if($this->_groupUsers === null) {
+				$this->getGroupUsers();
+			}
+			$ids = array();
+			foreach($this->_groupUsers as $u) {
+				$ids[] = $u->id;
+			}
+			return $ids;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Get all user IDs in a group with a user, and all group IDs the user is in
+	 * @return array
+	 */
+	public function getSharedGroupUserIds() {
+		$groupModel = new \Model\User\Group;
+		$groups = $groupModel->find(array("user_id = ?", $this->id));
+		$groupIds = array();
+		foreach ($groups as $g) {
+			$groupIds[] = $g["group_id"];
+		}
+		$groupIdString = implode(",", $groupIds);
+		$ids = $groupIds;
+		$users = $groupModel->find("group_id IN ({$groupIdString})", array("group" => "user_id"));
+		foreach ($users as $u) {
+			$ids[] = $u->user_id;
+		}
+		return $ids;
+	}
+	/**
 	 * Get all user options
 	 * @return array
 	 */

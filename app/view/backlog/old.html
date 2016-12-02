@@ -39,13 +39,7 @@
 					<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
 						<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
 							<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
-								<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
-									<span class="badge">{{ @project.status_name }}</span>
-									<span class="title">
-										<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-										{{ @project.name | esc }}
-									</span>
-								</li>
+								<include href="backlog/item.html" />
 							</repeat>
 						</ul>
 					</div>
