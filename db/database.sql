@@ -58,6 +58,7 @@ CREATE TABLE `issue` (
 	`due_date` date DEFAULT NULL,
 	`repeat_cycle` varchar(10) NULL,
 	`sprint_id` int(10) unsigned DEFAULT NULL,
+	`due_date_sprint` tinyint(1) unsigned DEFAULT 0 NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `sprint_id` (`sprint_id`),
 	KEY `repeat_cycle` (`repeat_cycle`),
@@ -150,7 +151,7 @@ CREATE TABLE `issue_type` (
 	`name` varchar(32) NOT NULL,
 	`role` ENUM('task','project','bug') DEFAULT 'task' NOT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY issue_backlog_sprint_id (sprint_id)
+	KEY `issue_type_role` (`role`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `issue_type` (`id`, `name`, `role`) VALUES
