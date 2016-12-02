@@ -163,32 +163,30 @@ class Taskboard extends \Controller {
 		$projects = $issue->find($queryArray, array("order" => "owner_id ASC, priority DESC"));
 
 		// Sort projects if a filter is given
-		if(!empty($params["filter"]) && is_numeric($params["filter"])) {
-			$sortModel = new \Model\Issue\Backlog;
-			$sortOrder = $sortModel->load(array("sprint_id = ?", $sprint->id));
-			if($sortOrders) {
-				$sortArray = json_decode($sortOrder->issues) ?: array();
-				$sortArray = array_unique($sortArray);
-				usort($projects, function(\Model\Issue $a, \Model\Issue $b) use($sortArray) {
-					$ka = array_search($a->id, $sortArray);
-					$kb = array_search($b->id, $sortArray);
-					if($ka === false && $kb !== false) {
-						return -1;
-					}
-					if($ka !== false && $kb === false) {
-						return 1;
-					}
-					if($ka === $kb) {
-						return 0;
-					}
-					if($ka > $kb) {
-						return 1;
-					}
-					if($ka < $kb) {
-						return -1;
-					}
-				});
-			}
+		$sortModel = new \Model\Issue\Backlog;
+		$sortOrder = $sortModel->load(array("sprint_id = ?", $sprint->id));
+		if($sortOrder) {
+			$sortArray = json_decode($sortOrder->issues) ?: array();
+			$sortArray = array_unique($sortArray);
+			usort($projects, function(\Model\Issue $a, \Model\Issue $b) use($sortArray) {
+				$ka = array_search($a->id, $sortArray);
+				$kb = array_search($b->id, $sortArray);
+				if($ka === false && $kb !== false) {
+					return -1;
+				}
+				if($ka !== false && $kb === false) {
+					return 1;
+				}
+				if($ka === $kb) {
+					return 0;
+				}
+				if($ka > $kb) {
+					return 1;
+				}
+				if($ka < $kb) {
+					return -1;
+				}
+			});
 		}
 
 		// Build multidimensional array of all tasks and projects
