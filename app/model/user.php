@@ -152,15 +152,17 @@ class User extends \Model {
 	public function getSharedGroupUserIds() {
 		$groupModel = new \Model\User\Group;
 		$groups = $groupModel->find(array("user_id = ?", $this->id));
-		$groupIds = array();
+		$groupIds = [];
 		foreach ($groups as $g) {
 			$groupIds[] = $g["group_id"];
 		}
-		$groupIdString = implode(",", $groupIds);
 		$ids = $groupIds;
-		$users = $groupModel->find("group_id IN ({$groupIdString})", array("group" => "user_id"));
-		foreach ($users as $u) {
-			$ids[] = $u->user_id;
+		if ($groupIds) {
+			$groupIdString = implode(",", $groupIds);
+			$users = $groupModel->find("group_id IN ({$groupIdString})", array("group" => "user_id"));
+			foreach ($users as $u) {
+				$ids[] = $u->user_id;
+			}
 		}
 		return $ids;
 	}
