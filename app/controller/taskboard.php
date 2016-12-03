@@ -60,7 +60,7 @@ class Taskboard extends \Controller {
 		$sprint = new \Model\Sprint();
 
 		// Load current sprint if no sprint ID is given
-		if(!intval($params["id"])) {
+		if(empty($params["id"]) || !intval($params["id"])) {
 			$localDate = date('Y-m-d', \Helper\View::instance()->utc2local());
 			$sprint->load(array("? BETWEEN start_date AND end_date", $localDate));
 			if(!$sprint->id) {
