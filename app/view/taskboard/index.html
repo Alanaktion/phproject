@@ -65,13 +65,13 @@
 								<span class="fa fa-filter"></span> {{ @dict.groups }} <span class="caret"></span>
 							</button>
 							<ul class="dropdown-menu" role="menu">
-								<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/all">{{ @dict.all_tasks }}</a></li>
-								<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/groups">{{ @dict.my_groups }}</a></li>
-								<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/me">{{ @dict.my_tasks }}</a></li>
+								<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/all">{{ @dict.all_tasks }}</a></li>
+								<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/groups">{{ @dict.my_groups }}</a></li>
+								<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/me">{{ @dict.my_tasks }}</a></li>
 								<check if="{{ count(@groups) }}">
 									<li class="divider"></li>
 									<repeat group="{{ @groups }}" value="{{ @group }}">
-										<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @group.id }}">{{ @group.name | esc }}</a></li>
+										<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @group.id }}">{{ @group.name | esc }}</a></li>
 									</repeat>
 								</check>
 							</ul>
@@ -100,7 +100,7 @@
 										}
 									~}
 									<li class="{{ @active ? 'active' : '' }}">
-										<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @filter ? @filter . '/' : '' }}{{ @query ? '?' . @query : '' | esc }}">
+										<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @filter ? @filter . '/' : '' }}{{ @query ? '?' . @query : '' | esc }}">
 											{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
 										</a>
 									</li>
