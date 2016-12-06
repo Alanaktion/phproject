@@ -83,15 +83,6 @@ class Taskboard extends \Controller {
 			}
 		}
 
-		$type = new \Model\Issue\Type;
-		$projectTypes = $type->find(["role = ?", "project"]);
-		$f3->set("project_types", $projectTypes);
-		$projectTypeIds = [];
-		foreach($projectTypes as $type) {
-			$projectTypeIds[] = $type->id;
-		}
-		$projectTypeIdStr = implode(",", $projectTypeIds);
-
 		$f3->set("sprint", $sprint);
 		$f3->set("title", $sprint->name . " " . date('n/j', strtotime($sprint->start_date)) . "-" . date('n/j', strtotime($sprint->end_date)));
 		$f3->set("menuitem", "backlog");
@@ -122,9 +113,24 @@ class Taskboard extends \Controller {
 		// Load project list
 		$issue = new \Model\Issue\Detail();
 
+		// Determine type filtering
+		$type = new \Model\Issue\Type;
+		$projectTypes = $type->find(["role = ?", "project"]);
+		$f3->set("project_types", $projectTypes);
+		if ($f3->get("GET.type_id")) {
+			$typeIds =	array_filter($f3->split($f3->get("GET.type_id")), "is_numeric");
+		} else {
+			$typeIds = [];
+			foreach($projectTypes as $type) {
+				$typeIds[] = $type->id;
+			}
+		}
+		$typeStr = implode(",", $typeIds);
+		sort($typeIds, SORT_NUMERIC);
+
 		// Find all visible tasks
 		$tasks = $issue->find(array(
-			"sprint_id = ? AND type_id NOT IN ($projectTypeIdStr) AND deleted_date IS NULL AND status IN ($visible_status_ids)"
+			"sprint_id = ? AND type_id NOT IN ($typeStr) AND deleted_date IS NULL AND status IN ($visible_status_ids)"
 				. (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
 			$sprint->id
 		), array("order" => "priority DESC"));
@@ -140,26 +146,12 @@ class Taskboard extends \Controller {
 		$parent_ids_str = implode(",", $parent_ids);
 		$f3->set("tasks", $task_ids_str);
 
-		$typeIds = $f3->get("GET.type_id")
-			? array_filter($f3->split($f3->get("GET.type_id")), "is_numeric")
-			: $projectTypeIds;
-		sort($typeIds, SORT_NUMERIC);
-		$typeStr = implode(",", $typeIds);
-
 		// Find all visible projects or parent tasks if no type filter is given
-		if ($typeStr == $f3->get("issue_type.project")) {
-			$queryArray = array(
-				"id IN ($parent_ids_str) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
-					. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
-				$sprint->id, $f3->get("issue_type.project")
-			);
-		} else {
-			$queryArray = array(
-				"sprint_id = ? AND type_id IN (" . $typeStr . ") AND deleted_date IS NULL"
-					. (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
-				$sprint->id
-			);
-		}
+		$queryArray = array(
+			"(id IN ($parent_ids_str) AND type_id IN ($typeStr)) OR (sprint_id = ? AND type_id IN ($typeStr) AND deleted_date IS NULL"
+				. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
+			$sprint->id
+		);
 		$projects = $issue->find($queryArray, array("order" => "owner_id ASC, priority DESC"));
 
 		// Sort projects if a filter is given
