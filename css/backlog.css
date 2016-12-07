@@ -39,9 +39,6 @@ body.is-sortable #backlog .list-group-item:hover {
 	cursor: pointer;
 	font-weight: bold;
 }
-#backlog .panel-body.collapse {
-	display: none;
-}
 .badge.status {
 	background-color: #C6C6C6;
 	color: #fff;

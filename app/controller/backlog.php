@@ -173,11 +173,19 @@ class Backlog extends \Controller {
 		$sprint_model = new \Model\Sprint();
 		$sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date ASC"));
 
-		$issue = new \Model\Issue\Detail();
+		$type = new \Model\Issue\Type;
+		$projectTypes = $type->find(["role = ?", "project"]);
+		$f3->set("project_types", $projectTypes);
+		$typeIds = [];
+		foreach($projectTypes as $type) {
+			$typeIds[] = $type->id;
+		}
+		$typeStr = implode(",", $typeIds);
 
+		$issue = new \Model\Issue\Detail();
 		$sprint_details = array();
 		foreach($sprints as $sprint) {
-			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND role = ?", $sprint->id, "project"));
+			$projects = $issue->find(array("deleted_date IS NULL AND sprint_id = ? AND type_id IN ($typeStr)", $sprint->id));
 			$sprint_details[] = $sprint->cast() + array("projects" => $projects);
 		}
 
