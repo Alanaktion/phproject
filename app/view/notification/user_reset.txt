@@ -2,4 +2,4 @@
 
 Someone requested to reset your password on {{ date("F jS \\a\\t g:ia", $this->utc2local()) }}. If this was you, click the link below to reset your password. Otherwise, you can safely ignore this email.
 
-{{ @site.url }}reset/{{ @user.password . @user.salt }}
+{{ @site.url }}reset/{{ @token }}

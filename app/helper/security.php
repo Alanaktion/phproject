@@ -27,7 +27,7 @@ class Security extends \Prefab {
 	 * @return string
 	 */
 	public function salt() {
-		return md5($this->rand_bytes(64));
+		return md5($this->randBytes(64));
 	}
 
 	/**
@@ -35,7 +35,7 @@ class Security extends \Prefab {
 	 * @return string
 	 */
 	public function salt_sha1() {
-		return sha1($this->rand_bytes(64));
+		return sha1($this->randBytes(64));
 	}
 
 	/**
@@ -48,7 +48,7 @@ class Security extends \Prefab {
 		if(!in_array($size, $allSizes)) {
 			throw new Exception("Hash size must be one of: " . implode(", ", $allSizes));
 		}
-		return hash("sha$size", $this->rand_bytes(512), false);
+		return hash("sha$size", $this->randBytes(512), false);
 	}
 
 	/**
@@ -94,7 +94,7 @@ class Security extends \Prefab {
 	 * @param  integer $length
 	 * @return binary
 	 */
-	private function rand_bytes($length = 16) {
+	public function randBytes($length = 16) {
 
 		// Use OpenSSL cryptography extension if available
 		if(function_exists("openssl_random_pseudo_bytes")) {
