@@ -158,4 +158,24 @@ class Security extends \Prefab {
 		}
 	}
 
+	/**
+	 * Check if two hashes are equal, safe against timing attacks
+	 *
+	 * This is a userland implementation of the hash_equals function from 5.6
+	 *
+	 * @param  string $str1
+	 * @param  string $str2
+	 * @return boolean
+	 */
+	function hashEquals($str1, $str2) {
+		if(strlen($str1) != strlen($str2)) {
+			return false;
+		} else {
+			$res = $str1 ^ $str2;
+			$ret = 0;
+			for($i = strlen($res) - 1; $i >= 0; $i--) $ret |= ord($res[$i]);
+			return !$ret;
+		}
+	}
+
 }
