@@ -3,8 +3,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{{ @site.description | esc }}">
 <meta name="generator" content="alanaktion/phproject">
-<title>{{ empty(@title) ? @site.name : @title . ' - ' . @site.name }}</title>
+<title>{{ empty(@title) ? @site.name : @title . ' - ' . @site.name | esc }}</title>
 <link rel="stylesheet" href="{{ @BASE }}/{{ empty(@user.theme) ? @site.theme : @user.theme }}">
 <link rel="stylesheet" href="{{ @BASE }}/minify/css/style.css,datepicker.css">
 <link rel="stylesheet" href="{{ @BASE }}/css/font-awesome.min.css">
 <link rel="stylesheet" href="{{ @BASE }}/css/emote.css">
+<link rel="search" type="application/opensearchdescription+xml" href="{{ @BASE }}/opensearch.xml" title="{{ @site.name | esc }}">

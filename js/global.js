@@ -66,6 +66,9 @@ $(function() {
 	});
 
 	// Add double click on issue listing
+	$('.issue-list tbody tr input').dblclick(function(e) {
+		e.stopPropagation();
+	});
 	$('.issue-list tbody tr').dblclick(function() {
 		var id = $(this).data('id');
 		if(id) {

@@ -12,19 +12,19 @@
 		<div class="form-group">
 			<label for="name" class="col-md-2 control-label label-sm">{{ @dict.name }}</label>
 			<div class="col-md-10">
-				<input class="form-control input-sm" id="name" type="text" name="name" value="{{ empty(@POST) ? "" : @POST.name }}">
+				<input class="form-control input-sm" id="name" type="text" name="name" value="{{ empty(@POST) ? "" : @POST.name | esc }}">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="start_date" class="col-md-2 control-label label-sm">{{ @dict.start_date }}</label>
 			<div class="col-md-4">
-				<input class="form-control input-sm" id="start_date" type="date" name="start_date" value="{{ empty(@POST) ? "" : @POST.start_date }}" required>
+				<input class="form-control input-sm" id="start_date" type="date" name="start_date" value="{{ empty(@POST) ? "" : @POST.start_date | esc }}" required>
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="end_date" class="col-md-2 control-label label-sm">{{ @dict.end_date }}</label>
 			<div class="col-md-4">
-				<input class="form-control input-sm" id="end_date" type="date" name="end_date" value="{{ empty(@POST) ? "" : @POST.end_date }}" required>
+				<input class="form-control input-sm" id="end_date" type="date" name="end_date" value="{{ empty(@POST) ? "" : @POST.end_date | esc }}" required>
 			</div>
 		</div>
 		<div class="form-group">

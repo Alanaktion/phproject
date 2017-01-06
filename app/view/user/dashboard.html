@@ -17,7 +17,7 @@
 		<span class="fa fa-plus"></span>&ensp;{{ @dict.add_widgets }}
 	</a>
 	<check if="{{ @sprint && @sprint.id }}">
-		<a class="btn btn-default btn-xs" href="{{ @BASE }}/taskboard/0/me">
+		<a class="btn btn-default btn-xs" href="{{ @BASE }}/taskboard">
 			<span class="fa fa-list"></span>&ensp;{{ @dict.taskboard }}
 		</a>
 	</check>
@@ -40,7 +40,7 @@
 			<form class="modal-content" action="{{ @BASE }}/user/dashboard" method="post">
 				<input type="hidden" name="action" value="add">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="">
+					<button type="button" class="close" data-dismiss="modal" aria-label="{{ @dict.close }}">
 						<span aria-hidden="true">&times;</span>
 					</button>
 					<h4 class="modal-title">{{ @dict.add_widgets }}</h4>
@@ -84,7 +84,7 @@
 
 			$.post(BASE + '/user/dashboard', {
 				widgets: JSON.stringify(items)
-			}).error(function() {
+			}).fail(function() {
 				alert('An error occurred saving the dashboard layout.');
 			});
 		};
@@ -99,7 +99,7 @@
 				saveWidgets();
 			},
 			distance: 10
-		}).disableSelection();
+		});
 
 		// Add close buttons to widgets
 		$('<a />').html('&times;').addClass('close').appendTo('.dashboard-widget-handle');

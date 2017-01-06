@@ -260,7 +260,7 @@ class Issues extends \Controller {
 					}
 
 					// Save to the sprint of the due date if no sprint selected
-					if (!empty($post['due_date']) && empty($post['sprint_id'])) {
+					if (!empty($post['due_date']) && empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
 						$sprint = new \Model\Sprint;
 						$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
 						$issue->sprint_id = $sprint->id;
@@ -283,16 +283,9 @@ class Issues extends \Controller {
 					return;
 				}
 			}
-
-		} else {
-			$f3->reroute($post["url_path"] . "?" . $post["url_query"]);
 		}
 
-		if (!empty($post["url_path"]))	{
-			$f3->reroute($post["url_path"] . "?" . $post["url_query"]);
-		} else {
-			$f3->reroute("/issues?" . $post["url_query"]);
-		}
+		$f3->reroute("/issues?" . $post["url_query"]);
 	}
 
 	/**
@@ -572,7 +565,7 @@ class Issues extends \Controller {
 
 					// Save to the sprint of the due date unless one already set
 					if ($i=="due_date" && !empty($val)) {
-						if(empty($post['sprint_id'])) {
+						if(empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
 							$sprint = new \Model\Sprint;
 							$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
 							$issue->sprint_id = $sprint->id;

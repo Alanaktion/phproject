@@ -19,11 +19,17 @@
 	<check if="{{ @issues.count }}">
 		<div class="text-center">
 			<ul class="pagination pagination-sm" style="margin: 15px 0;">
-				<li {~ if(@issues.pos == 0) echo 'class="disabled"' ~}><a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ @issues.pos ? @issues.pos - 1 : 0 }}&amp;closed={{ @@GET.closed }}">&laquo;</a></li>
+				<li {~ if(@issues.pos == 0) echo 'class="disabled"' ~}>
+					<a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ @issues.pos ? @issues.pos - 1 : 0 }}&amp;closed={{ intval(@@GET.closed) }}">&laquo;</a>
+				</li>
 				<repeat group="{{ @pages }}" value="{{ @page }}">
-					<li {~ if(@page == @issues.pos) echo 'class="active"' ~}><a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ @page }}&amp;closed={{ @@GET.closed }}">{{ @page + 1 }}</a></li>
+					<li {~ if(@page == @issues.pos) echo 'class="active"' ~}>
+						<a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ @page }}&amp;closed={{ intval(@@GET.closed) }}">{{ @page + 1 }}</a>
+					</li>
 				</repeat>
-				<li {~ if(@issues.pos == @issues.count - 1) echo 'class="disabled"' ~}><a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ (@issues.pos < @issues.count - 1) ? @issues.pos + 1 : @issues.count - 1 }}&amp;closed={{ @@GET.closed }}">&raquo;</a></li>
+				<li {~ if(@issues.pos == @issues.count - 1) echo 'class="disabled"' ~}>
+					<a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ (@issues.pos < @issues.count - 1) ? @issues.pos + 1 : @issues.count - 1 }}&amp;closed={{ intval(@@GET.closed) }}">&raquo;</a>
+				</li>
 			</ul>
 		</div>
 	</check>

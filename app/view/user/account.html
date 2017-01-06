@@ -105,6 +105,12 @@
 						{{ @dict.disable_editor }}
 					</label>
 				</div>
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" name="disable_due_alerts" value="1" {{ @user_obj->option('disable_due_alerts') ? 'checked' : '' }}>
+						{{ @dict.disable_due_alerts }}
+					</label>
+				</div>
 				<button type="submit" class="btn btn-success btn-sm">{{ @dict.save }}</button>
 			</form>
 		</div>

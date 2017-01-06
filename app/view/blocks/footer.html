@@ -5,7 +5,7 @@
 ~}
 <check if="{{ @DEBUG == 3 }}">
 	<br>
-	<div class="well well-sm log">{{ @dblog }}</div>
+	<div class="well well-sm log">{{ @dblog | esc }}</div>
 </check>
 <footer class="row">
 	<div class="col-xs-4">

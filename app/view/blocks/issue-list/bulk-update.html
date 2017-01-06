@@ -20,6 +20,27 @@
 						</select>
 					</div>
 				</div>
+				<check if="{{ @user.role=='admin' }}">
+					<div class="form-group">
+						<label class="col-md-3 control-label label-sm">{{ @dict.cols.author }}</label>
+						<div class="col-md-9">
+							<select class="form-control input-sm" name="author_id">
+								<option value="">{{ @dict.choose_option }}</option>
+								<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
+								<optgroup label="{{ @dict.groups }}">
+									<repeat group="{{ @groups }}" value="{{ @group }}">
+										<option value="{{ @group.id }}">{{ @group.name | esc }}</option>
+									</repeat>
+								</optgroup>
+								<optgroup label="{{ @dict.users }}">
+									<repeat group="{{ @users }}" value="{{ @item }}">
+										<option value="{{ @item.id }}">{{ @item.name | esc }}</option>
+									</repeat>
+								</optgroup>
+							</select>
+						</div>
+					</div>
+				</check>
 				<div class="form-group">
 					<label class="col-sm-3 control-label label-sm">{{ @dict.cols.assignee }}</label>
 					<div class="col-sm-9">
@@ -49,7 +70,11 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label label-sm">{{ @dict.cols.due_date }}</label>
 					<div class="col-sm-9">
-						<input class="form-control input-sm bulk-input" id="due_date" type="text" name="due_date"  value="">
+						<input class="form-control input-sm bulk-input" id="due_date" type="text" name="due_date" value="">
+						<label class="checkbox-inline">
+							<input type="checkbox" name="due_date_sprint" value="1">
+							{{ @dict.set_sprint_from_due_date }}
+						</label>
 					</div>
 				</div>
 				<div class="form-group">
@@ -114,7 +139,6 @@
 				<button type="submit" id="bulk-submit" class="btn btn-sm btn-primary">{{ @dict.submit }}</button>
 			</div>
 			<input type="hidden" id="url_query" name="url_query" value="{{ http_build_query($_GET) | esc }}" />
-			<input type="hidden" id="url_path" name="url_path" value="{{ @PATH | esc }}" />
 		</form>
 	</div>
 </div>

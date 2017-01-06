@@ -140,8 +140,8 @@
 					<true><option value="repeat" selected>{{ @dict.repeating }}</option></true>
 					<false><option value="repeat">{{ @dict.repeating }}</option></false>
 				</check>
-				<check if="{{ isset(@GET.repeat_cycle) && @GET.repeat_cycle == null }}">
-					<true><option value="none" selected>{{ @dict.not_repeating }}</option></true>
+				<check if="{{ empty(@GET.repeat_cycle) }}">
+					<true><option value="" selected>{{ @dict.not_repeating }}</option></true>
 					<false><option value="">{{ @dict.not_repeating }}</option></false>
 				</check>
 			</optgroup>

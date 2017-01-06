@@ -9,30 +9,6 @@ class Taskboard extends \Controller {
 	}
 
 	/**
-	 * Takes two dates formatted as YYYY-MM-DD and creates an
-	 * inclusive array of the dates between the from and to dates.
-	 * @param  string $strDateFrom
-	 * @param  string $strDateTo
-	 * @return array
-	 */
-	protected function _createDateRangeArray($strDateFrom, $strDateTo) {
-		$aryRange = array();
-
-		$iDateFrom = mktime(1,0,0,substr($strDateFrom,5,2),substr($strDateFrom,8,2),substr($strDateFrom,0,4));
-		$iDateTo = mktime(1,0,0,substr($strDateTo,5,2),substr($strDateTo,8,2),substr($strDateTo,0,4));
-
-		if ($iDateTo >= $iDateFrom) {
-			$aryRange[] = date('Y-m-d', $iDateFrom); // first entry
-			while ($iDateFrom < $iDateTo) {
-				$iDateFrom += 86400; // add 24 hours
-				$aryRange[] = date('Y-m-d', $iDateFrom);
-			}
-		}
-
-		return $aryRange;
-	}
-
-	/**
 	 * Get a list of users from a filter
 	 * @param  string $params URL Parameters
 	 * @return array
@@ -56,6 +32,7 @@ class Taskboard extends \Controller {
 			$user = new \Model\User();
 			$user->load($params["filter"]);
 			if ($user->role == 'group') {
+				\Base::instance()->set("filterGroup", $user);
 				$group_model = new \Model\User\Group();
 				$users_result = $group_model->find(array("group_id = ?", $user->id));
 				$filter_users = array(intval($params["filter"]));
@@ -83,7 +60,7 @@ class Taskboard extends \Controller {
 		$sprint = new \Model\Sprint();
 
 		// Load current sprint if no sprint ID is given
-		if(!intval($params["id"])) {
+		if(empty($params["id"]) || !intval($params["id"])) {
 			$localDate = date('Y-m-d', \Helper\View::instance()->utc2local());
 			$sprint->load(array("? BETWEEN start_date AND end_date", $localDate));
 			if(!$sprint->id) {
@@ -136,11 +113,26 @@ class Taskboard extends \Controller {
 		// Load project list
 		$issue = new \Model\Issue\Detail();
 
+		// Determine type filtering
+		$type = new \Model\Issue\Type;
+		$projectTypes = $type->find(["role = ?", "project"]);
+		$f3->set("project_types", $projectTypes);
+		if ($f3->get("GET.type_id")) {
+			$typeIds =	array_filter($f3->split($f3->get("GET.type_id")), "is_numeric");
+		} else {
+			$typeIds = [];
+			foreach($projectTypes as $type) {
+				$typeIds[] = $type->id;
+			}
+		}
+		$typeStr = implode(",", $typeIds);
+		sort($typeIds, SORT_NUMERIC);
+
 		// Find all visible tasks
 		$tasks = $issue->find(array(
-			"sprint_id = ? AND type_id != ? AND deleted_date IS NULL AND status IN ($visible_status_ids)"
+			"sprint_id = ? AND type_id NOT IN ($typeStr) AND deleted_date IS NULL AND status IN ($visible_status_ids)"
 				. (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
-			$sprint->id, $f3->get("issue_type.project")
+			$sprint->id
 		), array("order" => "priority DESC"));
 		$task_ids = array();
 		$parent_ids = array(0);
@@ -154,40 +146,39 @@ class Taskboard extends \Controller {
 		$parent_ids_str = implode(",", $parent_ids);
 		$f3->set("tasks", $task_ids_str);
 
-		// Find all visible projects or parent tasks
-		$projects = $issue->find(array(
-			"id IN ($parent_ids_str) OR (sprint_id = ? AND type_id = ? AND deleted_date IS NULL"
+		// Find all visible projects or parent tasks if no type filter is given
+		$queryArray = array(
+			"(id IN ($parent_ids_str) AND type_id IN ($typeStr)) OR (sprint_id = ? AND type_id IN ($typeStr) AND deleted_date IS NULL"
 				. (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
-			$sprint->id, $f3->get("issue_type.project")
-		), array("order" => "owner_id ASC, priority DESC"));
+			$sprint->id
+		);
+		$projects = $issue->find($queryArray, array("order" => "owner_id ASC, priority DESC"));
 
 		// Sort projects if a filter is given
-		if(!empty($params["filter"]) && is_numeric($params["filter"])) {
-			$sortModel = new \Model\Issue\Backlog;
-			$sortModel->load(array("user_id = ? AND sprint_id = ?", $params["filter"], $sprint->id));
-			$sortArray = array();
-			if($sortModel->id) {
-				$sortArray = json_decode($sortModel->issues);
-				usort($projects, function(\Model\Issue $a, \Model\Issue $b) use($sortArray) {
-					$ka = array_search($a->id, $sortArray);
-					$kb = array_search($b->id, $sortArray);
-					if($ka === false && $kb !== false) {
-						return -1;
-					}
-					if($ka !== false && $kb === false) {
-						return 1;
-					}
-					if($ka === $kb) {
-						return 0;
-					}
-					if($ka > $kb) {
-						return 1;
-					}
-					if($ka < $kb) {
-						return -1;
-					}
-				});
-			}
+		$sortModel = new \Model\Issue\Backlog;
+		$sortOrder = $sortModel->load(array("sprint_id = ?", $sprint->id));
+		if($sortOrder) {
+			$sortArray = json_decode($sortOrder->issues) ?: array();
+			$sortArray = array_unique($sortArray);
+			usort($projects, function(\Model\Issue $a, \Model\Issue $b) use($sortArray) {
+				$ka = array_search($a->id, $sortArray);
+				$kb = array_search($b->id, $sortArray);
+				if($ka === false && $kb !== false) {
+					return -1;
+				}
+				if($ka !== false && $kb === false) {
+					return 1;
+				}
+				if($ka === $kb) {
+					return 0;
+				}
+				if($ka > $kb) {
+					return 1;
+				}
+				if($ka < $kb) {
+					return -1;
+				}
+			});
 		}
 
 		// Build multidimensional array of all tasks and projects
@@ -215,6 +206,7 @@ class Taskboard extends \Controller {
 
 		}
 
+		$f3->set("type_ids", $typeIds);
 		$f3->set("taskboard", array_values($taskboard));
 		$f3->set("filter", $params["filter"]);
 
@@ -227,124 +219,190 @@ class Taskboard extends \Controller {
 	}
 
 	/**
-	 * Load the burndown chart data
+	 * Load the hourly burndown chart data
 	 *
-	 * @param \Base $f3
-	 * @param array $params
+	 * @param  \Base $f3
+	 * @param  array $params
 	 */
 	public function burndown($f3, $params) {
 		$sprint = new \Model\Sprint;
 		$sprint->load($params["id"]);
 
-		if(!$sprint->id) {
+		if (!$sprint->id) {
 			$f3->error(404);
 			return;
 		}
 
-		$visible_tasks = explode(",", $params["tasks"]);
+		$db = $f3->get("db.instance");
 
-		// Visible tasks must have at least one key
-		if (empty($visible_tasks)) {
-			$visible_tasks = array(0);
+		$user = new \Model\User;
+		$user->load(array("id = ?", $params["filter"]));
+		if (!$user->id) {
+			$f3->error(404);
+			return;
 		}
 
-		// Get today's date
-		$today = date('Y-m-d');
-		$today = $today . " 23:59:59";
+		$query = "
+			SELECT SUM(IFNULL(f.new_value, IFNULL(i.hours_total, i.hours_remaining))) AS remaining
+			FROM issue_update_field f
+			JOIN issue_update u ON u.id = f.issue_update_id
+			JOIN (
+				SELECT MAX(u.id) AS max_id
+				FROM issue_update u
+				JOIN issue_update_field f ON f.issue_update_id = u.id
+				JOIN issue i ON i.id = u.issue_id
+				JOIN user_group g ON g.user_id = i.owner_id OR g.group_id = i.owner_id
+				WHERE f.field = 'hours_remaining'
+					AND i.sprint_id = :sprint1
+					AND u.created_date < :date1
+					AND g.group_id = :user1
+				GROUP BY u.issue_id
+			) a ON a.max_id = u.id
+			RIGHT JOIN (
+				SELECT i.*
+				FROM issue i
+				JOIN user_group g ON g.user_id = i.owner_id OR g.group_id = i.owner_id
+				WHERE i.sprint_id = :sprint2
+				AND g.group_id = :user2
+			) i ON i.id = u.issue_id
+			WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
+				AND i.created_date < :date2";
 
-		// Check to see if the sprint is completed
-		if ($today < strtotime($sprint->end_date . ' + 1 day')) {
-			$burnComplete = 0;
-			$burnDates = $this->_createDateRangeArray($sprint->start_date, $today);
-			$remainingDays = $this->_createDateRangeArray($today, $sprint->end_date);
-		} else {
-			$burnComplete = 1;
-			$burnDates = $this->_createDateRangeArray($sprint->start_date, $sprint->end_date);
-			$remainingDays = array();
+		$start = strtotime($sprint->getFirstWeekday());
+		$end = min(strtotime($sprint->getLastWeekday() . " 23:59:59"), time());
+
+		$return = [];
+		$cur = $start;
+		$helper = \Helper\View::instance();
+		$offset = $helper->timeoffset();
+		while($cur < $end) {
+			/*// Weekdays only
+			if (in_array(date("w", $cur), [0, 6])) {
+				continue;
+			}*/
+			$date = date("Y-m-d H:i:00", $cur);
+			$utc = date("Y-m-d H:i:s", $cur - $offset);
+			$return[$date] = round($db->exec($query, [
+				":date1" => $utc,
+				":date2" => $utc,
+				":sprint1" => $sprint->id,
+				":sprint2" => $sprint->id,
+				":user1" => $user->id,
+				":user2" => $user->id,
+			])[0]["remaining"], 2);
+			$cur += 3600;
 		}
 
-		$burnDays = array();
-		$burnDatesCount = count($burnDates);
+		$this->_printJson($return);
+	}
+
+	/**
+	 * Load the precise burndown chart data
+	 *
+	 * This function is not currently used due to calculation issues. It's been
+	 * replaced with the burndown() function above.
+	 *
+	 * @todo  Find and fix calculation issues
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 */
+	public function burndownPrecise($f3, $params) {
+		$sprint = new \Model\Sprint;
+		$sprint->load($params["id"]);
+
+		if (!$sprint->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$user = new \Model\User;
+		$user->load(array("id = ?", $params["filter"]));
+		if (!$user->id) {
+			$f3->error(404);
+			return;
+		}
+
+		$helper = \Helper\View::instance();
+		$offset = $helper->timeoffset();
+		$start = date("Y-m-d H:i:s", strtotime($sprint->start_date) - $offset);
+		$end = date("Y-m-d H:i:s", strtotime($sprint->end_date . " 23:59:59") - $offset);
 
 		$db = $f3->get("db.instance");
-		$visible_tasks_str = implode(",", $visible_tasks);
-		$query_initial =
-				"SELECT SUM(IFNULL(i.hours_total, i.hours_remaining)) AS remaining
-				FROM issue i
-				WHERE i.created_date < :date
-				AND i.id IN (" . implode(",", $visible_tasks) . ")";
-		$query_daily =
-				"SELECT SUM(IF(f.id IS NULL, IFNULL(i.hours_total, i.hours_remaining), f.new_value)) AS remaining
-				FROM issue_update_field f
-				JOIN issue_update u ON u.id = f.issue_update_id
-				JOIN (
-					SELECT MAX(u.id) AS max_id
-					FROM issue_update u
-					JOIN issue_update_field f ON f.issue_update_id = u.id
-					WHERE f.field = 'hours_remaining'
-					AND u.created_date < :date
-					AND u.issue_id IN ($visible_tasks_str)
-					GROUP BY u.issue_id
-				) a ON a.max_id = u.id
-				RIGHT JOIN issue i ON i.id = u.issue_id
-				WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
-				AND i.created_date < :date
-				AND i.id IN ($visible_tasks_str)";
+		$plannedHours = $db->exec(
+			"SELECT GREATEST(i.created_date, :start) AS ts,
+				SUM(i.hours_total) AS hours
+			FROM issue i
+			JOIN user_group g ON g.`user_id` = i.`owner_id` OR g.`group_id` = i.`owner_id`
+			WHERE i.sprint_id = :sprint
+				AND g.`group_id` = :user
+				AND i.`hours_total` > 0
+			GROUP BY ts
+			ORDER BY ts ASC",
+			array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $start)
+		);
+		$updatedHours = $db->exec(
+			"SELECT GREATEST(u.created_date, :start) AS ts,
+				SUM(IFNULL(f.`old_value`, 0)) `old`,
+				SUM(f.`new_value`) `new`,
+				(SUM(f.new_value) - SUM(IFNULL(f.old_value, 0))) diff
+			FROM issue_update_field f
+			JOIN issue_update u ON f.`issue_update_id` = u.`id`
+			JOIN issue i ON i.id = u.`issue_id`
+			JOIN user_group g ON g.`user_id` = i.`owner_id`
+				OR g.`group_id` = i.`owner_id`
+			WHERE i.sprint_id = :sprint
+				AND g.`group_id` = :user
+				AND u.`created_date` < :end
+				AND f.`field` = 'hours_remaining'
+				AND IFNULL(f.`old_value`, 0) != IFNULL(f.`new_value`, 0)
+			GROUP BY ts
+			ORDER BY ts ASC",
+			array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $start, ":end" => $end)
+		);
 
-		$i = 1;
-		foreach($burnDates as $date) {
-
-			// Get total_hours, which is the initial amount entered on each task, and cache this query
-			if($i == 1) {
-				$result = $db->exec($query_initial, array(":date" => $sprint->start_date), 2592000);
-				$burnDays[$date] = $result[0];
-			}
-
-			// Get between day values and cache them... this also will get the last day of completed sprints so they will be cached
-			elseif ($i < ($burnDatesCount - 1) || $burnComplete) {
-				$result = $db->exec($query_daily, array(":date" => $date . " 23:59:59"), 2592000);
-				$burnDays[$date] = $result[0];
-			}
-
-			// Get the today's info and don't cache it
-			else {
-				$result = $db->exec($query_daily, array(":date" => $date . " 23:59:59"));
-				$burnDays[$date] = $result[0];
-			}
-
-			$i++;
+		$diffs = array();
+		foreach($plannedHours as $h) {
+			$diffs[date("Y-m-d H:i:s", $helper->utc2local($h["ts"]))] = $h["hours"];
 		}
-
-		// Add in empty days
-		if(!$burnComplete) {
-			$i = 0;
-			foreach($remainingDays as $day) {
-				if($i != 0){
-					$burnDays[$day] = NULL;
-				}
-				$i++;
+		foreach($updatedHours as $h) {
+			if (array_key_exists(date("Y-m-d H:i:s", $helper->utc2local($h["ts"])), $diffs)) {
+				$diffs[date("Y-m-d H:i:s", $helper->utc2local($h["ts"]))] += $h["diff"];
+			} else {
+				$diffs[date("Y-m-d H:i:s", $helper->utc2local($h["ts"]))] = $h["diff"];
 			}
 		}
+		ksort($diffs);
 
-		// Reformat the date and remove weekends
-		$i = 0;
-		foreach($burnDays as $burnKey => $burnDay) {
-
-			$weekday = date("D", strtotime($burnKey));
-			$weekendDays = array("Sat","Sun");
-
-			if(!in_array($weekday, $weekendDays)) {
-				$newDate = date("M j", strtotime($burnKey));
-				$burnDays[$newDate] = $burnDays[$burnKey];
-				unset($burnDays[$burnKey]);
-			} else { // Remove weekend days
-				unset($burnDays[$burnKey]);
-			}
-
-			$i++;
+		$totals = array();
+		$current = 0;
+		foreach($diffs as $ts=>$diff) {
+			$totals[$ts] = $current = $current + $diff;
 		}
 
-		$this->_printJson($burnDays);
+		$totalsRounded = array_map(function($val) {
+			return round($val, 2);
+		}, $totals);
+
+		$this->_printJson($totalsRounded);
+	}
+
+	/**
+	 * Save man hours for a group/user
+	 *
+	 * @param  \Base $f3
+	 */
+	public function saveManHours($f3) {
+		$user = new \Model\User;
+		$user->load(array("id = ?", $f3->get("POST.user_id")));
+		if (!$user->id) {
+			$f3->error(404);
+		}
+		if ($user->id != $this->_userId && $user->role != "group") {
+			$f3->error(403);
+		}
+		$user->option("man_hours", floatval($f3->get("POST.man_hours")));
+		$user->save();
 	}
 
 	/**
@@ -393,9 +451,9 @@ class Taskboard extends \Controller {
 			$issue->hours_remaining = $post["hours"];
 			$issue->hours_spent += $post["hours_spent"];
 			if(!empty($post["hours_spent"]) && !empty($post["burndown"])) {
-				$issue->hours_remaining -=  $post["hours_spent"];
+				$issue->hours_remaining -= $post["hours_spent"];
 			}
-			if($issue->hours_remaining < 0) {
+			if(!$issue->hours_remaining || $issue->hours_remaining < 0) {
 				$issue->hours_remaining = 0;
 			}
 			if(!empty($post["dueDate"])) {
@@ -403,8 +461,8 @@ class Taskboard extends \Controller {
 			} else {
 				$issue->due_date = null;
 			}
-			if(!empty($post["repeat_cycle"])) {
-				$issue->repeat_cycle = $post["repeat_cycle"];
+			if(isset($post["repeat_cycle"])) {
+				$issue->repeat_cycle = $post["repeat_cycle"] ?: null;
 			}
 			$issue->priority = $post["priority"];
 			if(!empty($post["storyId"])) {

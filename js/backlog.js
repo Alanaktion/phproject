@@ -1,138 +1,147 @@
 /* jslint browser: true */
 /* globals $ BASE */
 
-function cleanId(identifier, id) {
-	return (id.replace(identifier + '_', ''));
-}
-
-function sanitizeSortableArray(identifier, sortableString) {
-	sortableString = sortableString.replace(/&/g, '');
-
-	var sortableArray = [];
-	sortableArray = sortableString.split(identifier + '[]=');
-	sortableArray.splice(0, 1);
-
-	return sortableArray;
+/**
+ * Get query string variable value by key
+ * @link   https://css-tricks.com/snippets/javascript/get-url-variables/
+ * @param  {string} variable
+ * @return {string}
+ */
+function getQueryVariable(variable) {
+	var query = window.location.search.substring(1);
+	var vars = query.split("&");
+	for (var i = 0; i < vars.length; i++) {
+		var pair = vars[i].split("=");
+		if(pair[0] == variable) {
+			return pair[1];
+		}
+	}
+	return(false);
 }
 
 var Backlog = {
-	updateUrl: BASE + '/backlog/edit',
-	projectReceived: 0,
 	init: function() {
-		Backlog.makeSortable('.sortable');
+		// Initialize sorting
+		if (window.sortBacklog) {
+			$('.sortable').sortable({
+				group: 'backlog',
+				ghostClass: 'placeholder',
+				filter: '.hidden-group,.hidden-type',
+				onAdd: function(event) {
+					var $item = $(event.item);
+					$.post(BASE + '/backlog/edit', {
+						id: $item.attr('data-id'),
+						sprint_id: $item.parents('.list-group').attr('data-list-id')
+					}).fail(function() {
+						console.error('Failed to save new sprint assignment');
+					});
+				},
+				onSort: function(event) {
+					Backlog.saveSortOrder(event.target);
+				}
+			});
+		}
+
+		// Open issue in new window on double-click
 		$('.sortable').on('dblclick', 'li', function() {
 			window.open(BASE + '/issues/' + $(this).data('id'));
 		});
-	},
-	makeSortable: function(selector) {
-		$(selector).sortable({
-			items: 'li:not(.unsortable)',
-			connectWith: '.sortable',
-			receive: function(event, ui) {
-				Backlog.projectReceive($(ui.item), $(ui.sender), sanitizeSortableArray('project', $(this).sortable('serialize')));
-				Backlog.projectReceived = true; // keep from repeating if changed lists
-			},
-			stop: function(event, ui) {
-				if (Backlog.projectReceived !== true) {
-					Backlog.sameReceive($(ui.item), sanitizeSortableArray('project', $(this).sortable('serialize')));
-				} else {
-					Backlog.projectReceived = false;
-				}
-				Backlog.saveSortOrder();
-			}
-		}).disableSelection();
-	},
-	projectReceive: function(item, sender, receiverSerialized) {
-		var itemId = cleanId('project', $(item).attr('id')),
-			receiverId = cleanId('sprint', $(item).parent().attr('data-list-id')),
-			senderId = $(sender).attr('data-list-id');
-		if (typeof($(sender).attr('data-list-id') !== 'undefined')) {
-			var senderSerialized = sanitizeSortableArray('project', $(sender).sortable('serialize')),
-				data = {
-					itemId: itemId,
-					sender: {
-						senderId: senderId,
-						senderSerialized: senderSerialized
-					},
-					reciever: {
-						receiverId: receiverId,
-						receiverSerialized: receiverSerialized
-					}
-				};
 
-			Backlog.ajaxUpdateBacklog(data, item);
+		// Handle group filters
+		$('.dropdown-menu a[data-user-ids]').click(function(e) {
+			var $this = $(this),
+				userIds = $this.attr('data-user-ids').split(',');
+
+			$this.parents('ul').children('li').removeClass('active');
+			$this.parents('li').addClass('active');
+
+			if (userIds == 'all') {
+				$('.list-group-item[data-user-id]').removeClass('hidden-group');
+			} else {
+				$('.list-group-item[data-user-id]').addClass('hidden-group');
+				$.each(userIds, function(i, val) {
+					$('.list-group-item[data-user-id=' + val + ']').removeClass('hidden-group');
+				});
+			}
+
+			Backlog.updateUrl();
+			e.preventDefault();
+		});
+
+		// Handle type filters
+		$('.dropdown-menu a[data-type-id]').click(function(e) {
+			var $this = $(this),
+				typeId = $this.attr('data-type-id');
+			$this.parents('li').toggleClass('active');
+			$('.list-group-item[data-type-id=' + typeId + ']').toggleClass('hidden-type');
+			Backlog.updateUrl();
+			e.preventDefault();
+		});
+
+		// Apply filters from query string, if any
+		var groupId = getQueryVariable('group_id');
+		if (groupId) {
+			$('.dropdown-menu a[data-group-id=' + groupId + ']').click();
+		} else {
+			$('.dropdown-menu a[data-my-groups]').click();
+		}
+		var typeIdString = getQueryVariable('type_id');
+		if (typeIdString) {
+			$('.list-group-item[data-type-id]').addClass('hidden-type');
+			$('.dropdown-menu a[data-type-id]').parents('li').removeClass('active');
+			$.each(decodeURIComponent(typeIdString).split(','), function (i, val) {
+				$('.dropdown-menu a[data-type-id=' + val + ']').parents('li').addClass('active');
+				$('.list-group-item[data-type-id=' + val + ']').removeClass('hidden-type');
+			});
+		}
+
+		// Un-hide backlog
+		$('body').removeClass('is-loading');
+	},
+	updateUrl: function() {
+		if (window.history && history.replaceState) {
+			var state = {};
+			state.groupId = $('.dropdown-menu .active a[data-user-ids]').attr('data-group-id');
+			state.typeIds = [];
+			$('.dropdown-menu .active a[data-type-id]').each(function() {
+				state.typeIds.push($(this).attr('data-type-id'));
+			});
+			state.allStatesApplied = !$('.dropdown-menu li:not(.active) a[data-type-id]').length;
+
+			var path = '/backlog';
+			if (state.groupId || (!state.allStatesApplied && state.typeIds)) {
+				path += '?';
+				if (state.groupId) {
+					path += 'group_id=' + encodeURIComponent(state.groupId);
+					if (!state.allStatesApplied && state.typeIds) {
+						path += '&';
+					}
+				}
+				if (!state.allStatesApplied && state.typeIds) {
+					path += 'type_ids=' + encodeURIComponent(state.typeIds.join(','));
+				}
+			}
+			history.replaceState(state, '', BASE + path);
 		}
 	},
-	sameReceive: function(item, receiverSerialized) {
-		var itemId = cleanId('project', $(item).attr('id')),
-			receiverId = cleanId('sprint', $(item).parent().attr('data-list-id')),
-			data = {
-				itemId: itemId,
-				reciever: {
-					receiverId: receiverId,
-					receiverSerialized: receiverSerialized
-				}
-			};
+	saveSortOrder: function(element) {
+		var $el = $(element),
+			items = [];
 
-		Backlog.ajaxUpdateBacklog(data, item);
-	},
-	ajaxUpdateBacklog: function(data, item) {
-		var projectId = data.itemId;
-		Backlog.block(projectId, item);
-		$.ajax({
-			type: 'POST',
-			url: Backlog.updateUrl,
-			data: data,
-			success: function() {
-				Backlog.unBlock(projectId, item);
-			},
-			error: function() {
-				Backlog.unBlock(projectId, item);
-				Backlog.showError(projectId, item);
-			}
-		});
-	},
-	saveSortOrder: function() {
-		var userId = $('#panel-0 .list-group').attr('data-user-id');
-
-		if(!userId)
+		if ($el.attr('data-list-id') === undefined) {
 			return;
+		}
 
-		$('.panel-body > .list-group.sortable').each(function() {
-			var items = [];
-			$(this).find('.list-group-item').each(function() {
-				items.push(parseInt($(this).attr('data-id')));
-			});
+		$el.find('.list-group-item').each(function() {
+			items.push(parseInt($(this).attr('data-id')));
+		});
 
-			$.post(BASE + '/backlog/sort', {
-				user: userId,
-				sprint_id: $(this).attr('data-list-id'),
-				items: JSON.stringify(items)
-			}).error(function() {
-				console.error('An error occurred saving the sort order.');
-			});
+		$.post(BASE + '/backlog/sort', {
+			sprint_id: $el.attr('data-list-id'),
+			items: JSON.stringify(items)
+		}).fail(function() {
+			console.error('An error occurred saving the sort order.');
 		});
-	},
-	block: function(projectId, item) {
-		var project = $('#project_' + projectId);
-		project.append('<div class="spinner"></div>');
-		item.addClass('unsortable');
-		Backlog.makeSortable('.sortable'); //redo this so it is disabled
-	},
-	unBlock: function(projectId, item) {
-		var project = $('#project_' + projectId);
-		project.find('.spinner').remove();
-		item.removeClass('unsortable');
-		Backlog.makeSortable('.sortable'); //redo this so it is disabled
-	},
-	showError: function(projectId, item) {
-		var project = $('#project_' + projectId);
-		project.css({
-			'opacity': '.8'
-		});
-		project.append('<div class="error" title="An error occured while saving the task!"></div>');
-		item.addClass('unsortable');
-		Backlog.makeSortable('.sortable'); //redo this so it is disabled
 	}
 };
 

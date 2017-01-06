@@ -76,7 +76,7 @@ class Index extends \Controller {
 
 		// Verify password
 		$security = \Helper\Security::instance();
-		if($security->hash($f3->get("POST.password"), $user->salt ?: "") == $user->password) {
+		if($security->hashEquals($security->hash($f3->get("POST.password"), $user->salt ?: ""), $user->password)) {
 
 			// Create a session and use it
 			$session = new \Model\Session($user->id);
@@ -184,8 +184,14 @@ class Index extends \Controller {
 				$user = new \Model\User;
 				$user->load(array("email = ?", $f3->get("POST.email")));
 				if($user->id && !$user->deleted_date) {
+					// Re-generate reset token
+					$token = $user->generateResetToken();
+					$user->save();
+
+					// Send notification
 					$notification = \Helper\Notification::instance();
-					$notification->user_reset($user->id);
+					$notification->user_reset($user->id, $token);
+
 					$f3->set("reset.success", "We've sent an email to " . $f3->get("POST.email") . " with a link to reset your password.");
 				} else {
 					$f3->set("reset.error", "No user exists with the email address " . $f3->get("POST.email") . ".");
@@ -197,7 +203,7 @@ class Index extends \Controller {
 	}
 
 	/**
-	 * GET|POST /reset/@hash
+	 * GET|POST /reset/@token
 	 *
 	 * @param \Base $f3
 	 * @param array $params
@@ -206,33 +212,41 @@ class Index extends \Controller {
 	public function reset_complete($f3, $params) {
 		if($f3->get("user.id")) {
 			$f3->reroute("/");
-		} else {
-			$user = new \Model\User;
-			$user->load(array("CONCAT(password, salt) = ?", $params["hash"]));
-			if(!$user->id || !$params["hash"]) {
-				$f3->set("reset.error", "Invalid reset URL.");
-				$this->_render("index/reset.html");
+			return;
+		}
+
+		if (!$params["token"]) {
+			$f3->reroute("/login");
+			return;
+		}
+
+		$user = new \Model\User;
+		$user->load(array("reset_token = ?", hash("sha384", $params["token"])));
+		if(!$user->id || !$user->validateResetToken($params["token"])) {
+			$f3->set("reset.error", "Invalid reset URL.");
+			$this->_render("index/reset.html");
+			return;
+		}
+
+		if($f3->get("POST.password1")) {
+			// Validate new password
+			if($f3->get("POST.password1") != $f3->get("POST.password2")) {
+				$f3->set("reset.error", "The given passwords don't match.");
+			} elseif(strlen($f3->get("POST.password1")) < 6) {
+				$f3->set("reset.error", "The given password is too short. Passwords must be at least 6 characters.");
+			} else {
+				// Save new password and redirect to login
+				$security = \Helper\Security::instance();
+				$user->reset_token = null;
+				$user->salt = $security->salt();
+				$user->password = $security->hash($f3->get("POST.password1"), $user->salt);
+				$user->save();
+				$f3->reroute("/login");
 				return;
 			}
-			if($f3->get("POST.password1")) {
-				// Validate new password
-				if($f3->get("POST.password1") != $f3->get("POST.password2")) {
-					$f3->set("reset.error", "The given passwords don't match.");
-				} elseif(strlen($f3->get("POST.password1")) < 6) {
-					$f3->set("reset.error", "The given password is too short. Passwords must be at least 6 characters.");
-				} else {
-					// Save new password and redirect to login
-					$security = \Helper\Security::instance();
-					$user->salt = $security->salt();
-					$user->password = $security->hash($f3->get("POST.password1"), $user->salt);
-					$user->save();
-					$f3->reroute("/login");
-					return;
-				}
-			}
-			$f3->set("resetuser", $user);
-			$this->_render("index/reset_complete.html");
 		}
+		$f3->set("resetuser", $user);
+		$this->_render("index/reset_complete.html");
 	}
 
 	/**
@@ -323,7 +337,7 @@ class Index extends \Controller {
 		if($get["type"] == "assigned") {
 			$issues = $issue->find(array("author_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
 		} elseif($get["type"] == "created") {
-			$issues = $issue->find(array("owner = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
+			$issues = $issue->find(array("owner_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
 		} elseif($get["type"] == "all") {
 			$issues = $issue->find("status_closed = 0 AND deleted_date IS NULL", $options + array("limit" => 50));
 		} else {
@@ -336,6 +350,16 @@ class Index extends \Controller {
 		$f3->set("feed_user", $user);
 		$f3->set("issues", $issues);
 		$this->_render("index/atom.xml", "application/atom+xml");
+	}
+
+	/**
+	 * GET /opensearch.xml
+	 *
+	 * @param \Base $f3
+	 * @throws \Exception
+	 */
+	public function opensearch($f3) {
+		$this->_render("index/opensearch.xml", "application/opensearchdescription+xml");
 	}
 
 }
