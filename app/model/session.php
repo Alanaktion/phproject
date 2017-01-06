@@ -44,10 +44,9 @@ class Session extends \Model {
 	 */
 	public function loadCurrent() {
 		$f3 = \Base::instance();
-		$ip = $f3->get("IP");
 		$token = $f3->get("COOKIE.".self::COOKIE_NAME);
 		if($token) {
-			$this->load(array("token = ? AND ip = ?", $token, $ip));
+			$this->load(array("token = ?", $token));
 			$expire = $f3->get("JAR.expire");
 
 			// Delete expired sessions
@@ -64,6 +63,7 @@ class Session extends \Model {
 							. "; new date: " . date("Y-m-d H:i:s"));
 				}
 				$this->created = date("Y-m-d H:i:s");
+				$this->ip = $f3->get("IP");
 				$this->save();
 				$this->setCurrent();
 			}

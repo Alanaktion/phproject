@@ -6,3 +6,5 @@ php:
   - '7.0'
   - hhvm
   - nightly
+before_script:
+  - if find . -name "*.php" ! -path "./lib/*" -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi

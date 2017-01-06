@@ -16,7 +16,7 @@ $f3=require($homedir."lib/base.php");
 $f3->mset(array(
 	"UI" => $homedir."app/view/",
 	"LOGS" => $homedir."log/",
-	"AUTOLOAD" => $homedir."app/",
+	"AUTOLOAD" => $homedir."app/;".$homedir."lib/vendor/",
 	"TEMP" => $homedir."tmp/",
 ));
 

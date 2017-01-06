@@ -1,7 +1,17 @@
 {{ @site.name }}
 
+<check if="{{ @due }}">
 Issues due today:
 
-<repeat group="{{ @issues }}" value="{{ @issue }}">
+<repeat group="{{ @due }}" value="{{ @issue }}">
 	#{{ @issue.id }}: {{ @issue.name }} - {{ @site.url }}issues/{{ @issue.id }}
 </repeat>
+</check>
+
+<check if="{{ @overdue }}">
+Overdue issues:
+
+<repeat group="{{ @due }}" value="{{ @issue }}">
+	#{{ @issue.id }}: {{ @issue.name }} - {{ @site.url }}issues/{{ @issue.id }} - Due {{ date("D, M j, Y", strtotime(@issue.due_date)) }}
+</repeat>
+</check>

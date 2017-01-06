@@ -17,13 +17,13 @@ class Update extends \Prefab {
 		$f3 = \Base::instance();
 
 		// Generate human readable values
-		$func = "convert" . ucfirst($f3->camelcase($field));
+		$func = $f3->camelcase("convert_$field");
 		if(is_callable(array($this, $func))) {
-			if($old_val) {
+			if($old_val !== null && $old_val !== '') {
 				$old_val = call_user_func_array(
 						array($this, $func), array($old_val));
 			}
-			if($new_val) {
+			if($new_val !== null && $new_val !== '') {
 				$new_val = call_user_func_array(
 						array($this, $func), array($new_val));
 			}

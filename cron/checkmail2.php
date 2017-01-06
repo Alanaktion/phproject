@@ -7,14 +7,17 @@ if(!isset($imap["hostname"])) {
 	throw new Exception("No IMAP hostname specified in configuration");
 }
 
-$inbox = imap_open($imap['hostname'],$imap['username'],$imap['password']);
+$inbox = imap_open($imap['hostname'], $imap['username'], $imap['password']);
 if($inbox === false) {
-	$err = 'Cannot connect to IMAP: ' . imap_last_error();
-	$log->write($err);
+	$err = 'Cannot connect to IMAP: %s';
+	$log->write(sprintf($err, imap_last_error()));
 	throw new Exception($err);
 }
 
-$emails = imap_search($inbox,'ALL UNSEEN');
+$emails = imap_search($inbox, 'ALL UNSEEN');
+if(!$emails) {
+	return;
+}
 
 foreach($emails as $msg_number) {
 	$header = imap_headerinfo($inbox, $msg_number);
@@ -23,82 +26,91 @@ foreach($emails as $msg_number) {
 	$text = "";
 	$attachments = array();
 
-	// Skip broken messages
+	// Use text from non-multipart messages directly
 	if(empty($structure->parts)) {
-		$err = 'Got message without any structure info. ' . imap_last_error();
-		$log->write($err);
-		continue;
+		// Get message body
+		$text = imap_fetchbody($inbox, $msg_number, 1);
+		$part = imap_bodystruct($inbox, $msg_number, 1);
+
+		// Decode body
+		if($part->encoding == 4) {
+			$text = imap_qprint($text);
+		} elseif($part->encoding == 3) {
+			$text = imap_base64($text);
+		}
 	}
 
-	// Load message parts
-	foreach($structure->parts as $part_number=>$part) {
+	// Load message parts for multipart messages
+	if(!empty($structure->parts)) {
+		foreach($structure->parts as $part_number=>$part) {
 
-		// Handle plaintext
-		if($part->type === 0 && !trim($text)) {
-			$text = imap_fetchbody($inbox, $msg_number, $part_number + 1);
-
-			// Decode body
-			if($part->encoding == 4) {
-				$text = imap_qprint($text);
-			} elseif($part->encoding == 3) {
-				$text = imap_base64($text);
-			}
-
-			// Un-HTML an HTML part
-			if($part->ifsubtype && $part->subtype == 'HTML') {
-				$text = html_entity_decode(strip_tags($text));
-			}
-
-		}
-
-		// Handle multipart
-		elseif($part->type == 1 && !trim($text)) {
-			foreach($part->parts as $multipart_number=>$multipart) {
-				$text = imap_fetchbody($inbox, $msg_number, ($part_number + 1) . '.' . $multipart_number);
+			// Handle plaintext
+			if($part->type === 0 && !trim($text)) {
+				$text = imap_fetchbody($inbox, $msg_number, $part_number + 1);
 
 				// Decode body
-				if($multipart->encoding == 4) {
+				if($part->encoding == 4) {
 					$text = imap_qprint($text);
-				} elseif($multipart->encoding == 3) {
+				} elseif($part->encoding == 3) {
 					$text = imap_base64($text);
 				}
 
 				// Un-HTML an HTML part
-				if($multipart->ifsubtype && $multipart->subtype == 'HTML') {
+				if($part->ifsubtype && $part->subtype == 'HTML') {
 					$text = html_entity_decode(strip_tags($text));
 				}
+
 			}
-		}
 
-		// Handle attachments
-		elseif($part->type > 1 && $part->ifdisposition && $part->disposition == 'ATTACHMENT') {
+			// Handle multipart
+			elseif($part->type == 1 && !trim($text)) {
+				foreach($part->parts as $multipart_number=>$multipart) {
+					$text = imap_fetchbody($inbox, $msg_number, ($part_number + 1) . '.' . $multipart_number);
 
-			// Get filename
-			$filename = '';
-			if($part->ifdparameters) {
-				foreach($part->dparameters as $param) {
-					if($param->attribute == 'FILENAME') {
-						$filename = $param->value;
-						break;
+					// Decode body
+					if($multipart->encoding == 4) {
+						$text = imap_qprint($text);
+					} elseif($multipart->encoding == 3) {
+						$text = imap_base64($text);
 					}
-				}
-			} elseif($part->ifparameters) {
-				foreach($part->parameters as $param) {
-					if($param->attribute == 'NAME') {
-						$filename = $param->value;
-						break;
+
+					// Un-HTML an HTML part
+					if($multipart->ifsubtype && $multipart->subtype == 'HTML') {
+						$text = html_entity_decode(strip_tags($text));
 					}
 				}
 			}
 
-			// Store attachment metadata
-			$attachments[] = array(
-				'part_number' => $part_number,
-				'filename' => $filename,
-				'size' => $part->bytes,
-				'encoding' => $part->encoding,
-			);
+			// Handle attachments
+			elseif($part->type > 1 && $part->ifdisposition && $part->disposition == 'ATTACHMENT') {
 
+				// Get filename
+				$filename = '';
+				if($part->ifdparameters) {
+					foreach($part->dparameters as $param) {
+						if($param->attribute == 'FILENAME') {
+							$filename = $param->value;
+							break;
+						}
+					}
+				} elseif($part->ifparameters) {
+					foreach($part->parameters as $param) {
+						if($param->attribute == 'NAME') {
+							$filename = $param->value;
+							break;
+						}
+					}
+				}
+
+				// Store attachment metadata
+				$attachments[] = array(
+					'part_number' => $part_number,
+					'filename' => $filename,
+					'size' => $part->bytes,
+					'encoding' => $part->encoding,
+				);
+
+			}
 		}
 	}
 
@@ -116,8 +128,13 @@ foreach($emails as $msg_number) {
 	$from_user = new \Model\User;
 	$from_user->load(array('email = ? AND deleted_date IS NULL', $from));
 	if(!$from_user->id) {
-		$log->write('Unable to find user for ' . $header->subject);
-		continue;
+		if(isset($imap['default_user'])) {
+			$from_user->load($imap['default_user']);
+			$log->write(sprintf('No matching user, using default - From: %s; Subject: %s', $from, $header->subject));
+		} else {
+			$log->write(sprintf('Skipping message, no matching user - From: %s; Subject: %s', $from, $header->subject));
+			continue;
+		}
 	}
 
 	$to_user = new \Model\User;
@@ -152,7 +169,7 @@ foreach($emails as $msg_number) {
 				'issue_id' => $issue->id,
 				'text' => $text,
 			));
-			$log->write("Added comment {$comment->id} on issue {$issue->id}");
+			$log->write(sprintf("Added comment %s on issue #%s - %s", $comment->id, $issue->id, $issue->name));
 		}
 	} else {
 		$issue = \Model\Issue::create(array(
@@ -163,7 +180,7 @@ foreach($emails as $msg_number) {
 			'status' => 1,
 			'type_id' => 1
 		));
-		$log->write("Created issue {$issue->id}");
+		$log->write(sprintf("Created issue #%s - %s", $issue->id, $issue->name));
 	}
 
 	// Add other recipients as watchers
@@ -227,7 +244,7 @@ foreach($emails as $msg_number) {
 			"digest" => md5($data),
 		));
 
-		$log->write("Saved file {$file->id} on issue {$issue->id}");
+		$log->write(sprintf("Saved file %s on issue #%s - %s", $file->id, $issue->id, $issue->name));
 	}
 
 }

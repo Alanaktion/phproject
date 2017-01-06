@@ -1,38 +1,108 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<style type="text/css">
-		body {
-			margin: 0;
-			padding: 0;
-			font-family: 'Open Sans','Helvetica Neue',Arial,sans-serif;
-			font-size: 14px;
-			line-height: 16px;
-			color: #000;
-		}
-	</style>
+	<meta charset="utf-8">
+	<title>New file uploaded to #{{ @issue.id }} - {{ @issue.name | esc }}</title>
+	<include href="notification/blocks/_head.html" />
 </head>
-<body>
-<span style="font-size:0px;"> --- --- </span>
+<body style="margin: 0; padding: 0;">
+	<span style="font-size:0px;"> --- --- </span>
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td bgcolor="#ffffff">
+				<div align="center" style="padding: 0px 15px 0px 15px;">
+					<table width="600" class="wrapper">
 
-	<div style="padding: 10px;">
-		<p style="margin: 0 0 10px;"><strong>
-			<a href="{{ @site.url }}user/{{ @file.user_username }}">{{ @file.user_name | esc }}</a> attached a file to <a href="{{ @site.url }}issues/{{ @issue.id }}">#{{ @issue.id }} {{ @issue.name | esc }}</a>:
-		</strong></p>
-		<check if="{{ @issue.parent_id }}">
-			<p><small>Under: <a href="{{ @site.url }}issues/{{ @parent.id }}">#{{ @parent.id }} {{ @parent.name | esc }}</a></small></p>
-		</check>
-		<img src="{{ @site.url }}avatar/48-{{ @file.user_id }}.png" srcset="{{ @site.url }}/avatar/96-{{ @file.user_id }}.png 2x" alt style="float: left; margin-right: 10px;">
+						<include href="notification/blocks/logo.html" />
 
-		<a href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename }}" target="_blank">{{ @file.filename | esc }}</a>
-		({{ \Helper\View::instance()->formatFilesize(@file.filesize) }})
+						<!-- Header -->
+						<tr>
+							<td bgcolor="#2c3e50" style="border-radius: 4px 4px 0 0;" class="header">
+								<table width="100%">
+									<tr>
+										<td colspan="3" height="45"></td>
+									</tr>
+									<tr>
+										<td width="15"></td>
+										<td style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 18px; color: #ffffff; line-height: 1.5;">
+											New file uploaded to <a href="{{ @site.url }}issues/{{ @issue.id }}" style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 18px; color: #ffffff; text-decoration: underline; line-height: 1.5;">#{{ @issue.id }} &ndash; {{ @issue.name | esc }}</a>
+										</td>
+										<td width="15"></td>
+									</tr>
+									<tr>
+										<td colspan="3" height="15"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
 
-		<div style="clear:both"></div>
-	</div>
-	<div style="padding: 0 10px;">
-		<h1 style="font-size: 19px; font-weight: normal;"><a href="{{ @site.url }}" style="text-decoration: none;">{{ @site.name }}</a></h1>
-		<span style="color: #777;"><small>{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@file.created_date)) }}</small></span>
-	</div>
+						<!-- Message -->
+						<tr>
+							<td class="body">
+								<table style="border: 1px solid #ecf0f1; border-top: 0;" width="100%">
+									<tr>
+										<td colspan="3" height="15"></td>
+									</tr>
+									<tr>
+										<td width="15"></td>
+										<td>
+
+											<!-- File -->
+											<table width="100%">
+												<tr>
+													<td width="48" valign="top" class="profile-img">
+														<img src="{{ @site.url }}avatar/48-{{ @file.user_id }}.png" srcset="{{ @site.url }}/avatar/96-{{ @file.user_id }}.png 2x" alt="" width="48" height="48">
+													</td>
+													<td width="15"></td>
+													<td valign="top">
+														<table width="100%">
+															<tr>
+																<td>
+																	<a href="{{ @site.url }}user/{{ @file.user_username }}" style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; line-height: 1.5;font-size: 16px; font-weight: bold; color: #15bc9c; text-decoration: none;">
+																		{{ @file.user_name | esc }}
+																	</a>
+																</td>
+															</tr>
+															<tr>
+																<td height="3"></td>
+															</tr>
+															<tr>
+																<td style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
+																	<span style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5; font-weight: bold;">Attached file:</span>
+																	<a href="{{ @site.url }}files/{{ @file.id }}/{{ @file.filename | esc }}" style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #15bc9c; line-height: 1.5;">{{ @file.filename | esc }}</a>
+																	({{ \Helper\View::instance()->formatFilesize(@file.filesize) }})
+																</td>
+															</tr>
+															<tr>
+																<td height="3"></td>
+															</tr>
+															<tr>
+																<td style="font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; color: #95a5a6; line-height: 1.5;">
+																	{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@file.created_date)) }}
+																</td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+											</table>
+
+										</td>
+										<td width="15"></td>
+									</tr>
+									<tr>
+										<td colspan="3" height="15"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
+						<include href="notification/blocks/actions.html" />
+						<include href="notification/blocks/footer.html" />
+
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
 </body>
 </html>

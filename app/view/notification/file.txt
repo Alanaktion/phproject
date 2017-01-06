@@ -1,7 +1,9 @@
 --- ---
-{{ @file.user_name }} attached a file to #{{ @issue.id }} {{ @issue.name }}:
+{{ @site.name }}
+New file uploaded to #{{ @issue.id }} - {{ @issue.name }}:
 
+{{ @file.user_name }}
 
-{{@file.filename}} - {{ @site.url }}files/{{ @file.id }}/{{ @file.filename }} ({{ \Helper\View::instance()->formatFilesize(@file.filesize) }})
+{{ @file.filename }} - {{ @site.url }}files/{{ @file.id }}/{{ @file.filename }} ({{ \Helper\View::instance()->formatFilesize(@file.filesize) }})
 
 {{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(strtotime(@file.created_date))) }}

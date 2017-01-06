@@ -10,7 +10,7 @@
 	<div class="row">
 		<div class="col-sm-8">
 			<p class="alert alert-success alert-popup saved" style="display: none;">{{ @dict.group_name_saved }}</p>
-			<form role="form" onsubmit="return false;">
+			<form onsubmit="return false;">
 				<div class="form-group">
 					<label class="sr-only" for="group-name">{{ @dict.group_name }}</label>
 					<input type="text" class="form-control input-lg" id="group-name" name="name" value="{{ @group.name | esc }}">
@@ -34,7 +34,7 @@
 			</ul>
 		</div>
 		<div class="col-sm-4">
-			<form role="form" id="adduser">
+			<form id="adduser">
 				<input type="hidden" name="action" value="add_member">
 				<input type="hidden" name="group_id" value="{{ @group.id }}">
 				<div class="form-group">

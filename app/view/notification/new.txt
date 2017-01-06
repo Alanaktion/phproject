@@ -1,6 +1,8 @@
 --- ---
-#{{ @issue.id }} {{ @issue.name }} created by {{ @issue.author_name }}:
+{{ @site.name }}
+Issue #{{ @issue.id }} {{ @issue.name }} created
 
+Author: {{ @issue.author_name }}
 Assigned to: {{ @issue.owner_name }}
 Priority: {{ @issue.priority_name }}
 Status: {{ @issue.status_name }}

@@ -194,7 +194,9 @@ select[multiple] {
 	white-space: nowrap;
 }
 .file-list li img {
+	display: block;
 	width: 96px;
+	height: 96px;
 }
 .file-list li .delete {
 	position: absolute;
@@ -204,6 +206,14 @@ select[multiple] {
 }
 .file-list li:hover .delete {
 	visibility: visible;
+}
+.file-list th:first-child,
+.file-list td:first-child {
+	width: 26px;
+}
+.file-list td:first-child img {
+	width: 16px;
+	height: 16px;
 }
 
 .issue-list .closed {
@@ -258,6 +268,18 @@ textarea.form-control {
 	padding-top: 8px;
 }
 
+.table-scrollbox {
+	overflow-x: auto;
+}
+
+@media (min-width: 768px) {
+	.dashboard-widget .issue-tree tbody td {
+		max-width: 25vw;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
 
 .dl-inline dt {
 	float: left;
@@ -334,6 +356,8 @@ table a.btn {
 .tex ul,
 .tex ol {
 	padding-left: 20px;
+}
+.tex ul:last-child, .tex ol:last-child {
 	margin-bottom: 0;
 }
 .tex blockquote {
@@ -359,7 +383,7 @@ table a.btn {
 
 /* Make huge dropdowns usable */
 .dropdown-menu {
-	max-height: 400px;
+	max-height: 60vh;
 	overflow-y: auto;
 }
 
@@ -463,6 +487,13 @@ th[data-sort] {
 	}
 	.navbar-form[role=search] .btn {
 		display: none;
+	}
+}
+
+/* Clean up admin tabs on mobile */
+@media (max-width: 767px) {
+	.pull-right + .nav-tabs {
+		float: left;
 	}
 }
 
