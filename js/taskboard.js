@@ -192,12 +192,13 @@ var Taskboard = {
 	},
 	updateCard: function(card, data) {
 		$(card).find('.title').text(data.title);
+		$(card).find('.repeat_cycle').text(data.repeat_cycle);
 
-		if (isNumber(data.hours_spent) && data.burndown && data.hours > 0) {
-			$(card).find('.hours').text(parseFloat(data.hours).toFixed(1) - parseFloat(data.hours_spent));
+		if (isNumber(data.hours_spent) && parseInt(data.burndown) && data.hours > 0) {
+			$(card).find('.hours').text(parseFloat(data.hours) - parseFloat(data.hours_spent));
 			$(card).find('.hours').show();
 		} else if (isNumber(data.hours) && data.hours > 0) {
-			$(card).find('.hours').text(parseFloat(data.hours).toFixed(1));
+			$(card).find('.hours').text(parseFloat(data.hours));
 			$(card).find('.hours').show();
 		} else {
 			$(card).find('.hours').hide();
@@ -220,7 +221,7 @@ var Taskboard = {
 		$(card).find('.repeat_cycle').text(data.repeat_cycle);
 
 		if (isNumber(data.hours) && data.hours > 0) {
-			$(card).find('.hours').text(parseFloat(data.hours).toFixed(1));
+			$(card).find('.hours').text(parseFloat(data.hours));
 			$(card).find('.hours').show();
 		} else {
 			$(card).find('.hours').hide();
@@ -252,6 +253,9 @@ var Taskboard = {
 					'status': receiverStatus
 				}
 			};
+		if ($(task).parents('.column').hasClass('completed')) {
+			$(task).find('.hours').text(0);
+		}
 		Taskboard.ajaxSendTaskPosition(data);
 	},
 	TaskboardSame: function(task, receiverSerialized) {
@@ -309,10 +313,10 @@ var Taskboard = {
 			type: 'POST',
 			url: Taskboard.addURL,
 			data: data,
-			success: function() {
+			success: function(result) {
 				Taskboard.newUnBlock(taskId);
-				$(card).find('.task-id').html('<a href="/issues/' + data.taskId + '" target="_blank">' + data.taskId + '</a>');
-				$(card).attr('id', 'task_' + data.taskId);
+				$(card).find('.task-id').html('<a href="/issues/' + result.id + '" target="_blank">' + result.id + '</a>');
+				$(card).attr('id', 'task_' + result.id);
 				Taskboard.makeDraggable(card);
 			},
 			error: function() {

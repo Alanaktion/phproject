@@ -26,7 +26,8 @@ class User extends \Controller {
 	}
 
 	/**
-	 * GET /user/dashboard User dashboard
+	 * GET /user/dashboard
+	 * User dashboard
 	 *
 	 * @param \Base $f3
 	 * @throws \Exception
@@ -41,17 +42,22 @@ class User extends \Controller {
 		}
 
 		// Load dashboard widget data
-		$allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments", "open_comments", "issue_tree");
 		$helper = \Helper\Dashboard::instance();
-		foreach($dashboard as $widgets) {
-			foreach($widgets as $widget) {
+		$allWidgets = $helper->allWidgets;
+		$missing = array();
+		foreach($dashboard as $k=>$widgets) {
+			foreach($widgets as $l=>$widget) {
 				if(is_callable(array($helper, $widget))) {
 					$f3->set($widget, $helper->$widget());
 				} else {
-					$f3->set("error", "Widget '{$widget}' is not available.");
+					$f3->set("error", "Some dashboard widgets cannot be displayed.");
+					$missing[] = array($k, $l);
 				}
 				unset($allWidgets[array_search($widget, $allWidgets)]);
 			}
+		}
+		foreach($missing as $kl) {
+			unset($dashboard[$kl[0]][$kl[1]]);
 		}
 		$f3->set("unused_widgets", $allWidgets);
 
@@ -68,15 +74,19 @@ class User extends \Controller {
 
 	/**
 	 * POST /user/dashboard
+	 * Save dashboard widget selections
 	 *
 	 * @param \Base $f3
 	 */
 	public function dashboardPost($f3) {
+		$helper = \Helper\Dashboard::instance();
 		$user = $f3->get("user_obj");
 		if($f3->get("POST.action") == "add") {
 			$widgets = $user->option("dashboard");
 			foreach($f3->get("POST.widgets") as $widget) {
-				$widgets["left"][] = $widget;
+				if(in_array($widget, $helper->allWidgets)) {
+					$widgets["left"][] = $widget;
+				}
 			}
 		} else {
 			$widgets = json_decode($f3->get("POST.widgets"));
@@ -90,20 +100,16 @@ class User extends \Controller {
 		}
 	}
 
+	/**
+	 * Get array of theme names
+	 * @return array
+	 */
 	private function _loadThemes() {
-		$f3 = \Base::instance();
-
-		// Get theme list
-		$hidden_themes = array("backlog", "style", "taskboard", "datepicker", "jquery-ui-1.10.3", "bootstrap-tagsinput", "emote", "fontawesome", "font-awesome", "simplemde");
-		$themes = array();
-		foreach (glob("css/*.css") as $file) {
-			$name = pathinfo($file, PATHINFO_FILENAME);
-			if(!in_array($name, $hidden_themes)) {
-				$themes[] = $name;
-			}
+		$themes = array("bootstrap.min");
+		foreach (glob("css/bootstrap-*.css") as $file) {
+			$themes[] = pathinfo($file, PATHINFO_FILENAME);
 		}
-
-		$f3->set("themes", $themes);
+		\Base::instance()->set("themes", $themes);
 		return $themes;
 	}
 
@@ -138,7 +144,7 @@ class User extends \Controller {
 			$security = \Helper\Security::instance();
 
 			// Update password
-			if($security->hash($post["old_pass"], $user->salt) == $user->password) {
+			if($security->hashEquals($security->hash($post["old_pass"], $user->salt), $user->password)) {
 				$min = $f3->get("security.min_pass_len");
 				if(strlen($post["new_pass"]) >= $min) {
 					if($post["new_pass"] == $post["new_pass_confirm"]) {
@@ -159,6 +165,7 @@ class User extends \Controller {
 
 			// Update option values
 			$user->option("disable_mde", !empty($post["disable_mde"]));
+			$user->option("disable_due_alerts", !empty($post["disable_due_alerts"]));
 
 		} else {
 

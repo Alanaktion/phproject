@@ -50,7 +50,7 @@ class Issue extends \Model {
 			if (!preg_match("/[0-9]{4}(-[0-9]{2}){2}/", $data["due_date"])) {
 				$data["due_date"] = date("Y-m-d", strtotime($data["due_date"]));
 			}
-			if (empty($data["sprint_id"])) {
+			if (empty($data["sprint_id"]) && !empty($data['due_date_sprint'])) {
 				$sprint = new Sprint();
 				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $data["due_date"]));
 				$data["sprint_id"] = $sprint->id;
@@ -380,18 +380,18 @@ class Issue extends \Model {
 	 */
 	function saveTags() {
 		$tag = new \Model\Issue\Tag;
-		$issue_id = $this->id;
-		$str = $this->description;
-		$count = preg_match_all("/(?<=[^a-z\\/&]#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=[^a-z\\/]|$)/i", $str, $matches);
-		if($issue_id) {
-			$tag->deleteByIssueId($issue_id);
+		if ($this->id) {
+			$tag->deleteByIssueId($this->id);
 		}
-		if ($count) {
-			foreach ($matches[0] as $match) {
-				$tag->reset();
-				$tag->tag = preg_replace("/[_-]+/", "-", ltrim($match, "#"));
-				$tag->issue_id = $issue_id;
-				$tag->save();
+		if (!$this->deleted_date) {
+			$count = preg_match_all("/(?<=[^a-z\\/&]#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=[^a-z\\/]|$)/i", $this->description, $matches);
+			if ($count) {
+				foreach ($matches[0] as $match) {
+					$tag->reset();
+					$tag->tag = preg_replace("/[_-]+/", "-", ltrim($match, "#"));
+					$tag->issue_id = $this->id;
+					$tag->save();
+				}
 			}
 		}
 		return $this;
@@ -412,11 +412,12 @@ class Issue extends \Model {
 		$this->copyto("duplicating_issue");
 		$f3->clear("duplicating_issue.id");
 		$f3->clear("duplicating_issue.due_date");
+		$f3->clear("duplicating_issue.hours_spent");
 
 		$new_issue = new Issue;
 		$new_issue->copyfrom("duplicating_issue");
-		$new_issue->clear("due_date");
 		$new_issue->author_id = $f3->get("user.id");
+		$new_issue->hours_remaining = $new_issue->hours_total;
 		$new_issue->created_date = date("Y-m-d H:i:s");
 		$new_issue->save();
 
@@ -445,13 +446,13 @@ class Issue extends \Model {
 					$child->copyto("duplicating_issue");
 					$f3->clear("duplicating_issue.id");
 					$f3->clear("duplicating_issue.due_date");
+					$f3->clear("duplicating_issue.hours_spent");
 
 					$new_child = new Issue;
 					$new_child->copyfrom("duplicating_issue");
-					$new_child->clear("id");
-					$new_child->clear("due_date");
 					$new_child->author_id = $f3->get("user.id");
-					$new_child->set("parent_id", $new_id);
+					$new_child->hours_remaining = $new_child->hours_total;
+					$new_child->parent_id = $new_id;
 					$new_child->created_date = date("Y-m-d H:i:s");
 					$new_child->save(false);
 

@@ -25,6 +25,21 @@
 		#taskboard .spinner {
 			background-image: url({{ @BASE }}/img/ajax-loader.gif);
 		}
+
+		#burndown-modal .modal-body {
+			position: relative;
+		}
+		#burndown-modal .modal-body[data-loading]::after {
+			content: attr(data-loading);
+			position: absolute;
+			top: 50%;
+			left: 0;
+			right: 0;
+			transform: translateY(-50%);
+			text-align: center;
+			font-size: 28px;
+			opacity: 0.4;
+		}
 		</style>
 	</check>
 	<!--[if lte IE 9]>
@@ -45,24 +60,59 @@
 			<tr class="tb-row">
 				<th class="column column-1">
 					<div class="btn-group">
-						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
-							<span class="fa fa-filter"></span> {{ @dict.filter_tasks }} <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/all">{{ @dict.all_tasks }}</a></li>
-							<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/groups">{{ @dict.my_groups }}</a></li>
-							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/me">{{ @dict.my_tasks }}</a></li>
-							<check if="{{ count(@groups) }}">
-								<li class="divider"></li>
-								<repeat group="{{ @groups }}" value="{{ @group }}">
-									<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id }}/{{ @group.id }}">{{ @group.name | esc }}</a></li>
-								</repeat>
-							</check>
-						</ul>
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+								<span class="fa fa-filter"></span> {{ @dict.groups }} <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/all">{{ @dict.all_tasks }}</a></li>
+								<li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/groups">{{ @dict.my_groups }}</a></li>
+								<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/me">{{ @dict.my_tasks }}</a></li>
+								<check if="{{ count(@groups) }}">
+									<li class="divider"></li>
+									<repeat group="{{ @groups }}" value="{{ @group }}">
+										<li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @group.id }}">{{ @group.name | esc }}</a></li>
+									</repeat>
+								</check>
+							</ul>
+						</div>
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+								{{ @dict.cols.type }} <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<F3:repeat group="{{ @project_types }}" value="{{ @type }}">
+									{~
+										@active = in_array(@type.id, @type_ids);
+										if (@active) {
+											@idStr = implode(',', array_diff(@type_ids, [@type.id]));
+										} else {
+											if (@GET.type_id) {
+												@idStr = implode(',', array_unique(array_merge([@type.id], @type_ids)));
+											} else {
+												@idStr = @type.id;
+											}
+										}
+										if (@idStr) {
+											@query = http_build_query(array_merge(@GET, ['type_id' => @idStr]));
+										} else {
+											@query = http_build_query(['group_id' => @GET.group_id]);
+										}
+									~}
+									<li class="{{ @active ? 'active' : '' }}">
+										<a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @filter ? @filter . '/' : '' }}{{ @query ? '?' . @query : '' | esc }}">
+											{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
+										</a>
+									</li>
+								</F3:repeat>
+							</ul>
+						</div>
 					</div>
-					<button type="button" id="btn-burndown" class="btn btn-default btn-xs" data-toggle="modal" data-target="#burndown-modal">
-						<span class="fa fa-fire"></span> {{ @dict.burndown }}
-					</button>
+					<check if="{{ @@filterGroup }}">
+						<button type="button" id="btn-burndown" class="btn btn-default btn-xs" data-toggle="modal" data-target="#burndown-modal">
+							<span class="fa fa-fire"></span> {{ @dict.burndown }}
+						</button>
+					</check>
 				</th>
 				<repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
 					<th class="column column-{{ @key + 1 }}">{{ isset(@dict[@value.name]) ? @dict[@value.name] : str_replace('_', ' ', @value.name) }}</th>
@@ -259,7 +309,6 @@
 									</div>
 									<div class="checkbox">
 										&nbsp;
-										<input type="hidden" name="burndown" value="0">
 										<label>
 											<input type="checkbox" name="burndown" id="input-burndown" value="1" checked> {{ @dict.burn_hours }}
 										</label>
@@ -277,31 +326,33 @@
 		</div>
 	</div>
 
-	<!-- Burndown Modal -->
-	<div class="modal fade" id="burndown-modal" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
-					<h4 class="modal-title">{{ @dict.burndown }}</h4>
-				</div>
-				<div class="modal-body">
-					<div class="container-fluid">
-						<div class="row">
-							<div class="col-md-9">
-								<div>
-									<canvas id="burndown" width="666" height="320"></canvas>
-								</div>
-							</div>
-							<div class="col-md-3">
-								<div id="burndown-legend" class="hidden-xs hidden-sm"></div>
-							</div>
-						</div>
+	<check if="{{ @@filterGroup }}">
+		<div class="modal fade" id="burndown-modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span>
+							<span class="sr-only">{{ @dict.close }}</span>
+						</button>
+						<form class="form-inline pull-right" id="frm-man-hours" style="margin-top: -5px;">
+							<input type="hidden" name="user_id" value="{{ @filterGroup->id }}">
+							<label class="control-label input-sm">{{ @dict.man_hours }}</label>
+							<span class="does-toggle man-hours">{{ @filterGroup->option('man_hours') }}</span>
+							&nbsp;
+							<a class="fa fa-edit does-toggle" href="#input-man-hours"></a>
+							<input type="number" style="width: 80px;" class="form-control input-sm hidden" name="man_hours" id="input-man-hours" value="{{ @filterGroup->option('man_hours') }}">
+							&emsp;
+						</form>
+						<h4 class="modal-title">{{ @dict.burndown }}</h4>
+					</div>
+					<div class="modal-body" data-loading="{{ @dict.loading }}">
+						<canvas id="burndown" width="850" height="320"></canvas>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</check>
 
 	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js,bootstrap-datepicker.js"></script>
 	<check if="{{ @user_obj->date_picker()->js }}">
@@ -309,46 +360,7 @@
 	</check>
 	<script>
 		var datepickerLanguage='{{ @user_obj->date_picker()->language }}';
-	</script>
-	<script src="{{ @BASE }}/js/chart.js"></script>
-	<script src="{{ @BASE }}/minify/js/taskboard.js,burndown.js"></script>
-	<script>
-		var BurndownData,
-			BurndownReady = false,
-			BurndownLegendDict = {
-				hours_remaining: '{{ @dict.hours_remaining }}',
-				target_velocity: '{{ @dict.ideal_hours_remaining }}',
-				actual_velocity: '{{ @dict.daily_hours_remaining }}',
-			};
-
 		$(document).ready(function() {
-
-			// Preload burndown data
-			$.ajax({
-				url: BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @tasks }}',
-				success: function(data) {
-					BurndownData = data;
-					BurndownReady = true;
-				},
-				dataType: 'json',
-				cache: false
-			});
-
-			// Initialize burndown when requested
-			$("#btn-burndown").click(function(e) {
-				if(BurndownReady) {
-					$("#burndown-modal").on("shown.bs.modal", function(e) {
-						if(Burndown.initialized === false) {
-							Burndown.init(BurndownData);
-							$("#burndown-legend").html(Burndown.chart.generateLegend());
-						}
-					});
-				} else {
-					alert("Burndown data is not ready yet, click again in a few seconds.");
-					e.preventDefault();
-					e.stopPropagation();
-				}
-			});
 
 			// Taskboard header horizontal scrolling
 			$(window).scroll(function(e) {
@@ -361,5 +373,49 @@
 
 		});
 	</script>
+	<check if="{{ @@filterGroup }}">
+		<true>
+			<script>
+				var BurndownUrl = BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @filter }}',
+					BurndownLegendDict = {
+						hours_remaining: '{{ @dict.hours_remaining }}',
+						man_hours_remaining: '{{ @dict.man_hours_remaining }}',
+					},
+					BurndownManHours = parseFloat('{{ @filterGroup->option("man_hours") }}'),
+					BurndownRange = {
+						start: '{{ @sprint->getFirstWeekday() }} 00:00:00',
+						end: '{{ @sprint->getLastWeekday() }} 23:59:59'
+					};
+			</script>
+			<script src="{{ @BASE }}/js/chart.js"></script>
+			<script src="{{ @BASE }}/minify/js/taskboard.js,burndown.js"></script>
+			<script>
+				$(document).ready(function() {
+					$("#burndown-modal").on("shown.bs.modal", function(e) {
+						if(Burndown.initialized === false) {
+							Burndown.init('burndown', BurndownUrl);
+						}
+					});
+					$("#burndown-modal .fa-edit").click(function(e) {
+						e.preventDefault();
+						$('#input-man-hours, #burndown-modal .does-toggle').toggleClass('hidden');
+						$('#input-man-hours').focus().select();
+					});
+					$("#frm-man-hours").submit(function(e) {
+						e.preventDefault();
+						$.post(BASE + '/taskboard/saveManHours', $(this).serialize());
+						BurndownManHours = $('#input-man-hours').val();
+						$("#burndown-modal .man-hours").text(BurndownManHours);
+						$('#input-man-hours, #burndown-modal .does-toggle').toggleClass('hidden');
+						Burndown.chart.data.datasets[1].data[0].y = BurndownManHours;
+						Burndown.chart.update();
+					});
+				});
+			</script>
+		</true>
+		<false>
+			<script src="{{ @BASE }}/minify/js/taskboard.js"></script>
+		</false>
+	</check>
 </body>
 </html>

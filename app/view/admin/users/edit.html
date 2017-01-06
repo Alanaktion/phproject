@@ -20,19 +20,19 @@
 		<div class="form-group">
 			<label for="username" class="col-lg-2 control-label label-sm">{{ @dict.username }}</label>
 			<div class="col-lg-10">
-				<input class="form-control input-sm" id="username" type="text" name="username" value="{{ @@this_user.username ?: @@POST.username }}">
+				<input class="form-control input-sm" id="username" type="text" name="username" value="{{ @@this_user.username ?: @@POST.username | esc }}">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="email" class="col-lg-2 control-label label-sm">{{ @dict.email }}</label>
 			<div class="col-lg-10">
-				<input class="form-control input-sm" id="email" type="email" name="email" value="{{ @@this_user.email ?: @@POST.email }}">
+				<input class="form-control input-sm" id="email" type="email" name="email" value="{{ @@this_user.email ?: @@POST.email | esc }}">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="name" class="col-lg-2 control-label label-sm">{{ @dict.name | esc }}</label>
 			<div class="col-lg-10">
-				<input class="form-control input-sm" id="name" type="text" name="name" value="{{ @@this_user.name ?: @@POST.name }}">
+				<input class="form-control input-sm" id="name" type="text" name="name" value="{{ @@this_user.name ?: @@POST.name | esc }}">
 			</div>
 		</div>
 		<br>
@@ -73,7 +73,7 @@
 			<label for="task_color" class="col-lg-2 control-label label-sm">{{ @dict.task_color }}</label>
 			<div class="col-lg-10">
 				{~ if(!empty(@this_user)) @task_color = '#' . @this_user.task_color; elseif(!empty(@POST.task_color)) @task_color = @POST.task_color; ~}
-				<input class="form-control input-sm" id="task_color" type="color" name="task_color" value="{{ @@task_color ?: @rand_color }}" maxlength="7">
+				<input class="form-control input-sm" id="task_color" type="color" name="task_color" value="{{ @@task_color ?: @rand_color | esc }}" maxlength="7">
 			</div>
 		</div>
 		<div class="form-group">

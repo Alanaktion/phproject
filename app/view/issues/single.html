@@ -103,7 +103,7 @@
 							{{ @author.name | esc }}
 						</false>
 					</check>
-					<br><em>{{ @@author.username }}</em>
+					<br><em>{{ @author.email ?: @author.username }}</em>
 				</p>
 			</div>
 
@@ -120,7 +120,7 @@
 								{{ @owner.name | esc }}
 							</false>
 						</check>
-						<br><em>{{ @@owner.username }}</em>
+						<br><em>{{ @owner.email ?: @owner.username }}</em>
 					</p>
 				</div>
 			</check>
@@ -135,9 +135,7 @@
 				<dd>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}</dd>
 
 				<dt>{{ @dict.cols.type }}</dt>
-				<dd>
-					{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
-				</dd>
+				<dd>{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
 				<dd>{{ isset(@dict[@issue.priority_name]) ? @dict[@issue.priority_name] : str_replace('_', ' ', @issue.priority_name) }}</dd>
@@ -202,13 +200,7 @@
 					<div class="tab-pane fade in active" id="files-tiles">
 						<ul class="list-inline file-list">
 							<repeat group="{{ @files }}" value="{{ @file }}">
-								<li class="has-popover" id="f-{{ @file.id }}" data-id="{{ @file.id }}" data-trigger="hover" data-html="true" data-content="<p>{{ @dict.uploaded_by }}: {{ @file.user_name | esc }}</p>{{ @file.filename | esc }}<br>{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}<br>{{ @file.filesize | formatFilesize }}">
-									<a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" data-mime="{{ @file.content_type }}" target="_blank">
-										<img src="{{ @BASE }}/files/thumb/96-{{ @file.id }}.png" srcset="{{ @BASE }}/files/thumb/192-{{ @file.id }}.png 2x" alt><br>
-										{{ @file.filename | esc }}
-									</a>
-									<button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button>
-								</li>
+								<include href="blocks/file/thumb.html" />
 							</repeat>
 						</ul>
 					</div>
@@ -217,7 +209,7 @@
 							<table class="table table-striped table-condensed file-list">
 								<thead>
 									<tr>
-										<th data-sort="int">{{ @dict.cols.id }}</th>
+										<th></th>
 										<th data-sort="string">{{ @dict.file_name }}</th>
 										<th data-sort="string">{{ @dict.uploaded_by }}</th>
 										<th data-sort="int">{{ @dict.upload_date }}</th>
@@ -228,8 +220,10 @@
 								<tbody>
 									<repeat group="{{ @files }}" value="{{ @file }}">
 										<tr id="ft-{{ @file.id }}" data-id="{{ @file.id }}">
-											<td>{{ @file.id }}</td>
-											<td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename }}" data-mime="{{ @file.content_type }}" target="_blank">{{ @file.filename | esc }}</a></td>
+											<td data-sort-value="{{ @file.content_type | esc }}">
+												<img src="{{ @BASE }}/img/mime/16/{{ \Helper\Image::mimeIcon(@file.content_type) }}.svg" alt>
+											</td>
+											<td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" target="_blank">{{ @file.filename | esc }}</a></td>
 											<td>{{ @file.user_name | esc }}</td>
 											<td data-sort-value="{{ strtotime(@file.created_date) }}">{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
 											<td data-sort-value="{{ @file.filesize }}">{{ @file.filesize | formatFilesize }}</td>
@@ -327,7 +321,7 @@
 	<include href="blocks/footer.html" />
 </div>
 
-<form class="modal fade in" id="upload" method="post" enctype="multipart/form-data" action="{{ @BASE }}/issues/upload">
+<form class="modal fade in" id="upload" tabindex="-1" method="post" enctype="multipart/form-data" action="{{ @BASE }}/issues/upload">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -408,7 +402,7 @@ $(function() {
 				$('#comment_form')
 					.after(
 						'<div class="media" id="c-' + data.id + '" data-id="' + data.id + '">' +
-							'<a class="pull-left" href="{{ @BASE }}/user/' + data.user_username + '">' +
+							'<a class="media-left" href="{{ @BASE }}/user/' + data.user_username + '">' +
 								'<img src="{{ @user_obj->avatar(48) | esc }}" srcset="{{ @user_obj->avatar(96) | esc }} 2x" class="media-object profile-picture img-rounded" alt>' +
 							'</a>' +
 							'<div class="media-body">' +
@@ -433,7 +427,7 @@ $(function() {
 	$.get(BASE + '/issues/{{ @issue.id }}/history', {}, function(data) {
 		$('#history').empty().append(data.html);
 		$('#tab_history').html('{{ @dict.history }}&ensp;<span class="badge">' + data.total + '</span>');
-	}, 'json').error(function() {
+	}, 'json').fail(function() {
 		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_history }}'));
 	});
 	$.get(BASE + '/issues/{{ @issue.id }}/watchers', {}, function(data) {
@@ -470,7 +464,7 @@ $(function() {
 			e.preventDefault();
 		});
 
-	}, 'json').error(function() {
+	}, 'json').fail(function() {
 		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
 	});
 	if(parseInt('{{ @issue.parent_id }}')) {
@@ -478,7 +472,7 @@ $(function() {
 			$('#related-sibling').empty().append(data.html);
 			$('#tab_related-sibling').html($('#tab_related-sibling').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 			$('#related-sibling table').stupidtable();
-		}, 'json').error(function() {
+		}, 'json').fail(function() {
 			$('#related-sibling').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_related_issues }}'));
 		});
 	}
@@ -486,7 +480,7 @@ $(function() {
 		$('#related-child').empty().append(data.html);
 		$('#tab_related-child').html($('#tab_related-child').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 		$('#related-child table').stupidtable();
-	}, 'json').error(function() {
+	}, 'json').fail(function() {
 		$('#related-child').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_related_issues }}'));
 	});
 
@@ -524,7 +518,7 @@ $(function() {
 					}
 				}
 			});
-		}, 'json').error(function() {
+		}, 'json').fail(function() {
 			$('#dependencies').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_dependencies }}'));
 		});
 	};
@@ -578,6 +572,22 @@ $(function() {
 		format: 'yyyy-mm-dd',
 		language: '{{ @user_obj->date_picker()->language }}',
 		autoclose: true
+	});
+
+	// Add file thumbnail popovers
+	$('#files-tiles li').each(function() {
+		$el = $(this);
+		$el.popover({
+			trigger: 'hover',
+			html: true,
+			delay: {
+				show: 250,
+				hide: 50
+			},
+			container: 'body',
+			placement: 'auto right',
+			content: '<b>' + $el.attr('data-name') + '</b><br>' + $el.attr('data-user') + '<br>' + $el.attr('data-date') + '<br>' +$el.attr('data-size')
+		});
 	});
 
 	// Handle file deletion

@@ -10,21 +10,21 @@
 	<form action="{{ @BASE }}/admin/sprints/{{@sprint.id}}" method="post" class="form-horizontal" autocomplete="off">
 		<legend>{{ @dict.edit_sprint }}</legend>
 		<div class="form-group">
-			<label for="name" class="col-md-2 control-label label-sm">{{ @dict.name | esc }}</label>
+			<label for="name" class="col-md-2 control-label label-sm">{{ @dict.name }}</label>
 			<div class="col-md-10">
-				<input class="form-control input-sm" id="name" type="text" name="name" value="{{ @sprint.name }}">
+				<input class="form-control input-sm" id="name" type="text" name="name" value="{{ @sprint.name | esc }}">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="start_date" class="col-md-2 control-label label-sm">{{ @dict.start_date }}</label>
 			<div class="col-md-4">
-				<input class="form-control input-sm" id="start_date" type="text" name="start_date" value="{{ @sprint.start_date }}" required>
+				<input class="form-control input-sm" id="start_date" type="text" name="start_date" value="{{ @sprint.start_date | esc }}" required>
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="end_date" class="col-md-2 control-label label-sm">{{ @dict.end_date }}</label>
 			<div class="col-md-4">
-				<input class="form-control input-sm" id="end_date" type="text" name="end_date" value="{{ @sprint.end_date }}" required>
+				<input class="form-control input-sm" id="end_date" type="text" name="end_date" value="{{ @sprint.end_date | esc }}" required>
 			</div>
 		</div>
 		<div class="form-group">
