@@ -150,7 +150,9 @@ class Files extends \Controller {
 		}
 
 		// Render and cache image
-		$data = call_user_func_array('image' . $params["format"], array($frame));
+		ob_start();
+		call_user_func_array('image' . $params["format"], array($frame));
+		$data = ob_get_clean();
 		if($f3->get("DEBUG") < 2) {
 			$cache->set($hash, $data, $f3->get("cache_expire.attachments"));
 		}

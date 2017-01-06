@@ -1,16 +1,30 @@
-#backlog .list-group {
+body.is-loading #backlog .list-group.sortable {
+	opacity: 0;
+}
+#backlog .list-group.sortable {
 	min-height: 80px;
+	transition: all 0.3s ease;
 	margin: 0;
 }
 #backlog .list-group-item {
 	-webkit-box-sizing: content-box;
 	-moz-box-sizing: content-box;
 	box-sizing: content-box;
-	cursor: move;
 	position: relative;
 	padding: 6px 6px 6px 14px;
 }
-#backlog .list-group-item:hover {
+body.is-sortable #backlog .list-group-item {
+	cursor: move;
+}
+#backlog .hidden-group,
+#backlog .hidden-type {
+	display: none;
+	visibility: hidden;
+}
+#backlog .list-group-item.placeholder {
+	opacity: 0.5;
+}
+body.is-sortable #backlog .list-group-item:hover {
 	background-image: url(../img/backlog/i_has_grip.png);
 	background-position: 2px center;
 	background-repeat: no-repeat;
@@ -18,37 +32,12 @@
 #backlog .list-group-item.completed {
 	text-decoration: line-through;
 }
-#backlog .spinner {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	z-index: 50;
-	background-image: url(../img/ajax-loader.gif);
-	background-position: center center;
-	background-repeat: no-repeat
-}
-#backlog .error {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	z-index: 50;
-	background-image: url(../img/taskboard/warning.png);
-	background-position: right bottom;
-	background-repeat: no-repeat
-}
 #backlog .panel-heading {
-	position: relative
+	position: relative;
 }
 #backlog .panel-heading > a:first-child {
 	cursor: pointer;
 	font-weight: bold;
-}
-#backlog .panel-body.collapse {
-	display: none;
 }
 .badge.status {
 	background-color: #C6C6C6;

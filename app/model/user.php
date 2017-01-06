@@ -127,6 +127,46 @@ class User extends \Model {
 	}
 
 	/**
+	 * Get array of IDs of users within a group
+	 * @return array|NULL
+	 */
+	public function getGroupUserIds() {
+		if($this->role == "group") {
+			if($this->_groupUsers === null) {
+				$this->getGroupUsers();
+			}
+			$ids = array();
+			foreach($this->_groupUsers as $u) {
+				$ids[] = $u->id;
+			}
+			return $ids;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Get all user IDs in a group with a user, and all group IDs the user is in
+	 * @return array
+	 */
+	public function getSharedGroupUserIds() {
+		$groupModel = new \Model\User\Group;
+		$groups = $groupModel->find(array("user_id = ?", $this->id));
+		$groupIds = [];
+		foreach ($groups as $g) {
+			$groupIds[] = $g["group_id"];
+		}
+		$ids = $groupIds;
+		if ($groupIds) {
+			$groupIdString = implode(",", $groupIds);
+			$users = $groupModel->find("group_id IN ({$groupIdString})", array("group" => "user_id"));
+			foreach ($users as $u) {
+				$ids[] = $u->user_id;
+			}
+		}
+		return $ids;
+	}
+	/**
 	 * Get all user options
 	 * @return array
 	 */
@@ -282,6 +322,29 @@ class User extends \Model {
 	public function date_picker() {
 		$lang = $this->language ?: \Base::instance()->get("LANGUAGE");
 		return (object) array("language" => $lang, "js" => ($lang != "en"));
+	}
+
+	/**
+	 * Generate a password reset token and store hashed value
+	 * @return string
+	 */
+	public function generateResetToken() {
+		$random = \Helper\Security::instance()->randBytes(512);
+		$token = hash("sha384", $random) . time();
+		$this->reset_token = hash("sha384", $token);
+		return $token;
+	}
+
+	/**
+	 * Validate a plaintext password reset token
+	 * @param  string $token
+	 * @return boolean
+	 */
+	public function validateResetToken($token) {
+		$ttl = \Base::instance()->get("security.reset_ttl");
+		$timestampValid = substr($token, 96) > (time() - 3600*24);
+		$tokenValid = hash("sha384", $token) == $this->reset_token;
+		return $timestampValid && $tokenValid;
 	}
 
 }

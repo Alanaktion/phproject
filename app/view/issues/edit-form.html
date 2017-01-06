@@ -173,6 +173,10 @@
 		<label class="col-md-2 control-label label-sm">{{ @dict.cols.due_date }}</label>
 		<div class="col-md-6">
 			<input class="form-control input-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.due_date }}">
+			<label class="checkbox-inline">
+				<input type="checkbox" name="due_date_sprint" value="1" {~ if(@@issue.due_date_sprint) echo 'checked' ~}>
+				{{ @dict.set_sprint_from_due_date }}
+			</label>
 		</div>
 	</div>
 	<div class="form-group">

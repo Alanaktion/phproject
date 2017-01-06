@@ -1,12 +1,12 @@
 <div class="media" id="c-{{ @comment.id }}" data-id="{{ @comment.id }}">
-	<a class="pull-left" href="{{ @BASE }}/user/{{ @comment.user_username }}">
+	<a class="media-left" href="{{ @BASE }}/user/{{ @comment.user_username }}">
 		<img class="profile-picture media-object img-rounded" src="{{ @BASE }}/avatar/48-{{ @comment.user_id }}.png" srcset="{{ @BASE }}/avatar/96-{{ @comment.user_id }}.png 2x" alt>
 	</a>
 	<div class="media-body">
 		<p class="media-heading clearfix">
 			<a href="{{ @BASE }}/user/{{ @comment.user_username }}">{{ @comment.user_name }}</a>
 			<check if="{{ @menuitem == 'index' }}">
-				&gt; <a href="{{ @BASE }}/issues/{{ @comment.issue_id }}">{{ @issue.name }}</a>
+				&gt; <a href="{{ @BASE }}/issues/{{ @comment.issue_id }}" style="{{ @issue.closed_date ? 'text-decoration: line-through;' : '' }}">{{ @issue.name }}</a>
 			</check>
 			<check if="{{ (@user.role == 'admin' || @user.rank >= \Model\User::RANK_MANAGER) && @menuitem != 'index' }}">
 				<a class="comment-delete" title="{{ @dict.delete }}"><span class="close">&times;</span></a>

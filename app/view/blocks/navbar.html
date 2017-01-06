@@ -26,19 +26,9 @@
 						{{ @dict.new }} <b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu" role="menu">
-						<check if="{{ @user.role == 'admin' }}">
-							<li><a href="{{ @BASE }}/admin/sprints/new">{{ @dict.sprint }}</a></li>
-							<li role="presentation" class="divider"></li>
-						</check>
 						<repeat group="{{ @issue_types }}" value="{{ @type }}">
 							<li><a href="{{ @BASE }}/issues/new/{{ @type.id }}">{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</a></li>
 						</repeat>
-						<check if="{{ @nav.new }}">
-							<li role="presentation" class="divider"></li>
-							<repeat group="{{ @nav.new }}" value="{{ @navitem }}">
-								<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
-							</repeat>
-						</check>
 						<check if="{{ !empty(@issue) }}">
 							<li role="presentation" class="divider"></li>
 							<check if="{{ @issue.type_id == @issue_type.project }}">
@@ -55,6 +45,17 @@
 									</check>
 								</false>
 							</check>
+						</check>
+						<check if="{{ @user.role == 'admin' || @nav.new }}">
+							<li role="presentation" class="divider"></li>
+						</check>
+						<check if="{{ @user.role == 'admin' }}">
+							<li><a href="{{ @BASE }}/admin/sprints/new">{{ @dict.sprint }}</a></li>
+						</check>
+						<check if="{{ @nav.new }}">
+							<repeat group="{{ @nav.new }}" value="{{ @navitem }}">
+								<li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
+							</repeat>
 						</check>
 					</ul>
 				</li>

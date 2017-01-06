@@ -50,7 +50,7 @@ class Issue extends \Model {
 			if (!preg_match("/[0-9]{4}(-[0-9]{2}){2}/", $data["due_date"])) {
 				$data["due_date"] = date("Y-m-d", strtotime($data["due_date"]));
 			}
-			if (empty($data["sprint_id"])) {
+			if (empty($data["sprint_id"]) && !empty($data['due_date_sprint'])) {
 				$sprint = new Sprint();
 				$sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $data["due_date"]));
 				$data["sprint_id"] = $sprint->id;

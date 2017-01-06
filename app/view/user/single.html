@@ -6,19 +6,6 @@
 		<link rel="alternate" type="application/atom+xml" title="{{ @dict.assigned_issues }}" href="{{ @site.url }}atom.xml?type=assigned&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
 		<link rel="alternate" type="application/atom+xml" title="{{ @dict.created_issues }}" href="{{ @site.url }}atom.xml?type=created&amp;user={{ @this_user.username }}&amp;key={{ @user.api_key }}" />
 	</check>
-	<style type="text/css">
-	.chart-legend div {
-		float: left;
-		margin-right: 1em;
-	}
-	.chart-legend span {
-		display: inline-block;
-		width: 1em;
-		height: 1em;
-		margin-right: .5em;
-		border-radius: 2px;
-	}
-	</style>
 </head>
 <body>
 	<set fullwidth="{{ true }}" />
@@ -42,18 +29,11 @@
 					</check>
 				</div>
 			</div>
-			<div class="col-md-8 hidden-xs">
-				<check if="{{ @this_user.role != 'group' }}">
-					<div>
-						<canvas id="stats" width="600" height="100"></canvas>
-					</div>
-					<div class="chart-legend clearfix">
-						<div><span style="background-color: #2ecc71;"></span>{{ @dict.cols.total_spent_hours }}</div>
-						<div><span style="background-color: #3498db;"></span>{{ @dict.closed }}</div>
-						<div><span style="background-color: #9b59b6;"></span>{{ @dict.cols.created }}</div>
-					</div>
-				</check>
-			</div>
+			<check if="{{ @this_user.role != 'group' }}">
+				<div class="col-md-8 hidden-xs">
+					<canvas id="stats" width="600" height="130"></canvas>
+				</div>
+			</check>
 		</div>
 		<br>
 
@@ -97,65 +77,88 @@
 		};
 		var charts = {
 			data: {
-				labels: $.parseJSON(jsonData.labels),
+				labels: JSON.parse(jsonData.labels),
 				datasets: [{
-					data: $.parseJSON(jsonData.spent),
+					data: JSON.parse(jsonData.spent),
 					label: "{{ @dict.cols.total_spent_hours }}",
-					fillColor: "rgba(42,204,113,0.1)",
-					strokeColor: "#2ecc71",
-					pointColor: "#2ecc71",
-					pointStrokeColor: "#2ecc71",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "#2ecc71"
+					borderColor: "#2ecc71",
+					pointBackgroundColor: "#2ecc71",
+					pointBorderColor: "#2ecc71",
 				},{
-					data: $.parseJSON(jsonData.closed),
+					data: JSON.parse(jsonData.closed),
 					label: "{{ @dict.closed }}",
-					fillColor: "rgba(52,152,219,0.1)",
-					strokeColor: "#3498db",
-					pointColor: "#3498db",
-					pointStrokeColor: "#3498db",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "#3498db",
+					borderColor: "#3498db",
+					pointBackgroundColor: "#3498db",
+					pointBorderColor: "#3498db",
 				},{
-					data: $.parseJSON(jsonData.created),
+					data: JSON.parse(jsonData.created),
 					label: "{{ @dict.cols.created }}",
-					fillColor: "rgba(155,89,152,0.1)",
-					strokeColor: "#9b59b6",
-					pointColor: "#9b59b6",
-					pointStrokeColor: "#9b59b6",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "#9b59b6",
+					borderColor: "#9b59b6",
+					pointBackgroundColor: "#9b59b6",
+					pointBorderColor: "#9b59b6",
 				}]
 			},
 			options: {
-				scaleBeginAtZero: true,
-				bezierCurve: false,
-				pointDot: true,
-				pointDotRadius: 2,
-				pointDotStrokeWidth: 1,
-				datasetStroke: true,
-				datasetStrokeWidth: 2,
-				datasetFill: true,
-				animation: false,
-				responsive: true,
 				maintainAspectRatio: false,
-				scaleLineColor: "rgba(127,127,127,.2)",
-				scaleGridLineColor : "rgba(127,127,127,.1)"
+				legend: {
+					position: 'left',
+					labels: {
+						boxWidth: 1
+					}
+				},
+				animation: {
+					duration: 250
+				},
+				tooltips: {
+					mode: 'x-axis',
+					titleSpacing: 0,
+					titleMarginBottom: 3,
+					yPadding: 4,
+				},
+				hover: {
+					mode: 'x-axis'
+				},
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				},
+				elements: {
+					line: {
+						tension: 0.3,
+						borderWidth: 2,
+					},
+					point: {
+						radius: 2,
+						hoverRadius: 3,
+						hitRadius: 15,
+					}
+				}
 			}
 		};
+
+		Chart.defaults.global.defaultFontColor = "rgba(127,127,127,1)";
+		Chart.defaults.scale.gridLines.color = "rgba(127,127,127,.3)";
+		Chart.defaults.scale.gridLines.zeroLineColor = "rgba(127,127,127,.3)";
 
 		$(document).ready(function() {
 
 			// Preload issue tree
 			$.get(BASE + '/user/{{ @this_user.username }}/tree', {}, function(data) {
 				$('#user-tree').html(data);
-			}).error(function() {
+			}).fail(function() {
 				$('#user-tree').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.404_text }}'));
 			});
 
 			// Render chart
 			var ctx = document.getElementById("stats").getContext("2d");
-			charts.chart = new Chart(ctx).Line(charts.data, charts.options);
+			charts.chart = new Chart(ctx, {
+				type: 'line',
+				data: charts.data,
+				options: charts.options
+			});
 
 		});
 		</script>

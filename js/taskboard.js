@@ -253,6 +253,9 @@ var Taskboard = {
 					'status': receiverStatus
 				}
 			};
+		if ($(task).parents('.column').hasClass('completed')) {
+			$(task).find('.hours').text(0);
+		}
 		Taskboard.ajaxSendTaskPosition(data);
 	},
 	TaskboardSame: function(task, receiverSerialized) {

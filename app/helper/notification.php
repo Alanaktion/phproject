@@ -250,8 +250,9 @@ class Notification extends \Prefab {
 	/**
 	 * Send a user a password reset email
 	 * @param  int $user_id
+	 * @param  string $token
 	 */
-	public function user_reset($user_id) {
+	public function user_reset($user_id, $token) {
 		$f3 = \Base::instance();
 		if($f3->get("mail.from")) {
 			$user = new \Model\User;
@@ -262,7 +263,7 @@ class Notification extends \Prefab {
 			}
 
 			// Render message body
-			$f3->set("user", $user);
+			$f3->set("token", $token);
 			$text = $this->_render("notification/user_reset.txt");
 			$body = $this->_render("notification/user_reset.html");
 

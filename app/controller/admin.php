@@ -19,7 +19,18 @@ class Admin extends \Controller {
 		$f3->set("menuitem", "admin");
 
 		if($f3->get("POST.action") == "clearcache") {
-			\Cache::instance()->reset();
+			$cache = \Cache::instance();
+
+			// Clear configured cache
+			$cache->reset();
+
+			// Clear filesystem cache (thumbnails, etc.)
+			$cache->load("folder=tmp/cache/");
+			$cache->reset();
+
+			// Reset cache configuration
+			$cache->load($f3->get("CACHE"));
+
 			$f3->set("success", "Cache cleared successfully.");
 		}
 
