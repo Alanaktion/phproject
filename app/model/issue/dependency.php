@@ -46,6 +46,4 @@ class Dependency extends \Model {
 		);
 	}
 
-
-
 }

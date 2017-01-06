@@ -51,13 +51,18 @@ class View extends \Template {
 			$str = $this->_parseMarkdown($str);
 		}
 		if($options["textile"]) {
+			$escape = true;
 			if($options["markdown"]) {
 				// Yes, this is hacky. Please open an issue on GitHub if you
 				// know of a better way of supporting Markdown and Textile :)
 				$str = html_entity_decode($str);
 				$str = preg_replace('/^<p>|<\/p>$/m', "\n", $str);
+				$escape = false;
 			}
-			$str = $this->_parseTextile($str);
+			$str = $this->_parseTextile($str, $escape);
+		}
+		if(!$options["markdown"] && !$options['textile']) {
+			$str = nl2br(\Base::instance()->encode($str), false);
 		}
 		if($options["emoticons"]) {
 			$str = $this->_parseEmoticons($str);
@@ -65,6 +70,9 @@ class View extends \Template {
 		if($options["urls"]) {
 			$str = $this->_parseUrls($str);
 		}
+
+		// Simplistic XSS protection
+		$str = preg_replace("#</?script>#i", "", $str);
 
 		// Pass to any plugin hooks
 		$str = \Helper\Plugin::instance()->callHook("text.parse.after", $str);
@@ -84,7 +92,42 @@ class View extends \Template {
 	 */
 	protected function _parseIds($str) {
 		$url = \Base::instance()->get("site.url");
-		return preg_replace("/(?<=[^a-z\\/&]|^)#([0-9]+)(?=[^a-z\\/]|$)/i", "<a href=\"{$url}issues/$1\">#$1</a>", $str);
+
+		// Find all IDs
+		$count = preg_match_all("/(?<=[^a-z\\/&]#|^#)[0-9]+(?=[^a-z\\/]|$)/i", $str, $matches);
+		if(!$count) {
+			return $str;
+		}
+
+		// Load IDs
+		$ids = array();
+		foreach($matches[0] as $match) {
+			$ids[] = $match;
+		}
+		$idsStr = implode(",", array_unique($ids));
+		$issue = new \Model\Issue;
+		$issues = $issue->find(array("id IN ($idsStr)"));
+
+		return preg_replace_callback("/(?<=[^a-z\\/&]|^)#[0-9]+(?=[^a-z\\/]|$)/i", function($matches) use($url, $issues) {
+			$id = ltrim($matches[0], "#");
+			foreach($issues as $i) {
+				if($i->id == $id) {
+					$issue = $i;
+				}
+			}
+			if($issue) {
+				if($issue->deleted_date) {
+					$f3 = \Base::instance();
+					if($f3->get("user.role") == "admin" || $f3->get("user.rank") >= \Model\User::RANK_MANAGER || $f3->get("user.id") == $issue->author_id) {
+						return "<a href=\"{$url}issues/$id\" style=\"text-decoration: line-through;\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
+					} else {
+						return "#$id";
+					}
+				}
+				return "<a href=\"{$url}issues/$id\">#$id &ndash; " . htmlspecialchars($issue->name) . "</a>";
+			}
+			return "<a href=\"{$url}issues/$id\">#$id</a>";
+		}, $str);
 	}
 
 	/**
@@ -222,9 +265,10 @@ class View extends \Template {
 	 * @param  string $str
 	 * @return string
 	 */
-	protected function _parseTextile($str) {
+	protected function _parseTextile($str, $escape = true) {
 		$tex = new \Textile\Parser('html5');
 		$tex->setDimensionlessImages(true);
+		$tex->setRestricted($escape);
 		return $tex->parse($str);
 	}
 
@@ -233,9 +277,10 @@ class View extends \Template {
 	 * @param  string $str
 	 * @return string
 	 */
-	protected function _parseMarkdown($str) {
+	protected function _parseMarkdown($str, $escape = true) {
 		$mkd = new \Parsedown();
 		$mkd->setUrlsLinked(false);
+		$mkd->setMarkupEscaped($escape);
 		return $mkd->text($str);
 	}
 
@@ -273,6 +318,27 @@ class View extends \Template {
 	}
 
 	/**
+	 * Get UTC time offset in seconds
+	 *
+	 * @return int
+	 */
+	function timeoffset() {
+		$f3 = \Base::instance();
+
+		if($f3->exists("site.timeoffset")) {
+			return $f3->get("site.timeoffset");
+		} else {
+			$tz = $f3->get("site.timezone");
+			$dtzLocal = new \DateTimeZone($tz);
+			$dtLocal = new \DateTime("now", $dtzLocal);
+			$offset = $dtzLocal->getOffset($dtLocal);
+			$f3->set("site.timeoffset", $offset);
+		}
+
+		return $offset;
+	}
+
+	/**
 	 * Convert a UTC timestamp to local time
 	 * @param  int $timestamp
 	 * @return int
@@ -285,17 +351,7 @@ class View extends \Template {
 			$timestamp = time();
 		}
 
-		$f3 = \Base::instance();
-
-		if($f3->exists("site.timeoffset")) {
-			$offset = $f3->get("site.timeoffset");
-		} else {
-			$tz = $f3->get("site.timezone");
-			$dtzLocal = new \DateTimeZone($tz);
-			$dtLocal = new \DateTime("now", $dtzLocal);
-			$offset = $dtzLocal->getOffset($dtLocal);
-			$f3->set("site.timeoffset", $offset);
-		}
+		$offset = $this->timeoffset();
 
 		return $timestamp + $offset;
 	}
@@ -311,3 +367,4 @@ class View extends \Template {
 	}
 
 }
+

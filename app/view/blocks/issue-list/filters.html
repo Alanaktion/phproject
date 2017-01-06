@@ -1,0 +1,177 @@
+<tr class="issue-filters">
+	<td colspan="{{ @bulkUpdate ? 2 : 1 }}">
+		<check if="{{ !empty(@show_export) }}">
+			<a class="btn btn-default btn-xs" href="{{ @BASE }}/issues/export?{{ http_build_query($_GET) }}">
+				<span class="fa fa-save"></span>&ensp;{{ @dict.export }}
+			</a>
+		</check>
+	</td>
+	<td>
+		<input type="text" class="form-control input-sm" name="name" value="{{ @@GET.name | esc }}">
+	</td>
+	<td>
+		<select class="form-control input-sm" name="type_id">
+			<option value="">--</option>
+			<repeat group="{{ @types }}" value="{{ @item }}">
+				<check if="{{ !empty(@GET.type_id) && @GET.type_id == @item.id }}">
+					<true><option value="{{ @item.id }}" selected>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></true>
+					<false><option value="{{ @item.id }}">{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></false>
+				</check>
+			</repeat>
+		</select>
+	</td>
+	<td>
+		<select class="form-control input-sm" name="priority">
+			<option value="">--</option>
+			<repeat group="{{ @priorities }}" value="{{ @item }}">
+				<check if="{{ !empty(@GET.priority) && @GET.priority == @item.value }}">
+					<true><option value="{{ @item.value }}" selected>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></true>
+					<false><option value="{{ @item.value }}">{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></false>
+				</check>
+			</repeat>
+		</select>
+	</td>
+	<td>
+		<select class="form-control input-sm" name="status">
+			<option value="">--</option>
+			<optgroup label="{{ @dict.general }}">
+				<check if="{{ !empty(@GET.status) && @GET.status == 'open' }}">
+					<true><option value="open" selected>{{ @dict.open }}</option></true>
+					<false><option value="open">{{ @dict.open }}</option></false>
+				</check>
+				<check if="{{ !empty(@GET.status) && @GET.status == 'closed' }}">
+					<true><option value="closed" selected>{{ @dict.closed }}</option></true>
+					<false><option value="closed">{{ @dict.closed }}</option></false>
+				</check>
+			</optgroup>
+			<optgroup label="{{ @dict.exact_match }}">
+				<repeat group="{{ @statuses }}" value="{{ @item }}">
+					<check if="{{ !empty(@GET.status) && @GET.status == @item.id }}">
+						<true><option value="{{ @item.id }}" selected>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></true>
+						<false><option value="{{ @item.id }}">{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></false>
+					</check>
+				</repeat>
+			</optgroup>
+		</select>
+	</td>
+	<td>
+		<input type="text" class="form-control input-sm" name="parent_id" data-typeahead="issues" id="filter-input-parent-id" value="{{ @@GET.parent_id | esc }}" />
+	</td>
+	<td>
+		<select class="form-control input-sm" name="author_id">
+			<option value="">--</option>
+			<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
+			<optgroup label="{{ @dict.groups }}">
+				<repeat group="{{ @groups }}" value="{{ @item }}">
+					<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
+						<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+						<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
+					</check>
+				</repeat>
+			</optgroup>
+			<optgroup label="{{ @dict.users }}">
+				<repeat group="{{ @users }}" value="{{ @item }}">
+					<check if="{{ !empty(@GET.author_id) && @GET.author_id == @item.id }}">
+						<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+						<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
+					</check>
+				</repeat>
+			</optgroup>
+		</select>
+	</td>
+	<td>
+		<select class="form-control input-sm" name="owner_id">
+			<option value="">--</option>
+			<option value="{{ @user.id }}">{{ @user.name | esc }}</option>
+			<optgroup label="{{ @dict.groups }}">
+				<repeat group="{{ @groups }}" value="{{ @item }}">
+					<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
+						<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+						<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
+					</check>
+				</repeat>
+			</optgroup>
+			<optgroup label="{{ @dict.users }}">
+				<repeat group="{{ @users }}" value="{{ @item }}">
+					<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
+						<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+						<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
+					</check>
+				</repeat>
+			</optgroup>
+			<check if="{{ @user.rank >= 3 && !empty(@deleted_users) }}">
+				<optgroup label="{{ @dict.deactivated_users }}">
+					<repeat group="{{ @deleted_users }}" value="{{ @item }}">
+						<check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">
+							<true><option value="{{ @item.id }}" selected>{{ @item.name | esc }}</option></true>
+							<false><option value="{{ @item.id }}">{{ @item.name | esc }}</option></false>
+						</check>
+					</repeat>
+				</optgroup>
+			</check>
+		</select>
+	</td>
+	<td>
+		<select class="form-control input-sm" name="sprint_id">
+			<option value="">--</option>
+			<repeat group="{{ @sprints }}" value="{{ @item }}">
+				<check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
+					<true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
+					<false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
+				</check>
+			</repeat>
+			<check if="{{ !empty(@old_sprints) }}">
+				<optgroup label="@dict.previous_sprints">
+					<repeat group="{{ @old_sprints }}" value="{{ @item }}">
+						<check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
+							<true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
+							<false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
+						</check>
+					</repeat>
+				</optgroup>
+			</check>
+		</select>
+	</td>
+	<td>
+		<select class="form-control input-sm" name="repeat_cycle">
+			<option value="">--</option>
+			<optgroup label="{{ @dict.general }}">
+				<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'repeat' }}">
+					<true><option value="repeat" selected>{{ @dict.repeating }}</option></true>
+					<false><option value="repeat">{{ @dict.repeating }}</option></false>
+				</check>
+				<check if="{{ empty(@GET.repeat_cycle) }}">
+					<true><option value="" selected>{{ @dict.not_repeating }}</option></true>
+					<false><option value="">{{ @dict.not_repeating }}</option></false>
+				</check>
+			</optgroup>
+			<optgroup label="{{ @dict.exact_match }}">
+				<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'daily' }}">
+					<true><option value="daily" selected>{{ @dict.daily }}</option></true>
+					<false><option value="daily">{{ @dict.daily }}</option></false>
+				</check>
+				<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'weekly' }}">
+					<true><option value="weekly" selected>{{ @dict.weekly }}</option></true>
+					<false><option value="weekly">{{ @dict.weekly }}</option></false>
+				</check>
+				<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'monthly' }}">
+					<true><option value="monthly" selected>{{ @dict.monthly }}</option></true>
+					<false><option value="monthly">{{ @dict.monthly }}</option></false>
+				</check>
+				<check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'sprint' }}">
+					<true><option value="sprint" selected>{{ @dict.sprint }}</option></true>
+					<false><option value="sprint">{{ @dict.sprint }}</option></false>
+				</check>
+			</optgroup>
+		</select>
+	</td>
+	<td></td>
+	<check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">
+		<td></td>
+	</check>
+	<td class="text-right">
+		<noscript>
+			<button type="submit" class="btn btn-xs btn-primary">{{ @dict.submit }}</button>
+		</noscript>
+	</td>
+</tr>

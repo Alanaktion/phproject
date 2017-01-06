@@ -56,7 +56,7 @@ if($_POST) {
 		$security = \Helper\Security::instance();
 		$user = new \Model\User;
 		$user->role = "admin";
-		$user->rank = 5; // superadmin
+		$user->rank = \Model\User::RANK_SUPER;
 		$user->name = "Admin";
 		$user->username = $post["user-username"] ?: "admin";
 		$user->email = $post["user-email"];
@@ -73,42 +73,32 @@ if($_POST) {
 			mkdir("log", 0777, true);
 		}
 
-		// Build custom config string
-		$config = "[globals]";
+		// Save configruation options
 		if(!empty($post["language"])) {
-			$config .= "\nLANGUAGE={$post['language']}";
+			\Model\Config::setVal("LANGUAGE", $post["language"]);
 		}
-
-		if($post["parser"] != "both") {
-			$config .= "\n\n; Parser options";
-			if($post["parser"] != "markdown") {
-				$config .= "\nparse.markdown=false";
-			}
-			if($post["parser"] != "textile") {
-				$config .= "\nparse.textile=false";
-			}
+		if($post["parser"] == "both") {
+			\Model\Config::setVal("parse.markdown", 1);
+			\Model\Config::setVal("parse.textile", 1);
+		} elseif($post["parser"] == "markdown") {
+			\Model\Config::setVal("parse.markdown", 0);
+			\Model\Config::setVal("parse.textile", 1);
+		} elseif($post["parser"] == "textile") {
+			\Model\Config::setVal("parse.markdown", 1);
+			\Model\Config::setVal("parse.textile", 0);
 		}
+		\Model\Config::setVal("site.name", $post['site-name']);
+		\Model\Config::setVal("site.timezone", $post['site-timezone']);
+		\Model\Config::setVal("site.public_registration", $post['site-public_registration']);
+		\Model\Config::setVal("mail.from", $post['mail-from']);
 
-		// Write configuration file
-		file_put_contents("config.ini",
-"$config
-
-; Database
-db.host={$post['db-host']}
-db.port={$post['db-port']}
-db.user={$post['db-user']}
-db.pass={$post['db-pass']}
-db.name={$post['db-name']}
-
-; Global site configuration
-site.name={$post['site-name']}
-site.timezone={$post['site-timezone']}
-site.public_registration={$post['site-public_registration']}
-site.db_sessions=1
-
-; Email
-mail.from={$post['mail-from']}
-	");
+		// Write database connection file
+		$data = "[globals]\n";
+		$data .= "db.host=\"{$post['db-host']}\"\n";
+		$data .= "db.user=\"{$post['db-user']}\"\n";
+		$data .= "db.pass=\"{$post['db-pass']}\"\n";
+		$data .= "db.name=\"{$post['db-name']}\"\n";
+		file_put_contents("config.ini", $data);
 
 		$f3->set("success", "Installation complete.");
 	} catch(PDOException $e) {

@@ -44,7 +44,6 @@ class Group extends \Model {
 	 */
 	public static function userIsInGroup($group_id, $user_id = null) {
 		$f3 = \Base::instance();
-		$db = $f3->get("db.instance");
 
 		if($user_id === null) {
 			$user_id =  $f3->get("user.id");

@@ -6,6 +6,9 @@ class Issues extends \Controller {
 
 	protected $_userId;
 
+	/**
+	 * Require login on new
+	 */
 	public function __construct() {
 		$this->_userId = $this->_requireLogin();
 	}
@@ -13,6 +16,7 @@ class Issues extends \Controller {
 	/**
 	 * Clean a string for encoding in JSON
 	 * Collapses whitespace, then trims
+	 *
 	 * @param  string $string
 	 * @return string
 	 */
@@ -22,10 +26,12 @@ class Issues extends \Controller {
 
 	/**
 	 * Build a WHERE clause for issue listings based on the current filters and sort options
+	 *
 	 * @return array
 	 */
 	protected function _buildFilter() {
 		$f3 = \Base::instance();
+		$db = $f3->get("db.instance");
 		$issues = new \Model\Issue\Detail;
 
 		// Filter issue listing by URL parameters
@@ -42,15 +48,15 @@ class Issues extends \Controller {
 		$filter_str = "";
 		foreach($filter as $i => $val) {
 			if($i == "name") {
-				$filter_str .= "`$i` LIKE '%" . addslashes($val) . "%' AND ";
+				$filter_str .= "`$i` LIKE " . $db->quote("%$val%") . " AND ";
 			} elseif($i == "status" && $val == "open") {
 				$filter_str .= "status_closed = 0 AND ";
 			} elseif($i == "status" && $val == "closed") {
 				$filter_str .= "status_closed = 1 AND ";
 			} elseif($i == "repeat_cycle" && $val == "repeat") {
-				$filter_str .= "repeat_cycle NOT IN ('none', '') AND ";
+				$filter_str .= "repeat_cycle IS NOT NULL AND ";
 			} elseif($i == "repeat_cycle" && $val == "none") {
-				$filter_str .= "repeat_cycle IN ('none', '') AND ";
+				$filter_str .= "repeat_cycle IS NULL AND ";
 			} elseif(($i == "author_id" || $i== "owner_id") && !empty($val) && is_numeric($val)) {
 				// Find all users in a group if necessary
 				$user = new \Model\User;
@@ -65,10 +71,10 @@ class Issues extends \Controller {
 					$filter_str .= "$i in (". implode(",",$garray) .") AND ";
 				} else {
 					// Just select by user
-					$filter_str .= "$i = '". addslashes($val) ."' AND ";
+					$filter_str .= "$i = ". $db->quote($val) ." AND ";
 				}
 			} else {
-				$filter_str .= "`$i` = '" . addslashes($val) . "' AND ";
+				$filter_str .= "`$i` = " . $db->quote($val) . " AND ";
 			}
 		}
 		unset($val);
@@ -124,7 +130,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * GET /issues
 	 * Display a sortable, filterable issue list
+	 *
 	 * @param  \Base  $f3
 	 */
 	public function index($f3) {
@@ -203,18 +211,24 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * POST /issues/bulk_update
 	 * Update a list of issues
-	 * @param  \Base  $f3
+	 *
+	 * @param \Base $f3
 	 */
 	public function bulk_update($f3) {
 		$post = $f3->get("POST");
 
 		$issue = new \Model\Issue;
-		if( !empty($post["id"] ) && is_array($post["id"] )) {
+		if(!empty($post["id"]) && is_array($post["id"] )) {
 			foreach($post["id"] as $id) {
 				// Updating existing issue.
 				$issue->load($id);
 				if($issue->id) {
+
+					if(!empty($post["update_copy"])) {
+						$issue = $issue->duplicate(false);
+					}
 
 					// Diff contents and save what's changed.
 					foreach($post as $i=>$val) {
@@ -246,7 +260,7 @@ class Issues extends \Controller {
 					}
 
 					// Save to the sprint of the due date if no sprint selected
-					if (!empty($post['due_date']) && empty($post['sprint_id'])) {
+					if (!empty($post['due_date']) && empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
 						$sprint = new \Model\Sprint;
 						$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
 						$issue->sprint_id = $sprint->id;
@@ -269,20 +283,15 @@ class Issues extends \Controller {
 					return;
 				}
 			}
-
-		} else {
-			$f3->reroute($post["url_path"] . "?" . $post["url_query"]);
 		}
 
-		if (!empty($post["url_path"]))	{
-			$f3->reroute($post["url_path"] . "?" . $post["url_query"]);
-		} else {
-			$f3->reroute("/issues?" . $post["url_query"]);
-		}
+		$f3->reroute("/issues?" . $post["url_query"]);
 	}
 
 	/**
+	 * GET /issues/export
 	 * Export a list of issues
+	 *
 	 * @param  \Base  $f3
 	 */
 	public function export($f3) {
@@ -331,7 +340,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * Get /issues/new/@type
 	 * Create a new issue
+	 *
 	 * @param \Base $f3
 	 */
 	public function add($f3) {
@@ -350,10 +361,10 @@ class Issues extends \Controller {
 		}
 
 		if($f3->get("PARAMS.parent")) {
-			$parent = $f3->get("PARAMS.parent");
-			$parent_issue = new \Model\Issue;
-			$parent_issue->load(array("id=? AND (closed_date IS NULL OR closed_date = '0000-00-00 00:00:00')", $parent));
-			if($parent_issue->id){
+			$parent_id = $f3->get("PARAMS.parent");
+			$parent = new \Model\Issue;
+			$parent->load(array("id = ?", $parent_id));
+			if($parent->id) {
 				$f3->set("parent", $parent);
 			}
 		}
@@ -432,6 +443,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * GET /issues/close/@id
+	 * Close an issue
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -451,6 +465,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * GET /issues/reopen/@id
+	 * Reopen an issue
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -476,6 +493,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * GET /issues/copy/@id
+	 * Copy an issue
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -501,6 +521,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Save an updated issue
+	 *
 	 * @return \Model\Issue
 	 */
 	protected function _saveUpdate() {
@@ -544,23 +565,13 @@ class Issues extends \Controller {
 
 					// Save to the sprint of the due date unless one already set
 					if ($i=="due_date" && !empty($val)) {
-						if(empty($post['sprint_id'])) {
+						if(empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
 							$sprint = new \Model\Sprint;
 							$sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
 							$issue->sprint_id = $sprint->id;
 						}
 					}
 				}
-			}
-		}
-
-		// If it's a child issue and the parent is in a sprint,
-		// use that sprint if another has not been set already
-		if(!$issue->sprint_id && $issue->parent_id) {
-			$parent = new \Model\Issue;
-			$parent->load($issue->parent_id);
-			if($parent->sprint_id) {
-				$issue->sprint_id = $parent->sprint_id;
 			}
 		}
 
@@ -584,6 +595,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Create a new issue from $_POST
+	 *
 	 * @return \Model\Issue
 	 */
 	protected function _saveNew() {
@@ -592,6 +604,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * POST /issues
+	 * Save an issue
+	 *
 	 * @param \Base $f3
 	 */
 	public function save($f3) {
@@ -621,6 +636,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * GET /issues/@id
+	 * View an issue
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -637,70 +655,6 @@ class Issues extends \Controller {
 
 		$type = new \Model\Issue\Type();
 		$type->load($issue->type_id);
-
-		// Run actions if passed
-		$post = $f3->get("POST");
-		if(!empty($post)) {
-			switch($post["action"]) {
-				case "add_watcher":
-					$watching = new \Model\Issue\Watcher;
-					// Loads just in case the user is already a watcher
-					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
-					if(!$watching->id) {
-						$watching->issue_id = $issue->id;
-						$watching->user_id = $post["user_id"];
-						$watching->save();
-					}
-
-					if($f3->get("AJAX"))
-						return;
-					break;
-
-				case "remove_watcher":
-					$watching = new \Model\Issue\Watcher;
-					$watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
-					$watching->delete();
-
-					if($f3->get("AJAX"))
-						return;
-					break;
-
-				case "add_dependency":
-					$dependencies = new \Model\Issue\Dependency;
-					// Loads just in case the task  is already a dependency
-					$dependencies->load(array("issue_id = ? AND dependency_id = ?", $issue->id, $post["id"]));
-					$dependencies->issue_id = $issue->id;
-					$dependencies->dependency_id = $post["id"];
-					$dependencies->dependency_type = $post["type_id"];
-					$dependencies->save();
-
-					if($f3->get("AJAX"))
-						return;
-					break;
-
-				case "add_dependent":
-					$dependencies = new \Model\Issue\Dependency;
-					// Loads just in case the task  is already a dependency
-					$dependencies->load(array("issue_id = ? AND dependency_id = ?",  $post["id"],  $issue->id));
-					$dependencies->dependency_id = $issue->id;
-					$dependencies->issue_id = $post["id"];
-					$dependencies->dependency_type = $post["type_id"];
-					$dependencies->save();
-
-					if($f3->get("AJAX"))
-						return;
-					break;
-
-				case "remove_dependency":
-					$dependencies = new \Model\Issue\Dependency;
-					$dependencies->load($post["id"]);
-					$dependencies->delete();
-
-					if($f3->get("AJAX"))
-						return;
-					break;
-			}
-		}
 
 		$f3->set("title", $type->name . " #" . $issue->id  . ": " . $issue->name);
 		$f3->set("menuitem", "browse");
@@ -749,10 +703,100 @@ class Issues extends \Controller {
 		$f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
 		$this->_render("issues/single.html");
-
 	}
 
 	/**
+	 * POST /issues/@id/watchers
+	 * Add a watcher
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 */
+	public function add_watcher($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load(array("id=?", $params["id"]));
+		if(!$issue->id) {
+			$f3->error(404);
+		}
+
+		$watcher = new \Model\Issue\Watcher;
+
+		// Loads just in case the user is already a watcher
+		$watcher->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
+		if(!$watcher->id) {
+			$watcher->issue_id = $issue->id;
+			$watcher->user_id = $f3->get("POST.user_id");
+			$watcher->save();
+		}
+	}
+
+	/**
+	 * POST /issues/@id/watchers/delete
+	 * Delete a watcher
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 */
+	public function delete_watcher($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load(array("id=?", $params["id"]));
+		if(!$issue->id) {
+			$f3->error(404);
+		}
+
+		$watcher = new \Model\Issue\Watcher;
+
+		$watcher->load(array("issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")));
+		$watcher->delete();
+	}
+
+	/**
+	 * POST /issues/@id/dependencies
+	 * Add a dependency
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 */
+	public function add_dependency($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load(array("id=?", $params["id"]));
+		if(!$issue->id) {
+			$f3->error(404);
+		}
+
+		$dependency = new \Model\Issue\Dependency;
+
+		// Loads just in case the task is already a dependency
+		$dependency->load(array("issue_id = ? AND dependency_id = ?", $issue->id, $f3->get("POST.id")));
+		$dependency->issue_id = $f3->get("POST.issue_id");
+		$dependency->dependency_id = $f3->get("POST.dependency_id");
+		$dependency->dependency_type = $f3->get("POST.type");
+		$dependency->save();
+	}
+
+	/**
+	 * POST /issues/@id/dependencies/delete
+	 * Delete a dependency
+	 *
+	 * @param \Base $f3
+	 * @param array $params
+	 */
+	public function delete_dependency($f3, $params) {
+		$issue = new \Model\Issue;
+		$issue->load(array("id=?", $params["id"]));
+		if(!$issue->id) {
+			$f3->error(404);
+		}
+
+		$dependency = new \Model\Issue\Dependency;
+		$dependency->load($f3->get("POST.id"));
+		$dependency->delete();
+	}
+
+	/**
+	 * GET /issues/@id/history
+	 * AJAX call for issue history
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 */
@@ -777,6 +821,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * GET /issues/@id/related
+	 * AJAX call for related issues
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -789,7 +836,11 @@ class Issues extends \Controller {
 			$f3->set("parent", $issue);
 
 			$issues = new \Model\Issue\Detail;
-			$searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
+			if($exclude = $f3->get("GET.exclude")) {
+				$searchparams = array("parent_id = ? AND id != ? AND deleted_date IS NULL", $issue->id, $exclude);
+			} else {
+				$searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
+			}
 			$orderparams = array("order" => "status_closed, priority DESC, due_date");
 			$f3->set("issues", $issues->find($searchparams, $orderparams));
 
@@ -807,6 +858,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * GET /issues/@id/watchers
+	 * AJAX call for issue watchers
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 */
@@ -823,6 +877,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * GET /issues/@id/dependencies
+	 * AJAX call for issue dependencies
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -832,6 +889,7 @@ class Issues extends \Controller {
 		$issue->load($params["id"]);
 
 		if($issue->id) {
+			$f3->set("issue", $issue);
 			$dependencies = new \Model\Issue\Dependency;
 			$f3->set("dependencies", $dependencies->findby_issue($issue->id));
 			$f3->set("dependents", $dependencies->findby_dependent($issue->id));
@@ -846,6 +904,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * POST /issues/delete/@id
+	 * Delete an issue
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -863,6 +924,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * POST /issues/undelete/@id
+	 * Un-delete an issue
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -880,6 +944,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * POST /issues/comment/save
+	 * Save a comment
+	 *
 	 * @param \Base $f3
 	 * @throws \Exception
 	 */
@@ -927,6 +994,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * POST /issues/comment/delete
+	 * Delete a comment
+	 *
 	 * @param \Base $f3
 	 * @throws \Exception
 	 */
@@ -939,6 +1009,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * POST /issues/file/delete
+	 * Delete a file
+	 *
 	 * @param \Base $f3
 	 * @throws \Exception
 	 */
@@ -950,6 +1023,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * POST /issues/file/undelete
+	 * Un-delete a file
+	 *
 	 * @param \Base $f3
 	 * @throws \Exception
 	 */
@@ -963,6 +1039,7 @@ class Issues extends \Controller {
 
 	/**
 	 * Build an issue search query WHERE clause
+	 *
 	 * @param  string $q User query string
 	 * @return array  [string, keyword, ...]
 	 */
@@ -993,6 +1070,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * GET /search
+	 * Search for issues
+	 *
 	 * @param \Base $f3
 	 */
 	public function search($f3) {
@@ -1038,6 +1118,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * POST /issues/upload
+	 * Upload a file
+	 *
 	 * @param \Base $f3
 	 * @param array $params
 	 * @throws \Exception
@@ -1118,7 +1201,9 @@ class Issues extends \Controller {
 	}
 
 	/**
+	 * GET /issues/project/@id
 	 * Project Overview action
+	 *
 	 * @param  \Base $f3
 	 * @param  array $params
 	 */
@@ -1199,11 +1284,12 @@ class Issues extends \Controller {
 		$f3->set("project", $project);
 		$f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - " . $f3->get("dict.project_overview"));
 		$this->_render("issues/project.html");
-
 	}
 
 	/**
+	 * GET /issues/parent_ajax
 	 * Load all matching issues
+	 *
 	 * @param  \Base $f3
 	 */
 	public function parent_ajax($f3) {
@@ -1241,4 +1327,5 @@ class Issues extends \Controller {
 
 		$this->_printJson(array('results' => $results));
 	}
+
 }

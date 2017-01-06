@@ -12,4 +12,6 @@ $f3->mset(array(
 	"CACHE" => false,
 	"AUTOLOAD" => "app/;lib/vendor/",
 	"PACKAGE" => "Phproject",
+	"TZ" => "UTC",
+	"site.timezone" => "America/Phoenix"
 ));

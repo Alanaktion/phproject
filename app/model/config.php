@@ -38,13 +38,13 @@ class Config extends \Model {
 	 */
 	public static function importAll() {
 		$f3 = \Base::instance();
-		$root = $f3->get('ROOT').$f3->get('BASE');
+		$root = $f3->get("ROOT") . $f3->get("BASE");
 
 		// Import existing config
-		$ini = parse_ini_file($root.'/config.ini');
-		$ini = $ini + parse_ini_file($root.'/config-base.ini');
+		$ini = parse_ini_file($root."/config.ini");
+		$ini = $ini + parse_ini_file($root."/config-base.ini");
 		foreach($ini as $key => $val) {
-			if(substr($key, 0, 3) == 'db.') {
+			if(substr($key, 0, 3) == "db.") {
 				continue;
 			}
 			$conf = new Config;
@@ -55,11 +55,11 @@ class Config extends \Model {
 
 		// Write new config.ini
 		$data = "[globals]\n";
-		$data .= "db.host={$ini['db.host']}\n";
-		$data .= "db.user={$ini['db.user']}\n";
-		$data .= "db.pass={$ini['db.pass']}\n";
-		$data .= "db.name={$ini['db.name']}\n";
-		file_put_contents($root.'/config.ini', $data);
+		$data .= "db.host=\"{$ini['db.host']}\"\n";
+		$data .= "db.user=\"{$ini['db.user']}\"\n";
+		$data .= "db.pass=\"{$ini['db.pass']}\"\n";
+		$data .= "db.name=\"{$ini['db.name']}\"\n";
+		file_put_contents($root . "/config.ini", $data);
 	}
 
 	/**

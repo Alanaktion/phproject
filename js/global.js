@@ -66,6 +66,9 @@ $(function() {
 	});
 
 	// Add double click on issue listing
+	$('.issue-list tbody tr input').dblclick(function(e) {
+		e.stopPropagation();
+	});
 	$('.issue-list tbody tr').dblclick(function() {
 		var id = $(this).data('id');
 		if(id) {
@@ -100,6 +103,13 @@ $(function() {
 	if(navigator.platform.indexOf('Mac') >= 0) {
 		var $modalBody = $('#modal-hotkeys .modal-body');
 		$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8997;').replace(/ctrl\+/g, '&#8984;').replace(/enter/g, '&#8617;').replace(/shift\+/g, '&#8679;'));
+	}
+
+	// Show correct accesskey modifier
+	if(navigator.platform.indexOf('Mac') >= 0) {
+		$('.accesskey-modifier').html('&#8984;&#8997;');
+	} else if(navigator.userAgent.indexOf('Firefox') >= 0) {
+		$('.accesskey-modifier').text('alt+shift');
 	}
 
 	// Submit from textarea if Ctrl+Enter or Cmd+Enter is pressed
@@ -212,7 +222,7 @@ var Session = {
 		if(data.is_logged_in && $('#modal-loggedout.in').length) {
 			$('#modal-loggedout').modal('hide');
 		}
-		if(!data.is_logged_in && !$('#modal-loggedout.in').length) {
+		if(!data.is_logged_in && $('#modal-loggedout').length && !$('#modal-loggedout.in').length) {
 			$('.modal.in').modal('hide');
 			$('#modal-loggedout').modal('show');
 		}

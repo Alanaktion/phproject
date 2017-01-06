@@ -43,6 +43,25 @@
 							<dt>shift+r</dt>
 							<dd>{{ @dict.reopen }}</dd>
 						</dl>
+						<br>
+						<p><b>Nagivation</b></p>
+						Use with <kbd class="accesskey-modifier">alt</kbd>:
+						<dl class="dl-inline">
+							<dt>h</dt>
+							<dd>{{ @dict.dashboard }}</dd>
+							<dt>n</dt>
+							<dd>{{ @dict.new }}&hellip;</dd>
+							<dt>b</dt>
+							<dd>{{ @dict.browse }}&hellip;</dd>
+							<check if="{{ @user.role=='admin' }}">
+								<dt>s</dt>
+								<dd>{{ @dict.sprints }}</dd>
+								<dt>a</dt>
+								<dd>{{ @dict.administration }}</dd>
+							</check>
+							<dt>u</dt>
+							<dd>{{ @dict.user }}</dd>
+						</dl>
 					</div>
 				</div>
 			</div>
