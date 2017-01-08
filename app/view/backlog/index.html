@@ -1,105 +1,134 @@
 <!DOCTYPE html>
 <html lang="{{ @this->lang() }}">
+
 <head>
 	<include href="blocks/head.html" />
 	<link rel="stylesheet" href="{{ @BASE }}/css/backlog.css">
+	<style type="text/css">
+	</style>
 </head>
-<body>
-<include href="blocks/navbar.html" />
-<div class="container">
-	<div class="row" id="backlog">
-		<div class="col-md-6">
-			 <div class="panel panel-default">
-				<div class="panel-heading has-buttons">
-					{{ @dict.backlog }}&ensp;
-					<div class="btn-group">
-						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" data-target=".bs-example-modal-lg">
-							<span class="fa fa-filter"></span> {{ @dict.filter_projects }} <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/all">{{ @dict.all_projects }}</a></li>
-							<li class="{{ @filter == 'groups' && empty(@groupid) ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/groups">{{ @dict.my_groups }}</a></li>
-							<li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/me">{{ @dict.my_projects }}</a></li>
-							<check if="{{ count(@groups) }}">
-								<li class="divider"></li>
-								<repeat group="{{ @groups }}" value="{{ @group }}">
-									<li class="{{ @groupid == @group.id ? 'active' : '' }}"><a href="{{ @BASE }}/backlog/groups/{{ @group.id }}">{{ @group.name | esc }}</a></li>
-								</repeat>
-							</check>
-						</ul>
-					</div>
-					<a href="{{ @BASE }}/issues/new/{{ @issue_type.project }}" class="btn btn-default btn-xs pull-right">
-						<span class="fa fa-plus"></span> {{ @dict.add_project }}
-					</a>
-				</div>
-				<div class="panel-body in" id="panel-0">
-					<ul class="list-group sortable" data-list-id="0" data-user-id="{{ @@groupid }}">
-						<repeat group="{{ @backlog }}" value="{{ @project }}">
-							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
-								<span class="badge">{{ @project.priority_name }}</span>
-								<span class="title">
-									<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-									{{ @project.name | esc }}
-								</span>
-							</li>
-						</repeat>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<ul class="nav nav-tabs">
-				<li class="active"><a href="#tab-sprints" data-toggle="tab">{{ @dict.sprints }}</a></li>
-				<li><a href="#tab-unsorted" data-toggle="tab">{{ @dict.unsorted_projects }}</a></li>
-			</ul>
-			<div class="tab-content">
-				<div class="tab-pane active" id="tab-sprints">
-					<repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
-						<div class="panel panel-default">
-							<div class="panel-heading has-buttons">
-								<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
-								<a href="{{ @BASE }}/taskboard/{{ @sprint.id }}/{{ @@@groupid ?: @filter }}" class="btn btn-default btn-xs pull-right">
-									<span class="fa fa-list"></span> {{ @dict.taskboard }}
-								</a>
+
+<body class="is-loading {{ @user.rank >= \Model\User::RANK_MANAGER ? 'is-sortable' : '' }}">
+	<include href="blocks/navbar.html" />
+	<div class="container">
+		<div class="row" id="backlog">
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading has-buttons">
+						{{ @dict.backlog }}&ensp;
+						<div class="btn-group btn-group-xs">
+							<div class="btn-group">
+								<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+									<span class="fa fa-filter"></span>&ensp; {{ @dict.groups }}
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<li>
+										<a href="#" data-group-id="all" data-user-ids="all">
+											{{ @dict.all_projects }}
+										</a>
+									</li>
+									<li class="active">
+										<a href="#" data-my-groups data-user-ids="{{ implode(',', @user_obj->getSharedGroupUserIds()) }}">
+											{{ @dict.my_groups }}
+										</a>
+									</li>
+									<li>
+										<a href="#" data-group-id="{{ @user.id }}" data-user-ids="{{ @user.id }}">
+											{{ @dict.my_projects }}
+										</a>
+									</li>
+									<check if="{{ count(@groups) }}">
+										<li class="divider"></li>
+										<repeat group="{{ @groups }}" value="{{ @group }}">
+											<li>
+												<a href="#" data-group-id="{{ @group->id }}" data-user-ids="{{ implode(',', @group->getGroupUserIds()) }}">
+													{{ @group.name | esc }}
+												</a>
+											</li>
+										</repeat>
+									</check>
+								</ul>
 							</div>
-							<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
-								<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
-									<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
-										<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
-											<span class="badge">{{ @project.priority_name }}</span>
-											<span class="title">
-												<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-												{{ @project.name | esc }}
-											</span>
+							<div class="btn-group">
+								<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+									{{ @dict.cols.type }}
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<F3:repeat group="{{ @project_types }}" value="{{ @type }}">
+										<li class="active">
+											<a href="#" data-type-id="{{ @type.id }}">
+												{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
+											</a>
 										</li>
-									</repeat>
+									</F3:repeat>
 								</ul>
 							</div>
 						</div>
-					</repeat>
-					<p class="text-center">
-						<a href="{{ @BASE }}/backlog/old">{{ @dict.show_previous_sprints }}</a>
-					</p>
+						<a href="{{ @BASE }}/issues/new/{{ @issue_type.project }}" class="btn btn-default btn-xs pull-right">
+							<span class="fa fa-plus"></span> {{ @dict.add_project }}
+						</a>
+					</div>
+					<div class="panel-body in" id="panel-0">
+						<ul class="list-group sortable" data-list-id="0">
+							<repeat group="{{ @backlog }}" value="{{ @project }}">
+								<include href="backlog/item.html" />
+							</repeat>
+						</ul>
+					</div>
 				</div>
-				<div class="tab-pane" id="tab-unsorted">
-					<ul class="list-group sortable">
-						<repeat group="{{ @unsorted }}" value="{{ @project }}" data-list-id="0">
-							<li class="list-group-item" id="project_{{ @project.id }}" data-id="{{ @project.id }}">
-								<span class="badge">{{ @project.priority_name }}</span>
-								<span class="title">
-									<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
-									{{ @project.name | esc }}
-								</span>
-							</li>
+			</div>
+			<div class="col-md-6">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#tab-sprints" data-toggle="tab">{{ @dict.sprints }}</a>
+					</li>
+					<li>
+						<a href="#tab-unsorted" data-toggle="tab">{{ @dict.unsorted_items }}</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="tab-sprints">
+						<repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
+							<div class="panel panel-default">
+								<div class="panel-heading has-buttons">
+									<a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">
+										{{ @sprint.name }} &mdash; {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}
+									</a>
+									<a href="{{ @BASE }}/taskboard/{{ @sprint.id }}/{{ @@@groupid ?: @filter }}" class="btn btn-default btn-xs pull-right">
+										<span class="fa fa-list"></span> {{ @dict.taskboard }}
+									</a>
+								</div>
+								<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
+									<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
+										<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
+											<include href="backlog/item.html" />
+										</repeat>
+									</ul>
+								</div>
+							</div>
 						</repeat>
-					</ul>
+						<p class="text-center">
+							<a href="{{ @BASE }}/backlog/old">{{ @dict.show_previous_sprints }}</a>
+						</p>
+					</div>
+					<div class="tab-pane" id="tab-unsorted">
+						<ul class="list-group sortable">
+							<repeat group="{{ @unsorted }}" value="{{ @project }}" data-list-id="0">
+								<include href="backlog/item.html" />
+							</repeat>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>
+		<include href="blocks/footer.html" />
+		<check if="{{ @user.rank >= \Model\User::RANK_MANAGER }}">
+			<script type="text/javascript">var sortBacklog = true;</script>
+		</check>
+		<script src="{{ @BASE }}/js/jquery.fn.sortable.js"></script>
+		<script src="{{ @BASE }}/minify/js/backlog.js"></script>
 	</div>
-	<include href="blocks/footer.html" />
-	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
-	<script src="{{ @BASE }}/minify/js/backlog.js"></script>
-</div>
 </body>
 </html>

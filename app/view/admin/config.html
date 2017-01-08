@@ -54,6 +54,7 @@
 								<tr>
 									<th>{{ @dict.cols.id }}</th>
 									<th>{{ @dict.name }}</th>
+									<th>{{ @dict.role }}</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -62,6 +63,7 @@
 									<tr>
 										<td>{{ @item.id }}</td>
 										<td>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) | esc }}</td>
+										<td>{{ ucfirst(isset(@dict[@item.role]) ? @dict[@item.role] : @item.role) | esc }}</td>
 									</tr>
 								</repeat>
 							</tbody>

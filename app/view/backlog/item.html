@@ -1,0 +1,8 @@
+<li class="list-group-item {{ @project.status_closed ? 'completed' : '' }}" data-id="{{ @project.id }}" data-type-id="{{ @project.type_id }}" data-user-id="{{ @project.owner_id }}">
+	<span class="badge">{{ @project.priority_name }}</span>
+	<span class="title">
+		{{ @project.type_name }}
+		<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
+		{{ @project.name | esc }}
+	</span>
+</li>

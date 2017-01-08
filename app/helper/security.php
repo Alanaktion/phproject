@@ -27,7 +27,7 @@ class Security extends \Prefab {
 	 * @return string
 	 */
 	public function salt() {
-		return md5($this->rand_bytes(64));
+		return md5($this->randBytes(64));
 	}
 
 	/**
@@ -35,7 +35,7 @@ class Security extends \Prefab {
 	 * @return string
 	 */
 	public function salt_sha1() {
-		return sha1($this->rand_bytes(64));
+		return sha1($this->randBytes(64));
 	}
 
 	/**
@@ -48,7 +48,7 @@ class Security extends \Prefab {
 		if(!in_array($size, $allSizes)) {
 			throw new Exception("Hash size must be one of: " . implode(", ", $allSizes));
 		}
-		return hash("sha$size", $this->rand_bytes(512), false);
+		return hash("sha$size", $this->randBytes(512), false);
 	}
 
 	/**
@@ -94,7 +94,7 @@ class Security extends \Prefab {
 	 * @param  integer $length
 	 * @return binary
 	 */
-	private function rand_bytes($length = 16) {
+	public function randBytes($length = 16) {
 
 		// Use OpenSSL cryptography extension if available
 		if(function_exists("openssl_random_pseudo_bytes")) {
@@ -155,6 +155,26 @@ class Security extends \Prefab {
 			$f3->set("success", " Database updated to version: {$version}");
 		} else {
 			$f3->set("error", " Database file not found for version: {$version}");
+		}
+	}
+
+	/**
+	 * Check if two hashes are equal, safe against timing attacks
+	 *
+	 * This is a userland implementation of the hash_equals function from 5.6
+	 *
+	 * @param  string $str1
+	 * @param  string $str2
+	 * @return boolean
+	 */
+	function hashEquals($str1, $str2) {
+		if(strlen($str1) != strlen($str2)) {
+			return false;
+		} else {
+			$res = $str1 ^ $str2;
+			$ret = 0;
+			for($i = strlen($res) - 1; $i >= 0; $i--) $ret |= ord($res[$i]);
+			return !$ret;
 		}
 	}
 
