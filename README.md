@@ -3,8 +3,10 @@
 [![Build Status](https://api.travis-ci.org/Alanaktion/phproject.svg)](https://travis-ci.org/Alanaktion/phproject)
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/phproject/localized.png)](https://crowdin.com/project/phproject)
 
+Interested in **managed hosting**? [Take a brief survey](https://docs.google.com/forms/d/e/1FAIpQLSdzsvlbmLm4hgkWXspXVW7hyCb4CNTItNaC7LdVpyM1r48EmQ/viewform) to help us know what to build!
+
 Phproject
-===========
+=========
 *A high-performance project management system in PHP*
 
 ### Installation
