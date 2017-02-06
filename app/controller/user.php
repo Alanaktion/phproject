@@ -81,16 +81,7 @@ class User extends \Controller {
 	public function dashboardPost($f3) {
 		$helper = \Helper\Dashboard::instance();
 		$user = $f3->get("user_obj");
-		if($f3->get("POST.action") == "add") {
-			$widgets = $user->option("dashboard");
-			foreach($f3->get("POST.widgets") as $widget) {
-				if(in_array($widget, $helper->allWidgets)) {
-					$widgets["left"][] = $widget;
-				}
-			}
-		} else {
-			$widgets = json_decode($f3->get("POST.widgets"));
-		}
+		$widgets = json_decode($f3->get("POST.widgets"));
 		$user->option("dashboard", $widgets);
 		$user->save();
 		if($f3->get("AJAX")) {

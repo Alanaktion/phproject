@@ -13,8 +13,8 @@
 <include href="blocks/navbar.html" />
 <div class="container-fluid dashboard-container">
 
-	<a class="btn btn-default btn-xs" id="btn-add-widgets" data-toggle="modal" data-target="#mdl-add-widgets">
-		<span class="fa fa-plus"></span>&ensp;{{ @dict.add_widgets }}
+	<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#mdl-manage-widgets">
+		<span class="fa fa-bars"></span>&ensp;{{ @dict.manage_widgets }}
 	</a>
 	<check if="{{ @sprint && @sprint.id }}">
 		<a class="btn btn-default btn-xs" href="{{ @BASE }}/taskboard">
@@ -23,99 +23,22 @@
 	</check>
 
 	<div class="row">
-		<div class="col-sm-5 dashboard-widget-box">
+		<div class="col-sm-5">
 			<repeat group="{{ @dashboard.left }}" value="{{ @widget }}">
 				<include href="{{ 'user/dashboard-widgets/' . @widget . '.html' }}" />
 			</repeat>
 		</div>
-		<div class="col-sm-7 dashboard-widget-box">
+		<div class="col-sm-7">
 			<repeat group="{{ @dashboard.right }}" value="{{ @widget }}">
 				<include href="{{ 'user/dashboard-widgets/' . @widget . '.html' }}" />
 			</repeat>
 		</div>
 	</div>
 
-	<div class="modal fade" id="mdl-add-widgets" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="modal-dialog">
-			<form class="modal-content" action="{{ @BASE }}/user/dashboard" method="post">
-				<input type="hidden" name="action" value="add">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="{{ @dict.close }}">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					<h4 class="modal-title">{{ @dict.add_widgets }}</h4>
-				</div>
-				<div class="modal-body add-widgets-list" style="text-transform: capitalize;">
-					<repeat group="{{ @unused_widgets }}" value="{{ @widget }}">
-						<div class="checkbox">
-							<label>
-								<input type="checkbox" name="widgets[]" value="{{ @widget }}">
-								{{ isset(@dict[@widget]) ? @dict[@widget] : str_replace('_', ' ', @widget) }}
-							</label>
-						</div>
-					</repeat>
-					<check if="{{ !@unused_widgets }}">
-						<div class="add-widgets-empty">
-							{{ @dict.no_more_widgets}}
-						</div>
-					</check>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{ @dict.cancel }}</button>
-					<button type="submit" class="btn btn-primary btn-sm">{{ @dict.save }}</button>
-				</div>
-			</form>
-		</div>
-	</div>
-
 	<include href="blocks/footer.html" />
 	<script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js"></script>
-	<script type="text/javascript">
-	$(document).ready(function() {
 
-		// Save widget layout to user options
-		var saveWidgets = function() {
-			var items = {left: [], right: []};
-			$('.dashboard-widget-box').each(function(i, el) {
-				$(el).find('.dashboard-widget').each(function() {
-					items[i ? 'right' : 'left'].push($(this).attr('data-widget'));
-				});
-			});
-
-			$.post(BASE + '/user/dashboard', {
-				widgets: JSON.stringify(items)
-			}).fail(function() {
-				alert('An error occurred saving the dashboard layout.');
-			});
-		};
-
-		// Enable widget arranging
-		$('.dashboard-widget-box').sortable({
-			items: '.dashboard-widget',
-			connectWith: '.dashboard-widget-box',
-			handle: '.dashboard-widget-handle',
-			cursor: "move",
-			stop: function(event, ui) {
-				saveWidgets();
-			},
-			distance: 10
-		});
-
-		// Add close buttons to widgets
-		$('<a />').html('&times;').addClass('close').appendTo('.dashboard-widget-handle');
-
-		// Handle close button clicks
-		$('.dashboard-container').on('click', '.dashboard-widget-handle .close', function(e) {
-			var widget = $(this).parents('.dashboard-widget'),
-				widgetName = widget.attr('data-widget');
-			$('.add-widgets-empty').remove();
-			$('.add-widgets-list').append('<div class="checkbox"><label><input type="checkbox" name="widgets[]" value="' + widgetName + '">' + widgetName.replace('_', ' ') + '</label></div>');
-			widget.remove();
-			saveWidgets();
-		});
-
-	});
-	</script>
+	<include href="user/dashboard-widget-modal.html" />
 </div>
 </body>
 </html>
