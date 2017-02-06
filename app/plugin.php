@@ -30,7 +30,7 @@ abstract class Plugin extends \Prefab {
 	/**
 	 * Hook into a core feature
 	 * This is the primary way for plugins to add functionality
-	 * @see    http://www.phproject.org/plugins.html
+	 * @link   http://www.phproject.org/plugins.html
 	 * @param  string   $hook
 	 * @param  callable $action
 	 * @return Plugin
