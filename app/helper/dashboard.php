@@ -167,10 +167,11 @@ class Dashboard extends \Prefab {
 	 */
 	public function issue_tree() {
 		$f3 = \Base::instance();
+		$userId = $f3->get("this_user") ? $f3->get("this_user")->id : $f3->get("user.id");
 
 		// Load assigned issues
 		$issue = new \Model\Issue\Detail;
-		$assigned = $issue->find(array("closed_date IS NULL AND deleted_date IS NULL AND owner_id = ?", $f3->get("user.id")));
+		$assigned = $issue->find(array("closed_date IS NULL AND deleted_date IS NULL AND owner_id = ?", $userId));
 
 		// Build issue list
 		$issues = array();
