@@ -32,7 +32,13 @@
 										<true>
 											<li>
 												{{ @dict.a_changed,'<b>'.@humanreadable.field.'</b>' | format }}<br>
-												{~ @diff = new \Diff(explode("\n", @change.old_value), explode("\n", @change.new_value), array("ignoreWhitespace" => true)); ~}
+												{~
+												@diff = new \Diff(
+													explode("\n", rtrim(str_replace(["\r\n", "\r"], "\n", @change.old_value) . "\n")),
+													explode("\n", rtrim(str_replace(["\r\n", "\r"], "\n", @change.new_value) . "\n")),
+													["ignoreWhitespace" => true]
+												);
+												~}
 												{~ @diff_renderer = new \Diff\Renderer\Html\Inline ~}
 												{{ @diff->render(@diff_renderer) }}
 											</li>

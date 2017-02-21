@@ -281,7 +281,7 @@ class Issue extends \Model {
 		$important_changes = 0;
 		$important_fields = array('status', 'name', 'description', 'owner_id', 'priority', 'due_date');
 		foreach ($this->fields as $key => $field) {
-			if ($field["changed"] && $field["value"] != $this->_getPrev($key)) {
+			if ($field["changed"] && rtrim($field["value"]) != rtrim($this->_getPrev($key))) {
 				$update_field = new \Model\Issue\Update\Field();
 				$update_field->issue_update_id = $update->id;
 				$update_field->field = $key;
