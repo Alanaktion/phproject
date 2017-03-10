@@ -1,5 +1,8 @@
 <?php
-class StringTest extends PHPUnit_Framework_TestCase {
+
+use PHPUnit\Framework\TestCase;
+
+class StringTest extends TestCase {
 
 	public function testRot8() {
 		$helper = \Helper\Security::instance();
