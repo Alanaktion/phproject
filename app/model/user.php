@@ -231,8 +231,7 @@ class User extends \Model {
 	 * @return array
 	 */
 	public function stats($time = 0) {
-		\Helper\View::instance()->utc2local();
-		$offset = \Base::instance()->get("site.timeoffset");
+		$offset = \Helper\View::instance()->timeoffset();
 
 		if(!$time) {
 			$time = strtotime("-2 weeks", time() + $offset);

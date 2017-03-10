@@ -18,6 +18,7 @@ $f3->mset(array(
 	"LOGS" => $homedir."log/",
 	"AUTOLOAD" => $homedir."app/;".$homedir."lib/vendor/",
 	"TEMP" => $homedir."tmp/",
+	"TZ" => "UTC",
 ));
 
 // Load local configuration
