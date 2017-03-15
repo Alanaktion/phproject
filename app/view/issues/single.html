@@ -385,7 +385,7 @@ $(function() {
 	$("#btn-copy-confirm").click(function(e) {
 		$(this).prop('disabled', true)
 			.addClass('disabled')
-			.html('{{ @dict.loading }}');
+			.html('{{ addslashes(@dict.loading) }}');
 	});
 
 	// AJAX comment submission
@@ -426,13 +426,13 @@ $(function() {
 	// Load history, watchers, and related issues
 	$.get(BASE + '/issues/{{ @issue.id }}/history', {}, function(data) {
 		$('#history').empty().append(data.html);
-		$('#tab_history').html('{{ @dict.history }}&ensp;<span class="badge">' + data.total + '</span>');
+		$('#tab_history').html('{{ addslashes(@dict.history) }}&ensp;<span class="badge">' + data.total + '</span>');
 	}, 'json').fail(function() {
-		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_history }}'));
+		$('#history').empty().append($('<p />').addClass('text-center text-danger').text('{{ addslashes(@dict.error.loading_issue_history) }}'));
 	});
 	$.get(BASE + '/issues/{{ @issue.id }}/watchers', {}, function(data) {
 		$('#watchers').empty().append(data.html);
-		$('#tab_watchers').html('{{ @dict.watchers }}&ensp;<span class="badge" id="watchers-badge">' + data.total + '</span>');
+		$('#tab_watchers').html('{{ addslashes(@dict.watchers) }}&ensp;<span class="badge" id="watchers-badge">' + data.total + '</span>');
 
 		// Add/remove watchers from tab
 		$('#watchers-list').on('click', 'a.delete', function(e) {
@@ -465,7 +465,7 @@ $(function() {
 		});
 
 	}, 'json').fail(function() {
-		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_issue_watchers }}'));
+		$('#watchers').empty().append($('<p />').addClass('text-center text-danger').text('{{ addslashes(@dict.error.loading_issue_watchers) }}'));
 	});
 	if(parseInt('{{ @issue.parent_id }}')) {
 		$.get(BASE + '/issues/{{ @issue.parent_id }}/related?exclude={{ @issue.id }}', {}, function(data) {
@@ -473,7 +473,7 @@ $(function() {
 			$('#tab_related-sibling').html($('#tab_related-sibling').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 			$('#related-sibling table').stupidtable();
 		}, 'json').fail(function() {
-			$('#related-sibling').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_related_issues }}'));
+			$('#related-sibling').empty().append($('<p />').addClass('text-center text-danger').text('{{ addslashes(@dict.error.loading_related_issues) }}'));
 		});
 	}
 	$.get(BASE + '/issues/{{ @issue.id }}/related', {}, function(data) {
@@ -481,7 +481,7 @@ $(function() {
 		$('#tab_related-child').html($('#tab_related-child').text() + '&ensp;<span class="badge">' + data.open +' / '+ data.total + '</span>');
 		$('#related-child table').stupidtable();
 	}, 'json').fail(function() {
-		$('#related-child').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_related_issues }}'));
+		$('#related-child').empty().append($('<p />').addClass('text-center text-danger').text('{{ addslashes(@dict.error.loading_related_issues) }}'));
 	});
 
 	// Load dependencies
@@ -519,7 +519,7 @@ $(function() {
 				}
 			});
 		}, 'json').fail(function() {
-			$('#dependencies').empty().append($('<p />').addClass('text-center text-danger').text('{{ @dict.error.loading_dependencies }}'));
+			$('#dependencies').empty().append($('<p />').addClass('text-center text-danger').text('{{ addslashes(@dict.error.loading_dependencies) }}'));
 		});
 	};
 	load_dependencies();
@@ -595,7 +595,7 @@ $(function() {
 		var $file = $(this).parents('li, tr');
 		$file.fadeTo(100, 0.5).popover('hide');
 		$.post(BASE + '/issues/file/delete', {id: $file.data('id')}, function(data) {
-			$('#alert span').html('{{ @dict.file_deleted }} <a href="{{ @BASE }}/javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
+			$('#alert span').html('{{ addslashes(@dict.file_deleted) }} <a href="{{ @BASE }}/javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
 			$('#alert').show();
 			$(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();
 		}, 'json');
@@ -666,7 +666,7 @@ $(function() {
 		formSerialized = $editForm.serialize();
 	$(window).on('beforeunload', function() {
 		if($editForm.length && $editForm.serialize() !== formSerialized) {
-			return '{{ @dict.unsaved_changes }}';
+			return '{{ addslashes(@dict.unsaved_changes) }}';
 		}
 	});
 	$editForm.submit(function() {
