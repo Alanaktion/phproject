@@ -138,6 +138,7 @@ var Taskboard = {
 		$('#task-dialog').find('#dueDate').datepicker({
 			format: 'mm/dd/yyyy',
 			language: datepickerLanguage,
+			todayHighlight: true,
 			autoclose: true
 		});
 		Taskboard.setOptionByVal('#task-dialog', user);
@@ -158,6 +159,7 @@ var Taskboard = {
 		$('#task-dialog').find('#dueDate').datepicker({
 			format: 'mm/dd/yyyy',
 			language: datepickerLanguage,
+			todayHighlight: true,
 			autoclose: true
 		});
 	},

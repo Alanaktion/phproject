@@ -45,6 +45,7 @@
 		$('#start_date, #end_date').datepicker({
 			format: 'yyyy-mm-dd',
 			language: '{{ @user_obj->date_picker()->language }}',
+			todayHighlight: true,
 			autoclose: true
 		});
 	});
