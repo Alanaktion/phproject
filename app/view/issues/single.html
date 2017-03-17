@@ -376,7 +376,11 @@
 </check>
 <script type="text/javascript">
 $(function() {
-
+	// Scroll to top
+	$('#btn-edit').click(function(){
+		$("html, body").animate({ scrollTop: 0 }, 0);
+		return false;
+	});
 	// Handle copy modal
 	$("#btn-copy").click(function(e) {
 		$("#modal-copy").modal("show");
@@ -532,7 +536,7 @@ $(function() {
 		});
 
 		$tr.fadeOut(400, function(){
-		 	$tr.remove();
+			$tr.remove();
 		});
 
 		$('#dependencies_badge').text(parseInt($('#dependencies_badge').text())  - 1);
