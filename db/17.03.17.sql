@@ -1,4 +1,4 @@
-ALTER TABLE phproject.issue
+ALTER TABLE issue
  ADD size_estimate VARCHAR(20) AFTER name;
  
  ALTER ALGORITHM = UNDEFINED DEFINER = `root` @`localhost` SQL SECURITY DEFINER VIEW `issue_detail`
