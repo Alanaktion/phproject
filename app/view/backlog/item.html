@@ -4,5 +4,8 @@
 		{{ @project.type_name }}
 		<a href="{{ @BASE }}/issues/{{ @project.id }}" target="_blank">#{{ @project.id }}</a>&ensp;
 		{{ @project.name | esc }}
+		<check if="{{ @project.size_estimate }}">
+		 - {{ @project.size_estimate }}
+		</check>
 	</span>
 </li>
