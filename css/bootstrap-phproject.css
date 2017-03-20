@@ -65,3 +65,10 @@ h1, .h1, h2, .h2, h3, .h3, .issue-heading {
 .datepicker td span.active:hover {
 	background-color: #128F76 !important;
 }
+.close {
+    color: #000000;
+}
+.close:hover, .close:focus {
+    color: #000000;
+    opacity: 1;
+}
