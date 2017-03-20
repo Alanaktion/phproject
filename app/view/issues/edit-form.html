@@ -18,8 +18,12 @@
 	</check>
 	<div class="form-group">
 		<label class="col-md-2 control-label">{{ @dict.cols.title }}</label>
-		<div class="col-md-10">
+		<div class="col-md-7">
 			<input type="text" class="form-control" name="name" value="{{ empty(@issue) ? '' : @issue.name | esc }}" autocomplete="off" required>
+		</div>
+		<label class="col-md-2 control-label label-sm">{{ @dict.cols.size_estimate }}</label>
+		<div class="col-md-1">
+			<input type="text" class="form-control" name="size_estimate" value="{{ @@issue.size_estimate }}" autocomplete="off">
 		</div>
 	</div>
 	<div class="form-group">
