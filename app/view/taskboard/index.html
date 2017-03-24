@@ -144,7 +144,11 @@
 
 								<span class="task-dueDate">{{ empty(@row.project.due_date) ? "" : date('n/j', strtotime(@row.project.due_date)) }}</span>
 							</div>
-							<div class="title">{{ @row.project.name | esc }}</div>
+							<div class="title">{{ @row.project.name | esc }}
+								<check if="{{ @row.project.size_estimate }}">
+								 - {{ @row.project.size_estimate }}
+								</check>
+							</div>
 							<div class="type">
 								<check if="{{ @row.project.type_id == @issue_type.project }}">
 									<true>
@@ -241,7 +245,7 @@
 							<div class="col-md-7">
 								<div class="form-group">
 									<label for="title">{{ @dict.cols.title }}</label>
-									<input type="text" name="title" id="title" class="form-control input-sm" required>
+									<input type="text" name="title" id="title" class="form-control input-sm" required autofocus>
 								</div>
 								<div class="form-group">
 									<label for="description">{{ @dict.cols.description }}</label>
@@ -371,6 +375,10 @@
 			// Trigger scroll handler on ready (in case user refreshed after scrolling)
 			$(window).scroll();
 
+		});
+		// Every time a modal is shown, if it has an autofocus element, focus on it.
+		$('.modal').on('shown.bs.modal', function() {
+			$(this).find('[autofocus]').focus();
 		});
 	</script>
 	<check if="{{ @@filterGroup }}">
