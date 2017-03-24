@@ -10,6 +10,7 @@ CREATE TABLE `user` (
 	`name` varchar(32) NOT NULL,
 	`password` char(40) DEFAULT NULL,
 	`salt` char(32) DEFAULT NULL,
+	`reset_token` CHAR(96) NULL,
 	`role` enum('user','admin','group') NOT NULL DEFAULT 'user',
 	`rank` tinyint(1) unsigned NOT NULL DEFAULT '0',
 	`task_color` char(6) DEFAULT NULL,
@@ -43,6 +44,7 @@ CREATE TABLE `issue` (
 	`status` int(10) unsigned NOT NULL DEFAULT '1',
 	`type_id` int(11) unsigned NOT NULL DEFAULT '1',
 	`name` varchar(255) NOT NULL,
+	`size_estimate` VARCHAR(20) NULL,
 	`description` text NOT NULL,
 	`parent_id` int(11) unsigned DEFAULT NULL,
 	`author_id` int(11) unsigned NOT NULL,
@@ -236,7 +238,55 @@ DROP VIEW IF EXISTS `issue_comment_detail`;
 CREATE VIEW `issue_comment_detail` AS (select `c`.`id` AS `id`, `c`.`issue_id` AS `issue_id`, `c`.`user_id` AS `user_id`, `c`.`text` AS `text`, `c`.`file_id` AS `file_id`, `c`.`created_date` AS `created_date`, `u`.`username` AS `user_username`, `u`.`email` AS `user_email`, `u`.`name` AS `user_name`, `u`.`role` AS `user_role`, `u`.`task_color` AS `user_task_color`, `f`.`filename` AS `file_filename`, `f`.`filesize` AS `file_filesize`, `f`.`content_type` AS `file_content_type`, `f`.`downloads` AS `file_downloads`, `f`.`created_date` AS `file_created_date`, `f`.`deleted_date` AS `file_deleted_date`, `i`.`deleted_date` AS `issue_deleted_date` from `issue_comment` `c` join `user` `u` on `c`.`user_id` = `u`.`id` left join `issue_file` `f` on `c`.`file_id` = `f`.`id` JOIN `issue` `i` ON `i`.`id` = `c`.`issue_id`);
 
 DROP VIEW IF EXISTS `issue_detail`;
-CREATE VIEW `issue_detail` AS (select `issue`.`id` AS `id`,`issue`.`status` AS `status`,`issue`.`type_id` AS `type_id`,`issue`.`name` AS `name`,`issue`.`description` AS `description`,`issue`.`parent_id` AS `parent_id`,`issue`.`author_id` AS `author_id`,`issue`.`owner_id` AS `owner_id`,`issue`.`priority` AS `priority`,`issue`.`hours_total` AS `hours_total`,`issue`.`hours_remaining` AS `hours_remaining`,`issue`.`hours_spent` AS `hours_spent`,`issue`.`created_date` AS `created_date`,`issue`.`closed_date` AS `closed_date`,`issue`.`deleted_date` AS `deleted_date`,`issue`.`start_date` AS `start_date`,`issue`.`due_date` AS `due_date`,isnull(`issue`.`due_date`) AS `has_due_date`,`issue`.`repeat_cycle` AS `repeat_cycle`,`issue`.`sprint_id` AS `sprint_id`,`issue`.`due_date_sprint` AS `due_date_sprint`,`sprint`.`name` AS `sprint_name`,`sprint`.`start_date` AS `sprint_start_date`,`sprint`.`end_date` AS `sprint_end_date`,`type`.`name` AS `type_name`,`status`.`name` AS `status_name`,`status`.`closed` AS `status_closed`,`priority`.`id` AS `priority_id`,`priority`.`name` AS `priority_name`,`author`.`username` AS `author_username`,`author`.`name` AS `author_name`,`author`.`email` AS `author_email`,`author`.`task_color` AS `author_task_color`,`owner`.`username` AS `owner_username`,`owner`.`name` AS `owner_name`,`owner`.`email` AS `owner_email`,`owner`.`task_color` AS `owner_task_color` from ((((((`issue` left join `user` `author` on((`issue`.`author_id` = `author`.`id`))) left join `user` `owner` on((`issue`.`owner_id` = `owner`.`id`))) left join `issue_status` `status` on((`issue`.`status` = `status`.`id`))) left join `issue_priority` `priority` on((`issue`.`priority` = `priority`.`value`))) left join `issue_type` `type` on((`issue`.`type_id` = `type`.`id`))) left join `sprint` on((`issue`.`sprint_id` = `sprint`.`id`))));
+CREATE VIEW `issue_detail` AS
+SELECT
+	`issue`.`id` AS `id`,
+	`issue`.`status` AS `status`,
+	`issue`.`type_id` AS `type_id`,
+	`issue`.`name` AS `name`,
+	`issue`.`size_estimate` AS `size_estimate`,
+	`issue`.`description` AS `description`,
+	`issue`.`parent_id` AS `parent_id`,
+	`issue`.`author_id` AS `author_id`,
+	`issue`.`owner_id` AS `owner_id`,
+	`issue`.`priority` AS `priority`,
+	`issue`.`hours_total` AS `hours_total`,
+	`issue`.`hours_remaining` AS `hours_remaining`,
+	`issue`.`hours_spent` AS `hours_spent`,
+	`issue`.`created_date` AS `created_date`,
+	`issue`.`closed_date` AS `closed_date`,
+	`issue`.`deleted_date` AS `deleted_date`,
+	`issue`.`start_date` AS `start_date`,
+	`issue`.`due_date` AS `due_date`,
+	ISNULL(`issue`.`due_date`) AS `has_due_date`,
+	`issue`.`repeat_cycle` AS `repeat_cycle`,
+	`issue`.`sprint_id` AS `sprint_id`,
+	`issue`.`due_date_sprint` AS `due_date_sprint`,
+	`sprint`.`name` AS `sprint_name`,
+	`sprint`.`start_date` AS `sprint_start_date`,
+	`sprint`.`end_date` AS `sprint_end_date`,
+	`type`.`name` AS `type_name`,
+	`status`.`name` AS `status_name`,
+	`status`.`closed` AS `status_closed`,
+	`priority`.`id` AS `priority_id`,
+	`priority`.`name` AS `priority_name`,
+	`author`.`username` AS `author_username`,
+	`author`.`name` AS `author_name`,
+	`author`.`email` AS `author_email`,
+	`author`.`task_color` AS `author_task_color`,
+	`owner`.`username` AS `owner_username`,
+	`owner`.`name` AS `owner_name`,
+	`owner`.`email` AS `owner_email`,
+	`owner`.`task_color` AS `owner_task_color`
+	`parent`.`name` AS `parent_name`
+FROM `issue`
+LEFT JOIN `user` `author` on`issue`.`author_id` = `author`.`id`
+LEFT JOIN `user` `owner` on`issue`.`owner_id` = `owner`.`id`
+LEFT JOIN `issue_status` `status` on`issue`.`status` = `status`.`id`
+LEFT JOIN `issue_priority` `priority` on`issue`.`priority` = `priority`.`value`
+LEFT JOIN `issue_type` `type` on`issue`.`type_id` = `type`.`id`
+LEFT JOIN `sprint` on`issue`.`sprint_id` = `sprint`.`id`
+LEFT JOIN `issue` `parent` ON `issue`.`parent_id` = `parent`.`id`;
 
 DROP VIEW IF EXISTS `issue_file_detail`;
 CREATE VIEW `issue_file_detail` AS (select `f`.`id` AS `id`, `f`.`issue_id` AS `issue_id`, `f`.`filename` AS `filename`, `f`.`disk_filename` AS `disk_filename`, `f`.`disk_directory` AS `disk_directory`, `f`.`filesize` AS `filesize`, `f`.`content_type` AS `content_type`, `f`.`digest` AS `digest`, `f`.`downloads` AS `downloads`, `f`.`user_id` AS `user_id`, `f`.`created_date` AS `created_date`, `f`.`deleted_date` AS `deleted_date`, `u`.`username` AS `user_username`, `u`.`email` AS `user_email`, `u`.`name` AS `user_name`, `u`.`task_color` AS `user_task_color` from (`issue_file` `f` join `user` `u` on ((`f`.`user_id` = `u`.`id`))));
@@ -303,4 +353,8 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 );
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '16.12.01');
+-- TODO: Set all default config values from config-base.ini in DB
+-- This will allow us to deprecate and remove the file
+INSERT INTO `config` (`attribute`,`value`) VALUES ('security.reset_ttl', '86400');
+
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '17.03.23');
