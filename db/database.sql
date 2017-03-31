@@ -277,7 +277,7 @@ SELECT
 	`owner`.`username` AS `owner_username`,
 	`owner`.`name` AS `owner_name`,
 	`owner`.`email` AS `owner_email`,
-	`owner`.`task_color` AS `owner_task_color`
+	`owner`.`task_color` AS `owner_task_color`,
 	`parent`.`name` AS `parent_name`
 FROM `issue`
 LEFT JOIN `user` `author` on`issue`.`author_id` = `author`.`id`
