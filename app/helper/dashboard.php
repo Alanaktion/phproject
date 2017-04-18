@@ -31,13 +31,16 @@ class Dashboard extends \Prefab {
 
 	public function projects() {
 		$f3 = \Base::instance();
-		$ownerString = implode(",", $this->getOwnerIds());
 		$typeIds = [];
 		foreach ($f3->get('issue_types') as $t) {
 			if ($t->role == 'project') {
 				$typeIds[] = $t->id;
 			}
 		}
+		if (!$typeIds) {
+			return [];
+		}
+		$ownerString = implode(",", $this->getOwnerIds());
 		$typeIdStr = implode(",", $typeIds);
 		$this->_projects = $this->getIssue()->find(
 			array(
@@ -67,13 +70,16 @@ class Dashboard extends \Prefab {
 
 	public function bugs() {
 		$f3 = \Base::instance();
-		$ownerString = implode(",", $this->getOwnerIds());
 		$typeIds = [];
 		foreach ($f3->get('issue_types') as $t) {
 			if ($t->role == 'bug') {
 				$typeIds[] = $t->id;
 			}
 		}
+		if (!$typeIds) {
+			return [];
+		}
+		$ownerString = implode(",", $this->getOwnerIds());
 		$typeIdStr = implode(",", $typeIds);
 		return $this->getIssue()->find(
 			array(
@@ -99,13 +105,16 @@ class Dashboard extends \Prefab {
 
 	public function tasks() {
 		$f3 = \Base::instance();
-		$ownerString = implode(",", $this->getOwnerIds());
 		$typeIds = [];
 		foreach ($f3->get('issue_types') as $t) {
 			if ($t->role == 'task') {
 				$typeIds[] = $t->id;
 			}
 		}
+		if (!$typeIds) {
+			return [];
+		}
+		$ownerString = implode(",", $this->getOwnerIds());
 		$typeIdStr = implode(",", $typeIds);
 		return $this->getIssue()->find(
 			array(
@@ -136,8 +145,11 @@ class Dashboard extends \Prefab {
 			$ids[] = $item->id;
 		}
 
-		$comment = new \Model\Issue\Comment\Detail;
+		if (!$ids) {
+			return [];
+		}
 		$issueIds = implode(",", $ids);
+		$comment = new \Model\Issue\Comment\Detail;
 		return $comment->find(array("issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 15));
 	}
 
@@ -156,8 +168,11 @@ class Dashboard extends \Prefab {
 			$ids[] = $item->id;
 		}
 
-		$comment = new \Model\Issue\Comment\Detail;
+		if (!$ids) {
+			return [];
+		}
 		$issueIds = implode(",", $ids);
+		$comment = new \Model\Issue\Comment\Detail;
 		return $comment->find(array("issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 15));
 	}
 
