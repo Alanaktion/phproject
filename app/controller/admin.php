@@ -219,7 +219,7 @@ class Admin extends \Controller {
 
 			// Verify a password is being set
 			if(!$f3->get("POST.password")) {
-				$f3->set("error", "User already exists with this username");
+				$f3->set("error", "A password is required for a new user");
 				$this->_render("admin/users/edit.html");
 				return;
 			}
