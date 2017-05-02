@@ -28,14 +28,14 @@ function refreshPoints(){
 				points += val;
 			}
 		});
-		if (points){
-			$('.panel-head-points',this).show();
-		}else{
-			$('.panel-head-points',this).hide();
+		if (points) {
+			$('.panel-head-points', this).show();
+		} else {
+			$('.panel-head-points', this).hide();
 		}
 		$(".points-label", this).text(points);
 	});
-};
+}
 
 var Backlog = {
 	init: function() {
