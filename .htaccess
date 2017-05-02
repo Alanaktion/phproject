@@ -7,15 +7,8 @@ RewriteEngine On
 #
 # RewriteBase /
 
-RewriteCond %{REQUEST_URI} app\/(controller|dict|helper|model|view)
-RewriteRule app\/(controller|dict|helper|model|view) - [R=404]
-
-RewriteCond %{REQUEST_URI} \.ini$
-RewriteRule \.ini$ - [R=404]
-
-RewriteCond %{REQUEST_URI} log\/[a-zA-Z1-9]+\.log
-RewriteRule log\/[a-zA-Z1-9]+\.log - [R=404]
-
+RewriteRule ^app\/(controller|dict|helper|model|view) - [R=404]
+RewriteRule ^(tmp|log)\/|\.ini$ - [R=404]
 
 RewriteCond %{REQUEST_FILENAME} !-l
 RewriteCond %{REQUEST_FILENAME} !-f
