@@ -107,6 +107,7 @@
 								<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
 									<div class="panel-head-points text-muted">
 										<span>{{ @dict.backlog_points }}:</span>
+										<span class="points-label-completed">0</span> /
 										<span class="points-label">0</span>
 									</div>
 									<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
