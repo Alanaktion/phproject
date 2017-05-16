@@ -21,6 +21,7 @@ function getQueryVariable(variable) {
 
 function refreshPoints(){
 	$('.panel').each(function() {
+		// calculates total points in the backlog and sprints
 		var points = 0;
 		$('.list-group-item:not(.hidden-group):not(.hidden-type)', this).each(function() {
 			var val = parseInt($(this).attr('data-points'), 10);
@@ -28,14 +29,32 @@ function refreshPoints(){
 				points += val;
 			}
 		});
+		
+		// calculates completed points in sprints
+		var completedPoints = 0;
+		$('.list-group-item.completed:not(.hidden-group):not(.hidden-type)', this).each(function() {
+			var cval = parseInt($(this).attr('data-points'), 10);
+			if (cval > 0) {
+				completedPoints += cval;
+			}
+		});
+		
+		// if no total points than hide points displayed
 		if (points) {
 			$('.panel-head-points', this).show();
 		} else {
 			$('.panel-head-points', this).hide();
 		}
+		
+		// adds points to span
 		$(".points-label", this).text(points);
+		
+		// adds completed points to span
+		$(".points-label-completed", this).text(completedPoints);
 	});
-}
+	$('.panel').each(function() {
+	});
+};
 
 var Backlog = {
 	init: function() {
