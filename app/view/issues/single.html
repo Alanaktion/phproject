@@ -35,7 +35,7 @@
 					<check if="{{ @crumb.id != @issue.id }}">
 						<li class="active">
 							<a href="{{ @BASE }}/issues/{{ @crumb.id }}">
-								{{ @crumb.name }} <small>#{{ @crumb.id }}</small>
+								{{ @crumb.name | esc }} <small>#{{ @crumb.id }}</small>
 							</a>
 						</li>
 					</check>
@@ -139,13 +139,13 @@
 				<dd>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}</dd>
 
 				<dt>{{ @dict.cols.type }}</dt>
-				<dd>{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</dd>
+				<dd>{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | esc }}</dd>
 
 				<dt>{{ @dict.cols.priority }}</dt>
-				<dd>{{ isset(@dict[@issue.priority_name]) ? @dict[@issue.priority_name] : str_replace('_', ' ', @issue.priority_name) }}</dd>
+				<dd>{{ isset(@dict[@issue.priority_name]) ? @dict[@issue.priority_name] : str_replace('_', ' ', @issue.priority_name) | esc }}</dd>
 
 				<dt>{{ @dict.cols.status }}</dt>
-				<dd>{{ isset(@dict[@issue.status_name]) ? @dict[@issue.status_name] : str_replace('_', ' ', @issue.status_name) }}</dd>
+				<dd>{{ isset(@dict[@issue.status_name]) ? @dict[@issue.status_name] : str_replace('_', ' ', @issue.status_name) | esc }}</dd>
 
 				<check if="{{ @issue.repeat_cycle }}">
 					<dt>{{ @dict.cols.repeat_cycle }}</dt>

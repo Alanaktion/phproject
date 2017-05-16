@@ -7,7 +7,7 @@
 <div class="container">
 	<include href="blocks/navbar-public.html" />
 	<div class="jumbotron">
-		<h1>{{ @site.name }}</h1>
+		<h1>{{ @site.name | esc }}</h1>
 		<p>{{ @site.description | esc }}</p>
 	</div>
 	<include href="blocks/footer.html" />

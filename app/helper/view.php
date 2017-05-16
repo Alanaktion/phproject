@@ -72,7 +72,8 @@ class View extends \Template {
 		}
 
 		// Simplistic XSS protection
-		$str = preg_replace("#</?script>#i", "", $str);
+		$antiXss = new \voku\helper\AntiXSS();
+		$str = $antiXss->xss_clean($str);
 
 		// Pass to any plugin hooks
 		$str = \Helper\Plugin::instance()->callHook("text.parse.after", $str);

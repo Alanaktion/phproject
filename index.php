@@ -24,6 +24,11 @@ if(!is_file("config.ini")) {
 	return;
 }
 
+// Polyfill PHP 7 features we rely on
+require_once 'lib/vendor/random_compat/random.php';
+require_once 'lib/vendor/Symfony/Polyfill/Mbstring/bootstrap.php';
+require_once 'lib/vendor/Symfony/Polyfill/Intl/Grapheme/bootstrap.php';
+
 // Get current Git revision
 if(is_file(".git/refs/heads/master")) {
 	$f3->set("revision", trim(file_get_contents(".git/refs/heads/master")));
