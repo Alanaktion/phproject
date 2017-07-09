@@ -8,8 +8,7 @@ namespace Model\Issue;
  * @property int $id
  * @property string $name
  */
-class Type extends \Model {
-
-	protected $_table_name = "issue_type";
-
+class Type extends \Model
+{
+    protected $_table_name = "issue_type";
 }

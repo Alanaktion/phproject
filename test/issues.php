@@ -11,28 +11,28 @@ $test = new Test;
 $issue = new Model\Issue;
 
 $test->expect(
-	$issue->load(1) && $issue->id == 1,
-	"Issue->load() by Integer"
+    $issue->load(1) && $issue->id == 1,
+    "Issue->load() by Integer"
 );
 
 $test->expect(
-	$issue->load(array('id = ?', 1)) && $issue->id == 1,
-	"Issue->load() by String"
+    $issue->load(array('id = ?', 1)) && $issue->id == 1,
+    "Issue->load() by String"
 );
 
 $test->expect(
-	is_array($issue->getChildren()),
-	"Issue->getChildren()"
+    is_array($issue->getChildren()),
+    "Issue->getChildren()"
 );
 
 $test->expect(
-	is_array($issue->getAncestors()),
-	"Issue->getAncestors()"
+    is_array($issue->getAncestors()),
+    "Issue->getAncestors()"
 );
 
 $test->expect(
-	$issue->save(false) && $issue->id,
-	"Issue->save() without notifications"
+    $issue->save(false) && $issue->id,
+    "Issue->save() without notifications"
 );
 
 // Output results

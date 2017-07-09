@@ -10,50 +10,50 @@ namespace Model\User;
  * @property int $group_id
  * @property int $manager
  */
-class Group extends \Model {
+class Group extends \Model
+{
+    protected $_table_name = "user_group";
 
-	protected $_table_name = "user_group";
+    /**
+     * Get complete group list for user
+     * @param int $user_id
+     * @return array
+     */
+    public static function getUserGroups($user_id = null)
+    {
+        $f3 = \Base::instance();
+        $db = $f3->get("db.instance");
 
-	/**
-	 * Get complete group list for user
-	 * @param int $user_id
-	 * @return array
-	 */
-	public static function getUserGroups($user_id = null) {
-		$f3 = \Base::instance();
-		$db = $f3->get("db.instance");
+        if ($user_id === null) {
+            $user_id =  $f3->get("user.id");
+        }
 
-		if($user_id === null) {
-			$user_id =  $f3->get("user.id");
-		}
-
-		$query_groups = "SELECT u.id, u.name, u.username
+        $query_groups = "SELECT u.id, u.name, u.username
 			FROM user u
 			JOIN user_group g ON u.id = g.group_id
 			WHERE g.user_id = :user AND u.deleted_date IS NULL ORDER BY u.name";
 
-		$result = $db->exec($query_groups, array(":user" => $user_id));
-		return $result;
-	}
+        $result = $db->exec($query_groups, array(":user" => $user_id));
+        return $result;
+    }
 
-	/**
-	 * Check if a user is in a group
-	 * @param int $group_id
-	 * @param int $user_id
-	 * @return bool
-	 */
-	public static function userIsInGroup($group_id, $user_id = null) {
-		$f3 = \Base::instance();
+    /**
+     * Check if a user is in a group
+     * @param int $group_id
+     * @param int $user_id
+     * @return bool
+     */
+    public static function userIsInGroup($group_id, $user_id = null)
+    {
+        $f3 = \Base::instance();
 
-		if($user_id === null) {
-			$user_id =  $f3->get("user.id");
-		}
+        if ($user_id === null) {
+            $user_id =  $f3->get("user.id");
+        }
 
-		$group = new static();
-		$group->load(array('user_id = ? AND group_id = ?', $user_id, $group_id));
+        $group = new static();
+        $group->load(array('user_id = ? AND group_id = ?', $user_id, $group_id));
 
-		return $group->id ? true : false;
-	}
-
+        return $group->id ? true : false;
+    }
 }
-

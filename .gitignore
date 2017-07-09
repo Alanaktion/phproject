@@ -1,2 +1,4 @@
 plugin
 config.ini
+/node_modules/
+/vendor/
