@@ -70,7 +70,7 @@ class Issues extends \Controller\Api
         // Build filter string
         $filter = array();
         $get = $f3->get("GET");
-        $db = $f3->get("db.instance");
+        $db = \App::db();
         foreach ($issue->fields(false) as $i) {
             if (isset($get[$i])) {
                 $filter[] = "`$i` = " . $db->quote($get[$i]);

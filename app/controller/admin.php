@@ -36,7 +36,7 @@ class Admin extends \Controller
             $f3->set("success", "Cache cleared successfully.");
         }
 
-        $db = $f3->get("db.instance");
+        $db = \App::db();
 
         // Gather some stats
         $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE deleted_date IS NULL AND role != 'group'");
@@ -383,7 +383,7 @@ class Admin extends \Controller
         $groups = $group->find("deleted_date IS NULL AND role = 'group'");
 
         $group_array = array();
-        $db = $f3->get("db.instance");
+        $db = \App::db();
         foreach ($groups as $g) {
             $db->exec("SELECT g.id FROM user_group g JOIN user u ON g.user_id = u.id WHERE g.group_id = ? AND u.deleted_date IS NULL", $g["id"]);
             $count = $db->count();
@@ -523,7 +523,7 @@ class Admin extends \Controller
      */
     public function group_setmanager($f3, $params)
     {
-        $db = $f3->get("db.instance");
+        $db = \App::db();
 
         $group = new \Model\User();
         $group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));

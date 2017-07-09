@@ -308,7 +308,7 @@ class Notification extends \Prefab
      */
     protected function _issue_watchers($issue_id)
     {
-        $db = \Base::instance()->get("db.instance");
+        $db = \App::db();
         $recipients = array();
 
         // Add issue author and owner

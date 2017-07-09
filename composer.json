@@ -4,7 +4,9 @@
     "require": {
         "bcosca/fatfree": "^3.6",
         "twbs/bootstrap": "v4.0.0-alpha.6",
-        "leafo/scssphp": "^0.6.7"
+        "leafo/scssphp": "^0.6.7",
+        "ikkez/f3-flash": "^1.0",
+        "ikkez/f3-middleware": "^1.1"
     },
     "license": "GPL",
     "authors": [

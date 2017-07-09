@@ -20,8 +20,7 @@ class Config extends \Model
     public static function loadAll()
     {
         $f3 = \Base::instance();
-        $db = $f3->get("db.instance");
-        $result = $db->exec("SELECT attribute,value FROM config");
+        $result = \App::db()->exec("SELECT attribute,value FROM config");
         $foundAttributes = array();
         foreach ($result as $item) {
             $foundAttributes[] = $item["attribute"];

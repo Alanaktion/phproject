@@ -34,7 +34,7 @@ class Issues extends \Controller
     protected function _buildFilter()
     {
         $f3 = \Base::instance();
-        $db = $f3->get("db.instance");
+        $db = \App::db();
         $issues = new \Model\Issue\Detail;
 
         // Filter issue listing by URL parameters

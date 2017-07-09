@@ -134,7 +134,7 @@ class Security extends \Prefab
         // Get current version
         $version = $f3->get("version");
         if (!$version) {
-            $result = $f3->get("db.instance")->exec("SELECT value as version FROM config WHERE attribute = 'version'");
+            $result = \App::db()->exec("SELECT value as version FROM config WHERE attribute = 'version'");
             $version = $result[0]["version"];
         }
 
@@ -159,7 +159,7 @@ class Security extends \Prefab
         $f3 = \Base::instance();
         if (file_exists("db/{$version}.sql")) {
             $update_db = file_get_contents("db/{$version}.sql");
-            $db = $f3->get("db.instance");
+            $db = \App::db();
             $db->exec(explode(";", $update_db));
             \Cache::instance()->reset();
             $f3->set("success", " Database updated to version: {$version}");

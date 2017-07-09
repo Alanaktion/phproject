@@ -8,28 +8,13 @@
 $homedir = dirname(dirname(__FILE__)) . "/";
 set_include_path($homedir);
 
-$f3=require($homedir."lib/base.php");
-$f3->mset(array(
-    "CACHE" => false,
-    "UI" => $homedir."app/view/",
-    "LOGS" => $homedir."log/",
-    "AUTOLOAD" => $homedir."app/",
-    "TEMP" => $homedir."tmp/",
-    "ESCAPE" => false,
-    "TZ" => "UTC",
-));
+// Init app
+require_once 'app/app.php';
+App::init();
+App::db();
 
-// Load local configuration
-$f3->config($homedir."config-base.ini");
-$f3->config($homedir."config.ini");
-
-// Connect to database
-$db = new DB\SQL(
-    "mysql:host=" . $f3->get("db.host") . ";port=3306;dbname=" . $f3->get("db.name"),
-    $f3->get("db.user"),
-    $f3->get("db.pass")
-);
-$f3->set("db.instance", $db);
+// Load database-backed config
+\Model\Config::loadAll();
 
 /**
  * Output test results formatted for CLI or web

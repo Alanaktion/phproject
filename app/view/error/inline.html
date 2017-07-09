@@ -7,7 +7,7 @@
 		</div>
 	<?php } ?>
 	<?php if($f3->get("DEBUG") >= 3) { ?>
-		<pre><?php echo $f3->get("db.instance")->log(); ?></pre>
+		<pre><?php echo \App::db()->log(); ?></pre>
 	<?php } ?>
 </div>
 <?php /*

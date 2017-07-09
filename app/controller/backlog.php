@@ -66,7 +66,7 @@ class Backlog extends \Controller
             $sprint_details[] = $sprint->cast() + array("projects" => $sprintBacklog);
         }
 
-        $large_projects = $f3->get("db.instance")->exec("SELECT i.parent_id FROM issue i JOIN issue_type t ON t.id = i.type_id WHERE i.parent_id IS NOT NULL AND t.role = 'project'");
+        $large_projects = \App::db()->exec("SELECT i.parent_id FROM issue i JOIN issue_type t ON t.id = i.type_id WHERE i.parent_id IS NOT NULL AND t.role = 'project'");
         $large_project_ids = [];
         foreach ($large_projects as $p) {
             $large_project_ids[] = $p["parent_id"];

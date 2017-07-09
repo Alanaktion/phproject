@@ -22,7 +22,7 @@ class Group extends \Model
     public static function getUserGroups($user_id = null)
     {
         $f3 = \Base::instance();
-        $db = $f3->get("db.instance");
+        $db = \App::db();
 
         if ($user_id === null) {
             $user_id =  $f3->get("user.id");

@@ -236,7 +236,7 @@ class Taskboard extends \Controller
             return;
         }
 
-        $db = $f3->get("db.instance");
+        $db = \App::db();
 
         $user = new \Model\User;
         $user->load(array("id = ?", $params["filter"]));
@@ -332,7 +332,7 @@ class Taskboard extends \Controller
         $start = date("Y-m-d H:i:s", strtotime($sprint->start_date) - $offset);
         $end = date("Y-m-d H:i:s", strtotime($sprint->end_date . " 23:59:59") - $offset);
 
-        $db = $f3->get("db.instance");
+        $db = \App::db();
         $plannedHours = $db->exec(
             "SELECT GREATEST(i.created_date, :start) AS ts,
 				SUM(i.hours_total) AS hours

@@ -1,5 +1,5 @@
 {~
-	@dblog = @db.instance->log();
+	@dblog = \App::db()->log();
 	@total = preg_match_all('/\([0-9\.]{3,}ms\)/', @dblog, $matches);
 	@cached = substr_count(@dblog, '[CACHED]');
 ~}

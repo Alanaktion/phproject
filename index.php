@@ -1,98 +1,25 @@
 <?php
 
-// Initialize core
-$f3=require("lib/base.php");
-$f3->mset(array(
-    "UI" => "app/view/;app/plugin/",
-    "ESCAPE" => false,
-    "LOGS" => "log/",
-    "TEMP" => "tmp/",
-    "PREFIX" => "dict.",
-    "LOCALES" => "app/dict/",
-    "FALLBACK" => "en",
-    "CACHE" => true,
-    "AUTOLOAD" => "app/;lib/vendor/",
-    "PACKAGE" => "Phproject",
-    "TZ" => "UTC",
-    "microtime" => microtime(true),
-    "site.url" => $f3->get("SCHEME") . "://" . $f3->get("HOST") . $f3->get("BASE") . "/"
-));
-
-// Redirect to installer if no config file is found
-if (!is_file("config.ini")) {
-    header("Location: install.php");
-    return;
+require_once 'app/app.php';
+if (App::init()) {
+    App::run();
 }
-
-// Get current Git revision
-if (is_file(".git/refs/heads/master")) {
-    $f3->set("revision", trim(file_get_contents(".git/refs/heads/master")));
-} else {
-    $f3->set("revision", "");
-}
-
-// Load configuration
-$f3->config("config-base.ini");
-$f3->config("config.ini");
-
-// Load routes
-$f3->config("app/routes.ini");
-
-// Set up error handling
-$f3->set("ONERROR", function (Base $f3) {
-    if ($f3->get("AJAX")) {
-        if (!headers_sent()) {
-            header("Content-type: application/json");
-        }
-        echo json_encode(array(
-            "error" => $f3->get("ERROR.title"),
-            "text" => $f3->get("ERROR.text")
-        ));
-    } else {
-        switch ($f3->get("ERROR.code")) {
-            case 404:
-                $f3->set("title", "Not Found");
-                $f3->set("ESCAPE", false);
-                echo \Helper\View::instance()->render("error/404.html");
-                break;
-            case 403:
-                echo "You do not have access to this page.";
-                break;
-            default:
-                if (ob_get_level()) {
-                    include "app/view/error/inline.html";
-                } else {
-                    include "app/view/error/500.html";
-                }
-        }
-    }
-});
-
-// Connect to database
-$f3->set("db.instance", new DB\SQL(
-    "mysql:host=" . $f3->get("db.host") . ";port=" . $f3->get("db.port") . ";dbname=" . $f3->get("db.name"),
-    $f3->get("db.user"),
-    $f3->get("db.pass")
-));
-
-// Load final configuration
-\Model\Config::loadAll();
 
 // Ensure database is up to date
-$version = \Helper\Security::instance()->checkDatabaseVersion();
+/*$version = \Helper\Security::instance()->checkDatabaseVersion();
 if ($version !== true) {
     \Helper\Security::instance()->updateDatabase($version);
-}
+}*/
 
 // Minify static resources
 // Cache for 1 week
-$f3->route("GET /minify/@type/@files", function (Base $f3, $args) {
+/*$f3->route("GET /minify/@type/@files", function (Base $f3, $args) {
     $f3->set("UI", $args["type"] . "/");
     echo Web::instance()->minify($args["files"]);
-}, $f3->get("cache_expire.minify"));
+}, $f3->get("cache_expire.minify"));*/
 
 // Initialize plugins and any included locales
-$pluginDir = scandir("app/plugin");
+/*$pluginDir = scandir("app/plugin");
 $plugins = array();
 $locales = "";
 foreach ($pluginDir as $pluginName) {
@@ -123,16 +50,4 @@ foreach ($pluginDir as $pluginName) {
         }
     }
 }
-$f3->set("plugins", $plugins);
-
-// Set up user session
-$user = new Model\User();
-$user->loadCurrent();
-
-// Load issue types
-$types = new \Model\Issue\Type();
-$f3->set("issue_types", $types->find(null, null, $f3->get("cache_expire.db")));
-
-// Run the application
-$f3->set("menuitem", false);
-$f3->run();
+$f3->set("plugins", $plugins);*/
