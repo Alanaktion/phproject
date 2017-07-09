@@ -1,25 +1,25 @@
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-	<div class="{{ empty(@fullwidth) ? 'container' : 'container-fluid' }}">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nb-collapse">
-				<span class="sr-only">{{ @dict.toggle_navigation }}</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand" href="{{ @BASE }}/">{{ @site.name | esc }}</a>
-		</div>
+    <div class="{{ empty(@fullwidth) ? 'container' : 'container-fluid' }}">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nb-collapse">
+                <span class="sr-only">{{ @dict.toggle_navigation }}</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ @BASE }}/">{{ @site.name | esc }}</a>
+        </div>
 
-		<div class="collapse navbar-collapse" id="nb-collapse">
-			<form class="navbar-form navbar-right" method="post" action="{{ @BASE }}/login">
-				<div class="form-group">
-					<input type="text" name="username" class="form-control" placeholder="{{ @dict.username }}">
-				</div>
-				<div class="form-group">
-					<input type="password" name="password" class="form-control" placeholder="{{ @dict.password }}">
-				</div>
-				<button type="submit" class="btn btn-default">{{ @dict.log_in }}</button>
-			</form>
-		</div>
-	</div>
+        <div class="collapse navbar-collapse" id="nb-collapse">
+            <form class="navbar-form navbar-right" method="post" action="{{ @BASE }}/login">
+                <div class="form-group">
+                    <input type="text" name="username" class="form-control" placeholder="{{ @dict.username }}">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" class="form-control" placeholder="{{ @dict.password }}">
+                </div>
+                <button type="submit" class="btn btn-secondary">{{ @dict.log_in }}</button>
+            </form>
+        </div>
+    </div>
 </nav>

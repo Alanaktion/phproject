@@ -1,47 +1,47 @@
 <!DOCTYPE html>
 <html lang="{{ @this->lang() }}">
 <head>
-	<include href="blocks/head.html" />
+    <include href="blocks/head.html" />
 </head>
 <body class="login">
 <div class="hidden-xs" style="padding-top: 160px;"></div>
 <div class="container-fluid">
-	<div class="row">
-		<div class="col-sm-4 col-sm-offset-4">
-			<form action="{{ @BASE }}/reset/forced" method="post" class="form-horizontal">
-				<fieldset>
-					<legend>{{ @dict.reset_password }}</legend>
-					<check if="{{ !empty(@reset.error) }}">
-						<p class="alert alert-danger">{{ @reset.error }}</p>
-					</check>
-					<div class="form-group">
-						<label for="inputPassword" class="col-md-4 control-label">{{ @dict.username }}</label>
-						<div class="col-md-8">
-							<input class="form-control disabled" value="{{ @user.username }}" disabled>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputPassword" class="col-md-4 control-label">{{ @dict.new_password }}</label>
-						<div class="col-md-8">
-							<input class="form-control" name="password1" type="password" required autofocus>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputPassword" class="col-md-4 control-label">{{ @dict.confirm_password }}</label>
-						<div class="col-md-8">
-							<input class="form-control" name="password2" type="password" required>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-lg-8 col-lg-offset-4">
-							<button type="submit" class="btn btn-primary">{{ @dict.reset_password }}</button>
-							<a href="{{ @BASE }}/login" class="btn btn-link">{{ @dict.cancel }}</a>
-						</div>
-					</div>
-				</fieldset>
-			</form>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-sm-4 offset-sm-4">
+            <form action="{{ @BASE }}/reset/forced" method="post">
+                <fieldset>
+                    <legend>{{ @dict.reset_password }}</legend>
+                    <check if="{{ !empty(@reset.error) }}">
+                        <p class="alert alert-danger">{{ @reset.error }}</p>
+                    </check>
+                    <div class="form-group row">
+                        <label for="inputPassword" class="col-md-4 control-label">{{ @dict.username }}</label>
+                        <div class="col-md-8">
+                            <input class="form-control disabled" value="{{ @user.username }}" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="inputPassword" class="col-md-4 control-label">{{ @dict.new_password }}</label>
+                        <div class="col-md-8">
+                            <input class="form-control" name="password1" type="password" required autofocus>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="inputPassword" class="col-md-4 control-label">{{ @dict.confirm_password }}</label>
+                        <div class="col-md-8">
+                            <input class="form-control" name="password2" type="password" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-8 offset-lg-4">
+                            <button type="submit" class="btn btn-primary">{{ @dict.reset_password }}</button>
+                            <a href="{{ @BASE }}/login" class="btn btn-link">{{ @dict.cancel }}</a>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
 </div>
 </body>
 </html>

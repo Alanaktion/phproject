@@ -331,7 +331,8 @@ class User extends \Model
 
     public function date_picker()
     {
-        $lang = $this->language ?: \Base::instance()->get("LANGUAGE");
+        $fw = \App::fw();
+        $lang = $this->language ?: end($fw->split($fw->get("LANGUAGE")));
         return (object) array("language" => $lang, "js" => ($lang != "en"));
     }
 

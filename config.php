@@ -1,6 +1,6 @@
 <?php
 return [
-    'DEBUG' => 3,
+    'DEBUG' => 2,
     'db.host' => 'localhost',
     'db.user' => 'root',
     'db.pass' => '',

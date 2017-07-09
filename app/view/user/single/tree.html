@@ -1,50 +1,49 @@
 <!DOCTYPE html>
 <html lang="{{ @this->lang() }}">
 <head>
-	<include href="blocks/head.html" />
+    <include href="blocks/head.html" />
 </head>
 <body>
 <include href="blocks/navbar.html" />
 <div class="container">
+    <div class="clearfix">
+        <div class="pull-left" style="margin-right: 15px;">
+            <img src="{{ @this_user->avatar(128) | esc }}" srcset="{{ @this_user->avatar(256) | esc }} 2x" class="img-rounded profile-picture" alt>
+        </div>
+        <div class="pull-left">
+            <h3>{{ @this_user.name | esc }}</h3>
+            <p>{{ @dict.username }}: {{ @this_user.username | esc }}</p>
+            <check if="{{ @this_user.role != 'group' }}">
+                <p>{{ @dict.email }}: {{ @this_user.email | esc }}</p>
+            </check>
+        </div>
+    </div>
 
-	<div class="clearfix">
-		<div class="pull-left" style="margin-right: 15px;">
-			<img src="{{ @this_user->avatar(128) | esc }}" srcset="{{ @this_user->avatar(256) | esc }} 2x" class="img-rounded profile-picture" alt>
-		</div>
-		<div class="pull-left">
-			<h3>{{ @this_user.name | esc }}</h3>
-			<p>{{ @dict.username }}: {{ @this_user.username | esc }}</p>
-			<check if="{{ @this_user.role != 'group' }}">
-				<p>{{ @dict.email }}: {{ @this_user.email | esc }}</p>
-			</check>
-		</div>
-	</div>
+    <h3>{{ @dict.assigned_issues }}</h3>
+    <div class="table-responsive">
+        <table class="table table-sm table-sriped issue-tree">
+            <thead>
+                <tr>
+                    <th>{{ @dict.cols.id }}</th>
+                    <th>{{ @dict.cols.title }}</th>
+                    <th>{{ @dict.cols.type }}</th>
+                    <th>{{ @dict.cols.assignee }}</th>
+                    <th>{{ @dict.cols.author }}</th>
+                    <th>{{ @dict.cols.priority }}</th>
+                    <th>{{ @dict.cols.due_date }}</th>
+                    <th>{{ @dict.cols.sprint }}</th>
+                    <th>{{ @dict.cols.hours_spent }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <repeat group="{{ @issues }}" value="{{ @issue }}">
+                    {~ @renderTree(@issue) ~}
+                </repeat>
+            </tbody>
+        </table>
+    </div>
 
-	<h3>{{ @dict.assigned_issues }}</h3>
-	<div class="table-responsive">
-		<table class="table table-condensed table-hover issue-tree">
-			<thead>
-				<tr>
-					<th>{{ @dict.cols.id }}</th>
-					<th>{{ @dict.cols.title }}</th>
-					<th>{{ @dict.cols.type }}</th>
-					<th>{{ @dict.cols.assignee }}</th>
-					<th>{{ @dict.cols.author }}</th>
-					<th>{{ @dict.cols.priority }}</th>
-					<th>{{ @dict.cols.due_date }}</th>
-					<th>{{ @dict.cols.sprint }}</th>
-					<th>{{ @dict.cols.hours_spent }}</th>
-				</tr>
-			</thead>
-			<tbody>
-				<repeat group="{{ @issues }}" value="{{ @issue }}">
-					{~ @renderTree(@issue) ~}
-				</repeat>
-			</tbody>
-		</table>
-	</div>
-
-	<include href="blocks/footer.html" />
+    <include href="blocks/footer.html" />
 </div>
 </body>
 </html>

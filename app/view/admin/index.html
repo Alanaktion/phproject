@@ -1,101 +1,109 @@
 <!DOCTYPE html>
 <html lang="{{ @this->lang() }}">
 <head>
-	<include href="blocks/head.html" />
+    <include href="blocks/head.html" />
 </head>
 <body>
 <include href="blocks/navbar.html" />
 <div class="container">
-	<include href="blocks/admin/tabs.html" />
+    <include href="blocks/admin/tabs.html" />
 
-	<div class="row">
-		<div class="col-md-3 col-sm-6">
-			<div class="well well-sm text-center">
-				<h4>{{ @dict.users }}</h4>
-				<h2>{{ @count_user }}</h2>
-			</div>
-		</div>
-		<div class="col-md-3 col-sm-6">
-			<div class="well well-sm text-center">
-				<h4>{{ @dict.issues }}</h4>
-				<h2>{{ @count_issue }}</h2>
-			</div>
-		</div>
-		<div class="col-md-3 col-sm-6">
-			<div class="well well-sm text-center">
-				<h4>{{ @dict.comments }}</h4>
-				<h2>{{ @count_issue_comment }}</h2>
-			</div>
-		</div>
-		<div class="col-md-3 col-sm-6">
-			<div class="well well-sm text-center">
-				<h4>Updates</h4>
-				<h2>{{ @count_issue_update }}</h2>
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-center">
+                <div class="card-block">
+                    <h4>{{ @dict.users }}</h4>
+                    <h2>{{ @count_user }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-center">
+                <div class="card-block">
+                    <h4>{{ @dict.issues }}</h4>
+                    <h2>{{ @count_issue }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-center">
+                <div class="card-block">
+                    <h4>{{ @dict.comments }}</h4>
+                    <h2>{{ @count_issue_comment }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-center">
+                <div class="card-block">
+                    <h4>Updates</h4>
+                    <h2>{{ @count_issue_update }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<div class="row">
-		<div class="col-md-3 col-sm-6">
-			<h4>{{ @dict.database }}</h4>
-			<b>{{ @dict.hostname }}:</b> {{ @db.host | esc }}:{{ @db.port | esc }}<br>
-			<b>{{ @dict.schema }}:</b> {{ @db.name | esc }}<br>
-			<b>{{ @dict.username }}:</b> {{ @db.user | esc }}<br>
-			<b>{{ @dict.password }}:</b> ********<br>
-			<b>{{ @dict.current_version }}:</b> {{@version}}<br>
-		</div>
-		<div class="col-md-3 col-sm-6">
-			<div class="clearfix">
-				<h4 class="pull-left">{{ @dict.cache }}</h4>
-				<form class="pull-right" action="{{ @BASE }}/admin" method="post" style="margin-top: 10px;">
-					<input type="hidden" name="action" value="clearcache">
-					<button type="submit" class="btn btn-warning btn-xs">{{ @dict.clear_cache }}</button>
-				</form>
-			</div>
-			<p><b>{{ @dict.cache_mode }}:</b> {{ @CACHE }}</p>
-			<small>{{ @dict.timeouts }}</small><br>
-			<b>{{ @dict.queries }}:</b> {{ @cache_expire.db }}<br>
-			<b>{{ @dict.minify }}:</b> {{ @cache_expire.minify }}<br>
-			<b>{{ @dict.attachments }}:</b> {{ @cache_expire.attachments }}<br>
-		</div>
-		<div class="col-md-3 col-sm-6">
-			<h4>{{ @dict.outgoing_mail }}</h4>
-			<check if="{{ @mail.from }}">
-				<true>
-					<p><b>{{ @dict.from_address }}:</b> {{ @mail.from }}</p>
-				</true>
-				<false>
-					{{ @dict.smtp_not_enabled }}
-				</false>
-			</check>
-			<h4>{{ @dict.incoming_mail }}</h4>
-			<check if="{{ @imap.hostname }}">
-				<true>
-					<b>{{ @dict.hostname }}:</b> {{ @imap.hostname }}<br>
-					<b>{{ @dict.username }}:</b> {{ @imap.username }}<br>
-					<b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
-				</true>
-				<false>
-					{{ @dict.imap_not_enabled }}
-				</false>
-			</check>
-		</div>
-		<div class="col-md-3 col-sm-6">
-			<h4>{{ @dict.miscellaneous }}</h4>
-			<p>
-				<b>{{ @dict.debug_level }}:</b> {{ @DEBUG }}<br>
-				<b>{{ @dict.session_lifetime }}:</b> {{ gmdate("z\\d G\\h", @JAR.expire) }}<br>
-				<b>{{ @dict.max_upload_size }}:</b> {{ round(@files.maxsize/1024/1024, 2) }}MB
-			</p>
-			<p>
-				<small>Gravatar</small><br>
-				<b>{{ @dict.max_rating }}:</b> {{ @gravatar.rating }}<br>
-				<b>{{ @dict.default }}:</b> {{ @gravatar.default }}<br>
-			</p>
-		</div>
-	</div>
+    <br>
 
-	<include href="blocks/footer.html" />
+    <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <h4>{{ @dict.database }}</h4>
+            <b>{{ @dict.hostname }}:</b> {{ @db.host | esc }}:{{ @db.port | esc }}<br>
+            <b>{{ @dict.schema }}:</b> {{ @db.name | esc }}<br>
+            <b>{{ @dict.username }}:</b> {{ @db.user | esc }}<br>
+            <b>{{ @dict.password }}:</b> ********<br>
+            <b>{{ @dict.current_version }}:</b> {{ @version }}<br>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <h4>{{ @dict.cache }}</h4>
+            <form action="{{ @BASE }}/admin" method="post" style="margin-top: 10px;">
+                <input type="hidden" name="action" value="clearcache">
+                <button type="submit" class="btn btn-warning btn-sm">{{ @dict.clear_cache }}</button>
+            </form>
+            <p><b>{{ @dict.cache_mode }}:</b> {{ @CACHE }}</p>
+            <small>{{ @dict.timeouts }}</small><br>
+            <b>{{ @dict.queries }}:</b> {{ @cache_expire.db }}<br>
+            <b>{{ @dict.minify }}:</b> {{ @cache_expire.minify }}<br>
+            <b>{{ @dict.attachments }}:</b> {{ @cache_expire.attachments }}<br>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <h4>{{ @dict.outgoing_mail }}</h4>
+            <check if="{{ @mail.from }}">
+                <true>
+                    <p><b>{{ @dict.from_address }}:</b> {{ @mail.from }}</p>
+                </true>
+                <false>
+                    {{ @dict.smtp_not_enabled }}
+                </false>
+            </check>
+            <h4>{{ @dict.incoming_mail }}</h4>
+            <check if="{{ @imap.hostname }}">
+                <true>
+                    <b>{{ @dict.hostname }}:</b> {{ @imap.hostname }}<br>
+                    <b>{{ @dict.username }}:</b> {{ @imap.username }}<br>
+                    <b>{{ @dict.password }}:</b> {{ str_repeat("*", strlen(@imap.password)) }}<br>
+                </true>
+                <false>
+                    {{ @dict.imap_not_enabled }}
+                </false>
+            </check>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <h4>{{ @dict.miscellaneous }}</h4>
+            <p>
+                <b>{{ @dict.debug_level }}:</b> {{ @DEBUG }}<br>
+                <b>{{ @dict.session_lifetime }}:</b> {{ gmdate("z\\d G\\h", @JAR.expire) }}<br>
+                <b>{{ @dict.max_upload_size }}:</b> {{ round(@files.maxsize/1024/1024, 2) }}MB
+            </p>
+            <p>
+                <small>Gravatar</small><br>
+                <b>{{ @dict.max_rating }}:</b> {{ @gravatar.rating }}<br>
+                <b>{{ @dict.default }}:</b> {{ @gravatar.default }}<br>
+            </p>
+        </div>
+    </div>
+
+    <include href="blocks/footer.html" />
 </div>
 </body>
 </html>

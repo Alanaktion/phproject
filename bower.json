@@ -1,0 +1,24 @@
+{
+  "name": "phproject",
+  "homepage": "https://github.com/Alanaktion/phproject",
+  "authors": [
+    "Alan Hardman <alan@phpizza.com>"
+  ],
+  "license": "GPL3",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "v4.0.0-alpha.6",
+    "simplemde": "^1.11.2",
+    "font-awesome": "^4.7.0",
+    "bootstrap-datepicker": "^1.7.1",
+    "typeahead.js": "^0.11.1",
+    "intercom": "^0.1.4"
+  }
+}

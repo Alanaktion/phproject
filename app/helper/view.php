@@ -73,7 +73,7 @@ class View extends \Template
         }
 
         // Simplistic XSS protection
-        $antiXss = new \AntiXSS();
+        $antiXss = new \voku\helper\AntiXSS();
         $str = $antiXss->xss_clean($str);
 
         // Pass to any plugin hooks
@@ -275,7 +275,7 @@ class View extends \Template
      */
     protected function _parseTextile($str, $escape = true)
     {
-        $tex = new \Textile\Parser('html5');
+        $tex = new \Netcarver\Textile\Parser('html5');
         $tex->setDimensionlessImages(true);
         $tex->setRestricted($escape);
         return $tex->parse($str);

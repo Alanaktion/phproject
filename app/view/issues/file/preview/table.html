@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="{{ @this->lang() }}">
 <head>
-	<title>{{ @file.filename }}</title>
-	<link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/bootstrap.min.css">
+    <title>{{ @file.filename }}</title>
+    <link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/bootstrap.min.css">
 </head>
 <body style="padding: 15px;">
-	<set fh="{{ fopen(@file->disk_filename, 'r') }}" />
-	<p>
-		<a class="btn btn-default" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename }}" target="_blank" onclick="window.close();">
-			<span class="fa fa-download"></span>&ensp;Download
-		</a>
-	</p>
-	<table class="table table-striped table-condensed" style="width: auto;">
-		{~ while((@row = fgetcsv(@fh, 0, @delimiter)) !== false): ~}
-			<tr>
-				<repeat group="{{ @row }}" value="{{ @col }}">
-					<td>{{ @col }}</td>
-				</repeat>
-			</tr>
-		{~ endwhile ~}
-	</table>
-	{~ fclose(@fh) ~}
+    <set fh="{{ fopen(@file->disk_filename, 'r') }}" />
+    <p>
+        <a class="btn btn-secondary" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename }}" target="_blank" onclick="window.close();">
+            <span class="fa fa-download"></span>&ensp;Download
+        </a>
+    </p>
+    <table class="table table-striped table-sm" style="width: auto;">
+        {~ while((@row = fgetcsv(@fh, 0, @delimiter)) !== false): ~}
+            <tr>
+                <repeat group="{{ @row }}" value="{{ @col }}">
+                    <td>{{ @col }}</td>
+                </repeat>
+            </tr>
+        {~ endwhile ~}
+    </table>
+    {~ fclose(@fh) ~}
 </body>
 </html>

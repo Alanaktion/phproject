@@ -1,84 +1,85 @@
 <!DOCTYPE html>
 <html lang="{{ @this->lang() }}">
 <head>
-	<include href="blocks/head.html" />
-	<check if="{{ @parse.markdown }}">
-		<link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/simplemde.min.css">
-	</check>
+    <include href="blocks/head.html" />
+    <check if="{{ @parse.markdown }}">
+        <link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/simplemde.min.css">
+    </check>
 </head>
 <body>
 <include href="blocks/navbar.html" />
 <div class="container">
-	<include href="issues/edit-form.html" />
-	<include href="blocks/footer.html" />
+    <include href="issues/edit-form.html" />
+    <include href="blocks/footer.html" />
 </div>
-<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js,typeahead.jquery.js"></script>
+<script src="{{ @BASE }}/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="{{ @BASE }}/bower_components/typeahead.js/dist/typeahead.jquery.min.js"></script>
 <check if="{{ @user_obj->date_picker()->js }}">
-	<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+    <script src="{{ @BASE }}/bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.min.js"></script>
 </check>
 <check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
-	<script src="{{ @BASE }}/js/simplemde.min.js"></script>
+    <script src="{{ @BASE }}/js/simplemde.min.js"></script>
 </check>
 <script type="text/javascript">
 $(function() {
-	// Enable datepickers
-	$('#due_date, #start_date').datepicker({
-		format: 'yyyy-mm-dd',
-		language: '{{ @user_obj->date_picker()->language }}',
-		todayHighlight: true,
-		autoclose: true
-	});
+    // Enable datepickers
+    $('#due_date, #start_date').datepicker({
+        format: 'yyyy-mm-dd',
+        language: '{{ @user_obj->date_picker()->language }}',
+        todayHighlight: true,
+        autoclose: true
+    });
 
-	// Enable typeahead
-	$('input[name="parent_id"]').typeahead({
-		classNames: {
-			menu: 'dropdown-menu',
-		}
-	}, {
-		async: true,
-		limit: 10,
-		source: function(query, syncResults, asyncResults) {
-			$.ajax({
-				url: BASE + '/issues/parent_ajax',
-				data: {'q': query},
-				success: function(data) {
-					asyncResults(data.results);
+    // Enable typeahead
+    $('input[name="parent_id"]').typeahead({
+        classNames: {
+            menu: 'dropdown-menu',
+        }
+    }, {
+        async: true,
+        limit: 10,
+        source: function(query, syncResults, asyncResults) {
+            $.ajax({
+                url: BASE + '/issues/parent_ajax',
+                data: {'q': query},
+                success: function(data) {
+                    asyncResults(data.results);
 
-				},
-				dataType: 'json',
-				cache: false,
-			});
-		},
-		display: function(element) {
-			return element.id;
-		},
-		templates: {
-			suggestion: function(element) {
-				return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
-			}
-		}
-	});
+                },
+                dataType: 'json',
+                cache: false,
+            });
+        },
+        display: function(element) {
+            return element.id;
+        },
+        templates: {
+            suggestion: function(element) {
+                return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
+            }
+        }
+    });
 
-	// Prevent navigation with unsaved changes
-	var $editForm = $('#edit-form'),
-		formSerialized = $editForm.serialize();
-	$(window).on('beforeunload', function() {
-		if($editForm.length && $editForm.serialize() !== formSerialized) {
-			return '{{ @dict.unsaved_changes }}';
-		}
-	});
-	$editForm.submit(function() {
-		$(window).off('beforeunload');
-	});
+    // Prevent navigation with unsaved changes
+    var $editForm = $('#edit-form'),
+        formSerialized = $editForm.serialize();
+    $(window).on('beforeunload', function() {
+        if($editForm.length && $editForm.serialize() !== formSerialized) {
+            return '{{ @dict.unsaved_changes }}';
+        }
+    });
+    $editForm.submit(function() {
+        $(window).off('beforeunload');
+    });
 });
 if('SimpleMDE' in window) {
-	var simplemde = new SimpleMDE({
-		autoDownloadFontAwesome: false,
-		element: $('input[name="description"]')[0],
-		toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
-		forceSync: true
-	});
-	simplemde.render();
+    var simplemde = new SimpleMDE({
+        autoDownloadFontAwesome: false,
+        element: $('input[name="description"]')[0],
+        toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
+        forceSync: true
+    });
+    simplemde.render();
 }
 </script>
 </body>

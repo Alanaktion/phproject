@@ -1,86 +1,86 @@
 <!DOCTYPE html>
 <html lang="{{ @this->lang() }}">
 <head>
-	<include href="blocks/head.html" />
+    <include href="blocks/head.html" />
 </head>
 <body>
 <set fullwidth="{{ true }}" />
 <include href="blocks/navbar.html" />
 <div class="container-fluid">
-	<h2>{{ @project.name | esc }} <small>#{{ @project.id }}</small></h2>
-	<dl class="dl-inline">
-		<dt>{{ @dict.cols.assignee }}</dt>
-		<dd>
-			<check if="{{ @project.owner_id }}">
-				<true>
-					<check if="{{ @project.owner_username }}">
-						<true>
-							<a href="{{ @BASE }}/user/{{ @project.owner_username }}">{{ @project.owner_name | esc }}</a>
-						</true>
-						<false>
-							{{ @project.owner_name | esc }}
-						</false>
-					</check>
-				</true>
-				<false>
-					{{ @dict.not_assigned }}
-				</false>
-			</check>
-		</dd>
-	</dl>
-	<check if="{{ @project.description }}">
-		<div class="tex">{{ @project.description | parseText }}</div><br>
-	</check>
+    <h2>{{ @project.name | esc }} <small>#{{ @project.id }}</small></h2>
+    <dl class="dl-inline">
+        <dt>{{ @dict.cols.assignee }}</dt>
+        <dd>
+            <check if="{{ @project.owner_id }}">
+                <true>
+                    <check if="{{ @project.owner_username }}">
+                        <true>
+                            <a href="{{ @BASE }}/user/{{ @project.owner_username }}">{{ @project.owner_name | esc }}</a>
+                        </true>
+                        <false>
+                            {{ @project.owner_name | esc }}
+                        </false>
+                    </check>
+                </true>
+                <false>
+                    {{ @dict.not_assigned }}
+                </false>
+            </check>
+        </dd>
+    </dl>
+    <check if="{{ @project.description }}">
+        <div class="tex">{{ @project.description | parseText }}</div><br>
+    </check>
 
-	<div class="row">
-		<div class="col-md-6">
-			<h3 class="h4"><i>{{ @dict.project_overview }}</i></h3>
-			<set percentComplete="{{ round(@stats.complete / @stats.total * 100) }}" />
-			<div class="progress" style="max-width: 400px; margin: 15px 0 0;">
-				<div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ @percentComplete }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ @percentComplete }}%;">
-					<span class="sr-only">{{ @dict.n_complete, @percentComplete.'%' | format }}</span>
-				</div>
-			</div>
-			{{ @dict.n_complete,@stats.complete.'/'.@stats.total | format }}
-		</div>
-		<div class="col-md-6 clearfix">
-			<div class="hidden-sm hidden-xs" style="margin-bottom: 1em;"></div>
-			<div class="pull-right text-center" style="margin-left: 1em;">
-				<b>{{ @dict.cols.hours_spent }}</b>
-				<div class="h4">{{ @stats.hours_spent }}</div>
-			</div>
-			<div class="pull-right text-center">
-				<b>{{ @dict.cols.hours_total }}</b>
-				<div class="h4">{{ @stats.hours_total }}</div>
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="h4"><i>{{ @dict.project_overview }}</i></h3>
+            <set percentComplete="{{ round(@stats.complete / @stats.total * 100) }}" />
+            <div class="progress" style="max-width: 400px; margin: 15px 0 0;">
+                <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ @percentComplete }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ @percentComplete }}%;">
+                    <span class="sr-only">{{ @dict.n_complete, @percentComplete.'%' | format }}</span>
+                </div>
+            </div>
+            {{ @dict.n_complete,@stats.complete.'/'.@stats.total | format }}
+        </div>
+        <div class="col-md-6 clearfix">
+            <div class="hidden-sm hidden-xs" style="margin-bottom: 1em;"></div>
+            <div class="pull-right text-center" style="margin-left: 1em;">
+                <b>{{ @dict.cols.hours_spent }}</b>
+                <div class="h4">{{ @stats.hours_spent }}</div>
+            </div>
+            <div class="pull-right text-center">
+                <b>{{ @dict.cols.hours_total }}</b>
+                <div class="h4">{{ @stats.hours_total }}</div>
+            </div>
+        </div>
+    </div>
 
-	<hr>
+    <hr>
 
-	<h4>{{ @dict.project_tree }}</h4>
-	<div class="table-responsive">
-		<table class="table table-condensed table-hover">
-			<thead>
-				<tr>
-					<th>{{ @dict.cols.id }}</th>
-					<th>{{ @dict.cols.title }}</th>
-					<th>{{ @dict.cols.type }}</th>
-					<th>{{ @dict.cols.assignee }}</th>
-					<th>{{ @dict.cols.author }}</th>
-					<th>{{ @dict.cols.priority }}</th>
-					<th>{{ @dict.cols.due_date }}</th>
-					<th>{{ @dict.cols.sprint }}</th>
-					<th>{{ @dict.cols.hours_spent }}</th>
-				</tr>
-			</thead>
-			<tbody>
-				{~ @renderTree(@project) ~}
-			</tbody>
-		</table>
-	</div>
+    <h4>{{ @dict.project_tree }}</h4>
+    <div class="table-responsive">
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th>{{ @dict.cols.id }}</th>
+                    <th>{{ @dict.cols.title }}</th>
+                    <th>{{ @dict.cols.type }}</th>
+                    <th>{{ @dict.cols.assignee }}</th>
+                    <th>{{ @dict.cols.author }}</th>
+                    <th>{{ @dict.cols.priority }}</th>
+                    <th>{{ @dict.cols.due_date }}</th>
+                    <th>{{ @dict.cols.sprint }}</th>
+                    <th>{{ @dict.cols.hours_spent }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {~ @renderTree(@project) ~}
+            </tbody>
+        </table>
+    </div>
 
-	<include href="blocks/footer.html" />
+    <include href="blocks/footer.html" />
 </div>
 </body>
 </html>

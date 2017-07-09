@@ -1,4 +1,4 @@
 plugin
 config.ini
-/node_modules/
+/bower_components/
 /vendor/

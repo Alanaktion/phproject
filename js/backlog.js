@@ -29,7 +29,7 @@ function refreshPoints(){
 				points += val;
 			}
 		});
-		
+
 		// calculates completed points in sprints
 		var completedPoints = 0;
 		$('.list-group-item.completed:not(.hidden-group):not(.hidden-type)', this).each(function() {
@@ -38,21 +38,19 @@ function refreshPoints(){
 				completedPoints += cval;
 			}
 		});
-		
+
 		// if no total points than hide points displayed
 		if (points) {
 			$('.panel-head-points', this).show();
 		} else {
 			$('.panel-head-points', this).hide();
 		}
-		
+
 		// adds points to span
 		$(".points-label", this).text(points);
-		
+
 		// adds completed points to span
 		$(".points-label-completed", this).text(completedPoints);
-	});
-	$('.panel').each(function() {
 	});
 };
 
@@ -68,7 +66,7 @@ var Backlog = {
 					var $item = $(event.item);
 					$.post(BASE + '/backlog/edit', {
 						id: $item.attr('data-id'),
-						sprint_id: $item.parents('.list-group').attr('data-list-id')
+						sprint_id: $item.closest('.list-group').attr('data-list-id')
 					}).fail(function() {
 						console.error('Failed to save new sprint assignment');
 					});
@@ -89,8 +87,8 @@ var Backlog = {
 			var $this = $(this),
 				userIds = $this.attr('data-user-ids').split(',');
 
-			$this.parents('ul').children('li').removeClass('active');
-			$this.parents('li').addClass('active');
+			$this.closest('.dropdown-menu').children('a').removeClass('active');
+			$this.addClass('active');
 
 			if (userIds == 'all') {
 				$('.list-group-item[data-user-id]').removeClass('hidden-group');
@@ -109,7 +107,7 @@ var Backlog = {
 		$('.dropdown-menu a[data-type-id]').click(function(e) {
 			var $this = $(this),
 				typeId = $this.attr('data-type-id');
-			$this.parents('li').toggleClass('active');
+			$this.toggleClass('active');
 			$('.list-group-item[data-type-id=' + typeId + ']').toggleClass('hidden-type');
 			refreshPoints();
 			Backlog.updateUrl();
@@ -126,9 +124,9 @@ var Backlog = {
 		var typeIdString = getQueryVariable('type_id');
 		if (typeIdString) {
 			$('.list-group-item[data-type-id]').addClass('hidden-type');
-			$('.dropdown-menu a[data-type-id]').parents('li').removeClass('active');
+			$('.dropdown-menu a[data-type-id]').closest('li').removeClass('active');
 			$.each(decodeURIComponent(typeIdString).split(','), function (i, val) {
-				$('.dropdown-menu a[data-type-id=' + val + ']').parents('li').addClass('active');
+				$('.dropdown-menu a[data-type-id=' + val + ']').closest('li').addClass('active');
 				$('.list-group-item[data-type-id=' + val + ']').removeClass('hidden-type');
 			});
 		}
@@ -139,12 +137,12 @@ var Backlog = {
 	updateUrl: function() {
 		if (window.history && history.replaceState) {
 			var state = {};
-			state.groupId = $('.dropdown-menu .active a[data-user-ids]').attr('data-group-id');
+			state.groupId = $('.dropdown-menu a.active[data-user-ids]').attr('data-group-id');
 			state.typeIds = [];
-			$('.dropdown-menu .active a[data-type-id]').each(function() {
+			$('.dropdown-menu a.active[data-type-id]').each(function() {
 				state.typeIds.push($(this).attr('data-type-id'));
 			});
-			state.allStatesApplied = !$('.dropdown-menu li:not(.active) a[data-type-id]').length;
+			state.allStatesApplied = !$('.dropdown-menu a:not(.active)[data-type-id]').length;
 
 			var path = '/backlog';
 			if (state.groupId || (!state.allStatesApplied && state.typeIds)) {

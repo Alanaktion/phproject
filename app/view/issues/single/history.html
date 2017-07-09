@@ -1,70 +1,70 @@
 <repeat group="{{ @updates }}" value="{{ @update }}">
-	<div class="media" id="u-{{ @update.id }}">
-		<a class="media-left" href="{{ @BASE }}/user/{{ @update.user_username }}">
-			<img src="{{ @BASE }}/avatar/48-{{ @update.user_id }}.png" srcset="{{ @BASE }}/avatar/96-{{ @update.user_id }}.png 2x" class="media-object profile-picture img-rounded" alt>
-		</a>
-		<div class="media-body">
-			<p class="media-heading">
-				<check if="{{ @update.user_username }}">
-					<true>
-						<a href="{{ @BASE }}/user/{{ @update.user_username }}">{{ @update.user_name | esc }}</a>
-					</true>
-					<false>
-						{{ @update.user_name }}
-					</false>
-				</check>
-				on {{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@update.created_date)) }}
-				<check if="{{ @update.notify }}">
-					&ensp;<span class="fa fa-envelope text-success" title="{{ @dict.notifications_sent }}"></span>
-				</check>
-				<check if="{{ @update.notify === 0 }}">
-					&ensp;<span class="fa fa-envelope text-danger" title="{{ @dict.notifications_not_sent }}"></span>
-				</check>
-			</p>
-			<ul>
-				<repeat group="{{ @update.changes }}" value="{{ @change }}">
-					<set humanreadable="{{ \Helper\Update::instance()->humanReadableValues(@change.field, @change.old_value, @change.new_value) }}" />
-					<check if="{{ @change.old_value }}">
-						<true>
-							<check if="{{ @change.new_value !== '' }}">
-								<true>
-									<check if="{{ @change.field == 'description' }}">
-										<true>
-											<li>
-												{{ @dict.a_changed,'<b>'.@humanreadable.field.'</b>' | format }}<br>
-												{~
-												@diff = new \Diff(
-													explode("\n", rtrim(str_replace(["\r\n", "\r"], "\n", @change.old_value) . "\n")),
-													explode("\n", rtrim(str_replace(["\r\n", "\r"], "\n", @change.new_value) . "\n")),
-													["ignoreWhitespace" => true]
-												);
-												~}
-												{~ @diff_renderer = new \Diff\Renderer\Html\Inline ~}
-												{{ @diff->render(@diff_renderer) }}
-											</li>
-										</true>
-										<false>
-											<li>{{ @dict.a_changed_from_b_to_c, '<b>'.@humanreadable.field.'</b>', '<i>'.@this->esc(@humanreadable.old).'</i>', '<i>'.@this->esc(@humanreadable.new).'</i>' | format }}</li>
-										</false>
-									</check>
-								</true>
-								<false>
-									<li>{{ @dict.a_removed,'<b>'.@humanreadable.field.'</b>' | format }}</li>
-								</false>
-							</check>
-						</true>
-						<false>
-							<li>{{ @dict.a_set_to_b, '<b>'.@humanreadable.field.'</b>', '<i>'.@this->esc(@humanreadable.new).'</i>' | format }}</li>
-						</false>
-					</check>
-				</repeat>
-			</ul>
-			<check if="{{ @update.comment_id }}">
-				<div class="tex">{{ @update.comment_text, array('hashtags' => false) | parseText }}</div>
-			</check>
-		</div>
-	</div>
+    <div class="media" id="u-{{ @update.id }}">
+        <a class="media-left" href="{{ @BASE }}/user/{{ @update.user_username }}">
+            <img src="{{ @BASE }}/avatar/48-{{ @update.user_id }}.png" srcset="{{ @BASE }}/avatar/96-{{ @update.user_id }}.png 2x" class="media-object profile-picture img-rounded" alt>
+        </a>
+        <div class="media-body">
+            <p class="media-heading">
+                <check if="{{ @update.user_username }}">
+                    <true>
+                        <a href="{{ @BASE }}/user/{{ @update.user_username }}">{{ @update.user_name | esc }}</a>
+                    </true>
+                    <false>
+                        {{ @update.user_name }}
+                    </false>
+                </check>
+                on {{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@update.created_date)) }}
+                <check if="{{ @update.notify }}">
+                    &ensp;<span class="fa fa-envelope text-success" title="{{ @dict.notifications_sent }}"></span>
+                </check>
+                <check if="{{ @update.notify === 0 }}">
+                    &ensp;<span class="fa fa-envelope text-danger" title="{{ @dict.notifications_not_sent }}"></span>
+                </check>
+            </p>
+            <ul>
+                <repeat group="{{ @update.changes }}" value="{{ @change }}">
+                    <set humanreadable="{{ \Helper\Update::instance()->humanReadableValues(@change.field, @change.old_value, @change.new_value) }}" />
+                    <check if="{{ @change.old_value }}">
+                        <true>
+                            <check if="{{ @change.new_value !== '' }}">
+                                <true>
+                                    <check if="{{ @change.field == 'description' }}">
+                                        <true>
+                                            <li>
+                                                {{ @dict.a_changed,'<b>'.@humanreadable.field.'</b>' | format }}<br>
+                                                {~
+                                                @diff = new \Diff(
+                                                    explode("\n", rtrim(str_replace(["\r\n", "\r"], "\n", @change.old_value) . "\n")),
+                                                    explode("\n", rtrim(str_replace(["\r\n", "\r"], "\n", @change.new_value) . "\n")),
+                                                    ["ignoreWhitespace" => true]
+                                                );
+                                                ~}
+                                                {~ @diff_renderer = new \Diff\Renderer\Html\Inline ~}
+                                                {{ @diff->render(@diff_renderer) }}
+                                            </li>
+                                        </true>
+                                        <false>
+                                            <li>{{ @dict.a_changed_from_b_to_c, '<b>'.@humanreadable.field.'</b>', '<i>'.@this->esc(@humanreadable.old).'</i>', '<i>'.@this->esc(@humanreadable.new).'</i>' | format }}</li>
+                                        </false>
+                                    </check>
+                                </true>
+                                <false>
+                                    <li>{{ @dict.a_removed,'<b>'.@humanreadable.field.'</b>' | format }}</li>
+                                </false>
+                            </check>
+                        </true>
+                        <false>
+                            <li>{{ @dict.a_set_to_b, '<b>'.@humanreadable.field.'</b>', '<i>'.@this->esc(@humanreadable.new).'</i>' | format }}</li>
+                        </false>
+                    </check>
+                </repeat>
+            </ul>
+            <check if="{{ @update.comment_id }}">
+                <div class="tex">{{ @update.comment_text, array('hashtags' => false) | parseText }}</div>
+            </check>
+        </div>
+    </div>
 </repeat>
 <check if="{{ empty(@updates) }}">
-	<p class="text-center text-muted">{{ @dict.no_history_available }}</p>
+    <p class="text-center text-muted">{{ @dict.no_history_available }}</p>
 </check>
