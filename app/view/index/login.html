@@ -77,13 +77,13 @@
 					<div class="form-group">
 						<label for="register-name" class="col-md-4 control-label">{{ @dict.name }}</label>
 						<div class="col-md-8">
-							<input class="form-control" placeholder="{{ @dict.name }}" id="register-name" name="register-name" type="text" value="{{ @@POST['register-name'] }}" required>
+							<input class="form-control" placeholder="{{ @dict.name }}" id="register-name" name="register-name" type="text" value="{{ @@POST['register-name'] | esc }}" required>
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="register-username" class="col-md-4 control-label">{{ @dict.username }}</label>
 						<div class="col-md-8">
-							<input class="form-control" placeholder="{{ @dict.username }}" id="register-username" name="register-username" type="text" value="{{ @@POST['register-username'] }}" required>
+							<input class="form-control" placeholder="{{ @dict.username }}" id="register-username" name="register-username" type="text" value="{{ @@POST['register-username'] | esc }}" required>
 						</div>
 					</div>
 					<div class="form-group">

@@ -26,7 +26,7 @@
 				<div role="tabpanel" class="tab-pane fade in active" id="config-site">
 					<div class="form-group">
 						<label class="control-label" for="site-name">{{ @dict.site_name }}</label>
-						<input type="text" class="form-control" name="site-name" value="{{ @site.name }}" required>
+						<input type="text" class="form-control" name="site-name" value="{{ @site.name | esc }}" required>
 					</div>
 					<div class="form-group">
 						<label class="control-label" for="site-description">{{ @dict.site_description }}</label>
@@ -38,11 +38,11 @@
 					</div>
 					<div class="form-group">
 						<label class="control-label" for="site-theme">{{ @dict.default_theme }}</label>
-						<input type="text" class="form-control input-sm" name="site-theme" value="{{ @site.theme }}" required>
+						<input type="text" class="form-control input-sm" name="site-theme" value="{{ @site.theme | esc }}" required>
 					</div>
 					<div class="form-group">
 						<label class="control-label" for="site-logo">{{ @dict.logo }}</label>
-						<input type="text" class="form-control input-sm" name="site-logo" placeholder="(Site Name)" value="{{ @site.logo }}">
+						<input type="text" class="form-control input-sm" name="site-logo" placeholder="(Site Name)" value="{{ @site.logo | esc }}">
 					</div>
 				</div>
 
@@ -157,7 +157,7 @@
 						<legend>{{ @dict.outgoing_mail }}</legend>
 						<div class="form-group">
 							<label class="control-label" for="mail-from">{{ @dict.from_address}}</label>
-							<input type="text" class="form-control input-sm" name="mail-from" value="{{ @mail.from }}" placeholder="{{ @dict.email_leave_blank }}">
+							<input type="text" class="form-control input-sm" name="mail-from" value="{{ @mail.from | esc }}" placeholder="{{ @dict.email_leave_blank }}">
 						</div>
 						<p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.package_mail_config_note, @PACKAGE | format }} </p>
 					</fieldset>
@@ -166,11 +166,11 @@
 						<legend>{{ @dict.incoming_mail }}</legend>
 						<div class="form-group">
 							<label class="control-label" for="imap-hostname">{{ @dict.hostname }}</label>
-							<input type="text" class="form-control input-sm" name="imap-hostname" value="{{ @imap.hostname }}" placeholder="{{ @dict.email_leave_blank }}">
+							<input type="text" class="form-control input-sm" name="imap-hostname" value="{{ @imap.hostname | esc }}" placeholder="{{ @dict.email_leave_blank }}">
 						</div>
 						<div class="form-group">
 							<label class="control-label" for="imap-username">{{ @dict.username }}</label>
-							<input type="text" class="form-control input-sm" name="imap-username" value="{{ @imap.username }}">
+							<input type="text" class="form-control input-sm" name="imap-username" value="{{ @imap.username | esc }}">
 						</div>
 						<div class="form-group">
 							<label class="control-label" for="imap-password">{{ @dict.password }}</label>

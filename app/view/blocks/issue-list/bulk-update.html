@@ -89,7 +89,7 @@
 						<select class="form-control input-sm bulk-input" name="priority">
 							<option value="">{{ @dict.choose_option }}</option>
 							<repeat group="{{ @priorities }}" value="{{ @item }}">
-								<option value="{{ @item.value }}">{{ @item.name }}</option>
+								<option value="{{ @item.value }}">{{ @item.name | esc }}</option>
 							</repeat>
 						</select>
 					</div>
@@ -112,7 +112,7 @@
 						<select class="form-control input-sm bulk-input" name="type_id">
 							<option value="">{{ @dict.choose_option }}</option>
 							<repeat group="{{ @issue_types }}" value="{{ @item }}">
-								<option value="{{ @item.id }}">{{ @item.name }}</option>
+								<option value="{{ @item.id }}">{{ @item.name | esc }}</option>
 							</repeat>
 						</select>
 					</div>

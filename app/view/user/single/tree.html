@@ -13,9 +13,9 @@
 		</div>
 		<div class="pull-left">
 			<h3>{{ @this_user.name | esc }}</h3>
-			<p>{{ @dict.username }}: {{ @this_user.username }}</p>
+			<p>{{ @dict.username }}: {{ @this_user.username | esc }}</p>
 			<check if="{{ @this_user.role != 'group' }}">
-				<p>{{ @dict.email }}: {{ @this_user.email }}</p>
+				<p>{{ @dict.email }}: {{ @this_user.email | esc }}</p>
 			</check>
 		</div>
 	</div>

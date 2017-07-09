@@ -12,7 +12,7 @@
 			<div class="list-group">
 				<repeat group="{{ @issue_types }}" value="{{ @type }}">
 					<a href="{{ @BASE }}/issues/new/{{ @type.id }}" class="list-group-item">
-						<h4 class="list-group-item-heading">{{ @type.name }}</h4>
+						<h4 class="list-group-item-heading">{{ @type.name | esc }}</h4>
 					</a>
 				</repeat>
 			</div>

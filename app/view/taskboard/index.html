@@ -294,7 +294,7 @@
 									<label for="priority">{{ @dict.cols.priority }}</label>
 									<select id="priority" name="priority" class="form-control input-sm" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
 										<repeat group="{{ @priorities }}" value="{{ @priority }}">
-											<option value="{{ @priority.value }}">{{ isset(@dict[@priority.name]) ? @dict[@priority.name] : str_replace('_', ' ', @priority.name) }}</option>
+											<option value="{{ @priority.value }}">{{ isset(@dict[@priority.name]) ? @dict[@priority.name] : str_replace('_', ' ', @priority.name) | esc }}</option>
 										</repeat>
 									</select>
 								</div>

@@ -71,6 +71,10 @@
 						</a>
 					</div>
 					<div class="panel-body in" id="panel-0">
+						<div class="panel-head-points text-muted">
+							<span>{{ @dict.backlog_points }}:</span>
+							<span class="points-label">0</span>
+						</div>
 						<ul class="list-group sortable" data-list-id="0">
 							<repeat group="{{ @backlog }}" value="{{ @project }}">
 								<include href="backlog/item.html" />
@@ -101,6 +105,11 @@
 									</a>
 								</div>
 								<div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
+									<div class="panel-head-points text-muted">
+										<span>{{ @dict.backlog_points }}:</span>
+										<span class="points-label-completed">0</span> /
+										<span class="points-label">0</span>
+									</div>
 									<ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
 										<repeat group="{{ @sprint.projects }}" value="{{ @project }}">
 											<include href="backlog/item.html" />

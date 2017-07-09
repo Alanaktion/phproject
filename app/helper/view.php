@@ -6,7 +6,6 @@ class View extends \Template
 {
     public function __construct()
     {
-
         // Register filters
         $this->filter('parseText', '$this->parseText');
         $this->filter('formatFilesize', '$this->formatFilesize');
@@ -74,7 +73,8 @@ class View extends \Template
         }
 
         // Simplistic XSS protection
-        $str = preg_replace("#</?script>#i", "", $str);
+        $antiXss = new \AntiXSS();
+        $str = $antiXss->xss_clean($str);
 
         // Pass to any plugin hooks
         $str = \Helper\Plugin::instance()->callHook("text.parse.after", $str);

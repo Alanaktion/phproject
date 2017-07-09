@@ -19,6 +19,43 @@ function getQueryVariable(variable) {
 	return(false);
 }
 
+function refreshPoints(){
+	$('.panel').each(function() {
+		// calculates total points in the backlog and sprints
+		var points = 0;
+		$('.list-group-item:not(.hidden-group):not(.hidden-type)', this).each(function() {
+			var val = parseInt($(this).attr('data-points'), 10);
+			if (val > 0) {
+				points += val;
+			}
+		});
+		
+		// calculates completed points in sprints
+		var completedPoints = 0;
+		$('.list-group-item.completed:not(.hidden-group):not(.hidden-type)', this).each(function() {
+			var cval = parseInt($(this).attr('data-points'), 10);
+			if (cval > 0) {
+				completedPoints += cval;
+			}
+		});
+		
+		// if no total points than hide points displayed
+		if (points) {
+			$('.panel-head-points', this).show();
+		} else {
+			$('.panel-head-points', this).hide();
+		}
+		
+		// adds points to span
+		$(".points-label", this).text(points);
+		
+		// adds completed points to span
+		$(".points-label-completed", this).text(completedPoints);
+	});
+	$('.panel').each(function() {
+	});
+};
+
 var Backlog = {
 	init: function() {
 		// Initialize sorting
@@ -63,7 +100,7 @@ var Backlog = {
 					$('.list-group-item[data-user-id=' + val + ']').removeClass('hidden-group');
 				});
 			}
-
+			refreshPoints();
 			Backlog.updateUrl();
 			e.preventDefault();
 		});
@@ -74,6 +111,7 @@ var Backlog = {
 				typeId = $this.attr('data-type-id');
 			$this.parents('li').toggleClass('active');
 			$('.list-group-item[data-type-id=' + typeId + ']').toggleClass('hidden-type');
+			refreshPoints();
 			Backlog.updateUrl();
 			e.preventDefault();
 		});
@@ -142,9 +180,11 @@ var Backlog = {
 		}).fail(function() {
 			console.error('An error occurred saving the sort order.');
 		});
+		refreshPoints();
 	}
 };
 
 $(function() {
 	Backlog.init();
+	refreshPoints();
 });
