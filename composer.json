@@ -9,7 +9,8 @@
         "paragonie/random_compat": "^2.0",
         "symfony/polyfill": "^1.4",
         "voku/anti-xss": "^2.1",
-        "netcarver/textile": "3.6.*"
+        "netcarver/textile": "3.6.*",
+        "erusev/parsedown": "^1.6"
     },
     "license": "GPL",
     "authors": [
