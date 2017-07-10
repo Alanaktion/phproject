@@ -7,10 +7,10 @@
         </check>
     </td>
     <td>
-        <input type="text" class="form-control input-sm" name="name" value="{{ @@GET.name | esc }}">
+        <input type="text" class="form-control form-control-sm" name="name" value="{{ @@GET.name | esc }}">
     </td>
     <td>
-        <select class="form-control input-sm" name="type_id">
+        <select class="form-control form-control-sm" name="type_id">
             <option value="">--</option>
             <repeat group="{{ @types }}" value="{{ @item }}">
                 <check if="{{ !empty(@GET.type_id) && @GET.type_id == @item.id }}">
@@ -21,7 +21,7 @@
         </select>
     </td>
     <td>
-        <select class="form-control input-sm" name="priority">
+        <select class="form-control form-control-sm" name="priority">
             <option value="">--</option>
             <repeat group="{{ @priorities }}" value="{{ @item }}">
                 <check if="{{ !empty(@GET.priority) && @GET.priority == @item.value }}">
@@ -32,7 +32,7 @@
         </select>
     </td>
     <td>
-        <select class="form-control input-sm" name="status">
+        <select class="form-control form-control-sm" name="status">
             <option value="">--</option>
             <optgroup label="{{ @dict.general }}">
                 <check if="{{ !empty(@GET.status) && @GET.status == 'open' }}">
@@ -55,10 +55,10 @@
         </select>
     </td>
     <td>
-        <input type="text" class="form-control input-sm" name="parent_id" data-typeahead="issues" id="filter-input-parent-id" value="{{ @@GET.parent_id | esc }}" />
+        <input type="text" class="form-control form-control-sm" name="parent_id" data-typeahead="issues" id="filter-input-parent-id" value="{{ @@GET.parent_id | esc }}" />
     </td>
     <td>
-        <select class="form-control input-sm" name="author_id">
+        <select class="form-control form-control-sm" name="author_id">
             <option value="">--</option>
             <option value="{{ @user.id }}">{{ @user.name | esc }}</option>
             <optgroup label="{{ @dict.groups }}">
@@ -80,7 +80,7 @@
         </select>
     </td>
     <td>
-        <select class="form-control input-sm" name="owner_id">
+        <select class="form-control form-control-sm" name="owner_id">
             <option value="">--</option>
             <option value="{{ @user.id }}">{{ @user.name | esc }}</option>
             <optgroup label="{{ @dict.groups }}">
@@ -112,7 +112,7 @@
         </select>
     </td>
     <td>
-        <select class="form-control input-sm" name="sprint_id">
+        <select class="form-control form-control-sm" name="sprint_id">
             <option value="">--</option>
             <repeat group="{{ @sprints }}" value="{{ @item }}">
                 <check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
@@ -133,7 +133,7 @@
         </select>
     </td>
     <td>
-        <select class="form-control input-sm" name="repeat_cycle">
+        <select class="form-control form-control-sm" name="repeat_cycle">
             <option value="">--</option>
             <optgroup label="{{ @dict.general }}">
                 <check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'repeat' }}">

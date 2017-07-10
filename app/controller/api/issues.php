@@ -4,7 +4,6 @@ namespace Controller\Api;
 
 class Issues extends \Controller\Api
 {
-
     /**
      * Converts an issue into a Redmine API-style multidimensional array
      * This isn't pretty.

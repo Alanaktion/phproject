@@ -4,7 +4,7 @@
     </check>
     <a class="btn btn-secondary btn-sm" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
     <a class="btn btn-secondary btn-sm" href="{{ @BASE }}/issues?parent_id={{ @parent.id }}">{{ @dict.browse }}</a>
-    <span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="' . @BASE . '/issues/' . @parent.id . '">#' . @parent.id . ' ' . @this->esc(@parent.name) . '</a>' | format }}</span>
+    <span class="hidden-xs-down">&ensp;{{ @dict.under_n,'<a href="' . @BASE . '/issues/' . @parent.id . '">#' . @parent.id . ' ' . @this->esc(@parent.name) . '</a>' | format }}</span>
 </p>
 
 <check if="{{ !empty(@issues) }}">

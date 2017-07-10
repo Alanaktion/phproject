@@ -7,9 +7,11 @@
     <br>
     <div class="well well-sm log">{{ @dblog | esc }}</div>
 </check>
-<footer class="row mt-3">
+<footer class="row site-footer">
     <div class="col-4">
-        <p class="visible-sm visible-xs"><a href="{{ @BASE }}/logout" class="btn btn-secondary btn-sm">{{ @dict.log_out }}</a></p>
+        <p class="hidden-md-up">
+            <a href="{{ @BASE }}/logout" class="btn btn-secondary btn-sm">{{ @dict.log_out }}</a>
+        </p>
     </div>
     <div class="col-8">
         <p class="text-right text-muted">

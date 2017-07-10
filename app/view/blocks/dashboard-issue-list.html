@@ -2,19 +2,23 @@
     <repeat group="{{ @issues }}" value="{{ @item }}">
         <a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ @BASE }}/issues/{{ @item.id }}">
             <div class="d-flex w-100 justify-content-between">
-                <div>
-                    #{{ @item.id }} - {{ @item.name | esc }}
-                    <check if="{{ @item.priority != 0 }}">
-                        <span class="label-{{ @item.priority < 0 ? 'default' : 'danger' }} priority" style="width: {{ !@item.priority ? 0 : 1 + 1 * abs(@item.priority) }}px;"></span>
-                    </check>
+                <check if="{{ @item.priority != 0 }}">
+                    <div class="mr-1">
+                        <span class="fa fa-circle {{ @item.priority > 0 ? 'text-danger' : 'text-muted' }} has-tooltip" title="{{ @item.priority_name }}"></span>
+                    </div>
+                </check>
+                <div>#{{ @item.id }} - {{ @item.name | esc }}</div>
+                <div class="ml-auto">
+                    <span class="badge badge-default status">{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) | esc }}</span>
                 </div>
-                <span class="badge badge-default status">{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) | esc }}</span>
             </div>
             <check if="{{ @item.repeat_cycle || @item.due_date || @item.sprint_id || @item.owner_id != @user.id }}">
                 <small class="d-flex w-100 justify-content-between mt-1">
-                    <check if="{{ strtotime(@item.due_date) }}">
-                        <div class="mr-auto">Due {{ date("l, F j", strtotime(@item.due_date)) }}</div>
-                    </check>
+                    <div class="mr-auto">
+                        <check if="{{ strtotime(@item.due_date) }}">
+                            Due {{ date("l, F j", strtotime(@item.due_date)) }}
+                        </check>
+                    </div>
                     <check if="{{ @item.repeat_cycle }}">
                         <div class="has-tooltip" title="{{ @dict.cols.repeat_cycle }}">
                             <span class="fa fa-repeat"></span>&ensp;{{ @dict[@item.repeat_cycle] ?: @item.repeat_cycle }}

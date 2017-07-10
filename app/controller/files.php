@@ -4,7 +4,6 @@ namespace Controller;
 
 class Files extends \Controller
 {
-
     /**
      * Force the framework to use the local filesystem cache method if possible
      */

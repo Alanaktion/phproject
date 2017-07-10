@@ -1,0 +1,256 @@
+/*!
+ * Phproject theme
+ * Built on Bootstrap v4
+ */
+
+// Global styles
+body {
+    margin-top: 3.5rem + $navbar-padding-y * 2;
+}
+
+.navbar-brand img {
+    height: 2.5rem;
+    width: auto;
+    margin-top: -.25rem;
+    margin-bottom: -.25rem;
+}
+
+.site-footer {
+    margin-top: $spacer;
+    font-size: 85%;
+}
+
+a.nolink {
+    color: inherit;
+    text-decoration: inherit;
+}
+a.nolink:hover {
+    text-decoration: underline;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 3rem;
+}
+
+.dropdown-menu:not(.datepicker) {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+th[data-sort] {
+    cursor: pointer;
+}
+
+// User content
+.tex {
+    word-wrap: break-word;
+    table {
+        margin: 10px 0;
+        td {
+            padding: 2px 5px;
+            border: 1px solid #ccc;
+        }
+    }
+    ul,
+    ol {
+        padding-left: 20px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    blockquote {
+        font-size: inherit;
+        padding: 0 0 0 5px;
+        margin-bottom: 5px;
+    }
+    del {
+        opacity: 0.45;
+        transition: opacity .25s ease;
+        &:hover {
+            opacity: 1;
+        }
+    }
+    pre a {
+        color: inherit;
+    }
+}
+
+// Issue
+.file-list li {
+    position: relative;
+    text-align: center;
+    width: 106px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.file-list li img {
+    display: block;
+    width: 96px;
+    height: 96px;
+}
+.file-list li .delete {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+}
+.file-list li:hover .delete {
+    visibility: visible;
+}
+.file-list th:first-child,
+.file-list td:first-child {
+    width: 26px;
+}
+.file-list td:first-child img {
+    width: 16px;
+    height: 16px;
+}
+
+.comment-form {
+    margin-bottom: $spacer;
+}
+.comment {
+    margin-bottom: $spacer;
+    .media-heading,
+    p:last-child {
+        margin-bottom: 0;
+    }
+    .comment-delete {
+        visibility: hidden;
+        @media (pointer: coarse) {
+            visibility: visible;
+        }
+    }
+    &:hover .comment-delete {
+        visibility: visible;
+    }
+}
+
+// Browse
+.issue-list {
+    .issue-filters {
+        th, td {
+            padding-left: 0;
+        }
+    }
+    .closed {
+        text-decoration: line-through;
+    }
+}
+
+// Typeahead
+.twitter-typeahead {
+    display: block !important;
+    .dropdown-menu {
+        min-width: 300px;
+        width: 100%;
+        padding: 0;
+    }
+    .tt-suggestion {
+        padding: 6px 12px;
+        color: #404040;
+        cursor: pointer;
+        font-size: 13px;
+        &:hover {
+            background-color: #00bc8c;
+            color: #fff;
+            .text-muted {
+                color: #eee;
+            }
+        }
+    }
+}
+
+// Dashboard
+.manage-widgets-list .list-group {
+    min-height: 3.5rem;
+}
+.manage-widgets-list .list-group-item {
+    cursor: move;
+}
+
+.dashboard .list-group-item {
+    padding: 5px 10px;
+    position: relative;
+}
+
+.table-scrollbox {
+    overflow-x: auto;
+}
+
+@include media-breakpoint-up(md) {
+    .dashboard-widget .issue-tree tbody td {
+        max-width: 25vw;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+// Administration
+@include media-breakpoint-down(md) {
+    .pull-right + .nav-tabs {
+        float: left;
+    }
+}
+.alert-popup {
+    position: fixed;
+    top: 4rem;
+    right: 1rem;
+    z-index: 20;
+}
+.alert-popup.alert-popup-center {
+    left: 50%;
+    width: 18rem;
+    margin-left: -9rem;
+}
+
+// Backlog
+.panel-heading {
+    a[data-toggle='collapse'] {
+        &:before {
+            content: '\25bc';
+            margin-right: 5px;
+        }
+        &:hover,
+        &:focus {
+            text-decoration: none;
+        }
+    }
+    a.collapsed:before {
+        content: '\25b6';
+    }
+}
+
+// Taskboard
+@include media-breakpoint-up(md) {
+    .form-inline .form-group-wide .form-control {
+        width: 16rem;
+    }
+    .form-inline .form-group-narrow .form-control {
+        width: 6rem;
+    }
+}
+
+// Footer
+.log {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-size: 11px;
+    overflow-x: auto;
+    white-space: pre;
+}
+
+// Hotkey modal
+.dl-inline dt {
+    float: left;
+    clear: left;
+    margin-right: .5em;
+}
+.dl-inline dt:after {
+    content: ':';
+}

@@ -14,6 +14,9 @@ $fw->route('GET|POST /logout', 'Controller\Index->logout');
 $fw->route('GET|POST /ping', 'Controller\Index->ping');
 $fw->route('GET /opensearch.xml', 'Controller\Index->opensearch');
 
+// Style
+$fw->route('GET /style/@file.css', 'Controller\Style->index');
+
 // Issues
 $fw->route('GET /issues', 'Controller\Issues->index');
 $fw->route('GET /issues/new', 'Controller\Issues->add_selecttype');

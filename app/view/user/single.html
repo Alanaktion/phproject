@@ -20,7 +20,7 @@
                     <h3>
                         {{ @this_user.name | esc }}
                         <check if="{{ @this_user.deleted_date }}">
-                            &ensp;<small class="label label-danger">{{ @dict.deleted }}</small>
+                            &ensp;<small class="badge badge-danger">{{ @dict.deleted }}</small>
                         </check>
                     </h3>
                     <p>{{ @dict.username }}: {{ @this_user.username }}</p>
@@ -30,7 +30,7 @@
                 </div>
             </div>
             <check if="{{ @this_user.role != 'group' }}">
-                <div class="col-md-8 hidden-xs">
+                <div class="col-md-8 hidden-xs-down">
                     <canvas id="stats" width="600" height="130"></canvas>
                 </div>
             </check>

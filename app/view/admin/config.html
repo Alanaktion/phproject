@@ -30,19 +30,19 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="site-description">{{ @dict.site_description }}</label>
-                        <textarea class="form-control input-sm" name="site-description">{{ @site.description | esc }}</textarea>
+                        <textarea class="form-control" name="site-description">{{ @site.description | esc }}</textarea>
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="site-timezone">{{ @dict.timezone }}</label>
-                        <input type="text" class="form-control input-sm" name="site-timezone" value="{{ @site.timezone }}" required>
+                        <input type="text" class="form-control" name="site-timezone" value="{{ @site.timezone }}" required>
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="site-theme">{{ @dict.default_theme }}</label>
-                        <input type="text" class="form-control input-sm" name="site-theme" value="{{ @site.theme | esc }}" required>
+                        <input type="text" class="form-control" name="site-theme" value="{{ @site.theme | esc }}" required>
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="site-logo">{{ @dict.logo }}</label>
-                        <input type="text" class="form-control input-sm" name="site-logo" aria-describedby="logoHelp" value="{{ @site.logo | esc }}">
+                        <input type="text" class="form-control" name="site-logo" aria-describedby="logoHelp" value="{{ @site.logo | esc }}">
                         <small class="form-text" id="logoHelp">{{ @dict.logo_default_message }}</small>
                     </div>
                 </div>
@@ -156,7 +156,7 @@
                         <legend>{{ @dict.outgoing_mail }}</legend>
                         <div class="form-group">
                             <label class="control-label" for="mail-from">{{ @dict.from_address}}</label>
-                            <input type="text" class="form-control input-sm" name="mail-from" value="{{ @mail.from | esc }}" aria-describedby="emailHelp">
+                            <input type="text" class="form-control" name="mail-from" value="{{ @mail.from | esc }}" aria-describedby="emailHelp">
                             <small id="emailHelp" class="form-text text-muted">{{ @dict.email_leave_blank }}</small>
                         </div>
                         <p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.package_mail_config_note, @PACKAGE | format }} </p>
@@ -166,19 +166,19 @@
                         <legend>{{ @dict.incoming_mail }}</legend>
                         <div class="form-group">
                             <label class="control-label" for="imap-hostname">{{ @dict.hostname }}</label>
-                            <input type="text" class="form-control input-sm" name="imap-hostname" value="{{ @imap.hostname | esc }}">
+                            <input type="text" class="form-control" name="imap-hostname" value="{{ @imap.hostname | esc }}">
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="imap-username">{{ @dict.username }}</label>
-                            <input type="text" class="form-control input-sm" name="imap-username" value="{{ @imap.username | esc }}">
+                            <input type="text" class="form-control" name="imap-username" value="{{ @imap.username | esc }}">
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="imap-password">{{ @dict.password }}</label>
-                            <input type="text" class="form-control input-sm" name="imap-password" value="{{ str_repeat('*', strlen(@imap.password)) }}">
+                            <input type="text" class="form-control" name="imap-password" value="{{ str_repeat('*', strlen(@imap.password)) }}">
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
-                            <textarea class="form-control input-sm" name="mail-truncate_lines" rows="4">{{ implode("\n", is_array(@mail.truncate_lines) ? @mail.truncate_lines : \Base::instance()->split(@mail.truncate_lines)) | esc }}</textarea>
+                            <textarea class="form-control" name="mail-truncate_lines" rows="4">{{ implode("\n", is_array(@mail.truncate_lines) ? @mail.truncate_lines : \Base::instance()->split(@mail.truncate_lines)) | esc }}</textarea>
                         </div>
                         <p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.imap_settings_note, '<code>checkmail.php</code>' | format }}</p>
                     </fieldset>
@@ -188,7 +188,7 @@
                     <h3>{{ @dict.security }}</h3>
                     <div class="form-group">
                         <label class="control-label">{{ @dict.min_pass_len }}</label>
-                        <input type="number" class="form-control input-sm" name="security-min_pass_len" value="{{ @security.min_pass_len }}">
+                        <input type="number" class="form-control" name="security-min_pass_len" value="{{ @security.min_pass_len }}">
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
@@ -202,11 +202,11 @@
                     <h3>{{ @dict.general }}</h3>
                     <div class="form-group">
                         <label class="control-label">{{ @dict.cookie_expiration }}</label>
-                        <input type="text" class="form-control input-sm" name="JAR-expire" value="{{ @JAR.expire }}">
+                        <input type="text" class="form-control" name="JAR-expire" value="{{ @JAR.expire }}">
                     </div>
                     <div class="form-group">
                         <label class="control-label">{{ @dict.max_upload_size }}</label>
-                        <input type="text" class="form-control input-sm" name="files-maxsize" value="{{ @files.maxsize }}">
+                        <input type="text" class="form-control" name="files-maxsize" value="{{ @files.maxsize }}">
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
@@ -222,15 +222,15 @@
                     <h3>{{ @dict.core }}</h3>
                     <div class="form-group">
                         <label class="control-label">{{ @dict.debug_level }}</label>
-                        <input type="text" class="form-control input-sm" value="{{ @DEBUG }}" readonly>
+                        <input type="text" class="form-control" value="{{ @DEBUG }}" readonly>
                     </div>
                     <div class="form-group">
                         <label class="control-label">{{ @dict.cache_mode }}</label>
-                        <input type="text" class="form-control input-sm" value="{{ @CACHE }}" readonly>
+                        <input type="text" class="form-control" value="{{ @CACHE }}" readonly>
                     </div>
                     <div class="form-group">
                         <label class="control-label">{{ @dict.demo_user }}</label>
-                        <input type="text" class="form-control input-sm" value="{{ @site.demo ?: 'Disabled' }}" readonly>
+                        <input type="text" class="form-control" value="{{ @site.demo ?: 'Disabled' }}" readonly>
                     </div>
                     <p class="alert alert-info">{{ @dict.advanced_config_note,'<code>config</code>' | format }}</p>
                 </div>

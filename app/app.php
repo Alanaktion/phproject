@@ -18,6 +18,7 @@ final class App {
         self::$fw = Base::instance();
         self::$fw->mset([
             'AUTOLOAD' => 'app/;lib/vendor/',
+            'CACHE' => true,
             'ESCAPE' => false,
             'PREFIX' => 'dict.',
             "LOCALES" => "app/dict/",
@@ -76,6 +77,9 @@ final class App {
      */
     static function fw()
     {
+        if (!self::$fw) {
+            self::$fw = \Base::instance();
+        }
         return self::$fw;
     }
 
@@ -86,15 +90,16 @@ final class App {
     static function db()
     {
         if (!self::$db) {
+            $fw = self::fw();
             self::$db = new DB\SQL(
                 sprintf(
                     "mysql:host=%s;port=%s;dbname=%s",
-                    self::$fw->get("db.host"),
-                    self::$fw->get("db.port"),
-                    self::$fw->get("db.name")
+                    $fw->get("db.host"),
+                    $fw->get("db.port"),
+                    $fw->get("db.name")
                 ),
-                self::$fw->get("db.user"),
-                self::$fw->get("db.pass")
+                $fw->get("db.user"),
+                $fw->get("db.pass")
             );
         }
         return self::$db;

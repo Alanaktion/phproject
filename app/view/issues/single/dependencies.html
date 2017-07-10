@@ -1,12 +1,12 @@
 <form id="dependency_form">
     <input type="hidden" name="issue_id" value="{{ @issue.id }}">
     <div class="form-group row">
-        <label class="col-md-4"><b>{{ @dict.task_depends }}</b></label>
+        <label class="col-md-4 col-form-label">{{ @dict.task_depends }}</label>
         <div class="col-md-3">
-            <input type="text" class="form-control input-sm" name="dependency_id" required>
+            <input type="text" class="form-control" name="dependency_id" required>
         </div>
         <div class="col-md-2">
-            <select class="form-control input-sm" name="type">
+            <select class="form-control" name="type">
                 <option>{{ @dict.fs }}</option>
                 <option>{{ @dict.ff }}</option>
                 <option>{{ @dict.ss }}</option>
@@ -14,7 +14,7 @@
             </select>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary btn-sm">{{ @dict.add_dependency }}</button>
+            <button type="submit" class="btn btn-secondary btn-sm">{{ @dict.add_dependency }}</button>
         </div>
     </div>
 </form>
@@ -56,12 +56,12 @@
 <form id="dependent_form">
     <input type="hidden" name="dependency_id" value="{{ @issue.id }}">
     <div class="form-group row">
-        <label class="col-md-4"><strong>{{ @dict.task_dependency }}</strong></label>
+        <label class="col-md-4 col-form-label">{{ @dict.task_dependency }}</label>
         <div class="col-md-3">
-            <input type="text" class="form-control input-sm" name="issue_id" required>
+            <input type="text" class="form-control" name="issue_id" required>
         </div>
         <div class="col-md-2">
-            <select class="form-control input-sm" name="type">
+            <select class="form-control" name="type">
                 <option>{{ @dict.fs }}</option>
                 <option>{{ @dict.ff }}</option>
                 <option>{{ @dict.ss }}</option>
@@ -69,7 +69,7 @@
             </select>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary btn-sm">{{ @dict.add_dependent }}</button>
+            <button type="submit" class="btn btn-secondary btn-sm">{{ @dict.add_dependent }}</button>
         </div>
     </div>
 </form>

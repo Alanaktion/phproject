@@ -3,7 +3,7 @@
 <head>
     <include href="blocks/head.html" />
     <check if="{{ @parse.markdown }}">
-        <link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/simplemde.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ @BASE }}/bower_components/simplemde/dist/simplemde.min.css">
     </check>
 </head>
 <body>
@@ -18,7 +18,7 @@
     <script src="{{ @BASE }}/bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.min.js"></script>
 </check>
 <check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
-    <script src="{{ @BASE }}/js/simplemde.min.js"></script>
+    <script src="{{ @BASE }}/bower_components/simplemde/dist/simplemde.min.js"></script>
 </check>
 <script type="text/javascript">
 $(function() {

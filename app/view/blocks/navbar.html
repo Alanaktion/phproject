@@ -1,5 +1,5 @@
 <set nav="{{ \Helper\Plugin::instance()->getAllNavs(@PATH) }}" />
-<div class="navbar navbar-toggleable-md navbar-light bg-faded mb-3">
+<div class="navbar fixed-top navbar-toggleable-md navbar-light bg-faded">
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ @dict.toggle_navigation }}">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -87,7 +87,7 @@
 
         <form class="form-inline mr-sm-3" role="search" action="{{ @BASE }}/search" method="get">
             <input type="search" name="q" class="form-control mr-sm-2" placeholder="{{ @dict.issue_search }}" value="{{ @@GET.q | esc }}">
-            <button type="submit" class="btn btn-secondary hidden-xs">
+            <button type="submit" class="btn btn-secondary hidden-xs-down">
                 <span class="sr-only">{{ @dict.submit }}</span>
                 <span class="fa fa-search"></span>
             </button>

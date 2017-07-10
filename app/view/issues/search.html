@@ -12,7 +12,7 @@
     </p>
     <include href="blocks/issue-list.html" />
     <div class="clearfix">
-        <p class="pull-right hidden-xs">
+        <p class="pull-right hidden-xs-down">
             <span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
         </p>
     </div>

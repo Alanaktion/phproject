@@ -3,7 +3,7 @@
 <head>
     <include href="blocks/head.html" />
     <check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
-        <link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/simplemde.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ @BASE }}/bower_components/simplemde/dist/simplemde.min.css">
     </check>
 </head>
 <body>
@@ -214,7 +214,7 @@
 
             <div class="tab-content">
                 <check if="{{ !empty(@files) }}">
-                    <div class="tab-pane fade in active" id="files-tiles">
+                    <div class="tab-pane fade show active" id="files-tiles">
                         <ul class="list-inline file-list">
                             <repeat group="{{ @files }}" value="{{ @file }}">
                                 <include href="blocks/file/thumb.html" />
@@ -286,10 +286,10 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="comments">
                     <div class="comments">
-                        <form action="{{ @BASE }}/issues/comment/save" method="POST" id="comment_form">
+                        <form action="{{ @BASE }}/issues/comment/save" method="POST" class="comment-form" id="comment_form">
                             <input type="hidden" name="issue_id" value="{{ @issue.id }}">
                             <div class="form-group">
-                                <textarea class="form-control input-sm" id="comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}"></textarea>
+                                <textarea class="form-control" id="comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}"></textarea>
                             </div>
                             <div class="text-right">
                                 <div class="form-check form-check-inline">
@@ -298,8 +298,12 @@
                                         {{ @dict.send_notifications }}
                                     </label>
                                 </div>&ensp;
-                                <button type="button" class="btn btn-secondary has-tooltip" title="{{ @dict.upload_a_file }}" data-placement="top" data-toggle="modal" data-target="#upload" id="btn-attach-file"><span class="fa fa-file"></span></button>
-                                <button type="submit" class="btn btn-primary">{{ @dict.save_comment }}</button>
+                                <button type="button" class="btn btn-secondary has-tooltip" title="{{ @dict.upload_a_file }}" data-placement="top" data-toggle="modal" data-target="#upload" id="btn-attach-file">
+                                    <span class="fa fa-file"></span>
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    {{ @dict.save_comment }}
+                                </button>
                             </div>
                         </form>
                         <repeat group="{{ @comments }}" value="{{ @comment }}">
@@ -365,7 +369,7 @@
                 <div class="form-group">
                     <input type="file" name="attachment">
                 </div>
-                <textarea class="form-control input-sm" id="file_comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}"></textarea>
+                <textarea class="form-control" id="file_comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}"></textarea>
             </div>
             <div class="modal-footer">
                 <div class="form-check form-check-inline">
@@ -408,7 +412,7 @@
     <script src="{{ @BASE }}/bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.min.js"></script>
 </check>
 <check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
-    <script src="{{ @BASE }}/js/simplemde.min.js"></script>
+    <script src="{{ @BASE }}/bower_components/simplemde/dist/simplemde.min.js"></script>
 </check>
 <script type="text/javascript">
 $(function() {
@@ -446,7 +450,7 @@ $(function() {
                                 '<img src="{{ @user_obj->avatar(48) | esc }}" srcset="{{ @user_obj->avatar(96) | esc }} 2x" class="media-object profile-picture img-rounded" alt>' +
                             '</a>' +
                             '<div class="media-body">' +
-                                '<p class="media-heading"><a href="{{ @BASE }}/user/' + data.user_username + '">' + data.user_name + '</a></p>' +
+                                '<div><a href="{{ @BASE }}/user/' + data.user_username + '">' + data.user_name + '</a></div>' +
                                 '<div class="tex">' + data.text + '</div>' +
                                 '<p class="text-muted"><small>' + data.date_formatted + '</small></p>' +
                             '</div>' +
@@ -626,8 +630,8 @@ $(function() {
                 hide: 50
             },
             container: 'body',
-            placement: 'auto right',
-            content: '<b>' + $el.attr('data-name') + '</b><br>' + $el.attr('data-user') + '<br>' + $el.attr('data-date') + '<br>' +$el.attr('data-size')
+            placement: 'right',
+            content: '<b>' + $el.attr('data-name') + '</b><br>' + $el.attr('data-user') + '<br>' + $el.attr('data-date') + '<br>' + $el.attr('data-size')
         });
     });
 
