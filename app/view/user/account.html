@@ -87,13 +87,13 @@
                         <true>
                             <p>
                                 <a href="https://www.gravatar.com/emails/" target="_blank">
-                                    <img src="{{ @user_obj->avatar(96) | esc }}" srcset="{{ @user_obj->avatar(192) | esc }} 2x" class="rounded profile-picture" alt="Gravatar">
+                                    <img src="{{ @user_obj->avatar(96) | esc }}" srcset="{{ @user_obj->avatar(192) | esc }} 2x" class="rounded" alt="Gravatar">
                                 </a>
                             </p>
                         </true>
                         <false>
                             <p>
-                                <img src="{{ @user_obj->avatar(96) | esc }}" srcset="{{ @user_obj->avatar(192) | esc }} 2x" class="rounded profile-picture" alt="{{ @dict.avatar }}">
+                                <img src="{{ @user_obj->avatar(96) | esc }}" srcset="{{ @user_obj->avatar(192) | esc }} 2x" class="rounded" alt="{{ @dict.avatar }}">
                             </p>
                         </false>
                     </check>

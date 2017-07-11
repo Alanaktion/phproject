@@ -102,7 +102,7 @@
             <b>{{ @dict.cols.author }}</b>
             <div class="issue-head d-flex">
                 <div class="mr-2">
-                    <img src="{{ @author->avatar(48) | esc }}" srcset="{{ @author->avatar(96) | esc }} 2x" class="profile-picture rounded" alt>
+                    <img src="{{ @author->avatar(48) | esc }}" srcset="{{ @author->avatar(96) | esc }} 2x" class="rounded" alt>
                 </div>
                 <p>
                     <check if="{{ @author.username }}">
@@ -121,7 +121,7 @@
                 <b>{{ @dict.cols.assignee }}</b>
                 <div class="issue-head d-flex">
                     <div class="mr-2">
-                        <img src="{{ @owner->avatar(48) | esc }}" srcset="{{ @owner->avatar(96) | esc }} 2x" class="profile-picture rounded" alt>
+                        <img src="{{ @owner->avatar(48) | esc }}" srcset="{{ @owner->avatar(96) | esc }} 2x" class="rounded" alt>
                     </div>
                     <p>
                         <check if="{{ @owner.username }}">
@@ -447,7 +447,7 @@ $(function() {
                     .after(
                         '<div class="media" id="c-' + data.id + '" data-id="' + data.id + '">' +
                             '<a class="media-left" href="{{ @BASE }}/user/' + data.user_username + '">' +
-                                '<img src="{{ @user_obj->avatar(48) | esc }}" srcset="{{ @user_obj->avatar(96) | esc }} 2x" class="media-object profile-picture img-rounded" alt>' +
+                                '<img src="{{ @user_obj->avatar(48) | esc }}" srcset="{{ @user_obj->avatar(96) | esc }} 2x" class="media-object rounded" alt>' +
                             '</a>' +
                             '<div class="media-body">' +
                                 '<div><a href="{{ @BASE }}/user/' + data.user_username + '">' + data.user_name + '</a></div>' +
