@@ -17,7 +17,7 @@ body {
 
 .site-footer {
     margin-top: $spacer;
-    font-size: 85%;
+    font-size: $font-size-sm;
 }
 
 a.nolink {
@@ -53,7 +53,7 @@ th[data-sort] {
         margin: 10px 0;
         td {
             padding: 2px 5px;
-            border: 1px solid #ccc;
+            border: 1px solid $table-border-color;
         }
     }
     ul,
@@ -152,15 +152,15 @@ th[data-sort] {
         padding: 0;
     }
     .tt-suggestion {
-        padding: 6px 12px;
-        color: #404040;
+        padding: .5rem 1rem;
+        color: $gray;
         cursor: pointer;
-        font-size: 13px;
+        font-size: $font-size-sm;
         &:hover {
-            background-color: #00bc8c;
-            color: #fff;
+            background-color: $brand-primary;
+            color: $white;
             .text-muted {
-                color: #eee;
+                color: $gray-lighter;
             }
         }
     }
@@ -239,8 +239,8 @@ th[data-sort] {
 
 // Footer
 .log {
-    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-    font-size: 11px;
+    font-family: $font-family-monospace;
+    font-size: $font-size-xs;
     overflow-x: auto;
     white-space: pre;
 }
