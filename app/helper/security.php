@@ -51,7 +51,7 @@ class Security extends \Prefab
     {
         $allSizes = array(256, 384, 512);
         if (!in_array($size, $allSizes)) {
-            throw new Exception("Hash size must be one of: " . implode(", ", $allSizes));
+            throw new \Exception("Hash size must be one of: " . implode(", ", $allSizes));
         }
         return hash("sha$size", $this->randBytes(512), false);
     }

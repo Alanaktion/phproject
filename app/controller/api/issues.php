@@ -116,8 +116,8 @@ class Issues extends \Controller\Api
             // For Redmine compatibility, also accept a JSON object
             try {
                 $post = json_decode(file_get_contents('php://input'), true);
-            } catch (Exception $e) {
-                throw new Exception("Unable to parse input");
+            } catch (\Exception $e) {
+                throw new \Exception("Unable to parse input");
             }
 
             if (!empty($post["issue"])) {
@@ -377,4 +377,5 @@ class Issues extends \Controller\Api
         }
         $this->_printJson($return);
     }
+
 }
