@@ -29,7 +29,7 @@ function refreshPoints(){
 				points += val;
 			}
 		});
-		
+
 		// calculates completed points in sprints
 		var completedPoints = 0;
 		$('.list-group-item.completed:not(.hidden-group):not(.hidden-type)', this).each(function() {
@@ -38,44 +38,47 @@ function refreshPoints(){
 				completedPoints += cval;
 			}
 		});
-		
+
 		// if no total points than hide points displayed
 		if (points) {
 			$('.panel-head-points', this).show();
 		} else {
 			$('.panel-head-points', this).hide();
 		}
-		
+
 		// adds points to span
 		$(".points-label", this).text(points);
-		
+
 		// adds completed points to span
 		$(".points-label-completed", this).text(completedPoints);
 	});
 	$('.panel').each(function() {
 	});
-};
+}
 
 var Backlog = {
 	init: function() {
 		// Initialize sorting
 		if (window.sortBacklog) {
-			$('.sortable').sortable({
-				group: 'backlog',
-				ghostClass: 'placeholder',
-				filter: '.hidden-group,.hidden-type',
-				onAdd: function(event) {
-					var $item = $(event.item);
-					$.post(BASE + '/backlog/edit', {
-						id: $item.attr('data-id'),
-						sprint_id: $item.parents('.list-group').attr('data-list-id')
-					}).fail(function() {
-						console.error('Failed to save new sprint assignment');
-					});
-				},
-				onSort: function(event) {
-					Backlog.saveSortOrder(event.target);
-				}
+			$('.sortable').each(function() {
+					new Sortable(this, {
+					group: 'backlog',
+					ghostClass: 'placeholder',
+					filter: '.hidden-group,.hidden-type',
+					scrollSensitivity: 90,
+					onAdd: function(event) {
+						var $item = $(event.item);
+						$.post(BASE + '/backlog/edit', {
+							id: $item.attr('data-id'),
+							sprint_id: $item.parents('.list-group').attr('data-list-id')
+						}).fail(function() {
+							console.error('Failed to save new sprint assignment');
+						});
+					},
+					onSort: function(event) {
+						Backlog.saveSortOrder(event.target);
+					}
+				});
 			});
 		}
 
