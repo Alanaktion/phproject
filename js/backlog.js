@@ -52,28 +52,31 @@ function refreshPoints(){
 		// adds completed points to span
 		$(".points-label-completed", this).text(completedPoints);
 	});
-};
+}
 
 var Backlog = {
 	init: function() {
 		// Initialize sorting
 		if (window.sortBacklog) {
-			$('.sortable').sortable({
-				group: 'backlog',
-				ghostClass: 'placeholder',
-				filter: '.hidden-group,.hidden-type',
-				onAdd: function(event) {
-					var $item = $(event.item);
-					$.post(BASE + '/backlog/edit', {
-						id: $item.attr('data-id'),
-						sprint_id: $item.closest('.list-group').attr('data-list-id')
-					}).fail(function() {
-						console.error('Failed to save new sprint assignment');
-					});
-				},
-				onSort: function(event) {
-					Backlog.saveSortOrder(event.target);
-				}
+			$('.sortable').each(function() {
+				new Sortable(this, {
+					group: 'backlog',
+					ghostClass: 'placeholder',
+					filter: '.hidden-group,.hidden-type',
+					scrollSensitivity: 90,
+					onAdd: function(event) {
+						var $item = $(event.item);
+						$.post(BASE + '/backlog/edit', {
+							id: $item.attr('data-id'),
+							sprint_id: $item.parents('.list-group').attr('data-list-id')
+						}).fail(function() {
+							console.error('Failed to save new sprint assignment');
+						});
+					},
+					onSort: function(event) {
+						Backlog.saveSortOrder(event.target);
+					}
+				});
 			});
 		}
 
