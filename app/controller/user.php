@@ -81,7 +81,6 @@ class User extends \Controller {
 	 * @param \Base $f3
 	 */
 	public function dashboardPost($f3) {
-		$helper = \Helper\Dashboard::instance();
 		$user = $f3->get("user_obj");
 		$widgets = json_decode($f3->get("POST.widgets"));
 		$user->option("dashboard", $widgets);

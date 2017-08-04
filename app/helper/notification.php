@@ -259,7 +259,7 @@ class Notification extends \Prefab {
 			$user->load($user_id);
 
 			if(!$user->id) {
-				throw new Exception("User does not exist.");
+				throw new \Exception("User does not exist.");
 			}
 
 			// Render message body

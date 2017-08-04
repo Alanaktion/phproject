@@ -46,7 +46,7 @@ class Security extends \Prefab {
 	public function salt_sha2($size = 256) {
 		$allSizes = array(256, 384, 512);
 		if(!in_array($size, $allSizes)) {
-			throw new Exception("Hash size must be one of: " . implode(", ", $allSizes));
+			throw new \Exception("Hash size must be one of: " . implode(", ", $allSizes));
 		}
 		return hash("sha$size", $this->randBytes(512), false);
 	}
