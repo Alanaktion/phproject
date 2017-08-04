@@ -9,7 +9,7 @@ final class App {
      * Initialize the app
      * @return boolean
      */
-    static function init()
+    public static function init()
     {
         // Initialize Composer autoloader
         require_once 'vendor/autoload.php';
@@ -44,7 +44,7 @@ final class App {
     /**
      * Start router and handle requests
      */
-    static function run()
+    public static function run()
     {
         // Initialize routes
         require_once 'routes.php';
@@ -75,7 +75,7 @@ final class App {
      * Get a router instance
      * @return Base
      */
-    static function fw()
+    public static function fw()
     {
         if (!self::$fw) {
             self::$fw = \Base::instance();
@@ -87,7 +87,7 @@ final class App {
      * Get database connection, connecting if needed
      * @return \DB\SQL
      */
-    static function db()
+    public static function db()
     {
         if (!self::$db) {
             $fw = self::fw();
@@ -109,7 +109,7 @@ final class App {
      * Trigger router error
      * @param int $code
      */
-    static function error($code = null)
+    public static function error($code = null)
     {
         return self::$fw->error($code);
     }

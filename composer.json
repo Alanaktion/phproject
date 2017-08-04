@@ -1,5 +1,6 @@
 {
     "name": "alanaktion/phproject",
+    "description": "A high performance full-featured project management system",
     "type": "project",
     "require": {
         "bcosca/fatfree": "^3.6",
@@ -12,7 +13,7 @@
         "netcarver/textile": "3.6.*",
         "erusev/parsedown": "^1.6"
     },
-    "license": "GPL",
+    "license": "GPL-3.0",
     "authors": [
         {
             "name": "Alan Hardman",
