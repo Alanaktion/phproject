@@ -25,7 +25,7 @@ body.is-sortable #backlog .list-group-item {
 	opacity: 0.5;
 }
 body.is-sortable #backlog .list-group-item:hover {
-	background-image: url(../img/backlog/i_has_grip.png);
+	background-image: url(../img/grip.svg);
 	background-position: 2px center;
 	background-repeat: no-repeat;
 }

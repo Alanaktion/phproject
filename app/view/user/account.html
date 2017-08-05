@@ -164,7 +164,7 @@ $('#input_avatar').change(function(e) {
 
     // Show loading animation
     $('.help-block').remove();
-    $(this).parents('form').parent().append('<img src="{{ @BASE }}/img/ajax-loader.gif" alt="{{ @dict.loading }}" />');
+    $(this).parents('form').parent().append('<img src="{{ @BASE }}/img/spin.svg" alt="{{ @dict.loading }}" />');
 
     // Submit form
     $(this).parents('form').submit();

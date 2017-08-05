@@ -160,7 +160,7 @@
         top: 0;
         bottom: 0;
         z-index: 50;
-        background-image: url(../../img/ajax-loader.gif);
+        background-image: if(lightness($card-bg) > 50, url(../../img/spin.svg), url(../../img/spin-white.svg));
         background-position: center center;
         background-repeat: no-repeat;
     }

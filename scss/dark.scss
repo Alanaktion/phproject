@@ -43,7 +43,7 @@ $nav-tabs-border-color: $gray;
 $nav-tabs-active-link-hover-color: $gray-lighter;
 $nav-tabs-active-link-hover-border-color: $nav-tabs-border-color;
 $nav-tabs-justified-link-border-color: $nav-tabs-border-color;
-$nav-tabs-link-hover-border-color: $gray-light;
+$nav-tabs-link-hover-border-color: $gray;
 
 // Darken cards
 $card-bg: $gray-darkest;
@@ -54,9 +54,10 @@ $card-border-color: rgba($gray-lighter, .25);
 // Darken list groups
 $list-group-color: $gray-lighter;
 $list-group-bg: $gray-darker;
-$list-group-hover-bg: $gray-dark;
+$list-group-hover-bg: $gray-darkest;
 $list-group-link-color: $gray-lighter;
 $list-group-link-heading-color: $gray-light;
+$list-group-link-active-bg: $gray-darkest;
 
 // Darken dropdown menus
 $dropdown-bg: $gray-darker;
@@ -80,6 +81,11 @@ $popover-bg: $gray-darker;
 $popover-border-color: rgba($gray-light, .25);
 $popover-title-bg: darken($popover-bg, 3%);
 $popover-arrow-color: $popover-bg;
+
+// Darken breadcrumbs
+$breadcrumb-bg: $gray-darker;
+$breadcrumb-divider-color: $gray-dark;
+$breadcrumb-active-color: $gray-dark;
 
 // Lighten up links
 $link-hover-color: lighten($brand-primary, 10%);
