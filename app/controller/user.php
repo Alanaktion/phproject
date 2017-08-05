@@ -96,20 +96,6 @@ class User extends \Controller
     }
 
     /**
-     * Get array of theme names
-     * @return array
-     */
-    private function _loadThemes()
-    {
-        $themes = array("bootstrap.min");
-        foreach (glob("css/bootstrap-*.css") as $file) {
-            $themes[] = pathinfo($file, PATHINFO_FILENAME);
-        }
-        \Base::instance()->set("themes", $themes);
-        return $themes;
-    }
-
-    /**
      * GET /user
      *
      * @param \Base $f3
@@ -119,7 +105,6 @@ class User extends \Controller
         $f3->set("title", $f3->get("dict.my_account"));
         $f3->set("menuitem", "user");
         $f3->set("languages", $this->_languages);
-        $this->_loadThemes();
         $this->_render("user/account.html");
     }
 
@@ -208,7 +193,6 @@ class User extends \Controller
         $user->loadCurrent();
 
         $f3->set("languages", $this->_languages);
-        $this->_loadThemes();
 
         $this->_render("user/account.html");
     }

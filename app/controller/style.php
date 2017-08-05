@@ -28,4 +28,22 @@ class Style extends \Controller
         header("Content-Type: text/css");
         echo $scss->compile('@import "' . $params['file'] . '.scss";');
     }
+
+    /**
+     * Get hash of timestamp of most recent modified SCSS file
+     * @return string
+     */
+    public static function mtimeHash()
+    {
+        $iterator = new \DirectoryIterator('scss');
+        $mtime = -1;
+        foreach ($iterator as $fileinfo) {
+            if ($fileinfo->isFile()) {
+                if ($fileinfo->getMTime() > $mtime) {
+                    $mtime = $fileinfo->getMTime();
+                }
+            }
+        }
+        return \App::fw()->hash($mtime);
+    }
 }

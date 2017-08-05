@@ -15,7 +15,7 @@ $fw->route('GET|POST /ping', 'Controller\Index->ping');
 $fw->route('GET /opensearch.xml', 'Controller\Index->opensearch');
 
 // Style
-$fw->route('GET /style/@file.css', 'Controller\Style->index');
+$fw->route('GET /style/@timestamp/@file.css', 'Controller\Style->index', 86400 * 90);
 
 // Issues
 $fw->route('GET /issues', 'Controller\Issues->index');
@@ -136,7 +136,7 @@ $fw->route('GET /user.json', 'Controller\Api\User->get');
 $fw->route('GET /usergroups.json', 'Controller\Api\User->get_group');
 
 // Set up error handling
-/*$fw->set("ONERROR", function (Base $fw) {
+$fw->set("ONERROR", function (Base $fw) {
     if ($fw->get("AJAX")) {
         if (!headers_sent()) {
             header("Content-type: application/json");
@@ -163,4 +163,4 @@ $fw->route('GET /usergroups.json', 'Controller\Api\User->get_group');
                 }
         }
     }
-});*/
+});

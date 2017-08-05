@@ -1,5 +1,5 @@
 <set nav="{{ \Helper\Plugin::instance()->getAllNavs(@PATH) }}" />
-<div class="navbar fixed-top navbar-toggleable-md navbar-light bg-faded">
+<div class="navbar fixed-top navbar-toggleable-md {{ (@@user.theme ?: @site.theme == 'dark') ? 'navbar-inverse' : 'navbar-light' }} bg-faded">
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ @dict.toggle_navigation }}">
         <span class="navbar-toggler-icon"></span>
     </button>

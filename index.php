@@ -11,13 +11,6 @@ if ($version !== true) {
     \Helper\Security::instance()->updateDatabase($version);
 }*/
 
-// Minify static resources
-// Cache for 1 week
-/*$f3->route("GET /minify/@type/@files", function (Base $f3, $args) {
-    $f3->set("UI", $args["type"] . "/");
-    echo Web::instance()->minify($args["files"]);
-}, $f3->get("cache_expire.minify"));*/
-
 // Initialize plugins and any included locales
 /*$pluginDir = scandir("app/plugin");
 $plugins = array();

@@ -50,9 +50,8 @@
                             <div class="col-sm-8">
                                 <select name="theme" class="form-control">
                                     <option value="">[ {{ @dict.default }} ]</option>
-                                    <repeat group="{{ @themes }}" value="{{ @item }}">
-                                        <option value="css/{{ @item }}.css" {{ (@user.theme == 'css/'.@item.'.css') ? 'selected' : '' }}>{{ str_replace(array("bootstrap-", ".min"), "", @item) }}</option>
-                                    </repeat>
+                                    <option value="light" {{ @user.theme == 'light' ? 'selected' : '' }}>Light</option>
+                                    <option value="dark" {{ @user.theme == 'dark' ? 'selected' : '' }}>Dark</option>
                                 </select>
                             </div>
                         </div>
