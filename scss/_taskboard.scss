@@ -1,0 +1,228 @@
+.taskboard-page {
+    margin-top: 4.5rem + $navbar-padding-y * 2;
+}
+.taskboard {
+    font-size: $font-size-sm;
+    margin: 0 auto;
+    .table {
+        border-collapse: collapse;
+        width: auto;
+        max-width: none;
+        table-layout: fixed;
+    }
+    td, th {
+        padding: 4px;
+        border: 1px solid $table-border-color;
+    }
+    th {
+        border-bottom: none;
+    }
+    .card {
+        position: relative;
+        font-size: $font-size-sm;
+        padding: 6px;
+        margin: 4px;
+        background-color: $card-bg;
+        box-shadow: $dropdown-box-shadow;
+        border: none;
+        border-left: 6px solid $gray-light;
+        height: 120px;
+        border-radius: 0;
+        &.task {
+            cursor: move;
+            width: 145px;
+            float: left;
+            &.placeholder {
+                background-color: $card-bg;
+                box-shadow: $dropdown-box-shadow;
+                opacity: .1;
+            }
+        }
+        &.story {
+            .task-id {
+                float: left;
+            }
+            .top {
+                height: 20px;
+                padding: 0;
+            }
+            .owner {
+                display: block;
+                float: right;
+                width: 135px;
+                position: static;
+                padding-left: 0;
+                margin-right: 5px;
+                overflow: hidden;
+            }
+        }
+        .owner {
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            height: 18px;
+            text-align: left;
+            overflow: hidden;
+            padding-left: 5px;
+            color: $text-muted;
+        }
+        .type {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            height: 18px;
+            text-align: left;
+            overflow: hidden;
+            padding-left: 5px;
+            color: $text-muted;
+        }
+        .hours,
+        .priority {
+            position: absolute;
+            padding: 0 $badge-pill-padding-x;
+            line-height: 18px;
+        }
+        .hours {
+            bottom: -3px;
+            right: -3px;
+            background-color: $badge-default-bg;
+            color: $badge-color;
+            width: auto;
+            border-radius: 10px;
+            z-index: 10;
+            &.no-hours {
+                display: none;
+            }
+        }
+        .priority {
+            max-width: 77px;
+            top: -3px;
+            right: -3px;
+            z-index: 10;
+            border-radius: $badge-pill-border-radius;
+            text-align: center;
+            color: $badge-color;
+            &.normal {
+                display: none;
+            }
+            &.low {
+                background-color: $gray-lighter;
+                color: $text-muted;
+            }
+            &.high {
+                background-color: $badge-danger-bg;
+            }
+        }
+        .top {
+            position: relative;
+            border-bottom: 1px solid $card-border-color;
+            text-align: left;
+            top: -4px;
+            height: 20px;
+            overflow: hidden;
+        }
+        .top a:hover {
+            text-decoration: underline;
+        }
+        .title {
+            position: relative;
+            top: -4px;
+            height: 78px;
+            overflow: hidden;
+        }
+        .dueDate, .description {
+            display: none;
+        }
+    }
+
+    .completed .card.task,
+    .completed.card.task {
+        text-decoration: line-through;
+        height: 52px;
+    }
+    .completed.card.story,
+    .completed.card.story a {
+        text-decoration: line-through;
+    }
+    .completed .task .title,
+    .completed.task .title {
+        font-size: 10px;
+        height: 28px;
+    }
+    .completed .hours,
+    .completed .owner {
+        display: none;
+    }
+    .spinner {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 50;
+        background-image: url(../../img/ajax-loader.gif);
+        background-position: center center;
+        background-repeat: no-repeat;
+    }
+    .error {
+        position: absolute;
+        left: 0;
+        right: 0;
+        text-align: center;
+        bottom: 20%;
+        z-index: 50;
+        font-size: 4em;
+        line-height: 1;
+    }
+}
+.taskboard-head {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 91px;
+    z-index: 1000;
+    th {
+        vertical-align: bottom;
+        background-color: $body-bg;
+        background-color: rgba($body-bg, 0.7);
+        border-bottom: 1px solid $table-border-color;
+    }
+}
+.task-table {
+    td, th {
+        vertical-align: top;
+    }
+}
+
+.cloneable {
+    display: none;
+}
+
+#burndown-modal .modal-body {
+    position: relative;
+    &[data-loading]::after {
+        content: attr(data-loading);
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        transform: translateY(-50%);
+        text-align: center;
+        font-size: 28px;
+        opacity: 0.4;
+    }
+}
+#burndown-legend .line-legend {
+    list-style: none;
+    line-height: 1.5;
+    padding-left: 0;
+    li span {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        border: 1px solid $gray;
+        border-radius: 2px;
+        margin: 0 .5em;
+        margin-bottom: -2px;
+    }
+}

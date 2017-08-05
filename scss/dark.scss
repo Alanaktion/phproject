@@ -17,8 +17,6 @@ $body-color: $gray-lighter;
 
 // Invert some other colors
 $jumbotron-bg: $gray-darkest;
-$card-bg: $gray-darkest;
-$card-link-hover-color: $gray-darkest;
 $hr-border-color: rgba($gray-lighter, 0.1);
 $progress-bg: $gray-dark;
 
@@ -48,7 +46,10 @@ $nav-tabs-justified-link-border-color: $nav-tabs-border-color;
 $nav-tabs-link-hover-border-color: $gray-light;
 
 // Darken cards
+$card-bg: $gray-darkest;
+$card-link-hover-color: $gray-darkest;
 $card-cap-bg: $gray-darker;
+$card-border-color: rgba($gray-lighter, .25);
 
 // Darken list groups
 $list-group-color: $gray-lighter;
@@ -58,11 +59,27 @@ $list-group-link-color: $gray-lighter;
 $list-group-link-heading-color: $gray-light;
 
 // Darken dropdown menus
-$dropdown-bg: $gray-dark;
+$dropdown-bg: $gray-darker;
 $dropdown-link-color: $gray-lighter;
-$dropdown-link-hover-bg: $gray;
+$dropdown-link-hover-bg: $gray-dark;
 $dropdown-link-hover-color: $gray-lighter;
 $dropdown-divider-bg: $gray;
+
+// Darken modals
+$modal-content-bg: $gray-darker;
+$modal-content-border-color: $gray-dark;
+$modal-header-border-color: $gray;
+$modal-footer-border-color: $gray;
+
+// Darken close button
+$close-color: $gray-lightest;
+$close-text-shadow: 0 1px 0 #000;
+
+// Darken popovers
+$popover-bg: $gray-darker;
+$popover-border-color: rgba($gray-light, .25);
+$popover-title-bg: darken($popover-bg, 3%);
+$popover-arrow-color: $popover-bg;
 
 // Lighten up links
 $link-hover-color: lighten($brand-primary, 10%);

@@ -2,61 +2,21 @@
 <html lang="{{ @LANGUAGE }}">
 <head>
     <include href="blocks/head.html" />
-    <link rel="stylesheet" href="{{ @BASE }}/css/taskboard.css">
-    <set columnwidth="160" />
-    <check if="{{ !empty(@taskboard[0]) }}">
-        <style type="text/css">
-        /* Size columns at multiples of @columnwidth ({{ @columnwidth }}px) */
-{~ foreach(@statuses as @key=>@value): ~}
-        #taskboard table .column-{{ @key + 1 }} {
-            width: {{ @value.taskboard * @columnwidth }}px;
-        }
-{~ endforeach; ~}
-
-        #taskboard table {
-            width: {{ @column_count * $columnwidth + 252 }}px;
-            table-layout: fixed;
-        }
-
-        /* Reference images within <base> context */
-        #taskboard .completed .spinner {
-            background-image: url({{ @BASE }}/img/taskboard/burn.gif);
-        }
-        #taskboard .spinner {
-            background-image: url({{ @BASE }}/img/ajax-loader.gif);
-        }
-
-        #burndown-modal .modal-body {
-            position: relative;
-        }
-        #burndown-modal .modal-body[data-loading]::after {
-            content: attr(data-loading);
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            transform: translateY(-50%);
-            text-align: center;
-            font-size: 28px;
-            opacity: 0.4;
-        }
-        </style>
-    </check>
-    <!--[if lte IE 9]>
-        <style type="text/css">
-            /*  Fix RGBA issues */
-            #taskboard .card {
-                color: #000000;
-                background-color: #ffffff;
-            }
-        </style>
-    <![endif]-->
 </head>
-<body>
+<body class="taskboard-page">
     <set fullwidth="{{ true }}" />
+    <set columnwidth="160" />
     <include href="blocks/navbar.html" />
-    <section id="taskboard">
+    <section class="taskboard" id="taskboard">
         <table class="taskboard-head">
+            <check if="{{ !empty(@taskboard[0]) }}">
+                <colgroup>
+                    <col width="252">
+                    <repeat group="{{ @statuses }}" value="{{ @value }}">
+                        <col width="{{ @value.taskboard * @columnwidth }}">
+                    </repeat>
+                </colgroup>
+            </check>
             <tr class="tb-row">
                 <th class="column column-1">
                     <div class="btn-group">
@@ -119,7 +79,15 @@
                 </repeat>
             </tr>
         </table>
-        <table id="task-table">
+        <table id="task-table" class="task-table">
+            <check if="{{ !empty(@taskboard[0]) }}">
+                <colgroup>
+                    <col width="252">
+                    <repeat group="{{ @statuses }}" value="{{ @value }}">
+                        <col width="{{ @value.taskboard * @columnwidth }}">
+                    </repeat>
+                </colgroup>
+            </check>
             <repeat group="{{ @taskboard }}" value="{{ @row }}">
                 <tr data-story-id="{{ @row.project.id }}" class="tb-row">
                     <td class="column column-1">

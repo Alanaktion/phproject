@@ -156,11 +156,8 @@ $fw->set("ONERROR", function (Base $fw) {
                 echo "You do not have access to this page.";
                 break;
             default:
-                if (ob_get_level()) {
-                    include "app/view/error/inline.html";
-                } else {
-                    include "app/view/error/500.html";
-                }
+                // Pass unhandled errors back to framework
+                return false;
         }
     }
 });
