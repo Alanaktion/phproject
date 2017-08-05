@@ -24,17 +24,17 @@
                             <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
                                 <span class="fa fa-filter"></span> {{ @dict.groups }} <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/all">{{ @dict.all_tasks }}</a></li>
-                                <li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/groups">{{ @dict.my_groups }}</a></li>
-                                <li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/me">{{ @dict.my_tasks }}</a></li>
+                            <div class="dropdown-menu" role="menu">
+                                <a class="dropdown-item {{ @filter == 'all' ? 'active' : '' }}" href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/all">{{ @dict.all_tasks }}</a>
+                                <a class="dropdown-item {{ @filter == 'groups' ? 'active' : '' }}" href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/groups">{{ @dict.my_groups }}</a>
+                                <a class="dropdown-item {{ @filter == 'me' ? 'active' : '' }}" href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/me">{{ @dict.my_tasks }}</a>
                                 <check if="{{ count(@groups) }}">
-                                    <li class="divider"></li>
+                                    <div class="dropdown-divider"></div>
                                     <repeat group="{{ @groups }}" value="{{ @group }}">
-                                        <li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @group.id }}">{{ @group.name | esc }}</a></li>
+                                        <a class="dropdown-item {{ @group.id == @filter ? 'active' : '' }}" href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @group.id }}">{{ @group.name | esc }}</a>
                                     </repeat>
                                 </check>
-                            </ul>
+                            </div>
                         </div>
                         <div class="btn-group">
                             <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
@@ -59,11 +59,9 @@
                                             @query = http_build_query(['group_id' => @GET.group_id]);
                                         }
                                     ~}
-                                    <li class="{{ @active ? 'active' : '' }}">
-                                        <a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @filter ? @filter . '/' : '' }}{{ @query ? '?' . @query : '' | esc }}">
-                                            {{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
-                                        </a>
-                                    </li>
+                                    <a class="dropdown-item {{ @active ? 'active' : '' }}" href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @filter ? @filter . '/' : '' }}{{ @query ? '?' . @query : '' | esc }}">
+                                        {{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | esc }}
+                                    </a>
                                 </F3:repeat>
                             </ul>
                         </div>
