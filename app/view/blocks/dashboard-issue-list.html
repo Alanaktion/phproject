@@ -9,7 +9,7 @@
                 </check>
                 <div>#{{ @item.id }} - {{ @item.name | esc }}</div>
                 <div class="ml-auto">
-                    <span class="badge badge-default status">{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) | esc }}</span>
+                    <span class="badge badge-secondary status">{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) | esc }}</span>
                 </div>
             </div>
             <check if="{{ @item.repeat_cycle || @item.due_date || @item.sprint_id || @item.owner_id != @user.id }}">

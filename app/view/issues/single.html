@@ -263,7 +263,7 @@
             <br>
             <ul class="nav nav-tabs mb-3">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#comments" data-toggle="tab" role="tab">{{ @dict.comments }}&ensp;<span class="badge badge-default" id="comment_badge">{{ count(@comments) }}</span></a>
+                    <a class="nav-link active" href="#comments" data-toggle="tab" role="tab">{{ @dict.comments }}&ensp;<span class="badge badge-secondary" id="comment_badge">{{ count(@comments) }}</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#history" data-toggle="tab" role="tab" id="tab_history">{{ @dict.history }}</a>
@@ -280,7 +280,7 @@
                     <a class="nav-link" href="#related-child" data-toggle="tab" role="tab" id="tab_related-child">{{ @dict.child_tasks }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#dependencies" data-toggle="tab" role="tab" id="tab_dependencies">{{ @dict.dependencies }}&ensp;<span class="badge badge-default" id="dependencies_badge"></span></a>
+                    <a class="nav-link" href="#dependencies" data-toggle="tab" role="tab" id="tab_dependencies">{{ @dict.dependencies }}&ensp;<span class="badge badge-secondary" id="dependencies_badge"></span></a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -470,13 +470,13 @@ $(function() {
     // Load history, watchers, and related issues
     $.get(BASE + '/issues/{{ @issue.id }}/history', {}, function(data) {
         $('#history').empty().append(data.html);
-        $('#tab_history').html('{{ addslashes(@dict.history) }}&ensp;<span class="badge badge-default">' + data.total + '</span>');
+        $('#tab_history').html('{{ addslashes(@dict.history) }}&ensp;<span class="badge badge-secondary">' + data.total + '</span>');
     }, 'json').fail(function() {
         $('#history').empty().append($('<p />').addClass('text-center text-danger').text('{{ addslashes(@dict.error.loading_issue_history) }}'));
     });
     $.get(BASE + '/issues/{{ @issue.id }}/watchers', {}, function(data) {
         $('#watchers').empty().append(data.html);
-        $('#tab_watchers').html('{{ addslashes(@dict.watchers) }}&ensp;<span class="badge badge-default" id="watchers-badge">' + data.total + '</span>');
+        $('#tab_watchers').html('{{ addslashes(@dict.watchers) }}&ensp;<span class="badge badge-secondary" id="watchers-badge">' + data.total + '</span>');
 
         // Add/remove watchers from tab
         $('#watchers-list').on('click', 'a.delete', function(e) {
@@ -514,7 +514,7 @@ $(function() {
     if(parseInt('{{ @issue.parent_id }}')) {
         $.get(BASE + '/issues/{{ @issue.parent_id }}/related?exclude={{ @issue.id }}', {}, function(data) {
             $('#related-sibling').empty().append(data.html);
-            $('#tab_related-sibling').html($('#tab_related-sibling').text() + '&ensp;<span class="badge badge-default">' + data.open +' / '+ data.total + '</span>');
+            $('#tab_related-sibling').html($('#tab_related-sibling').text() + '&ensp;<span class="badge badge-secondary">' + data.open +' / '+ data.total + '</span>');
             $('#related-sibling table').stupidtable();
         }, 'json').fail(function() {
             $('#related-sibling').empty().append($('<p />').addClass('text-center text-danger').text('{{ addslashes(@dict.error.loading_related_issues) }}'));
@@ -522,7 +522,7 @@ $(function() {
     }
     $.get(BASE + '/issues/{{ @issue.id }}/related', {}, function(data) {
         $('#related-child').empty().append(data.html);
-        $('#tab_related-child').html($('#tab_related-child').text() + '&ensp;<span class="badge badge-default">' + data.open +' / '+ data.total + '</span>');
+        $('#tab_related-child').html($('#tab_related-child').text() + '&ensp;<span class="badge badge-secondary">' + data.open +' / '+ data.total + '</span>');
         $('#related-child table').stupidtable();
     }, 'json').fail(function() {
         $('#related-child').empty().append($('<p />').addClass('text-center text-danger').text('{{ addslashes(@dict.error.loading_related_issues) }}'));

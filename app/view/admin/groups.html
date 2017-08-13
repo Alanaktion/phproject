@@ -31,7 +31,7 @@
                         <td><a href="{{ @BASE }}/admin/groups/{{ @group.id }}">{{ @group.id }}</a></td>
                         <td>{{ @group.name | esc }}</td>
                         <td>{{ @group.count }}</td>
-                        <td><span class="badge badge-default" style="background-color: #{{ @group.task_color }};">&ensp;</span>&ensp;#{{ @group.task_color }}</td>
+                        <td><span class="badge badge-secondary" style="background-color: #{{ @group.task_color }};">&ensp;</span>&ensp;#{{ @group.task_color }}</td>
                         <td><a href="{{ @BASE }}/admin/groups/{{ @group.id }}/delete" class="has-tooltip" title="{{ @dict.delete }}"><span class="fa fa-trash"></span></a></td>
                     </tr>
                 </repeat>

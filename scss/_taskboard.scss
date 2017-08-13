@@ -85,7 +85,7 @@
         .hours {
             bottom: -3px;
             right: -3px;
-            background-color: map-get($theme-colors, secondary);
+            background-color: theme-color("secondary");
             color: $badge-color;
             width: auto;
             border-radius: 10px;
@@ -110,7 +110,7 @@
                 color: $text-muted;
             }
             &.high {
-                background-color: map-get($theme-colors, danger);
+                background-color: theme-color("danger");
             }
         }
         .top {

@@ -33,7 +33,7 @@
                         <td>{{ @user.email | esc }}</td>
                         <td class="user-name">{{ @user.name | esc }}</td>
                         <td>{{ ucfirst(@user.role) }}</td>
-                        <td><span class="badge badge-default" style="background-color: #{{ @user.task_color }};">&ensp;</span>&ensp;#{{ @user.task_color }}</td>
+                        <td><span class="badge badge-secondary" style="background-color: #{{ @user.task_color }};">&ensp;</span>&ensp;#{{ @user.task_color }}</td>
                         <td>
                             <check if="{{ @user.id != @user_obj.id }}">
                                 <a href="{{ @BASE }}/admin/users/{{ @user.id }}/delete" class="delete has-tooltip" title="{{ @dict.deactivate }}">

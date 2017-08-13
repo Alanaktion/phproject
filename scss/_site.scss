@@ -3,6 +3,13 @@
  * Built on Bootstrap v4
  */
 
+// Bootstrap overrides
+.form-control {
+    &:focus {
+        box-shadow: $btn-focus-box-shadow;
+    }
+}
+
 // Global styles
 body {
     margin-top: 3.5rem + $navbar-padding-y * 2;
@@ -157,7 +164,7 @@ th[data-sort] {
         cursor: pointer;
         font-size: $font-size-sm;
         &:hover {
-            background-color: map-get($theme-colors, primary);
+            background-color: theme-color("primary");
             color: $white;
             .text-muted {
                 color: map-get($grays, 200);

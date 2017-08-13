@@ -48,7 +48,7 @@ $input-bg-disabled: map-get($grays, 900);
 $input-color: map-get($grays, 200);
 $input-border-color: rgba(map-get($grays, 200),.15);
 $input-box-shadow: none;
-$input-border-focus: lighten(map-get($theme-colors, primary), 25%);
+$input-border-focus: lighten($blue, 25%);
 $input-box-shadow-focus: none;
 $input-group-addon-bg: map-get($grays, 900);
 
@@ -110,7 +110,7 @@ $breadcrumb-divider-color: map-get($grays, 900);
 $breadcrumb-active-color: map-get($grays, 900);
 
 // Lighten up links
-$link-hover-color: lighten(map-get($theme-colors, primary), 10%);
+$link-hover-color: lighten($blue, 10%);
 
 @import "../bower_components/bootstrap/scss/bootstrap";
 @import "site";
