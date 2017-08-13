@@ -14,9 +14,9 @@
         <div class="row" id="backlog">
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header has-buttons">
+                    <div class="card-header d-flex">
                         {{ @dict.backlog }}&ensp;
-                        <div class="btn-group btn-group-xs">
+                        <div class="btn-group btn-group-xs ml-2">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
                                     <span class="fa fa-filter"></span>&ensp; {{ @dict.groups }}
@@ -56,11 +56,11 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="{{ @BASE }}/issues/new/{{ @issue_type.project }}" class="btn btn-secondary btn-sm pull-right">
+                        <a href="{{ @BASE }}/issues/new/{{ @issue_type.project }}" class="btn btn-secondary btn-sm ml-auto">
                             <span class="fa fa-plus"></span> {{ @dict.add_project }}
                         </a>
                     </div>
-                    <div class="card-block" id="panel-0">
+                    <div class="card-body" id="panel-0">
                         <div class="panel-head-points text-muted">
                             <span>{{ @dict.backlog_points }}:</span>
                             <span class="points-label">0</span>
@@ -86,16 +86,16 @@
                     <div class="tab-pane active" id="tab-sprints">
                         <repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
                             <div class="card mb-2">
-                                <div class="card-header has-buttons">
+                                <div class="card-header d-flex">
                                     <a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">
                                         {{ @sprint.name }} &mdash; {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}
                                     </a>
-                                    <a href="{{ @BASE }}/taskboard/{{ @sprint.id }}/{{ @@@groupid ?: @filter }}" class="btn btn-secondary btn-sm pull-right">
+                                    <a href="{{ @BASE }}/taskboard/{{ @sprint.id }}/{{ @@@groupid ?: @filter }}" class="btn btn-secondary btn-sm ml-auto">
                                         <span class="fa fa-list"></span> {{ @dict.taskboard }}
                                     </a>
                                 </div>
                                 <div class="collapse {{ @key ? '' : 'show' }}" id="panel-{{ @sprint.id }}">
-                                    <div class="card-block">
+                                    <div class="card-body">
                                         <div class="panel-head-points text-muted">
                                             <span>{{ @dict.backlog_points }}:</span>
                                             <span class="points-label-completed">0</span> /

@@ -12,20 +12,20 @@
     <include href="blocks/navbar.html" />
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4 clearfix">
-                <div class="pull-left" style="margin-right: 15px;">
+            <div class="col-md-4 d-flex">
+                <div class="mr-3">
                     <img src="{{ @this_user->avatar(128) | esc }}" srcset="{{ @this_user->avatar(256) | esc }} 2x" class="rounded" alt>
                 </div>
-                <div class="pull-left">
+                <div>
                     <h3>
                         {{ @this_user.name | esc }}
                         <check if="{{ @this_user.deleted_date }}">
                             &ensp;<small class="badge badge-danger">{{ @dict.deleted }}</small>
                         </check>
                     </h3>
-                    <p>{{ @dict.username }}: {{ @this_user.username }}</p>
+                    {{ @dict.username }}: {{ @this_user.username }}
                     <check if="{{ @this_user.role != 'group' }}">
-                        <p>{{ @dict.email }}: {{ @this_user.email }}</p>
+                        <br>{{ @dict.email }}: {{ @this_user.email }}
                     </check>
                 </div>
             </div>

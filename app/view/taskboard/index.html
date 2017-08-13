@@ -131,7 +131,7 @@
                         <td class="column column-{{ @status_id + 1 }} {{ @statuses[@status_id]['closed'] ? 'completed' : '' }} droppable" data-status="{{ @status_id }}">
                             <repeat group="{{ @col }}" value="{{ @task }}">
                                 <div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto bottom" data-container="body" data-content="<strong>{{ @dict.cols.author }}: </strong>{{ @task.author_name | esc }}<br><strong>{{ @dict.cols.description | esc }}: </strong> {{ strlen(@task.description) > 320 ? substr(@task.description, 0, 300) . ' [...]' : @task.description | esc }}" style="border-color: #{{ @task.owner_task_color | esc }};">
-                                    <div class="hidden repeat_cycle">{{ @task.repeat_cycle }}</div>
+                                    <div class="d-none repeat_cycle">{{ @task.repeat_cycle }}</div>
                                     <div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
                                     <div class="top">
                                         <span class="task-id"><a href="{{ @BASE }}/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
@@ -181,7 +181,7 @@
         </table>
     </section>
     <div class="card task cloneable" id="new_task">
-        <div class="hidden repeat_cycle"></div>
+        <div class="d-none repeat_cycle"></div>
         <div class="hours"></div><div class="top">
             <span class="task-id"></span>
         </div>
@@ -310,7 +310,7 @@
                             <span class="does-toggle man-hours">{{ @filterGroup->option('man_hours') }}</span>
                             &nbsp;
                             <a class="fa fa-edit does-toggle" href="#input-man-hours"></a>
-                            <input type="number" style="width: 80px;" class="form-control hidden" name="man_hours" id="input-man-hours" value="{{ @filterGroup->option('man_hours') }}">
+                            <input type="number" style="width: 80px;" class="form-control d-none" name="man_hours" id="input-man-hours" value="{{ @filterGroup->option('man_hours') }}">
                         </form>
                         <button type="button" class="close" data-dismiss="modal" aria-label="{{ @dict.close }}">
                             <span aria-hidden="true">&times;</span>

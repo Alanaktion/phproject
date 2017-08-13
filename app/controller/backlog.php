@@ -195,7 +195,7 @@ class Backlog extends \Controller
             $sprint_details[] = $sprint->cast() + array("projects" => $projects);
         }
 
-        $f3->set("sprints", $sprint_details);
+        $f3->set("sprints", array_reverse($sprint_details));
 
         $f3->set("title", $f3->get("dict.backlog"));
         $f3->set("menuitem", "backlog");

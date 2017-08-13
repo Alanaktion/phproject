@@ -96,9 +96,12 @@
                             </p>
                         </false>
                     </check>
-                    <form class="clearfix" method="post" enctype="multipart/form-data" action="{{ @BASE }}/user/avatar">
-                        <input type="file" name="avatar" id="input_avatar" class="pull-left">
-                        <button type="submit" class="btn btn-secondary pull-left nojs">{{ @dict.upload }}</button>
+                    <form class="d-flex" method="post" enctype="multipart/form-data" action="{{ @BASE }}/user/avatar">
+                        <label class="custom-file">
+                            <input type="file" name="avatar" id="input_avatar" class="custom-file-input">
+                            <span class="custom-file-control"></span>
+                        </label>
+                        <button type="submit" class="btn btn-secondary ml-2 nojs">{{ @dict.upload }}</button>
                     </form>
                     <check if="{{ empty($user->avatar_filename) }}">
                         <p class="help-block"><a href="https://www.gravatar.com/emails/" target="_blank">{{ @dict.edit_on_gravatar }}</a></p>

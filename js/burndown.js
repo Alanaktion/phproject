@@ -86,7 +86,7 @@ var Burndown = {
 				{x: BurndownRange.end, y: 0}
 			];
 
-			$('#' + canvasId).parents('.modal-body').removeAttr('data-loading');
+			$('#' + canvasId).closest('.modal-body').removeAttr('data-loading');
 
 			var ctx = document.getElementById(canvasId).getContext('2d');
 			Burndown.chart = new Chart(ctx, {
@@ -95,7 +95,7 @@ var Burndown = {
 				options: Burndown.options
 			});
 		}, 'json').fail(function() {
-			$('#' + canvasId).parents('.modal-body').removeAttr('data-loading')
+			$('#' + canvasId).closest('.modal-body').removeAttr('data-loading')
 				.html('<p class="alert alert-danger">Failed to load burndown data!</p>');
 		});
 	}

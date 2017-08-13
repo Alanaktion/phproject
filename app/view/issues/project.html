@@ -41,15 +41,14 @@
             </div>
             {{ @dict.n_complete,@stats.complete.'/'.@stats.total | format }}
         </div>
-        <div class="col-md-6 clearfix">
-            <div class="hidden-sm-down" style="margin-bottom: 1em;"></div>
-            <div class="pull-right text-center" style="margin-left: 1em;">
-                <b>{{ @dict.cols.hours_spent }}</b>
-                <div class="h4">{{ @stats.hours_spent }}</div>
-            </div>
-            <div class="pull-right text-center">
+        <div class="col-md-6 d-flex">
+            <div class="ml-auto text-center">
                 <b>{{ @dict.cols.hours_total }}</b>
                 <div class="h4">{{ @stats.hours_total }}</div>
+            </div>
+            <div class="text-center" style="margin-left: 1em;">
+                <b>{{ @dict.cols.hours_spent }}</b>
+                <div class="h4">{{ @stats.hours_spent }}</div>
             </div>
         </div>
     </div>

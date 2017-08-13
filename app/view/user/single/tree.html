@@ -6,15 +6,15 @@
 <body>
 <include href="blocks/navbar.html" />
 <div class="container">
-    <div class="clearfix">
-        <div class="pull-left" style="margin-right: 15px;">
+    <div class="d-flex mb-3">
+        <div class="mr-3">
             <img src="{{ @this_user->avatar(128) | esc }}" srcset="{{ @this_user->avatar(256) | esc }} 2x" class="rounded" alt>
         </div>
-        <div class="pull-left">
+        <div>
             <h3>{{ @this_user.name | esc }}</h3>
-            <p>{{ @dict.username }}: {{ @this_user.username | esc }}</p>
+            {{ @dict.username }}: {{ @this_user.username | esc }}
             <check if="{{ @this_user.role != 'group' }}">
-                <p>{{ @dict.email }}: {{ @this_user.email | esc }}</p>
+                <br>{{ @dict.email }}: {{ @this_user.email | esc }}
             </check>
         </div>
     </div>

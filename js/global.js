@@ -1,5 +1,6 @@
 /* globals $ Intercom BASE */
 $(function() {
+	$('.nojs').hide();
 
 	// Tooltips and popovers
 	$('.has-tooltip').tooltip();
@@ -28,9 +29,9 @@ $(function() {
 	$('.issue-list tbody tr input').click(function(e) {
 		var checked = $(this).prop('checked');
 		if(checked) {
-			$(this).parents('tr').addClass('active');
+			$(this).closest('tr').addClass('active');
 		} else {
-			$(this).parents('tr').removeClass('active');
+			$(this).closest('tr').removeClass('active');
 		}
 		e.stopPropagation();
 	});
@@ -46,16 +47,16 @@ $(function() {
 		if (e.ctrlKey || e.metaKey) {
 			$checkbox.prop('checked', !checked);
 			if(!checked) {
-				$checkbox.parents('tr').addClass('active');
+				$checkbox.closest('tr').addClass('active');
 			} else {
-				$checkbox.parents('tr').removeClass('active');
+				$checkbox.closest('tr').removeClass('active');
 			}
 		} else {
 			$('.issue-list tbody tr td input').prop('checked', false);
 			$('.issue-list tbody tr').removeClass('active');
 			$checkbox.prop('checked', !checked);
 			if(!checked) {
-				$checkbox.parents('tr').addClass('active');
+				$checkbox.closest('tr').addClass('active');
 			}
 		}
 		if (document.selection) {
@@ -78,12 +79,12 @@ $(function() {
 
 	// Auto-submit filters when select box is changed
 	$('.issue-filters').on('change', 'select, input', function() {
-		$(this).parents('form').submit();
+		$(this).closest('form').submit();
 	});
 
 	// Submit issue sorting options
 	$('.issue-sort').on('click', function(e) {
-		var $form = $(this).parents('form');
+		var $form = $(this).closest('form');
 		e.preventDefault();
 
 		if($form.find('input[name=orderby]').val() == $(this).attr('id')) {
@@ -96,7 +97,17 @@ $(function() {
 			$form.find('input[name=orderby]').val($(this).attr('id'));
 			$form.find('input[name=ascdesc]').val('desc');
 		}
-		$(this).parents('form').submit();
+		$(this).closest('form').submit();
+	});
+
+	// Handle custom file inputs
+	$('.custom-file input').change(function() {
+		var name = this.files[0].name;
+		console.log(name);
+		$(this).closest('.custom-file').find('.custom-file-control').text(name);
+	});
+	$('.custom-file').closest('form').on('reset', function() {
+		$(this).find('.custom-file-control').empty();
 	});
 
 	// Show Mac hotkeys on Macs
@@ -115,7 +126,7 @@ $(function() {
 	// Submit from textarea if Ctrl+Enter or Cmd+Enter is pressed
 	$('body').on('keypress', 'textarea', function(e) {
 		if((e.keyCode == 13 || e.keyCode == 10) && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.metaKey)))) {
-			$(this).parents('form').first().submit();
+			$(this).closest('form').first().submit();
 			e.preventDefault();
 		}
 	});

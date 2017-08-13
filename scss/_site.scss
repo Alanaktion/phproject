@@ -210,11 +210,11 @@ th[data-sort] {
     top: 4rem;
     right: 1rem;
     z-index: 20;
-}
-.alert-popup.alert-popup-center {
-    left: 50%;
-    width: 18rem;
-    margin-left: -9rem;
+    &.alert-popup-center {
+        left: 50%;
+        width: 18rem;
+        margin-left: -9rem;
+    }
 }
 
 // Backlog

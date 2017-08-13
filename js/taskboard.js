@@ -76,7 +76,7 @@ var Taskboard = {
 		// Initialize add buttons on stories
 		$('.add-task').click(function(e) {
 			e.preventDefault();
-			Taskboard.modalAdd($(this).parents('.tb-row').data('story-id'));
+			Taskboard.modalAdd($(this).closest('.tb-row').data('story-id'));
 		});
 
 		// Handle add/edit form submission
@@ -90,7 +90,7 @@ var Taskboard = {
 					Taskboard.updateCard($('#task_' + data.taskId), data);
 					$('#task-dialog').modal('hide');
 				} else {
-					$('#hours').parents('.form-group').addClass('has-error');
+					$('#hours').closest('.form-group').addClass('has-error');
 				}
 			} else {
 				Taskboard.addCard($('#project_' + $this.data('story-id')), data, $this.data('story-id'));
@@ -214,7 +214,7 @@ var Taskboard = {
 		Taskboard.ajaxUpdateTask(data);
 	},
 	addCard: function(story, data, storyId) {
-		var row = $(story).parents('.tb-row');
+		var row = $(story).closest('.tb-row');
 		var cell = row.find('td.column-2'); // put new tasks in the new column
 		cell.append($('.cloneable:last').clone());
 		var card = cell.find('.cloneable:last');
@@ -247,7 +247,7 @@ var Taskboard = {
 	TaskboardReceive: function(task) { // if the task changes statuses/stories
 		var taskId = $(task).attr('id').replace('task_', ''),
 			receiverStatus = $(task).parent().attr('data-status'),
-			receiverStory = $(task).parents('.tb-row').attr('data-story-id'),
+			receiverStory = $(task).closest('.tb-row').attr('data-story-id'),
 			data = {
 				taskId: taskId,
 				receiver: {
@@ -255,7 +255,7 @@ var Taskboard = {
 					'status': receiverStatus
 				}
 			};
-		if ($(task).parents('.column').hasClass('completed')) {
+		if ($(task).closest('.column').hasClass('completed')) {
 			$(task).find('.hours').text(0);
 		}
 		Taskboard.ajaxSendTaskPosition(data);
@@ -263,7 +263,7 @@ var Taskboard = {
 	TaskboardSame: function(task, receiverSerialized) {
 		var taskId = $(task).attr('id').replace('task_', ''),
 			receiverStatus = $(task).parent().attr('data-status'),
-			receiverStory = $(task).parents('.tb-row').attr('data-story-id'),
+			receiverStory = $(task).closest('.tb-row').attr('data-story-id'),
 			data = {
 				taskId: taskId,
 				receiver: {

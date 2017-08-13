@@ -13,15 +13,17 @@
 
     <div id="form-edit" style="display: none;">
         <div class="card">
-            <div class="card-block">
+            <div class="card-body">
                 <include href="issues/edit-form.html" />
             </div>
         </div>
         <hr>
     </div>
 
-    <div id="alert" class="alert alert-success alert-popup alert-popup-center clearfix" style="display: none;">
-        <button type="button" class="close">&times;</button>
+    <div id="alert" class="alert alert-success alert-dismissible alert-popup alert-popup-center" style="display: none;" aria-hidden="true">
+        <button type="button" class="close" data-dismiss="alert" aria-label="{{ @dict.close }}">
+            <span aria-hidden="true">&times;</span>
+        </button>
         <span></span>
     </div>
 
@@ -33,29 +35,27 @@
     </check>
 
     <check if="{{ count(@ancestors) > 1 }}">
-        <div class="clearfix">
-            <ol class="breadcrumb pull-left">
-                <repeat group="{{ @ancestors }}" value="{{ @crumb }}">
-                    <check if="{{ @crumb.id != @issue.id }}">
-                        <li class="breadcrumb-item active">
-                            <a href="{{ @BASE }}/issues/{{ @crumb.id }}">
-                                {{ @crumb.name | esc }} <small>#{{ @crumb.id }}</small>
-                            </a>
-                        </li>
-                    </check>
-                </repeat>
-            </ol>
-        </div>
+        <ol class="breadcrumb d-inline-block">
+            <repeat group="{{ @ancestors }}" value="{{ @crumb }}">
+                <check if="{{ @crumb.id != @issue.id }}">
+                    <li class="breadcrumb-item active">
+                        <a href="{{ @BASE }}/issues/{{ @crumb.id }}">
+                            {{ @crumb.name | esc }} <small>#{{ @crumb.id }}</small>
+                        </a>
+                    </li>
+                </check>
+            </repeat>
+        </ol>
     </check>
-    <div class="clearfix">
-        <h3 class="pull-left issue-heading">
+    <div class="d-flex">
+        <h3 class="issue-heading">
             <a href="{{ @BASE }}/issues/{{ @issue.id }}" class="nolink">{{ @issue.name | esc }}</a>
             <check if="{{ @issue.size_estimate }}">
                 - {{ @issue.size_estimate }}
             </check>
             <small>#{{ @issue.id }}</small>
         </h3>
-        <div class="pull-right">
+        <div class="ml-auto">
             <check if="{{ @issue.status_closed }}">
                 <false>
                     <a id="btn-issue-close" href="{{ @BASE }}/issues/close/{{ @issue.id }}" class="btn btn-success btn-sm">
@@ -367,7 +367,10 @@
             <div class="modal-body">
                 <input type="hidden" name="issue_id" value="{{ @issue.id }}" />
                 <div class="form-group">
-                    <input type="file" name="attachment">
+                    <label class="custom-file">
+                        <input type="file" name="attachment" class="custom-file-input">
+                        <span class="custom-file-control"></span>
+                    </label>
                 </div>
                 <textarea class="form-control" id="file_comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}"></textarea>
             </div>
@@ -640,7 +643,7 @@ $(function() {
         var $file = $(this).parents('li, tr');
         $file.fadeTo(100, 0.5).popover('hide');
         $.post(BASE + '/issues/file/delete', {id: $file.data('id')}, function(data) {
-            $('#alert span').html('{{ addslashes(@dict.file_deleted) }} <a href="{{ @BASE }}/javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
+            $('#alert > span').html('{{ addslashes(@dict.file_deleted) }} <a href="javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
             $('#alert').show();
             $(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();
         }, 'json');
@@ -648,7 +651,7 @@ $(function() {
 
     // Handle alert hide
     $('#alert .close').click(function(e) {
-        $('#alert span').empty();
+        $('#alert > span').empty();
         $('#alert').hide();
     });
 

@@ -68,7 +68,7 @@ var Backlog = {
 						var $item = $(event.item);
 						$.post(BASE + '/backlog/edit', {
 							id: $item.attr('data-id'),
-							sprint_id: $item.parents('.list-group').attr('data-list-id')
+							sprint_id: $item.closest('.list-group').attr('data-list-id')
 						}).fail(function() {
 							console.error('Failed to save new sprint assignment');
 						});
