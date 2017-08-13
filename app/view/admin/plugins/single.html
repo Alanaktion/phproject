@@ -8,8 +8,8 @@
 <div class="container">
     <include href="blocks/admin/tabs.html" />
     <ol class="breadcrumb">
-        <li><a href="{{ @BASE }}/admin/plugins">{{ @dict.plugins }}</a></li>
-        <li class="active">{{ @plugin->_package() }}</li>
+        <li class="breadcrumb-item"><a href="{{ @BASE }}/admin/plugins">{{ @dict.plugins }}</a></li>
+        <li class="breadcrumb-item active">{{ @plugin->_package() }}</li>
     </ol>
     {~ @plugin->_admin() ~}
     <include href="blocks/footer.html" />

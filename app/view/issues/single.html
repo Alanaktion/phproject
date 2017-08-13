@@ -37,7 +37,7 @@
             <ol class="breadcrumb pull-left">
                 <repeat group="{{ @ancestors }}" value="{{ @crumb }}">
                     <check if="{{ @crumb.id != @issue.id }}">
-                        <li class="active">
+                        <li class="breadcrumb-item active">
                             <a href="{{ @BASE }}/issues/{{ @crumb.id }}">
                                 {{ @crumb.name | esc }} <small>#{{ @crumb.id }}</small>
                             </a>
