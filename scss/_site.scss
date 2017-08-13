@@ -201,7 +201,7 @@ th[data-sort] {
 
 // Administration
 @include media-breakpoint-down(md) {
-    .pull-right + .nav-tabs {
+    .pull-right + .nav-pills {
         float: left;
     }
 }

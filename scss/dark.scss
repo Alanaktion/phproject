@@ -1,12 +1,6 @@
 @import "variables";
 
 // Bootstrap v4 standard grayscale
-// @TODO: Replace with map from upstream variables
-$gray:          #464a4c;
-$gray-light:    #636c72;
-$gray-lighter:  #eceeef;
-$gray-lightest: #f7f7f9;
-
 $white:  #fff !default;
 $gray-100: #f8f9fa !default;
 $gray-200: #e9ecef !default;
@@ -14,7 +8,7 @@ $gray-300: #dee2e6 !default;
 $gray-400: #ced4da !default;
 $gray-500: #adb5bd !default;
 $gray-600: #868e96 !default;
-$gray-700: #492557 !default;
+$gray-700: #495057 !default;
 $gray-800: #343a40 !default;
 $gray-900: #212529 !default;
 $black:  #000 !default;
@@ -34,7 +28,7 @@ $grays: (
 ) !default;
 
 // Invert the main colors
-$body-bg: map-get($grays, 900);
+$body-bg: map-get($grays, 925);
 $body-color: map-get($grays, 200);
 
 // Invert some other colors
@@ -55,17 +49,10 @@ $input-group-addon-bg: map-get($grays, 900);
 // Darken secondary buttons
 $btn-secondary-color: #fff;
 $btn-secondary-bg: map-get($grays, 900);
-$btn-secondary-border: $gray;
+$btn-secondary-border: map-get($grays, 700);
 
 // Darken tables
 $table-border-color: lighten(map-get($grays, 900), 15%);
-
-// Darken tabs
-$nav-tabs-border-color: $gray;
-$nav-tabs-active-link-hover-color: map-get($grays, 200);
-$nav-tabs-active-link-hover-border-color: $nav-tabs-border-color;
-$nav-tabs-justified-link-border-color: $nav-tabs-border-color;
-$nav-tabs-link-hover-border-color: $gray;
 
 // Darken cards
 $card-bg: map-get($grays, 950);
@@ -74,33 +61,32 @@ $card-cap-bg: map-get($grays, 925);
 $card-border-color: rgba(map-get($grays, 200), .25);
 
 // Darken list groups
-$list-group-color: map-get($grays, 200);
 $list-group-bg: map-get($grays, 925);
 $list-group-hover-bg: map-get($grays, 950);
-$list-group-link-color: map-get($grays, 200);
-$list-group-link-heading-color: $gray-light;
-$list-group-link-active-bg: map-get($grays, 950);
+$list-group-action-color: map-get($grays, 200);
+$list-group-action-hover-color: $list-group-action-color;
+$list-group-action-active-bg: $blue;
 
 // Darken dropdown menus
 $dropdown-bg: map-get($grays, 925);
 $dropdown-link-color: map-get($grays, 200);
 $dropdown-link-hover-bg: map-get($grays, 900);
 $dropdown-link-hover-color: map-get($grays, 200);
-$dropdown-divider-bg: $gray;
+$dropdown-divider-bg: map-get($grays, 700);
 
 // Darken modals
 $modal-content-bg: map-get($grays, 925);
 $modal-content-border-color: map-get($grays, 900);
-$modal-header-border-color: $gray;
-$modal-footer-border-color: $gray;
+$modal-header-border-color: map-get($grays, 700);
+$modal-footer-border-color: map-get($grays, 700);
 
 // Darken close button
-$close-color: $gray-lightest;
+$close-color: map-get($grays, 100);
 $close-text-shadow: 0 1px 0 #000;
 
 // Darken popovers
 $popover-bg: map-get($grays, 925);
-$popover-border-color: rgba($gray-light, .25);
+$popover-border-color: rgba(map-get($grays, 600), .25);
 $popover-title-bg: darken($popover-bg, 3%);
 $popover-arrow-color: $popover-bg;
 
@@ -108,6 +94,13 @@ $popover-arrow-color: $popover-bg;
 $breadcrumb-bg: map-get($grays, 925);
 $breadcrumb-divider-color: map-get($grays, 900);
 $breadcrumb-active-color: map-get($grays, 900);
+
+// Darken custom file input
+$custom-file-bg: $body-bg;
+$custom-file-color: $btn-secondary-color;
+$custom-file-border-color: $btn-secondary-border;
+$custom-file-button-color: $btn-secondary-color;
+$custom-file-button-bg: $btn-secondary-bg;
 
 // Lighten up links
 $link-hover-color: lighten($blue, 10%);

@@ -23,7 +23,7 @@
 
             <div class="col-sm-9 tab-content">
 
-                <div role="tabpanel" class="tab-pane fade show active" id="config-site">
+                <div role="tabpanel" class="tab-pane active" id="config-site">
                     <div class="form-group">
                         <label class="control-label" for="site-name">{{ @dict.site_name }}</label>
                         <input type="text" class="form-control" name="site-name" value="{{ @site.name | esc }}" required>
@@ -47,7 +47,7 @@
                     </div>
                 </div>
 
-                <div role="tabpanel" class="tab-pane fade" id="config-ts">
+                <div role="tabpanel" class="tab-pane" id="config-ts">
                     <fieldset>
                         <legend>{{ @dict.issue_types }}</legend>
                         <table class="table table-sm table-striped">
@@ -97,7 +97,7 @@
                     </fieldset>
                 </div>
 
-                <div role="tabpanel" class="tab-pane fade" id="config-parse">
+                <div role="tabpanel" class="tab-pane" id="config-parse">
                     <!-- TODO: Set checked attributes on current values, rather than defaults -->
                     <p>{{ @dict.parser_syntax }}</p>
                     <div class="form-group" style="margin-bottom: 0;">
@@ -151,7 +151,7 @@
                     </div>
                 </div>
 
-                <div role="tabpanel" class="tab-pane fade" id="config-email">
+                <div role="tabpanel" class="tab-pane" id="config-email">
                     <fieldset>
                         <legend>{{ @dict.outgoing_mail }}</legend>
                         <div class="form-group">
@@ -184,7 +184,7 @@
                     </fieldset>
                 </div>
 
-                <div role="tabpanel" class="tab-pane fade" id="config-advanced">
+                <div role="tabpanel" class="tab-pane" id="config-advanced">
                     <h3>{{ @dict.security }}</h3>
                     <div class="form-group">
                         <label class="control-label">{{ @dict.min_pass_len }}</label>

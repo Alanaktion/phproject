@@ -6,7 +6,7 @@
 <body>
 <include href="blocks/navbar.html" />
 <div class="container">
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-pills">
         <li class="nav-item">
             <a class="nav-link active" href="#profile" data-toggle="tab">{{ @dict.profile }}</a>
         </li>
@@ -19,7 +19,7 @@
     </ul>
     <br>
     <div class="tab-content">
-        <div class="tab-pane fade show active" id="profile">
+        <div class="tab-pane active" id="profile">
             <form action="{{ @BASE }}/user" method="post">
                 <div class="row">
                     <div class="col-md-6">
@@ -109,7 +109,7 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade" id="settings">
+        <div class="tab-pane" id="settings">
             <form action="{{ @BASE }}/user" method="post">
                 <input type="hidden" name="action" value="options">
                 <div class="checkbox">
@@ -127,7 +127,7 @@
                 <button type="submit" class="btn btn-success">{{ @dict.save }}</button>
             </form>
         </div>
-        <div class="tab-pane fade" id="password">
+        <div class="tab-pane" id="password">
             <form action="{{ @BASE }}/user" method="post">
                 <div class="form-group row">
                     <label for="opass" class="col-lg-4 col-sm-2 col-form-label">{{ @dict.current_password }}</label>
