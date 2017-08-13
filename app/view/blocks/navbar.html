@@ -1,9 +1,5 @@
 <set nav="{{ \Helper\Plugin::instance()->getAllNavs(@PATH) }}" />
-<div class="navbar fixed-top navbar-toggleable-md {{ (@@user.theme ?: @site.theme == 'dark') ? 'navbar-inverse' : 'navbar-light' }} bg-faded">
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ @dict.toggle_navigation }}">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
+<div class="navbar fixed-top navbar-expand-md {{ ((@@user.theme ?: @site.theme) == 'dark') ? 'navbar-dark bg-dark' : 'navbar-light bg-light' }}">
     <a class="navbar-brand" href="{{ @BASE }}/" accesskey="h">
         <check if="{{ empty(@site.logo) }}">
             <true>{{ @site.name | esc }}</true>
@@ -12,6 +8,10 @@
             </false>
         </check>
     </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ @dict.toggle_navigation }}">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
@@ -87,7 +87,7 @@
 
         <form class="form-inline mr-sm-3" role="search" action="{{ @BASE }}/search" method="get">
             <input type="search" name="q" class="form-control mr-sm-2" placeholder="{{ @dict.issue_search }}" value="{{ @@GET.q | esc }}">
-            <button type="submit" class="btn btn-secondary hidden-xs-down">
+            <button type="submit" class="btn btn-secondary d-xs-none">
                 <span class="sr-only">{{ @dict.submit }}</span>
                 <span class="fa fa-search"></span>
             </button>

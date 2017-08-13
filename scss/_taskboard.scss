@@ -25,7 +25,7 @@
         background-color: $card-bg;
         box-shadow: $dropdown-box-shadow;
         border: none;
-        border-left: 6px solid $gray-light;
+        border-left: 6px solid map-get($grays, 600);
         height: 120px;
         border-radius: 0;
         &.task {
@@ -85,7 +85,7 @@
         .hours {
             bottom: -3px;
             right: -3px;
-            background-color: $badge-default-bg;
+            background-color: map-get($theme-colors, secondary);
             color: $badge-color;
             width: auto;
             border-radius: 10px;
@@ -106,11 +106,11 @@
                 display: none;
             }
             &.low {
-                background-color: $gray-lighter;
+                background-color: map-get($grays, 200);
                 color: $text-muted;
             }
             &.high {
-                background-color: $badge-danger-bg;
+                background-color: map-get($theme-colors, danger);
             }
         }
         .top {
@@ -220,7 +220,7 @@
         display: inline-block;
         width: 1em;
         height: 1em;
-        border: 1px solid $gray;
+        border: 1px solid map-get($grays, 700);
         border-radius: 2px;
         margin: 0 .5em;
         margin-bottom: -2px;

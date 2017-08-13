@@ -12,14 +12,17 @@
         </check>
         <include href="blocks/issue-list.html" />
         <div class="clearfix">
-            <p class="pull-right hidden-xs-down">
+            <p class="pull-right">
                 <span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
             </p>
         </div>
         <check if="{{ @issues.count }}">
             <ul class="pagination pagination-sm justify-content-center mt-3">
                 <li class="page-item {~ if(@issues.pos == 0) echo 'disabled' ~}">
-                    <a class="page-link" href="{{ @BASE }}/issues?page={{ @issues.pos ? @issues.pos - 1 : 0 }}&amp;{{ @filter_get }}">&laquo;</a>
+                    <a class="page-link" href="{{ @BASE }}/issues?page={{ @issues.pos ? @issues.pos - 1 : 0 }}&amp;{{ @filter_get }}" {~ if(@issues.pos == 0) echo 'tabindex="-1"' ~}>
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">{{ @dict.go_previous }}</span>
+                    </a>
                 </li>
                 <repeat group="{{ @pages }}" value="{{ @page }}">
                     <li class="page-item {~ if(@page == @issues.pos) echo 'active' ~}">
@@ -27,7 +30,10 @@
                     </li>
                 </repeat>
                 <li class="page-item {~ if(@issues.pos == @issues.count - 1) echo 'disabled' ~}">
-                    <a class="page-link" href="{{ @BASE }}/issues?page={{ (@issues.pos < @issues.count - 1) ? @issues.pos + 1 : @issues.count - 1 }}&amp;{{ @filter_get }}">&raquo;</a>
+                    <a class="page-link" href="{{ @BASE }}/issues?page={{ (@issues.pos < @issues.count - 1) ? @issues.pos + 1 : @issues.count - 1 }}&amp;{{ @filter_get }}" {~ if(@issues.pos == @issues.count - 1) echo 'tabindex="-1"' ~}>
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">{{ @dict.go_next }}</span>
+                    </a>
                 </li>
             </ul>
         </check>

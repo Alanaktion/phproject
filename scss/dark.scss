@@ -1,74 +1,96 @@
 @import "variables";
 
 // Bootstrap v4 standard grayscale
-$gray-dark:     #292b2c;
+// @TODO: Replace with map from upstream variables
 $gray:          #464a4c;
 $gray-light:    #636c72;
 $gray-lighter:  #eceeef;
 $gray-lightest: #f7f7f9;
 
-// Custom darker grays
-$gray-darker: mix($gray-dark, #000, 75%);
-$gray-darkest: mix($gray-dark, #000);
+$white:  #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #868e96 !default;
+$gray-700: #492557 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black:  #000 !default;
+
+$grays: (
+  100: $gray-100,
+  200: $gray-200,
+  300: $gray-300,
+  400: $gray-400,
+  500: $gray-500,
+  600: $gray-600,
+  700: $gray-700,
+  800: $gray-800,
+  900: $gray-900,
+  925: mix($gray-900, #000, 75%),
+  950: mix($gray-900, #000),
+) !default;
 
 // Invert the main colors
-$body-bg: $gray-dark;
-$body-color: $gray-lighter;
+$body-bg: map-get($grays, 900);
+$body-color: map-get($grays, 200);
 
 // Invert some other colors
-$jumbotron-bg: $gray-darkest;
-$hr-border-color: rgba($gray-lighter, 0.1);
-$progress-bg: $gray-dark;
+$jumbotron-bg: map-get($grays, 950);
+$hr-border-color: rgba(map-get($grays, 200), 0.1);
+$progress-bg: map-get($grays, 900);
 
 // Darken up inputs
-$input-bg: $gray-darker;
-$input-bg-disabled: $gray-dark;
-$input-color: $gray-lighter;
-$input-border-color: rgba($gray-lighter,.15);
+$input-bg: map-get($grays, 925);
+$input-bg-disabled: map-get($grays, 900);
+$input-color: map-get($grays, 200);
+$input-border-color: rgba(map-get($grays, 200),.15);
 $input-box-shadow: none;
-$input-border-focus: lighten($brand-primary, 25%);
+$input-border-focus: lighten(map-get($theme-colors, primary), 25%);
 $input-box-shadow-focus: none;
-$input-group-addon-bg: $gray-dark;
+$input-group-addon-bg: map-get($grays, 900);
 
 // Darken secondary buttons
 $btn-secondary-color: #fff;
-$btn-secondary-bg: $gray-dark;
+$btn-secondary-bg: map-get($grays, 900);
 $btn-secondary-border: $gray;
 
 // Darken tables
-$table-border-color: lighten($gray-dark, 15%);
+$table-border-color: lighten(map-get($grays, 900), 15%);
 
 // Darken tabs
 $nav-tabs-border-color: $gray;
-$nav-tabs-active-link-hover-color: $gray-lighter;
+$nav-tabs-active-link-hover-color: map-get($grays, 200);
 $nav-tabs-active-link-hover-border-color: $nav-tabs-border-color;
 $nav-tabs-justified-link-border-color: $nav-tabs-border-color;
 $nav-tabs-link-hover-border-color: $gray;
 
 // Darken cards
-$card-bg: $gray-darkest;
-$card-link-hover-color: $gray-darkest;
-$card-cap-bg: $gray-darker;
-$card-border-color: rgba($gray-lighter, .25);
+$card-bg: map-get($grays, 950);
+$card-link-hover-color: map-get($grays, 950);
+$card-cap-bg: map-get($grays, 925);
+$card-border-color: rgba(map-get($grays, 200), .25);
 
 // Darken list groups
-$list-group-color: $gray-lighter;
-$list-group-bg: $gray-darker;
-$list-group-hover-bg: $gray-darkest;
-$list-group-link-color: $gray-lighter;
+$list-group-color: map-get($grays, 200);
+$list-group-bg: map-get($grays, 925);
+$list-group-hover-bg: map-get($grays, 950);
+$list-group-link-color: map-get($grays, 200);
 $list-group-link-heading-color: $gray-light;
-$list-group-link-active-bg: $gray-darkest;
+$list-group-link-active-bg: map-get($grays, 950);
 
 // Darken dropdown menus
-$dropdown-bg: $gray-darker;
-$dropdown-link-color: $gray-lighter;
-$dropdown-link-hover-bg: $gray-dark;
-$dropdown-link-hover-color: $gray-lighter;
+$dropdown-bg: map-get($grays, 925);
+$dropdown-link-color: map-get($grays, 200);
+$dropdown-link-hover-bg: map-get($grays, 900);
+$dropdown-link-hover-color: map-get($grays, 200);
 $dropdown-divider-bg: $gray;
 
 // Darken modals
-$modal-content-bg: $gray-darker;
-$modal-content-border-color: $gray-dark;
+$modal-content-bg: map-get($grays, 925);
+$modal-content-border-color: map-get($grays, 900);
 $modal-header-border-color: $gray;
 $modal-footer-border-color: $gray;
 
@@ -77,18 +99,18 @@ $close-color: $gray-lightest;
 $close-text-shadow: 0 1px 0 #000;
 
 // Darken popovers
-$popover-bg: $gray-darker;
+$popover-bg: map-get($grays, 925);
 $popover-border-color: rgba($gray-light, .25);
 $popover-title-bg: darken($popover-bg, 3%);
 $popover-arrow-color: $popover-bg;
 
 // Darken breadcrumbs
-$breadcrumb-bg: $gray-darker;
-$breadcrumb-divider-color: $gray-dark;
-$breadcrumb-active-color: $gray-dark;
+$breadcrumb-bg: map-get($grays, 925);
+$breadcrumb-divider-color: map-get($grays, 900);
+$breadcrumb-active-color: map-get($grays, 900);
 
 // Lighten up links
-$link-hover-color: lighten($brand-primary, 10%);
+$link-hover-color: lighten(map-get($theme-colors, primary), 10%);
 
 @import "../bower_components/bootstrap/scss/bootstrap";
 @import "site";

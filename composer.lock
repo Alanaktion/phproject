@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "38ff87e5a38ac3264bc5042df87acac4",
+    "content-hash": "36b81e83c507352f913aea0bd0d28c7a",
     "packages": [
         {
             "name": "bcosca/fatfree",
@@ -275,6 +275,36 @@
                 "stylesheet"
             ],
             "time": "2017-02-23T05:07:33+00:00"
+        },
+        {
+            "name": "neos/diff",
+            "version": "3.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/diff.git",
+                "reference": "375302baf7a27f4bb0379997330b4860fb3f9c13"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neos/diff/zipball/375302baf7a27f4bb0379997330b4860fb3f9c13",
+                "reference": "375302baf7a27f4bb0379997330b4860fb3f9c13",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "type": "neos-package",
+            "autoload": {
+                "psr-4": {
+                    "Neos\\Diff\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "This is a comprehensive library for generating differences between two strings or arrays",
+            "time": "2016-11-23T15:06:35+00:00"
         },
         {
             "name": "netcarver/textile",

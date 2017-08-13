@@ -153,14 +153,14 @@ th[data-sort] {
     }
     .tt-suggestion {
         padding: .5rem 1rem;
-        color: $gray;
+        color: map-get($grays, 700);
         cursor: pointer;
         font-size: $font-size-sm;
         &:hover {
-            background-color: $brand-primary;
+            background-color: map-get($theme-colors, primary);
             color: $white;
             .text-muted {
-                color: $gray-lighter;
+                color: map-get($grays, 200);
             }
         }
     }
@@ -237,10 +237,40 @@ th[data-sort] {
     }
 }
 
+// Simplify Diff rendering
+.Differences {
+	font-family: 'Consolas', 'Monaco', monospace;
+	font-size: 12px;
+}
+#history .DifferencesInline {
+    thead,
+    tbody th {
+        display: none;
+    }
+    .ChangeReplace .Left,
+    .ChangeDelete .Left {
+        background-color: #fdd;
+        background-color: rgba(255,0,0,0.1);
+    }
+    .ChangeReplace del {
+        background-color: #e99;
+        background-color: rgba(255,0,0,0.2);
+    }
+    .ChangeReplace .Right,
+    .ChangeInsert .Right {
+        background-color: #dfd;
+        background-color: rgba(50,255,50,0.1);
+    }
+    .ChangeReplace ins {
+        background-color: #9e9;
+        background-color: rgba(50,255,50,0.25);
+    }
+}
+
 // Footer
 .log {
     font-family: $font-family-monospace;
-    font-size: $font-size-xs;
+    font-size: $font-size-sm;
     overflow-x: auto;
     white-space: pre;
 }

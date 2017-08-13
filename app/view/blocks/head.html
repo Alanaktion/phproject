@@ -5,7 +5,7 @@
 <meta name="generator" content="alanaktion/phproject">
 <title>{{ empty(@title) ? @site.name : @title . ' - ' . @site.name | esc }}</title>
 {~ @hash = \Controller\Style::mtimeHash() ~}
-<check if="{{ @@user.theme ?: @site.theme == 'dark' }}">
+<check if="{{ (@@user.theme ?: @site.theme) == 'dark' }}">
     <true>
         <link rel="stylesheet" href="{{ @BASE }}/style/{{ @hash }}/dark.css">
     </true>
