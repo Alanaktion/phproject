@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="{{ @this->lang() }}">
 <head>
-	<include href="blocks/head.html" />
+    <include href="blocks/head.html" />
 </head>
 <body>
 <div class="container">
-	<include href="blocks/navbar-public.html" />
-	<div class="jumbotron">
-		<h1>{{ @site.name | esc }}</h1>
-		<p>{{ @site.description | esc }}</p>
-	</div>
-	<include href="blocks/footer.html" />
+    <include href="blocks/navbar-public.html" />
+    <div class="jumbotron">
+        <h1>{{ @site.name | esc }}</h1>
+        <p>{{ @site.description | esc }}</p>
+    </div>
+    <include href="blocks/footer.html" />
 </div>
 </body>
 </html>

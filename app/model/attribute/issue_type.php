@@ -9,9 +9,7 @@ namespace Model\Attribute;
  * @property int $attribute_id
  * @property int $issue_type_id
  */
-class Attribute extends \Model {
-
-	protected $_table_name = "attribute_issue_type";
-
+class Attribute extends \Model
+{
+    protected $_table_name = "attribute_issue_type";
 }
-

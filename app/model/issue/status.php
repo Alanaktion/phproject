@@ -10,9 +10,7 @@ namespace Model\Issue;
  * @property int $closed
  * @property int $taskboard
  */
-class Status extends \Model {
-
-	protected $_table_name = "issue_status";
-
+class Status extends \Model
+{
+    protected $_table_name = "issue_status";
 }
-

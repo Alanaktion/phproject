@@ -11,9 +11,7 @@ namespace Model\Issue\Update;
  * @property string $old_value
  * @property string $new_value
  */
-class Field extends \Model {
-
-	protected $_table_name = "issue_update_field";
-
+class Field extends \Model
+{
+    protected $_table_name = "issue_update_field";
 }
-

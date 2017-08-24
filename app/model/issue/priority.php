@@ -9,9 +9,7 @@ namespace Model\Issue;
  * @property int $value
  * @property string $name
  */
-class Priority extends \Model {
-
-	protected $_table_name = "issue_priority";
-
+class Priority extends \Model
+{
+    protected $_table_name = "issue_priority";
 }
-

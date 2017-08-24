@@ -1,45 +1,45 @@
 <div class="list-group">
-	<repeat group="{{ @issues }}" value="{{ @item }}">
-		<a class="list-group-item" href="{{ @BASE }}/issues/{{ @item.id }}">
-			<span class="badge status">{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) | esc }}</span>
-			<check if="{{ @item.owner_id != @user.id }}">
-				<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="{{ @dict.cols.assignee }}">
-					<span class="fa fa-user"></span>&ensp;{{ @item.owner_name | esc }}
-				</p>
-			</check>
-			<check if="{{ @item.repeat_cycle }}">
-				<p class="pull-right badge-sibling hidden-xs group has-tooltip" title="{{ @dict.cols.repeat_cycle }}">
-					<span class="fa fa-repeat"></span>&ensp;{{ @dict[@item.repeat_cycle] ?: @item.repeat_cycle }}
-				</p>
-			</check>
-			<p class="list-group-item-heading">
-				#{{ @item.id }} - {{ @item.name | esc }}
-				<check if="{{ @item.priority != 0 }}">
-					<span class="label-{{ @item.priority < 0 ? 'default' : 'danger' }} priority" style="width: {{ !@item.priority ? 0 : 1 + 1 * abs(@item.priority) }}px;"></span>
-				</check>
-			</p>
-			<check if="{{ strtotime(@item.due_date) }}">
-				<p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
-			</check>
-			<check if="{{ @item.sprint_id }}">
-				<set sprint_date_range="{{ date('M j-', strtotime(@item.sprint_start_date)) }}" />
-				{~
-					if(date('Ym', strtotime(@item.sprint_start_date)) == date('Ym', strtotime(@item.sprint_end_date))) {
-						@sprint_date_range = @sprint_date_range . date('j', strtotime(@item.sprint_end_date));
-					} else {
-						@sprint_date_range = @sprint_date_range . date('M j', strtotime(@item.sprint_end_date));
-					}
-				~}
-				<p class="list-group-item-text text-muted">
-					<span class="has-tooltip" title="{{ @dict.sprint }} #{{ @item.sprint_id }}: {{ @sprint_date_range }}">{{ @item.sprint_name | esc }}</span>
-					<check if="{{ @item.type_id == @issue_type.project && @item.parent_id }}">
-						&mdash; <span class="has-tooltip" title="{{ @dict.parent_project}}">{{ @dict.under_n, '#' . @item.parent_id . ' - ' . @@item.parent_name | format }}</span>
-					</check>
-				</p>
-			</check>
-		</a>
-	</repeat>
-	<check if="{{ !count(@issues) }}">
-		<li class="list-group-item disabled">{{ @dict.no_matching_issues }}</li>
-	</check>
+    <repeat group="{{ @issues }}" value="{{ @item }}">
+        <a class="list-group-item" href="{{ @BASE }}/issues/{{ @item.id }}">
+            <span class="badge status">{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) | esc }}</span>
+            <check if="{{ @item.owner_id != @user.id }}">
+                <p class="pull-right badge-sibling hidden-xs group has-tooltip" title="{{ @dict.cols.assignee }}">
+                    <span class="fa fa-user"></span>&ensp;{{ @item.owner_name | esc }}
+                </p>
+            </check>
+            <check if="{{ @item.repeat_cycle }}">
+                <p class="pull-right badge-sibling hidden-xs group has-tooltip" title="{{ @dict.cols.repeat_cycle }}">
+                    <span class="fa fa-repeat"></span>&ensp;{{ @dict[@item.repeat_cycle] ?: @item.repeat_cycle }}
+                </p>
+            </check>
+            <p class="list-group-item-heading">
+                #{{ @item.id }} - {{ @item.name | esc }}
+                <check if="{{ @item.priority != 0 }}">
+                    <span class="label-{{ @item.priority < 0 ? 'default' : 'danger' }} priority" style="width: {{ !@item.priority ? 0 : 1 + 1 * abs(@item.priority) }}px;"></span>
+                </check>
+            </p>
+            <check if="{{ strtotime(@item.due_date) }}">
+                <p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
+            </check>
+            <check if="{{ @item.sprint_id }}">
+                <set sprint_date_range="{{ date('M j-', strtotime(@item.sprint_start_date)) }}" />
+                {~
+                    if(date('Ym', strtotime(@item.sprint_start_date)) == date('Ym', strtotime(@item.sprint_end_date))) {
+                        @sprint_date_range = @sprint_date_range . date('j', strtotime(@item.sprint_end_date));
+                    } else {
+                        @sprint_date_range = @sprint_date_range . date('M j', strtotime(@item.sprint_end_date));
+                    }
+                ~}
+                <p class="list-group-item-text text-muted">
+                    <span class="has-tooltip" title="{{ @dict.sprint }} #{{ @item.sprint_id }}: {{ @sprint_date_range }}">{{ @item.sprint_name | esc }}</span>
+                    <check if="{{ @item.type_id == @issue_type.project && @item.parent_id }}">
+                        &mdash; <span class="has-tooltip" title="{{ @dict.parent_project}}">{{ @dict.under_n, '#' . @item.parent_id . ' - ' . @@item.parent_name | format }}</span>
+                    </check>
+                </p>
+            </check>
+        </a>
+    </repeat>
+    <check if="{{ !count(@issues) }}">
+        <li class="list-group-item disabled">{{ @dict.no_matching_issues }}</li>
+    </check>
 </div>

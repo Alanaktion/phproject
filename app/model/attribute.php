@@ -10,9 +10,7 @@ namespace Model;
  * @property string $type
  * @property string $default
  */
-class Attribute extends \Model {
-
-	protected $_table_name = "attribute";
-
+class Attribute extends \Model
+{
+    protected $_table_name = "attribute";
 }
-

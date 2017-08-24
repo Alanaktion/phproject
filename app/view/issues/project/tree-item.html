@@ -1,36 +1,36 @@
 <tr>
-	<td colspan="2">
-		{{ str_repeat("&emsp;", @level) }}
-		{{ @issue.id }} &ndash;
-		<check if="{{ @issue.closed_date }}">
-			<true>
-				<a href="{{ @BASE }}/issues/{{ @issue.id }}" class="text-muted"><s>{{ @issue.name | esc }}</s></a>
-			</true>
-			<false>
-				<a href="{{ @BASE }}/issues/{{ @issue.id }}">{{ @issue.name | esc }}</a>
-			</false>
-		</check>
-	</td>
-	<td>{{ @issue.type_name }}</td>
-	<td>{{ @issue.owner_name }}</td>
-	<td>{{ @issue.author_name }}</td>
-	<td>{{ @issue.priority_name }}</td>
-	<td>
-		<check if="{{ @issue.due_date }}">
-			<true>
-			{{ date("n/j/y", strtotime(@issue.due_date)) }}
-			</true>
-			<false>
-				<check if="{{ @issue.sprint_end_date }}">
-					{{ date("n/j/y", strtotime(@issue.sprint_end_date)) }}
-				</check>
-			</false>
-		</check>
-	</td>
-	<td>
-		<check if="{{ @issue.sprint_start_date }}">
-			{{ date("n/j/y", strtotime(@issue.sprint_start_date)) }}
-		</check>
-	</td>
-	<td>{{ @issue.hours_spent }}</td>
+    <td colspan="2">
+        {{ str_repeat("&emsp;", @level) }}
+        {{ @issue.id }} &ndash;
+        <check if="{{ @issue.closed_date }}">
+            <true>
+                <a href="{{ @BASE }}/issues/{{ @issue.id }}" class="text-muted"><s>{{ @issue.name | esc }}</s></a>
+            </true>
+            <false>
+                <a href="{{ @BASE }}/issues/{{ @issue.id }}">{{ @issue.name | esc }}</a>
+            </false>
+        </check>
+    </td>
+    <td>{{ @issue.type_name }}</td>
+    <td>{{ @issue.owner_name }}</td>
+    <td>{{ @issue.author_name }}</td>
+    <td>{{ @issue.priority_name }}</td>
+    <td>
+        <check if="{{ @issue.due_date }}">
+            <true>
+            {{ date("n/j/y", strtotime(@issue.due_date)) }}
+            </true>
+            <false>
+                <check if="{{ @issue.sprint_end_date }}">
+                    {{ date("n/j/y", strtotime(@issue.sprint_end_date)) }}
+                </check>
+            </false>
+        </check>
+    </td>
+    <td>
+        <check if="{{ @issue.sprint_start_date }}">
+            {{ date("n/j/y", strtotime(@issue.sprint_start_date)) }}
+        </check>
+    </td>
+    <td>{{ @issue.hours_spent }}</td>
 </tr>

@@ -1,175 +1,175 @@
 <!doctype html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{ @dict.install_phproject }}</title>
-	<link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/bootstrap-phproject.css">
-	<style type="text/css">
-		body {
-			margin: 15px 0;
-		}
-	</style>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ @dict.install_phproject }}</title>
+    <link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/bootstrap-phproject.css">
+    <style type="text/css">
+        body {
+            margin: 15px 0;
+        }
+    </style>
 </head>
 <body>
-	<div class="visible-lg">
-		<div style="height: 60px;"></div>
-	</div>
-	<div class="container">
-		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
-				<div class="panel panel-default">
-					<div class="panel-heading">{{ @dict.install_phproject }}</div>
-					<div class="panel-body">
-						<check if="{{ empty(@success) }}">
-							<true>
-								<check if="{{ empty(@error) }}">
-									<true>
-										<check if="{{ !empty(@warning) }}">
-											<p class="alert alert-warning">{{ @warning }}</p>
-										</check>
-										<form class="form-horizontal" action="{{ @BASE }}/install.php" method="post">
-											<div class="col-sm-9 col-sm-offset-3">
-												<h4>Site Configuration</h4>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="site-name" class="col-sm-3 control-label">Site Name</label>
-												<div class="col-sm-9">
-													<input type="text" class="form-control" id="site-name" name="site-name" value="Phproject">
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="site-timezone" class="col-sm-3 control-label">
-													<a href="http://php.net/manual/en/timezones.php" target="_blank" class="badge">?</a>&ensp;Timezone
-												</label>
-												<div class="col-sm-9">
-													<input type="text" class="form-control" id="site-timezone" name="site-timezone" value="Etc/UTC">
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="mail-from" class="col-sm-3 control-label">From Address</label>
-												<div class="col-sm-9">
-													<input type="text" class="form-control" id="mail-from" name="mail-from" placeholder="Optional">
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="language" class="col-sm-3 control-label">{{ @dict.language }}</label>
-												<div class="col-sm-9">
-													<select class="form-control" name="language" id="language">
-														<option value="">Default (English)</option>
-														<option value="es">Spanish (Español)</option>
-														<option value="ru">Russian (Русский)</option>
-														<option value="fr">French (Français)</option>
-														<option value="pl">Polish (Polszczyzna)</option>
-														<option value="pt">Portuguese (Português)</option>
-														<option value="it">Italian (Italiano)</option>
-														<option value="nl">Dutch (Nederlands)</option>
-														<option value="de">German (Deutsch)</option>
-														<option value="cs">Czech (Češka)</option>
-														<option value="zh">Chinese (中国)</option>
-														<option value="ja">Japanese (日本語)</option>
-													</select>
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="site-public_registration" class="col-sm-3 control-label">Registration</label>
-												<div class="col-sm-9">
-													<select class="form-control" name="site-public_registration" id="site-public_registration">
-														<option value="0">Not Allowed</option>
-														<option value="1">Open to Public</option>
-													</select>
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="parser" class="col-sm-3 control-label">Text Parser</label>
-												<div class="col-sm-9">
-													<select class="form-control" name="parser" id="parser">
-														<option value="markdown">Markdown (Recommended)</option>
-														<option value="textile">Textile (Redmine-compatible)</option>
-														<option value="both">Markdown + Textile</option>
-														<option value="">None</option>
-													</select>
-												</div>
-											</div>
-											<div class="col-sm-9 col-sm-offset-3">
-												<h4>MySQL Connection</h4>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="db-host" class="col-sm-3 control-label">Host</label>
-												<div class="col-sm-9">
-													<input type="text" class="form-control" id="db-host" name="db-host" value="localhost" required>
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="db-port" class="col-sm-3 control-label">Port</label>
-												<div class="col-sm-9">
-													<input type="text" class="form-control" id="db-port" name="db-port" value="3306" required>
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="db-user" class="col-sm-3 control-label">User</label>
-												<div class="col-sm-9">
-													<input type="text" class="form-control" id="db-user" name="db-user" required>
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="db-pass" class="col-sm-3 control-label">Password</label>
-												<div class="col-sm-9">
-													<input type="text" class="form-control" id="db-pass" name="db-pass">
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="db-name" class="col-sm-3 control-label">Database</label>
-												<div class="col-sm-9">
-													<input type="text" class="form-control" id="db-name" name="db-name" value="phproject" required>
-												</div>
-											</div>
-											<div class="col-sm-9 col-sm-offset-3">
-												<h4>Administrator User</h4>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="user-username" class="col-sm-3 control-label">{{ @dict.username }}</label>
-												<div class="col-sm-9">
-													<input type="text" class="form-control" id="user-username" name="user-username" required value="admin">
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="user-email" class="col-sm-3 control-label">{{ @dict.email }}</label>
-												<div class="col-sm-9">
-													<input type="email" class="form-control" id="user-email" name="user-email" required>
-												</div>
-											</div>
-											<div class="form-group form-group-sm">
-												<label for="user-password" class="col-sm-3 control-label">{{ @dict.password }}</label>
-												<div class="col-sm-9">
-													<input type="password" class="form-control" id="user-password" name="user-password" placeholder="admin">
-												</div>
-											</div>
-											<div class="text-right">
-												<button type="submit" class="btn btn-primary btn-sm">Install</button>
-											</div>
-										</form>
-									</true>
-									<false>
-										<p class="alert alert-danger">
-											Unable to continue installation, check the errors and try again.<br>
-											{{ @error }}
-										</p>
-									</false>
-								</check>
-							</true>
-							<false>
-								<p class="alert alert-success">{{ @success }}</p>
-								<div class="text-right">
-									<a class="btn btn-success" href="{{ @BASE }}/">Continue</a>
-								</div>
-							</false>
-						</check>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="visible-lg">
+        <div style="height: 60px;"></div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">{{ @dict.install_phproject }}</div>
+                    <div class="panel-body">
+                        <check if="{{ empty(@success) }}">
+                            <true>
+                                <check if="{{ empty(@error) }}">
+                                    <true>
+                                        <check if="{{ !empty(@warning) }}">
+                                            <p class="alert alert-warning">{{ @warning }}</p>
+                                        </check>
+                                        <form class="form-horizontal" action="{{ @BASE }}/install.php" method="post">
+                                            <div class="col-sm-9 col-sm-offset-3">
+                                                <h4>Site Configuration</h4>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="site-name" class="col-sm-3 control-label">Site Name</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="site-name" name="site-name" value="Phproject">
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="site-timezone" class="col-sm-3 control-label">
+                                                    <a href="http://php.net/manual/en/timezones.php" target="_blank" class="badge">?</a>&ensp;Timezone
+                                                </label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="site-timezone" name="site-timezone" value="Etc/UTC">
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="mail-from" class="col-sm-3 control-label">From Address</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="mail-from" name="mail-from" placeholder="Optional">
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="language" class="col-sm-3 control-label">{{ @dict.language }}</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" name="language" id="language">
+                                                        <option value="">Default (English)</option>
+                                                        <option value="es">Spanish (Español)</option>
+                                                        <option value="ru">Russian (Русский)</option>
+                                                        <option value="fr">French (Français)</option>
+                                                        <option value="pl">Polish (Polszczyzna)</option>
+                                                        <option value="pt">Portuguese (Português)</option>
+                                                        <option value="it">Italian (Italiano)</option>
+                                                        <option value="nl">Dutch (Nederlands)</option>
+                                                        <option value="de">German (Deutsch)</option>
+                                                        <option value="cs">Czech (Češka)</option>
+                                                        <option value="zh">Chinese (中国)</option>
+                                                        <option value="ja">Japanese (日本語)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="site-public_registration" class="col-sm-3 control-label">Registration</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" name="site-public_registration" id="site-public_registration">
+                                                        <option value="0">Not Allowed</option>
+                                                        <option value="1">Open to Public</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="parser" class="col-sm-3 control-label">Text Parser</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" name="parser" id="parser">
+                                                        <option value="markdown">Markdown (Recommended)</option>
+                                                        <option value="textile">Textile (Redmine-compatible)</option>
+                                                        <option value="both">Markdown + Textile</option>
+                                                        <option value="">None</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-9 col-sm-offset-3">
+                                                <h4>MySQL Connection</h4>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="db-host" class="col-sm-3 control-label">Host</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="db-host" name="db-host" value="localhost" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="db-port" class="col-sm-3 control-label">Port</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="db-port" name="db-port" value="3306" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="db-user" class="col-sm-3 control-label">User</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="db-user" name="db-user" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="db-pass" class="col-sm-3 control-label">Password</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="db-pass" name="db-pass">
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="db-name" class="col-sm-3 control-label">Database</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="db-name" name="db-name" value="phproject" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-9 col-sm-offset-3">
+                                                <h4>Administrator User</h4>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="user-username" class="col-sm-3 control-label">{{ @dict.username }}</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="user-username" name="user-username" required value="admin">
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="user-email" class="col-sm-3 control-label">{{ @dict.email }}</label>
+                                                <div class="col-sm-9">
+                                                    <input type="email" class="form-control" id="user-email" name="user-email" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="user-password" class="col-sm-3 control-label">{{ @dict.password }}</label>
+                                                <div class="col-sm-9">
+                                                    <input type="password" class="form-control" id="user-password" name="user-password" placeholder="admin">
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <button type="submit" class="btn btn-primary btn-sm">Install</button>
+                                            </div>
+                                        </form>
+                                    </true>
+                                    <false>
+                                        <p class="alert alert-danger">
+                                            Unable to continue installation, check the errors and try again.<br>
+                                            {{ @error }}
+                                        </p>
+                                    </false>
+                                </check>
+                            </true>
+                            <false>
+                                <p class="alert alert-success">{{ @success }}</p>
+                                <div class="text-right">
+                                    <a class="btn btn-success" href="{{ @BASE }}/">Continue</a>
+                                </div>
+                            </false>
+                        </check>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
