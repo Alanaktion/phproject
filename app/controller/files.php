@@ -94,7 +94,7 @@ class Files extends \Controller
         }
 
         // Initialize thumbnail image
-        $img = new \Helper\Image($file->disk_filename);
+        $img = new \Image($file->disk_filename);
 
         // Render thumbnail directly if no alpha
         $alpha = (imagecolorat($img->data(), 0, 0) & 0x7F000000) >> 24;

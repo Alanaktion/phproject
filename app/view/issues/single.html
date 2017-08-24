@@ -225,7 +225,7 @@
                                     <repeat group="{{ @files }}" value="{{ @file }}">
                                         <tr id="ft-{{ @file.id }}" data-id="{{ @file.id }}">
                                             <td data-sort-value="{{ @file.content_type | esc }}">
-                                                <img src="{{ @BASE }}/img/mime/16/{{ \Helper\Image::mimeIcon(@file.content_type) }}.svg" alt>
+                                                <img src="{{ @BASE }}/img/mime/16/{{ \Helper\File::mimeIcon(@file.content_type) }}.svg" alt>
                                             </td>
                                             <td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" target="_blank">{{ @file.filename | esc }}</a></td>
                                             <td>{{ @file.user_name | esc }}</td>
