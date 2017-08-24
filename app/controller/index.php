@@ -295,20 +295,6 @@ class Index extends \Controller
     }
 
     /**
-     * GET|POST /ping
-     *
-     * @param \Base $f3
-     */
-    public function ping($f3)
-    {
-        if ($f3->get("user.id")) {
-            $this->_printJson(array("user_id" => $f3->get("user.id"), "is_logged_in" => true));
-        } else {
-            $this->_printJson(array("user_id" => null, "is_logged_in" => false));
-        }
-    }
-
-    /**
      * GET /atom.xml
      *
      * @param \Base $f3
