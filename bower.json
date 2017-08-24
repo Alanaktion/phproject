@@ -21,6 +21,7 @@
     "typeahead.js": "^0.11.1",
     "intercom": "^0.1.4",
     "Sortable": "sortablejs#^1.6.0",
+    "jquery": "^3.0",
     "jquery-stupid-table": "^1.1.2"
   }
 }

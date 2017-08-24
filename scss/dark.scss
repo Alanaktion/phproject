@@ -61,8 +61,8 @@ $card-cap-bg: map-get($grays, 925);
 $card-border-color: rgba(map-get($grays, 200), .25);
 
 // Darken list groups
-$list-group-bg: map-get($grays, 925);
-$list-group-hover-bg: map-get($grays, 950);
+$list-group-bg: map-get($grays, 900);
+$list-group-hover-bg: map-get($grays, 800);
 $list-group-action-color: map-get($grays, 200);
 $list-group-action-hover-color: $list-group-action-color;
 $list-group-action-active-bg: $blue;
