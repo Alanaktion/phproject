@@ -202,13 +202,27 @@ class View extends \Template
     }
 
     /**
-     * Replaces text emoticons with webfont versions
+     * Replaces text emoticons with Emoji versions
      * @param  string $str
      * @return string
      */
     protected function _parseEmoticons($str)
     {
-        return \UTF::instance()->emojify($str);
+        // Custom Emoji map, based on UTF::emojify
+        $map = [
+            ':(' => "\xF0\x9F\x99\x81", // frown
+            ':)' => "\xF0\x9F\x99\x82", // smile
+            '<3' => "\xE2\x9D\xA4\xEF\xB8\x8F", // heart
+            '&lt;3' => "\xE2\x9D\xA4\xEF\xB8\x8F", // heart, HTML-encoded
+            ':D' => "\xF0\x9F\x98\x83", // grin
+            'XD' => "\xF0\x9F\x98\x86", // laugh
+            ';)' => "\xF0\x9F\x98\x89", // wink
+            ':P' => "\xF0\x9F\x98\x8B", // tongue
+            ':,' => "\xF0\x9F\x98\x8F", // think
+            ':/' => "\xF0\x9F\x98\xA3", // skeptic
+            '8O' => "\xF0\x9F\x98\xB2", // oops
+        ];
+        return \UTF::instance()->translate(str_replace(array_keys($map), array_values($map), $str));
     }
 
     /**
