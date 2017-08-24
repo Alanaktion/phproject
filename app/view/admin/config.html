@@ -99,7 +99,6 @@
                 </div>
 
                 <div role="tabpanel" class="tab-pane fade" id="config-parse">
-                    <!-- TODO: Set checked attributes on current values, rather than defaults -->
                     <p>{{ @dict.parser_syntax }}</p>
                     <div class="form-group" style="margin-bottom: 0;">
                         <div class="checkbox">
@@ -113,7 +112,7 @@
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" name="parse-textile" value="1" autocomplete="off" {{ @parse.textile ? 'checked' : '' }}>
-                                Textile
+                                Textile (Deprecated)
                             </label>
                         </div>
                     </div>
