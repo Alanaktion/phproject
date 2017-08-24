@@ -239,10 +239,18 @@ class User extends \Controller
         $overwrite = true;
         $slug = true;
 
-        //Make a good name
+        // Make a good name
         $parts = pathinfo($_FILES['avatar']['name']);
         $_FILES['avatar']['name'] = $user->id . "-" . substr(uniqid(), 0, 4)  . "." . $parts["extension"];
         $f3->set("avatar_filename", $_FILES['avatar']['name']);
+
+        // Verify file is an image
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $allowedTypes = ['image/jpeg', 'image/gif', 'image/png', 'image/bmp'];
+        if (!in_array(finfo_file($finfo, $_FILES['avatar']['tmp_name']), $allowedTypes)) {
+            $f3->error(400);
+            return;
+        }
 
         $web->receive(
             function ($file) use ($f3, $user) {
