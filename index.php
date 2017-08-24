@@ -1,7 +1,8 @@
 <?php
 
 // Initialize core
-$f3=require("lib/base.php");
+require_once "vendor/autoload.php";
+$f3 = Base::instance();
 $f3->mset(array(
 	"UI" => "app/view/;app/plugin/",
 	"ESCAPE" => false,
@@ -23,11 +24,6 @@ if(!is_file("config.ini")) {
 	header("Location: install.php");
 	return;
 }
-
-// Polyfill PHP 7 features we rely on
-require_once 'lib/vendor/random_compat/random.php';
-require_once 'lib/vendor/Symfony/Polyfill/Mbstring/bootstrap.php';
-require_once 'lib/vendor/Symfony/Polyfill/Intl/Grapheme/bootstrap.php';
 
 // Get current Git revision
 if(is_file(".git/refs/heads/master")) {

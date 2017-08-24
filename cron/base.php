@@ -12,7 +12,9 @@ if (PHP_SAPI != 'cli') {
 $homedir = dirname(dirname(__FILE__)) . "/";
 set_include_path($homedir);
 
-$f3=require($homedir."lib/base.php");
+require_once $homedir."vendor/autoload.php";
+
+$f3 = Base::instance();
 $f3->mset(array(
 	"UI" => $homedir."app/view/",
 	"LOGS" => $homedir."log/",
