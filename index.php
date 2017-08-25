@@ -38,10 +38,6 @@ if (is_file(".git/refs/heads/master")) {
     $f3->set("revision", "");
 }
 
-// Load configuration
-$f3->config("config-base.ini");
-$f3->config("config.ini");
-
 // Load routes
 $f3->config("app/routes.ini");
 
