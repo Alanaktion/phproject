@@ -41,9 +41,11 @@ class Admin extends \Controller
 
         // Gather some stats
         $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE deleted_date IS NULL AND role != 'group'");
-        $f3->set("users", $result[0]["count"]);
+        $f3->set("count_user", $result[0]["count"]);
         $result = $db->exec("SELECT COUNT(id) AS `count` FROM issue WHERE deleted_date IS NULL");
-        $f3->set("issues", $result[0]["count"]);
+        $f3->set("count_issue", $result[0]["count"]);
+        $result = $db->exec("SELECT COUNT(id) AS `count` FROM issue_comment");
+        $f3->set("count_issue_comment", $result[0]["count"]);
         $result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
         $f3->set("version", $result[0]["version"]);
 
