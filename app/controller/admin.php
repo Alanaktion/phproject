@@ -13,9 +13,10 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /admin
      * @param \Base $f3
      */
-    public function index($f3)
+    public function index(\Base $f3)
     {
         $f3->set("title", $f3->get("dict.administration"));
         $f3->set("menuitem", "admin");
@@ -40,13 +41,9 @@ class Admin extends \Controller
 
         // Gather some stats
         $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE deleted_date IS NULL AND role != 'group'");
-        $f3->set("count_user", $result[0]["count"]);
+        $f3->set("users", $result[0]["count"]);
         $result = $db->exec("SELECT COUNT(id) AS `count` FROM issue WHERE deleted_date IS NULL");
-        $f3->set("count_issue", $result[0]["count"]);
-        $result = $db->exec("SELECT COUNT(id) AS `count` FROM issue_update");
-        $f3->set("count_issue_update", $result[0]["count"]);
-        $result = $db->exec("SELECT COUNT(id) AS `count` FROM issue_comment");
-        $f3->set("count_issue_comment", $result[0]["count"]);
+        $f3->set("issues", $result[0]["count"]);
         $result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
         $f3->set("version", $result[0]["version"]);
 
@@ -58,9 +55,79 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /admin/release.json
+     *
+     * Check for a new release and report some basic stats
+     *
+     * @param \Base $f3
+     * @return void
+     */
+    public function releaseCheck(\Base $f3)
+    {
+        if (!$f3->get('site.key')) {
+            \Model\Config::setVal('site.key', sha1(mt_rand() . mt_rand()));
+        }
+
+        // Gather stats
+        $data = [
+            'release' => PHPROJECT_VERSION,
+            'key' => $f3->get('site.key'),
+            'revision' => $f3->get('revision'),
+        ];
+        $db = $f3->get('db.instance');
+        $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE role != 'group'");
+        $data['users'] = $result[0]['count'];
+        $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE role = 'group'");
+        $data['groups'] = $result[0]['count'];
+        $result = $db->exec("SELECT COUNT(id) AS `count` FROM issue");
+        $data['issues'] = $result[0]['count'];
+        $result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
+        $data['version'] = $result[0]['version'];
+
+        // Make HTTP request
+        $endpoint = 'https://meta.phproject.org/release.php';
+        $options = [
+            'http' => [
+                'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+                'method' => 'POST',
+                'content' => http_build_query($data)
+            ]
+        ];
+
+        $context = stream_context_create($options);
+        $result = @file_get_contents($endpoint, false, $context);
+        if ($result === false) {
+            $this->_printJson(['error' => 1]);
+            return;
+        }
+
+        file_put_contents('result', $result);
+
+        $return = @json_decode($result);
+        if (json_last_error() != JSON_ERROR_NONE) {
+            $this->_printJson(['error' => 2]);
+            return;
+        }
+
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+            header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 3600*12) . ' GMT');
+        }
+        if (!empty($return->description)) {
+            // Render markdown description as HTML
+            $parsedown = new \Parsedown();
+            $parsedown->setUrlsLinked(false);
+            $parsedown->setMarkupEscaped(true);
+            $return->description_html = $parsedown->text($return->description);
+        }
+        echo json_encode($return);
+    }
+
+    /**
+     * GET /admin/config
      * @param \Base $f3
      */
-    public function config($f3)
+    public function config(\Base $f3)
     {
         $status = new \Model\Issue\Status;
         $f3->set("issue_statuses", $status->find());
@@ -70,10 +137,11 @@ class Admin extends \Controller
     }
 
     /**
+     * POST /admin/config/saveattribute
      * @param \Base $f3
      * @throws \Exception
      */
-    public function config_post_saveattribute($f3)
+    public function config_post_saveattribute(\Base $f3)
     {
         $attribute = str_replace("-", ".", $f3->get("POST.attribute"));
         $value = $f3->get("POST.value");
@@ -120,19 +188,21 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /admin/plugins
      * @param \Base $f3
      */
-    public function plugins($f3)
+    public function plugins(\Base $f3)
     {
         $f3->set("title", $f3->get("dict.plugins"));
         $this->_render("admin/plugins.html");
     }
 
     /**
+     * GET /admin/plugins/@id
      * @param \Base $f3
      * @param array $params
      */
-    public function plugin_single($f3, $params)
+    public function plugin_single(\Base $f3, array $params)
     {
         $this->_userId = $this->_requireAdmin(5);
         $plugins = $f3->get("plugins");
@@ -150,9 +220,10 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /users
      * @param \Base $f3
      */
-    public function users($f3)
+    public function users(\Base $f3)
     {
         $f3->set("title", $f3->get("dict.users"));
 
@@ -164,9 +235,10 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /admin/users/deleted
      * @param \Base $f3
      */
-    public function deleted_users($f3)
+    public function deleted_users(\Base $f3)
     {
         $f3->set("title", $f3->get("dict.users"));
 
@@ -177,11 +249,12 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /admin/users/@id
      * @param \Base $f3
      * @param array $params
      * @throws \Exception
      */
-    public function user_edit($f3, $params)
+    public function user_edit(\Base $f3, array $params)
     {
         $f3->set("title", $f3->get("dict.edit_user"));
 
@@ -201,9 +274,10 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /admin/users/new
      * @param \Base $f3
      */
-    public function user_new($f3)
+    public function user_new(\Base $f3)
     {
         $f3->set("title", $f3->get("dict.new_user"));
         $f3->set("rand_color", sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF)));
@@ -211,10 +285,11 @@ class Admin extends \Controller
     }
 
     /**
+     * POST /admin/users, POST /admin/users/@id
      * @param \Base $f3
      * @throws \Exception
      */
-    public function user_save($f3)
+    public function user_save(\Base $f3)
     {
         $security = \Helper\Security::instance();
         $user = new \Model\User;
@@ -315,11 +390,12 @@ class Admin extends \Controller
     }
 
     /**
+     * POST /admin/users/delete/@id
      * @param \Base $f3
      * @param array $params
      * @throws \Exception
      */
-    public function user_delete($f3, $params)
+    public function user_delete(\Base $f3, array $params)
     {
         $user = new \Model\User();
         $user->load($params["id"]);
@@ -349,11 +425,12 @@ class Admin extends \Controller
     }
 
     /**
+     * POST /admin/users/undelete/@id
      * @param \Base $f3
      * @param array $params
      * @throws \Exception
      */
-    public function user_undelete($f3, $params)
+    public function user_undelete(\Base $f3, array $params)
     {
         $user = new \Model\User();
         $user->load($params["id"]);
@@ -373,9 +450,10 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /admin/groups
      * @param \Base $f3
      */
-    public function groups($f3)
+    public function groups(\Base $f3)
     {
         $f3->set("title", $f3->get("dict.groups"));
 
@@ -400,9 +478,10 @@ class Admin extends \Controller
     }
 
     /**
+     * POST /admin/groups/new
      * @param \Base $f3
      */
-    public function group_new($f3)
+    public function group_new(\Base $f3)
     {
         $f3->set("title", $f3->get("dict.groups"));
 
@@ -421,11 +500,12 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /admin/groups/@id
      * @param \Base $f3
      * @param array $params
      * @throws \Exception
      */
-    public function group_edit($f3, $params)
+    public function group_edit(\Base $f3, array $params)
     {
         $f3->set("title", $f3->get("dict.groups"));
 
@@ -443,11 +523,12 @@ class Admin extends \Controller
     }
 
     /**
+     * POST /admin/groups/delete/@id
      * @param \Base $f3
      * @param array $params
      * @throws \Exception
      */
-    public function group_delete($f3, $params)
+    public function group_delete(\Base $f3, array $params)
     {
         $group = new \Model\User();
         $group->load($params["id"]);
@@ -460,10 +541,11 @@ class Admin extends \Controller
     }
 
     /**
+     * POST /admin/groups/ajax
      * @param \Base $f3
      * @throws \Exception
      */
-    public function group_ajax($f3)
+    public function group_ajax(\Base $f3)
     {
         if (!$f3->get("AJAX")) {
             $f3->error(400);
@@ -517,11 +599,12 @@ class Admin extends \Controller
     }
 
     /**
+     * POST /admin/groups/@id/setmanager/@user_group_id
      * @param \Base $f3
      * @param array $params
      * @throws \Exception
      */
-    public function group_setmanager($f3, $params)
+    public function group_setmanager(\Base $f3, array $params)
     {
         $db = $f3->get("db.instance");
 
@@ -541,9 +624,10 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /admin/sprints
      * @param \Base $f3
      */
-    public function sprints($f3)
+    public function sprints(\Base $f3)
     {
         $f3->set("title", $f3->get("dict.sprints"));
 
@@ -554,9 +638,10 @@ class Admin extends \Controller
     }
 
     /**
+     * POST /admin/sprints/new
      * @param \Base $f3
      */
-    public function sprint_new($f3)
+    public function sprint_new(\Base $f3)
     {
         $f3->set("title", $f3->get("dict.sprints"));
 
@@ -595,11 +680,12 @@ class Admin extends \Controller
     }
 
     /**
+     * GET /admin/sprints/@id, POST /admin/sprints/@id
      * @param \Base $f3
      * @param array $params
      * @throws \Exception
      */
-    public function sprint_edit($f3, $params)
+    public function sprint_edit(\Base $f3, array $params)
     {
         $f3->set("title", $f3->get("dict.sprints"));
 

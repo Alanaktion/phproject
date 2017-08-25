@@ -8,29 +8,28 @@
 <div class="container">
     <include href="blocks/admin/tabs.html" />
 
+    <p id="alert-release" class="alert alert-info clearfix hidden" aria-hidden="true">
+        <a href="https://github.com/Alanaktion/phproject" target="_blank" class="btn btn-default btn-xs pull-right">{{ @dict.releases }}</a>
+        {{ @dict.release_available }}
+    </p>
+
     <div class="row">
-        <div class="col-md-3 col-sm-6">
+        <div class="col-sm-4">
             <div class="well well-sm text-center">
                 <h4>{{ @dict.users }}</h4>
                 <h2>{{ @count_user }}</h2>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
+        <div class="col-sm-4">
             <div class="well well-sm text-center">
                 <h4>{{ @dict.issues }}</h4>
                 <h2>{{ @count_issue }}</h2>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
+        <div class="col-sm-4">
             <div class="well well-sm text-center">
                 <h4>{{ @dict.comments }}</h4>
                 <h2>{{ @count_issue_comment }}</h2>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="well well-sm text-center">
-                <h4>Updates</h4>
-                <h2>{{ @count_issue_update }}</h2>
             </div>
         </div>
     </div>
@@ -97,5 +96,26 @@
 
     <include href="blocks/footer.html" />
 </div>
+<script>
+$(function() {
+    // Check for new releases
+    $.get(BASE + '/admin/releaseCheck', function(data) {
+        if (data.error) {
+            return console.error('Failed to check for a new release.');
+        }
+        if (data.update_available) {
+            $alert = $('#alert-release');
+            if (data.description_html) {
+                $description = $('<div />').css({
+                    'max-height': '200px',
+                    'overflow-y': 'auto'
+                }).html(data.description_html);
+                $alert.append('<hr>').append($description);
+            }
+            $alert.removeClass('hidden').removeAttr('aria-hidden');
+        }
+    }, 'json');
+});
+</script>
 </body>
 </html>
