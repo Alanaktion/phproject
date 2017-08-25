@@ -65,6 +65,21 @@ class Config extends \Model
     }
 
     /**
+     * Convert INI configuration to PHP format
+     *
+     * @return void
+     */
+    public static function iniToPhp()
+    {
+        $f3 = \Base::instance();
+        $root = $f3->get("ROOT") . $f3->get("BASE");
+        $ini = parse_ini_file($root."/config.ini");
+        $data = "<?php\nreturn " . var_export($ini, true) . ";\n";
+        file_put_contents("$root/config.php", $data);
+        unlink("$root/config.ini");
+    }
+
+    /**
      * Set a configuration value
      * @param  string $key
      * @param  mixed  $value

@@ -19,9 +19,15 @@ $f3->mset(array(
     "site.url" => $f3->get("SCHEME") . "://" . $f3->get("HOST") . $f3->get("BASE") . "/"
 ));
 
-// Redirect to installer if no config file is found
-if (!is_file("config.ini")) {
-    header("Location: install.php");
+// Load configuration
+if(is_file('config.php')) {
+    $config = require_once('config.php');
+    $f3->mset($config);
+} elseif(is_file('config.ini')) {
+    $f3->config('config.ini');
+    \Model\Config::iniToPhp();
+} else {
+    header('Location: install.php');
     return;
 }
 
