@@ -68,7 +68,7 @@ class Admin extends \Controller
             \Model\Config::setVal('site.key', sha1(mt_rand() . mt_rand()));
         }
 
-        // Gather stats
+        // Gather basic stats
         $data = [
             'release' => PHPROJECT_VERSION,
             'key' => $f3->get('site.key'),
@@ -79,8 +79,12 @@ class Admin extends \Controller
         $data['users'] = $result[0]['count'];
         $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE role = 'group'");
         $data['groups'] = $result[0]['count'];
+        $result = $db->exec("SELECT AVG(num) num FROM (SELECT COUNT(*) num FROM user_group GROUP BY group_id) g");
+        $data['avg_group_size'] = $result[0]['num'];
         $result = $db->exec("SELECT COUNT(id) AS `count` FROM issue");
         $data['issues'] = $result[0]['count'];
+        $result = $db->exec("SELECT COUNT(id) AS `count` FROM sprint");
+        $data['sprints'] = $result[0]['count'];
         $result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
         $data['version'] = $result[0]['version'];
 
@@ -100,8 +104,6 @@ class Admin extends \Controller
             $this->_printJson(['error' => 1]);
             return;
         }
-
-        file_put_contents('result', $result);
 
         $return = @json_decode($result);
         if (json_last_error() != JSON_ERROR_NONE) {
