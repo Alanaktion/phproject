@@ -97,7 +97,7 @@ if ($_POST) {
         \Model\Config::setVal('mail.truncate_lines', '<--->,--- ---,------------------------------');
         \Model\Config::setVal('files.maxsize', 2097152);
 
-        // Save configruation options
+        // Save configuration options
         if (!empty($post["language"])) {
             \Model\Config::setVal("LANGUAGE", $post["language"]);
         }
