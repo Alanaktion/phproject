@@ -74,6 +74,29 @@ if ($_POST) {
             mkdir("log", 0777, true);
         }
 
+        // Save base configuration
+        \Model\Config::setVal('JAR.expire', 604800);
+        \Model\Config::setVal('cache_expire.db', 3600);
+        \Model\Config::setVal('cache_expire.minify', 86400);
+        \Model\Config::setVal('cache_expire.attachments', 2592000);
+        \Model\Config::setVal('parse.ids', true);
+        \Model\Config::setVal('parse.hashtags', true);
+        \Model\Config::setVal('parse.urls', true);
+        \Model\Config::setVal('parse.emoticons', true);
+        \Model\Config::setVal('site.description', 'A high performance full-featured project management system');
+        \Model\Config::setVal('site.demo', 0);
+        \Model\Config::setVal('site.public_registration', 0);
+        \Model\Config::setVal('security.block_ccs', 0);
+        \Model\Config::setVal('security.min_pass_len', 6);
+        \Model\Config::setVal('issue_type.task', 1);
+        \Model\Config::setVal('issue_type.project', 2);
+        \Model\Config::setVal('issue_type.bug', 3);
+        \Model\Config::setVal('issue_priority.default', 0);
+        \Model\Config::setVal('gravatar.rating', 'pg');
+        \Model\Config::setVal('gravatar.default', 'mm');
+        \Model\Config::setVal('mail.truncate_lines', '<--->,--- ---,------------------------------');
+        \Model\Config::setVal('files.maxsize', 2097152);
+
         // Save configruation options
         if (!empty($post["language"])) {
             \Model\Config::setVal("LANGUAGE", $post["language"]);
@@ -94,12 +117,15 @@ if ($_POST) {
         \Model\Config::setVal("mail.from", $post['mail-from']);
 
         // Write database connection file
-        $data = "[globals]\n";
-        $data .= "db.host=\"{$post['db-host']}\"\n";
-        $data .= "db.user=\"{$post['db-user']}\"\n";
-        $data .= "db.pass=\"{$post['db-pass']}\"\n";
-        $data .= "db.name=\"{$post['db-name']}\"\n";
-        file_put_contents("config.ini", $data);
+        $data = "<?php\n";
+        $data = "return [\n";
+        $data .= "    'db.host' => '{$post['db-host']}',\n";
+        $data .= "    'db.port' => '" . ($post['db-port'] ?: 3306) . "',\n";
+        $data .= "    'db.user' => '{$post['db-user']}',\n";
+        $data .= "    'db.pass' => '{$post['db-pass']}',\n";
+        $data .= "    'db.name' => '{$post['db-name']}',\n";
+        $data .= "];\n";
+        file_put_contents("config.php", $data);
 
         $f3->set("success", "Installation complete.");
     } catch (PDOException $e) {
