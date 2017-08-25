@@ -117,14 +117,14 @@ if ($_POST) {
         \Model\Config::setVal("mail.from", $post['mail-from']);
 
         // Write database connection file
-        $data = "<?php\n";
-        $data = "return [\n";
-        $data .= "    'db.host' => '{$post['db-host']}',\n";
-        $data .= "    'db.port' => '" . ($post['db-port'] ?: 3306) . "',\n";
-        $data .= "    'db.user' => '{$post['db-user']}',\n";
-        $data .= "    'db.pass' => '{$post['db-pass']}',\n";
-        $data .= "    'db.name' => '{$post['db-name']}',\n";
-        $data .= "];\n";
+        $config = [
+            'db.host' => $post['db-host'],
+            'db.port' => $post['db-port'] ?: 3306,
+            'db.user' => $post['db-user'],
+            'db.pass' => $post['db-pass'],
+            'db.name' => $post['db-name'],
+        ];
+        $data = "<?php\nreturn " . var_export($config, true) . ";\n";
         file_put_contents("config.php", $data);
 
         $f3->set("success", "Installation complete.");
