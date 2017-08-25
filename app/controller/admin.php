@@ -74,21 +74,24 @@ class Admin extends \Controller
         $data = [
             'release' => PHPROJECT_VERSION,
             'key' => $f3->get('site.key'),
-            'revision' => $f3->get('revision'),
         ];
-        $db = $f3->get('db.instance');
-        $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE role != 'group'");
-        $data['users'] = $result[0]['count'];
-        $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE role = 'group'");
-        $data['groups'] = $result[0]['count'];
-        $result = $db->exec("SELECT AVG(num) num FROM (SELECT COUNT(*) num FROM user_group GROUP BY group_id) g");
-        $data['avg_group_size'] = $result[0]['num'];
-        $result = $db->exec("SELECT COUNT(id) AS `count` FROM issue");
-        $data['issues'] = $result[0]['count'];
-        $result = $db->exec("SELECT COUNT(id) AS `count` FROM sprint");
-        $data['sprints'] = $result[0]['count'];
-        $result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
-        $data['version'] = $result[0]['version'];
+
+        if (!$f3->get('site.disable_stats')) {
+            $data['revision'] = $f3->get('revision');
+            $db = $f3->get('db.instance');
+            $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE role != 'group'");
+            $data['users'] = $result[0]['count'];
+            $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE role = 'group'");
+            $data['groups'] = $result[0]['count'];
+            $result = $db->exec("SELECT AVG(num) num FROM (SELECT COUNT(*) num FROM user_group GROUP BY group_id) g");
+            $data['avg_group_size'] = $result[0]['num'];
+            $result = $db->exec("SELECT COUNT(id) AS `count` FROM issue");
+            $data['issues'] = $result[0]['count'];
+            $result = $db->exec("SELECT COUNT(id) AS `count` FROM sprint");
+            $data['sprints'] = $result[0]['count'];
+            $result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
+            $data['version'] = $result[0]['version'];
+        }
 
         // Make HTTP request
         $endpoint = 'https://meta.phproject.org/release.php';
