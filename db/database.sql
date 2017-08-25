@@ -72,7 +72,6 @@ CREATE TABLE `issue` (
 	CONSTRAINT `issue_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
 	CONSTRAINT `issue_author_id` FOREIGN KEY (`author_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
 	CONSTRAINT `issue_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
-	CONSTRAINT `issue_priority` FOREIGN KEY (`priority`) REFERENCES `issue_priority`(`value`) ON UPDATE CASCADE ON DELETE SET NULL,
 	CONSTRAINT `issue_status` FOREIGN KEY (`status`) REFERENCES `issue_status`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -124,7 +123,7 @@ CREATE TABLE `issue_file` (
 DROP TABLE IF EXISTS `issue_priority`;
 CREATE TABLE `issue_priority` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`value` int(10) NOT NULL,
+	`value` int(11) NOT NULL,
 	`name` varchar(64) NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `priority` (`value`)
