@@ -42,14 +42,14 @@ DROP TABLE IF EXISTS `issue`;
 CREATE TABLE `issue` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`status` int(10) unsigned NOT NULL DEFAULT '1',
-	`type_id` int(11) unsigned NOT NULL DEFAULT '1',
+	`type_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`name` varchar(255) NOT NULL,
 	`size_estimate` VARCHAR(20) NULL,
 	`description` text NOT NULL,
-	`parent_id` int(11) unsigned DEFAULT NULL,
-	`author_id` int(11) unsigned NOT NULL,
-	`owner_id` int(11) unsigned DEFAULT NULL,
-	`priority` int(11) NOT NULL DEFAULT '0',
+	`parent_id` int(10) unsigned DEFAULT NULL,
+	`author_id` int(10) unsigned NOT NULL,
+	`owner_id` int(10) unsigned DEFAULT NULL,
+	`priority` int(10) NOT NULL DEFAULT '0',
 	`hours_total` double unsigned DEFAULT NULL,
 	`hours_remaining` double unsigned DEFAULT NULL,
 	`hours_spent` double unsigned DEFAULT NULL,
@@ -123,7 +123,7 @@ CREATE TABLE `issue_file` (
 DROP TABLE IF EXISTS `issue_priority`;
 CREATE TABLE `issue_priority` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`value` int(11) NOT NULL,
+	`value` int(10) NOT NULL,
 	`name` varchar(64) NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `priority` (`value`)
@@ -213,7 +213,7 @@ DROP TABLE IF EXISTS `issue_dependency`;
 CREATE TABLE `issue_dependency` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`issue_id` int(10) unsigned NOT NULL,
-	`dependency_id` int(11) unsigned NOT NULL,
+	`dependency_id` int(10) unsigned NOT NULL,
 	`dependency_type` char(2) COLLATE utf8_unicode_ci NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `issue_id_dependency_id` (`issue_id`,`dependency_id`),
