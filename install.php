@@ -17,7 +17,7 @@ $f3->mset(array(
 ));
 
 // Check if already installed
-if (is_file("config.ini")) {
+if (is_file("config.php")) {
     $f3->set("success", "Phproject is already installed.");
 }
 
