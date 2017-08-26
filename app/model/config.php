@@ -72,6 +72,13 @@ class Config extends \Model
     public static function iniToPhp()
     {
         $f3 = \Base::instance();
+
+        // Set some basic config values if they're not already there
+        if (!$f3->get('site.theme')) {
+            \Model\Config::setVal('site.theme', 'css/bootstrap-phproject.css');
+        }
+
+        // Move the config from INI to PHP
         $root = $f3->get("ROOT") . $f3->get("BASE");
         $ini = parse_ini_file($root."/config.ini");
         $data = "<?php\nreturn " . var_export($ini, true) . ";\n";
