@@ -11,7 +11,7 @@ ALTER TABLE `issue`
 	CHANGE `type_id` `type_id` INT(10) UNSIGNED DEFAULT 1 NOT NULL,
 	CHANGE `parent_id` `parent_id` INT(10) UNSIGNED NULL,
 	CHANGE `author_id` `author_id` INT(10) UNSIGNED NOT NULL,
-	CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL,
+	CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NULL,
 	CHANGE `priority` `priority` INT(10) DEFAULT 0 NOT NULL,
 	CHANGE `sprint_id` `sprint_id` INT(10) UNSIGNED NOT NULL;
 ALTER TABLE `issue_dependency`
