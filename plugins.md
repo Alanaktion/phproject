@@ -57,7 +57,8 @@ If your plugin adds additional routes, they should point to a separate class out
 ```php
 <?php
 // ...
-public function _load() {
+public function _load()
+{
     $f3 = \Base::instance();
     $f3->route("GET /yourplugin/action", "Plugin\Yourplugin\Controller->action");
 }
@@ -72,8 +73,10 @@ Hooks allow your plugin to extend core Phproject functionality while avoiding co
 ```php
 <?php
 // ...
-public function _load() {
-    $this->_hook("view.parse", function($str) {
+public function _load()
+{
+    $this->_hook("view.parse", function($str)
+    {
         return str_replace("asdf", "jkl;", $str);
     });
 }
@@ -96,11 +99,11 @@ Menu items can be added to the main navigation with a simple call to `$this->_ad
 ```php
 <?php
 // ...
-public function _load() {
+public function _load()
+{
     $this->_addNav("myplugin/page", "My Plugin", "/^myplugin\/page/");
 }
 // ...
-
 ```
 
 
@@ -131,13 +134,16 @@ These can be called within templates using the standard syntax found in all the 
 
 namespace Plugin\YourPlugin;
 
-class Base extends \Plugin {
+class Base extends \Plugin
+{
 
-    public function _load() {
+    public function _load()
+    {
         $this->_hook( ... );
     }
 
-    public function _installed() {
+    public function _installed()
+    {
         return true;
     }
 
