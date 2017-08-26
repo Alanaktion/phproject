@@ -13,7 +13,7 @@ ALTER TABLE `issue`
 	CHANGE `author_id` `author_id` INT(10) UNSIGNED NOT NULL,
 	CHANGE `owner_id` `owner_id` INT(10) UNSIGNED NULL,
 	CHANGE `priority` `priority` INT(10) DEFAULT 0 NOT NULL,
-	CHANGE `sprint_id` `sprint_id` INT(10) UNSIGNED NOT NULL;
+	CHANGE `sprint_id` `sprint_id` INT(10) UNSIGNED NULL;
 ALTER TABLE `issue_dependency`
 	CHANGE `dependency_id` `dependency_id` INT(10) UNSIGNED NOT NULL;
 ALTER TABLE `issue_priority`
