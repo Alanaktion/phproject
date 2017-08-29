@@ -38,7 +38,7 @@ class User extends \Controller
     public function dashboard($f3)
     {
         $dashboard = $f3->get("user_obj")->option("dashboard");
-        if (!$dashboard) {
+        if (!$dashboard || !is_array($dashboard)) {
             $dashboard = array(
                 "left" => array("projects", "subprojects", "bugs", "repeat_work", "watchlist"),
                 "right" => array("tasks")

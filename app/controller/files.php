@@ -63,6 +63,12 @@ class Files extends \Controller
         $this->_useFileCache();
         $cache = \Cache::instance();
 
+        // Abort on unusually large dimensions
+        if ($params["size"] > 1024) {
+            $f3->error(400);
+            return;
+        }
+
         // Ensure proper content-type for JPEG images
         if ($params["format"] == "jpg") {
             $params["format"] = "jpeg";

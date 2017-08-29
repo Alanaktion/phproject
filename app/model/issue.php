@@ -354,6 +354,11 @@ class Issue extends \Model
             $this->start_date = null;
         }
 
+        // Only save valid repeat_cycle values
+        if (!in_array($this->repeat_cycle, ['daily', 'weekly', 'monthly', 'sprint'])) {
+            $this->repeat_cycle = null;
+        }
+
         // Check if updating or inserting
         if ($this->query) {
 
