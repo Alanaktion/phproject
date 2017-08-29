@@ -27,6 +27,11 @@ class Config extends \Model
             $foundAttributes[] = $item["attribute"];
             $f3->set($item["attribute"], $item["value"]);
         }
+
+        // Set some basic config values if they're not already there
+        if (!in_array("site.theme", $foundAttributes)) {
+            \Model\Config::setVal('site.theme', 'css/bootstrap-phproject.css');
+        }
         if (!in_array("site.name", $foundAttributes)) {
             self::importAll();
         }
@@ -72,11 +77,6 @@ class Config extends \Model
     public static function iniToPhp()
     {
         $f3 = \Base::instance();
-
-        // Set some basic config values if they're not already there
-        if (!$f3->get('site.theme')) {
-            \Model\Config::setVal('site.theme', 'css/bootstrap-phproject.css');
-        }
 
         // Move the config from INI to PHP
         $root = $f3->get("ROOT") . $f3->get("BASE");
