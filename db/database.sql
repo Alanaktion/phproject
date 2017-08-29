@@ -42,14 +42,14 @@ DROP TABLE IF EXISTS `issue`;
 CREATE TABLE `issue` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`status` int(10) unsigned NOT NULL DEFAULT '1',
-	`type_id` int(11) unsigned NOT NULL DEFAULT '1',
+	`type_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`name` varchar(255) NOT NULL,
 	`size_estimate` VARCHAR(20) NULL,
 	`description` text NOT NULL,
-	`parent_id` int(11) unsigned DEFAULT NULL,
-	`author_id` int(11) unsigned NOT NULL,
-	`owner_id` int(11) unsigned DEFAULT NULL,
-	`priority` int(11) NOT NULL DEFAULT '0',
+	`parent_id` int(10) unsigned DEFAULT NULL,
+	`author_id` int(10) unsigned NOT NULL,
+	`owner_id` int(10) unsigned DEFAULT NULL,
+	`priority` int(10) NOT NULL DEFAULT '0',
 	`hours_total` double unsigned DEFAULT NULL,
 	`hours_remaining` double unsigned DEFAULT NULL,
 	`hours_spent` double unsigned DEFAULT NULL,
@@ -68,8 +68,11 @@ CREATE TABLE `issue` (
 	KEY `type_id` (`type_id`),
 	KEY `parent_id` (`parent_id`),
 	CONSTRAINT `issue_type_id` FOREIGN KEY (`type_id`) REFERENCES `issue_type`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT `issue_parent_id` FOREIGN KEY (`parent_id`) REFERENCES `issue`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
 	CONSTRAINT `issue_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `issue_author_id` FOREIGN KEY (`author_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
 	CONSTRAINT `issue_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `issue_priority` FOREIGN KEY (`priority`) REFERENCES `issue_priority`(`value`) ON UPDATE CASCADE ON DELETE RESTRICT,
 	CONSTRAINT `issue_status` FOREIGN KEY (`status`) REFERENCES `issue_status`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -123,7 +126,8 @@ CREATE TABLE `issue_priority` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`value` int(10) NOT NULL,
 	`name` varchar(64) NOT NULL,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `priority` (`value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `issue_priority` (`id`, `value`, `name`) VALUES
@@ -210,7 +214,7 @@ DROP TABLE IF EXISTS `issue_dependency`;
 CREATE TABLE `issue_dependency` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`issue_id` int(10) unsigned NOT NULL,
-	`dependency_id` int(11) unsigned NOT NULL,
+	`dependency_id` int(10) unsigned NOT NULL,
 	`dependency_type` char(2) COLLATE utf8_unicode_ci NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `issue_id_dependency_id` (`issue_id`,`dependency_id`),
@@ -297,41 +301,6 @@ CREATE VIEW `issue_update_detail` AS (select `i`.`id` AS `id`, `i`.`issue_id` AS
 DROP VIEW IF EXISTS `issue_watcher_user`;
 CREATE VIEW `issue_watcher_user` AS (select `w`.`id` AS `watcher_id`,`w`.`issue_id` AS `issue_id`,`u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`email` AS `email`,`u`.`name` AS `name`,`u`.`password` AS `password`,`u`.`role` AS `role`,`u`.`task_color` AS `task_color`,`u`.`created_date` AS `created_date`,`u`.`deleted_date` AS `deleted_date` from (`issue_watcher` `w` join `user` `u` on((`w`.`user_id` = `u`.`id`))));
 
-DROP TABLE IF EXISTS `attribute`;
-CREATE TABLE `attribute` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(64) NOT NULL,
-	`type` enum('text','numeric','datetime','bool','list') NOT NULL DEFAULT 'text',
-	`default` text,
-	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `attribute_issue_type`;
-CREATE TABLE `attribute_issue_type` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`attribute_id` int(10) unsigned NOT NULL,
-	`issue_type_id` int(10) unsigned NOT NULL,
-	PRIMARY KEY (`id`),
-	KEY `issue_type` (`issue_type_id`),
-	KEY `attribute_issue_type_attribute_id` (`attribute_id`),
-	CONSTRAINT `attribute_issue_type_attribute_id` FOREIGN KEY (`attribute_id`) REFERENCES `attribute` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `attribute_issue_type_issue_type_id` FOREIGN KEY (`issue_type_id`) REFERENCES `issue_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `attribute_value`;
-CREATE TABLE `attribute_value` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`attribute_id` int(10) unsigned NOT NULL,
-	`issue_id` int(10) unsigned NOT NULL,
-	`value` text NOT NULL,
-	PRIMARY KEY (`id`),
-	KEY `object` (`attribute_id`,`issue_id`),
-	CONSTRAINT `attribute_value_attribute_id` FOREIGN KEY (`attribute_id`) REFERENCES `attribute` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP VIEW IF EXISTS `attribute_value_detail`;
-CREATE VIEW `attribute_value_detail` AS (select `v`.`id` AS `id`,`v`.`attribute_id` AS `attribute_id`,`v`.`issue_id` AS `issue_id`,`v`.`value` AS `value`,`a`.`name` AS `name`,`a`.`type` AS `type`,`a`.`default` AS `default` from (`attribute_value` `v` join `attribute` `a` on((`v`.`attribute_id` = `a`.`id`))));
-
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session`(
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -357,4 +326,4 @@ CREATE TABLE `config` (
 -- This will allow us to deprecate and remove the file
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.reset_ttl', '86400');
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '17.03.23');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '17.08.25');

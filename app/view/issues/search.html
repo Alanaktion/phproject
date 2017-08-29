@@ -1,39 +1,39 @@
 <!DOCTYPE html>
 <html lang="{{ @this->lang() }}">
 <head>
-	<include href="blocks/head.html" />
+    <include href="blocks/head.html" />
 </head>
 <body>
 <set fullwidth="{{ true }}" />
 <include href="blocks/navbar.html" />
 <div class="container-fluid">
-	<p>
-		<a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;closed={{ empty(@GET.closed) }}">{{ empty(@GET.closed) ? 'Include closed issues' : 'Exclude closed issues' }}</a>
-	</p>
-	<include href="blocks/issue-list.html" />
-	<div class="clearfix">
-		<p class="pull-right hidden-xs">
-			<span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
-		</p>
-	</div>
-	<check if="{{ @issues.count }}">
-		<div class="text-center">
-			<ul class="pagination pagination-sm" style="margin: 15px 0;">
-				<li {~ if(@issues.pos == 0) echo 'class="disabled"' ~}>
-					<a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ @issues.pos ? @issues.pos - 1 : 0 }}&amp;closed={{ intval(@@GET.closed) }}">&laquo;</a>
-				</li>
-				<repeat group="{{ @pages }}" value="{{ @page }}">
-					<li {~ if(@page == @issues.pos) echo 'class="active"' ~}>
-						<a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ @page }}&amp;closed={{ intval(@@GET.closed) }}">{{ @page + 1 }}</a>
-					</li>
-				</repeat>
-				<li {~ if(@issues.pos == @issues.count - 1) echo 'class="disabled"' ~}>
-					<a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ (@issues.pos < @issues.count - 1) ? @issues.pos + 1 : @issues.count - 1 }}&amp;closed={{ intval(@@GET.closed) }}">&raquo;</a>
-				</li>
-			</ul>
-		</div>
-	</check>
-	<include href="blocks/footer.html" />
+    <p>
+        <a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;closed={{ empty(@GET.closed) }}">{{ empty(@GET.closed) ? 'Include closed issues' : 'Exclude closed issues' }}</a>
+    </p>
+    <include href="blocks/issue-list.html" />
+    <div class="clearfix">
+        <p class="pull-right hidden-xs">
+            <span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
+        </p>
+    </div>
+    <check if="{{ @issues.count }}">
+        <div class="text-center">
+            <ul class="pagination pagination-sm" style="margin: 15px 0;">
+                <li {~ if(@issues.pos == 0) echo 'class="disabled"' ~}>
+                    <a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ @issues.pos ? @issues.pos - 1 : 0 }}&amp;closed={{ intval(@@GET.closed) }}">&laquo;</a>
+                </li>
+                <repeat group="{{ @pages }}" value="{{ @page }}">
+                    <li {~ if(@page == @issues.pos) echo 'class="active"' ~}>
+                        <a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ @page }}&amp;closed={{ intval(@@GET.closed) }}">{{ @page + 1 }}</a>
+                    </li>
+                </repeat>
+                <li {~ if(@issues.pos == @issues.count - 1) echo 'class="disabled"' ~}>
+                    <a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;page={{ (@issues.pos < @issues.count - 1) ? @issues.pos + 1 : @issues.count - 1 }}&amp;closed={{ intval(@@GET.closed) }}">&raquo;</a>
+                </li>
+            </ul>
+        </div>
+    </check>
+    <include href="blocks/footer.html" />
 </div>
 </body>
 </html>

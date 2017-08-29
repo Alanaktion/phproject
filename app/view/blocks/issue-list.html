@@ -5,93 +5,93 @@
 </check>
 <set randid="{{ rand() }}" />
 <form action="{{ @BASE }}/issues" method="get" class="table-responsive filter-form" id="form-filter-issues-{{ @randid }}">
-	<check if="{{ !empty(@heading_links_enabled) }}">
-		<input type="hidden" name="orderby" value="{{ (!empty(@GET.orderby) ? @GET.orderby : 'priority') | esc }}" />
-		<input type="hidden" name="ascdesc" value="{{ (!empty(@GET.ascdesc) ? @GET.ascdesc : 'desc') | esc }}" />
-	</check>
-	<table class="table table-striped table-hover table-condensed issue-list">
-		<thead>
-			<check if="{{ !empty(@show_filters) }}">
-				<include href="blocks/issue-list/filters.html" />
-			</check>
-			<tr>
-				<check if="{{ @bulkUpdate }}">
-					<th><input type="checkbox" class="chk-toggle-all"></th>
-				</check>
-				<check if="{{ !empty(@heading_links_enabled) }}">
-					<true>
-						<repeat group="{{ @headings }}" value="{{ @heading }}">
-							<th class="nowrap"><a href="#" class="issue-sort nolink" id="{{ @heading }}">
-								<check if="{{ !empty(@GET.orderby) && @GET.orderby == @heading }}">
-									<true>
-										<check if="{{ !empty(@GET.ascdesc) && @GET.ascdesc == 'asc' }}">
-											<true><span class="fa fa-chevron-up"></span></true>
-											<false><span class="fa fa-chevron-down"></span></false>
-										</check>
-									</true>
-								</check>
-								{{ !empty(@dict.cols[@heading]) ? @dict.cols[@heading] : ucwords(str_replace(array('_', 'id'), array(' ', 'ID'), @heading)) }}
-							</a></th>
-						</repeat>
-					</true>
-					<false>
-						<repeat group="{{ @headings }}" value="{{ @heading }}">
-							<th class="nowrap">{{ !empty(@dict.cols[@heading]) ? @dict.cols[@heading] : ucwords(str_replace(array('_', 'id'), array(' ', 'ID'), @heading)) }}</th>
-						</repeat>
-					</false>
-				</check>
-			</tr>
-		</thead>
-		<tbody>
-			<repeat group="{{ @issues.subset }}" value="{{ @item }}">
-				<include href="blocks/issue-list/issue.html" />
-			</repeat>
-		</tbody>
+    <check if="{{ !empty(@heading_links_enabled) }}">
+        <input type="hidden" name="orderby" value="{{ (!empty(@GET.orderby) ? @GET.orderby : 'priority') | esc }}" />
+        <input type="hidden" name="ascdesc" value="{{ (!empty(@GET.ascdesc) ? @GET.ascdesc : 'desc') | esc }}" />
+    </check>
+    <table class="table table-striped table-hover table-condensed issue-list">
+        <thead>
+            <check if="{{ !empty(@show_filters) }}">
+                <include href="blocks/issue-list/filters.html" />
+            </check>
+            <tr>
+                <check if="{{ @bulkUpdate }}">
+                    <th><input type="checkbox" class="chk-toggle-all"></th>
+                </check>
+                <check if="{{ !empty(@heading_links_enabled) }}">
+                    <true>
+                        <repeat group="{{ @headings }}" value="{{ @heading }}">
+                            <th class="nowrap"><a href="#" class="issue-sort nolink" id="{{ @heading }}">
+                                <check if="{{ !empty(@GET.orderby) && @GET.orderby == @heading }}">
+                                    <true>
+                                        <check if="{{ !empty(@GET.ascdesc) && @GET.ascdesc == 'asc' }}">
+                                            <true><span class="fa fa-chevron-up"></span></true>
+                                            <false><span class="fa fa-chevron-down"></span></false>
+                                        </check>
+                                    </true>
+                                </check>
+                                {{ !empty(@dict.cols[@heading]) ? @dict.cols[@heading] : ucwords(str_replace(array('_', 'id'), array(' ', 'ID'), @heading)) }}
+                            </a></th>
+                        </repeat>
+                    </true>
+                    <false>
+                        <repeat group="{{ @headings }}" value="{{ @heading }}">
+                            <th class="nowrap">{{ !empty(@dict.cols[@heading]) ? @dict.cols[@heading] : ucwords(str_replace(array('_', 'id'), array(' ', 'ID'), @heading)) }}</th>
+                        </repeat>
+                    </false>
+                </check>
+            </tr>
+        </thead>
+        <tbody>
+            <repeat group="{{ @issues.subset }}" value="{{ @item }}">
+                <include href="blocks/issue-list/issue.html" />
+            </repeat>
+        </tbody>
 
-	</table>
+    </table>
 </form>
 
 <check if="{{ @bulkUpdate }}">
-	<include href="blocks/issue-list/bulk-update.html" />
+    <include href="blocks/issue-list/bulk-update.html" />
 </check>
 
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
-	$.ajax({
-		url: BASE + '/minify/js/typeahead.jquery.js',
-		cache: true,
-		dataType: "script",
-		success: function() {
-			$('input[data-typeahead="issues"]').typeahead({
-				classNames: {
-					menu: 'dropdown-menu'
-				}
-			}, {
-				async: true,
-				limit: 10,
-				source: function(query, syncResults, asyncResults) {
-					$.ajax({
-						url: BASE + '/issues/parent_ajax',
-						data: { 'q': query },
-						success: function(data) {
-							asyncResults(data.results);
-						},
-						dataType: 'json',
-						cache: false
-					});
-				},
-				display: function(element) {
-					return element.id;
-				},
-				templates: {
-					suggestion: function(element) {
-						return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
-					}
-				}
-			}).bind('typeahead:select', function() {
-				$('#form-filter-issues-{{ @randid }}').submit();
-			});
-		}
-	});
+    $.ajax({
+        url: BASE + '/minify/js/typeahead.jquery.js',
+        cache: true,
+        dataType: "script",
+        success: function() {
+            $('input[data-typeahead="issues"]').typeahead({
+                classNames: {
+                    menu: 'dropdown-menu'
+                }
+            }, {
+                async: true,
+                limit: 10,
+                source: function(query, syncResults, asyncResults) {
+                    $.ajax({
+                        url: BASE + '/issues/parent_ajax',
+                        data: { 'q': query },
+                        success: function(data) {
+                            asyncResults(data.results);
+                        },
+                        dataType: 'json',
+                        cache: false
+                    });
+                },
+                display: function(element) {
+                    return element.id;
+                },
+                templates: {
+                    suggestion: function(element) {
+                        return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
+                    }
+                }
+            }).bind('typeahead:select', function() {
+                $('#form-filter-issues-{{ @randid }}').submit();
+            });
+        }
+    });
 });
 </script>

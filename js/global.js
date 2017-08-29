@@ -1,4 +1,4 @@
-/* globals $ Intercom BASE */
+/* globals $ BASE */
 $(function() {
 
 	// Tooltips and popovers
@@ -172,65 +172,4 @@ $(function() {
 		}
 	});
 
-});
-
-
-/**
- * Session helper
- * @type {Object}
- */
-var Session = {
-
-	pingInterval: 5,
-
-	/**
-	 * Initialize session pings
-	 */
-	init: function() {
-		Intercom.getInstance().on('pingResponse', Session.pingResponse);
-		setInterval(Session.pingWrapper, Session.pingInterval * 1000);
-	},
-
-	/**
-	 * Recurring ping request wrapper
-	 */
-	pingWrapper: function() {
-		if(Intercom.supported) {
-			Intercom.getInstance().once('sessionPing', Session.ping, Session.pingInterval);
-		} else {
-			Session.ping();
-		}
-	},
-
-	/**
-	 * Send Ping request
-	 */
-	ping: function() {
-		$.get(BASE + '/ping', function(data) {
-			if(Intercom.supported) {
-				Intercom.getInstance().emit('pingResponse', data);
-			} else {
-				Session.pingResponse(data);
-			}
-		});
-	},
-
-	/**
-	 * Handle ping responses
-	 */
-	pingResponse: function(data) {
-		if(data.is_logged_in && $('#modal-loggedout.in').length) {
-			$('#modal-loggedout').modal('hide');
-		}
-		if(!data.is_logged_in && $('#modal-loggedout').length && !$('#modal-loggedout.in').length) {
-			$('.modal.in').modal('hide');
-			$('#modal-loggedout').modal('show');
-		}
-	}
-
-};
-
-$(function() {
-	// Start session helper
-	Session.init();
 });

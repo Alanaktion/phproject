@@ -1,0 +1,21 @@
+{
+    "name": "alanaktion/phproject",
+    "description": "A high performance full-featured project management system",
+    "type": "project",
+    "require": {
+        "bcosca/fatfree": "^3.6",
+        "paragonie/random_compat": "^2.0",
+        "symfony/polyfill": "^1.4",
+        "voku/anti-xss": "^2.1",
+        "netcarver/textile": "3.6.*",
+        "erusev/parsedown": "^1.6",
+        "neos/diff": "^3.1"
+    },
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Alan Hardman",
+            "email": "alan@phpizza.com"
+        }
+    ]
+}

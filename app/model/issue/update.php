@@ -12,9 +12,7 @@ namespace Model\Issue;
  * @property int $comment_id
  * @property int $notify
  */
-class Update extends \Model {
-
-	protected $_table_name = "issue_update";
-
+class Update extends \Model
+{
+    protected $_table_name = "issue_update";
 }
-
