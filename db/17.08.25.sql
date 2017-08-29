@@ -22,6 +22,24 @@ ALTER TABLE `issue_priority`
 
 SET foreign_key_checks = 1;
 
+-- Remove invalid parent IDs
+UPDATE `issue` `i1` LEFT
+JOIN `issue` `i2` ON `i2`.`id` = `i1`.`parent_id`
+SET `i1`.`parent_id` = NULL
+WHERE `i1`.`parent_id` IS NOT NULL AND `i2`.`id` IS NULL;
+
+-- Reset invalid priorities
+UPDATE `issue` `i`
+LEFT JOIN `issue_priority` `p` ON `p`.`value` = `i`.`priority`
+SET `i`.`priority` = IFNULL((SELECT `value` FROM `config` WHERE `attribute` = 'issue_priority.default'), '0')
+WHERE `p`.`id` IS NULL;
+
+-- Reset invalid author IDs
+UPDATE `issue` `i`
+LEFT JOIN `user` `u` ON `u`.`id` = `i`.`author_id`
+SET i.`author_id` = (SELECT MIN(`id`) FROM `user`)
+WHERE `u`.`id` IS NULL;
+
 -- Add additional foreign keys
 ALTER TABLE `issue`
 	ADD CONSTRAINT `issue_parent_id` FOREIGN KEY (`parent_id`) REFERENCES `issue`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
