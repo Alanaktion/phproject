@@ -1,8 +1,6 @@
 <?php
 /**
  * Cron job base initialization
- * @package  Test
- * @author   Alan Hardman <alan@phpizza.com>
  */
 
 if (PHP_SAPI != 'cli') {
@@ -24,8 +22,7 @@ $f3->mset(array(
 ));
 
 // Load local configuration
-$f3->config($homedir."config-base.ini");
-$f3->config($homedir."config.ini");
+$f3->mset(require_once('config.php'));
 
 // Connect to database
 $f3->set("db.instance", new DB\SQL(
