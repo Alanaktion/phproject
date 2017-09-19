@@ -42,6 +42,7 @@
             <b>{{ @dict.username }}:</b> {{ @db.user | esc }}<br>
             <b>{{ @dict.password }}:</b> ********<br>
             <b>{{ @dict.current_version }}:</b> {{@version}}<br>
+            <b>MySQL version:</b> {{ @db.instance->getAttribute(\PDO::ATTR_SERVER_VERSION) }}
         </div>
         <div class="col-md-3 col-sm-6">
             <div class="clearfix">
