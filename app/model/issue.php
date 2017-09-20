@@ -213,6 +213,18 @@ class Issue extends \Model
                 $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +1 month")) : null;
                 $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +1 month"));
                 break;
+            case 'quarterly':
+                $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +3 months")) : null;
+                $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +3 months"));
+                break;
+            case 'semi-annually':
+                $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +6 months")) : null;
+                $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +6 months"));
+                break;
+            case 'annually':
+                $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +1 year")) : null;
+                $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +1 year"));
+                break;
             case 'sprint':
                 $sprint = new \Model\Sprint();
                 $sprint->load(array("start_date > NOW()"), array('order' => 'start_date'));
@@ -355,7 +367,7 @@ class Issue extends \Model
         }
 
         // Only save valid repeat_cycle values
-        if (!in_array($this->repeat_cycle, ['daily', 'weekly', 'monthly', 'sprint'])) {
+        if (!in_array($this->repeat_cycle, ['daily', 'weekly', 'monthly', 'quarterly', 'semi-annually', 'annually', 'sprint'])) {
             $this->repeat_cycle = null;
         }
 

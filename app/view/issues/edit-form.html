@@ -191,6 +191,9 @@
                 <option value="daily" {{ !empty(@issue) && @issue.repeat_cycle == 'daily' ? "selected" : "" }}>{{ @dict.daily }}</option>
                 <option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>{{ @dict.weekly }}</option>
                 <option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>{{ @dict.monthly }}</option>
+                <option value="quarterly" {{ !empty(@issue) && @issue.repeat_cycle == 'quarterly' ? "selected" : "" }}>{{ @dict.quarterly }}</option>
+                <option value="semi-annually" {{ !empty(@issue) && @issue.repeat_cycle == 'semi-annually' ? "selected" : "" }}>{{ @dict.semi_annually }}</option>
+                <option value="annually" {{ !empty(@issue) && @issue.repeat_cycle == 'annually' ? "selected" : "" }}>{{ @dict.annually }}</option>
                 <option value="sprint" {{ !empty(@issue) && @issue.repeat_cycle == 'sprint' ? "selected" : "" }}>{{ @dict.sprint }}</option>
             </select>
         </div>
