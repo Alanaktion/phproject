@@ -251,6 +251,7 @@ class User extends \Controller
             $f3->error(400);
             return;
         }
+        finfo_close($finfo);
 
         $web->receive(
             function ($file) use ($f3, $user) {
