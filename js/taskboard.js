@@ -343,7 +343,7 @@ var Taskboard = {
 	showError: function(taskId) {
 		$('#task_' + taskId + ', #new_task_' + taskId).css({
 			'opacity': '.8'
-		}).append('<div class="error text-danger" title="An error occured while saving the task."><span class="glyphicon glyphicon-floppy-remove"></span></div>');
+		}).append('<div class="error text-danger" title="An error occured while saving the task."><span class="fa fa-exclamation-triangle" aira-hidden="true"></span></div>');
 	}
 };
 

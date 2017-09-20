@@ -455,8 +455,8 @@ class Taskboard extends \Controller
             $issue->name = $post["title"];
             $issue->description = $post["description"];
             $issue->owner_id = $post["assigned"];
-            $issue->hours_remaining = $post["hours"];
-            $issue->hours_spent += $post["hours_spent"];
+            $issue->hours_remaining = floatval($post["hours"]) ?: 0;
+            $issue->hours_spent += floatval($post["hours_spent"]) ?: 0;
             if (!empty($post["hours_spent"]) && !empty($post["burndown"])) {
                 $issue->hours_remaining -= $post["hours_spent"];
             }
