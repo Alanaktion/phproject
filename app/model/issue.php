@@ -217,7 +217,7 @@ class Issue extends \Model
                 $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +3 months")) : null;
                 $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +3 months"));
                 break;
-            case 'semi-annually':
+            case 'semi_annually':
                 $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +6 months")) : null;
                 $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +6 months"));
                 break;
@@ -367,7 +367,7 @@ class Issue extends \Model
         }
 
         // Only save valid repeat_cycle values
-        if (!in_array($this->repeat_cycle, ['daily', 'weekly', 'monthly', 'quarterly', 'semi-annually', 'annually', 'sprint'])) {
+        if (!in_array($this->repeat_cycle, ['daily', 'weekly', 'monthly', 'quarterly', 'semi_annually', 'annually', 'sprint'])) {
             $this->repeat_cycle = null;
         }
 

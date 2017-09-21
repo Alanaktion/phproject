@@ -162,9 +162,9 @@
                     <true><option value="quarterly" selected>{{ @dict.quarterly }}</option></true>
                     <false><option value="quarterly">{{ @dict.quarterly }}</option></false>
                 </check>
-                <check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'semi-annually' }}">
-                    <true><option value="semi-annually" selected>{{ @dict.semi_annually }}</option></true>
-                    <false><option value="semi-annually">{{ @dict.semi_annually }}</option></false>
+                <check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'semi_annually' }}">
+                    <true><option value="semi_annually" selected>{{ @dict.semi_annually }}</option></true>
+                    <false><option value="semi_annually">{{ @dict.semi_annually }}</option></false>
                 </check>
                 <check if="{{ !empty(@GET.repeat_cycle) && @GET.repeat_cycle == 'annually' }}">
                     <true><option value="annually" selected>{{ @dict.annually }}</option></true>
