@@ -63,10 +63,10 @@ a.nolink:hover {
 .badge.status {
 	opacity: 0.7;
 }
-.dashboard .list-group-item .badge {
+.issue-list-group .list-group-item .badge {
 	margin-top: 3px;
 }
-.dashboard .list-group-item .badge-sibling {
+.issue-list-group .list-group-item .badge-sibling {
 	margin: 2px 10px 0 0;
 }
 

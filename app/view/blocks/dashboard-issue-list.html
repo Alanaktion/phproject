@@ -1,4 +1,4 @@
-<div class="list-group">
+<div class="list-group issue-list-group">
     <repeat group="{{ @issues }}" value="{{ @item }}">
         <a class="list-group-item" href="{{ @BASE }}/issues/{{ @item.id }}">
             <span class="badge status">{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) | esc }}</span>
