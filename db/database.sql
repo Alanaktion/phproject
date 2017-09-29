@@ -58,7 +58,7 @@ CREATE TABLE `issue` (
 	`deleted_date` datetime DEFAULT NULL,
 	`start_date` date DEFAULT NULL,
 	`due_date` date DEFAULT NULL,
-	`repeat_cycle` varchar(10) NULL,
+	`repeat_cycle` varchar(20) NULL,
 	`sprint_id` int(10) unsigned DEFAULT NULL,
 	`due_date_sprint` tinyint(1) unsigned DEFAULT 0 NOT NULL,
 	PRIMARY KEY (`id`),
@@ -326,4 +326,4 @@ CREATE TABLE `config` (
 -- This will allow us to deprecate and remove the file
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.reset_ttl', '86400');
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '17.08.25');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '17.09.20');
