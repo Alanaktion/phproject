@@ -49,6 +49,9 @@ class View extends \Template
         if ($options["hashtags"]) {
             $str = $this->_parseHashtags($str);
         }
+        if ($options["emoticons"]) {
+            $str = $this->_parseEmoticons($str);
+        }
         if ($options["markdown"]) {
             $str = $this->_parseMarkdown($str);
         }
@@ -65,9 +68,6 @@ class View extends \Template
         }
         if (!$options["markdown"] && !$options['textile']) {
             $str = nl2br(\Base::instance()->encode($str), false);
-        }
-        if ($options["emoticons"]) {
-            $str = $this->_parseEmoticons($str);
         }
         if ($options["urls"]) {
             $str = $this->_parseUrls($str);
@@ -213,7 +213,6 @@ class View extends \Template
             ':(' => "\xF0\x9F\x99\x81", // frown
             ':)' => "\xF0\x9F\x99\x82", // smile
             '<3' => "\xE2\x9D\xA4\xEF\xB8\x8F", // heart
-            '&lt;3' => "\xE2\x9D\xA4\xEF\xB8\x8F", // heart, HTML-encoded
             ':D' => "\xF0\x9F\x98\x83", // grin
             'XD' => "\xF0\x9F\x98\x86", // laugh
             ';)' => "\xF0\x9F\x98\x89", // wink
@@ -222,7 +221,16 @@ class View extends \Template
             ':/' => "\xF0\x9F\x98\xA3", // skeptic
             '8O' => "\xF0\x9F\x98\xB2", // oops
         ];
-        return \UTF::instance()->translate(str_replace(array_keys($map), array_values($map), $str));
+
+        $match = implode('|', array_map(function($str) {
+            return preg_quote($str, '/');
+        }, array_keys($map)));
+        $regex = "/([^a-z\\/&]|^)($match)([^a-z\\/]|$)/m";
+
+        return preg_replace_callback($regex, function($match) use ($map) {
+            var_dump([$match[2], $map[$match[2]]]);
+            return $match[1] . $map[$match[2]] . $match[3];
+        }, $str);
     }
 
     /**
