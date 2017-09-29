@@ -228,7 +228,6 @@ class View extends \Template
         $regex = "/([^a-z\\/&]|^)($match)([^a-z\\/]|$)/m";
 
         return preg_replace_callback($regex, function($match) use ($map) {
-            var_dump([$match[2], $map[$match[2]]]);
             return $match[1] . $map[$match[2]] . $match[3];
         }, $str);
     }
