@@ -43,8 +43,6 @@ class User extends \Controller
             $dashboard = $helper->defaultConfig;
         }
 
-        $widgetWhitelist = [];
-
         // Load dashboard widget data
         $allWidgets = $helper->allWidgets;
         $missing = array();
@@ -177,6 +175,7 @@ class User extends \Controller
             // Update option values
             $user->option("disable_mde", !empty($post["disable_mde"]));
             $user->option("disable_due_alerts", !empty($post["disable_due_alerts"]));
+            $user->option("disable_self_notifications", !empty($post["disable_self_notifications"]));
         } else {
 
             // Update profile

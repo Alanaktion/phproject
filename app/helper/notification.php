@@ -190,8 +190,13 @@ class Notification extends \Prefab
                 $f3->set("parent", $parent);
             }
 
-            // Get recipient list, keeping current user
+            // Get recipient list, conditionally removing the author
             $recipients = $this->_issue_watchers($issue_id);
+            $user = new \Model\User;
+            $user->load($issue->user_id);
+            if ($user->option('disable_self_notifications')) {
+                $recipients = array_diff($recipients, array($user->email));
+            }
 
             // Render message body
             $f3->set("issue", $issue);
