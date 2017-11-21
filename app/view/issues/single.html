@@ -136,7 +136,7 @@
                 </check>
 
                 <dt>{{ @dict.cols.created }}</dt>
-                <dd>{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}</dd>
+                <dd title="{{ date('Y-m-d H:i:s', @this->utc2local(@issue.created_date)) }}">{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}</dd>
 
                 <dt>{{ @dict.cols.type }}</dt>
                 <dd>{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | esc }}</dd>
@@ -229,7 +229,7 @@
                                             </td>
                                             <td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" target="_blank">{{ @file.filename | esc }}</a></td>
                                             <td>{{ @file.user_name | esc }}</td>
-                                            <td data-sort-value="{{ strtotime(@file.created_date) }}">{{ date('M j, Y \a\t g:ia', $this->utc2local(strtotime(@file.created_date))) }}</td>
+                                            <td data-sort-value="{{ strtotime(@file.created_date) }}" title="{{ date('Y-m-d H:i:s', @this->utc2local(@file.created_date)) }}">{{ date('M j, Y \a\t g:ia', @this->utc2local(strtotime(@file.created_date))) }}</td>
                                             <td data-sort-value="{{ @file.filesize }}">{{ @file.filesize | formatFilesize }}</td>
                                             <td><button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button></td>
                                         </tr>
