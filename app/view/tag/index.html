@@ -38,9 +38,23 @@
                 </table>
             </div>
             <div class="tab-pane fade" id="tag-cloud">
+                {~
+                    @tagSizeMin = 14;
+                    @tagSizeMax = 60;
+                    @tagFreqMin = null;
+                    @tagFreqMax = 0;
+                    foreach (@cloud as @item) {
+                        if (@tagFreqMin === null || @item.freq < @tagFreqMin) @tagFreqMin = @item.freq;
+                        if (@tagFreqMax < @item.freq) @tagFreqMax = @item.freq;
+                    }
+                    @sizes = [];
+                    foreach (@cloud as @item) {
+                        @sizes[@item.tag] = (@item.freq - @tagFreqMin) / (@tagFreqMax - @tagFreqMin) * (@tagSizeMax - @tagSizeMin) + @tagSizeMin;
+                    }
+                ~}
                 <div class="tag-cloud">
                     <repeat group="{{ @cloud }}" value="{{ @item }}">
-                        <a href="{{ @BASE }}/tag/{{ @item.tag }}" style="font-size: {{ 14 + (@item.freq * 2) }}px;">{{ @item.tag }}</a>&ensp;
+                        <a href="{{ @BASE }}/tag/{{ @item.tag }}" style="font-size: {{ @sizes[@item.tag] }}px;">{{ @item.tag }}</a>&ensp;
                     </repeat>
                 </div>
             </div>
