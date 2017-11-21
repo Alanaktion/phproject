@@ -59,6 +59,9 @@ $(function() {
         }
     });
 
+    // Autofocus the first field
+    $('#edit-form input[name="name"]').focus();
+
     // Prevent navigation with unsaved changes
     var $editForm = $('#edit-form'),
         formSerialized = $editForm.serialize();

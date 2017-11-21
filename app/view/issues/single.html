@@ -380,11 +380,6 @@
 </check>
 <script type="text/javascript">
 $(function() {
-    // Scroll to top
-    $('#btn-edit').click(function(){
-        $("html, body").animate({ scrollTop: 0 }, 0);
-        return false;
-    });
     // Handle copy modal
     $("#btn-copy").click(function(e) {
         $("#modal-copy").modal("show");
@@ -558,7 +553,14 @@ $(function() {
     var hasClickedEdit = false;
     $("#btn-edit, #form-edit .close, #form-edit .btn-cancel").click(function(e) {
         if(!e.which || e.which == 1) {
-            $("#form-edit").slideToggle("fast");
+            var $form = $('#form-edit');
+            if ($form.is(':visible')) {
+                $("#form-edit").slideUp("fast");
+            } else {
+                window.scrollTo(0, 0);
+                $("#form-edit").slideDown("fast");
+                $('#edit-form input[name="name"]').focus();
+            }
             if(!hasClickedEdit) {
                 hasClickedEdit = true;
                 if('SimpleMDE' in window) {

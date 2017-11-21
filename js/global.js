@@ -169,6 +169,12 @@ $(function() {
 						window.location = BASE + '/issues/new/' + (e.which - 48);
 					}
 			}
+		} else if(e.which == 27) {
+			$el = $(document.activeElement);
+			if ($el.filter('input,select,textarea').length) {
+				// Clear focus on a form element
+				$el.blur();
+			}
 		}
 	});
 
