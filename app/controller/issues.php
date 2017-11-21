@@ -166,8 +166,8 @@ class Issues extends \Controller
         $f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
         $sprint = new \Model\Sprint;
-        $f3->set("sprints", $sprint->find(array("end_date >= ?", date("Y-m-d")), array("order" => "start_date ASC")));
-        $f3->set("old_sprints", $sprint->find(array("end_date < ?", date("Y-m-d")), array("order" => "start_date ASC")));
+        $f3->set("sprints", $sprint->find(array("end_date >= ?", date("Y-m-d")), array("order" => "start_date ASC, id ASC")));
+        $f3->set("old_sprints", $sprint->find(array("end_date < ?", date("Y-m-d")), array("order" => "start_date ASC, id ASC")));
 
         $users = new \Model\User;
         $f3->set("users", $users->getAll());
@@ -380,7 +380,7 @@ class Issues extends \Controller
         $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
         $sprint = new \Model\Sprint;
-        $f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC")));
+        $f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC, id ASC")));
 
         $users = new \Model\User;
         $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -431,7 +431,7 @@ class Issues extends \Controller
         $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
         $sprint = new \Model\Sprint;
-        $f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", $this->now(false), $issue->sprint_id), array("order" => "start_date ASC")));
+        $f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", $this->now(false), $issue->sprint_id), array("order" => "start_date ASC, id ASC")));
 
         $users = new \Model\User;
         $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -696,7 +696,7 @@ class Issues extends \Controller
         $f3->set("owner", $owner);
 
         $comments = new \Model\Issue\Comment\Detail;
-        $f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC")));
+        $f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC, id DESC")));
 
         // Extra data needed for inline edit form
         $status = new \Model\Issue\Status;
@@ -706,7 +706,7 @@ class Issues extends \Controller
         $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
         $sprint = new \Model\Sprint;
-        $f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", $this->now(false), $issue->sprint_id), array("order" => "start_date ASC")));
+        $f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", $this->now(false), $issue->sprint_id), array("order" => "start_date ASC, id ASC")));
 
         $users = new \Model\User;
         $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
@@ -819,7 +819,7 @@ class Issues extends \Controller
         // Build updates array
         $updates_array = array();
         $update_model = new \Model\Custom("issue_update_detail");
-        $updates = $update_model->find(array("issue_id = ?", $params["id"]), array("order" => "created_date DESC"));
+        $updates = $update_model->find(array("issue_id = ?", $params["id"]), array("order" => "created_date DESC, id DESC"));
         foreach ($updates as $update) {
             $update_array = $update->cast();
             $update_field_model = new \Model\Issue\Update\Field;
@@ -1119,7 +1119,7 @@ class Issues extends \Controller
             $where[0] .= " AND status_closed = '0'";
         }
 
-        $issue_page = $issues->paginate($args["page"], 50, $where, array("order" => "created_date DESC"));
+        $issue_page = $issues->paginate($args["page"], 50, $where, array("order" => "created_date DESC, id DESC"));
         $f3->set("issues", $issue_page);
 
         if ($issue_page["count"] > 7) {
