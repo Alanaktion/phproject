@@ -9,6 +9,11 @@ class Dashboard extends \Prefab
     protected $_projects;
     protected $_order = "priority DESC, has_due_date ASC, due_date ASC";
 
+    public $defaultConfig = [
+        "left" => ["projects", "subprojects", "bugs", "repeat_work", "watchlist"],
+        "right" => ["tasks"]
+    ];
+
     public $allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments", "open_comments", "issue_tree");
 
     public function getIssue()

@@ -301,98 +301,87 @@ class Admin extends \Controller
         $security = \Helper\Security::instance();
         $user = new \Model\User;
 
-        // Load current user if set, otherwise validate fields for new user
-        if ($user_id = $f3->get("POST.user_id")) {
-            $f3->set("title", $f3->get("dict.edit_user"));
-            $user->load($user_id);
-            $f3->set("this_user", $user);
-        } else {
-            $f3->set("title", $f3->get("dict.new_user"));
-
-            // Verify a password is being set
-            if (!$f3->get("POST.password")) {
-                $f3->set("error", "A password is required for a new user");
-                $this->_render("admin/users/edit.html");
-                return;
-            }
-
+        try {
             // Check for existing users with same info
-            $user->load(array("username = ?", $f3->get("POST.username")));
+            $user->load(array("username = ? AND id != ?", $f3->get("POST.username"), $user_id));
             if ($user->id) {
-                $f3->set("error", "User already exists with this username");
-                $this->_render("admin/users/edit.html");
-                return;
+                throw new \Exception("Another user already exists with this username");
             }
-
-            $user->load(array("email = ?", $f3->get("POST.email")));
+            $user->load(array("email = ? AND id != ?", $f3->get("POST.email"), $user_id));
             if ($user->id) {
-                $f3->set("error", "User already exists with this email address");
-                $this->_render("admin/users/edit.html");
-                return;
+                throw new \Exception("Another user already exists with this email address");
             }
 
-            // Set new user fields
-            $user->api_key = $security->salt_sha1();
-            $user->created_date = $this->now();
-        }
-
-        // Validate password if being set
-        if ($f3->get("POST.password")) {
-            if ($f3->get("POST.password") != $f3->get("POST.password_confirm")) {
-                $f3->set("error", "Passwords do not match");
-                $this->_render("admin/users/edit.html");
-                return;
-            }
-            $min = $f3->get("security.min_pass_len");
-            if (strlen($f3->get("POST.password")) < $min) {
-                $f3->set("error", "Passwords must be at least {$min} characters");
-                $this->_render("admin/users/edit.html");
-                return;
-            }
-
-            // Check if giving user temporary or permanent password
-            if ($f3->get("POST.temporary_password")) {
-                $user->salt = null;
-                $user->password = $security->hash($f3->get("POST.password"), "");
+            if ($user_id = $f3->get("POST.user_id")) {
+                $f3->set("title", $f3->get("dict.edit_user"));
+                $user->load($user_id);
+                $f3->set("this_user", $user);
             } else {
-                $user->salt = $security->salt();
-                $user->password = $security->hash($f3->get("POST.password"), $user->salt);
-            }
-        }
+                $f3->set("title", $f3->get("dict.new_user"));
 
-        // Validate fields
-        $error = null;
-        if (!$f3->get("POST.name")) {
-            $error = "Please enter a name.";
-        }
-        if (!preg_match("/#?[0-9a-f]{3,6}/i", $f3->get("POST.task_color"))) {
-            $error = "Please enter a valid hex color.";
-        }
-        if (!preg_match("/[0-9a-z_-]+/i", $f3->get("POST.username"))) {
-            $error = "Usernames can only contain letters, numbers, hyphens, and underscores.";
-        }
-        if (!filter_var($f3->get("POST.email"), FILTER_VALIDATE_EMAIL)) {
-            $error = "Please enter a valid email address";
-        }
-        if ($error) {
-            $f3->set("error", $error);
+                // Verify a password is being set
+                if (!$f3->get("POST.password")) {
+                    throw new \Exception("A password is required for a new user");
+                }
+
+                // Set new user fields
+                $user->api_key = $security->salt_sha1();
+                $user->created_date = $this->now();
+            }
+
+            // Validate password if being set
+            if ($f3->get("POST.password")) {
+                if ($f3->get("POST.password") != $f3->get("POST.password_confirm")) {
+                    throw new \Exception("Passwords do not match");
+                }
+                $min = $f3->get("security.min_pass_len");
+                if (strlen($f3->get("POST.password")) < $min) {
+                    throw new \Exception("Passwords must be at least {$min} characters");
+                }
+
+                // Check if giving user temporary or permanent password
+                if ($f3->get("POST.temporary_password")) {
+                    $user->salt = null;
+                    $user->password = $security->hash($f3->get("POST.password"), "");
+                } else {
+                    $user->salt = $security->salt();
+                    $user->password = $security->hash($f3->get("POST.password"), $user->salt);
+                }
+            }
+
+            if (!$f3->get("POST.name")) {
+                throw new \Exception("Please enter a name.");
+            }
+            if (!preg_match("/#?[0-9a-f]{3,6}/i", $f3->get("POST.task_color"))) {
+                throw new \Exception("Please enter a valid hex color.");
+            }
+            if (!preg_match("/[0-9a-z_-]+/i", $f3->get("POST.username"))) {
+                throw new \Exception("Usernames can only contain letters, numbers, hyphens, and underscores.");
+            }
+            if (!filter_var($f3->get("POST.email"), FILTER_VALIDATE_EMAIL)) {
+                throw new \Exception("Please enter a valid email address");
+            }
+
+            // Set basic fields
+            $user->username = $f3->get("POST.username");
+            $user->email = $f3->get("POST.email");
+            $user->name = $f3->get("POST.name");
+            // Don't allow user to change own rank
+            if ($user->id != $f3->get("user.id")) {
+                $user->rank = $f3->get("POST.rank");
+            }
+            $user->role = $user->rank < \Model\User::RANK_ADMIN ? 'user' : 'admin';
+            $user->task_color = ltrim($f3->get("POST.task_color"), "#");
+
+            // Save user
+            $user->save();
+
+        } catch (\Exception $e) {
+            $f3->set("error", $e->getMessage());
             $this->_render("admin/users/edit.html");
             return;
         }
 
-        // Set basic fields
-        $user->username = $f3->get("POST.username");
-        $user->email = $f3->get("POST.email");
-        $user->name = $f3->get("POST.name");
-        if ($user->id != $f3->get("user.id")) {
-            // Don't allow user to change own rank
-            $user->rank = $f3->get("POST.rank");
-        }
-        $user->role = $user->rank < \Model\User::RANK_ADMIN ? 'user' : 'admin';
-        $user->task_color = ltrim($f3->get("POST.task_color"), "#");
-
-        // Save user
-        $user->save();
         $f3->reroute("/admin/users#" . $user->id);
     }
 

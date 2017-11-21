@@ -4,7 +4,6 @@ namespace Helper;
 
 class Security extends \Prefab
 {
-
     /**
      * Generate a salted SHA1 hash
      * @param  string $string
@@ -57,54 +56,18 @@ class Security extends \Prefab
     }
 
     /**
-     * Encrypt a string with ROT13
-     * @param  string $string
-     * @return string
-     */
-    public function rot13($string)
-    {
-        return str_rot13($string);
-    }
-
-    /**
-     * ROT13 equivelant for hexadecimal
-     * @param  string $hex
-     * @return string
-     */
-    public function rot8($hex)
-    {
-        return strtr(
-            strtolower($hex),
-            array(
-                "0"=>"8",
-                "1"=>"9",
-                "2"=>"a",
-                "3"=>"b",
-                "4"=>"c",
-                "5"=>"d",
-                "6"=>"e",
-                "7"=>"f",
-                "8"=>"0",
-                "9"=>"1",
-                "a"=>"2",
-                "b"=>"3",
-                "c"=>"4",
-                "d"=>"5",
-                "e"=>"6",
-                "f"=>"7"
-            )
-        );
-    }
-
-    /**
      * Generate secure random bytes
      * @param  integer $length
      * @return binary
      */
     public function randBytes($length = 16)
     {
+        // Try to use native secure random
+        if (function_exists('random_bytes')) {
+            return random_bytes($length);
+        }
 
-        // Use OpenSSL cryptography extension if available
+        // Fall back to OpenSSL cryptography extension if available
         if (function_exists("openssl_random_pseudo_bytes")) {
             $strong = false;
             $rnd = openssl_random_pseudo_bytes($length, $strong);

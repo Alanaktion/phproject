@@ -38,20 +38,19 @@ class User extends \Controller
     public function dashboard($f3)
     {
         $dashboard = $f3->get("user_obj")->option("dashboard");
+        $helper = \Helper\Dashboard::instance();
         if (!$dashboard || !is_array($dashboard)) {
-            $dashboard = array(
-                "left" => array("projects", "subprojects", "bugs", "repeat_work", "watchlist"),
-                "right" => array("tasks")
-            );
+            $dashboard = $helper->defaultConfig;
         }
 
+        $widgetWhitelist = [];
+
         // Load dashboard widget data
-        $helper = \Helper\Dashboard::instance();
         $allWidgets = $helper->allWidgets;
         $missing = array();
         foreach ($dashboard as $k=>$widgets) {
             foreach ($widgets as $l=>$widget) {
-                if (is_callable(array($helper, $widget))) {
+                if (in_array($widget, $allWidgets)) {
                     $f3->set($widget, $helper->$widget());
                 } else {
                     $f3->set("error", "Some dashboard widgets cannot be displayed.");
@@ -84,8 +83,24 @@ class User extends \Controller
      */
     public function dashboardPost($f3)
     {
-        $user = $f3->get("user_obj");
+        $helper = \Helper\Dashboard::instance();
         $widgets = json_decode($f3->get("POST.widgets"));
+        $allWidgets = $helper->allWidgets;
+
+        // Validate widget list
+        $valid = true;
+        foreach ($widgets as $k=>$col) {
+            foreach ($col as $l=>$widget) {
+                if (in_array($widget, $allWidgets)) {
+                    $valid = false;
+                }
+            }
+        }
+        if (!$valid) {
+            $widgets = $helper->defaultConfig;
+        }
+
+        $user = $f3->get("user_obj");
         $user->option("dashboard", $widgets);
         $user->save();
         if ($f3->get("AJAX")) {
