@@ -4,7 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a40b054abcb76bae04162a7795ffb6c4",
     "content-hash": "3b85fcf83d1b05848b21dfa36f82ab7a",
     "packages": [
         {
@@ -36,24 +35,27 @@
             ],
             "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
             "homepage": "http://fatfreeframework.com/",
-            "time": "2017-06-26 10:14:59"
+            "time": "2017-06-26T10:14:59+00:00"
         },
         {
             "name": "erusev/parsedown",
-            "version": "1.6.3",
+            "version": "1.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/erusev/parsedown.git",
-                "reference": "728952b90a333b5c6f77f06ea9422b94b585878d"
+                "reference": "fbe3fe878f4fe69048bb8a52783a09802004f548"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/erusev/parsedown/zipball/728952b90a333b5c6f77f06ea9422b94b585878d",
-                "reference": "728952b90a333b5c6f77f06ea9422b94b585878d",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/fbe3fe878f4fe69048bb8a52783a09802004f548",
+                "reference": "fbe3fe878f4fe69048bb8a52783a09802004f548",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35"
             },
             "type": "library",
             "autoload": {
@@ -78,7 +80,7 @@
                 "markdown",
                 "parser"
             ],
-            "time": "2017-05-14 14:47:48"
+            "time": "2017-11-14T20:44:03+00:00"
         },
         {
             "name": "ircmaxell/password-compat",
@@ -120,11 +122,11 @@
                 "hashing",
                 "password"
             ],
-            "time": "2014-11-20 16:49:30"
+            "time": "2014-11-20T16:49:30+00:00"
         },
         {
             "name": "neos/diff",
-            "version": "3.1.5",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/neos/diff.git",
@@ -150,7 +152,7 @@
                 "BSD-3-Clause"
             ],
             "description": "This is a comprehensive library for generating differences between two strings or arrays",
-            "time": "2016-11-23 15:06:35"
+            "time": "2016-11-23T15:06:35+00:00"
         },
         {
             "name": "netcarver/textile",
@@ -203,20 +205,20 @@
                 "plaintext",
                 "textile"
             ],
-            "time": "2016-11-17 14:18:12"
+            "time": "2016-11-17T14:18:12+00:00"
         },
         {
             "name": "paragonie/random_compat",
-            "version": "v2.0.10",
+            "version": "v2.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "634bae8e911eefa89c1abfbf1b66da679ac8f54d"
+                "reference": "5da4d3c796c275c55f057af5a643ae297d96b4d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/634bae8e911eefa89c1abfbf1b66da679ac8f54d",
-                "reference": "634bae8e911eefa89c1abfbf1b66da679ac8f54d",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/5da4d3c796c275c55f057af5a643ae297d96b4d8",
+                "reference": "5da4d3c796c275c55f057af5a643ae297d96b4d8",
                 "shasum": ""
             },
             "require": {
@@ -251,24 +253,24 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2017-03-13 16:27:32"
+            "time": "2017-09-27T21:40:39+00:00"
         },
         {
             "name": "symfony/intl",
-            "version": "v3.3.6",
+            "version": "v3.3.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/intl.git",
-                "reference": "a310b29a794578f544305f4f48e3f6c7981b606c"
+                "reference": "4336045f131d5141c6bf0c055299546fc63639ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/a310b29a794578f544305f4f48e3f6c7981b606c",
-                "reference": "a310b29a794578f544305f4f48e3f6c7981b606c",
+                "url": "https://api.github.com/repos/symfony/intl/zipball/4336045f131d5141c6bf0c055299546fc63639ad",
+                "reference": "4336045f131d5141c6bf0c055299546fc63639ad",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.9",
+                "php": "^5.5.9|>=7.0.8",
                 "symfony/polyfill-intl-icu": "~1.0"
             },
             "require-dev": {
@@ -326,20 +328,20 @@
                 "l10n",
                 "localization"
             ],
-            "time": "2017-06-01 21:01:25"
+            "time": "2017-11-16T15:24:32+00:00"
         },
         {
             "name": "symfony/polyfill",
-            "version": "v1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill.git",
-                "reference": "157dfe598da2181908ff2345cad1807b2c23f5f9"
+                "reference": "5b34ccc9f409387e81ab3e38f37b12e42772a0cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill/zipball/157dfe598da2181908ff2345cad1807b2c23f5f9",
-                "reference": "157dfe598da2181908ff2345cad1807b2c23f5f9",
+                "url": "https://api.github.com/repos/symfony/polyfill/zipball/5b34ccc9f409387e81ab3e38f37b12e42772a0cf",
+                "reference": "5b34ccc9f409387e81ab3e38f37b12e42772a0cf",
                 "shasum": ""
             },
             "require": {
@@ -370,7 +372,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.6-dev"
                 }
             },
             "autoload": {
@@ -419,7 +421,7 @@
                 "polyfill",
                 "shim"
             ],
-            "time": "2017-08-16 07:33:06"
+            "time": "2017-10-11T12:05:26+00:00"
         },
         {
             "name": "voku/anti-xss",
@@ -476,20 +478,20 @@
                 "security",
                 "xss"
             ],
-            "time": "2017-05-08 09:18:41"
+            "time": "2017-05-08T09:18:41+00:00"
         },
         {
             "name": "voku/portable-utf8",
-            "version": "3.1.25",
+            "version": "3.1.30",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voku/portable-utf8.git",
-                "reference": "607d481a647f81b685e32d0313c0c700699dc321"
+                "reference": "162de9c40d8a7dff84697296f375b424aef53df8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/portable-utf8/zipball/607d481a647f81b685e32d0313c0c700699dc321",
-                "reference": "607d481a647f81b685e32d0313c0c700699dc321",
+                "url": "https://api.github.com/repos/voku/portable-utf8/zipball/162de9c40d8a7dff84697296f375b424aef53df8",
+                "reference": "162de9c40d8a7dff84697296f375b424aef53df8",
                 "shasum": ""
             },
             "require": {
@@ -546,7 +548,7 @@
                 "utf-8",
                 "utf8"
             ],
-            "time": "2017-08-05 00:21:32"
+            "time": "2017-10-08T23:25:51+00:00"
         }
     ],
     "packages-dev": [],

@@ -95,6 +95,7 @@ class Notification extends \Prefab
             // Render message body
             $f3->set("issue", $issue);
             $f3->set("comment", $comment);
+            $f3->set("previewText", $comment->text);
             $text = $this->_render("notification/comment.txt");
             $body = $this->_render("notification/comment.html");
 
@@ -157,8 +158,6 @@ class Notification extends \Prefab
             } else {
                 $subject =  "[#{$issue->id}] - {$issue->name} updated";
             }
-
-
 
             // Send to recipients
             foreach ($recipients as $recipient) {
@@ -246,6 +245,7 @@ class Notification extends \Prefab
             // Render message body
             $f3->set("issue", $issue);
             $f3->set("file", $file);
+            $f3->set("previewText", $file->filename);
             $text = $this->_render("notification/file.txt");
             $body = $this->_render("notification/file.html");
 
@@ -299,6 +299,11 @@ class Notification extends \Prefab
         if ($f3->get("mail.from")) {
             $f3->set("due", $due);
             $f3->set("overdue", $overdue);
+            $preview = "$due issues due today";
+            if ($overdue) {
+                $preview .= ", $overdue overdue issues";
+            }
+            $f3->set("previewText", $preview);
             $subject = "Due Today - " . $f3->get("site.name");
             $text = $this->_render("notification/user_due_issues.txt");
             $body = $this->_render("notification/user_due_issues.html");
