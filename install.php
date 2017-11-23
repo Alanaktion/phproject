@@ -106,11 +106,11 @@ if ($_POST) {
             \Model\Config::setVal("parse.markdown", 1);
             \Model\Config::setVal("parse.textile", 1);
         } elseif ($post["parser"] == "markdown") {
-            \Model\Config::setVal("parse.markdown", 0);
-            \Model\Config::setVal("parse.textile", 1);
-        } elseif ($post["parser"] == "textile") {
             \Model\Config::setVal("parse.markdown", 1);
             \Model\Config::setVal("parse.textile", 0);
+        } elseif ($post["parser"] == "textile") {
+            \Model\Config::setVal("parse.markdown", 0);
+            \Model\Config::setVal("parse.textile", 1);
         }
         \Model\Config::setVal("site.name", $post['site-name']);
         \Model\Config::setVal("site.timezone", $post['site-timezone']);

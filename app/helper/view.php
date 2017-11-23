@@ -252,7 +252,7 @@ class View extends \Template
      */
     protected function _parseMarkdown($str, $escape = true)
     {
-        $mkd = new \Parsedown();
+        $mkd = new \Lib\Markdown();
         $mkd->setUrlsLinked(false);
         $mkd->setMarkupEscaped($escape);
         return $mkd->text($str);
