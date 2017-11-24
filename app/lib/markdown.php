@@ -28,15 +28,33 @@ class Markdown extends \Parsedown
         }
 
         if (strpos($Line['text'], '|') !== false && preg_match("/\\|([^\\|]+\\|)+/", $Line['text'])) {
-            $elements = array();
 
+            // Initialize block
+            if ($Block['element']['name'] != 'table') {
+                $Block = array(
+                    'element' => array(
+                        'name' => 'table',
+                        'text' => array(
+                            array(
+                                'name' => 'tbody',
+                                'handler' => 'elements',
+                                'text' => array(),
+                            )
+                        ),
+                        'handler' => 'elements',
+                    ),
+                    'identified' => true,
+                );
+            }
+
+            // Parse table cells
             $row = $Line['text'];
-
             $row = trim($row);
             $row = trim($row, '|');
 
             preg_match_all('/(?:(\\\\[|])|[^|`]|`[^`]+`|`)+/', $row, $matches);
 
+            $elements = array();
             foreach ($matches[0] as $index => $cell) {
                 $elements[] = array(
                     'name' => 'td',
@@ -45,26 +63,12 @@ class Markdown extends \Parsedown
                 );
             }
 
-            $Element = array(
+            // Add table row to block
+            $Block['element']['text'][0]['text'][] = array(
                 'name' => 'tr',
                 'handler' => 'elements',
                 'text' => $elements,
             );
-
-            $Block['identified'] = true;
-
-            if (is_string($Block['element']['text'])) {
-                $Block['element']['handler'] = 'elements';
-                $Block['element']['text'] = array(
-                    array(
-                        'name' => 'tbody',
-                        'handler' => 'elements',
-                        'text' => array(),
-                    )
-                );
-            }
-
-            $Block['element']['text'][0]['text'][] = $Element;
 
             return $Block;
         }
