@@ -104,13 +104,14 @@ class Admin extends \Controller
         ];
 
         $context = stream_context_create($options);
-        $result = @file_get_contents($endpoint, false, $context);
-        if ($result === false) {
+        try {
+            $result = file_get_contents($endpoint, false, $context);
+        } catch (Exception $e) {
             $this->_printJson(['error' => 1]);
             return;
         }
 
-        $return = @json_decode($result);
+        $return = json_decode($result);
         if (json_last_error() != JSON_ERROR_NONE) {
             $this->_printJson(['error' => 2]);
             return;

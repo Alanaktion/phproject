@@ -317,13 +317,13 @@ class View extends \Template
 
     /**
      * Convert a UTC timestamp to local time
-     * @param  int $timestamp
+     * @param  int|string $timestamp
      * @return int
      */
     public function utc2local($timestamp = null)
     {
         if ($timestamp && !is_numeric($timestamp)) {
-            $timestamp = @strtotime($timestamp);
+            $timestamp = strtotime($timestamp);
         }
         if (!$timestamp) {
             $timestamp = time();

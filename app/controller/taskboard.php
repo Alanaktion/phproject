@@ -279,10 +279,6 @@ class Taskboard extends \Controller
         $helper = \Helper\View::instance();
         $offset = $helper->timeoffset();
         while ($cur < $end) {
-            /*// Weekdays only
-            if (in_array(date("w", $cur), [0, 6])) {
-                continue;
-            }*/
             $date = date("Y-m-d H:i:00", $cur);
             $utc = date("Y-m-d H:i:s", $cur - $offset);
             $return[$date] = round($db->exec($query, [
@@ -297,98 +293,6 @@ class Taskboard extends \Controller
         }
 
         $this->_printJson($return);
-    }
-
-    /**
-     * Load the precise burndown chart data
-     *
-     * This function is not currently used due to calculation issues. It's been
-     * replaced with the burndown() function above.
-     *
-     * @todo  Find and fix calculation issues
-     *
-     * @param \Base $f3
-     * @param array $params
-     */
-    public function burndownPrecise($f3, $params)
-    {
-        $sprint = new \Model\Sprint;
-        $sprint->load($params["id"]);
-
-        if (!$sprint->id) {
-            $f3->error(404);
-            return;
-        }
-
-        $user = new \Model\User;
-        $user->load(array("id = ?", $params["filter"]));
-        if (!$user->id) {
-            $f3->error(404);
-            return;
-        }
-
-        $helper = \Helper\View::instance();
-        $offset = $helper->timeoffset();
-        $start = date("Y-m-d H:i:s", strtotime($sprint->start_date) - $offset);
-        $end = date("Y-m-d H:i:s", strtotime($sprint->end_date . " 23:59:59") - $offset);
-
-        $db = $f3->get("db.instance");
-        $plannedHours = $db->exec(
-            "SELECT GREATEST(i.created_date, :start) AS ts,
-				SUM(i.hours_total) AS hours
-			FROM issue i
-			JOIN user_group g ON g.`user_id` = i.`owner_id` OR g.`group_id` = i.`owner_id`
-			WHERE i.sprint_id = :sprint
-				AND g.`group_id` = :user
-				AND i.`hours_total` > 0
-			GROUP BY ts
-			ORDER BY ts ASC",
-            array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $start)
-        );
-        $updatedHours = $db->exec(
-            "SELECT GREATEST(u.created_date, :start) AS ts,
-				SUM(IFNULL(f.`old_value`, 0)) `old`,
-				SUM(f.`new_value`) `new`,
-				(SUM(f.new_value) - SUM(IFNULL(f.old_value, 0))) diff
-			FROM issue_update_field f
-			JOIN issue_update u ON f.`issue_update_id` = u.`id`
-			JOIN issue i ON i.id = u.`issue_id`
-			JOIN user_group g ON g.`user_id` = i.`owner_id`
-				OR g.`group_id` = i.`owner_id`
-			WHERE i.sprint_id = :sprint
-				AND g.`group_id` = :user
-				AND u.`created_date` < :end
-				AND f.`field` = 'hours_remaining'
-				AND IFNULL(f.`old_value`, 0) != IFNULL(f.`new_value`, 0)
-			GROUP BY ts
-			ORDER BY ts ASC",
-            array(":sprint" => $sprint->id, ":user" => $user->id, ":start" => $start, ":end" => $end)
-        );
-
-        $diffs = array();
-        foreach ($plannedHours as $h) {
-            $diffs[date("Y-m-d H:i:s", $helper->utc2local($h["ts"]))] = $h["hours"];
-        }
-        foreach ($updatedHours as $h) {
-            if (array_key_exists(date("Y-m-d H:i:s", $helper->utc2local($h["ts"])), $diffs)) {
-                $diffs[date("Y-m-d H:i:s", $helper->utc2local($h["ts"]))] += $h["diff"];
-            } else {
-                $diffs[date("Y-m-d H:i:s", $helper->utc2local($h["ts"]))] = $h["diff"];
-            }
-        }
-        ksort($diffs);
-
-        $totals = array();
-        $current = 0;
-        foreach ($diffs as $ts=>$diff) {
-            $totals[$ts] = $current = $current + $diff;
-        }
-
-        $totalsRounded = array_map(function ($val) {
-            return round($val, 2);
-        }, $totals);
-
-        $this->_printJson($totalsRounded);
     }
 
     /**
