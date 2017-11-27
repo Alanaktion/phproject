@@ -106,7 +106,7 @@ class Admin extends \Controller
         $context = stream_context_create($options);
         try {
             $result = file_get_contents($endpoint, false, $context);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->_printJson(['error' => 1]);
             return;
         }
