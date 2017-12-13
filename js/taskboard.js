@@ -167,15 +167,15 @@ var Taskboard = {
 		$('#task-dialog .modal-content').css('border', '3px solid ' + userColor);
 	},
 	updateCardPriority: function(priority, card) {
-		if(priority === 0) {
-			$(card).find('.priority').attr('class', 'priority normal');
-			$(card).find('.priority').text('Normal');
-		} else if(priority < 0) {
-			$(card).find('.priority').attr('class', 'priority low');
-			$(card).find('.priority').text('Low');
-		} else if(priority > 0) {
-			$(card).find('.priority').attr('class', 'priority high');
-			$(card).find('.priority').text('High');
+		var $priority = $(card).find('.priority');
+		var priorityName = $('#priority').find('option[value=' + priority + ']').text();
+		$priority.data('val', priority).text(priorityName);
+		if (!priority) {
+			$priority.attr('class', 'priority normal');
+		} else if (priority < 0) {
+			$priority.attr('class', 'priority low');
+		} else if (priority > 0) {
+			$priority.attr('class', 'priority high');
 		}
 	},
 	changeUser: function(selected) {
