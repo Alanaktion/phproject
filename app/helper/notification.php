@@ -193,7 +193,7 @@ class Notification extends \Prefab
             // Get recipient list, conditionally removing the author
             $recipients = $this->_issue_watchers($issue_id);
             $user = new \Model\User;
-            $user->load($issue->user_id);
+            $user->load($issue->author_id);
             if ($user->option('disable_self_notifications')) {
                 $recipients = array_diff($recipients, array($user->email));
             }
