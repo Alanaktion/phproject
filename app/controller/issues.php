@@ -610,7 +610,18 @@ class Issues extends \Controller
     protected function _saveNew()
     {
         $f3 = \Base::instance();
-        return \Model\Issue::create($f3->get("POST"), !!$f3->get("POST.notify"));
+        $data = $f3->get("POST");
+        $originalAuthor = null;
+        if (!empty($data['author_id']) && $data['author_id'] != $this->_userId) {
+            $originalAuthor = $data['author_id'];
+            $data['author_id'] = $this->_userId;
+        }
+        $issue = \Model\Issue::create($data, !!$f3->get("POST.notify"));
+        if ($originalAuthor) {
+            $issue->author_id = $originalAuthor;
+            $issue->save(false);
+        }
+        return $issue;
     }
 
     /**
