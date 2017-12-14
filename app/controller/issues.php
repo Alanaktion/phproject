@@ -1236,7 +1236,6 @@ class Issues extends \Controller
      */
     public function project_overview($f3, $params)
     {
-
         // Load issue
         $project = new \Model\Issue\Detail;
         $project->load($params["id"]);
@@ -1288,16 +1287,42 @@ class Issues extends \Controller
         };
         $f3->set("stats", $projectStats($project));
 
+        // Find all nested issues
+        $model = new \Model\Issue\Detail;
+        $parentMap = [];
+        $parents = [$project->id];
+        do {
+            $pStr = implode(',', array_map('intval', $parents));
+            $level = $model->find(["parent_id IN ($pStr) AND deleted_date IS NULL"]);
+            if (!$level) {
+                break;
+            }
+            $parents = [];
+            foreach ($level as $row) {
+                $parentMap[$row->parent_id][] = $row;
+                $parents[] = $row->id;
+            }
+        } while (true);
+
         /**
          * Helper function for recursive tree rendering
          * @param   \Model\Issue $issue
+         * @param   int          $level
          * @var     callable $renderTree This function, required for recursive calls
          */
-        $renderTree = function (\Model\Issue &$issue, $level = 0) use (&$renderTree) {
+        $renderTree = function (\Model\Issue &$issue, $level = 0) use ($parentMap, &$renderTree)
+        {
             if ($issue->id) {
                 $f3 = \Base::instance();
-                $children = $issue->getChildren();
-                $hive = array("issue" => $issue, "children" => $children, "dict" => $f3->get("dict"), "BASE" => $f3->get("BASE"), "level" => $level, "issue_type" => $f3->get("issue_type"));
+                $children = $parentMap[$issue->id] ?: [];
+                $hive = array(
+                    "issue" => $issue,
+                    "children" => $children,
+                    "dict" => $f3->get("dict"),
+                    "BASE" => $f3->get("BASE"),
+                    "level" => $level,
+                    "issue_type" => $f3->get("issue_type")
+                );
                 echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
                 if ($children) {
                     foreach ($children as $item) {
