@@ -125,9 +125,13 @@ class Security extends \Prefab
             $db = $f3->get("db.instance");
             $db->exec(explode(";", $update_db));
             \Cache::instance()->reset();
-            $f3->set("success", " Database updated to version: {$version}");
+            $f3->set("success", "Database updated to version: {$version}");
+        } elseif (file_exists("db/{$version}.php")) {
+            require "db/{$version}.php";
+            \Cache::instance()->reset();
+            $f3->set("success", "Updated to version: {$version}");
         } else {
-            $f3->set("error", " Database file not found for version: {$version}");
+            $f3->set("error", "Database file not found for version: {$version}");
         }
     }
 

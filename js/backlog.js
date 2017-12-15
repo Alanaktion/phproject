@@ -52,8 +52,6 @@ function refreshPoints(){
 		// adds completed points to span
 		$(".points-label-completed", this).text(completedPoints);
 	});
-	$('.panel').each(function() {
-	});
 }
 
 var Backlog = {
@@ -61,22 +59,35 @@ var Backlog = {
 		// Initialize sorting
 		if (window.sortBacklog) {
 			$('.sortable').each(function() {
-					new Sortable(this, {
+				new Sortable(this, {
 					group: 'backlog',
 					ghostClass: 'placeholder',
 					filter: '.hidden-group,.hidden-type',
 					scrollSensitivity: 90,
-					onAdd: function(event) {
-						var $item = $(event.item);
-						$.post(BASE + '/backlog/edit', {
-							id: $item.attr('data-id'),
-							sprint_id: $item.parents('.list-group').attr('data-list-id')
-						}).fail(function() {
-							console.error('Failed to save new sprint assignment');
-						});
-					},
 					onSort: function(event) {
-						Backlog.saveSortOrder(event.target);
+						var $item = $(event.item),
+							index;
+						if ($item.next('.list-group-item').length) {
+							index = $item.next('.list-group-item').attr('data-index');
+							$item.nextAll().each(function() {
+								var i = parseInt($(this).attr('data-index'));
+								$(this).attr('data-index', i + 1);
+							});
+						} else if ($item.prev('.list-group-item').length) {
+							index = $item.prev('.list-group-item').attr('data-index');
+						} else {
+							index = 0;
+						}
+						var data = {
+							id: $item.attr('data-id'),
+							from: $(event.from).attr('data-list-id'),
+							to: $(event.to).attr('data-list-id'),
+							index: index
+						};
+						$.post(BASE + '/backlog/edit', data).fail(function () {
+							console.error('Failed to update backlog item');
+						});
+						refreshPoints();
 					}
 				});
 			});
@@ -164,26 +175,6 @@ var Backlog = {
 			}
 			history.replaceState(state, '', BASE + path);
 		}
-	},
-	saveSortOrder: function(element) {
-		var $el = $(element),
-			items = [];
-
-		if ($el.attr('data-list-id') === undefined) {
-			return;
-		}
-
-		$el.find('.list-group-item').each(function() {
-			items.push(parseInt($(this).attr('data-id')));
-		});
-
-		$.post(BASE + '/backlog/sort', {
-			sprint_id: $el.attr('data-list-id'),
-			items: JSON.stringify(items)
-		}).fail(function() {
-			console.error('An error occurred saving the sort order.');
-		});
-		refreshPoints();
 	}
 };
 

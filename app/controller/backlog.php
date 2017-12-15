@@ -18,8 +18,9 @@ class Backlog extends \Controller
      */
     public function index($f3)
     {
-        $sprint_model = new \Model\Sprint();
-        $sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
+        $sprintModel = new \Model\Sprint();
+        $backlogModel = new \Model\Issue\Backlog;
+        $sprints = $sprintModel->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
 
         $type = new \Model\Issue\Type;
         $projectTypes = $type->find(["role = ?", "project"]);
@@ -32,7 +33,8 @@ class Backlog extends \Controller
 
         $issue = new \Model\Issue\Detail();
 
-        $sprint_details = [];
+        $indexMap = [];
+        $sprintDetails = [];
         foreach ($sprints as $sprint) {
             $projects = $issue->find(
                 array("deleted_date IS NULL AND sprint_id = ? AND type_id IN ($typeStr)", $sprint->id),
@@ -41,17 +43,14 @@ class Backlog extends \Controller
 
             // Add sorted projects
             $sprintBacklog = [];
-            $sortOrder = new \Model\Issue\Backlog;
-            $sortOrder->load(array("sprint_id = ?", $sprint->id));
+            $sort = $backlogModel->find(array("sprint_id = ?", $sprint->id));
             $sortArray = [];
-            if ($sortOrder->id) {
-                $sortArray = json_decode($sortOrder->issues) ?: [];
-                $sortArray = array_unique($sortArray);
-                foreach ($sortArray as $id) {
-                    foreach ($projects as $p) {
-                        if ($p->id == $id) {
-                            $sprintBacklog[] = $p;
-                        }
+            foreach ($sort as $row) {
+                $sortArray[] = $row->issue_id;
+                foreach ($projects as $p) {
+                    if ($p->id == $row->issue_id) {
+                        $indexMap[$p->id] = $row->index;
+                        $sprintBacklog[] = $p;
                     }
                 }
             }
@@ -63,7 +62,7 @@ class Backlog extends \Controller
                 }
             }
 
-            $sprint_details[] = $sprint->cast() + array("projects" => $sprintBacklog);
+            $sprintDetails[] = $sprint->cast() + array("projects" => $sprintBacklog);
         }
 
         $large_projects = $f3->get("db.instance")->exec("SELECT i.parent_id FROM issue i JOIN issue_type t ON t.id = i.type_id WHERE i.parent_id IS NOT NULL AND t.role = 'project'");
@@ -88,17 +87,14 @@ class Backlog extends \Controller
 
         // Add sorted projects
         $backlog = [];
-        $sortOrder = new \Model\Issue\Backlog;
-        $sortOrder->load(array("sprint_id IS NULL"));
+        $sort = $backlogModel->find(array("sprint_id IS NULL"));
         $sortArray = [];
-        if ($sortOrder->id) {
-            $sortArray = json_decode($sortOrder->issues) ?: [];
-            $sortArray = array_unique($sortArray);
-            foreach ($sortArray as $id) {
-                foreach ($unset_projects as $p) {
-                    if ($p->id == $id) {
-                        $backlog[] = $p;
-                    }
+        foreach ($sort as $row) {
+            $sortArray[] = $row->issue_id;
+            foreach ($unset_projects as $p) {
+                if ($p->id == $row->issue_id) {
+                    $indexMap[$p->id] = $row->index;
+                    $backlog[] = $p;
                 }
             }
         }
@@ -116,9 +112,10 @@ class Backlog extends \Controller
 
         $f3->set("groupid", $groupId);
         $f3->set("type_ids", $typeIds);
-        $f3->set("sprints", $sprint_details);
+        $f3->set("sprints", $sprintDetails);
         $f3->set("backlog", $backlog);
         $f3->set("unsorted", $unsorted);
+        $f3->set("indexMap", $indexMap);
 
         $f3->set("title", $f3->get("dict.backlog"));
         $f3->set("menuitem", "backlog");
@@ -138,36 +135,38 @@ class Backlog extends \Controller
 
     /**
      * POST /edit
+     *
+     * Move an item between sprints or within a backlog
+     *
      * @param \Base $f3
      * @throws \Exception
      */
     public function edit($f3)
     {
-        $post = $f3->get("POST");
-        $issue = new \Model\Issue();
-        $issue->load($post["id"]);
-        $issue->sprint_id = empty($post["sprint_id"]) ? null : $post["sprint_id"];
-        $issue->save();
-        $this->_printJson($issue);
-    }
+        // Update backlog indexes
+        $db = $f3->get('db.instance');
+        $db->exec(
+            'UPDATE `issue_backlog` SET `index` = `index` + 1 WHERE `sprint_id` = ? AND `index` >= ? ORDER BY `index` DESC',
+            [1 => $f3->get('POST.to'), 2 => $f3->get('POST.index')]
+        );
 
-    /**
-     * POST /sort
-     * @param \Base $f3
-     * @throws \Exception
-     */
-    public function sort($f3)
-    {
-        $this->_requireLogin(\Model\User::RANK_MANAGER);
-        $backlog = new \Model\Issue\Backlog;
-        if ($f3->get("POST.sprint_id")) {
-            $backlog->load(array("sprint_id = ?", $f3->get("POST.sprint_id")));
-            $backlog->sprint_id = $f3->get("POST.sprint_id");
-        } else {
-            $backlog->load(array("sprint_id IS NULL"));
+        // Create/update backlog item
+        $item = new \Model\Issue\Backlog();
+        $item->load(['issue_id = ?', $f3->get('POST.id')]);
+        $item->sprint_id = $f3->get('POST.to') ? : null;
+        $item->issue_id = $f3->get('POST.id');
+        $item->index = $f3->get('POST.index');
+        $item->save();
+
+        // Update issue when sprint is changed
+        if ($f3->get('POST.from') != $f3->get('POST.to')) {
+            $issue = new \Model\Issue();
+            $issue->load($f3->get('POST.id'));
+            $issue->sprint_id = $f3->get('POST.to') ? : null;
+            $issue->save();
         }
-        $backlog->issues = $f3->get("POST.items");
-        $backlog->save();
+
+        $this->_printJson($item->cast());
     }
 
     /**
@@ -176,8 +175,8 @@ class Backlog extends \Controller
      */
     public function index_old($f3)
     {
-        $sprint_model = new \Model\Sprint();
-        $sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date DESC"));
+        $sprintModel = new \Model\Sprint();
+        $sprints = $sprintModel->find(array("end_date < ?", $this->now(false)), array("order" => "start_date DESC"));
 
         $type = new \Model\Issue\Type;
         $projectTypes = $type->find(["role = ?", "project"]);

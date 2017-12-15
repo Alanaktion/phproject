@@ -77,14 +77,16 @@ CREATE TABLE `issue` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `issue_backlog`;
-CREATE TABLE `issue_backlog` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`sprint_id` int(10) unsigned DEFAULT NULL,
-	`issues` blob NOT NULL,
+CREATE TABLE `issue_backlog_new`(
+	`id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`sprint_id` int(10) UNSIGNED,
+	`issue_id` int(10) UNSIGNED NOT NULL,
+	`index` int(10) UNSIGNED NOT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `issue_backlog_sprint_id` (`sprint_id`),
-	CONSTRAINT `issue_backlog_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	UNIQUE INDEX `sprint_index` (`sprint_id`, `index`),
+	CONSTRAINT `issue_backlog_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint`(`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `issue_backlog_issue_id` FOREIGN KEY (`issue_id`) REFERENCES `issue`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=INNODB DEFAULT;
 
 DROP TABLE IF EXISTS `issue_comment`;
 CREATE TABLE `issue_comment` (
