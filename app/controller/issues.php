@@ -316,6 +316,7 @@ class Issues extends \Controller
             "sprint_name" => $f3->get("dict.cols.sprint"),
             "created_date" => $f3->get("dict.cols.created"),
             "due_date" => $f3->get("dict.cols.due_date"),
+            "closed_date" => $f3->get("dict.cols.closed_date"),
         );
 
         // Notify browser that file is a CSV, send as attachment (force download)
