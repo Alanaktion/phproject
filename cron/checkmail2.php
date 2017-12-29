@@ -62,7 +62,7 @@ foreach ($emails as $msg_number) {
             }
 
             // Handle multipart
-            elseif ($part->type == 1 && !trim($text)) {
+            elseif ($part->type == 1 && !trim($text) && !empty($part->parts)) {
                 foreach ($part->parts as $multipart_number=>$multipart) {
                     $text = imap_fetchbody($inbox, $msg_number, ($part_number + 1) . '.' . $multipart_number);
 
@@ -112,9 +112,13 @@ foreach ($emails as $msg_number) {
         }
     }
 
+    if (!$text) {
+        continue;
+    }
+
     // Truncate text to prevent long chains from being included
     $truncate = $f3->get("mail.truncate_lines");
-    if (is_string($truncate)) {
+    if (!is_array($truncate)) {
         $truncate = $f3->split($truncate);
     }
     foreach ($truncate as $truncator) {
@@ -136,14 +140,13 @@ foreach ($emails as $msg_number) {
     }
 
     $to_user = new \Model\User;
+    $owner = $from_user->id;
     foreach ($header->to as $to_email) {
         $to = $to_email->mailbox . "@" . $to_email->host;
         $to_user->load(array('email = ? AND deleted_date IS NULL', $to));
-        if (!empty($to_user->id)) {
+        if ($to_user->id) {
             $owner = $to_user->id;
             break;
-        } else {
-            $owner = $from_user->id;
         }
     }
 
@@ -194,12 +197,12 @@ foreach ($emails as $msg_number) {
             $watcher = new \Model\User();
             $watcher->load(array('email=? AND deleted_date IS NULL', $watcher_email));
 
-            if (!empty($watcher->id)) {
+            if ($watcher->id) {
                 $watching = new \Model\Issue\Watcher();
                 // Loads just in case the user is already a watcher
                 $watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $watcher->id));
                 $watching->issue_id = $issue->id;
-                $watching->user_id =  $watcher->id;
+                $watching->user_id = $watcher->id;
                 $watching->save();
             }
         }
