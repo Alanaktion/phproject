@@ -443,6 +443,7 @@ class Issues extends \Controller
      */
     protected function loadIssueMeta()
     {
+        $f3 = \Base::instance();
         $status = new \Model\Issue\Status;
         $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
