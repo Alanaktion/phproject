@@ -316,6 +316,7 @@ class Issues extends \Controller
             "sprint_name" => $f3->get("dict.cols.sprint"),
             "created_date" => $f3->get("dict.cols.created"),
             "due_date" => $f3->get("dict.cols.due_date"),
+            "closed_date" => $f3->get("dict.cols.closed_date"),
         );
 
         // Notify browser that file is a CSV, send as attachment (force download)
@@ -424,6 +425,25 @@ class Issues extends \Controller
         $type = new \Model\Issue\Type;
         $type->load($issue->type_id);
 
+        $this->loadIssueMeta();
+
+        $f3->set("title", $f3->get("edit_n", $issue->id));
+        $f3->set("issue", $issue);
+        $f3->set("type", $type);
+
+        if ($f3->get("AJAX")) {
+            $this->_render("issues/edit-form.html");
+        } else {
+            $this->_render("issues/edit.html");
+        }
+    }
+
+    /**
+     * Load metadata lists for displaying issue edit forms
+     */
+    protected function loadIssueMeta()
+    {
+        $f3 = \Base::instance();
         $status = new \Model\Issue\Status;
         $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
@@ -436,16 +456,6 @@ class Issues extends \Controller
         $users = new \Model\User;
         $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
         $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
-
-        $f3->set("title", $f3->get("edit_n", $issue->id));
-        $f3->set("issue", $issue);
-        $f3->set("type", $type);
-
-        if ($f3->get("AJAX")) {
-            $this->_render("issues/edit-form.html");
-        } else {
-            $this->_render("issues/edit.html");
-        }
     }
 
     /**
@@ -709,19 +719,7 @@ class Issues extends \Controller
         $comments = new \Model\Issue\Comment\Detail;
         $f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC, id DESC")));
 
-        // Extra data needed for inline edit form
-        $status = new \Model\Issue\Status;
-        $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
-
-        $priority = new \Model\Issue\Priority;
-        $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
-
-        $sprint = new \Model\Sprint;
-        $f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", $this->now(false), $issue->sprint_id), array("order" => "start_date ASC, id ASC")));
-
-        $users = new \Model\User;
-        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+        $this->loadIssueMeta();
 
         $this->_render("issues/single.html");
     }

@@ -11,12 +11,6 @@ class File extends \Image
             "image/gif",
             "image/bmp",
         ),
-        "text" => array(
-            // @todo: Use these values to generate text file thumbnails
-            "text/plain",
-            "text/tsv",
-            "text/csv",
-        ),
         "icon" => array(
             "audio/.+" => "_audio",
             "application/.*zip" => "_archive",

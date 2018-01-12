@@ -4,29 +4,29 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b85fcf83d1b05848b21dfa36f82ab7a",
+    "content-hash": "da608018a41526b9cc554e083fe11c75",
     "packages": [
         {
-            "name": "bcosca/fatfree",
-            "version": "3.6.2",
+            "name": "bcosca/fatfree-core",
+            "version": "3.6.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/bcosca/fatfree.git",
-                "reference": "e9aec879272c7474294c51c6c00802615afa32a6"
+                "url": "https://github.com/bcosca/fatfree-core.git",
+                "reference": "b35fe7ae88f6f3667c50c36563b50e5a1ec36bb1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bcosca/fatfree/zipball/e9aec879272c7474294c51c6c00802615afa32a6",
-                "reference": "e9aec879272c7474294c51c6c00802615afa32a6",
+                "url": "https://api.github.com/repos/bcosca/fatfree-core/zipball/b35fe7ae88f6f3667c50c36563b50e5a1ec36bb1",
+                "reference": "b35fe7ae88f6f3667c50c36563b50e5a1ec36bb1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.6"
+                "php": ">=5.4"
             },
             "type": "library",
             "autoload": {
-                "files": [
-                    "lib/base.php"
+                "classmap": [
+                    "."
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -35,7 +35,7 @@
             ],
             "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
             "homepage": "http://fatfreeframework.com/",
-            "time": "2017-06-26T10:14:59+00:00"
+            "time": "2017-06-26T10:03:43+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -126,7 +126,7 @@
         },
         {
             "name": "neos/diff",
-            "version": "3.2.1",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/neos/diff.git",
@@ -257,16 +257,16 @@
         },
         {
             "name": "symfony/intl",
-            "version": "v3.3.13",
+            "version": "v3.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/intl.git",
-                "reference": "4336045f131d5141c6bf0c055299546fc63639ad"
+                "reference": "8c4e3daf9df173f6a978756c2598b151d40177cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/4336045f131d5141c6bf0c055299546fc63639ad",
-                "reference": "4336045f131d5141c6bf0c055299546fc63639ad",
+                "url": "https://api.github.com/repos/symfony/intl/zipball/8c4e3daf9df173f6a978756c2598b151d40177cf",
+                "reference": "8c4e3daf9df173f6a978756c2598b151d40177cf",
                 "shasum": ""
             },
             "require": {
@@ -274,7 +274,7 @@
                 "symfony/polyfill-intl-icu": "~1.0"
             },
             "require-dev": {
-                "symfony/filesystem": "~2.8|~3.0"
+                "symfony/filesystem": "~2.8|~3.0|~4.0"
             },
             "suggest": {
                 "ext-intl": "to use the component with locales other than \"en\""
@@ -282,7 +282,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.4-dev"
                 }
             },
             "autoload": {
@@ -328,7 +328,7 @@
                 "l10n",
                 "localization"
             ],
-            "time": "2017-11-16T15:24:32+00:00"
+            "time": "2017-12-14T19:40:10+00:00"
         },
         {
             "name": "symfony/polyfill",
@@ -425,16 +425,16 @@
         },
         {
             "name": "voku/anti-xss",
-            "version": "2.1.7",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voku/anti-xss.git",
-                "reference": "ed60f88e576f4c82729737d57c2b6a2a614fd181"
+                "reference": "b4add48f28d19b22a7383553baae88f1c8ccbe64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/anti-xss/zipball/ed60f88e576f4c82729737d57c2b6a2a614fd181",
-                "reference": "ed60f88e576f4c82729737d57c2b6a2a614fd181",
+                "url": "https://api.github.com/repos/voku/anti-xss/zipball/b4add48f28d19b22a7383553baae88f1c8ccbe64",
+                "reference": "b4add48f28d19b22a7383553baae88f1c8ccbe64",
                 "shasum": ""
             },
             "require": {
@@ -478,7 +478,7 @@
                 "security",
                 "xss"
             ],
-            "time": "2017-05-08T09:18:41+00:00"
+            "time": "2017-11-22T15:56:25+00:00"
         },
         {
             "name": "voku/portable-utf8",
