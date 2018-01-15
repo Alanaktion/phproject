@@ -4,6 +4,71 @@ namespace Helper;
 
 class Notification extends \Prefab
 {
+    const QPRINT_MAXL = 75;
+
+    /**
+     * Convert a 8 bit string to a quoted-printable string
+     *
+     * Modified to add =2E instead of the leading double dot, see GH #238
+     *
+     * @link http://php.net/manual/en/function.quoted-printable-encode.php#115840
+     *
+     * @param string $str
+     * @return void
+     */
+    public function quotePrintEncode($str)
+    {
+        $lp = 0;
+        $ret = '';
+        $hex = "0123456789ABCDEF";
+        $length = strlen($str);
+        $str_index = 0;
+
+        while ($length--) {
+            if ((($c = $str[$str_index++]) == "\015") && ($str[$str_index] == "\012") && $length > 0) {
+                $ret .= "\015";
+                $ret .= $str[$str_index++];
+                $length--;
+                $lp = 0;
+            } else {
+                if (ctype_cntrl($c)
+                    || (ord($c) == 0x7f)
+                    || (ord($c) & 0x80)
+                    || ($c == '=')
+                    || (($c == ' ') && ($str[$str_index] == "\015")))
+                {
+                    if (($lp += 3) > self::QPRINT_MAXL)
+                    {
+                        $ret .= '=';
+                        $ret .= "\015";
+                        $ret .= "\012";
+                        $lp = 3;
+                    }
+                    $ret .= '=';
+                    $ret .= $hex[ord($c) >> 4];
+                    $ret .= $hex[ord($c) & 0xf];
+                }
+                else
+                {
+                    if ((++$lp) > self::QPRINT_MAXL)
+                    {
+                        $ret .= '=';
+                        $ret .= "\015";
+                        $ret .= "\012";
+                        $lp = 1;
+                    }
+                    $ret .= $c;
+                    if($lp == 1 && $c == '.') {
+                        $ret = substr($ret, 0, strlen($ret) - 1);
+                        $ret .= '=2E';
+                        $lp++;
+                    }
+                }
+            }
+        }
+
+        return $ret;
+    }
 
     /**
      * Send an email with the UTF-8 character set
@@ -33,17 +98,9 @@ class Notification extends \Prefab
             $text = str_replace("\r\n", "\n", $text);
             $text = str_replace("\n", "\r\n", $text);
 
-            // escape first char dots per line
-            $body = preg_replace(
-                '/^\.(.+)/m',
-                '..$1',
-                quoted_printable_encode($body)
-            );
-            $text = preg_replace(
-                '/^\.(.+)/m',
-                '..$1',
-                quoted_printable_encode($text)
-            );
+            // Encode content
+            $body = $this->quotePrintEncode($body);
+            $text = $this->quotePrintEncode($text);
 
             // Build final message
             $msg = "--$hash\r\n";
