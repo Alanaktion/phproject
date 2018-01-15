@@ -165,7 +165,7 @@ $(function() {
 					}
 					break;
 				default:
-					if(!e.shiftKey && !e.ctrlKey && e.altKey && issue_types.indexOf(e.which - 48) >= 0) {
+					if(e.shiftKey && !e.ctrlKey && e.altKey && issue_types.indexOf(e.which - 48) >= 0) {
 						window.location = BASE + '/issues/new/' + (e.which - 48);
 					}
 			}

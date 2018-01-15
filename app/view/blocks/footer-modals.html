@@ -21,7 +21,7 @@
                             <dd>Reload page</dd>
                             <repeat group="{{ @issue_types }}" value="{{ @type }}">
                                 <check if="{{ @type.id > 0 && @type.id < 10 }}">
-                                    <dt>alt+{{ @type.id }}</dt>
+                                    <dt>alt+shift+{{ @type.id }}</dt>
                                     <dd>{{ @dict.new_n,@type.name | format }}</dd>
                                 </check>
                             </repeat>
