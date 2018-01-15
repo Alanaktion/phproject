@@ -1,5 +1,5 @@
 /* jslint browser: true */
-/* globals $ BASE */
+/* globals $ BASE showAlert */
 
 /**
  * Get query string variable value by key
