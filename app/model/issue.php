@@ -114,16 +114,6 @@ class Issue extends \Model
     }
 
     /**
-     * Remove messy whitespace from a string
-     * @param  string $string
-     * @return string
-     */
-    public static function clean($string)
-    {
-        return preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n\n", str_replace("\r\n", "\n", $string));
-    }
-
-    /**
      * Delete without sending notification
      * @param  bool $recursive
      * @return Issue

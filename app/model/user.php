@@ -355,7 +355,7 @@ class User extends \Model
     public function validateResetToken($token)
     {
         $ttl = \Base::instance()->get("security.reset_ttl");
-        $timestampValid = substr($token, 96) > (time() - $ttl);
+        $timestampValid = substr($token, 96) >= (time() - $ttl);
         $tokenValid = hash("sha384", $token) == $this->reset_token;
         return $timestampValid && $tokenValid;
     }
