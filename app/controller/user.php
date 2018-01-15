@@ -89,7 +89,7 @@ class User extends \Controller
         $valid = true;
         foreach ($widgets as $k=>$col) {
             foreach ($col as $l=>$widget) {
-                if (in_array($widget, $allWidgets)) {
+                if (!in_array($widget, $allWidgets)) {
                     $valid = false;
                 }
             }
