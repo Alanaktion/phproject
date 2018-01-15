@@ -72,7 +72,7 @@ var Backlog = {
 							id: $item.attr('data-id'),
 							sprint_id: $item.parents('.list-group').attr('data-list-id')
 						}).fail(function() {
-							console.error('Failed to save new sprint assignment');
+							showAlert('Failed to save new sprint assignment');
 						});
 					},
 					onSort: function(event) {
@@ -181,7 +181,7 @@ var Backlog = {
 			sprint_id: $el.attr('data-list-id'),
 			items: JSON.stringify(items)
 		}).fail(function() {
-			console.error('An error occurred saving the sort order.');
+			showAlert('An error occurred saving the sort order.');
 		});
 		refreshPoints();
 	}

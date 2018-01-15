@@ -418,7 +418,7 @@ $(function() {
                 $('#comment_badge').text(parseInt($('#comment_badge').text()) + 1);
             }, 'json').fail(function() {
                 $('#comment_form .btn').prop('disabled', false);
-                alert('An error occurred saving this comment.');
+                showAlert('An error occurred saving this comment.');
             });
 
             $this.prop('disabled', true);
@@ -442,6 +442,8 @@ $(function() {
             var $li = $(this).parents('li');
             $.post(BASE + '/issues/{{ @issue.id }}/watchers/delete', {
                 user_id: $li.data('user-id')
+            }).fail(function() {
+                showAlert('Failed to remove watcher');
             });
 
             var matches = $('#watchers-list li').filter('[data-user-id=' + $li.data('user-id') + ']');
@@ -452,7 +454,9 @@ $(function() {
         });
         $('#add-watcher').submit(function(e) {
             var $this = $(this);
-            $.post(BASE + '/issues/{{ @issue.id }}/watchers', $this.serialize());
+            $.post(BASE + '/issues/{{ @issue.id }}/watchers', $this.serialize()).fail(function() {
+                showAlert('Failed to add watcher');
+            });
 
             var $select = $this.find('select');
             if(!$('#watchers-list li').filter('[data-user-id=' + $select.val() + ']').length) {
@@ -532,6 +536,8 @@ $(function() {
         var $tr = $(this).parents('tr');
         $.post(BASE + '/issues/{{ @issue.id }}/dependencies/delete', {
             id: $tr.data('id')
+        }).fail(function() {
+            showAlert('Failed to remove dependency');
         });
 
         $tr.fadeOut(400, function(){
@@ -543,7 +549,9 @@ $(function() {
     });
     $('#dependencies').on('submit', 'form', function(e) {
         var $this = $(this);
-        $.post(BASE + '/issues/{{ @issue.id }}/dependencies', $this.serialize());
+        $.post(BASE + '/issues/{{ @issue.id }}/dependencies', $this.serialize()).fail(function() {
+            showAlert('Failed to add dependency');
+        });
 
         e.preventDefault();
         load_dependencies();
@@ -609,7 +617,9 @@ $(function() {
             $('#alert span').html('{{ addslashes(@dict.file_deleted) }} <a href="{{ @BASE }}/javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
             $('#alert').show();
             $(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();
-        }, 'json');
+        }, 'json').fail(function() {
+            showAlert('Failed to remove file');
+        });
     });
 
     // Handle alert hide
@@ -623,8 +633,10 @@ $(function() {
         if(confirm("{{ @dict.comment_delete_confirm }}")) {
             var $comment = $(this).parents(".media");
             $comment.css("text-decoration", "line-through");
-            jQuery.post(BASE + "/issues/comment/delete", {id: $comment.data("id")}, function(data) {
+            $.post(BASE + "/issues/comment/delete", {id: $comment.data("id")}, function() {
                 $comment.remove();
+            }, 'json').fail(function() {
+                showAlert('Failed to remove comment');
             });
         }
     });
@@ -688,14 +700,20 @@ $(function() {
 function restoreFile(file_id) {
     $.post(BASE + '/issues/file/undelete', {id: file_id}, function(data) {
         window.location = window.location;
+    }).fail(function() {
+        showAlert('Failed to restore file');
     });
 }
 function watch_issue() {
-    $.post(BASE + '/issues/{{ @issue.id }}/watchers', {user_id: '{{ @user.id }}'});
+    $.post(BASE + '/issues/{{ @issue.id }}/watchers', {user_id: '{{ @user.id }}'}).fail(function() {
+        showAlert('Failed to watch issue');
+    });
     $('#watch-btn').attr('onclick','unwatch_issue()').html('<span class="fa fa-eye-slash"></span>&ensp;{{ @dict.unwatch }}');
 }
 function unwatch_issue() {
-    $.post(BASE + '/issues/{{ @issue.id }}/watchers/delete', {user_id: '{{ @user.id }}'});
+    $.post(BASE + '/issues/{{ @issue.id }}/watchers/delete', {user_id: '{{ @user.id }}'}).fail(function() {
+        showAlert('Failed to unwatch issue');
+    });
     $('#watch-btn').attr('onclick','watch_issue()').html('<span class="fa fa-eye"></span>&ensp;{{ @dict.watch }}');
 }
 </script>

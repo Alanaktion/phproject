@@ -79,7 +79,7 @@
 $(function(){
     $('#group-name').change(function(e) {
         if($(this).val().length > 0) {
-            $.post('{{ @BASE }}/admin/groups/ajax',{
+            $.post('{{ @BASE }}/admin/groups/ajax', {
                 action: 'change_title',
                 group_id: '{{ @group.id }}',
                 name: $(this).val()
@@ -88,7 +88,9 @@ $(function(){
                 window.setTimeout(function(){
                     $('.saved').fadeOut(400);
                 }, 3000);
-            }, 'json');
+            }, 'json').fail(function() {
+                showAlert('Failed to change group name');
+            });
         }
     });
     $('#members').on('click', 'a.delete', function(e) {
@@ -102,12 +104,16 @@ $(function(){
                 if(data.deleted) {
                     $li.remove();
                 }
-            }, 'json');
+            }, 'json').fail(function() {
+                showAlert('Failed to remove user from group');
+            });
         }
         e.preventDefault();
     });
     $('#adduser').submit(function(e) {
-        $.post('{{ @BASE }}/admin/groups/ajax', $(this).serialize());
+        $.post('{{ @BASE }}/admin/groups/ajax', $(this).serialize()).fail(function() {
+            showAlert('Failed to add user to group');
+        });
         $('#adduser select option:selected').each(function(i) {
             $this = $(this);
             $('<li />').data('user-id', $this.val()).html('<a href="#" class="delete text-danger"><span class="fa fa-remove"></span></a>&ensp;' + $this.text()).appendTo('#members');
@@ -119,14 +125,18 @@ $(function(){
             action: 'change_api_visibility',
             group_id: '{{ @group.id }}',
             value: $(this).prop('checked') + 0
-        }, function() {}, 'json');
+        }, function() {}, 'json').fail(function() {
+            showAlert('Failed to update API visibility');
+        });
     });
     $('#task_color').change(function(e) {
         $.post('{{ @BASE }}/admin/groups/ajax',{
             action: 'change_task_color',
             group_id: '{{ @group.id }}',
             value: $(this).val()
-        }, function() {}, 'json');
+        }, function() {}, 'json').fail(function() {
+            showAlert('Failed to update task color');
+        });
     });
 });
 </script>

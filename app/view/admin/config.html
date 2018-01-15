@@ -262,14 +262,16 @@ $(document).ready(function() {
             value: val
         }, function(data) {
             if(data.error) {
-                alert(data.error);
+                showAlert(data.error);
             } else {
                 $el.parents('.form-group').addClass('has-success');
                 setTimeout(function() {
                     $el.parents('.form-group').removeClass('has-success');
                 }, 2500);
             }
-        }, 'json');
+        }, 'json').fail(function() {
+            showAlert('Failed to save attribute');
+        });
     });
 
 });

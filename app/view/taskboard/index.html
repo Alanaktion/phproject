@@ -414,7 +414,9 @@
                     });
                     $("#frm-man-hours").submit(function(e) {
                         e.preventDefault();
-                        $.post(BASE + '/taskboard/saveManHours', $(this).serialize());
+                        $.post(BASE + '/taskboard/saveManHours', $(this).serialize()).fail(function() {
+                            showAlert('Failed to save new sprint assignment');
+                        });
                         BurndownManHours = $('#input-man-hours').val();
                         $("#burndown-modal .man-hours").text(BurndownManHours);
                         $('#input-man-hours, #burndown-modal .does-toggle').toggleClass('hidden');

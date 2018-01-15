@@ -179,3 +179,19 @@ $(function() {
 	});
 
 });
+
+/**
+ * Show an error message from a client-side action
+ * @param {string} message
+ */
+function showAlert(message, type)
+{
+	if (!type) {
+		type = 'danger';
+	}
+	var $alertContainer = $('<div />').addClass('container');
+	var $alert = $('<div />').addClass('alert alert-' + type + ' alert-dismissable').text(message);
+	$alert.prepend('<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>');
+	$alertContainer.append($alert);
+	$('.navbar').first().after($alertContainer);
+}
