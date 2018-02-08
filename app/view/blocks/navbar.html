@@ -34,7 +34,7 @@
                             <check if="{{ @issue.type_id == @issue_type.project }}">
                                 <true>
                                     <li role="presentation" class="dropdown-header">{{ @dict.related }}</li>
-                                    <li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.task }}</a></li>
+                                    <li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.Task }}</a></li>
                                     <li><a href="{{ @BASE }}/issues/new/{{ @issue_type.project }}/{{ @issue.id }}">{{ @dict.subproject }}</a></li>
                                 </true>
                                 <false>
