@@ -25,9 +25,8 @@ class Config extends \Model
         $foundAttributes = array();
         foreach ($result as $item) {
             $foundAttributes[] = $item["attribute"];
-            if ($item["attribute"] == 'JAR.expire') {
+            if ($item["attribute"] == 'session_lifetime') {
                 $f3->set('JAR.expire', $item['value'] + time());
-                continue;
             }
             $f3->set($item["attribute"], $item["value"]);
         }

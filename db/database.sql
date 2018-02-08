@@ -326,4 +326,4 @@ CREATE TABLE `config` (
 -- This will allow us to deprecate and remove the file
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.reset_ttl', '86400');
 
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '17.09.20');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '18.02.07');

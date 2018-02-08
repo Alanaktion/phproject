@@ -48,16 +48,17 @@ class Session extends \Model
         $token = $f3->get("COOKIE.".self::COOKIE_NAME);
         if ($token) {
             $this->load(array("token = ?", $token));
-            $expire = $f3->get("JAR.expire");
+            $lifetime = $f3->get("session_lifetime");
+            $duration = time() - strtotime($this->created);
 
             // Delete expired sessions
-            if (time() - $expire > strtotime($this->created)) {
+            if ($duration > $lifetime) {
                 $this->delete();
                 return $this;
             }
 
             // Update nearly expired sessions
-            if (time() - $expire / 2 > strtotime($this->created)) {
+            if ($duration > $lifetime / 2) {
                 if ($f3->get("DEBUG")) {
                     $log = new \Log("session.log");
                     $log->write("Updating expiration: " . json_encode($this->cast())
@@ -85,7 +86,7 @@ class Session extends \Model
             $log->write("Setting current session: " . json_encode($this->cast()));
         }
 
-        $f3->set("COOKIE.".self::COOKIE_NAME, $this->token, $f3->get("JAR.expire"));
+        $f3->set("COOKIE.".self::COOKIE_NAME, $this->token, $f3->get("session_lifetime"));
         return $this;
     }
 
