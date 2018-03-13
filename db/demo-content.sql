@@ -14,4 +14,3 @@ INSERT INTO `sprint` (`id`, `name`, `start_date`, `end_date`) VALUES
 INSERT INTO `issue` (`status`, `type_id`, `name`, `description`, `parent_id`, `author_id`, `owner_id`, `hours_total`, `hours_remaining`, `created_date`, `sprint_id`) VALUES
 	(1, 2, 'A Big Project', 'This is a project.  Projects group tasks and bugs, and can go into sprints.', NULL, 2, 2, NULL, NULL, NOW(), 1),
 	(1, 1, 'A Simple Task', 'This is a sample task.', 1, 1, 2, 2, 2, NOW(), NULL);
-
