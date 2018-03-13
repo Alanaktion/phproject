@@ -322,8 +322,5 @@ CREATE TABLE `config` (
 	UNIQUE KEY `attribute` (`attribute`)
 );
 
--- TODO: Set all default config values from config-base.ini in DB
--- This will allow us to deprecate and remove the file
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.reset_ttl', '86400');
-
 INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '18.02.19');
