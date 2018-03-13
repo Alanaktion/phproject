@@ -525,7 +525,7 @@ class Issue extends \Model
             return $this->_children;
         }
 
-        return $this->_children ?: $this->_children = $this->find(array("parent_id = ? AND deleted_date IS NULL", $this->id));
+        return $this->_children = $this->find(array("parent_id = ? AND deleted_date IS NULL", $this->id));
     }
 
     /**

@@ -224,7 +224,12 @@
     </div>
 
     <check if="{{ !empty(@issue) }}">
-        {~ \Helper\Plugin::instance()->callHook('render.issue_edit.after_fields', @issue) ~}
+        <true>
+            {~ \Helper\Plugin::instance()->callHook('render.issue_edit.after_fields', @issue) ~}
+        </true>
+        <false>
+            {~ \Helper\Plugin::instance()->callHook('render.issue_create.after_fields') ~}
+        </false>
     </check>
 
     <hr>
