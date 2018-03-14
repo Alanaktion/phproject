@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "da608018a41526b9cc554e083fe11c75",
+    "content-hash": "cf56872c01e53c7576aafb39021e2006",
     "packages": [
         {
             "name": "bcosca/fatfree-core",
@@ -35,23 +35,24 @@
             ],
             "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
             "homepage": "http://fatfreeframework.com/",
-            "time": "2017-06-26T10:03:43+00:00"
+            "time": "2017-12-31T14:47:39+00:00"
         },
         {
             "name": "erusev/parsedown",
-            "version": "1.6.4",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/erusev/parsedown.git",
-                "reference": "fbe3fe878f4fe69048bb8a52783a09802004f548"
+                "reference": "92e9c27ba0e74b8b028b111d1b6f956a15c01fc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/erusev/parsedown/zipball/fbe3fe878f4fe69048bb8a52783a09802004f548",
-                "reference": "fbe3fe878f4fe69048bb8a52783a09802004f548",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/92e9c27ba0e74b8b028b111d1b6f956a15c01fc1",
+                "reference": "92e9c27ba0e74b8b028b111d1b6f956a15c01fc1",
                 "shasum": ""
             },
             "require": {
+                "ext-mbstring": "*",
                 "php": ">=5.3.0"
             },
             "require-dev": {
@@ -80,7 +81,7 @@
                 "markdown",
                 "parser"
             ],
-            "time": "2017-11-14T20:44:03+00:00"
+            "time": "2018-03-08T01:11:30+00:00"
         },
         {
             "name": "ircmaxell/password-compat",
@@ -126,7 +127,7 @@
         },
         {
             "name": "neos/diff",
-            "version": "3.3.2",
+            "version": "3.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/neos/diff.git",
@@ -257,16 +258,16 @@
         },
         {
             "name": "symfony/intl",
-            "version": "v3.4.2",
+            "version": "v3.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/intl.git",
-                "reference": "8c4e3daf9df173f6a978756c2598b151d40177cf"
+                "reference": "4bcae9ab4e07c534586fc22f98a1fe694482b10b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/8c4e3daf9df173f6a978756c2598b151d40177cf",
-                "reference": "8c4e3daf9df173f6a978756c2598b151d40177cf",
+                "url": "https://api.github.com/repos/symfony/intl/zipball/4bcae9ab4e07c534586fc22f98a1fe694482b10b",
+                "reference": "4bcae9ab4e07c534586fc22f98a1fe694482b10b",
                 "shasum": ""
             },
             "require": {
@@ -328,20 +329,20 @@
                 "l10n",
                 "localization"
             ],
-            "time": "2017-12-14T19:40:10+00:00"
+            "time": "2018-02-03T00:57:06+00:00"
         },
         {
             "name": "symfony/polyfill",
-            "version": "v1.6.0",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill.git",
-                "reference": "5b34ccc9f409387e81ab3e38f37b12e42772a0cf"
+                "reference": "86e27771f290e6af6d95c1c256f6d6d15ac9e22e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill/zipball/5b34ccc9f409387e81ab3e38f37b12e42772a0cf",
-                "reference": "5b34ccc9f409387e81ab3e38f37b12e42772a0cf",
+                "url": "https://api.github.com/repos/symfony/polyfill/zipball/86e27771f290e6af6d95c1c256f6d6d15ac9e22e",
+                "reference": "86e27771f290e6af6d95c1c256f6d6d15ac9e22e",
                 "shasum": ""
             },
             "require": {
@@ -372,7 +373,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.6-dev"
+                    "dev-master": "1.7-dev"
                 }
             },
             "autoload": {
@@ -421,20 +422,20 @@
                 "polyfill",
                 "shim"
             ],
-            "time": "2017-10-11T12:05:26+00:00"
+            "time": "2018-01-31T19:39:15+00:00"
         },
         {
             "name": "voku/anti-xss",
-            "version": "2.2.0",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voku/anti-xss.git",
-                "reference": "b4add48f28d19b22a7383553baae88f1c8ccbe64"
+                "reference": "cde2346113c3d84495ddb2d1fe511ca9c7c0db3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/anti-xss/zipball/b4add48f28d19b22a7383553baae88f1c8ccbe64",
-                "reference": "b4add48f28d19b22a7383553baae88f1c8ccbe64",
+                "url": "https://api.github.com/repos/voku/anti-xss/zipball/cde2346113c3d84495ddb2d1fe511ca9c7c0db3c",
+                "reference": "cde2346113c3d84495ddb2d1fe511ca9c7c0db3c",
                 "shasum": ""
             },
             "require": {
@@ -478,7 +479,7 @@
                 "security",
                 "xss"
             ],
-            "time": "2017-11-22T15:56:25+00:00"
+            "time": "2018-02-14T13:32:33+00:00"
         },
         {
             "name": "voku/portable-utf8",
@@ -558,5 +559,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "platform-overrides": {
+        "php": "5.6.34"
+    }
 }
