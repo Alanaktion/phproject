@@ -66,7 +66,7 @@ class Backlog extends \Controller
             $sprint_details[] = $sprint->cast() + array("projects" => $sprintBacklog);
         }
 
-        $large_projects = $f3->get("db.instance")->exec("SELECT i.parent_id FROM issue i JOIN issue_type t ON t.id = i.type_id WHERE i.parent_id IS NOT NULL AND t.role = 'project'");
+        $large_projects = $f3->get("db.instance")->exec("SELECT i.parent_id FROM issue i JOIN issue_type t ON t.id = i.type_id WHERE i.parent_id IS NOT NULL AND t.role = 'project' AND i.deleted_date IS NULL");
         $large_project_ids = [];
         foreach ($large_projects as $p) {
             $large_project_ids[] = $p["parent_id"];
@@ -74,7 +74,7 @@ class Backlog extends \Controller
 
         // Load backlog
         if (!empty($large_project_ids)) {
-            $large_project_ids = implode(",", $large_project_ids);
+            $large_project_ids = implode(",", array_unique($large_project_ids));
             $unset_projects = $issue->find(
                 array("deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ($typeStr) AND status_closed = '0' AND id NOT IN ({$large_project_ids})"),
                 array('order' => 'priority DESC, due_date')
