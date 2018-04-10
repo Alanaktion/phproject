@@ -164,6 +164,14 @@ var Backlog = {
 			}
 			history.replaceState(state, '', BASE + path);
 		}
+		// Updates href attr if group_id is set
+		$('.sprint-board').each(function() {
+			var clickGroupId = $('.dropdown-menu .active a[data-user-ids]').attr('data-group-id');
+			var href_link = $(this).attr('data-base-href');
+			if (clickGroupId !== null){
+				$(this).attr("href", href_link + "/" + clickGroupId);
+			}
+		});
 	},
 	saveSortOrder: function(element) {
 		var $el = $(element),
