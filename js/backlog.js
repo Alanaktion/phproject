@@ -135,7 +135,6 @@ var Backlog = {
 				$('.list-group-item[data-type-id=' + val + ']').removeClass('hidden-type');
 			});
 		}
-
 		// Un-hide backlog
 		$('body').removeClass('is-loading');
 	},
@@ -190,4 +189,23 @@ var Backlog = {
 $(function() {
 	Backlog.init();
 	refreshPoints();
+});
+// Updates href attr if group_id is set
+$('.sprint-board').click(function() {
+	function getQueryVariable(variable) {
+		var query = window.location.search.substring(1);
+		var vars = query.split("&");
+		for (var i = 0; i < vars.length; i++) {
+			var pair = vars[i].split("=");
+			if(pair[0] == variable) {
+				return pair[1];
+			}
+		}
+		return('');
+	}
+	var clickGroupId = getQueryVariable('group_id');
+	var href_link = window.location.href = $(this).attr('href');
+	if (clickGroupId !== null){
+		$(this).attr("href", href_link + "/" + clickGroupId);
+	}
 });

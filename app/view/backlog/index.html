@@ -100,7 +100,7 @@
                                     <a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">
                                         {{ @sprint.name }} &mdash; {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}
                                     </a>
-                                    <a href="{{ @BASE }}/taskboard/{{ @sprint.id }}/{{ @@@groupid ?: @filter }}" class="btn btn-default btn-xs pull-right">
+                                    <a href="{{ @BASE }}/taskboard/{{ @sprint.id }}" class="sprint-board btn btn-default btn-xs pull-right">
                                         <span class="fa fa-list"></span> {{ @dict.taskboard }}
                                     </a>
                                 </div>
