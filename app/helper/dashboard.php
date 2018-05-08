@@ -7,7 +7,7 @@ class Dashboard extends \Prefab
     protected $_issue;
     protected $_ownerIds;
     protected $_projects;
-    protected $_order = "priority DESC, has_due_date ASC, due_date ASC";
+    protected $_order = "priority DESC, has_due_date ASC, due_date ASC, created_date DESC";
 
     public $defaultConfig = [
         "left" => ["projects", "subprojects", "bugs", "repeat_work", "watchlist"],
