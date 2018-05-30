@@ -95,13 +95,15 @@
                                         </check>
                                     </span>
                                 </div>
-                                <p>
+                                <div>
                                     {{ @row.project.name | esc }}
                                     <check if="{{ @row.project.size_estimate }}">
                                         - {{ @row.project.size_estimate }}
                                     </check>
-                                </p>
-                                <div class="task-dueDate">{{ empty(@row.project.due_date) ? "" : date('n/j', strtotime(@row.project.due_date)) }}</div>
+                                </div>
+                                <check if="{{ @row.project.due_date }}">
+                                    <div>Due {{ date('n/j', strtotime(@row.project.due_date)) }}</div>
+                                </check>
                                 <div class="text-muted">
                                     <check if="{{ @row.project.type_id == @issue_type.project }}">
                                         <true>
@@ -136,21 +138,9 @@
                                                 <div class="dueDate"></div>
                                             </false>
                                         </check>
-                                        <check if="{{ @task.priority == 0 }}">
-                                            <true>
-                                                <div class="priority normal" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
-                                            </true>
-                                            <false>
-                                                <check if="{{ @task.priority < 0 }}">
-                                                    <true>
-                                                        <div class="priority low" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
-                                                    </true>
-                                                    <false>
-                                                        <div class="priority high" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
-                                                    </false>
-                                                </check>
-                                            </false>
-                                        </check>
+                                        <div class="priority {{ !@task.priority ? 'normal' : (@task.priority > 0 ? 'high' : 'low') }}" data-val="{{ @task.priority }}">
+                                            {{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}
+                                        </div>
                                         <div class="owner" data-id="{{ @task.owner_id }}">
                                             <check if="{{ @task.owner_username }}">
                                                 <true>

@@ -1,45 +1,83 @@
 #taskboard {
-	margin-top: -20px;
-	table-layout: fixed;
-	font-size: 14px;
+    margin-top: -20px;
+    table-layout: fixed;
+    font-size: 14px;
 }
 #taskboard td,
 #taskboard th {
-	width: 270px;
+    width: 270px;
 }
 #taskboard thead > tr > * {
-	position: sticky;
-	top: 60px;
-	background-color: rgba(255, 255, 255, 0.85);
-	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 60px;
+    background-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+    z-index: 1;
 }
 @supports (backdrop-filter: blur(15px)) or (--webkit-backdrop-filter: blur(15px)) {
-	#taskboard thead > tr > * {
-		background-color: rgba(255, 255, 255, 0.5);
-		--webkit-backdrop-filter: blur(15px);
-		backdrop-filter: blur(15px);
-	}
+    #taskboard thead > tr > * {
+        background-color: rgba(255, 255, 255, 0.5);
+        --webkit-backdrop-filter: blur(15px);
+        backdrop-filter: blur(15px);
+    }
 }
 
 #taskboard .panel {
-	border-left-width: 5px;
-	margin-bottom: 10px;
+    position: relative;
+    border-left-width: 5px;
+    margin-bottom: 10px;
 }
 #taskboard .panel-body {
-	padding: 5px 8px;
+    padding: 4px 6px;
 }
 
 #taskboard .task {
-	cursor: move;
+    cursor: move;
 }
 #taskboard .task a {
-	cursor: pointer;
+    cursor: pointer;
 }
-#taskboard .completed .task {
-	font-size: 12px;
+#taskboard .completed .task .task-id {
+    text-decoration: line-through;
+}
+#taskboard .top {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 12px;
+}
+#taskboard .priority {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    visibility: hidden;
+    overflow: hidden;
+    color: transparent;
+    border-radius: 4px;
+}
+#taskboard .priority.high {
+    background-color: #dc3545;
+    visibility: visible;
+}
+#taskboard .priority.low {
+    background-color: #e9ecef;
+    visibility: visible;
+}
+#taskboard .owner {
+    font-size: 12px;
+}
+#taskboard .hours {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+}
+#taskboard .hours:not(:empty)::after {
+    content: 'h';
 }
 
 #taskboard .task.ui-draggable-dragging {
-	width: 255px;
-	opacity: 0.8;
+    width: 260px;
+    opacity: 0.8;
 }

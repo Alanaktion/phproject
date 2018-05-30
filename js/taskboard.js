@@ -173,7 +173,7 @@ var Taskboard = {
 	updateCardPriority: function(priority, card) {
 		var $priority = $(card).find('.priority');
 		var priorityName = $('#priority').find('option[value=' + priority + ']').text();
-		$priority.data('val', priority).text(priorityName);
+		$priority.data('val', priority).text(priorityName).removeClass('low high normal');
 		if (!priority) {
 			$priority.attr('class', 'priority normal');
 		} else if (priority < 0) {
@@ -213,7 +213,7 @@ var Taskboard = {
 		$(card).find('.description').text(data.description);
 		$(card).find('.dueDate').text(data.dueDate);
 		$(card).find('.owner').text($('#task-dialog #assigned option[value="' + data.assigned + '"]').first().text()).data('id', data.assigned);
-		$(card).css('border-color', $('#task-dialog #assigned option[value="' + data.assigned + '"]').first().attr('data-color'));
+		$(card).css('border-left-color', $('#task-dialog #assigned option[value="' + data.assigned + '"]').first().attr('data-color'));
 		Taskboard.updateCardPriority(data.priority, card);
 		Taskboard.ajaxUpdateTask(data);
 	},
@@ -236,7 +236,7 @@ var Taskboard = {
 		$(card).find('.description').text(data.description);
 		// $(card).find('.dueDate').text(data.dueDate);
 		$(card).find('.owner').text($('#task-dialog #assigned option[value="' + data.assigned + '"]').first().text());
-		$(card).css('border-color', $('#task-dialog #assigned option[value="' + data.assigned + '"]').first().attr('data-color'));
+		$(card).css('border-left-color', $('#task-dialog #assigned option[value="' + data.assigned + '"]').first().attr('data-color'));
 		$(card).removeClass('cloneable');
 		$(card).attr('id', 'new_task_' + Taskboard.newTaskId);
 		Taskboard.updateCardPriority(data.priority, card);
