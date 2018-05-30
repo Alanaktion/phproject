@@ -29,10 +29,10 @@ var Taskboard = {
 	init: function() {
 
 		// Initialize drag / drop
-		Taskboard.makeDraggable($('.card.task'));
+		Taskboard.makeDraggable($('.task'));
 
 		$('.droppable').droppable({
-			accept: '.card.task',
+			accept: '.task',
 			over: function() {
 				$(this).append('<div class="card task placeholder"></div>');
 			},
@@ -49,7 +49,7 @@ var Taskboard = {
 						'top': ''
 					}).draggable({
 						revert: 'invalid',
-						stack: '.card.task',
+						stack: '.task',
 						distance: 10
 					})
 				);
@@ -58,15 +58,15 @@ var Taskboard = {
 		});
 
 		// Initialize issue editing handler
-		$('#task-table').on('click', '.card.task', function(e) {
+		$('#taskboard').on('click', '.task', function(e) {
 			if(!$(e.target).is('a')) {
 				Taskboard.modalEdit($(this));
 			}
-		}).on('touchstart', '.card.task', function(e) {
+		}).on('touchstart', '.task', function(e) {
 			if(!$(e.target).is('a')) {
 				$(this).popover('show');
 			}
-		}).on('touchend', '.card.task', function(e) {
+		}).on('touchend', '.task', function(e) {
 			if(!$(e.target).is('a')) {
 				$(this).popover('hide');
 				Taskboard.modalEdit($(this));
@@ -104,9 +104,9 @@ var Taskboard = {
 		$(card).draggable({
 			helper: 'clone',
 			cursoer: 'move',
-			containment: '#task-table',
+			containment: '#taskboard',
 			revert: 'invalid',
-			stack: '.card.task',
+			stack: '.task',
 			start: function() {
 				$(this).css('opacity', '.5');
 			},

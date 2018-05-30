@@ -3,62 +3,14 @@
 <head>
     <include href="blocks/head.html" />
     <link rel="stylesheet" href="{{ @BASE }}/minify/css/taskboard.css">
-    <set columnwidth="160" />
-    <check if="{{ !empty(@taskboard[0]) }}">
-        <style type="text/css">
-        /* Size columns at multiples of @columnwidth ({{ @columnwidth }}px) */
-{~ foreach(@statuses as @key=>@value): ~}
-        #taskboard table .column-{{ @key + 1 }} {
-            width: {{ @value.taskboard * @columnwidth }}px;
-        }
-{~ endforeach; ~}
-
-        #taskboard table {
-            width: {{ @column_count * $columnwidth + 252 }}px;
-            table-layout: fixed;
-        }
-
-        /* Reference images within <base> context */
-        #taskboard .completed .spinner {
-            background-image: url({{ @BASE }}/img/taskboard/burn.gif);
-        }
-        #taskboard .spinner {
-            background-image: url({{ @BASE }}/img/ajax-loader.gif);
-        }
-
-        #burndown-modal .modal-body {
-            position: relative;
-        }
-        #burndown-modal .modal-body[data-loading]::after {
-            content: attr(data-loading);
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            transform: translateY(-50%);
-            text-align: center;
-            font-size: 28px;
-            opacity: 0.4;
-        }
-        </style>
-    </check>
-    <!--[if lte IE 9]>
-        <style type="text/css">
-            /*  Fix RGBA issues */
-            #taskboard .card {
-                color: #000000;
-                background-color: #ffffff;
-            }
-        </style>
-    <![endif]-->
 </head>
 <body>
     <set fullwidth="{{ true }}" />
     <include href="blocks/navbar.html" />
-    <section id="taskboard">
-        <table class="taskboard-head">
-            <tr class="tb-row">
-                <th class="column column-1">
+    <table class="table table-bordered table-condensed" id="taskboard">
+        <thead>
+            <tr>
+                <th>
                     <div class="btn-group">
                         <div class="btn-group">
                             <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -115,96 +67,100 @@
                     </check>
                 </th>
                 <repeat group="{{ @statuses }}" key="{{ @key }}" value="{{ @value }}">
-                    <th class="column column-{{ @key + 1 }}">{{ isset(@dict[@value.name]) ? @dict[@value.name] : str_replace('_', ' ', @value.name) }}</th>
+                    <th>{{ isset(@dict[@value.name]) ? @dict[@value.name] : str_replace('_', ' ', @value.name) }}</th>
                 </repeat>
             </tr>
-        </table>
-        <table id="task-table">
+        </thead>
+        <tbody id="task-table">
             <repeat group="{{ @taskboard }}" value="{{ @row }}">
                 <tr data-story-id="{{ @row.project.id }}" class="tb-row">
-                    <td class="column column-1">
-                        <div id="project_{{ @row.project.id}}" class="card story {{ @row.project.status_closed ? 'completed' : '' }}" style="border-color: #{{ @row.project.owner_task_color | esc }};">
-                            <div class="top">
-                                <a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @row.project.id }}" title="Add Task" class="add-task has-tooltip pull-right" data-placement="right">
-                                    <span class="fa fa-plus"></span>
-                                </a>
-                                <span class="owner">
-                                    <check if="{{ @row.project.owner_username }}">
+                    <td>
+                        <div id="project_{{ @row.project.id}}" class="panel panel-default story {{ @row.project.status_closed ? 'completed' : '' }}" style="border-left-color: #{{ @row.project.owner_task_color | esc }};">
+                            <div class="panel-body">
+                                <div class="clearfix text-center">
+                                    <a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @row.project.id }}" title="Add Task" class="add-task has-tooltip pull-right" data-placement="right">
+                                        <span class="fa fa-plus"></span>
+                                    </a>
+                                    <span class="pull-left">
+                                        <a href="{{ @BASE }}/issues/{{ @row.project.id }}" target="_blank">{{ @row.project.id }}</a>
+                                    </span>
+                                    <span class="owner">
+                                        <check if="{{ @row.project.owner_username }}">
+                                            <true>
+                                                <a href="{{ @BASE }}/user/{{ @row.project.owner_username }}" target="_blank">{{ @row.project.owner_name | esc }}</a>
+                                            </true>
+                                            <false>
+                                                {{ @row.project.owner_name | esc }}
+                                            </false>
+                                        </check>
+                                    </span>
+                                </div>
+                                <p>
+                                    {{ @row.project.name | esc }}
+                                    <check if="{{ @row.project.size_estimate }}">
+                                        - {{ @row.project.size_estimate }}
+                                    </check>
+                                </p>
+                                <div class="task-dueDate">{{ empty(@row.project.due_date) ? "" : date('n/j', strtotime(@row.project.due_date)) }}</div>
+                                <div class="text-muted">
+                                    <check if="{{ @row.project.type_id == @issue_type.project }}">
                                         <true>
-                                            <a href="{{ @BASE }}/user/{{ @row.project.owner_username }}" target="_blank">{{ @row.project.owner_name | esc }}</a>
+                                            {{ @row.project.parent_id ? @dict.subproject : @dict.project }}
                                         </true>
                                         <false>
-                                            {{ @row.project.owner_name | esc }}
+                                            {{ @row.project.type_name }}
                                         </false>
                                     </check>
-                                </span>
-                                <span class="task-id">
-                                    <a href="{{ @BASE }}/issues/{{ @row.project.id }}" target="_blank">{{ @row.project.id }}</a>
-                                </span>
-
-                                <span class="task-dueDate">{{ empty(@row.project.due_date) ? "" : date('n/j', strtotime(@row.project.due_date)) }}</span>
-                            </div>
-                            <div class="title">{{ @row.project.name | esc }}
-                                <check if="{{ @row.project.size_estimate }}">
-                                 - {{ @row.project.size_estimate }}
-                                </check>
-                            </div>
-                            <div class="type">
-                                <check if="{{ @row.project.type_id == @issue_type.project }}">
-                                    <true>
-                                        {{ @row.project.parent_id ? @dict.subproject : @dict.project }}
-                                    </true>
-                                    <false>
-                                        {{ @row.project.type_name }}
-                                    </false>
-                                </check>
+                                </div>
                             </div>
                         </div>
                     </td>
                     <repeat group="{{ @row.columns }}" key="{{ @status_id }}" value="{{ @col }}">
-                        <td class="column column-{{ @status_id + 1 }} {{ @statuses[@status_id]['closed'] ? 'completed' : '' }} droppable" data-status="{{ @status_id }}">
+                        <td class="column {{ @statuses[@status_id]['closed'] ? 'completed' : '' }} droppable" data-status="{{ @status_id }}">
                             <repeat group="{{ @col }}" value="{{ @task }}">
-                                <div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto bottom" data-container="body" data-content="<strong>{{ @dict.cols.author }}: </strong>{{ @task.author_name | esc }}<br><strong>{{ @dict.cols.description | esc }}: </strong> {{ strlen(@task.description) > 320 ? substr(@task.description, 0, 300) . ' [...]' : @task.description | esc }}" style="border-color: #{{ @task.owner_task_color | esc }};">
-                                    <div class="hidden repeat_cycle">{{ @task.repeat_cycle }}</div>
-                                    <div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
-                                    <div class="top">
-                                        <span class="task-id"><a href="{{ @BASE }}/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
-                                        <span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
-                                    </div>
-                                    <div class="title">{{ @task.name | esc }}</div>
-                                    <div class="description">{{ @task.description | esc }}</div>
-                                    <check if="{{ strtotime(@task.due_date) > 0 }}">
-                                        <true>
-                                            <div class="dueDate">{{ date('n/j/Y', strtotime(@task.due_date)) }}</div>
-                                        </true>
-                                        <false>
-                                            <div class="dueDate"></div>
-                                        </false>
-                                    </check>
-                                    <check if="{{ @task.priority == 0 }}">
-                                        <true>
-                                            <div class="priority normal" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
-                                        </true>
-                                        <false>
-                                            <check if="{{ @task.priority < 0 }}">
-                                                <true>
-                                                    <div class="priority low" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
-                                                </true>
-                                                <false>
-                                                    <div class="priority high" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
-                                                </false>
-                                            </check>
-                                        </false>
-                                    </check>
-                                    <div class="owner" data-id="{{ @task.owner_id }}">
-                                        <check if="{{ @task.owner_username }}">
+                                <div class="panel panel-default task" style="border-left-color: #{{ @task.owner_task_color | esc }};">
+                                    <div class="panel-body" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto bottom" data-container="body" data-content="<strong>{{ @dict.cols.author }}: </strong>{{ @task.author_name | esc }}<br><strong>{{ @dict.cols.description | esc }}: </strong> {{ strlen(@task.description) > 320 ? substr(@task.description, 0, 300) . ' [...]' : @task.description | esc }}">
+                                        <div class="repeat_cycle hidden">{{ @task.repeat_cycle }}</div>
+                                        <div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
+                                        <div class="top">
+                                            <span class="task-id"><a href="{{ @BASE }}/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
+                                            <span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
+                                        </div>
+                                        <div class="title">{{ @task.name | esc }}</div>
+                                        <div class="description hidden" aria-hidden="true">{{ @task.description | esc }}</div>
+                                        <check if="{{ strtotime(@task.due_date) > 0 }}">
                                             <true>
-                                                <a href="{{ @BASE }}/user/{{ @task.owner_username }}" target="_blank">{{ @task.owner_name | esc }}</a>
+                                                <div class="dueDate">{{ date('n/j/Y', strtotime(@task.due_date)) }}</div>
                                             </true>
                                             <false>
-                                                {{ @task.owner_name | esc }}
+                                                <div class="dueDate"></div>
                                             </false>
                                         </check>
+                                        <check if="{{ @task.priority == 0 }}">
+                                            <true>
+                                                <div class="priority normal" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
+                                            </true>
+                                            <false>
+                                                <check if="{{ @task.priority < 0 }}">
+                                                    <true>
+                                                        <div class="priority low" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
+                                                    </true>
+                                                    <false>
+                                                        <div class="priority high" data-val="{{ @task.priority }}">{{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}</div>
+                                                    </false>
+                                                </check>
+                                            </false>
+                                        </check>
+                                        <div class="owner" data-id="{{ @task.owner_id }}">
+                                            <check if="{{ @task.owner_username }}">
+                                                <true>
+                                                    <a href="{{ @BASE }}/user/{{ @task.owner_username }}" target="_blank">{{ @task.owner_name | esc }}</a>
+                                                </true>
+                                                <false>
+                                                    {{ @task.owner_name | esc }}
+                                                </false>
+                                            </check>
+                                        </div>
                                     </div>
                                 </div>
                             </repeat>
@@ -212,8 +168,9 @@
                     </repeat>
                 </tr>
             </repeat>
-        </table>
-    </section>
+        </tbody>
+    </table>
+
     <div class="card task cloneable" id="new_task">
         <div class="hidden repeat_cycle"></div>
         <div class="hours"></div><div class="top">
