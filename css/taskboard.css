@@ -7,12 +7,18 @@
 #taskboard th {
 	width: 270px;
 }
-#taskboard thead {
-	backdrop-filter: blur(15px);
-}
 #taskboard thead > tr > * {
 	position: sticky;
 	top: 60px;
+	background-color: rgba(255, 255, 255, 0.85);
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+@supports (backdrop-filter: blur(15px)) or (--webkit-backdrop-filter: blur(15px)) {
+	#taskboard thead > tr > * {
+		background-color: rgba(255, 255, 255, 0.5);
+		--webkit-backdrop-filter: blur(15px);
+		backdrop-filter: blur(15px);
+	}
 }
 #taskboard .panel {
 	border-left-width: 4px;

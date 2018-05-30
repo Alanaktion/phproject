@@ -6262,13 +6262,14 @@ a.list-group-item-danger.active:focus {
 	height: 24px;
 }
 
-#taskboard table.taskboard-head {
-	background-color: transparent;
-}
-#taskboard table.taskboard-head th {
-	background-color: #222;
-	background-color: rgba(34,34,34,.8) !important;
+#taskboard thead > tr > * {
+	background-color: rgba(34, 34, 34, .8) !important;
 	color: white !important;
+}
+@supports (backdrop-filter: blur(15px)) or (--webkit-backdrop-filter: blur(15px)) {
+	#taskboard thead > tr > * {
+		background-color: rgba(34, 34, 34, 0.5);
+	}
 }
 #taskboard .spinner {
 	background-image: url(../img/ajax-loader-dark.gif) !important;

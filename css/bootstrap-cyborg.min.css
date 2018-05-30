@@ -33,12 +33,14 @@ pre code {
 }
 
 /* Phproject Additions */
-#taskboard table.taskboard-head {
-	background-color: transparent;
-}
-#taskboard table.taskboard-head th {
-	background-color: rgba(0,0,0,.7) !important;
+#taskboard thead > tr > * {
+	background-color: rgba(0, 0, 0,.8) !important;
 	color: white !important;
+}
+@supports (backdrop-filter: blur(15px)) or (--webkit-backdrop-filter: blur(15px)) {
+	#taskboard thead > tr > * {
+		background-color: rgba(0, 0, 0, 0.5);
+	}
 }
 .datepicker-dropdown::before,
 .datepicker-dropdown::after {
