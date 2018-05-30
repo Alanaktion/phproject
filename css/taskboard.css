@@ -20,13 +20,26 @@
 		backdrop-filter: blur(15px);
 	}
 }
+
 #taskboard .panel {
-	border-left-width: 4px;
+	border-left-width: 5px;
 	margin-bottom: 10px;
 }
 #taskboard .panel-body {
-	padding: 5px 10px;
+	padding: 5px 8px;
 }
-#taskboard .completed .panel {
+
+#taskboard .task {
+	cursor: move;
+}
+#taskboard .task a {
+	cursor: pointer;
+}
+#taskboard .completed .task {
 	font-size: 12px;
+}
+
+#taskboard .task.ui-draggable-dragging {
+	width: 255px;
+	opacity: 0.8;
 }

@@ -33,8 +33,12 @@ var Taskboard = {
 
 		$('.droppable').droppable({
 			accept: '.task',
-			over: function() {
-				$(this).append('<div class="card task placeholder"></div>');
+			over: function(e, ui) {
+				let $task = ui.draggable;
+				let height = $task.height();
+				if ($task.closest('td')[0] != this) {
+					$(this).append('<div class="panel panel-default placeholder" style="height: ' + height + 'px;"><div class="panel-body"></div></div>');
+				}
 			},
 			out: function() {
 				$(this).find('.placeholder').remove();
@@ -116,16 +120,16 @@ var Taskboard = {
 			distance: 10
 		});
 	},
-	modalEdit: function(data) {
-		var user = $(data).find('.owner').data('id'),
-			userColor = $(data).css('border-left-color'),
-			taskId = $(data).attr('id').replace('task_', ''),
-			title = $(data).find('.title').text().trim(),
-			description = $(data).find('.description').text().trim(),
-			hours = $(data).find('.hours').text().trim(),
-			date = $(data).find('.dueDate').text().trim(),
-			priority = $(data).find('.priority').data('val'),
-			repeatCycle = $(data).find('.repeat_cycle').text();
+	modalEdit: function($el) {
+		let user = $el.find('.owner').data('id');
+		let userColor = $el.css('border-left-color');
+		let taskId = $el.attr('id').replace('task_', '');
+		let title = $el.find('.title').text().trim();
+		let description = $el.find('.description').text().trim();
+		let hours = $el.find('.hours').text().trim();
+		let date = $el.find('.dueDate').text().trim();
+		let priority = $el.find('.priority').data('val');
+		let repeatCycle = $el.find('.repeat_cycle').text();
 
 		$('#task-dialog input#taskId').val(taskId);
 		$('#task-dialog input#title').val(title);
