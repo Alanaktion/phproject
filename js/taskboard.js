@@ -66,15 +66,6 @@ var Taskboard = {
 			if(!$(e.target).is('a')) {
 				Taskboard.modalEdit($(this));
 			}
-		}).on('touchstart', '.task', function(e) {
-			if(!$(e.target).is('a')) {
-				$(this).popover('show');
-			}
-		}).on('touchend', '.task', function(e) {
-			if(!$(e.target).is('a')) {
-				$(this).popover('hide');
-				Taskboard.modalEdit($(this));
-			}
 		});
 
 		// Initialize add buttons on stories
@@ -101,6 +92,17 @@ var Taskboard = {
 				$('#task-dialog').modal('hide');
 			}
 			return false;
+		});
+
+		// Initialize priority tooltips
+		$('#taskboard').tooltip({
+			title: function() {
+				let $this = $(this);
+				return $this.attr('data-prefix') + ' — ' + $this.text();
+			},
+			container: 'body',
+			selector: '.task .priority',
+			placement: 'auto right',
 		});
 
 	},
@@ -180,8 +182,8 @@ var Taskboard = {
 		$('#task-dialog .modal-content').css('border', '3px solid ' + userColor);
 	},
 	updateCardPriority: function(priority, card) {
-		var $priority = $(card).find('.priority');
-		var priorityName = $('#priority').find('option[value=' + priority + ']').text();
+		let $priority = $(card).find('.priority');
+		let priorityName = $('#priority').find('option[value=' + priority + ']').text();
 		$priority.data('val', priority).text(priorityName).removeClass('low high normal');
 		if (!priority) {
 			$priority.attr('class', 'priority normal');
@@ -192,7 +194,7 @@ var Taskboard = {
 		}
 	},
 	changeUser: function(selected) {
-		var color = $(selected).find('option:selected').attr('data-color');
+		let color = $(selected).find('option:selected').attr('data-color');
 		Taskboard.changeModalColor(color);
 	},
 	setOptionByText: function(selectId, text) {
