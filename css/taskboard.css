@@ -80,4 +80,7 @@
 #taskboard .task.ui-draggable-dragging {
     width: 260px;
     opacity: 0.8;
+    z-index: 2;
+    --webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
 }
