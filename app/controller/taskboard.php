@@ -213,9 +213,16 @@ class Taskboard extends \Controller
         $f3->set("filter", $params["filter"]);
 
         // Get user list for select
-        $users = new \Model\User();
-        $f3->set("users", $users->getAll());
-        $f3->set("groups", $users->getAllGroups());
+        $userModel = new \Model\User();
+        $users = $userModel->getAll();
+        $f3->set("users", $users);
+        $f3->set("groups", $userModel->getAllGroups());
+
+        $avatars = [];
+        foreach ($users as $u) {
+            $avatars[$u->id] = $u->avatar(48);
+        }
+        $f3->set("avatars", $avatars);
 
         $this->_render("taskboard/index.html");
     }

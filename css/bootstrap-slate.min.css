@@ -36,7 +36,7 @@ pre code {
 	background-color: rgba(46, 51, 56, .9) !important;
 	color: white !important;
 }
-@supports (backdrop-filter: blur(15px)) or (--webkit-backdrop-filter: blur(15px)) {
+@supports (backdrop-filter: blur(15px)) or (-webkit-backdrop-filter: blur(15px)) {
 	#taskboard thead > tr > * {
 		background-color: rgba(46, 51, 56, .5) !important;
 	}

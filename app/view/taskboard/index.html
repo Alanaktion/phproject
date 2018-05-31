@@ -123,11 +123,6 @@
                                 <div class="panel panel-default task" style="border-left-color: #{{ @task.owner_task_color | esc }};" id="task_{{ @task.id }}" data-id="{{ @task.id }}">
                                     <div class="panel-body">
                                         <div class="repeat_cycle hidden">{{ @task.repeat_cycle }}</div>
-                                        <div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
-                                        <div class="top">
-                                            <span class="task-id"><a href="{{ @BASE }}/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
-                                            <span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
-                                        </div>
                                         <div class="title">{{ @task.name | esc }}</div>
                                         <div class="description hidden" aria-hidden="true">{{ @task.description | esc }}</div>
                                         <check if="{{ strtotime(@task.due_date) > 0 }}">
@@ -141,15 +136,26 @@
                                         <div class="priority {{ !@task.priority ? 'normal' : (@task.priority > 0 ? 'high' : 'low') }}" data-val="{{ @task.priority }}" data-prefix="{{ @dict.cols.priority }}">
                                             {{ isset(@dict[@task.priority_name]) ? @dict[@task.priority_name] : str_replace('_', ' ', @task.priority_name) }}
                                         </div>
-                                        <div class="owner" data-id="{{ @task.owner_id }}">
-                                            <check if="{{ @task.owner_username }}">
-                                                <true>
-                                                    <a href="{{ @BASE }}/user/{{ @task.owner_username }}" target="_blank">{{ @task.owner_name | esc }}</a>
-                                                </true>
-                                                <false>
-                                                    {{ @task.owner_name | esc }}
-                                                </false>
-                                            </check>
+                                        <div class="footer clearfix">
+                                            <div class="pull-left">
+                                                <span class="task-id"><a href="{{ @BASE }}/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
+                                                &ensp;<small class="text-muted">{{ @task.author_name }}</small>&ensp;
+                                                <span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
+                                            </div>
+                                            <div class="pull-right">
+                                                <div class="hours text-muted">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
+                                                <check if="{{ @task.owner_username }}">
+                                                    <true>
+                                                        <a href="{{ @BASE }}/user/{{ @task.owner_username }}" target="_blank">
+                                                            <span class="sr-only owner" data-id="{{ @task.owner_id }}">{{ @task.owner_name | esc }}</span>
+                                                            <img class="avatar" src="{{ @avatars[@task.owner_id] }}" aria-hidden="true" alt>
+                                                        </a>
+                                                    </true>
+                                                    <false>
+                                                        <span class="owner" data-id="{{ @task.owner_id }}">{{ @task.owner_name | esc }}</span>
+                                                    </false>
+                                                </check>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -212,7 +218,7 @@
                                         </optgroup>
                                         <optgroup label="Users">
                                             <repeat group="{{ @users }}" value="{{ @user }}">
-                                                <option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" data-username="{{ @user.username }}">{{ @user.name | esc }}</option>
+                                                <option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" data-username="{{ @user.username }}" data-avatar="{{ @user->avatar(48) }}">{{ @user.name | esc }}</option>
                                             </repeat>
                                         </optgroup>
                                     </select>

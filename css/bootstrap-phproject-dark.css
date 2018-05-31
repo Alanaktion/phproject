@@ -61,10 +61,10 @@ table a:not(.btn),
 
 /* Phproject Additions */
 #taskboard thead > tr > * {
-	background-color: rgba(34, 34, 34, .8) !important;
+	background-color: rgba(34, 34, 34, .9) !important;
 	color: white !important;
 }
-@supports (backdrop-filter: blur(15px)) or (--webkit-backdrop-filter: blur(15px)) {
+@supports (backdrop-filter: blur(15px)) or (-webkit-backdrop-filter: blur(15px)) {
 	#taskboard thead > tr > * {
 		background-color: rgba(34, 34, 34, 0.5) !important;
 	}

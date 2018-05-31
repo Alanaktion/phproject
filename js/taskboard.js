@@ -63,7 +63,8 @@ var Taskboard = {
 
 		// Initialize issue editing handler
 		$('#taskboard').on('click', '.task', function(e) {
-			if(!$(e.target).is('a')) {
+			let $target = $(e.target);
+			if(!$target.is('a') && !$target.is('img')) {
 				Taskboard.modalEdit($(this));
 			}
 		});
@@ -104,7 +105,6 @@ var Taskboard = {
 			selector: '.task .priority',
 			placement: 'auto right',
 		});
-
 	},
 	makeDraggable: function(card) {
 		$(card).draggable({
@@ -208,23 +208,35 @@ var Taskboard = {
 		}).prop('selected', true);
 	},
 	updateCard: function(card, data) {
-		$(card).find('.title').text(data.title);
-		$(card).find('.repeat_cycle').text(data.repeat_cycle);
+		let $card = $(card);
+		$card.find('.title').text(data.title);
+		$card.find('.repeat_cycle').text(data.repeat_cycle);
 
 		if (isNumber(data.hours_spent) && parseInt(data.burndown) && data.hours > 0) {
-			$(card).find('.hours').text(parseFloat(data.hours) - parseFloat(data.hours_spent));
-			$(card).find('.hours').show();
+			$card.find('.hours').text(parseFloat(data.hours) - parseFloat(data.hours_spent));
+			$card.find('.hours').show();
 		} else if (isNumber(data.hours) && data.hours > 0) {
-			$(card).find('.hours').text(parseFloat(data.hours));
-			$(card).find('.hours').show();
+			$card.find('.hours').text(parseFloat(data.hours));
+			$card.find('.hours').show();
 		} else {
-			$(card).find('.hours').hide();
+			$card.find('.hours').hide();
 		}
 
-		$(card).find('.description').text(data.description);
-		$(card).find('.dueDate').text(data.dueDate);
-		$(card).find('.owner').text($('#task-dialog #assigned option[value="' + data.assigned + '"]').first().text()).data('id', data.assigned);
-		$(card).css('border-left-color', $('#task-dialog #assigned option[value="' + data.assigned + '"]').first().attr('data-color'));
+		$card.find('.description').text(data.description);
+		$card.find('.dueDate').text(data.dueDate);
+
+		let $user = $('#task-dialog #assigned option[value="' + data.assigned + '"]');
+		$card.find('.owner')
+			.text($user.text())
+			.data('id', data.assigned);
+		if ($card.find('.owner').parent('a').length) {
+			$card.find('.owner').parent('a').attr('href', BASE + '/user/' + $user.attr('data-username'));
+		}
+		if ($card.find('.owner').siblings('img').length) {
+			$card.find('.owner').siblings('img').attr('src', BASE + '/avatar/48/' + data.assigned + '.png');
+		}
+
+		$card.css('border-left-color', $('#task-dialog #assigned option[value="' + data.assigned + '"]').first().attr('data-color'));
 		Taskboard.updateCardPriority(data.priority, card);
 		Taskboard.ajaxUpdateTask(data);
 	},

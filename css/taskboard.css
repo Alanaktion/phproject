@@ -11,7 +11,7 @@
     position: -webkit-sticky;
     position: sticky;
     top: 60px;
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
     z-index: 998;
 }
@@ -35,7 +35,7 @@
     margin-bottom: 5px;
 }
 #taskboard .panel-body {
-    padding: 4px 6px;
+    padding: 6px 6px 4px 7px;
 }
 
 #taskboard .task {
@@ -44,14 +44,18 @@
 #taskboard .task a {
     cursor: pointer;
 }
-#taskboard .completed .task .task-id {
+#taskboard .completed .task-id {
     text-decoration: line-through;
 }
-#taskboard .top {
+#taskboard .title {
+    padding-right: 12px;
+}
+#taskboard .footer {
+    padding-top: 3px;
+    line-height: 24px;
+}
+#taskboard .footer > div {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
-    font-size: 12px;
 }
 #taskboard .priority {
     position: absolute;
@@ -73,13 +77,11 @@
     background-color: #e9ecef;
     visibility: visible;
 }
-#taskboard .owner {
-    font-size: 12px;
-}
-#taskboard .hours {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
+#taskboard .avatar {
+    width: 24px;
+    height: 24px;
+    margin-left: 5px;
+    border-radius: 2px;
 }
 #taskboard .hours:not(:empty)::after {
     content: 'h';
