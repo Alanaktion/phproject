@@ -8,16 +8,17 @@
     width: 270px;
 }
 #taskboard thead > tr > * {
+    position: -webkit-sticky;
     position: sticky;
     top: 60px;
     background-color: rgba(255, 255, 255, 0.85);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
-    z-index: 1;
+    z-index: 998;
 }
-@supports (backdrop-filter: blur(15px)) or (--webkit-backdrop-filter: blur(15px)) {
+@supports (backdrop-filter: blur(15px)) or (-webkit-backdrop-filter: blur(15px)) {
     #taskboard thead > tr > * {
         background-color: rgba(255, 255, 255, 0.5);
-        --webkit-backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
         backdrop-filter: blur(15px);
     }
 }
@@ -25,7 +26,13 @@
 #taskboard .panel {
     position: relative;
     border-left-width: 5px;
-    margin-bottom: 10px;
+    margin: 10px 5px 0;
+}
+#taskboard .panel:first-child {
+    margin-top: 5px;
+}
+#taskboard .panel:last-child {
+    margin-bottom: 5px;
 }
 #taskboard .panel-body {
     padding: 4px 6px;
@@ -78,9 +85,7 @@
 }
 
 #taskboard .task.ui-draggable-dragging {
-    width: 260px;
-    opacity: 0.8;
-    z-index: 2;
-    --webkit-backdrop-filter: blur(15px);
+    width: 250px;
+    -webkit-backdrop-filter: blur(15px);
     backdrop-filter: blur(15px);
 }

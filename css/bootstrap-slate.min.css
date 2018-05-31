@@ -38,8 +38,14 @@ pre code {
 }
 @supports (backdrop-filter: blur(15px)) or (--webkit-backdrop-filter: blur(15px)) {
 	#taskboard thead > tr > * {
-		background-color: rgba(46, 51, 56, .5);
+		background-color: rgba(46, 51, 56, .5) !important;
 	}
+}
+#taskboard .priority.low {
+    background-color: #6c757d !important;
+}
+#taskboard .spinner {
+    background-image: url(../img/ajax-loader-dark.gif) !important;
 }
 
 .datepicker {

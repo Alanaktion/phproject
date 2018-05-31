@@ -6268,8 +6268,11 @@ a.list-group-item-danger.active:focus {
 }
 @supports (backdrop-filter: blur(15px)) or (--webkit-backdrop-filter: blur(15px)) {
 	#taskboard thead > tr > * {
-		background-color: rgba(34, 34, 34, 0.5);
+		background-color: rgba(34, 34, 34, 0.5) !important;
 	}
+}
+#taskboard .priority.low {
+    background-color: #606060 !important;
 }
 #taskboard .spinner {
 	background-image: url(../img/ajax-loader-dark.gif) !important;

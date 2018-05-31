@@ -107,17 +107,26 @@ var Taskboard = {
 	makeDraggable: function(card) {
 		$(card).draggable({
 			helper: 'clone',
-			cursoer: 'move',
+			cursor: 'move',
 			containment: '#taskboard',
 			revert: 'invalid',
 			stack: '.task',
-			start: function() {
+			start: function(e, ui) {
 				$(this).css('opacity', '.5');
+
+				// Make helper background semi-transparent
+				let $el = ui.helper;
+				let opacity = 0.95;
+				if ('CSS' in window && CSS.supports("(backdrop-filter: blur(15px)) or (-webkit-backdrop-filter: blur(15px))")) {
+					opacity = 0.75;
+				}
+				$el.css('background-color', $el.css('background-color').replace(')', ', ' + opacity + ')').replace('rgb', 'rgba'));
 			},
 			stop: function() {
 				$(this).css('opacity', '1');
 			},
-			distance: 10
+			distance: 10,
+			zIndex: 999
 		});
 	},
 	modalEdit: function($el) {
