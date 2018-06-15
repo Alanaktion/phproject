@@ -102,7 +102,7 @@ var Taskboard = {
 				return $this.attr('data-prefix') + ' — ' + $this.text();
 			},
 			container: 'body',
-			selector: '.task .priority',
+			selector: '.task .priority, .task .owner',
 			placement: 'auto right',
 		});
 	},
@@ -208,6 +208,7 @@ var Taskboard = {
 		}).prop('selected', true);
 	},
 	updateCard: function(card, data) {
+		// TODO: Fix and test this functionality. Mostly user info stuff.
 		let $card = $(card);
 		$card.find('.title').text(data.title);
 		$card.find('.repeat_cycle').text(data.repeat_cycle);
@@ -225,51 +226,50 @@ var Taskboard = {
 		$card.find('.description').text(data.description);
 		$card.find('.dueDate').text(data.dueDate);
 
-		let $user = $('#task-dialog #assigned option[value="' + data.assigned + '"]');
+		let $owner = $('#task-dialog #assigned option[value="' + data.assigned + '"]');
 		$card.find('.owner')
-			.text($user.text())
-			.data('id', data.assigned);
-		if ($card.find('.owner').parent('a').length) {
-			$card.find('.owner').parent('a').attr('href', BASE + '/user/' + $user.attr('data-username'));
-		}
-		if ($card.find('.owner').siblings('img').length) {
-			$card.find('.owner').siblings('img').attr('src', BASE + '/avatar/48/' + data.assigned + '.png');
-		}
+			.attr('title', $owner.text())
+			.attr('data-id', data.assigned);
+		$card.find('.owner img').attr('src', BASE + '/avatar/48/' + data.assigned + '.png');
 
-		$card.css('border-left-color', $('#task-dialog #assigned option[value="' + data.assigned + '"]').first().attr('data-color'));
+		$card.css('border-left-color', $owner.attr('data-color'));
 		Taskboard.updateCardPriority(data.priority, card);
 		Taskboard.ajaxUpdateTask(data);
 	},
 	addCard: function(story, data, storyId) {
-		var row = $(story).parents('.tb-row');
-		var cell = row.find('td.column-2'); // put new tasks in the new column
-		cell.append($('.cloneable:last').clone());
-		var card = cell.find('.cloneable:last');
+		// TODO: fix functionality here. It almost works, but not quite.
+		var $cell = $(story).parents('.tb-row').find('td.column');
+		$cell.append($('.cloneable').clone());
+		var $card = $cell.find('.cloneable').last();
 
-		$(card).find('.title').text(data.title);
-		$(card).find('.repeat_cycle').text(data.repeat_cycle);
+		$card.find('.title').text(data.title);
+		$card.find('.repeat_cycle').text(data.repeat_cycle);
 
 		if (isNumber(data.hours) && data.hours > 0) {
-			$(card).find('.hours').text(parseFloat(data.hours));
-			$(card).find('.hours').show();
+			$card.find('.hours').text(parseFloat(data.hours));
+			$card.find('.hours').show();
 		} else {
-			$(card).find('.hours').hide();
+			$card.find('.hours').hide();
 		}
 
-		$(card).find('.description').text(data.description);
-		// $(card).find('.dueDate').text(data.dueDate);
-		$(card).find('.owner').text($('#task-dialog #assigned option[value="' + data.assigned + '"]').first().text());
-		$(card).css('border-left-color', $('#task-dialog #assigned option[value="' + data.assigned + '"]').first().attr('data-color'));
-		$(card).removeClass('cloneable');
-		$(card).attr('id', 'new_task_' + Taskboard.newTaskId);
-		Taskboard.updateCardPriority(data.priority, card);
+		$card.find('.description').text(data.description);
+		// $card.find('.dueDate').text(data.dueDate);
+		let $owner = $('#task-dialog #assigned option[value="' + data.assigned + '"]');
+		$card.find('.owner')
+			.attr('title', $owner.text())
+			.attr('data-id', data.assigned);
+		$card.find('.owner img').attr('src', BASE + '/avatar/48/' + data.assigned + '.png');
+		$card.css('border-left-color', $owner.attr('data-color'));
+		$card.removeClass('cloneable');
+		$card.attr('id', 'new_task_' + Taskboard.newTaskId);
+		Taskboard.updateCardPriority(data.priority, $card);
 
 		data.storyId = storyId;
 		data.newTaskId = Taskboard.newTaskId;
-		Taskboard.ajaxAddTask(data, card);
+		Taskboard.ajaxAddTask(data, $card);
 		Taskboard.newTaskId++;
 
-		card.show();
+		$card.show();
 	},
 	TaskboardReceive: function(task) { // if the task changes statuses/stories
 		var taskId = $(task).attr('id').replace('task_', ''),
@@ -344,7 +344,7 @@ var Taskboard = {
 			data: data,
 			success: function(result) {
 				Taskboard.newUnBlock(taskId);
-				$(card).find('.task-id').html('<a href="/issues/' + result.id + '" target="_blank">' + result.id + '</a>');
+				$(card).find('.task-id').html('<a href="' + BASE + '/issues/' + result.id + '" target="_blank">' + result.id + '</a>');
 				$(card).attr('id', 'task_' + result.id);
 				Taskboard.makeDraggable(card);
 			},

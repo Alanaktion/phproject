@@ -144,17 +144,9 @@
                                             </div>
                                             <div class="pull-right">
                                                 <div class="hours text-muted">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
-                                                <check if="{{ @task.owner_username }}">
-                                                    <true>
-                                                        <a href="{{ @BASE }}/user/{{ @task.owner_username }}" target="_blank">
-                                                            <span class="sr-only owner" data-id="{{ @task.owner_id }}">{{ @task.owner_name | esc }}</span>
-                                                            <img class="avatar" src="{{ @avatars[@task.owner_id] }}" aria-hidden="true" alt>
-                                                        </a>
-                                                    </true>
-                                                    <false>
-                                                        <span class="owner" data-id="{{ @task.owner_id }}">{{ @task.owner_name | esc }}</span>
-                                                    </false>
-                                                </check>
+                                                <span class="owner" data-id="{{ @task.owner_id }}" title="{{ @task.owner_name }}">
+                                                    <img class="avatar" src="{{ @avatars[@task.owner_id] }}" aria-hidden="true" alt>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -167,17 +159,29 @@
         </tbody>
     </table>
 
-    <div class="card task cloneable" id="new_task">
-        <div class="hidden repeat_cycle"></div>
-        <div class="hours"></div><div class="top">
-            <span class="task-id"></span>
+    <div class="panel panel-default task cloneable" id="new_task">
+        <div class="panel-body">
+            <div class="repeat_cycle hidden"></div>
+            <div class="title"></div>
+            <div class="description hidden" aria-hidden="true"></div>
+            <div class="dueDate"></div>
+            <div class="priority normal"></div>
+            <div class="footer clearfix">
+                <div class="pull-left">
+                    <span class="task-id"></span>
+                    &ensp;<small class="text-muted">{{ @user.name }}</small>&ensp;
+                    <span class="task-dueDate"></span>
+                </div>
+                <div class="pull-right">
+                    <div class="hours text-muted"></div>
+                    <span class="owner">
+                        <img class="avatar" aria-hidden="true" alt>
+                    </span>
+                </div>
+            </div>
         </div>
-        <div class="title"></div>
-        <div class="description"></div>
-        <div class="dueDate"></div>
-        <div class="priority normal"></div>
-        <div class="owner"></div>
     </div>
+
     <div class="container-fluid">
         <include href="blocks/footer.html" />
     </div>

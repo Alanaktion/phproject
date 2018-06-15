@@ -23,6 +23,9 @@
     }
 }
 
+.cloneable {
+    display: none !important;
+}
 #taskboard .panel {
     position: relative;
     border-left-width: 5px;
