@@ -556,4 +556,55 @@ class Issue extends \Model
         }
         return $this;
     }
+
+    /**
+     * Get array of all descendant IDs
+     * @return array
+     */
+    public function descendantIds()
+    {
+        $ids = [$this->id];
+        foreach ($this->getChildren() as $child) {
+            $ids[] = $child->id;
+            $ids = $ids + $child->descendantIds();
+        }
+        return array_unique($ids);
+    }
+
+    /**
+     * Get aggregate totals across the project and its descendants
+     * @return array
+     */
+    public function projectStats()
+    {
+        $total = 0;
+        $complete = 0;
+        $hoursSpent = 0;
+        $hoursTotal = 0;
+        if ($this->id) {
+            $total ++;
+            if ($this->closed_date) {
+                $complete ++;
+            }
+            if ($this->hours_spent > 0) {
+                $hoursSpent += $this->hours_spent;
+            }
+            if ($this->hours_total > 0) {
+                $hoursTotal += $this->hours_total;
+            }
+            foreach ($this->getChildren() as $child) {
+                $result = $child->projectStats();
+                $total += $result["total"];
+                $complete += $result["complete"];
+                $hoursSpent += $result["hours_spent"];
+                $hoursTotal += $result["hours_total"];
+            }
+        }
+        return [
+            "total" => $total,
+            "complete" => $complete,
+            "hours_spent" => $hoursSpent,
+            "hours_total" => $hoursTotal,
+        ];
+    }
 }
