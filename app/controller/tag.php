@@ -47,7 +47,7 @@ class Tag extends \Controller
 
         $f3->set("title", "#" . $params["tag"] . " - " . $f3->get("dict.issue_tags"));
         $f3->set("tag", $tag);
-        $f3->set("issues.subset", $issue->find("id IN ($issue_ids)"));
+        $f3->set("issues.subset", $issue->find("id IN ($issue_ids) AND deleted_date IS NULL"));
         $this->_render("tag/single.html");
     }
 }
