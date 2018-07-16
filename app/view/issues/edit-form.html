@@ -49,7 +49,7 @@
         <div class="col-md-10">
             <select class="form-control input-sm" name="priority">
                 <repeat group="{{ @priorities }}" value="{{ @item }}">
-                    <check if="{{ empty(@issue) || empty(@issue.priority_id) }}">
+                    <check if="{{ empty(@issue) || !isset(@issue.priority) }}">
                         <true>
                             <option value="{{ @item.value }}" {{ @item.value == @issue_priority.default ? "selected" : '' }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) | esc }}</option>
                         </true>
