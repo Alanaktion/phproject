@@ -1,4 +1,4 @@
-/* globals $ BASE */
+/* globals $ BASE Mousetrap */
 $(function() {
 
 	// Tooltips and popovers
@@ -151,7 +151,6 @@ $(function() {
 	});
 	$.each(issue_types, function(key, type) {
 		var typeId = type;
-		console.log(type);
 		Mousetrap.bind('n ' + typeId, function() {
 			window.location = BASE + '/issues/new/' + typeId;
 		});
