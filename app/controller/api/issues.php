@@ -53,9 +53,9 @@ class Issues extends \Controller\Api
         }
 
         // Remove redundant fields
-        foreach ($issue->schema() as $i=>$val) {
-            if (preg_match("/(type|status|priority|author|owner|sprint)_.+|has_due_date/", $i)) {
-                unset($casted[$i]);
+        foreach (array_keys($issue->schema()) as $key) {
+            if (preg_match("/(type|status|priority|author|owner|sprint)_.+|has_due_date/", $key)) {
+                unset($casted[$key]);
             }
         }
 

@@ -87,8 +87,8 @@ class User extends \Controller
 
         // Validate widget list
         $valid = true;
-        foreach ($widgets as $k=>$col) {
-            foreach ($col as $l=>$widget) {
+        foreach ($widgets as $col) {
+            foreach ($col as $widget) {
                 if (!in_array($widget, $allWidgets)) {
                     $valid = false;
                 }

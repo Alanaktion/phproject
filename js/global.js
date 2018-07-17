@@ -1,4 +1,4 @@
-/* globals $ BASE Mousetrap */
+/* globals $ BASE Mousetrap issue_types */
 $(function() {
 
 	// Tooltips and popovers
@@ -159,7 +159,7 @@ $(function() {
 	// Allow "esc" to clear form focus
 	$(document).on('keyup', function(e) {
 		if(e.which == 27) {
-			$el = $(document.activeElement);
+			let $el = $(document.activeElement);
 			if ($el.filter('input,select,textarea').length) {
 				// Clear focus on a form element
 				$el.blur();

@@ -425,7 +425,7 @@ class Issues extends \Controller
         $type = new \Model\Issue\Type;
         $type->load($issue->type_id);
 
-        $this->loadIssueMeta();
+        $this->loadIssueMeta($issue);
 
         $f3->set("title", $f3->get("edit_n", $issue->id));
         $f3->set("issue", $issue);
@@ -440,8 +440,10 @@ class Issues extends \Controller
 
     /**
      * Load metadata lists for displaying issue edit forms
+     * @param  \Model\Issue $issue
+     * @return void
      */
-    protected function loadIssueMeta()
+    protected function loadIssueMeta(\Model\Issue $issue)
     {
         $f3 = \Base::instance();
         $status = new \Model\Issue\Status;
@@ -719,7 +721,7 @@ class Issues extends \Controller
         $comments = new \Model\Issue\Comment\Detail;
         $f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC, id DESC")));
 
-        $this->loadIssueMeta();
+        $this->loadIssueMeta($issue);
 
         $this->_render("issues/single.html");
     }
@@ -742,7 +744,7 @@ class Issues extends \Controller
         $watcher = new \Model\Issue\Watcher;
 
         // Loads just in case the user is already a watcher
-        $watcher->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
+        $watcher->load(array("issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")));
         if (!$watcher->id) {
             $watcher->issue_id = $issue->id;
             $watcher->user_id = $f3->get("POST.user_id");
@@ -1157,10 +1159,9 @@ class Issues extends \Controller
      * Upload a file
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function upload($f3, $params)
+    public function upload($f3)
     {
         $user_id = $this->_userId;
 

@@ -114,7 +114,6 @@ class Backlog extends \Controller
         $user = new \Model\User();
         $f3->set("groups", $user->getAllGroups());
 
-        $f3->set("groupid", $groupId);
         $f3->set("type_ids", $typeIds);
         $f3->set("sprints", $sprint_details);
         $f3->set("backlog", $backlog);
@@ -129,9 +128,8 @@ class Backlog extends \Controller
      * GET /backlog/@filter
      * GET /backlog/@filter/@groupid
      * @param \Base $f3
-     * @param array $params
      */
-    public function redirect(\Base $f3, array $params)
+    public function redirect(\Base $f3)
     {
         $f3->reroute("/backlog");
     }
