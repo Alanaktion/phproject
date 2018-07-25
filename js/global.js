@@ -127,7 +127,7 @@ $(function() {
 	});
 	Mousetrap.bind('/', function() {
 		$('.navbar-form input[type=search]').focus();
-	});
+	}, 'keyup');
 	Mousetrap.bind('shift+b', function() {
 		window.location = BASE + '/issues?status=open';
 	});
@@ -136,13 +136,13 @@ $(function() {
 	});
 	Mousetrap.bind('e', function() {
 		$('#btn-edit').click();
-	});
+	}, 'keyup');
 	Mousetrap.bind('shift+c', function() {
 		window.location = $('#btn-issue-close').attr('href');
 	});
 	Mousetrap.bind('c', function() {
 		$('#comment_textarea').focus();
-	});
+	}, 'keyup');
 	Mousetrap.bind('shift+r', function() {
 		window.location = $('#btn-issue-reopen').attr('href');
 	});
