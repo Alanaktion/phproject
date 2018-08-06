@@ -35,10 +35,8 @@ class Notification extends \Prefab
                     || (ord($c) == 0x7f)
                     || (ord($c) & 0x80)
                     || ($c == '=')
-                    || (($c == ' ') && ($str[$str_index] == "\015")))
-                {
-                    if (($lp += 3) > self::QPRINT_MAXL)
-                    {
+                    || (($c == ' ') && ($str[$str_index] == "\015"))) {
+                    if (($lp += 3) > self::QPRINT_MAXL) {
                         $ret .= '=';
                         $ret .= "\015";
                         $ret .= "\012";
@@ -47,18 +45,15 @@ class Notification extends \Prefab
                     $ret .= '=';
                     $ret .= $hex[ord($c) >> 4];
                     $ret .= $hex[ord($c) & 0xf];
-                }
-                else
-                {
-                    if ((++$lp) > self::QPRINT_MAXL)
-                    {
+                } else {
+                    if ((++$lp) > self::QPRINT_MAXL) {
                         $ret .= '=';
                         $ret .= "\015";
                         $ret .= "\012";
                         $lp = 1;
                     }
                     $ret .= $c;
-                    if($lp == 1 && $c == '.') {
+                    if ($lp == 1 && $c == '.') {
                         $ret = substr($ret, 0, strlen($ret) - 1);
                         $ret .= '=2E';
                         $lp++;

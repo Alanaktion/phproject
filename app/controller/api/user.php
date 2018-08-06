@@ -67,10 +67,10 @@ class User extends \Controller\Api
 
         $user = new \Model\User;
         $result = $user->paginate(
-                $f3->get("GET.offset") / $pagLimit,
-                $pagLimit,
-                "deleted_date IS NULL AND role != 'group'"
-            );
+            $f3->get("GET.offset") / $pagLimit,
+            $pagLimit,
+            "deleted_date IS NULL AND role != 'group'"
+        );
 
         $users = array();
         foreach ($result["subset"] as $user) {
@@ -99,10 +99,10 @@ class User extends \Controller\Api
 
         $user = new \Model\User;
         $result = $user->paginate(
-                $f3->get("GET.offset") / $pagLimit,
-                $pagLimit,
-                "deleted_date IS NULL AND role = 'group' AND api_visible != '0'"
-            );
+            $f3->get("GET.offset") / $pagLimit,
+            $pagLimit,
+            "deleted_date IS NULL AND role = 'group' AND api_visible != '0'"
+        );
 
         $groups = array();
         foreach ($result["subset"] as $user) {

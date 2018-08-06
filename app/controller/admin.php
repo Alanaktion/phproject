@@ -376,7 +376,6 @@ class Admin extends \Controller
 
             // Save user
             $user->save();
-
         } catch (\Exception $e) {
             $f3->set("error", $e->getMessage());
             $this->_render("admin/users/edit.html");

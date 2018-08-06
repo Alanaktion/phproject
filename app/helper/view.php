@@ -222,12 +222,12 @@ class View extends \Template
             '8O' => "\xF0\x9F\x98\xB2", // oops
         ];
 
-        $match = implode('|', array_map(function($str) {
+        $match = implode('|', array_map(function ($str) {
             return preg_quote($str, '/');
         }, array_keys($map)));
         $regex = "/([^a-z\\/&]|^)($match)([^a-z\\/]|$)/m";
 
-        return preg_replace_callback($regex, function($match) use ($map) {
+        return preg_replace_callback($regex, function ($match) use ($map) {
             return $match[1] . $map[$match[2]] . $match[3];
         }, $str);
     }

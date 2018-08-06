@@ -114,7 +114,6 @@ class Issues extends \Controller\Api
             // By default, use standard HTTP POST fields
             $post = $_REQUEST;
         } else {
-
             // For Redmine compatibility, also accept a JSON object
             try {
                 $post = json_decode(file_get_contents('php://input'), true);

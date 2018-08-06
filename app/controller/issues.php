@@ -234,9 +234,8 @@ class Issues extends \Controller
                     }
 
                     // Diff contents and save what's changed.
-                    foreach ($post as $i=>$val) {
-                        if (
-                            $issue->exists($i)
+                    foreach ($post as $i => $val) {
+                        if ($issue->exists($i)
                             && $i != "id"
                             && $issue->$i != $val
                             && (!empty($val) || $val === "0")
@@ -558,9 +557,8 @@ class Issues extends \Controller
 
         // Diff contents and save what's changed.
         $hashState = json_decode($post["hash_state"]);
-        foreach ($post as $i=>$val) {
-            if (
-                $issue->exists($i)
+        foreach ($post as $i => $val) {
+            if ($issue->exists($i)
                 && $i != "id"
                 && $issue->$i != $val
                 && md5($val) != $hashState->$i
@@ -645,7 +643,6 @@ class Issues extends \Controller
     public function save($f3)
     {
         if ($f3->get("POST.id")) {
-
             // Updating existing issue.
             $issue = $this->_saveUpdate();
             if ($issue->id) {
@@ -654,7 +651,6 @@ class Issues extends \Controller
                 $f3->error(404, "This issue does not exist.");
             }
         } elseif ($f3->get("POST.name")) {
-
             // Creating new issue.
             $issue = $this->_saveNew();
             if ($issue->id) {

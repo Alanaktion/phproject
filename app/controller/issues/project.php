@@ -61,8 +61,7 @@ class Project extends \Controller
          * @param   int          $level
          * @var     callable $renderTree This function, required for recursive calls
          */
-        $renderTree = function (\Model\Issue &$issue, $level = 0) use ($parentMap, &$renderTree)
-        {
+        $renderTree = function (\Model\Issue &$issue, $level = 0) use ($parentMap, &$renderTree) {
             if ($issue->id) {
                 $f3 = \Base::instance();
                 $children = $parentMap[$issue->id] ?: [];

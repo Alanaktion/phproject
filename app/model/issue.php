@@ -373,7 +373,6 @@ class Issue extends \Model
 
         // Check if updating or inserting
         if ($this->query) {
-
             // Save issue updates and send notifications
             $update = $this->_saveUpdate($notify);
             $issue = parent::save();
@@ -382,7 +381,6 @@ class Issue extends \Model
                 $notification->issue_update($this->id, $update->id);
             }
         } else {
-
             // Set closed date if status is closed
             if (!$this->closed_date && $this->status) {
                 $status = new Issue\Status;

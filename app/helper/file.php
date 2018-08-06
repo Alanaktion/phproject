@@ -45,7 +45,7 @@ class File extends \Image
      */
     public static function mimeIcon($contentType)
     {
-        foreach (self::$mimeMap["icon"] as $regex=>$name) {
+        foreach (self::$mimeMap["icon"] as $regex => $name) {
             if (preg_match("@^" . $regex . "$@i", $contentType)) {
                 return $name;
             }

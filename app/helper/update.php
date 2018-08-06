@@ -22,13 +22,13 @@ class Update extends \Prefab
         if (is_callable(array($this, $func))) {
             if ($old_val !== null && $old_val !== '') {
                 $old_val = call_user_func_array(
-                        array($this, $func),
+                    array($this, $func),
                     array($old_val)
                 );
             }
             if ($new_val !== null && $new_val !== '') {
                 $new_val = call_user_func_array(
-                        array($this, $func),
+                    array($this, $func),
                     array($new_val)
                 );
             }
@@ -38,7 +38,7 @@ class Update extends \Prefab
         $name = $f3->get("dict.cols." . $field);
         if ($name === null) {
             $name = ucwords(str_replace(
-                    array("_", " id"),
+                array("_", " id"),
                 array(" ", ""),
                 $field
             ));
