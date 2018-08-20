@@ -22,8 +22,8 @@
                 </div>
                 <check if="{{ @user.role=='admin' }}">
                     <div class="form-group">
-                        <label class="col-md-3 control-label label-sm">{{ @dict.cols.author }}</label>
-                        <div class="col-md-9">
+                        <label class="col-sm-3 control-label label-sm">{{ @dict.cols.author }}</label>
+                        <div class="col-sm-9">
                             <select class="form-control input-sm" name="author_id">
                                 <option value="">{{ @dict.choose_option }}</option>
                                 <option value="{{ @user.id }}">{{ @user.name | esc }}</option>
