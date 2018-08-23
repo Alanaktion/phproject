@@ -356,9 +356,9 @@ class Notification extends \Prefab
         if ($f3->get("mail.from")) {
             $f3->set("due", $due);
             $f3->set("overdue", $overdue);
-            $preview = "$due issues due today";
+            $preview = count($due) . " issues due today";
             if ($overdue) {
-                $preview .= ", $overdue overdue issues";
+                $preview .= ", " . count($overdue) . " overdue issues";
             }
             $f3->set("previewText", $preview);
             $subject = "Due Today - " . $f3->get("site.name");
