@@ -4,7 +4,6 @@ namespace Controller;
 
 class Index extends \Controller
 {
-
     /**
      * GET /
      *

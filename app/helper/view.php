@@ -6,7 +6,6 @@ class View extends \Template
 {
     public function __construct()
     {
-
         // Register filters
         $this->filter('parseText', '$this->parseText');
         $this->filter('formatFilesize', '$this->formatFilesize');

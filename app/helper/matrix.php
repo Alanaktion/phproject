@@ -4,7 +4,6 @@ namespace Helper;
 
 class Matrix extends \Matrix
 {
-
     /**
      * Merge n sorted arrays into a single array with the same sort order
      *
