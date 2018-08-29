@@ -4,7 +4,6 @@ namespace Helper;
 
 class Matrix extends \Matrix
 {
-
     /**
      * Merge n sorted arrays into a single array with the same sort order
      *
@@ -14,13 +13,13 @@ class Matrix extends \Matrix
     public function mergeSorted(array $arrays)
     {
         $lengths = array();
-        foreach ($arrays as $k=>$v) {
+        foreach ($arrays as $k => $v) {
             $lengths[$k] = count($v);
         }
         $max = max($lengths);
         $result = array();
         for ($i = 0; $i < $max; $i++) {
-            foreach ($lengths as $k=>$l) {
+            foreach ($lengths as $k => $l) {
                 if ($l > $i) {
                     $result[] = $arrays[$k][$i];
                 }

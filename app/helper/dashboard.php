@@ -66,7 +66,7 @@ class Dashboard extends \Prefab
 
         $projects = $this->_projects;
         $subprojects = array();
-        foreach ($projects as $i=>$project) {
+        foreach ($projects as $i => $project) {
             if ($project->parent_id) {
                 $subprojects[] = $project;
                 unset($projects[$i]);

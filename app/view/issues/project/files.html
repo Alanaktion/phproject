@@ -1,0 +1,54 @@
+<check if="{{ @files }}">
+    <true>
+        <ul class="nav nav-pills" role="tablist">
+            <li class="active"><a href="#files-tiles" data-toggle="tab"><span class="fa fa-th-large"></span></a></li>
+            <li><a href="#files-table" data-toggle="tab"><span class="fa fa-list"></span></a></li>
+        </ul>
+        <br>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="files-tiles">
+                <ul class="list-inline file-list">
+                    <repeat group="{{ @files }}" value="{{ @file }}">
+                        <include href="blocks/file/thumb.html" />
+                    </repeat>
+                </ul>
+            </div>
+            <div class="tab-pane" id="files-table">
+                <div class="table-responsive">
+                    <table class="table table-striped table-condensed file-list">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th data-sort="string">{{ @dict.file_name }}</th>
+                                <th data-sort="int">{{ @dict.cols.parent }}</th>
+                                <th data-sort="string">{{ @dict.uploaded_by }}</th>
+                                <th data-sort="int">{{ @dict.upload_date }}</th>
+                                <th data-sort="int">{{ @dict.file_size }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <repeat group="{{ @files }}" value="{{ @file }}">
+                                <tr id="ft-{{ @file.id }}" data-id="{{ @file.id }}">
+                                    <td data-sort-value="{{ @file.content_type | esc }}">
+                                        <img src="{{ @BASE }}/img/mime/16/{{ \Helper\File::mimeIcon(@file.content_type) }}.svg" alt>
+                                    </td>
+                                    <td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" target="_blank">{{ @file.filename | esc }}</a></td>
+                                    <td><a class="file-attachment" href="{{ @BASE }}/issues/{{ @file.issue_id }}" target="_blank">{{ @file.issue_id }}</a></td>
+                                    <td>{{ @file.user_name | esc }}</td>
+                                    <td data-sort-value="{{ strtotime(@file.created_date) }}" title="{{ date('Y-m-d H:i:s', @this->utc2local(@file.created_date)) }}">{{ date('M j, Y \a\t g:ia', @this->utc2local(strtotime(@file.created_date))) }}</td>
+                                    <td data-sort-value="{{ @file.filesize }}">{{ @file.filesize | formatFilesize }}</td>
+                                </tr>
+                            </repeat>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </true>
+    <false>
+        <div class="well well-sm center-block text-center" style="max-width: 400px; padding: 30px;">
+            No files are attached to issues in this project.
+        </div>
+    </false>
+</check>

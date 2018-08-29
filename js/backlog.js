@@ -9,9 +9,9 @@
  */
 function getQueryVariable(variable) {
 	var query = window.location.search.substring(1);
-	var vars = query.split("&");
+	var vars = query.split('&');
 	for (var i = 0; i < vars.length; i++) {
-		var pair = vars[i].split("=");
+		var pair = vars[i].split('=');
 		if(pair[0] == variable) {
 			return pair[1];
 		}
@@ -47,10 +47,10 @@ function refreshPoints(){
 		}
 
 		// adds points to span
-		$(".points-label", this).text(points);
+		$('.points-label', this).text(points);
 
 		// adds completed points to span
-		$(".points-label-completed", this).text(completedPoints);
+		$('.points-label-completed', this).text(completedPoints);
 	});
 	$('.panel').each(function() {
 	});
@@ -61,7 +61,7 @@ var Backlog = {
 		// Initialize sorting
 		if (window.sortBacklog) {
 			$('.sortable').each(function() {
-					new Sortable(this, {
+				new Sortable(this, {
 					group: 'backlog',
 					ghostClass: 'placeholder',
 					filter: '.hidden-group,.hidden-type',
@@ -167,9 +167,9 @@ var Backlog = {
 		// Updates href attr if group_id is set
 		$('.sprint-board').each(function() {
 			var clickGroupId = $('.dropdown-menu .active a[data-user-ids]').attr('data-group-id');
-			var href_link = $(this).attr('data-base-href');
+			var hrefLink = $(this).attr('data-base-href');
 			if (clickGroupId !== null){
-				$(this).attr("href", href_link + "/" + clickGroupId);
+				$(this).attr('href', hrefLink + '/' + clickGroupId);
 			}
 		});
 	},

@@ -1,4 +1,4 @@
-/* globals $ BASE */
+/* globals $ BASE Mousetrap issue_types */
 $(function() {
 
 	// Tooltips and popovers
@@ -115,62 +115,51 @@ $(function() {
 	// Submit from textarea if Ctrl+Enter or Cmd+Enter is pressed
 	$('body').on('keypress', 'textarea', function(e) {
 		if((e.keyCode == 13 || e.keyCode == 10) && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.metaKey)))) {
-			$(this).parents('form').first().submit();
+			$(this).closest('form').submit();
 			e.preventDefault();
 		}
 	});
 
-	// Bind keyup to hotkey handler
+	// Bind default hotkeys
+	Mousetrap.bind('?', function() {
+		$('.modal.in').not('#modal-hotkeys').modal('hide');
+		$('#modal-hotkeys').modal('toggle');
+	});
+	Mousetrap.bind('/', function() {
+		$('.navbar-form input[type=search]').focus();
+	}, 'keyup');
+	Mousetrap.bind('shift+b', function() {
+		window.location = BASE + '/issues?status=open';
+	});
+	Mousetrap.bind('w', function() {
+		$('#watch-btn').click();
+	});
+	Mousetrap.bind('e', function() {
+		$('#btn-edit').click();
+	}, 'keyup');
+	Mousetrap.bind('shift+c', function() {
+		window.location = $('#btn-issue-close').attr('href');
+	});
+	Mousetrap.bind('c', function() {
+		$('#comment_textarea').focus();
+	}, 'keyup');
+	Mousetrap.bind('shift+r', function() {
+		window.location = $('#btn-issue-reopen').attr('href');
+	});
+	Mousetrap.bind('r', function() {
+		window.location.reload();
+	});
+	$.each(issue_types, function(key, type) {
+		var typeId = type;
+		Mousetrap.bind('n ' + typeId, function() {
+			window.location = BASE + '/issues/new/' + typeId;
+		});
+	});
+
+	// Allow "esc" to clear form focus
 	$(document).on('keyup', function(e) {
-		// Only handle hotkeys when not in a form context
-		if(e.target.type != 'textarea' && e.target.tagName != 'INPUT' && e.target.tagName != 'SELECT' && (e.target.className != 'modal in' || e.which == 191)) {
-			switch (e.which) {
-				case 191: // Hotkey modal
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						$('.modal.in').not('#modal-hotkeys').modal('hide');
-						$('#modal-hotkeys').modal('toggle');
-					}
-					// Search
-					if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						$('.navbar-form input[type=search]').focus();
-					}
-					break;
-				case 66: // Browse
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						window.location = BASE + '/issues?status=open';
-					}
-					break;
-				case 87: // Watch/unwatch issue
-					if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						$('#watch-btn').click();
-					}
-					break;
-				case 69: // Edit issue
-					if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-						$('#btn-edit').click();
-					}
-					break;
-				case 67:
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $('#btn-issue-close').length) { // Close issue
-						window.location = $('#btn-issue-close').attr('href');
-					} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Comment on issue
-						$('#comment_textarea').focus();
-					}
-					break;
-				case 82:
-					if(e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && $('#btn-issue-reopen').length) { // Reopen issue
-						window.location = $('#btn-issue-reopen').attr('href');
-					} else if(!e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) { // Reload
-						window.location.reload();
-					}
-					break;
-				default:
-					if(e.shiftKey && !e.ctrlKey && e.altKey && issue_types.indexOf(e.which - 48) >= 0) {
-						window.location = BASE + '/issues/new/' + (e.which - 48);
-					}
-			}
-		} else if(e.which == 27) {
-			$el = $(document.activeElement);
+		if(e.which == 27) {
+			let $el = $(document.activeElement);
 			if ($el.filter('input,select,textarea').length) {
 				// Clear focus on a form element
 				$el.blur();

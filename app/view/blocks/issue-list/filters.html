@@ -21,12 +21,12 @@
         </select>
     </td>
     <td>
-        <select class="form-control input-sm" name="priority">
+        <select class="form-control input-sm" name="priority_id">
             <option value="">--</option>
             <repeat group="{{ @priorities }}" value="{{ @item }}">
-                <check if="{{ !empty(@GET.priority) && @GET.priority == @item.value }}">
-                    <true><option value="{{ @item.value }}" selected>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></true>
-                    <false><option value="{{ @item.value }}">{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></false>
+                <check if="{{ !empty(@GET.priority_id) && @GET.priority_id == @item.id }}">
+                    <true><option value="{{ @item.id }}" selected>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></true>
+                    <false><option value="{{ @item.id }}">{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) }}</option></false>
                 </check>
             </repeat>
         </select>

@@ -2,7 +2,6 @@
 
 abstract class Plugin extends \Prefab
 {
-
     // Metadata container
     protected $_meta;
 

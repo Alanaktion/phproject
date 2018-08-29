@@ -1,4 +1,4 @@
-/* globals $ Chart */
+/* globals $ Chart BurndownLegendDict BurndownRange */
 var Burndown = {
 	initialized: false,
 	chart: null,
@@ -6,15 +6,15 @@ var Burndown = {
 		datasets: [{
 			data: null,
 			label: BurndownLegendDict.hours_remaining,
-			borderColor: "#2ecc71",
-			pointBackgroundColor: "#2ecc71",
-			pointBorderColor: "#2ecc71",
+			borderColor: '#2ecc71',
+			pointBackgroundColor: '#2ecc71',
+			pointBorderColor: '#2ecc71',
 		}, {
 			data: null,
 			label: BurndownLegendDict.man_hours_remaining,
-			borderColor: "#9b59b6",
-			pointBackgroundColor: "#9b59b6",
-			pointBorderColor: "#9b59b6",
+			borderColor: '#9b59b6',
+			pointBackgroundColor: '#9b59b6',
+			pointBorderColor: '#9b59b6',
 		}]
 	},
 	options: {
@@ -36,7 +36,7 @@ var Burndown = {
 		},
 		scales: {
 			xAxes: [{
-				type: "time",
+				type: 'time',
 				time: {
 					min: BurndownRange.start,
 					max: BurndownRange.end,
@@ -66,9 +66,9 @@ var Burndown = {
 		}
 	},
 	init: function(canvasId, dataUrl) {
-		Chart.defaults.global.defaultFontColor = "rgba(127,127,127,1)";
-		Chart.defaults.scale.gridLines.color = "rgba(127,127,127,.3)";
-		Chart.defaults.scale.gridLines.zeroLineColor = "rgba(127,127,127,.3)";
+		Chart.defaults.global.defaultFontColor = 'rgba(127,127,127,1)';
+		Chart.defaults.scale.gridLines.color = 'rgba(127,127,127,.3)';
+		Chart.defaults.scale.gridLines.zeroLineColor = 'rgba(127,127,127,.3)';
 		this.initialized = true;
 
 		$.get(dataUrl, function(data) {

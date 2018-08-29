@@ -234,9 +234,8 @@ class Issues extends \Controller
                     }
 
                     // Diff contents and save what's changed.
-                    foreach ($post as $i=>$val) {
-                        if (
-                            $issue->exists($i)
+                    foreach ($post as $i => $val) {
+                        if ($issue->exists($i)
                             && $i != "id"
                             && $issue->$i != $val
                             && (!empty($val) || $val === "0")
@@ -425,7 +424,7 @@ class Issues extends \Controller
         $type = new \Model\Issue\Type;
         $type->load($issue->type_id);
 
-        $this->loadIssueMeta();
+        $this->loadIssueMeta($issue);
 
         $f3->set("title", $f3->get("edit_n", $issue->id));
         $f3->set("issue", $issue);
@@ -440,8 +439,10 @@ class Issues extends \Controller
 
     /**
      * Load metadata lists for displaying issue edit forms
+     * @param  \Model\Issue $issue
+     * @return void
      */
-    protected function loadIssueMeta()
+    protected function loadIssueMeta(\Model\Issue $issue)
     {
         $f3 = \Base::instance();
         $status = new \Model\Issue\Status;
@@ -556,9 +557,8 @@ class Issues extends \Controller
 
         // Diff contents and save what's changed.
         $hashState = json_decode($post["hash_state"]);
-        foreach ($post as $i=>$val) {
-            if (
-                $issue->exists($i)
+        foreach ($post as $i => $val) {
+            if ($issue->exists($i)
                 && $i != "id"
                 && $issue->$i != $val
                 && md5($val) != $hashState->$i
@@ -643,7 +643,6 @@ class Issues extends \Controller
     public function save($f3)
     {
         if ($f3->get("POST.id")) {
-
             // Updating existing issue.
             $issue = $this->_saveUpdate();
             if ($issue->id) {
@@ -652,7 +651,6 @@ class Issues extends \Controller
                 $f3->error(404, "This issue does not exist.");
             }
         } elseif ($f3->get("POST.name")) {
-
             // Creating new issue.
             $issue = $this->_saveNew();
             if ($issue->id) {
@@ -719,7 +717,7 @@ class Issues extends \Controller
         $comments = new \Model\Issue\Comment\Detail;
         $f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC, id DESC")));
 
-        $this->loadIssueMeta();
+        $this->loadIssueMeta($issue);
 
         $this->_render("issues/single.html");
     }
@@ -742,7 +740,7 @@ class Issues extends \Controller
         $watcher = new \Model\Issue\Watcher;
 
         // Loads just in case the user is already a watcher
-        $watcher->load(array("issue_id = ? AND user_id = ?", $issue->id, $post["user_id"]));
+        $watcher->load(array("issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")));
         if (!$watcher->id) {
             $watcher->issue_id = $issue->id;
             $watcher->user_id = $f3->get("POST.user_id");
@@ -1157,10 +1155,9 @@ class Issues extends \Controller
      * Upload a file
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function upload($f3, $params)
+    public function upload($f3)
     {
         $user_id = $this->_userId;
 
@@ -1234,118 +1231,6 @@ class Issues extends \Controller
         }
 
         $f3->reroute("/issues/" . $issue->id);
-    }
-
-    /**
-     * GET /issues/project/@id
-     * Project Overview action
-     *
-     * @param  \Base $f3
-     * @param  array $params
-     */
-    public function project_overview($f3, $params)
-    {
-        // Load issue
-        $project = new \Model\Issue\Detail;
-        $project->load($params["id"]);
-        if (!$project->id) {
-            $f3->error(404);
-            return;
-        }
-        if ($project->type_id != $f3->get("issue_type.project")) {
-            $f3->error(400, "Issue is not a project.");
-            return;
-        }
-
-        /**
-         * Helper function to get a percentage of completed issues and some totals across the entire tree
-         * @param   \Model\Issue $issue
-         * @var     callable $completeCount This function, required for recursive calls
-         * @return  array
-         */
-        $projectStats = function (\Model\Issue &$issue) use (&$projectStats) {
-            $total = 0;
-            $complete = 0;
-            $hoursSpent = 0;
-            $hoursTotal = 0;
-            if ($issue->id) {
-                $total ++;
-                if ($issue->closed_date) {
-                    $complete ++;
-                }
-                if ($issue->hours_spent > 0) {
-                    $hoursSpent += $issue->hours_spent;
-                }
-                if ($issue->hours_total > 0) {
-                    $hoursTotal += $issue->hours_total;
-                }
-                foreach ($issue->getChildren() as $child) {
-                    $result = $projectStats($child);
-                    $total += $result["total"];
-                    $complete += $result["complete"];
-                    $hoursSpent += $result["hours_spent"];
-                    $hoursTotal += $result["hours_total"];
-                }
-            }
-            return array(
-                "total" => $total,
-                "complete" => $complete,
-                "hours_spent" => $hoursSpent,
-                "hours_total" => $hoursTotal,
-            );
-        };
-        $f3->set("stats", $projectStats($project));
-
-        // Find all nested issues
-        $model = new \Model\Issue\Detail;
-        $parentMap = [];
-        $parents = [$project->id];
-        do {
-            $pStr = implode(',', array_map('intval', $parents));
-            $level = $model->find(["parent_id IN ($pStr) AND deleted_date IS NULL"]);
-            if (!$level) {
-                break;
-            }
-            $parents = [];
-            foreach ($level as $row) {
-                $parentMap[$row->parent_id][] = $row;
-                $parents[] = $row->id;
-            }
-        } while (true);
-
-        /**
-         * Helper function for recursive tree rendering
-         * @param   \Model\Issue $issue
-         * @param   int          $level
-         * @var     callable $renderTree This function, required for recursive calls
-         */
-        $renderTree = function (\Model\Issue &$issue, $level = 0) use ($parentMap, &$renderTree)
-        {
-            if ($issue->id) {
-                $f3 = \Base::instance();
-                $children = $parentMap[$issue->id] ?: [];
-                $hive = array(
-                    "issue" => $issue,
-                    "children" => $children,
-                    "dict" => $f3->get("dict"),
-                    "BASE" => $f3->get("BASE"),
-                    "level" => $level,
-                    "issue_type" => $f3->get("issue_type")
-                );
-                echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
-                if ($children) {
-                    foreach ($children as $item) {
-                        $renderTree($item, $level + 1);
-                    }
-                }
-            }
-        };
-        $f3->set("renderTree", $renderTree);
-
-        // Render view
-        $f3->set("project", $project);
-        $f3->set("title", $project->type_name . " #" . $project->id  . ": " . $project->name . " - " . $f3->get("dict.project_overview"));
-        $this->_render("issues/project.html");
     }
 
     /**

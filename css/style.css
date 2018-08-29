@@ -359,6 +359,11 @@ table a.btn {
 .tex pre a {
 	color: inherit;
 }
+.tex img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
 
 .popover-content {
 	text-overflow: ellipsis;

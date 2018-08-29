@@ -35,10 +35,8 @@ class Notification extends \Prefab
                     || (ord($c) == 0x7f)
                     || (ord($c) & 0x80)
                     || ($c == '=')
-                    || (($c == ' ') && ($str[$str_index] == "\015")))
-                {
-                    if (($lp += 3) > self::QPRINT_MAXL)
-                    {
+                    || (($c == ' ') && ($str[$str_index] == "\015"))) {
+                    if (($lp += 3) > self::QPRINT_MAXL) {
                         $ret .= '=';
                         $ret .= "\015";
                         $ret .= "\012";
@@ -47,18 +45,15 @@ class Notification extends \Prefab
                     $ret .= '=';
                     $ret .= $hex[ord($c) >> 4];
                     $ret .= $hex[ord($c) & 0xf];
-                }
-                else
-                {
-                    if ((++$lp) > self::QPRINT_MAXL)
-                    {
+                } else {
+                    if ((++$lp) > self::QPRINT_MAXL) {
                         $ret .= '=';
                         $ret .= "\015";
                         $ret .= "\012";
                         $lp = 1;
                     }
                     $ret .= $c;
-                    if($lp == 1 && $c == '.') {
+                    if ($lp == 1 && $c == '.') {
                         $ret = substr($ret, 0, strlen($ret) - 1);
                         $ret .= '=2E';
                         $lp++;
@@ -361,9 +356,9 @@ class Notification extends \Prefab
         if ($f3->get("mail.from")) {
             $f3->set("due", $due);
             $f3->set("overdue", $overdue);
-            $preview = "$due issues due today";
+            $preview = count($due) . " issues due today";
             if ($overdue) {
-                $preview .= ", $overdue overdue issues";
+                $preview .= ", " . count($overdue) . " overdue issues";
             }
             $f3->set("previewText", $preview);
             $subject = "Due Today - " . $f3->get("site.name");
@@ -399,7 +394,7 @@ class Notification extends \Prefab
         // Add whole group
         $result = $db->exec("SELECT u.role, u.id FROM issue i INNER JOIN `user` u on i.owner_id = u.id  WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
         if ($result && $result[0]["role"] == 'group') {
-            $group_users = $db->exec("SELECT g.user_email FROM user_group_user g  WHERE g.group_id = ?", $result[0]["id"]);
+            $group_users = $db->exec("SELECT g.user_email FROM user_group_user g WHERE g.deleted_date IS NULL AND g.group_id = ?", $result[0]["id"]);
             foreach ($group_users as $group_user) {
                 if (!empty($group_user["user_email"])) {
                     $recipients[] = $group_user["user_email"];

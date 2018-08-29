@@ -187,7 +187,6 @@ class Taskboard extends \Controller
         // Build multidimensional array of all tasks and projects
         $taskboard = array();
         foreach ($projects as $project) {
-
             // Build array of statuses to put tasks under
             $columns = array();
             foreach ($statuses as $status) {

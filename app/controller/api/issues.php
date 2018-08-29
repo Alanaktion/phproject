@@ -4,7 +4,6 @@ namespace Controller\Api;
 
 class Issues extends \Controller\Api
 {
-
     /**
      * Converts an issue into a Redmine API-style multidimensional array
      * This isn't pretty.
@@ -53,9 +52,9 @@ class Issues extends \Controller\Api
         }
 
         // Remove redundant fields
-        foreach ($issue->schema() as $i=>$val) {
-            if (preg_match("/(type|status|priority|author|owner|sprint)_.+|has_due_date/", $i)) {
-                unset($casted[$i]);
+        foreach (array_keys($issue->schema()) as $key) {
+            if (preg_match("/(type|status|priority|author|owner|sprint)_.+|has_due_date/", $key)) {
+                unset($casted[$key]);
             }
         }
 
@@ -114,7 +113,6 @@ class Issues extends \Controller\Api
             // By default, use standard HTTP POST fields
             $post = $_REQUEST;
         } else {
-
             // For Redmine compatibility, also accept a JSON object
             try {
                 $post = json_decode(file_get_contents('php://input'), true);

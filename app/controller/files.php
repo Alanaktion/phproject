@@ -4,7 +4,6 @@ namespace Controller;
 
 class Files extends \Controller
 {
-
     /**
      * Force the framework to use the local filesystem cache method if possible
      */
@@ -191,7 +190,6 @@ class Files extends \Controller
         $user->load($params["id"]);
 
         if ($user->avatar_filename && is_file("uploads/avatars/" . $user->avatar_filename)) {
-
             // Use local file
             $img = new \Image($user->avatar_filename, null, "uploads/avatars/");
             $img->resize($params["size"], $params["size"]);
@@ -201,7 +199,6 @@ class Files extends \Controller
             header("Cache-Control: private, max-age=" . (3600 / 2));
             $img->render($params["format"]);
         } else {
-
             // Send user to Gravatar
             header("Cache-Control: max-age=" . (3600 * 24));
             $f3->reroute($f3->get("SCHEME") . ":" . \Helper\View::instance()->gravatar($user->email, $params["size"]), true);

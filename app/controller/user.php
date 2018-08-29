@@ -46,8 +46,8 @@ class User extends \Controller
         // Load dashboard widget data
         $allWidgets = $helper->allWidgets;
         $missing = array();
-        foreach ($dashboard as $k=>$widgets) {
-            foreach ($widgets as $l=>$widget) {
+        foreach ($dashboard as $k => $widgets) {
+            foreach ($widgets as $l => $widget) {
                 if (in_array($widget, $allWidgets)) {
                     $f3->set($widget, $helper->$widget());
                 } else {
@@ -87,8 +87,8 @@ class User extends \Controller
 
         // Validate widget list
         $valid = true;
-        foreach ($widgets as $k=>$col) {
-            foreach ($col as $l=>$widget) {
+        foreach ($widgets as $col) {
+            foreach ($col as $widget) {
                 if (!in_array($widget, $allWidgets)) {
                     $valid = false;
                 }
@@ -171,13 +171,11 @@ class User extends \Controller
                 $f3->set("error", "Current password entered is not valid.");
             }
         } elseif (!empty($post["action"]) && $post["action"] == "options") {
-
             // Update option values
             $user->option("disable_mde", !empty($post["disable_mde"]));
             $user->option("disable_due_alerts", !empty($post["disable_due_alerts"]));
             $user->option("disable_self_notifications", !empty($post["disable_self_notifications"]));
         } else {
-
             // Update profile
             if (!empty($post["name"])) {
                 $user->name = filter_var($post["name"], FILTER_SANITIZE_STRING);
@@ -330,13 +328,13 @@ class User extends \Controller
                 0,
                 200,
                 array("status_closed = '0' AND deleted_date IS NULL AND author_id = ?", $user->id),
-                    array("order" => "priority DESC, due_date DESC")
+                array("order" => "priority DESC, due_date DESC")
             ));
             $f3->set("assigned_issues", $issue->paginate(
                 0,
                 200,
                 array("status_closed = '0' AND deleted_date IS NULL AND owner_id = ?", $user->id),
-                    array("order" => "priority DESC, due_date DESC")
+                array("order" => "priority DESC, due_date DESC")
             ));
             $f3->set("overdue_issues", $issue->paginate(0, 200, array("status_closed = '0' AND deleted_date IS NULL AND owner_id = ? AND due_date IS NOT NULL AND due_date < ?",
                     $user->id, date("Y-m-d", \Helper\View::instance()->utc2local())), array("order" => "due_date ASC")));

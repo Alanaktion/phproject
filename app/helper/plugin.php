@@ -126,8 +126,7 @@ class Plugin extends \Prefab
     {
         $return = array();
         foreach ($this->_jsFiles as $item) {
-            if (
-                !$item['match'] || !$path ||
+            if (!$item['match'] || !$path ||
                 ($item['match'] && $path && preg_match($item['match'], $path))
             ) {
                 $return[] = $item['file'];
@@ -145,8 +144,7 @@ class Plugin extends \Prefab
     {
         $return = array();
         foreach ($this->_jsCode as $item) {
-            if (
-                !$item['match'] || !$path ||
+            if (!$item['match'] || !$path ||
                 ($item['match'] && $path && preg_match($item['match'], $path))
             ) {
                 $return[] = $item['code'];

@@ -103,7 +103,7 @@ abstract class Model extends \DB\SQL\Mapper
      * @param  integer       $ttl
      * @return mixed
      */
-    public function load($filter=null, array $options=null, $ttl=0)
+    public function load($filter = null, array $options = null, $ttl = 0)
     {
         if (is_numeric($filter)) {
             return parent::load(array("id = ?", $filter), $options, $ttl);

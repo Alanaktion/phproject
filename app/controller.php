@@ -2,7 +2,6 @@
 
 abstract class Controller
 {
-
     /**
      * Require a user to be logged in. Redirects to /login if a session is not found.
      * @param  int $rank

@@ -2,6 +2,16 @@
 <html lang="{{ @this->lang() }}">
 <head>
     <include href="blocks/head.html" />
+    <style type="text/css">
+        .tab-content .progress {
+            max-width: 240px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .file-list li .delete {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <set fullwidth="{{ true }}" />
@@ -58,29 +68,58 @@
 
     <hr>
 
-    <h4>{{ @dict.project_tree }}</h4>
-    <div class="table-responsive">
-        <table class="table table-condensed table-hover">
-            <thead>
-                <tr>
-                    <th>{{ @dict.cols.id }}</th>
-                    <th>{{ @dict.cols.title }}</th>
-                    <th>{{ @dict.cols.type }}</th>
-                    <th>{{ @dict.cols.assignee }}</th>
-                    <th>{{ @dict.cols.author }}</th>
-                    <th>{{ @dict.cols.priority }}</th>
-                    <th>{{ @dict.cols.due_date }}</th>
-                    <th>{{ @dict.cols.sprint }}</th>
-                    <th>{{ @dict.cols.hours_spent }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {~ @renderTree(@project) ~}
-            </tbody>
-        </table>
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#tab-tree" data-toggle="tab">{{ @dict.project_tree }}</a>
+        </li>
+        <li>
+            <a href="#tab-files" data-toggle="tab">{{ @dict.files }}</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab-tree">
+            <include href="issues/project/tree.html" />
+        </div>
+        <div class="tab-pane" id="tab-files">
+            <div class="progress progress-striped active">
+                <div class="progress-bar" style="width: 100%"></div>
+            </div>
+        </div>
     </div>
 
     <include href="blocks/footer.html" />
+    <script src="{{ @BASE }}/minify/js/stupidtable.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            setTimeout(function() {
+                // Fetch file list
+                $.get(BASE + '/issues/project/{{ @project.id }}/files', function(data) {
+                    $('#tab-files').html(data);
+
+                    // Add file thumbnail popovers
+                    $('.file-list li').each(function() {
+                        $el = $(this);
+                        $el.popover({
+                            trigger: 'hover',
+                            html: true,
+                            delay: {
+                                show: 250,
+                                hide: 50
+                            },
+                            container: 'body',
+                            placement: 'auto right',
+                            content: '<b>' + $el.attr('data-name') + '</b><br>' + $el.attr('data-user') + '<br>' + $el.attr('data-date') + '<br>' +$el.attr('data-size')
+                        });
+                    });
+
+                    // Make file table sortable
+                    $('#files-table table').stupidtable();
+                }, 'html');
+            }, 250);
+        });
+    </script>
 </div>
 </body>
 </html>
