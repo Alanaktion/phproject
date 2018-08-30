@@ -341,51 +341,48 @@
             $(this).find('[autofocus]').focus();
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="{{ @BASE }}/minify/js/taskboard.js"></script>
     <check if="{{ @@filterGroup }}">
-        <true>
-            <script>
-                var BurndownUrl = BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @filter }}',
-                    BurndownLegendDict = {
-                        hours_remaining: '{{ @dict.hours_remaining }}',
-                        man_hours_remaining: '{{ @dict.man_hours_remaining }}',
-                    },
-                    BurndownManHours = parseFloat('{{ @filterGroup->option("man_hours") }}'),
-                    BurndownRange = {
-                        start: '{{ @sprint->getFirstWeekday() }} 00:00:00',
-                        end: '{{ @sprint->getLastWeekday() }} 23:59:59'
-                    };
-            </script>
-            <script src="{{ @BASE }}/js/chart.js"></script>
-            <script src="{{ @BASE }}/minify/js/taskboard.js,burndown.js"></script>
-            <script>
-                $(document).ready(function() {
-                    $("#burndown-modal").on("shown.bs.modal", function(e) {
-                        if(Burndown.initialized === false) {
-                            Burndown.init('burndown', BurndownUrl);
-                        }
-                    });
-                    $("#burndown-modal .fa-edit").click(function(e) {
-                        e.preventDefault();
-                        $('#input-man-hours, #burndown-modal .does-toggle').toggleClass('hidden');
-                        $('#input-man-hours').focus().select();
-                    });
-                    $("#frm-man-hours").submit(function(e) {
-                        e.preventDefault();
-                        $.post(BASE + '/taskboard/saveManHours', $(this).serialize()).fail(function() {
-                            showAlert('Failed to save new sprint assignment');
-                        });
-                        BurndownManHours = $('#input-man-hours').val();
-                        $("#burndown-modal .man-hours").text(BurndownManHours);
-                        $('#input-man-hours, #burndown-modal .does-toggle').toggleClass('hidden');
-                        Burndown.chart.data.datasets[1].data[0].y = BurndownManHours;
-                        Burndown.chart.update();
-                    });
+        <script>
+            var BurndownUrl = BASE + '/taskboard/{{ @sprint.id }}/burndown/{{ @filter }}',
+                BurndownLegendDict = {
+                    hours_remaining: '{{ @dict.hours_remaining }}',
+                    man_hours_remaining: '{{ @dict.man_hours_remaining }}',
+                },
+                BurndownManHours = parseFloat('{{ @filterGroup->option("man_hours") }}'),
+                BurndownRange = {
+                    start: '{{ @sprint->getFirstWeekday() }} 00:00:00',
+                    end: '{{ @sprint->getLastWeekday() }} 23:59:59'
+                };
+        </script>
+        <script src="{{ @BASE }}/js/chart.js"></script>
+        <script src="{{ @BASE }}/minify/js/burndown.js"></script>
+        <script>
+            $(document).ready(function() {
+                $("#burndown-modal").on("shown.bs.modal", function(e) {
+                    if(Burndown.initialized === false) {
+                        Burndown.init('burndown', BurndownUrl);
+                    }
                 });
-            </script>
-        </true>
-        <false>
-            <script src="{{ @BASE }}/minify/js/taskboard.js"></script>
-        </false>
+                $("#burndown-modal .fa-edit").click(function(e) {
+                    e.preventDefault();
+                    $('#input-man-hours, #burndown-modal .does-toggle').toggleClass('hidden');
+                    $('#input-man-hours').focus().select();
+                });
+                $("#frm-man-hours").submit(function(e) {
+                    e.preventDefault();
+                    $.post(BASE + '/taskboard/saveManHours', $(this).serialize()).fail(function() {
+                        showAlert('Failed to save new sprint assignment');
+                    });
+                    BurndownManHours = $('#input-man-hours').val();
+                    $("#burndown-modal .man-hours").text(BurndownManHours);
+                    $('#input-man-hours, #burndown-modal .does-toggle').toggleClass('hidden');
+                    Burndown.chart.data.datasets[1].data[0].y = BurndownManHours;
+                    Burndown.chart.update();
+                });
+            });
+        </script>
     </check>
 </body>
 </html>
