@@ -23,6 +23,7 @@ class User extends \Controller
             "nl" => \ISO::LC_nl . " (Nederlands)",
             "de" => \ISO::LC_de . " (Deutsch)",
             "cs" => \ISO::LC_cs . " (Češka)",
+            "et" => \ISO::LC_et . " (Eesti)",
             "zh" => \ISO::LC_zh . " (中国)",
             "ja" => \ISO::LC_ja . " (日本語)",
         );
