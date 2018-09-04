@@ -261,7 +261,8 @@ class Files extends \Controller
         $force = true;
         if (substr($file->content_type, 0, 5) == "image" ||
             $file->content_type == "text/plain" ||
-            $file->content_type == "application/pdf"
+            $file->content_type == "application/pdf" ||
+            in_array($file->content_type, ['video/mp4', 'video/webm'])
         ) {
             $force = false;
         }
