@@ -120,13 +120,7 @@ var Backlog = {
 		});
 
 		// Apply filters from query string, if any
-		var groupId = getQueryVariable('group_id');
-		if (groupId) {
-			$('.dropdown-menu a[data-group-id=' + groupId + ']').click();
-		} else {
-			$('.dropdown-menu a[data-my-groups]').click();
-		}
-		var typeIdString = getQueryVariable('type_id');
+		var typeIdString = getQueryVariable('type_ids');
 		if (typeIdString) {
 			$('.list-group-item[data-type-id]').addClass('hidden-type');
 			$('.dropdown-menu a[data-type-id]').parents('li').removeClass('active');
@@ -134,6 +128,12 @@ var Backlog = {
 				$('.dropdown-menu a[data-type-id=' + val + ']').parents('li').addClass('active');
 				$('.list-group-item[data-type-id=' + val + ']').removeClass('hidden-type');
 			});
+		}
+		var groupId = getQueryVariable('group_id');
+		if (groupId) {
+			$('.dropdown-menu a[data-group-id=' + groupId + ']').click();
+		} else {
+			$('.dropdown-menu a[data-my-groups]').click();
 		}
 
 		// Un-hide backlog
