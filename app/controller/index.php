@@ -160,7 +160,7 @@ class Index extends \Controller
             extract($security->hash($f3->get("POST.register-password")));
             $user->password = $hash;
             $user->salt = $salt;
-            $user->task_color = sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
+            $user->task_color = sprintf("%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
             $user->rank = \Model\User::RANK_CLIENT;
             $user->save();
 
