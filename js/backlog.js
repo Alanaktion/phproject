@@ -170,6 +170,8 @@ var Backlog = {
 			var hrefLink = $(this).attr('data-base-href');
 			if (clickGroupId) {
 				$(this).attr('href', hrefLink + '/' + clickGroupId);
+			} else {
+				$(this).attr('href', hrefLink);
 			}
 		});
 	},
