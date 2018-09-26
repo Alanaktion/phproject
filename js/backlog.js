@@ -168,7 +168,7 @@ var Backlog = {
 		$('.sprint-board').each(function() {
 			var clickGroupId = $('.dropdown-menu .active a[data-user-ids]').attr('data-group-id');
 			var hrefLink = $(this).attr('data-base-href');
-			if (clickGroupId !== null){
+			if (clickGroupId) {
 				$(this).attr('href', hrefLink + '/' + clickGroupId);
 			}
 		});
