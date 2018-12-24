@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cf56872c01e53c7576aafb39021e2006",
+    "content-hash": "db50bfff96585a4c683eda3549a8f223",
     "packages": [
         {
             "name": "bcosca/fatfree-core",
-            "version": "3.6.4",
+            "version": "3.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bcosca/fatfree-core.git",
-                "reference": "4d1a08829b14468c4821c03b9a5f3b6e4bc981e5"
+                "reference": "c5aa056d2111e666e87f6129fe633c6a2aeeaae2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bcosca/fatfree-core/zipball/4d1a08829b14468c4821c03b9a5f3b6e4bc981e5",
-                "reference": "4d1a08829b14468c4821c03b9a5f3b6e4bc981e5",
+                "url": "https://api.github.com/repos/bcosca/fatfree-core/zipball/c5aa056d2111e666e87f6129fe633c6a2aeeaae2",
+                "reference": "c5aa056d2111e666e87f6129fe633c6a2aeeaae2",
                 "shasum": ""
             },
             "require": {
@@ -35,7 +35,7 @@
             ],
             "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
             "homepage": "http://fatfreeframework.com/",
-            "time": "2018-04-19T17:35:23+00:00"
+            "time": "2018-12-24T13:37:45+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -127,7 +127,7 @@
         },
         {
             "name": "neos/diff",
-            "version": "3.3.9",
+            "version": "3.3.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/neos/diff.git",
@@ -157,36 +157,36 @@
         },
         {
             "name": "netcarver/textile",
-            "version": "v3.6.0",
+            "version": "v3.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/textile/php-textile.git",
-                "reference": "bac6381fcab28cf6b6ae3d0e61b6a8c8d6adca13"
+                "reference": "f1ae0073d2d72a32f4296741de9a14213da68e02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/textile/php-textile/zipball/bac6381fcab28cf6b6ae3d0e61b6a8c8d6adca13",
-                "reference": "bac6381fcab28cf6b6ae3d0e61b6a8c8d6adca13",
+                "url": "https://api.github.com/repos/textile/php-textile/zipball/f1ae0073d2d72a32f4296741de9a14213da68e02",
+                "reference": "f1ae0073d2d72a32f4296741de9a14213da68e02",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "3.7.*",
-                "satooshi/php-coveralls": "0.6.*",
-                "squizlabs/php_codesniffer": "1.5.*",
+                "php-coveralls/php-coveralls": "2.1.*",
+                "phpunit/phpunit": "5.7.*",
+                "squizlabs/php_codesniffer": "3.*",
                 "symfony/yaml": "2.4.*"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.6-dev"
+                    "dev-master": "3.7-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Netcarver\\Textile": "src/"
+                "psr-4": {
+                    "Netcarver\\Textile\\": "src/Netcarver/Textile/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -206,20 +206,20 @@
                 "plaintext",
                 "textile"
             ],
-            "time": "2016-11-17T14:18:12+00:00"
+            "time": "2018-12-15T01:06:16+00:00"
         },
         {
             "name": "paragonie/random_compat",
-            "version": "v2.0.12",
+            "version": "v2.0.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "258c89a6b97de7dfaf5b8c7607d0478e236b04fb"
+                "reference": "29af24f25bab834fcbb38ad2a69fa93b867e070d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/258c89a6b97de7dfaf5b8c7607d0478e236b04fb",
-                "reference": "258c89a6b97de7dfaf5b8c7607d0478e236b04fb",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/29af24f25bab834fcbb38ad2a69fa93b867e070d",
+                "reference": "29af24f25bab834fcbb38ad2a69fa93b867e070d",
                 "shasum": ""
             },
             "require": {
@@ -251,23 +251,24 @@
             "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
             "keywords": [
                 "csprng",
+                "polyfill",
                 "pseudorandom",
                 "random"
             ],
-            "time": "2018-04-04T21:24:14+00:00"
+            "time": "2018-07-04T16:31:37+00:00"
         },
         {
             "name": "symfony/intl",
-            "version": "v3.4.9",
+            "version": "v3.4.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/intl.git",
-                "reference": "e0e9ba72447d2006a5b1b602c6ca3151824b8747"
+                "reference": "0106fee521ff2d9297ca2592feaacad312050377"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/e0e9ba72447d2006a5b1b602c6ca3151824b8747",
-                "reference": "e0e9ba72447d2006a5b1b602c6ca3151824b8747",
+                "url": "https://api.github.com/repos/symfony/intl/zipball/0106fee521ff2d9297ca2592feaacad312050377",
+                "reference": "0106fee521ff2d9297ca2592feaacad312050377",
                 "shasum": ""
             },
             "require": {
@@ -329,25 +330,25 @@
                 "l10n",
                 "localization"
             ],
-            "time": "2018-03-28T18:23:39+00:00"
+            "time": "2018-12-01T08:50:52+00:00"
         },
         {
             "name": "symfony/polyfill",
-            "version": "v1.8.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill.git",
-                "reference": "6f13be2ff1681db53292eee1719dcee57e983207"
+                "reference": "cf87da97c2969a3446fa60e01eca99bd44b3b86d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill/zipball/6f13be2ff1681db53292eee1719dcee57e983207",
-                "reference": "6f13be2ff1681db53292eee1719dcee57e983207",
+                "url": "https://api.github.com/repos/symfony/polyfill/zipball/cf87da97c2969a3446fa60e01eca99bd44b3b86d",
+                "reference": "cf87da97c2969a3446fa60e01eca99bd44b3b86d",
                 "shasum": ""
             },
             "require": {
                 "ircmaxell/password-compat": "~1.0",
-                "paragonie/random_compat": "~1.0|~2.0",
+                "paragonie/random_compat": "~1.0|~2.0|~9.99",
                 "php": ">=5.3.3",
                 "symfony/intl": "~2.3|~3.0|~4.0"
             },
@@ -357,6 +358,8 @@
                 "symfony/polyfill-iconv": "self.version",
                 "symfony/polyfill-intl-grapheme": "self.version",
                 "symfony/polyfill-intl-icu": "self.version",
+                "symfony/polyfill-intl-idn": "self.version",
+                "symfony/polyfill-intl-messageformatter": "self.version",
                 "symfony/polyfill-intl-normalizer": "self.version",
                 "symfony/polyfill-mbstring": "self.version",
                 "symfony/polyfill-php54": "self.version",
@@ -375,7 +378,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.10-dev"
                 }
             },
             "autoload": {
@@ -394,11 +397,14 @@
                     "src/Php73/bootstrap.php",
                     "src/Iconv/bootstrap.php",
                     "src/Intl/Grapheme/bootstrap.php",
+                    "src/Intl/Idn/bootstrap.php",
                     "src/Intl/Icu/bootstrap.php",
+                    "src/Intl/MessageFormatter/bootstrap.php",
                     "src/Intl/Normalizer/bootstrap.php",
                     "src/Mbstring/bootstrap.php"
                 ],
                 "classmap": [
+                    "src/Intl/MessageFormatter/Resources/stubs",
                     "src/Intl/Normalizer/Resources/stubs",
                     "src/Php70/Resources/stubs",
                     "src/Php54/Resources/stubs"
@@ -426,7 +432,7 @@
                 "polyfill",
                 "shim"
             ],
-            "time": "2018-05-01T05:47:21+00:00"
+            "time": "2018-10-31T13:00:05+00:00"
         },
         {
             "name": "voku/anti-xss",

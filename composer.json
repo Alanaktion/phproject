@@ -3,7 +3,7 @@
     "description": "A high performance full-featured project management system",
     "type": "project",
     "require": {
-        "bcosca/fatfree-core": "^3.6",
+        "bcosca/fatfree-core": "^3.6.5",
         "paragonie/random_compat": "^2.0",
         "symfony/polyfill": "^1.7",
         "voku/anti-xss": "^2.1",
