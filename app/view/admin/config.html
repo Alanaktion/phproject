@@ -201,11 +201,11 @@
                     <h3>{{ @dict.general }}</h3>
                     <div class="form-group">
                         <label class="control-label">{{ @dict.cookie_expiration }}</label>
-                        <input type="text" class="form-control input-sm" value="{{ @JAR.expire }}">
+                        <input type="text" class="form-control input-sm" name="JAR-expire" value="{{ @JAR.expire }}">
                     </div>
                     <div class="form-group">
                         <label class="control-label">{{ @dict.max_upload_size }}</label>
-                        <input type="text" class="form-control input-sm" value="{{ @files.maxsize }}">
+                        <input type="text" class="form-control input-sm" name="files-maxsize" value="{{ @files.maxsize }}">
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
