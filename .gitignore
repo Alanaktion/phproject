@@ -1,4 +1,5 @@
-plugin
-config.ini
+/dist
+/node_modules
+/vendor
 config.php
-/vendor/
+plugin

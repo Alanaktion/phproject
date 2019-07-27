@@ -1,5 +1,9 @@
 <?php
 
+if (!file_exists('vendor/autoload.php')) {
+    die('Composer autoloader missing. Make sure composer dependencies are installed!');
+}
+
 // Initialize core
 require_once "vendor/autoload.php";
 $f3 = Base::instance();
