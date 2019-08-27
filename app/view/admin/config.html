@@ -156,7 +156,7 @@
                         <legend>{{ @dict.outgoing_mail }}</legend>
                         <div class="form-group">
                             <label class="control-label" for="mail-from">{{ @dict.from_address}}</label>
-                            <input type="text" class="form-control input-sm" name="mail-from" value="{{ @mail.from | esc }}" placeholder="{{ @dict.email_leave_blank }}">
+                            <input type="text" class="form-control input-sm" name="mail-from" value="{{ @mail.from | esc }}">
                         </div>
                         <p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.package_mail_config_note, @PACKAGE | format }} </p>
                     </fieldset>
