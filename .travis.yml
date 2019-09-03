@@ -1,10 +1,9 @@
-dist: bionic
+dist: xenial
 sudo: false
 language: php
 php:
   - '7.1'
   - '7.2'
-  - '7.3'
 install:
   - composer install
 before_script:
