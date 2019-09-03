@@ -6,13 +6,13 @@ title: Install
 
 ## Requirements
 
-* PHP 5.6 or later (PHP 7+ is highly recommended!)
+* PHP 7.0 or later (7.1 or later recommended)
     * MySQL PDO extension
     * GD extension (required for thumbnails and avatars)
 * MySQL 5.6 or later
 * Web server with support for URL rewrites
     * Apache .htaccess file and nginx sample configuration included
-    * Lighttpd and IIS 7+ should work, but will require custom configuration
+    * Caddy, H2O, Lighttpd and IIS should all work, but will require custom configuration
 
 
 ## Installation
