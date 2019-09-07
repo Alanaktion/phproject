@@ -38,7 +38,7 @@ class Issue extends \Model
      * @param  bool  $notify
      * @return Issue
      */
-    public static function create(array $data, $notify = true)
+    public static function create(array $data, bool $notify = true): Issue
     {
         // Normalize data
         if (isset($data["hours"])) {
@@ -78,29 +78,29 @@ class Issue extends \Model
      * Get complete parent list for issue
      * @return array
      */
-    public function getAncestors()
+    public function getAncestors(): array
     {
         if ($this->_heirarchy !== null) {
             return $this->_heirarchy;
         }
 
-        $issues = array();
+        $issues = [];
         $issues[] = $this;
-        $issue_ids = array($this->id);
-        $parent_id = $this->parent_id;
-        while ($parent_id) {
+        $issueIds = array($this->id);
+        $parentId = $this->parent_id;
+        while ($parentId) {
             // Catch infinite loops early on, in case server isn't running linux :)
-            if (in_array($parent_id, $issue_ids)) {
+            if (in_array($parentId, $issueIds)) {
                 $f3 = \Base::instance();
-                $f3->set("error", "Issue parent tree contains an infinite loop. Issue {$parent_id} is the first point of recursion.");
+                $f3->set("error", "Issue parent tree contains an infinite loop. Issue {$parentId} is the first point of recursion.");
                 break;
             }
             $issue = new Issue();
-            $issue->load($parent_id);
+            $issue->load($parentId);
             if ($issue->id) {
                 $issues[] = $issue;
-                $parent_id = $issue->parent_id;
-                $issue_ids[] = $issue->id;
+                $parentId = $issue->parent_id;
+                $issueIds[] = $issue->id;
             } else {
                 // Handle nonexistent issues
                 $f3 = \Base::instance();
@@ -118,7 +118,7 @@ class Issue extends \Model
      * @param  string $string
      * @return string
      */
-    public static function clean($string)
+    public static function clean(string $string): string
     {
         return preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n\n", str_replace("\r\n", "\n", $string));
     }
@@ -128,7 +128,7 @@ class Issue extends \Model
      * @param  bool $recursive
      * @return Issue
      */
-    public function delete($recursive = true)
+    public function delete(bool $recursive = true): Issue
     {
         if (!$this->deleted_date) {
             $this->set("deleted_date", date("Y-m-d H:i:s"));
@@ -143,7 +143,7 @@ class Issue extends \Model
      * Delete a complete issue tree
      * @return Issue
      */
-    protected function _deleteTree()
+    protected function _deleteTree(): Issue
     {
         $children = $this->find(array("parent_id = ?", $this->id));
         foreach ($children as $child) {
@@ -157,7 +157,7 @@ class Issue extends \Model
      * @param  bool $recursive
      * @return Issue
      */
-    public function restore($recursive = true)
+    public function restore(bool $recursive = true): Issue
     {
         $this->set("deleted_date", null);
         if ($recursive) {
@@ -170,7 +170,7 @@ class Issue extends \Model
      * Restore a complete issue tree
      * @return Issue
      */
-    protected function _restoreTree()
+    protected function _restoreTree(): Issue
     {
         $children = $this->find(array("parent_id = ? AND deleted_date IS NOT NULL", $this->id));
         foreach ($children as $child) {
@@ -181,81 +181,81 @@ class Issue extends \Model
 
     /**
      * Repeat an issue by generating a minimal copy and setting new due date
-     * @param  boolean $notify
+     * @param  bool $notify
      * @return Issue
      */
-    public function repeat($notify = true)
+    public function repeat(bool $notify = true): Issue
     {
-        $repeat_issue = new \Model\Issue();
-        $repeat_issue->name = $this->name;
-        $repeat_issue->type_id = $this->type_id;
-        $repeat_issue->parent_id = $this->parent_id;
-        $repeat_issue->author_id = $this->author_id;
-        $repeat_issue->owner_id = $this->owner_id;
-        $repeat_issue->description = $this->description;
-        $repeat_issue->priority = $this->priority;
-        $repeat_issue->repeat_cycle = $this->repeat_cycle;
-        $repeat_issue->hours_total = $this->hours_total;
-        $repeat_issue->hours_remaining = $this->hours_total;
-        $repeat_issue->created_date = date("Y-m-d H:i:s");
+        $repeatIssue = new Issue();
+        $repeatIssue->name = $this->name;
+        $repeatIssue->type_id = $this->type_id;
+        $repeatIssue->parent_id = $this->parent_id;
+        $repeatIssue->author_id = $this->author_id;
+        $repeatIssue->owner_id = $this->owner_id;
+        $repeatIssue->description = $this->description;
+        $repeatIssue->priority = $this->priority;
+        $repeatIssue->repeat_cycle = $this->repeat_cycle;
+        $repeatIssue->hours_total = $this->hours_total;
+        $repeatIssue->hours_remaining = $this->hours_total;
+        $repeatIssue->created_date = date("Y-m-d H:i:s");
 
         // Find a due date in the future
-        switch ($repeat_issue->repeat_cycle) {
+        switch ($repeatIssue->repeat_cycle) {
             case 'daily':
-                $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime("tomorrow")) : null;
-                $repeat_issue->due_date = date("Y-m-d", strtotime("tomorrow"));
+                $repeatIssue->start_date = $this->start_date ? date("Y-m-d", strtotime("tomorrow")) : null;
+                $repeatIssue->due_date = date("Y-m-d", strtotime("tomorrow"));
                 break;
             case 'weekly':
-                $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +1 week")) : null;
-                $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +1 week"));
+                $repeatIssue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +1 week")) : null;
+                $repeatIssue->due_date = date("Y-m-d", strtotime($this->due_date . " +1 week"));
                 break;
             case 'monthly':
-                $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +1 month")) : null;
-                $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +1 month"));
+                $repeatIssue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +1 month")) : null;
+                $repeatIssue->due_date = date("Y-m-d", strtotime($this->due_date . " +1 month"));
                 break;
             case 'quarterly':
-                $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +3 months")) : null;
-                $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +3 months"));
+                $repeatIssue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +3 months")) : null;
+                $repeatIssue->due_date = date("Y-m-d", strtotime($this->due_date . " +3 months"));
                 break;
             case 'semi_annually':
-                $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +6 months")) : null;
-                $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +6 months"));
+                $repeatIssue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +6 months")) : null;
+                $repeatIssue->due_date = date("Y-m-d", strtotime($this->due_date . " +6 months"));
                 break;
             case 'annually':
-                $repeat_issue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +1 year")) : null;
-                $repeat_issue->due_date = date("Y-m-d", strtotime($this->due_date . " +1 year"));
+                $repeatIssue->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date . " +1 year")) : null;
+                $repeatIssue->due_date = date("Y-m-d", strtotime($this->due_date . " +1 year"));
                 break;
             case 'sprint':
                 $sprint = new \Model\Sprint();
                 $sprint->load(array("start_date > NOW()"), array('order' => 'start_date'));
-                $repeat_issue->start_date = $this->start_date ? $sprint->start_date : null;
-                $repeat_issue->due_date = $sprint->end_date;
+                $repeatIssue->start_date = $this->start_date ? $sprint->start_date : null;
+                $repeatIssue->due_date = $sprint->end_date;
                 break;
             default:
-                $repeat_issue->repeat_cycle = 'none';
+                $repeatIssue->repeat_cycle = 'none';
         }
 
         // If the issue was in a sprint before, put it in a sprint again.
         if ($this->sprint_id) {
             $sprint = new \Model\Sprint();
-            $sprint->load(array("end_date >= ? AND start_date <= ?", $repeat_issue->due_date, $repeat_issue->due_date), array('order' => 'start_date'));
-            $repeat_issue->sprint_id = $sprint->id;
+            $sprint->load(array("end_date >= ? AND start_date <= ?", $repeatIssue->due_date, $repeatIssue->due_date), array('order' => 'start_date'));
+            $repeatIssue->sprint_id = $sprint->id;
         }
 
-        $repeat_issue->save();
+        $repeatIssue->save();
         if ($notify) {
             $notification = \Helper\Notification::instance();
-            $notification->issue_create($repeat_issue->id);
+            $notification->issue_create($repeatIssue->id);
         }
-        return $repeat_issue;
+        return $repeatIssue;
     }
 
     /**
      * Log and save an issue update
-     * @param  boolean $notify
+     * @param  bool $notify
      * @return Issue\Update
      */
-    protected function _saveUpdate($notify = true)
+    protected function _saveUpdate(bool $notify = true): Issue\Update
     {
         $f3 = \Base::instance();
 
@@ -298,22 +298,22 @@ class Issue extends \Model
 
         // Log updated fields
         $updated = 0;
-        $important_changes = 0;
-        $important_fields = array('status', 'name', 'description', 'owner_id', 'priority', 'due_date');
+        $importantChanges = 0;
+        $importantFields = array('status', 'name', 'description', 'owner_id', 'priority', 'due_date');
         foreach ($this->fields as $key => $field) {
             if ($field["changed"] && rtrim($field["value"]) != rtrim($this->_getPrev($key))) {
-                $update_field = new \Model\Issue\Update\Field();
-                $update_field->issue_update_id = $update->id;
-                $update_field->field = $key;
-                $update_field->old_value = $this->_getPrev($key);
-                $update_field->new_value = $field["value"];
-                $update_field->save();
+                $updateField = new \Model\Issue\Update\Field();
+                $updateField->issue_update_id = $update->id;
+                $updateField->field = $key;
+                $updateField->old_value = $this->_getPrev($key);
+                $updateField->new_value = $field["value"];
+                $updateField->save();
                 $updated++;
                 if ($key == 'sprint_id') {
                     $this->resetTaskSprints();
                 }
-                if (in_array($key, $important_fields)) {
-                    $important_changes++;
+                if (in_array($key, $importantFields)) {
+                    $importantChanges++;
                 }
             }
         }
@@ -324,7 +324,7 @@ class Issue extends \Model
         }
 
         // Set notify flag if important changes occurred
-        if ($notify && $important_changes) {
+        if ($notify && $importantChanges) {
             $update->notify = 1;
             $update->save();
         }
@@ -335,10 +335,10 @@ class Issue extends \Model
 
     /**
      * Log issue update, send notifications
-     * @param  boolean $notify
+     * @param  bool $notify
      * @return Issue
      */
-    public function save($notify = true)
+    public function save(bool $notify = true): Issue
     {
         $f3 = \Base::instance();
 
@@ -400,7 +400,7 @@ class Issue extends \Model
      * Finds and saves the current issue's tags
      * @return Issue
      */
-    public function saveTags()
+    public function saveTags(): Issue
     {
         $tag = new \Model\Issue\Tag;
         if ($this->id) {
@@ -424,11 +424,12 @@ class Issue extends \Model
      * Duplicate issue and all sub-issues
      * @param  bool  $recursive
      * @return Issue New issue
+     * @throws \Exception
      */
-    public function duplicate($recursive = true)
+    public function duplicate(bool $recursive = true): Issue
     {
         if (!$this->id) {
-            return false;
+            throw new \Exception('Cannot duplicate an issue that is not yet saved.');
         }
 
         $f3 = \Base::instance();
@@ -438,28 +439,28 @@ class Issue extends \Model
         $f3->clear("duplicating_issue.due_date");
         $f3->clear("duplicating_issue.hours_spent");
 
-        $new_issue = new Issue;
-        $new_issue->copyfrom("duplicating_issue");
-        $new_issue->author_id = $f3->get("user.id");
-        $new_issue->hours_remaining = $new_issue->hours_total;
-        $new_issue->created_date = date("Y-m-d H:i:s");
-        $new_issue->save();
+        $newIssue = new Issue;
+        $newIssue->copyfrom("duplicating_issue");
+        $newIssue->author_id = $f3->get("user.id");
+        $newIssue->hours_remaining = $newIssue->hours_total;
+        $newIssue->created_date = date("Y-m-d H:i:s");
+        $newIssue->save();
 
         if ($recursive) {
             // Run the recursive function to duplicate the complete descendant tree
-            $this->_duplicateTree($this->id, $new_issue->id);
+            $this->_duplicateTree($this->id, $newIssue->id);
         }
 
-        return $new_issue;
+        return $newIssue;
     }
 
     /**
      * Duplicate a complete issue tree, starting from a duplicated issue created by duplicate()
      * @param  int $id
-     * @param  int $new_id
+     * @param  int $newId
      * @return Issue $this
      */
-    protected function _duplicateTree($id, $new_id)
+    protected function _duplicateTree(int $id, int $newId): Issue
     {
         // Find all child issues
         $children = $this->find(array("parent_id = ?", $id));
@@ -473,16 +474,16 @@ class Issue extends \Model
                     $f3->clear("duplicating_issue.due_date");
                     $f3->clear("duplicating_issue.hours_spent");
 
-                    $new_child = new Issue;
-                    $new_child->copyfrom("duplicating_issue");
-                    $new_child->author_id = $f3->get("user.id");
-                    $new_child->hours_remaining = $new_child->hours_total;
-                    $new_child->parent_id = $new_id;
-                    $new_child->created_date = date("Y-m-d H:i:s");
-                    $new_child->save(false);
+                    $newChild = new Issue;
+                    $newChild->copyfrom("duplicating_issue");
+                    $newChild->author_id = $f3->get("user.id");
+                    $newChild->hours_remaining = $newChild->hours_total;
+                    $newChild->parent_id = $newId;
+                    $newChild->created_date = date("Y-m-d H:i:s");
+                    $newChild->save(false);
 
                     // Duplicate issue's children
-                    $this->_duplicateTree($child->id, $new_child->id);
+                    $this->_duplicateTree($child->id, $newChild->id);
                 }
             }
         }
@@ -491,14 +492,15 @@ class Issue extends \Model
 
     /**
      * Move all non-project children to same sprint
+     * @param bool $replaceExisting
      * @return Issue $this
      */
-    public function resetTaskSprints($replace_existing = true)
+    public function resetTaskSprints(bool $replaceExisting = true): Issue
     {
         $f3 = \Base::instance();
         if ($this->sprint_id) {
             $query = "UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type";
-            if ($replace_existing) {
+            if ($replaceExisting) {
                 $query .= " AND sprint_id IS NULL";
             }
             $this->db->exec(
@@ -517,7 +519,7 @@ class Issue extends \Model
      * Get children of current issue
      * @return array
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         if ($this->_children !== null) {
             return $this->_children;
@@ -527,10 +529,10 @@ class Issue extends \Model
     }
 
     /**
-     * Generate MD5 hashes for each column in a key=>value array
+     * Generate MD5 hashes for each column as a key=>value array
      * @return array
      */
-    public function hashState()
+    public function hashState(): array
     {
         $result = $this->cast();
         foreach ($result as &$value) {
@@ -543,7 +545,7 @@ class Issue extends \Model
      * Close the issue
      * @return Issue $this
      */
-    public function close()
+    public function close(): Issue
     {
         if ($this->id && !$this->closed_date) {
             $status = new \Model\Issue\Status;
@@ -559,7 +561,7 @@ class Issue extends \Model
      * Get array of all descendant IDs
      * @return array
      */
-    public function descendantIds()
+    public function descendantIds(): array
     {
         $ids = [$this->id];
         foreach ($this->getChildren() as $child) {
@@ -573,7 +575,7 @@ class Issue extends \Model
      * Get aggregate totals across the project and its descendants
      * @return array
      */
-    public function projectStats()
+    public function projectStats(): array
     {
         $total = 0;
         $complete = 0;

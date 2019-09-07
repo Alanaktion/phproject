@@ -15,12 +15,12 @@ class Tag extends \Model
 
     /**
      * Delete all stored tags for an issue
-     * @param  int $issue_id
+     * @param  int $issueId
      * @return Tag
      */
-    public function deleteByIssueId($issue_id)
+    public function deleteByIssueId(int $issueId): Tag
     {
-        $this->db->exec("DELETE FROM {$this->_table_name} WHERE issue_id = ?", $issue_id);
+        $this->db->exec("DELETE FROM {$this->_table_name} WHERE issue_id = ?", $issueId);
         return $this;
     }
 
@@ -28,7 +28,7 @@ class Tag extends \Model
      * Get a multidimensional array representing a tag cloud
      * @return array
      */
-    public function cloud()
+    public function cloud(): array
     {
         return $this->db->exec("SELECT tag, COUNT(*) AS freq FROM {$this->_table_name} GROUP BY tag ORDER BY freq DESC");
     }
@@ -38,7 +38,7 @@ class Tag extends \Model
      * @param  string $tag
      * @return array Issue IDs
      */
-    public function issues($tag = '')
+    public function issues($tag = ''): array
     {
         if (!$tag) {
             $tag = $this->get("tag");

@@ -21,9 +21,8 @@ class Session extends \Model
      * @param int $user_id
      * @param bool $auto_save
      */
-    public function __construct($user_id = null, $auto_save = true)
+    public function __construct($user_id = null, bool $auto_save = true)
     {
-
         // Run model constructor
         parent::__construct();
 
@@ -42,7 +41,7 @@ class Session extends \Model
      * Load the current session
      * @return Session
      */
-    public function loadCurrent()
+    public function loadCurrent(): Session
     {
         $f3 = \Base::instance();
         $token = $f3->get("COOKIE.".self::COOKIE_NAME);
@@ -77,7 +76,7 @@ class Session extends \Model
      * Set the user's cookie to the current session
      * @return Session
      */
-    public function setCurrent()
+    public function setCurrent(): Session
     {
         $f3 = \Base::instance();
 
@@ -94,7 +93,7 @@ class Session extends \Model
      * Delete the session
      * @return Session
      */
-    public function delete()
+    public function delete(): Session
     {
         if (!$this->id) {
             return $this;

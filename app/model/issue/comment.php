@@ -15,7 +15,7 @@ namespace Model\Issue;
 class Comment extends \Model
 {
     protected $_table_name = "issue_comment";
-    protected static $requiredFields = array("issue_id", "user_id", "text");
+    protected static $requiredFields = ["issue_id", "user_id", "text"];
 
     /**
      * Create and save a new comment
@@ -24,7 +24,7 @@ class Comment extends \Model
      * @return Comment
      * @throws \Exception
      */
-    public static function create(array $data, $notify = true)
+    public static function create(array $data, bool $notify = true): Comment
     {
         if (empty($data['text'])) {
             throw new \Exception("Comment text cannot be empty.");
@@ -42,9 +42,8 @@ class Comment extends \Model
      * Save the comment
      * @return Comment
      */
-    public function save()
+    public function save(): Comment
     {
-
         // Censor credit card numbers if enabled
         if (\Base::instance()->get("security.block_ccs") && preg_match("/[0-9-]{9,15}[0-9]{4}/", $this->get("text"))) {
             $this->set("text", preg_replace("/[0-9-]{9,15}([0-9]{4})/", "************$1", $this->get("text")));

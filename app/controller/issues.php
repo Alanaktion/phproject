@@ -1085,7 +1085,7 @@ class Issues extends \Controller
         $keywordParts = array();
         foreach (explode(" ", $q) as $w) {
             $keywordParts[] = "CONCAT(name, description, author_name, owner_name,
-				author_username, owner_username) LIKE ?";
+                author_username, owner_username) LIKE ?";
             $return[] = "%$w%";
         }
         if (is_numeric($q)) {

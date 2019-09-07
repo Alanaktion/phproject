@@ -29,7 +29,7 @@ class File extends \Model
      * @param  bool  $notify
      * @return File
      */
-    public static function create(array $data, $notify = true)
+    public static function create(array $data, bool $notify = true): File
     {
         /** @var File $item */
         $item = parent::create($data);

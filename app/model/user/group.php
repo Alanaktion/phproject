@@ -19,19 +19,19 @@ class Group extends \Model
      * @param int $user_id
      * @return array
      */
-    public static function getUserGroups($user_id = null)
+    public static function getUserGroups($user_id = null): array
     {
         $f3 = \Base::instance();
         $db = $f3->get("db.instance");
 
         if ($user_id === null) {
-            $user_id =  $f3->get("user.id");
+            $user_id = $f3->get("user.id");
         }
 
         $query_groups = "SELECT u.id, u.name, u.username
-			FROM user u
-			JOIN user_group g ON u.id = g.group_id
-			WHERE g.user_id = :user AND u.deleted_date IS NULL ORDER BY u.name";
+            FROM user u
+            JOIN user_group g ON u.id = g.group_id
+            WHERE g.user_id = :user AND u.deleted_date IS NULL ORDER BY u.name";
 
         $result = $db->exec($query_groups, array(":user" => $user_id));
         return $result;
@@ -43,12 +43,12 @@ class Group extends \Model
      * @param int $user_id
      * @return bool
      */
-    public static function userIsInGroup($group_id, $user_id = null)
+    public static function userIsInGroup(int $group_id, $user_id = null): bool
     {
         $f3 = \Base::instance();
 
         if ($user_id === null) {
-            $user_id =  $f3->get("user.id");
+            $user_id = $f3->get("user.id");
         }
 
         $group = new static();

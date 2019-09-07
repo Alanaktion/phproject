@@ -8,12 +8,11 @@ class Custom extends \Model
 
     /**
      * Creates a custom model from a specified table name
-     * @param string $table_name
+     * @param string $tableName
      */
-    public function __construct($table_name)
+    public function __construct(string $tableName)
     {
-        $this->_table_name = $table_name;
+        $this->_table_name = $tableName;
         parent::__construct();
-        return $this;
     }
 }
