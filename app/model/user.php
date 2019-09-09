@@ -157,7 +157,7 @@ class User extends \Model
     public function getSharedGroupUserIds(): array
     {
         $groupModel = new \Model\User\Group;
-        $groups = $groupModel->find(array("user_id = ?", $this->id));
+        $groups = $groupModel->find(["user_id = ?", $this->id]);
         $groupIds = [];
         foreach ($groups as $g) {
             $groupIds[] = $g["group_id"];
@@ -165,7 +165,7 @@ class User extends \Model
         $ids = $groupIds;
         if ($groupIds) {
             $groupIdString = implode(",", $groupIds);
-            $users = $groupModel->find("group_id IN ({$groupIdString})", array("group" => "user_id"));
+            $users = $groupModel->find("group_id IN ({$groupIdString})", ["group" => "id,user_id"]);
             foreach ($users as $u) {
                 $ids[] = $u->user_id;
             }
@@ -214,7 +214,7 @@ class User extends \Model
         }
 
         // Get group owner IDs
-        $ownerIds = array($this->id);
+        $ownerIds = [$this->id];
         $groups = new \Model\User\Group();
         foreach ($groups->find(array("user_id = ?", $this->id)) as $r) {
             $ownerIds[] = $r->group_id;
@@ -223,8 +223,8 @@ class User extends \Model
 
         // Find issues assigned to user or user's group
         $issue = new Issue;
-        $due = $issue->find(array("due_date = ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date), array("order" => "priority DESC"));
-        $overdue = $issue->find(array("due_date < ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date), array("order" => "priority DESC"));
+        $due = $issue->find(["due_date = ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date], ["order" => "priority DESC"]);
+        $overdue = $issue->find(["due_date < ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date], ["order" => "priority DESC"]);
 
         if ($due || $overdue) {
             $notif = new \Helper\Notification;
@@ -254,30 +254,30 @@ class User extends \Model
             JOIN issue_update_field f ON u.id = f.issue_update_id AND f.field = 'hours_spent'
             WHERE u.user_id = :user AND u.created_date > :date
             GROUP BY `date`",
-            array(":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time))
+            [":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time)]
         );
         $result["closed"] = $this->db->exec(
             "SELECT DATE(DATE_ADD(i.closed_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
             FROM issue i
             WHERE i.owner_id = :user AND i.closed_date > :date
             GROUP BY `date`",
-            array(":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time))
+            [":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time)]
         );
         $result["created"] = $this->db->exec(
             "SELECT DATE(DATE_ADD(i.created_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
             FROM issue i
             WHERE i.author_id = :user AND i.created_date > :date
             GROUP BY `date`",
-            array(":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time))
+            [":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time)]
         );
 
         $dates = $this->_createDateRangeArray(date("Y-m-d", $time), date("Y-m-d", time() + $offset));
-        $return = array(
+        $return = [
             "labels" => [],
             "spent" => [],
             "closed" => [],
             "created" => [],
-        );
+        ];
 
         foreach ($result["spent"] as $r) {
             $return["spent"][$r["date"]] = floatval($r["val"]);
@@ -321,7 +321,7 @@ class User extends \Model
             throw new \Exception("User is not initialized.");
         }
         $issueModel = new Issue;
-        $issues = $issueModel->find(array("owner_id = ? AND deleted_date IS NULL AND closed_date IS NULL", $this->id));
+        $issues = $issueModel->find(["owner_id = ? AND deleted_date IS NULL AND closed_date IS NULL", $this->id]);
         foreach ($issues as $issue) {
             $issue->owner_id = $userId;
             $issue->save();
@@ -333,7 +333,7 @@ class User extends \Model
     {
         $lang = $this->language ?: \Base::instance()->get("LANGUAGE");
         $lang = explode(',', $lang, 2)[0];
-        return (object) array("language" => $lang, "js" => ($lang != "en"));
+        return (object)["language" => $lang, "js" => ($lang != "en")];
     }
 
     /**
