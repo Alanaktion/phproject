@@ -40,6 +40,11 @@ pre code {
 	background-color: rgba(0,0,0,.7) !important;
 	color: white !important;
 }
+@supports (position: sticky) {
+	#backlog .panel-heading {
+		top: 50px;
+	}
+}
 .datepicker-dropdown::before,
 .datepicker-dropdown::after {
 	border-bottom-color: #222 !important;

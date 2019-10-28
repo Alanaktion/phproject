@@ -32,6 +32,11 @@ pre code {
 }
 
 /* Phproject Additions */
+@supports (position: sticky) {
+	#backlog .panel-heading {
+		top: 50px;
+	}
+}
 #taskboard table.taskboard-head {
 	background-color: transparent;
 }
