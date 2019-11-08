@@ -39,6 +39,7 @@ body.is-sortable #backlog .list-group-item:hover {
 	#backlog .panel-heading {
 		position: sticky;
 		top: 60px;
+		z-index: 2;
 	}
 }
 #backlog .panel-heading > a:first-child {
