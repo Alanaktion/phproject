@@ -5435,6 +5435,11 @@ body {
 }
 
 /* Phproject additions */
+@supports (position: sticky) {
+	#backlog .panel-heading {
+		top: 50px;
+	}
+}
 #taskboard .completed .card {
 	background-image: url('../img/geo/seamlessfire-web.gif');
 }

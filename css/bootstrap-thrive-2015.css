@@ -2294,7 +2294,7 @@ fieldset[disabled] a.btn {
 .btn-default.active.focus,
 .open > .dropdown-toggle.btn-default.focus {
 	color: #ffffff;
-	background-color: #687b7c505050;
+	background-color: #505050;
 	border-color: #505050;
 }
 .btn-default:active,
@@ -6211,6 +6211,11 @@ a.list-group-item-danger.active:focus {
 .navbar-form .input-sm,
 .navbar-form .btn-sm {
 	margin-top: 5px;
+}
+@supports (position: sticky) {
+	#backlog .panel-heading {
+		top: 62px;
+	}
 }
 #taskboard .btn {
 	margin-bottom: -2px;
