@@ -170,6 +170,9 @@ class User extends \Model
                 $ids[] = $u->user_id;
             }
         }
+        if (!count($ids)) {
+            return [$this->id];
+        }
         return $ids;
     }
     /**

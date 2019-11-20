@@ -100,7 +100,9 @@ var Backlog = {
 			} else {
 				$('.list-group-item[data-user-id]').addClass('hidden-group');
 				$.each(userIds, function(i, val) {
-					$('.list-group-item[data-user-id=' + val + ']').removeClass('hidden-group');
+					if (val) {
+						$('.list-group-item[data-user-id=' + val + ']').removeClass('hidden-group');
+					}
 				});
 			}
 			refreshPoints();
