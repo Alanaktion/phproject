@@ -114,6 +114,10 @@
     <td>
         <select class="form-control input-sm" name="sprint_id">
             <option value="">--</option>
+            <check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == '-1' }}">
+                <true><option value="-1" selected>{{ @dict.no_sprint }}</option></true>
+                <false><option value="-1">{{ @dict.no_sprint }}</option></false>
+            </check>
             <repeat group="{{ @sprints }}" value="{{ @item }}">
                 <check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
                     <true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>

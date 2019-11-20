@@ -38,29 +38,33 @@ class Issues extends \Controller
         $issues = new \Model\Issue\Detail;
 
         // Filter issue listing by URL parameters
-        $filter = array();
+        $filter = [];
         $args = $f3->get("GET");
         foreach ($args as $key => $val) {
-            if (!empty($val) && !is_array($val) && $issues->exists($key)) {
-                $filter[$key] = $val;
+            if ($issues->exists($key)) {
+                if ($val == '-1') {
+                    $filter[$key] = null;
+                } elseif (!empty($val) && !is_array($val)) {
+                    $filter[$key] = $val;
+                }
             }
         }
         unset($val);
 
         // Build SQL string to use for filtering
         $filter_str = "";
-        foreach ($filter as $i => $val) {
-            if ($i == "name") {
-                $filter_str .= "`$i` LIKE " . $db->quote("%$val%") . " AND ";
-            } elseif ($i == "status" && $val == "open") {
+        foreach ($filter as $field => $val) {
+            if ($field == "name") {
+                $filter_str .= "`$field` LIKE " . $db->quote("%$val%") . " AND ";
+            } elseif ($field == "status" && $val == "open") {
                 $filter_str .= "status_closed = 0 AND ";
-            } elseif ($i == "status" && $val == "closed") {
+            } elseif ($field == "status" && $val == "closed") {
                 $filter_str .= "status_closed = 1 AND ";
-            } elseif ($i == "repeat_cycle" && $val == "repeat") {
+            } elseif ($field == "repeat_cycle" && $val == "repeat") {
                 $filter_str .= "repeat_cycle IS NOT NULL AND ";
-            } elseif ($i == "repeat_cycle" && $val == "none") {
+            } elseif ($field == "repeat_cycle" && $val == "none") {
                 $filter_str .= "repeat_cycle IS NULL AND ";
-            } elseif (($i == "author_id" || $i== "owner_id") && !empty($val) && is_numeric($val)) {
+            } elseif (($field == "author_id" || $field== "owner_id") && !empty($val) && is_numeric($val)) {
                 // Find all users in a group if necessary
                 $user = new \Model\User;
                 $user->load($val);
@@ -71,13 +75,15 @@ class Issues extends \Controller
                     foreach ($list as $obj) {
                         $garray[] = $obj->user_id;
                     }
-                    $filter_str .= "$i in (". implode(",", $garray) .") AND ";
+                    $filter_str .= "$field in (". implode(",", $garray) .") AND ";
                 } else {
                     // Just select by user
-                    $filter_str .= "$i = ". $db->quote($val) ." AND ";
+                    $filter_str .= "$field = ". $db->quote($val) ." AND ";
                 }
+            } elseif ($val === null) {
+                $filter_str .= "`$field` IS NULL AND ";
             } else {
-                $filter_str .= "`$i` = " . $db->quote($val) . " AND ";
+                $filter_str .= "`$field` = " . $db->quote($val) . " AND ";
             }
         }
         unset($val);
@@ -128,7 +134,7 @@ class Issues extends \Controller
                 break;
         }
 
-        return array($filter, $filter_str);
+        return [$filter, $filter_str];
     }
 
     /**
@@ -1225,7 +1231,7 @@ class Issues extends \Controller
                 $notification = \Helper\Notification::instance();
                 $notification->issue_comment($issue->id, $comment->id);
             }
-        } elseif ($newfile->id && !!$f3->get("POST.notify")) {
+        } elseif ($f3->get('file_id') && !!$f3->get("POST.notify")) {
             $notification = \Helper\Notification::instance();
             $notification->issue_file($issue->id, $f3->get("file_id"));
         }
