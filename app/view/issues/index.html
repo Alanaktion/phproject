@@ -29,9 +29,9 @@
         </check>
         <include href="blocks/footer.html" />
     </div>
-    <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js"></script>
-    <check if="{{ @user_obj->date_picker()->js }}">
-        <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+    <script src="{{ @BASE }}/js/bootstrap-datepicker.js"></script>
+    <check if="{{ @user_obj->date_picker()->js && @user_obj->date_picker()->language != 'en-US' }}">
+        <script src="{{ @BASE }}/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
     </check>
     <script>var datepickerLanguage='{{ @user_obj->date_picker()->language }}';</script>
 </body>

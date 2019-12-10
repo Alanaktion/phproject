@@ -2,7 +2,7 @@
 <html lang="{{ @LANGUAGE }}">
 <head>
     <include href="blocks/head.html" />
-    <link rel="stylesheet" href="{{ @BASE }}/minify/css/taskboard.css">
+    <link rel="stylesheet" href="{{ @BASE }}/css/taskboard.css">
     <set columnwidth="160" />
     <check if="{{ !empty(@taskboard[0]) }}">
         <style type="text/css">
@@ -361,9 +361,11 @@
         </div>
     </check>
 
-    <script src="{{ @BASE }}/minify/js/jquery-ui-dragsort.min.js,jquery.ui.touch-punch.min.js,bootstrap-datepicker.js"></script>
-    <check if="{{ @user_obj->date_picker()->js }}">
-        <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+    <script src="{{ @BASE }}/js/jquery-ui-dragsort.min.js"></script>
+    <script src="{{ @BASE }}/js/jquery.ui.touch-punch.min.js"></script>
+    <script src="{{ @BASE }}/js/bootstrap-datepicker.js"></script>
+    <check if="{{ @user_obj->date_picker()->js && @user_obj->date_picker()->language != 'en-US' }}">
+        <script src="{{ @BASE }}/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
     </check>
     <script>
         var datepickerLanguage='{{ @user_obj->date_picker()->language }}';
@@ -399,7 +401,8 @@
                     };
             </script>
             <script src="{{ @BASE }}/js/chart.js"></script>
-            <script src="{{ @BASE }}/minify/js/taskboard.js,burndown.js"></script>
+            <script src="{{ @BASE }}/js/taskboard.js"></script>
+            <script src="{{ @BASE }}/js/burndown.js"></script>
             <script>
                 $(document).ready(function() {
                     $("#burndown-modal").on("shown.bs.modal", function(e) {
@@ -427,7 +430,7 @@
             </script>
         </true>
         <false>
-            <script src="{{ @BASE }}/minify/js/taskboard.js"></script>
+            <script src="{{ @BASE }}/js/taskboard.js"></script>
         </false>
     </check>
 </body>

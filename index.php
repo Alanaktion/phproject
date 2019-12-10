@@ -90,7 +90,12 @@ if ($version !== true) {
 
 // Minify static resources
 // Cache for 1 week
+// This route is deprecated, and will be removed in a future release.
 $f3->route("GET /minify/@type/@files", function (Base $f3, $args) {
+    if (!in_array($args['type'], ['js', 'css'])) {
+        $f3->abort(404);
+        return;
+    }
     $f3->set("UI", $args["type"] . "/");
     echo Web::instance()->minify($args["files"]);
 }, $f3->get("cache_expire.minify"));
