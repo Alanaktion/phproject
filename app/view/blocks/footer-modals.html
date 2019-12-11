@@ -4,24 +4,24 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
-                <h4 class="modal-title">Hotkeys</h4>
+                <h4 class="modal-title">{{ @dict.hotkeys }}</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-6">
-                        <p><b>Global</b></p>
+                        <p><b>{{ @dict.hotkeys_global }}</b></p>
                         <dl class="dl-inline">
                             <dt>?</dt>
-                            <dd>Show hotkeys</dd>
+                            <dd>{{ @dict.show_hotkeys }}</dd>
                             <dt>/</dt>
-                            <dd>Search</dd>
+                            <dd>{{ @dict.issue_search }}</dd>
                             <dt>shift+b</dt>
                             <dd>{{ @dict.browse }}</dd>
                             <dt>r</dt>
-                            <dd>Reload page</dd>
+                            <dd>{{ @dict.reload_page }}</dd>
                             <repeat group="{{ @issue_types }}" value="{{ @type }}">
                                 <check if="{{ @type.id > 0 && @type.id < 10 }}">
-                                    <dt>n then {{ @type.id }}</dt>
+                                    <dt>{{ @dict.press_x_then_y,'n',@type.id | format }}</dt>
                                     <dd>{{ @dict.new_n,@type.name | format }}</dd>
                                 </check>
                             </repeat>
@@ -44,8 +44,11 @@
                             <dd>{{ @dict.reopen }}</dd>
                         </dl>
                         <br>
-                        <p><b>Nagivation</b></p>
-                        Use with <kbd class="accesskey-modifier">alt</kbd>:
+                        <p><b>{{ @dict.navigation }}</b></p>
+                        {~
+                            $altKey = '<kbd class="accesskey-modifier">alt</kbd>';
+                            echo \Base::instance()->get('dict.use_with_x', $altKey);
+                        ~}:
                         <dl class="dl-inline">
                             <dt>h</dt>
                             <dd>{{ @dict.dashboard }}</dd>

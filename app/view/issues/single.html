@@ -262,7 +262,7 @@
                             <input type="hidden" name="issue_id" value="{{ @issue.id }}">
                             <div class="form-group">
                                 <div class="col-md-12">
-                                    <textarea class="form-control input-sm" id="comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}"></textarea>
+                                    <textarea class="form-control input-sm" id="comment_textarea" name="text" placeholder="{{ @dict.write_a_comment }}" rows="4"></textarea>
                                 </div>
                             </div>
                             <div class="text-right">
@@ -371,9 +371,12 @@
     </div>
 </div>
 
-<script src="{{ @BASE }}/minify/js/bootstrap-datepicker.js,stupidtable.min.js,typeahead.jquery.js"></script>
-<check if="{{ @user_obj->date_picker()->js }}">
-    <script src="{{ @BASE }}/minify/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+<script src="{{ @BASE }}/js/bootstrap-datepicker.js"></script>
+<script src="{{ @BASE }}/js/stupidtable.min.js"></script>
+<script src="{{ @BASE }}/js/typeahead.jquery.js"></script>
+<script src="{{ @BASE }}/js/autosize.min.js"></script>
+<check if="{{ @user_obj->date_picker()->js && @user_obj->date_picker()->language != 'en-US' }}">
+    <script src="{{ @BASE }}/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
 </check>
 <check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
     <script src="{{ @BASE }}/js/simplemde.min.js"></script>
@@ -392,6 +395,8 @@ $(function() {
     });
 
     var canDelete = parseInt("{{ (@user.role == 'admin' || @user.rank >= \Model\User::RANK_MANAGER) && @menuitem != 'index' }}");
+
+    autosize($('#comment_textarea'));
 
     // AJAX comment submission
     $('#comment_form').submit(function(e) {

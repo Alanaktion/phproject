@@ -107,18 +107,32 @@ $(function() {
 
 	// Show correct accesskey modifier
 	if(navigator.platform.indexOf('Mac') >= 0) {
-		$('.accesskey-modifier').html('&#8984;&#8997;');
+		$('.accesskey-modifier').html('&#8963;&#8997;');
 	} else if(navigator.userAgent.indexOf('Firefox') >= 0) {
 		$('.accesskey-modifier').text('alt+shift');
 	}
 
 	// Submit from textarea if Ctrl+Enter or Cmd+Enter is pressed
-	$('body').on('keypress', 'textarea', function(e) {
+	let submitEvent = navigator.platform.indexOf('Mac') >= 0 ? 'keydown' : 'keypress';
+	$('body').on(submitEvent, 'textarea', function(e) {
 		if((e.keyCode == 13 || e.keyCode == 10) && (e.target.type != 'textarea' || (e.target.type == 'textarea' && (e.ctrlKey || e.metaKey)))) {
 			$(this).closest('form').submit();
 			e.preventDefault();
 		}
 	});
+
+	// Suppress slash key native behavior in Firefox
+	// This allows the search hotkey to work correctly
+	if (navigator.userAgent.indexOf('Firefox')) {
+		$('body').on('keydown', function (e) {
+			if (e.keyCode != 191 || e.shiftKey || e.ctrlKey || e.metaKey) {
+				return;
+			}
+			if (!Mousetrap.stopCallback(e, e.target, null)) {
+				e.preventDefault();
+			};
+		});
+	}
 
 	// Bind default hotkeys
 	Mousetrap.bind('?', function() {
@@ -126,7 +140,8 @@ $(function() {
 		$('#modal-hotkeys').modal('toggle');
 	});
 	Mousetrap.bind('/', function() {
-		$('.navbar-form input[type=search]').focus();
+		$('.navbar-form input[type=search]').focus().select();
+		return false;
 	}, 'keyup');
 	Mousetrap.bind('shift+b', function() {
 		window.location = BASE + '/issues?status=open';
@@ -138,13 +153,19 @@ $(function() {
 		$('#btn-edit').click();
 	}, 'keyup');
 	Mousetrap.bind('shift+c', function() {
-		window.location = $('#btn-issue-close').attr('href');
+		let $close = $('#btn-issue-close');
+		if ($close.length) {
+			window.location = $close.attr('href');
+		}
 	});
 	Mousetrap.bind('c', function() {
 		$('#comment_textarea').focus();
 	}, 'keyup');
 	Mousetrap.bind('shift+r', function() {
-		window.location = $('#btn-issue-reopen').attr('href');
+		let $reopen = $('#btn-issue-reopen');
+		if ($reopen.length) {
+			window.location = $reopen.attr('href');
+		}
 	});
 	Mousetrap.bind('r', function() {
 		window.location.reload();

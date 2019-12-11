@@ -1,5 +1,5 @@
 <?php
-define('PHPROJECT_VERSION', '1.7.6');
+define('PHPROJECT_VERSION', '1.7.7');
 
 if (!file_exists('vendor/autoload.php')) {
     die('Composer autoloader missing. Make sure composer dependencies are installed!');
@@ -94,7 +94,12 @@ if ($version !== true) {
 
 // Minify static resources
 // Cache for 1 week
+// This route is deprecated, and will be removed in a future release.
 $f3->route("GET /minify/@type/@files", function (Base $f3, $args) {
+    if (!in_array($args['type'], ['js', 'css'])) {
+        $f3->abort(404);
+        return;
+    }
     $f3->set("UI", $args["type"] . "/");
     echo Web::instance()->minify($args["files"]);
 }, $f3->get("cache_expire.minify"));

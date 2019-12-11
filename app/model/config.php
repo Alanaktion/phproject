@@ -16,6 +16,7 @@ class Config extends \Model
 
     /**
      * Loads the configuration for the site
+     * @return void
      */
     public static function loadAll()
     {
@@ -44,6 +45,7 @@ class Config extends \Model
      * Imports the settings from config.ini to the database
      *
      * This will overwrite config.ini with only database connection settings!
+     * @return void
      */
     public static function importAll()
     {
@@ -95,7 +97,7 @@ class Config extends \Model
      * @param  mixed  $value
      * @return Config
      */
-    public static function setVal($key, $value)
+    public static function setVal(string $key, $value): Config
     {
         $f3 = \Base::instance();
         $f3->set($key, $value);

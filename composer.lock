@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db50bfff96585a4c683eda3549a8f223",
+    "content-hash": "4e2c78322313609a04d10ac04423011c",
     "packages": [
         {
             "name": "bcosca/fatfree-core",
-            "version": "3.6.5",
+            "version": "3.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bcosca/fatfree-core.git",
-                "reference": "c5aa056d2111e666e87f6129fe633c6a2aeeaae2"
+                "reference": "20245caf8bf6d70dcf669c75ed308d3b7d9f7927"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bcosca/fatfree-core/zipball/c5aa056d2111e666e87f6129fe633c6a2aeeaae2",
-                "reference": "c5aa056d2111e666e87f6129fe633c6a2aeeaae2",
+                "url": "https://api.github.com/repos/bcosca/fatfree-core/zipball/20245caf8bf6d70dcf669c75ed308d3b7d9f7927",
+                "reference": "20245caf8bf6d70dcf669c75ed308d3b7d9f7927",
                 "shasum": ""
             },
             "require": {
@@ -35,20 +35,20 @@
             ],
             "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
             "homepage": "http://fatfreeframework.com/",
-            "time": "2018-12-24T13:37:45+00:00"
+            "time": "2019-11-26T11:58:06+00:00"
         },
         {
             "name": "erusev/parsedown",
-            "version": "1.7.1",
+            "version": "1.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/erusev/parsedown.git",
-                "reference": "92e9c27ba0e74b8b028b111d1b6f956a15c01fc1"
+                "reference": "6d893938171a817f4e9bc9e86f2da1e370b7bcd7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/erusev/parsedown/zipball/92e9c27ba0e74b8b028b111d1b6f956a15c01fc1",
-                "reference": "92e9c27ba0e74b8b028b111d1b6f956a15c01fc1",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/6d893938171a817f4e9bc9e86f2da1e370b7bcd7",
+                "reference": "6d893938171a817f4e9bc9e86f2da1e370b7bcd7",
                 "shasum": ""
             },
             "require": {
@@ -81,7 +81,7 @@
                 "markdown",
                 "parser"
             ],
-            "time": "2018-03-08T01:11:30+00:00"
+            "time": "2019-03-17T18:48:37+00:00"
         },
         {
             "name": "ircmaxell/password-compat",
@@ -127,20 +127,20 @@
         },
         {
             "name": "neos/diff",
-            "version": "3.3.16",
+            "version": "4.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/neos/diff.git",
-                "reference": "375302baf7a27f4bb0379997330b4860fb3f9c13"
+                "reference": "c2e0739e53599da3616ba81be5260797ed5277e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/neos/diff/zipball/375302baf7a27f4bb0379997330b4860fb3f9c13",
-                "reference": "375302baf7a27f4bb0379997330b4860fb3f9c13",
+                "url": "https://api.github.com/repos/neos/diff/zipball/c2e0739e53599da3616ba81be5260797ed5277e0",
+                "reference": "c2e0739e53599da3616ba81be5260797ed5277e0",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0"
+                "php": "^7.0"
             },
             "type": "neos-package",
             "autoload": {
@@ -153,20 +153,20 @@
                 "BSD-3-Clause"
             ],
             "description": "This is a comprehensive library for generating differences between two strings or arrays",
-            "time": "2016-11-23T15:06:35+00:00"
+            "time": "2019-09-11T06:47:59+00:00"
         },
         {
             "name": "netcarver/textile",
-            "version": "v3.7.0",
+            "version": "v3.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/textile/php-textile.git",
-                "reference": "f1ae0073d2d72a32f4296741de9a14213da68e02"
+                "reference": "e7c94c4bb531bc83d18c50d7dbbc604fa4f1b00f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/textile/php-textile/zipball/f1ae0073d2d72a32f4296741de9a14213da68e02",
-                "reference": "f1ae0073d2d72a32f4296741de9a14213da68e02",
+                "url": "https://api.github.com/repos/textile/php-textile/zipball/e7c94c4bb531bc83d18c50d7dbbc604fa4f1b00f",
+                "reference": "e7c94c4bb531bc83d18c50d7dbbc604fa4f1b00f",
                 "shasum": ""
             },
             "require": {
@@ -206,37 +206,33 @@
                 "plaintext",
                 "textile"
             ],
-            "time": "2018-12-15T01:06:16+00:00"
+            "time": "2019-08-30T18:41:02+00:00"
         },
         {
             "name": "paragonie/random_compat",
-            "version": "v2.0.17",
+            "version": "v9.99.99",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "29af24f25bab834fcbb38ad2a69fa93b867e070d"
+                "reference": "84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/29af24f25bab834fcbb38ad2a69fa93b867e070d",
-                "reference": "29af24f25bab834fcbb38ad2a69fa93b867e070d",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95",
+                "reference": "84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.0"
+                "php": "^7"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*|5.*"
+                "phpunit/phpunit": "4.*|5.*",
+                "vimeo/psalm": "^1"
             },
             "suggest": {
                 "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
             },
             "type": "library",
-            "autoload": {
-                "files": [
-                    "lib/random.php"
-                ]
-            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
@@ -255,20 +251,20 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2018-07-04T16:31:37+00:00"
+            "time": "2018-07-02T15:55:56+00:00"
         },
         {
             "name": "symfony/intl",
-            "version": "v3.4.20",
+            "version": "v3.4.35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/intl.git",
-                "reference": "0106fee521ff2d9297ca2592feaacad312050377"
+                "reference": "3f40bc99590a5f2bb125d8f3c88ac0b9a0a2ee1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/0106fee521ff2d9297ca2592feaacad312050377",
-                "reference": "0106fee521ff2d9297ca2592feaacad312050377",
+                "url": "https://api.github.com/repos/symfony/intl/zipball/3f40bc99590a5f2bb125d8f3c88ac0b9a0a2ee1b",
+                "reference": "3f40bc99590a5f2bb125d8f3c88ac0b9a0a2ee1b",
                 "shasum": ""
             },
             "require": {
@@ -330,27 +326,27 @@
                 "l10n",
                 "localization"
             ],
-            "time": "2018-12-01T08:50:52+00:00"
+            "time": "2019-10-04T18:48:33+00:00"
         },
         {
             "name": "symfony/polyfill",
-            "version": "v1.10.0",
+            "version": "v1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill.git",
-                "reference": "cf87da97c2969a3446fa60e01eca99bd44b3b86d"
+                "reference": "e110fdfc055b47447c4f46e76d6eca83055e9a7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill/zipball/cf87da97c2969a3446fa60e01eca99bd44b3b86d",
-                "reference": "cf87da97c2969a3446fa60e01eca99bd44b3b86d",
+                "url": "https://api.github.com/repos/symfony/polyfill/zipball/e110fdfc055b47447c4f46e76d6eca83055e9a7a",
+                "reference": "e110fdfc055b47447c4f46e76d6eca83055e9a7a",
                 "shasum": ""
             },
             "require": {
                 "ircmaxell/password-compat": "~1.0",
                 "paragonie/random_compat": "~1.0|~2.0|~9.99",
                 "php": ">=5.3.3",
-                "symfony/intl": "~2.3|~3.0|~4.0"
+                "symfony/intl": "~2.3|~3.0|~4.0|~5.0"
             },
             "replace": {
                 "symfony/polyfill-apcu": "self.version",
@@ -369,6 +365,7 @@
                 "symfony/polyfill-php71": "self.version",
                 "symfony/polyfill-php72": "self.version",
                 "symfony/polyfill-php73": "self.version",
+                "symfony/polyfill-php74": "self.version",
                 "symfony/polyfill-util": "self.version",
                 "symfony/polyfill-xml": "self.version"
             },
@@ -378,7 +375,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.10-dev"
+                    "dev-master": "1.12-dev"
                 }
             },
             "autoload": {
@@ -395,6 +392,7 @@
                     "src/Php71/bootstrap.php",
                     "src/Php72/bootstrap.php",
                     "src/Php73/bootstrap.php",
+                    "src/Php74/bootstrap.php",
                     "src/Iconv/bootstrap.php",
                     "src/Intl/Grapheme/bootstrap.php",
                     "src/Intl/Idn/bootstrap.php",
@@ -406,6 +404,7 @@
                 "classmap": [
                     "src/Intl/MessageFormatter/Resources/stubs",
                     "src/Intl/Normalizer/Resources/stubs",
+                    "src/Php73/Resources/stubs",
                     "src/Php70/Resources/stubs",
                     "src/Php54/Resources/stubs"
                 ]
@@ -432,33 +431,33 @@
                 "polyfill",
                 "shim"
             ],
-            "time": "2018-10-31T13:00:05+00:00"
+            "time": "2019-08-06T08:03:45+00:00"
         },
         {
             "name": "voku/anti-xss",
-            "version": "2.3.1",
+            "version": "4.1.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voku/anti-xss.git",
-                "reference": "3f74c3c60931ebce07d6372abeeadf3f02b1ee7f"
+                "reference": "8acdad8a3ad4c70d04cd6925811b28d06d776ca1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/anti-xss/zipball/3f74c3c60931ebce07d6372abeeadf3f02b1ee7f",
-                "reference": "3f74c3c60931ebce07d6372abeeadf3f02b1ee7f",
+                "url": "https://api.github.com/repos/voku/anti-xss/zipball/8acdad8a3ad4c70d04cd6925811b28d06d776ca1",
+                "reference": "8acdad8a3ad4c70d04cd6925811b28d06d776ca1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
-                "voku/portable-utf8": "~3.1"
+                "php": ">=7.0.0",
+                "voku/portable-utf8": "~5.4.25"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0|~5.0"
+                "phpunit/phpunit": "~6.0 || ~7.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "4.1.x-dev"
                 }
             },
             "autoload": {
@@ -489,43 +488,96 @@
                 "security",
                 "xss"
             ],
-            "time": "2018-04-26T18:43:51+00:00"
+            "time": "2019-11-11T14:48:30+00:00"
         },
         {
-            "name": "voku/portable-utf8",
-            "version": "3.1.30",
+            "name": "voku/portable-ascii",
+            "version": "1.3.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/voku/portable-utf8.git",
-                "reference": "162de9c40d8a7dff84697296f375b424aef53df8"
+                "url": "https://github.com/voku/portable-ascii.git",
+                "reference": "056000d679a44b06ee61a63114f587cde066b1a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/portable-utf8/zipball/162de9c40d8a7dff84697296f375b424aef53df8",
-                "reference": "162de9c40d8a7dff84697296f375b424aef53df8",
+                "url": "https://api.github.com/repos/voku/portable-ascii/zipball/056000d679a44b06ee61a63114f587cde066b1a8",
+                "reference": "056000d679a44b06ee61a63114f587cde066b1a8",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
-                "symfony/polyfill": "~1.0"
+                "php": ">=7.0.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0|~5.0"
+                "phpunit/phpunit": "~6.0 || ~7.0"
             },
             "suggest": {
+                "ext-intl": "Use Intl for transliterator_transliterate() support"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "voku\\": "src/voku/",
+                    "voku\\tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lars Moelleken",
+                    "homepage": "http://www.moelleken.org/"
+                }
+            ],
+            "description": "Portable ASCII library - performance optimized (ascii) string functions for php.",
+            "homepage": "https://github.com/voku/portable-ascii",
+            "keywords": [
+                "ascii",
+                "clean",
+                "php"
+            ],
+            "time": "2019-11-11T16:55:47+00:00"
+        },
+        {
+            "name": "voku/portable-utf8",
+            "version": "5.4.28",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/voku/portable-utf8.git",
+                "reference": "f1b08aa203cb4731a5c4c9d9328b6fc329341acf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/voku/portable-utf8/zipball/f1b08aa203cb4731a5c4c9d9328b6fc329341acf",
+                "reference": "f1b08aa203cb4731a5c4c9d9328b6fc329341acf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0",
+                "symfony/polyfill-iconv": "~1.0",
+                "symfony/polyfill-intl-grapheme": "~1.0",
+                "symfony/polyfill-intl-normalizer": "~1.0",
+                "symfony/polyfill-mbstring": "~1.0",
+                "symfony/polyfill-php72": "~1.0",
+                "voku/portable-ascii": "~1.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0 || ~7.0"
+            },
+            "suggest": {
+                "ext-ctype": "Use Ctype for e.g. hexadecimal digit detection",
+                "ext-fileinfo": "Use Fileinfo for better binary file detection",
                 "ext-iconv": "Use iconv for best performance",
                 "ext-intl": "Use Intl for best performance",
+                "ext-json": "Use JSON for string detection",
                 "ext-mbstring": "Use Mbstring for best performance"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.1.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
-                    "voku\\": "src/voku/"
+                    "voku\\": "src/voku/",
+                    "voku\\tests\\": "tests/"
                 },
                 "files": [
                     "bootstrap.php"
@@ -537,19 +589,19 @@
             ],
             "authors": [
                 {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
                     "name": "Hamid Sarfraz",
                     "homepage": "http://pageconfig.com/"
                 },
                 {
                     "name": "Lars Moelleken",
                     "homepage": "http://www.moelleken.org/"
-                },
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
                 }
             ],
-            "description": "Portable UTF-8 library with polyfill / shim for Iconv, Intl, Mbstring, Normalizrer etc.",
+            "description": "Portable UTF-8 library - performance optimized (unicode) string functions for php.",
             "homepage": "https://github.com/voku/portable-utf8",
             "keywords": [
                 "UTF",
@@ -559,7 +611,7 @@
                 "utf-8",
                 "utf8"
             ],
-            "time": "2017-10-08T23:25:51+00:00"
+            "time": "2019-11-17T21:08:41+00:00"
         }
     ],
     "packages-dev": [],
@@ -568,9 +620,11 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=7.0.0"
+    },
     "platform-dev": [],
     "platform-overrides": {
-        "php": "5.6.34"
+        "php": "7.0.33"
     }
 }

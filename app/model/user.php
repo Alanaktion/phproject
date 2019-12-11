@@ -66,10 +66,10 @@ class User extends \Model
 
     /**
      * Get path to user's avatar or gravatar
-     * @param  integer $size
+     * @param  int $size
      * @return string|bool
      */
-    public function avatar($size = 80)
+    public function avatar(int $size = 80)
     {
         if (!$this->id) {
             return false;
@@ -84,7 +84,7 @@ class User extends \Model
      * Load all active users
      * @return array
      */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC"));
     }
@@ -93,7 +93,7 @@ class User extends \Model
      * Load all deleted users
      * @return array
      */
-    public function getAllDeleted()
+    public function getAllDeleted(): array
     {
         return $this->find("deleted_date IS NOT NULL AND role != 'group'", array("order" => "name ASC"));
     }
@@ -102,7 +102,7 @@ class User extends \Model
      * Load all active groups
      * @return array
      */
-    public function getAllGroups()
+    public function getAllGroups(): array
     {
         return $this->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC"));
     }
@@ -120,11 +120,11 @@ class User extends \Model
             $ug = new User\Group;
             /** @var User\Group[] $users */
             $users = $ug->find(array("group_id = ?", $this->id));
-            $user_ids = array();
+            $userIds = [];
             foreach ($users as $user) {
-                $user_ids[] = $user->user_id;
+                $userIds[] = $user->user_id;
             }
-            return $this->_groupUsers = $user_ids ? $this->find("id IN (" . implode(",", $user_ids) . ") AND deleted_date IS NULL") : array();
+            return $this->_groupUsers = $userIds ? $this->find("id IN (" . implode(",", $userIds) . ") AND deleted_date IS NULL") : [];
         } else {
             return null;
         }
@@ -140,7 +140,7 @@ class User extends \Model
             if ($this->_groupUsers === null) {
                 $this->getGroupUsers();
             }
-            $ids = array();
+            $ids = [];
             foreach ($this->_groupUsers as $u) {
                 $ids[] = $u->id;
             }
@@ -154,10 +154,10 @@ class User extends \Model
      * Get all user IDs in a group with a user, and all group IDs the user is in
      * @return array
      */
-    public function getSharedGroupUserIds()
+    public function getSharedGroupUserIds(): array
     {
         $groupModel = new \Model\User\Group;
-        $groups = $groupModel->find(array("user_id = ?", $this->id));
+        $groups = $groupModel->find(["user_id = ?", $this->id]);
         $groupIds = [];
         foreach ($groups as $g) {
             $groupIds[] = $g["group_id"];
@@ -165,10 +165,13 @@ class User extends \Model
         $ids = $groupIds;
         if ($groupIds) {
             $groupIdString = implode(",", $groupIds);
-            $users = $groupModel->find("group_id IN ({$groupIdString})", array("group" => "user_id"));
+            $users = $groupModel->find("group_id IN ({$groupIdString})", ["group" => "id,user_id"]);
             foreach ($users as $u) {
                 $ids[] = $u->user_id;
             }
+        }
+        if (!count($ids)) {
+            return [$this->id];
         }
         return $ids;
     }
@@ -176,9 +179,9 @@ class User extends \Model
      * Get all user options
      * @return array
      */
-    public function options()
+    public function options(): array
     {
-        return $this->options ? json_decode($this->options, true) : array();
+        return $this->options ? json_decode($this->options, true) : [];
     }
 
     /**
@@ -187,7 +190,7 @@ class User extends \Model
      * @param  mixed  $value
      * @return mixed
      */
-    public function option($key, $value = null)
+    public function option(string $key, $value = null)
     {
         $options = $this->options();
         if ($value === null) {
@@ -203,7 +206,7 @@ class User extends \Model
      * @param  string $date
      * @return bool
      */
-    public function sendDueAlert($date = '')
+    public function sendDueAlert(string $date = ''): bool
     {
         if (!$this->id) {
             return false;
@@ -214,7 +217,7 @@ class User extends \Model
         }
 
         // Get group owner IDs
-        $ownerIds = array($this->id);
+        $ownerIds = [$this->id];
         $groups = new \Model\User\Group();
         foreach ($groups->find(array("user_id = ?", $this->id)) as $r) {
             $ownerIds[] = $r->group_id;
@@ -223,8 +226,8 @@ class User extends \Model
 
         // Find issues assigned to user or user's group
         $issue = new Issue;
-        $due = $issue->find(array("due_date = ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date), array("order" => "priority DESC"));
-        $overdue = $issue->find(array("due_date < ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date), array("order" => "priority DESC"));
+        $due = $issue->find(["due_date = ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date], ["order" => "priority DESC"]);
+        $overdue = $issue->find(["due_date < ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date], ["order" => "priority DESC"]);
 
         if ($due || $overdue) {
             $notif = new \Helper\Notification;
@@ -239,7 +242,7 @@ class User extends \Model
      * @param  int $time  The lower limit on timestamps for stats collection
      * @return array
      */
-    public function stats($time = 0)
+    public function stats(int $time = 0): array
     {
         $offset = \Helper\View::instance()->timeoffset();
 
@@ -247,37 +250,37 @@ class User extends \Model
             $time = strtotime("-2 weeks", time() + $offset);
         }
 
-        $result = array();
+        $result = [];
         $result["spent"] = $this->db->exec(
             "SELECT DATE(DATE_ADD(u.created_date, INTERVAL :offset SECOND)) AS `date`, SUM(f.new_value - f.old_value) AS `val`
-			FROM issue_update u
-			JOIN issue_update_field f ON u.id = f.issue_update_id AND f.field = 'hours_spent'
-			WHERE u.user_id = :user AND u.created_date > :date
-			GROUP BY DATE(DATE_ADD(u.created_date, INTERVAL :offset2 SECOND))",
-            array(":user" => $this->id, ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
+            FROM issue_update u
+            JOIN issue_update_field f ON u.id = f.issue_update_id AND f.field = 'hours_spent'
+            WHERE u.user_id = :user AND u.created_date > :date
+            GROUP BY `date`",
+            [":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time)]
         );
         $result["closed"] = $this->db->exec(
             "SELECT DATE(DATE_ADD(i.closed_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
-			FROM issue i
-			WHERE i.owner_id = :user AND i.closed_date > :date
-			GROUP BY DATE(DATE_ADD(i.closed_date, INTERVAL :offset2 SECOND))",
-            array(":user" => $this->id, ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
+            FROM issue i
+            WHERE i.owner_id = :user AND i.closed_date > :date
+            GROUP BY `date`",
+            [":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time)]
         );
         $result["created"] = $this->db->exec(
             "SELECT DATE(DATE_ADD(i.created_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
-			FROM issue i
-			WHERE i.author_id = :user AND i.created_date > :date
-			GROUP BY DATE(DATE_ADD(i.created_date, INTERVAL :offset2 SECOND))",
-            array(":user" => $this->id, ":offset" => $offset, ":offset2" => $offset, ":date" => date("Y-m-d H:i:s", $time))
+            FROM issue i
+            WHERE i.author_id = :user AND i.created_date > :date
+            GROUP BY `date`",
+            [":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time)]
         );
 
         $dates = $this->_createDateRangeArray(date("Y-m-d", $time), date("Y-m-d", time() + $offset));
-        $return = array(
-            "labels" => array(),
-            "spent" => array(),
-            "closed" => array(),
-            "created" => array()
-        );
+        $return = [
+            "labels" => [],
+            "spent" => [],
+            "closed" => [],
+            "created" => [],
+        ];
 
         foreach ($result["spent"] as $r) {
             $return["spent"][$r["date"]] = floatval($r["val"]);
@@ -311,19 +314,19 @@ class User extends \Model
 
     /**
      * Reassign assigned issues
-     * @param  int $user_id
+     * @param  int $userId
      * @return int Number of issues affected
      * @throws \Exception
      */
-    public function reassignIssues($user_id)
+    public function reassignIssues(int $userId): int
     {
         if (!$this->id) {
             throw new \Exception("User is not initialized.");
         }
-        $issue_model = new Issue;
-        $issues = $issue_model->find(array("owner_id = ? AND deleted_date IS NULL AND closed_date IS NULL", $this->id));
+        $issueModel = new Issue;
+        $issues = $issueModel->find(["owner_id = ? AND deleted_date IS NULL AND closed_date IS NULL", $this->id]);
         foreach ($issues as $issue) {
-            $issue->owner_id = $user_id;
+            $issue->owner_id = $userId;
             $issue->save();
         }
         return count($issues);
@@ -333,14 +336,14 @@ class User extends \Model
     {
         $lang = $this->language ?: \Base::instance()->get("LANGUAGE");
         $lang = explode(',', $lang, 2)[0];
-        return (object) array("language" => $lang, "js" => ($lang != "en"));
+        return (object)["language" => $lang, "js" => ($lang != "en")];
     }
 
     /**
      * Generate a password reset token and store hashed value
      * @return string
      */
-    public function generateResetToken()
+    public function generateResetToken(): string
     {
         $random = \Helper\Security::instance()->randBytes(512);
         $token = hash("sha384", $random) . time();
@@ -351,9 +354,9 @@ class User extends \Model
     /**
      * Validate a plaintext password reset token
      * @param  string $token
-     * @return boolean
+     * @return bool
      */
-    public function validateResetToken($token)
+    public function validateResetToken(string $token): bool
     {
         $ttl = \Base::instance()->get("security.reset_ttl");
         $timestampValid = substr($token, 96) > (time() - $ttl);

@@ -40,7 +40,7 @@ class StringTest extends TestCase
         $helper = \Helper\View::instance();
         $email = "alan@phpizza.com";
         $result = $helper->gravatar($email);
-        $this->assertContains("gravatar.com/avatar/996df14", $result);
+        $this->assertStringContainsString("gravatar.com/avatar/996df14", $result);
     }
 
     public function testUtc2local()

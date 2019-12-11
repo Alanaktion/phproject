@@ -128,6 +128,7 @@ if ($_POST) {
             'db.user' => $post['db-user'],
             'db.pass' => $post['db-pass'],
             'db.name' => $post['db-name'],
+            'site.url' => $f3->get('SCHEME') . '://' . $f3->get('HOST') . $f3->get('BASE') . '/',
         ];
         $data = "<?php\nreturn " . var_export($config, true) . ";\n";
         file_put_contents("config.php", $data);

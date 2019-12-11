@@ -6257,6 +6257,11 @@ a.list-group-item-danger.active:focus {
 .navbar-form .btn-sm {
 	margin-top: 5px;
 }
+@supports (position: sticky) {
+	#backlog .panel-heading {
+		top: 62px;
+	}
+}
 #taskboard .btn {
 	margin-bottom: -2px;
 	height: 24px;
