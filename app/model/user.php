@@ -345,7 +345,7 @@ class User extends \Model
      */
     public function generateResetToken(): string
     {
-        $random = \Helper\Security::instance()->randBytes(512);
+        $random = random_bytes(512);
         $token = hash("sha384", $random) . time();
         $this->reset_token = hash("sha384", $token);
         return $token;

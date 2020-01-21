@@ -29,7 +29,7 @@ class Security extends \Prefab
      */
     public function salt()
     {
-        return md5($this->randBytes(64));
+        return md5(random_bytes(64));
     }
 
     /**
@@ -38,7 +38,7 @@ class Security extends \Prefab
      */
     public function salt_sha1()
     {
-        return sha1($this->randBytes(64));
+        return sha1(random_bytes(64));
     }
 
     /**
@@ -52,38 +52,20 @@ class Security extends \Prefab
         if (!in_array($size, $allSizes)) {
             throw new \Exception("Hash size must be one of: " . implode(", ", $allSizes));
         }
-        return hash("sha$size", $this->randBytes(512), false);
+        return hash("sha$size", random_bytes(512), false);
     }
 
     /**
      * Generate secure random bytes
+     *
+     * @deprecated v1.8 Use native random_bytes() instead.
+     *
      * @param  integer $length
      * @return binary
      */
     public function randBytes($length = 16)
     {
-        // Try to use native secure random
-        if (function_exists('random_bytes')) {
-            return random_bytes($length);
-        }
-
-        // Fall back to OpenSSL cryptography extension if available
-        if (function_exists("openssl_random_pseudo_bytes")) {
-            $strong = false;
-            $rnd = openssl_random_pseudo_bytes($length, $strong);
-            if ($strong === true) {
-                return $rnd;
-            }
-        }
-
-        // Use SHA256 of mt_rand if OpenSSL is not available
-        $rnd = "";
-        for ($i = 0; $i < $length; $i++) {
-            $sha = hash("sha256", mt_rand());
-            $char = mt_rand(0, 30);
-            $rnd .= chr(hexdec($sha[$char] . $sha[$char + 1]));
-        }
-        return (binary)$rnd;
+        return random_bytes($length);
     }
 
     /**
@@ -136,21 +118,14 @@ class Security extends \Prefab
      *
      * This is a userland implementation of the hash_equals function from 5.6
      *
+     * @deprecated v1.8 Use native hash_equals() instead.
+     *
      * @param  string $str1
      * @param  string $str2
      * @return boolean
      */
     public function hashEquals($str1, $str2)
     {
-        if (strlen($str1) != strlen($str2)) {
-            return false;
-        } else {
-            $res = $str1 ^ $str2;
-            $ret = 0;
-            for ($i = strlen($res) - 1; $i >= 0; $i--) {
-                $ret |= ord($res[$i]);
-            }
-            return !$ret;
-        }
+        return hash_equals($str1, $str2);
     }
 }
