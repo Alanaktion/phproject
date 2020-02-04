@@ -320,7 +320,7 @@ CREATE TABLE `config` (
 	`attribute` varchar(255) COLLATE 'utf8_general_ci' NULL,
 	`value` varchar(255) COLLATE 'utf8_general_ci' NULL,
 	UNIQUE KEY `attribute` (`attribute`)
-);
+) ENGINE=INNODB CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.reset_ttl', '86400');
 INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '18.02.19');
