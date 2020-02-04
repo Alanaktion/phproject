@@ -4,22 +4,23 @@ namespace Helper;
 
 class Plugin extends \Prefab
 {
-    protected $_hooks   = array();
-    protected $_nav     = array();
-    protected $_jsCode  = array();
-    protected $_jsFiles = array();
+    protected $hooks = [];
+    protected $nav = [];
+    protected $jsCode = [];
+    protected $jsFiles = [];
 
     /**
      * Register a hook function
+     * @api
      * @param string   $hook
      * @param callable $action
      */
-    public function addHook($hook, callable $action)
+    public function addHook(string $hook, callable $action)
     {
-        if (isset($this->_hooks[$hook])) {
-            $this->_hooks[$hook][] = $action;
+        if (isset($this->hooks[$hook])) {
+            $this->hooks[$hook][] = $action;
         } else {
-            $this->_hooks[$hook] = array($action);
+            $this->hooks[$hook] = [$action];
         }
     }
 
@@ -29,13 +30,13 @@ class Plugin extends \Prefab
      * @param  mixed  $data
      * @return mixed
      */
-    public function callHook($hook, $data = null)
+    public function callHook(string $hook, $data = null)
     {
-        if (empty($this->_hooks[$hook])) {
+        if (empty($this->hooks[$hook])) {
             return $data;
         }
 
-        foreach ($this->_hooks[$hook] as $cb) {
+        foreach ($this->hooks[$hook] as $cb) {
             $data = $cb($data);
         }
         return $data;
@@ -43,60 +44,68 @@ class Plugin extends \Prefab
 
     /**
      * Add a navigation item
+     * @api
      * @param string $href
      * @param string $title
-     * @param string $match
+     * @param string|null $match
      * @param string $location
      */
-    public function addNavItem($href, $title, $match = null, $location = 'root')
-    {
-        $this->_nav[] = array(
-            "href"  => $href,
-            "title" => $title,
-            "match" => $match,
-            "location" => $location
-        );
+    public function addNavItem(
+        string $href,
+        string $title,
+        ?string $match = null,
+        string $location = 'root'
+    ) {
+        $this->nav[] = [
+            'href'  => $href,
+            'title' => $title,
+            'match' => $match,
+            'location' => $location,
+        ];
     }
 
     /**
      * Add JavaScript code
+     * @api
      * @param string $code
-     * @param string $match
+     * @param string|null $match
      */
-    public function addJsCode($code, $match = null)
+    public function addJsCode(string $code, ?string $match = null)
     {
-        $this->_jsCode[] = array(
-            "code"  => $code,
-            "match" => $match
-        );
+        $this->jsCode[] = [
+            'code'  => $code,
+            'match' => $match,
+        ];
     }
 
     /**
      * Add a JavaScript file
+     * @api
      * @param string $file
-     * @param string $match
+     * @param string|null $match
      */
-    public function addJsFile($file, $match = null)
+    public function addJsFile(string $file, ?string $match = null)
     {
-        $this->_jsFiles[] = array(
-            "file"  => $file,
-            "match" => $match
-        );
+        $this->jsFiles[] = [
+            'file'  => $file,
+            'match' => $match,
+        ];
     }
 
     /**
      * Get navbar items, optionally setting matching items as active
-     * @param  string $path
+     * @param  string|null $path
      * @param  string $location
      * @return array
      */
-    public function getNav($path = null, $location = "root")
+    public function getNav(?string $path = null, string $location = 'root')
     {
-        $all = $this->_nav;
-        $return = array();
-        foreach ($all as $item) {
+        $return = [];
+        foreach ($this->nav as $item) {
             if ($item['location'] == $location) {
-                $return[] = $item + array("active" => ($item["match"] && $path && preg_match($item["match"], $path)));
+                $return[] = $item + [
+                    'active' => $item['match'] && $path && preg_match($item['match'], $path),
+                ];
             }
         }
         return $return;
@@ -104,29 +113,30 @@ class Plugin extends \Prefab
 
     /**
      * Get a multidimensional array of all nav items by location
-     * @param  string $path
+     * @param  string|null $path
      * @return array
      */
-    public function getAllNavs($path = null)
+    public function getAllNavs(?string $path = null)
     {
         return array(
-            "root" => $this->getNav($path, "root"),
-            "user" => $this->getNav($path, "user"),
-            "new" => $this->getNav($path, "new"),
-            "browse" => $this->getNav($path, "browse")
+            'root' => $this->getNav($path, 'root'),
+            'user' => $this->getNav($path, 'user'),
+            'new' => $this->getNav($path, 'new'),
+            'browse' => $this->getNav($path, 'browse')
         );
     }
 
     /**
      * Get an array of matching JS files to include
-     * @param  string $path
+     * @param  string|null $path
      * @return array
      */
-    public function getJsFiles($path = null)
+    public function getJsFiles(?string $path = null)
     {
-        $return = array();
-        foreach ($this->_jsFiles as $item) {
-            if (!$item['match'] || !$path ||
+        $return = [];
+        foreach ($this->jsFiles as $item) {
+            if (
+                !$item['match'] || !$path ||
                 ($item['match'] && $path && preg_match($item['match'], $path))
             ) {
                 $return[] = $item['file'];
@@ -137,14 +147,15 @@ class Plugin extends \Prefab
 
     /**
      * Get an array of matching JS code to include
-     * @param  string $path
+     * @param  string|null $path
      * @return array
      */
-    public function getJsCode($path = null)
+    public function getJsCode(?string $path = null)
     {
-        $return = array();
-        foreach ($this->_jsCode as $item) {
-            if (!$item['match'] || !$path ||
+        $return = [];
+        foreach ($this->jsCode as $item) {
+            if (
+                !$item['match'] || !$path ||
                 ($item['match'] && $path && preg_match($item['match'], $path))
             ) {
                 $return[] = $item['code'];
