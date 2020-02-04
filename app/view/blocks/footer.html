@@ -4,30 +4,31 @@
     @cached = substr_count(@dblog, '[CACHED]');
 ~}
 <check if="{{ @DEBUG == 3 }}">
-    <br>
-    <div class="well well-sm log">{{ @dblog | esc }}</div>
-</check>
-<footer class="row">
-    <div class="col-xs-4">
-        <p class="visible-sm visible-xs"><a href="{{ @BASE }}/logout" class="btn btn-default btn-xs">{{ @dict.log_out }}</a></p>
+    <div class="card bg-light my-3">
+        <div class="card-body p-3">
+            <pre class="mb-0" style="font-size: 80%;">{{ @dblog | esc }}</pre>
+        </div>
     </div>
-    <div class="col-xs-8">
-        <p class="text-right text-muted">
-            <check if="{{ @dblog }}">
-                <span title="{{ @dict.n_total_queries_n_cached,@total,@cached | format }}">{{ @dict.n_queries,(@total - @cached) | format }}</span> &middot;
-            </check>
-            <check if="{{ !empty(@microtime) }}">
-                <set pagemtime="{{ microtime(true) - @microtime }}" />
-                <span title="{{ @dict.page_generated_in_n_seconds,round(@pagemtime, 10) | format }}">{{ round(@pagemtime * 1000, 0) }}ms</span> &middot;
-            </check>
-            <span title="Real usage: {{ memory_get_peak_usage(true) }} bytes">{{ \Helper\View::instance()->formatFilesize(memory_get_peak_usage()) }}</span>
-            <check if="{{ @revision }}">
-                &middot; <a class="nolink" title="{{ @dict.current_commit_n,@revision | format }}" href="https://github.com/Alanaktion/phproject/commit/{{ @revision }}" target="_blank">{{ substr(@revision, 0, 7) }}</a>
-            </check>
-            <check if="{{ @plugins }}">
-                &middot; {{ count(@plugins) }} {{ @dict.plugins }}
-            </check>
-        </p>
+</check>
+<footer class="d-flex my-3">
+    <div class="d-block d-md-none">
+        <a href="{{ @BASE }}/logout" class="btn btn-secondary btn-sm">{{ @dict.log_out }}</a>
+    </div>
+    <div class="text-right text-muted ml-auto">
+        <check if="{{ @dblog }}">
+            <span title="{{ @dict.n_total_queries_n_cached,@total,@cached | format }}">{{ @dict.n_queries,(@total - @cached) | format }}</span> &middot;
+        </check>
+        <check if="{{ !empty(@microtime) }}">
+            <set pagemtime="{{ microtime(true) - @microtime }}" />
+            <span title="{{ @dict.page_generated_in_n_seconds,round(@pagemtime, 10) | format }}">{{ round(@pagemtime * 1000, 0) }}ms</span> &middot;
+        </check>
+        <span title="Real usage: {{ memory_get_peak_usage(true) }} bytes">{{ \Helper\View::instance()->formatFilesize(memory_get_peak_usage()) }}</span>
+        <check if="{{ @revision }}">
+            &middot; <a class="nolink" title="{{ @dict.current_commit_n,@revision | format }}" href="https://github.com/Alanaktion/phproject/commit/{{ @revision }}" target="_blank">{{ substr(@revision, 0, 7) }}</a>
+        </check>
+        <check if="{{ @plugins }}">
+            &middot; {{ count(@plugins) }} {{ @dict.plugins }}
+        </check>
     </div>
 </footer>
 <include href="blocks/footer-modals.html" if="{{ !empty(@user.id) }}" />

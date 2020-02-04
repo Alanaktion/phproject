@@ -1,6 +1,6 @@
-<div class="dashboard-widget" data-widget="projects">
-    <h3 class="dashboard-widget-handle">{{ @dict.my_projects }}&ensp;<small>{{ count(@projects) }}</small>&ensp;
-        <a class="btn btn-xs btn-default has-tooltip" href="{{ @BASE }}/issues/new/{{ @issue_type.project }}" title="{{ @dict.add_project }}"><span class="fa fa-plus"></span></a>
+<div class="dashboard-widget mb-4" data-widget="projects">
+    <h3 class="dashboard-widget mb-4-handle">{{ @dict.my_projects }}&ensp;<small>{{ count(@projects) }}</small>&ensp;
+        <a class="btn btn-sm btn-secondary has-tooltip" href="{{ @BASE }}/issues/new/{{ @issue_type.project }}" title="{{ @dict.add_project }}"><span class="fa fa-plus"></span></a>
     </h3>
     <set issues="{{ @projects }}" />
     <include href="blocks/dashboard-issue-list.html" />

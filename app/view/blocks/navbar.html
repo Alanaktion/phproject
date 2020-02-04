@@ -1,135 +1,128 @@
 <set nav="{{ \Helper\Plugin::instance()->getAllNavs(@PATH) }}" />
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nb-collapse">
-                <span class="sr-only">{{ @dict.toggle_navigation }}</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ @BASE }}/" accesskey="h">
-                <check if="{{ empty(@site.logo) }}">
-                    <true>{{ @site.name | esc }}</true>
-                    <false>
-                        <img src="{{ @site.logo }}" alt="{{ @site.name | esc }}">
-                    </false>
-                </check>
-            </a>
-        </div>
+<div class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+    <a class="navbar-brand" href="{{ @BASE }}/" accesskey="h">
+        <check if="{{ empty(@site.logo) }}">
+            <true>{{ @site.name | esc }}</true>
+            <false>
+                {* TODO: verify logo works correctly *}
+                <img src="{{ @site.logo }}" alt="{{ @site.name | esc }}">
+            </false>
+        </check>
+    </a>
+    <button class="navbar-toggler" type="button"
+        data-toggle="collapse" data-target="#nb-collapse"
+        aria-controls="nb-collapse" aria-expanded="false"
+        aria-label="{{ @dict.toggle_navigation }}">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <div class="collapse navbar-collapse" id="nb-collapse">
-
-            <ul class="nav navbar-nav">
-                <li class="dropdown {{ @menuitem == 'new' ? 'active':'' }}">
-                    <a href="{{ @BASE }}/issues/new" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" accesskey="n">
-                        {{ @dict.new }} <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <repeat group="{{ @issue_types }}" value="{{ @type }}">
-                            <li><a href="{{ @BASE }}/issues/new/{{ @type.id }}">{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</a></li>
+    <div class="collapse navbar-collapse" id="nb-collapse">
+        <ul class="nav navbar-nav mr-auto">
+            <li class="nav-item dropdown {{ @menuitem == 'new' ? 'active':'' }}">
+                <a href="{{ @BASE }}/issues/new" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" accesskey="n">
+                    {{ @dict.new }}
+                </a>
+                <div class="dropdown-menu" role="menu">
+                    <repeat group="{{ @issue_types }}" value="{{ @type }}">
+                        <a class="dropdown-item" href="{{ @BASE }}/issues/new/{{ @type.id }}">{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</a>
+                    </repeat>
+                    <check if="{{ !empty(@issue) }}">
+                        <div class="dropdown-divider"></div>
+                        <check if="{{ @issue.type_id == @issue_type.project }}">
+                            <true>
+                                <h6 class="dropdown-header">{{ @dict.related }}</h6>
+                                <a class="dropdown-item" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.Task }}</a>
+                                <a class="dropdown-item" href="{{ @BASE }}/issues/new/{{ @issue_type.project }}/{{ @issue.id }}">{{ @dict.subproject }}</a>
+                            </true>
+                            <false>
+                                <h6 class="dropdown-header">{{ @dict.current_issue }}</h6>
+                                <a class="dropdown-item" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.child_task }}</a>
+                                <check if="{{ @issue.parent_id }}">
+                                    <a class="dropdown-item" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.parent_id }}">{{ @dict.related_task }}</a>
+                                </check>
+                            </false>
+                        </check>
+                    </check>
+                    <check if="{{ @user.role == 'admin' || @nav.new }}">
+                        <div class="dropdown-divider"></div>
+                    </check>
+                    <check if="{{ @user.role == 'admin' }}">
+                        <a class="dropdown-item" href="{{ @BASE }}/admin/sprints/new">{{ @dict.sprint }}</a>
+                    </check>
+                    <check if="{{ @nav.new }}">
+                        <repeat group="{{ @nav.new }}" value="{{ @navitem }}">
+                            <a class="dropdown-item {{ @navitem.active ? 'active' : '' }}" href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a>
                         </repeat>
-                        <check if="{{ !empty(@issue) }}">
-                            <li role="presentation" class="divider"></li>
-                            <check if="{{ @issue.type_id == @issue_type.project }}">
-                                <true>
-                                    <li role="presentation" class="dropdown-header">{{ @dict.related }}</li>
-                                    <li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.Task }}</a></li>
-                                    <li><a href="{{ @BASE }}/issues/new/{{ @issue_type.project }}/{{ @issue.id }}">{{ @dict.subproject }}</a></li>
-                                </true>
-                                <false>
-                                    <li role="presentation" class="dropdown-header">{{ @dict.current_issue }}</li>
-                                    <li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.id }}">{{ @dict.child_task }}</a></li>
-                                    <check if="{{ @issue.parent_id }}">
-                                        <li><a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @issue.parent_id }}">{{ @dict.related_task }}</a></li>
-                                    </check>
-                                </false>
-                            </check>
-                        </check>
-                        <check if="{{ @user.role == 'admin' || @nav.new }}">
-                            <li role="presentation" class="divider"></li>
-                        </check>
-                        <check if="{{ @user.role == 'admin' }}">
-                            <li><a href="{{ @BASE }}/admin/sprints/new">{{ @dict.sprint }}</a></li>
-                        </check>
-                        <check if="{{ @nav.new }}">
-                            <repeat group="{{ @nav.new }}" value="{{ @navitem }}">
-                                <li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
-                            </repeat>
-                        </check>
-                    </ul>
-                </li>
-                <li class="dropdown {{ @menuitem == 'browse' ? 'active':'' }}">
-                    <a href="{{ @BASE }}/issues" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" accesskey="b">
-                        {{ @dict.browse }} <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="{{ @BASE }}/issues/?status=open">{{ @dict.open }}</a></li>
-                        <li><a href="{{ @BASE }}/issues/?status=closed">{{ @dict.closed }}</a></li>
-                        <li role="presentation" class="divider"></li>
-                        <li><a href="{{ @BASE }}/issues/?status=open&amp;author_id={{ @user.id }}">{{ @dict.created_by_me }}</a></li>
-                        <li><a href="{{ @BASE }}/issues/?status=open&amp;owner_id={{ @user.id }}">{{ @dict.assigned_to_me }}</a></li>
-                        <li role="presentation" class="divider"></li>
-                        <li role="presentation" class="dropdown-header">{{ @dict.by_type }}</li>
-                        <repeat group="{{ @issue_types }}" value="{{ @type }}">
-                            <li><a href="{{ @BASE }}/issues?type_id={{ @type.id }}&amp;status=open">{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</a></li>
-                        </repeat>
-                        <li role="presentation" class="divider"></li>
-                        <li><a href="{{ @BASE }}/tag">{{ @dict.issue_tags }}</a></li>
-                        <repeat group="{{ @nav.browse }}" value="{{ @navitem }}">
-                            <li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
-                        </repeat>
-                    </ul>
-                </li>
-                <li class="{{ @menuitem == 'backlog' ? 'active':'' }}">
-                    <a href="{{ @BASE }}/backlog" accesskey="s">{{ @dict.sprints }}</a>
-                </li>
-                <repeat group="{{ @nav.root }}" value="{{ @navitem }}">
-                    <li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
-                </repeat>
-            </ul>
-
-            <ul class="nav navbar-nav navbar-right">
-                <check if="{{ @user.role=='admin' }}">
-                    <li class="{{ @menuitem == 'admin' ? 'active':'' }}">
-                        <a href="{{ @BASE }}/admin" accesskey="a">
-                            <span class="hidden-sm">{{ @dict.administration }}</span>
-                            <span class="fa fa-cog visible-sm"></span>
-                        </a>
-                    </li>
-                </check>
-                <li class="dropdown {{ @menuitem == 'user' ? 'active':'' }}">
-                    <a href="{{ @BASE }}/user/{{ @user.username }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" accesskey="u">
-                        <span class="hidden-sm">{{ @user.name | esc }} <b class="caret"></b></span>
-                        <span class="fa fa-user visible-sm"></span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="{{ @BASE }}/">{{ @dict.dashboard }}</a></li>
-                        <li><a href="{{ @BASE }}/user/{{ @user.username }}">{{ @dict.my_issues }}</a></li>
-                        <li><a href="{{ @BASE }}/user">{{ @dict.my_account }}</a></li>
-                        <check if="{{ @nav.user }}">
-                            <li role="presentation" class="divider"></li>
-                            <repeat group="{{ @nav.user }}" value="{{ @navitem }}">
-                                <li class="{{ @navitem.active ? 'active' : '' }}"><a href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a></li>
-                            </repeat>
-                        </check>
-                        <li role="presentation" class="divider"></li>
-                        <li><a href="{{ @BASE }}/logout">{{ @dict.log_out }}</a></li>
-                    </ul>
-                </li>
-            </ul>
-
-            <form class="navbar-form navbar-right" role="search" action="{{ @BASE }}/search" method="get">
-                <div class="form-group">
-                    <input type="search" name="q" class="form-control input-sm" placeholder="{{ @dict.issue_search }}" value="{{ @@GET.q | esc }}">
+                    </check>
                 </div>
-                <button type="submit" class="btn btn-default btn-sm hidden-xs">
-                    <span class="sr-only">{{ @dict.submit }}</span>
-                    <span class="fa fa-search"></span>
-                </button>
-            </form>
+            </li>
+            <li class="nav-item dropdown {{ @menuitem == 'browse' ? 'active':'' }}">
+                <a href="{{ @BASE }}/issues" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" accesskey="b">
+                    {{ @dict.browse }}
+                </a>
+                <div class="dropdown-menu" aria-label="{{ @dict.browse }}">
+                    <a class="dropdown-item" href="{{ @BASE }}/issues/?status=open">{{ @dict.open }}</a>
+                    <a class="dropdown-item" href="{{ @BASE }}/issues/?status=closed">{{ @dict.closed }}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ @BASE }}/issues/?status=open&amp;author_id={{ @user.id }}">{{ @dict.created_by_me }}</a>
+                    <a class="dropdown-item" href="{{ @BASE }}/issues/?status=open&amp;owner_id={{ @user.id }}">{{ @dict.assigned_to_me }}</a>
+                    <div class="dropdown-divider"></div>
+                    <h6 class="dropdown-header">{{ @dict.by_type }}</h6>
+                    <repeat group="{{ @issue_types }}" value="{{ @type }}">
+                        <a class="dropdown-item" href="{{ @BASE }}/issues?type_id={{ @type.id }}&amp;status=open">{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}</a>
+                    </repeat>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ @BASE }}/tag">{{ @dict.issue_tags }}</a>
+                    <repeat group="{{ @nav.browse }}" value="{{ @navitem }}">
+                        <a class="dropdown-item {{ @navitem.active ? 'active' : '' }}" href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a>
+                    </repeat>
+                </div>
+            </li>
+            <li class="nav-item {{ @menuitem == 'backlog' ? 'active':'' }}">
+                <a class="nav-link" href="{{ @BASE }}/backlog" accesskey="s">{{ @dict.sprints }}</a class="nav-link">
+            </li>
+            <repeat group="{{ @nav.root }}" value="{{ @navitem }}">
+                <li class="nav-item {{ @navitem.active ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a>
+                </li>
+            </repeat>
+        </ul>
 
-        </div>
+        <form class="form-inline mr-2" role="search" action="{{ @BASE }}/search" method="get">
+            <input type="search" name="q" class="form-control mr-sm-2" placeholder="{{ @dict.issue_search }}" value="{{ @@GET.q | esc }}">
+            <button type="submit" class="btn btn-secondary my-2 my-sm-0 d-none d-sm-block">
+                <span class="sr-only">{{ @dict.submit }}</span>
+                <span class="fa fa-search"></span>
+            </button>
+        </form>
+
+        <ul class="nav navbar-nav">
+            <check if="{{ @user.role=='admin' }}">
+                <li class="nav-item {{ @menuitem == 'admin' ? 'active':'' }}">
+                    <a class="nav-link" href="{{ @BASE }}/admin" accesskey="a">
+                        {{ @dict.administration }}
+                    </a>
+                </li>
+            </check>
+            <li class="nav-item dropdown {{ @menuitem == 'user' ? 'active':'' }}">
+                <a href="{{ @BASE }}/user/{{ @user.username }}" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" accesskey="u">
+                    {{ @user.name | esc }}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                    <a class="dropdown-item" href="{{ @BASE }}/">{{ @dict.dashboard }}</a>
+                    <a class="dropdown-item" href="{{ @BASE }}/user/{{ @user.username }}">{{ @dict.my_issues }}</a>
+                    <a class="dropdown-item" href="{{ @BASE }}/user">{{ @dict.my_account }}</a>
+                    <check if="{{ @nav.user }}">
+                        <div class="dropdown-divider"></div>
+                        <repeat group="{{ @nav.user }}" value="{{ @navitem }}">
+                            <a class="dropdown-item {{ @navitem.active ? 'active' : '' }}" href="{{ @BASE }}/{{ @navitem.href }}">{{ @navitem.title }}</a>
+                        </repeat>
+                    </check>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ @BASE }}/logout">{{ @dict.log_out }}</a>
+                </div>
+            </li>
+        </ul>
     </div>
 </div>
 

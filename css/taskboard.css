@@ -1,16 +1,16 @@
-body {
-	padding-top: 90px;
-}
 #taskboard {
 	font-size: 13px;
 	margin: 0 auto;
 }
 #taskboard .taskboard-head {
-	position: fixed;
-	top: 0;
-	left: 0;
-	height: 91px;
 	z-index: 1000;
+}
+@supports (position: sticky) {
+	#taskboard .taskboard-head {
+		position: sticky;
+		top: 3.5rem;
+		left: 0;
+	}
 }
 #taskboard .taskboard-head th {
 	vertical-align: bottom;

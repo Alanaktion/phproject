@@ -42,15 +42,6 @@
         }
         </style>
     </check>
-    <!--[if lte IE 9]>
-        <style type="text/css">
-            /*  Fix RGBA issues */
-            #taskboard .card {
-                color: #000000;
-                background-color: #ffffff;
-            }
-        </style>
-    <![endif]-->
 </head>
 <body>
     <set fullwidth="{{ true }}" />
@@ -61,26 +52,26 @@
                 <th class="column column-1">
                     <div class="btn-group">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
                                 <span class="fa fa-filter"></span> {{ @dict.groups }} <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="{{ @filter == 'all' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/all">{{ @dict.all_tasks }}</a></li>
-                                <li class="{{ @filter == 'groups' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/groups">{{ @dict.my_groups }}</a></li>
-                                <li class="{{ @filter == 'me' ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/me">{{ @dict.my_tasks }}</a></li>
+                            <div class="dropdown-menu" role="menu">
+                                <a class="dropdown-item {{ @filter == 'all' ? 'active' : '' }}" href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/all">{{ @dict.all_tasks }}</a>
+                                <a class="dropdown-item {{ @filter == 'groups' ? 'active' : '' }}" href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/groups">{{ @dict.my_groups }}</a>
+                                <a class="dropdown-item {{ @filter == 'me' ? 'active' : '' }}" href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/me">{{ @dict.my_tasks }}</a>
                                 <check if="{{ count(@groups) }}">
-                                    <li class="divider"></li>
+                                    <div class="dropdown-divider"></div>
                                     <repeat group="{{ @groups }}" value="{{ @group }}">
-                                        <li class="{{ @group.id == @filter ? 'active' : '' }}"><a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @group.id }}">{{ @group.name | esc }}</a></li>
+                                        <a class="dropdown-item {{ @group.id == @filter ? 'active' : '' }}" href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @group.id }}">{{ @group.name | esc }}</a>
                                     </repeat>
                                 </check>
-                            </ul>
+                            </div>
                         </div>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
                                 {{ @dict.cols.type }} <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu" role="menu">
+                            <div class="dropdown-menu" role="menu">
                                 <F3:repeat group="{{ @project_types }}" value="{{ @type }}">
                                     {~
                                         @active = in_array(@type.id, @type_ids);
@@ -99,17 +90,15 @@
                                             @query = http_build_query(['group_id' => @GET.group_id]);
                                         }
                                     ~}
-                                    <li class="{{ @active ? 'active' : '' }}">
-                                        <a href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @filter ? @filter . '/' : '' }}{{ @query ? '?' . @query : '' | esc }}">
-                                            {{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
-                                        </a>
-                                    </li>
+                                    <a class="dropdown-item {{ @active ? 'active' : '' }}" href="{{ @BASE }}/taskboard/{{ @PARAMS.id ?: 0 }}/{{ @filter ? @filter . '/' : '' }}{{ @query ? '?' . @query : '' | esc }}">
+                                        {{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) }}
+                                    </a>
                                 </F3:repeat>
-                            </ul>
+                            </div>
                         </div>
                     </div>
                     <check if="{{ @@filterGroup }}">
-                        <button type="button" id="btn-burndown" class="btn btn-default btn-xs" data-toggle="modal" data-target="#burndown-modal">
+                        <button type="button" id="btn-burndown" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#burndown-modal">
                             <span class="fa fa-fire"></span> {{ @dict.burndown }}
                         </button>
                     </check>
@@ -234,99 +223,97 @@
         <div class="modal-dialog">
             <form class="modal-content" method="post">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
                     <h4 class="modal-title" id="task-dialog-title">{{ @dict.edit }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ @dict.close }}">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <fieldset class="modal-body">
                     <input type="hidden" name="sprintId" id="sprintId" value="{{ @sprint.id }}">
                     <input type="hidden" name="taskId" id="taskId" value="">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-7">
-                                <div class="form-group">
-                                    <label for="title">{{ @dict.cols.title }}</label>
-                                    <input type="text" name="title" id="title" class="form-control input-sm" required autofocus>
-                                </div>
-                                <div class="form-group">
-                                    <label for="description">{{ @dict.cols.description }}</label>
-                                    <textarea name="description" id="description" class="form-control input-sm" rows="12"></textarea>
-                                </div>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label for="title">{{ @dict.cols.title }}</label>
+                                <input type="text" name="title" id="title" class="form-control form-control-sm" required autofocus>
                             </div>
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <label for="assigned">{{ @dict.cols.assignee }}</label>
-                                    <select id="assigned" name="assigned" class="form-control input-sm" onchange="Taskboard.changeUser(this)" data-default-value="{{ @user.id }}" data-default-color="#{{ @user.task_color }}">
-                                        <option value="0" data-color="#AAAAAA">{{ @dict.not_assigned }}</option>
-                                        <option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" selected>{{ @user.name | esc }}</option>
-                                        <optgroup label="Groups">
-                                            <repeat group="{{ @groups }}" value="{{ @group }}">
-                                                <option value="{{ @group.id }}" data-color="#{{ @group.task_color }}">{{ @group.name | esc }}</option>
-                                            </repeat>
-                                        </optgroup>
-                                        <optgroup label="Users">
-                                            <repeat group="{{ @users }}" value="{{ @user }}">
-                                                <option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" data-username="{{ @user.username }}">{{ @user.name | esc }}</option>
-                                            </repeat>
-                                        </optgroup>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="hours">{{ @dict.cols.hours_remaining }}</label>
-                                    <input type="number" name="hours" id="hours" class="form-control input-sm" min="0" step="any">
-                                </div>
-                                <div class="form-group">
-                                    <label for="dueDate">{{ @dict.cols.due_date }}</label>
-                                    <input type="text" name="dueDate" id="dueDate" value="" class="dueDate form-control input-sm">
-                                </div>
-                                <div class="form-group">
-                                    <label for="repeat_cycle">{{ @dict.cols.repeat_cycle }}</label>
-                                    <div>
-                                        <select class="form-control input-sm" id="repeat_cycle" name="repeat_cycle">
-                                            <option value="">{{ @dict.not_repeating }}</option>
-                                            <option value="daily" {{ !empty(@issue) && @issue.repeat_cycle == 'daily' ? "selected" : "" }}>{{ @dict.daily }}</option>
-                                            <option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>{{ @dict.weekly }}</option>
-                                            <option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>{{ @dict.monthly }}</option>
-                                            <option value="quarterly" {{ !empty(@issue) && @issue.repeat_cycle == 'quarterly' ? "selected" : "" }}>{{ @dict.quarterly }}</option>
-                                            <option value="semi_annually" {{ !empty(@issue) && @issue.repeat_cycle == 'semi_annually' ? "selected" : "" }}>{{ @dict.semi_annually }}</option>
-                                            <option value="annually" {{ !empty(@issue) && @issue.repeat_cycle == 'annually' ? "selected" : "" }}>{{ @dict.annually }}</option>
-                                            <option value="sprint" {{ !empty(@issue) && @issue.repeat_cycle == 'sprint' ? "selected" : "" }}>{{ @dict.sprint }}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="priority">{{ @dict.cols.priority }}</label>
-                                    <select id="priority" name="priority" class="form-control input-sm" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
-                                        <repeat group="{{ @priorities }}" value="{{ @priority }}">
-                                            <option value="{{ @priority.value }}">{{ isset(@dict[@priority.name]) ? @dict[@priority.name] : str_replace('_', ' ', @priority.name) | esc }}</option>
+                            <div class="form-group">
+                                <label for="description">{{ @dict.cols.description }}</label>
+                                <textarea name="description" id="description" class="form-control form-control-sm" rows="12"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="assigned">{{ @dict.cols.assignee }}</label>
+                                <select id="assigned" name="assigned" class="form-control form-control-sm" onchange="Taskboard.changeUser(this)" data-default-value="{{ @user.id }}" data-default-color="#{{ @user.task_color }}">
+                                    <option value="0" data-color="#AAAAAA">{{ @dict.not_assigned }}</option>
+                                    <option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" selected>{{ @user.name | esc }}</option>
+                                    <optgroup label="Groups">
+                                        <repeat group="{{ @groups }}" value="{{ @group }}">
+                                            <option value="{{ @group.id }}" data-color="#{{ @group.task_color }}">{{ @group.name | esc }}</option>
                                         </repeat>
+                                    </optgroup>
+                                    <optgroup label="Users">
+                                        <repeat group="{{ @users }}" value="{{ @user }}">
+                                            <option value="{{ @user.id }}" data-color="#{{ @user.task_color }}" data-username="{{ @user.username }}">{{ @user.name | esc }}</option>
+                                        </repeat>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="hours">{{ @dict.cols.hours_remaining }}</label>
+                                <input type="number" name="hours" id="hours" class="form-control form-control-sm" min="0" step="any">
+                            </div>
+                            <div class="form-group">
+                                <label for="dueDate">{{ @dict.cols.due_date }}</label>
+                                <input type="text" name="dueDate" id="dueDate" value="" class="dueDate form-control form-control-sm">
+                            </div>
+                            <div class="form-group">
+                                <label for="repeat_cycle">{{ @dict.cols.repeat_cycle }}</label>
+                                <div>
+                                    <select class="form-control form-control-sm" id="repeat_cycle" name="repeat_cycle">
+                                        <option value="">{{ @dict.not_repeating }}</option>
+                                        <option value="daily" {{ !empty(@issue) && @issue.repeat_cycle == 'daily' ? "selected" : "" }}>{{ @dict.daily }}</option>
+                                        <option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>{{ @dict.weekly }}</option>
+                                        <option value="monthly" {{ !empty(@issue) && @issue.repeat_cycle == 'monthly' ? "selected" : "" }}>{{ @dict.monthly }}</option>
+                                        <option value="quarterly" {{ !empty(@issue) && @issue.repeat_cycle == 'quarterly' ? "selected" : "" }}>{{ @dict.quarterly }}</option>
+                                        <option value="semi_annually" {{ !empty(@issue) && @issue.repeat_cycle == 'semi_annually' ? "selected" : "" }}>{{ @dict.semi_annually }}</option>
+                                        <option value="annually" {{ !empty(@issue) && @issue.repeat_cycle == 'annually' ? "selected" : "" }}>{{ @dict.annually }}</option>
+                                        <option value="sprint" {{ !empty(@issue) && @issue.repeat_cycle == 'sprint' ? "selected" : "" }}>{{ @dict.sprint }}</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <hr>
-                                <div class="form-inline">
-                                    <label>{{ @dict.track_time_spent }}</label><br>
-                                    <div class="form-group form-group-wide">
-                                        <label class="sr-only" for="comment">{{ @dict.comment }}</label>
-                                        <input type="text" name="comment" id="comment" class="form-control input-sm" placeholder="{{ @dict.comment }}">
-                                    </div>
-                                    <div class="form-group form-group-narrow">
-                                        <label class="sr-only" for="hours_spent">{{ @dict.cols.hours_spent }}</label>
-                                        <input type="text" name="hours_spent" id="hours_spent" class="form-control input-sm" placeholder="{{ @dict.cols.hours_spent }}">
-                                    </div>
-                                    <div class="checkbox">
-                                        &nbsp;
-                                        <label>
-                                            <input type="checkbox" name="burndown" id="input-burndown" value="1" checked> {{ @dict.burn_hours }}
-                                        </label>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label for="priority">{{ @dict.cols.priority }}</label>
+                                <select id="priority" name="priority" class="form-control form-control-sm" onchange="Taskboard.changeModalPriority($(this).find('option:selected').val())">
+                                    <repeat group="{{ @priorities }}" value="{{ @priority }}">
+                                        <option value="{{ @priority.value }}">{{ isset(@dict[@priority.name]) ? @dict[@priority.name] : str_replace('_', ' ', @priority.name) | esc }}</option>
+                                    </repeat>
+                                </select>
                             </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <label>{{ @dict.track_time_spent }}</label>
+                    <div class="form-inline">
+                        <div class="form-group mr-2">
+                            <label class="sr-only" for="comment">{{ @dict.comment }}</label>
+                            <input type="text" name="comment" id="comment" class="form-control form-control-sm" placeholder="{{ @dict.comment }}">
+                        </div>
+                        <div class="form-group mr-2">
+                            <label class="sr-only" for="hours_spent">{{ @dict.cols.hours_spent }}</label>
+                            <input type="text" name="hours_spent" id="hours_spent" class="form-control form-control-sm" placeholder="{{ @dict.cols.hours_spent }}" style="max-width: 8rem;">
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="burndown" id="input-burndown" value="1" checked>
+                                {{ @dict.burn_hours }}
+                            </label>
                         </div>
                     </div>
                 </fieldset>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ @dict.cancel }}</button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">{{ @dict.cancel }}</button>
                     <button type="submit" class="btn btn-sm btn-primary">{{ @dict.save }}</button>
                 </div>
             </form>
@@ -338,20 +325,19 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span aria-hidden="true">&times;</span>
-                            <span class="sr-only">{{ @dict.close }}</span>
-                        </button>
                         <form class="form-inline pull-right" id="frm-man-hours" style="margin-top: -5px;">
                             <input type="hidden" name="user_id" value="{{ @filterGroup->id }}">
-                            <label class="control-label input-sm">{{ @dict.man_hours }}</label>
+                            <label class="col-form-label form-control-sm">{{ @dict.man_hours }}</label>
                             <span class="does-toggle man-hours">{{ @filterGroup->option('man_hours') }}</span>
                             &nbsp;
                             <a class="fa fa-edit does-toggle" href="#input-man-hours"></a>
-                            <input type="number" style="width: 80px;" class="form-control input-sm hidden" name="man_hours" id="input-man-hours" value="{{ @filterGroup->option('man_hours') }}">
+                            <input type="number" style="width: 80px;" class="form-control form-control-sm hidden" name="man_hours" id="input-man-hours" value="{{ @filterGroup->option('man_hours') }}">
                             &emsp;
                         </form>
                         <h4 class="modal-title">{{ @dict.burndown }}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ @dict.close }}">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                     <div class="modal-body" data-loading="{{ @dict.loading }}">
                         <canvas id="burndown" width="850" height="320"></canvas>

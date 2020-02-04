@@ -16,27 +16,27 @@
             <h3>{{ @dict.edit_n, isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | format }}</h3>
         </false>
     </check>
-    <div class="form-group">
-        <label class="col-md-2 control-label">{{ @dict.cols.title }}</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label">{{ @dict.cols.title }}</label>
         <div class="col-md-7">
             <input type="text" class="form-control" name="name" value="{{ empty(@issue) ? '' : @issue.name | esc }}" autocomplete="off" required>
         </div>
-        <label class="col-md-2 control-label label-sm">{{ @dict.cols.size_estimate }}</label>
+        <label class="col-md-2 col-form-label label-sm text-right">{{ @dict.cols.size_estimate }}</label>
         <div class="col-md-1">
             <input type="text" class="form-control" name="size_estimate" value="{{ @@issue.size_estimate }}" autocomplete="off">
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label label-sm">{{ @dict.cols.description }}</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.description }}</label>
         <div class="col-md-10">
-            <textarea class="form-control input-sm" name="description" rows="7">{{ empty(@issue) ? "" : @issue.description | esc }}</textarea>
+            <textarea class="form-control form-control-sm" name="description" rows="7">{{ empty(@issue) ? "" : @issue.description | esc }}</textarea>
         </div>
     </div>
     <check if="{{ !empty(@issue) }}">
-        <div class="form-group">
-            <label class="col-md-2 control-label label-sm">{{ @dict.cols.type }}</label>
+        <div class="form-group row">
+            <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.type }}</label>
             <div class="col-md-10">
-                <select class="form-control input-sm" name="type_id">
+                <select class="form-control form-control-sm" name="type_id">
                     <repeat group="{{ @issue_types }}" value="{{ @item }}">
                         <option value="{{ @item.id }}" {{ @issue.type_id == @item.id ? "selected" : '' }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) | esc }}</option>
                     </repeat>
@@ -44,10 +44,10 @@
             </div>
         </div>
     </check>
-    <div class="form-group">
-        <label class="col-md-2 control-label label-sm">{{ @dict.cols.priority }}</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.priority }}</label>
         <div class="col-md-10">
-            <select class="form-control input-sm" name="priority">
+            <select class="form-control form-control-sm" name="priority">
                 <repeat group="{{ @priorities }}" value="{{ @item }}">
                     <check if="{{ empty(@issue) || !isset(@issue.priority) }}">
                         <true>
@@ -61,10 +61,10 @@
             </select>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label label-sm">{{ @dict.cols.status }}</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.status }}</label>
         <div class="col-md-10">
-            <select class="form-control input-sm" name="status">
+            <select class="form-control form-control-sm" name="status">
                 <repeat group="{{ @statuses }}" value="{{ @item }}">
                     <option value="{{ @item.id }}" {{ !empty(@issue) && @issue.status == @item.id ? "selected" : "" }}>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) | esc }}</option>
                 </repeat>
@@ -72,10 +72,10 @@
         </div>
     </div>
     <check if="{{ @user.role=='admin' }}">
-        <div class="form-group">
-            <label class="col-md-2 control-label label-sm">{{ @dict.cols.author }}</label>
+        <div class="form-group row">
+            <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.author }}</label>
             <div class="col-md-10">
-                <select class="form-control input-sm" name="author_id">
+                <select class="form-control form-control-sm" name="author_id">
                     <check if="{{ @@issue.author_id }}">
                         {~ @author = new \Model\User; @author->load(@issue.author_id); ~}
                         <check if="{{ @author.deleted_date }}">
@@ -103,10 +103,10 @@
             </div>
         </div>
     </check>
-    <div class="form-group">
-        <label class="col-md-2 control-label label-sm">{{ @dict.cols.assignee }}</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.assignee }}</label>
         <div class="col-md-10">
-            <select class="form-control input-sm" name="owner_id">
+            <select class="form-control form-control-sm" name="owner_id">
                 <option value="0">{{ @dict.not_assigned }}</option>
                 <check if="{{ @@issue.owner_id }}">
                     {~ @owner = new \Model\User; @owner->load(@issue.owner_id); ~}
@@ -137,56 +137,58 @@
 
     <check if="{{ !empty(@issue) }}">
         <true>
-            <div class="form-group">
-                <label class="col-md-2 control-label label-sm">{{ @dict.cols.total_spent_hours }}</label>
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.total_spent_hours }}</label>
                 <div class="col-md-6">
-                    <input class="form-control input-sm" type="text" name="hours_spent" autocomplete="off" value="{{ @issue.hours_spent }}">
+                    <input class="form-control form-control-sm" type="text" name="hours_spent" autocomplete="off" value="{{ @issue.hours_spent }}">
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.hours_total }}</label>
                 <div class="col-md-6">
-                    <input class="form-control input-sm" type="text" name="hours_total" autocomplete="off" value="{{ @issue.hours_total }}">
+                    <input class="form-control form-control-sm" type="text" name="hours_total" autocomplete="off" value="{{ @issue.hours_total }}">
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_remaining }}</label>
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.hours_remaining }}</label>
                 <div class="col-md-6">
-                    <input class="form-control input-sm" type="text" name="hours_remaining" autocomplete="off" value="{{ @issue.hours_remaining }}">
+                    <input class="form-control form-control-sm" type="text" name="hours_remaining" autocomplete="off" value="{{ @issue.hours_remaining }}">
                 </div>
             </div>
         </true>
         <false>
-            <div class="form-group">
-                <label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.hours_total }}</label>
                 <div class="col-md-6">
-                    <input class="form-control input-sm" type="text" name="hours" autocomplete="off">
+                    <input class="form-control form-control-sm" type="text" name="hours" autocomplete="off">
                 </div>
             </div>
         </false>
     </check>
 
-    <div class="form-group">
-        <label class="col-md-2 control-label label-sm">{{ @dict.cols.start_date }}</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.start_date }}</label>
         <div class="col-md-6">
-            <input class="form-control input-sm" id="start_date" type="text" name="start_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.start_date }}">
+            <input class="form-control form-control-sm" id="start_date" type="text" name="start_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.start_date }}">
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-md-2 control-label label-sm">{{ @dict.cols.due_date }}</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.due_date }}</label>
         <div class="col-md-6">
-            <input class="form-control input-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.due_date }}">
-            <label class="checkbox-inline">
-                <input type="checkbox" name="due_date_sprint" value="1" {~ if(@@issue.due_date_sprint) echo 'checked' ~}>
-                {{ @dict.set_sprint_from_due_date }}
-            </label>
+            <input class="form-control form-control-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.due_date }}">
+            <div class="form-check mt-2">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" name="due_date_sprint" value="1" {~ if(@@issue.due_date_sprint) echo 'checked' ~}>
+                    {{ @dict.set_sprint_from_due_date }}
+                </label>
+            </div>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label label-sm">{{ @dict.cols.repeat_cycle }}</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.repeat_cycle }}</label>
         <div class="col-md-6">
-            <select class="form-control input-sm" name="repeat_cycle">
+            <select class="form-control form-control-sm" name="repeat_cycle">
                 <option value="">{{ @dict.not_repeating }}</option>
                 <option value="daily" {{ !empty(@issue) && @issue.repeat_cycle == 'daily' ? "selected" : "" }}>{{ @dict.daily }}</option>
                 <option value="weekly" {{ !empty(@issue) && @issue.repeat_cycle == 'weekly' ? "selected" : "" }}>{{ @dict.weekly }}</option>
@@ -198,16 +200,16 @@
             </select>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label label-sm">{{ @dict.cols.parent_id }}</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.parent_id }}</label>
         <div class="col-md-6">
-            <input class="form-control input-sm" type="text" name="parent_id" autocomplete="off" value="{{ @@issue.parent_id ?: @@parent.id }}">
+            <input class="form-control form-control-sm" type="text" name="parent_id" autocomplete="off" value="{{ @@issue.parent_id ?: @@parent.id }}">
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label label-sm">{{ @dict.cols.sprint }}</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label label-sm">{{ @dict.cols.sprint }}</label>
         <div class="col-md-6">
-            <select class="form-control input-sm" name="sprint_id">
+            <select class="form-control form-control-sm" name="sprint_id">
                 <option value="">{{ @dict.no_sprint }}</option>
                 <repeat group="{{ @sprints }}" value="{{ @item }}">
                     <check if="{{ !empty(@issue) && @issue.sprint_id == @item.id || empty(@issue) && !empty(@parent) && @parent.sprint_id == @item.id }}">
@@ -234,10 +236,10 @@
 
     <hr>
     <check if="{{ !empty(@issue) }}">
-        <div class="form-group">
-            <label class="col-md-2 control-label label-sm">{{ @dict.comment }}</label>
+        <div class="form-group row">
+            <label class="col-md-2 col-form-label label-sm">{{ @dict.comment }}</label>
             <div class="col-md-10">
-                <textarea class="form-control input-sm" name="comment" rows="3">{{ !empty(@comment) && is_string(@comment) ? @comment : "" | esc }}</textarea>
+                <textarea class="form-control form-control-sm" name="comment" rows="3">{{ !empty(@comment) && is_string(@comment) ? @comment : "" | esc }}</textarea>
             </div>
         </div>
 
@@ -247,11 +249,11 @@
     </check>
 
     <div class="row">
-        <div class="col-md-offset-2 col-md-10 clearfix">
+        <div class="offset-md-2 col-md-10 clearfix">
             <div class="pull-right" style="margin-left: 15px;">
                 <check if="{{ !empty(@issue) }}">
-                    <a href="{{ @BASE }}/issues/{{ @issue.id }}" class="btn btn-default btn-sm btn-cancel">{{ @dict.cancel }}</a>
-                    <button type="reset" class="btn btn-default btn-sm">{{ @dict.reset }}</button>
+                    <a href="{{ @BASE }}/issues/{{ @issue.id }}" class="btn btn-secondary btn-sm btn-cancel">{{ @dict.cancel }}</a>
+                    <button type="reset" class="btn btn-secondary btn-sm">{{ @dict.reset }}</button>
                 </check>
                 <check if="{{ empty(@issue) }}">
                     <true>

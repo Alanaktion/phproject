@@ -8,12 +8,12 @@
 <div class="container">
     <div class="clearfix">
         <div class="pull-right">
-            <a href="{{ @BASE }}/admin/users/new" class="btn btn-default btn-sm"><span class="fa fa-plus"></span>&ensp;{{ @dict.new_user }}</a>
+            <a href="{{ @BASE }}/admin/users/new" class="btn btn-secondary btn-sm"><span class="fa fa-plus"></span>&ensp;{{ @dict.new_user }}</a>
         </div>
         <include href="blocks/admin/tabs.html" />
     </div>
     <div class="table-responsive">
-        <table class="table table-striped table-condensed">
+        <table class="table table-striped table-sm">
             <thead>
                 <tr>
                     <th data-sort="int">{{ @dict.cols.id }}</th>
@@ -47,7 +47,7 @@
         </table>
     </div>
     <p>
-        <a class="btn btn-default btn-sm" href="{{ @BASE }}/admin/users/deleted">{{ @dict.show_deactivated_users }}</a>
+        <a class="btn btn-secondary btn-sm" href="{{ @BASE }}/admin/users/deleted">{{ @dict.show_deactivated_users }}</a>
     </p>
     <include href="blocks/footer.html" />
     <script src="{{ @BASE }}/js/stupidtable.min.js"></script>
@@ -78,8 +78,10 @@
     <div class="modal-dialog">
         <form class="modal-content" action="#" method="post">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">{{ @dict.deactivate }} <span class="user-name"></span></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ @dict.close }}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="radio">
@@ -101,7 +103,7 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <select name="reassign-to" class="form-control input-sm">
+                    <select name="reassign-to" class="form-control form-control-sm">
                         <repeat group="{{ @select_users }}" value="{{ @user }}">
                             <option value="{{ @user.id }}">{{ @user.name }}</option>
                         </repeat>
@@ -109,7 +111,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ @dict.cancel }}</button>
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">{{ @dict.cancel }}</button>
                 <button type="submit" class="btn btn-sm btn-primary">{{ @dict.deactivate }}</button>
             </div>
         </form>

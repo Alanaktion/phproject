@@ -1,10 +1,10 @@
 <repeat group="{{ @updates }}" value="{{ @update }}">
-    <div class="media" id="u-{{ @update.id }}">
-        <a class="media-left" href="{{ @BASE }}/user/{{ @update.user_username }}">
-            <img src="{{ @BASE }}/avatar/48-{{ @update.user_id }}.png" srcset="{{ @BASE }}/avatar/96-{{ @update.user_id }}.png 2x" class="media-object profile-picture img-rounded" alt>
+    <div class="d-flex align-items-start" id="u-{{ @update.id }}">
+        <a class="mr-2" href="{{ @BASE }}/user/{{ @update.user_username }}">
+            <img src="{{ @BASE }}/avatar/48-{{ @update.user_id }}.png" srcset="{{ @BASE }}/avatar/96-{{ @update.user_id }}.png 2x" class="media-object profile-picture rounded" alt>
         </a>
-        <div class="media-body">
-            <p class="media-heading">
+        <div>
+            <div>
                 <check if="{{ @update.user_username }}">
                     <true>
                         <a href="{{ @BASE }}/user/{{ @update.user_username }}">{{ @update.user_name | esc }}</a>
@@ -20,7 +20,7 @@
                 <check if="{{ @update.notify === 0 }}">
                     &ensp;<span class="fa fa-envelope text-danger" title="{{ @dict.notifications_not_sent }}"></span>
                 </check>
-            </p>
+            </div>
             <ul>
                 <repeat group="{{ @update.changes }}" value="{{ @change }}">
                     <set humanreadable="{{ \Helper\Update::instance()->humanReadableValues(@change.field, @change.old_value, @change.new_value) }}" />

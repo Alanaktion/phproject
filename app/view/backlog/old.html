@@ -7,36 +7,38 @@
 <body>
 <include href="blocks/navbar.html" />
 <div class="container">
-    <div class="row" id="backlog">
+    <div class="row mt-4" id="backlog">
         <div class="col-md-6">
             <p>
-                <a href="{{ @BASE }}/backlog" class="btn btn-default btn-sm">
-                <span class="fa fa-chevron-left"></span>&ensp;{{ @dict.show_future_sprints }}
+                <a href="{{ @BASE }}/backlog" class="btn btn-secondary btn-sm">
+                    <span class="fa fa-chevron-left"></span>&ensp;{{ @dict.show_future_sprints }}
                 </a>
             </p>
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card position-relative">
+                <div class="card-header sticky-top">
                     {{ @dict.backlog }}
                 </div>
-                <div class="panel-body in" id="panel-0">
+                <div class="card-body" id="panel-0">
                     <ul class="list-group sortable" data-list-id="0">
                     </ul>
                 </div>
-                <p style="text-align:center;" class="text-muted">
+                <p class="text-center text-muted">
                     {{ @dict.backlog_old_help_text }}
                 </p>
             </div>
         </div>
         <div class="col-md-6">
             <repeat group="{{ @sprints }}" key="{{ @key }}" value="{{ @sprint }}">
-                <div class="panel panel-default">
-                    <div class="panel-heading has-buttons">
-                        <a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">{{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a>
-                        <a href="{{ @BASE }}/taskboard/{{ @sprint.id }}" class="btn btn-default btn-xs pull-right">
+                <div class="card position-relative mb-3">
+                    <div class="card-header sticky-top">
+                        <a data-toggle="collapse" href="#panel-{{ @sprint.id }}" aria-controls="panel-{{ @sprint.id }}" aria-expanded="{{ @key ? 'false' : 'true' }}">
+                            {{ @sprint.name }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}
+                        </a>
+                        <a href="{{ @BASE }}/taskboard/{{ @sprint.id }}" class="btn btn-secondary btn-sm pull-right">
                             <span class="fa fa-list"></span> {{ @dict.taskboard }}
                         </a>
                     </div>
-                    <div class="panel-body {{ @key ? 'collapse' : 'in' }}" id="panel-{{ @sprint.id }}">
+                    <div class="card-body {{ @key ? null : 'show' }}" id="panel-{{ @sprint.id }}">
                         <ul class="list-group sortable" data-list-id="{{ @sprint.id }}">
                             <repeat group="{{ @sprint.projects }}" value="{{ @project }}">
                                 <include href="backlog/item.html" />

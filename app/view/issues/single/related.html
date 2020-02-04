@@ -1,16 +1,16 @@
 <p>
     <check if="{{ @parent.type_id == @issue_type.project }}">
-        <a class="btn btn-default btn-sm" href="{{ @BASE }}/issues/new/{{ @issue_type.project }}/{{ @parent.id }}">{{ @dict.new_sub_project }}</a>
+        <a class="btn btn-secondary btn-sm" href="{{ @BASE }}/issues/new/{{ @issue_type.project }}/{{ @parent.id }}">{{ @dict.new_sub_project }}</a>
     </check>
-    <a class="btn btn-default btn-sm" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
-    <a class="btn btn-default btn-sm" href="{{ @BASE }}/issues?parent_id={{ @parent.id }}">{{ @dict.browse }}</a>
+    <a class="btn btn-secondary btn-sm" href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @parent.id }}">{{ @dict.new_task }}</a>
+    <a class="btn btn-secondary btn-sm" href="{{ @BASE }}/issues?parent_id={{ @parent.id }}">{{ @dict.browse }}</a>
     <span class="hidden-xs">&ensp;{{ @dict.under_n,'<a href="' . @BASE . '/issues/' . @parent.id . '">#' . @parent.id . ' ' . @this->esc(@parent.name) . '</a>' | format }}</span>
 </p>
 
 <check if="{{ !empty(@issues) }}">
     <true>
         <div class="table-responsive">
-            <table class="table table-striped table-condensed issue-list">
+            <table class="table table-striped table-sm issue-list">
                 <thead>
                     <tr>
                         <th data-sort="int">{{ @dict.cols.id }}</th>

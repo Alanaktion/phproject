@@ -1,5 +1,5 @@
 <?php
-define('PHPROJECT_VERSION', '1.7.7');
+define('PHPROJECT_VERSION', '1.8.0a');
 
 if (!file_exists('vendor/autoload.php')) {
     die('Composer autoloader missing. Make sure composer dependencies are installed!');

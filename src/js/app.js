@@ -10,4 +10,9 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
+
+    // Enable tooltips
+    $.ready(() => {
+        $('.has-tooltip').tooltip();
+    });
 } catch (e) {}

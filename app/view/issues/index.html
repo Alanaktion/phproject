@@ -17,15 +17,25 @@
             </p>
         </div>
         <check if="{{ @issues.count }}">
-            <div class="text-center">
-                <ul class="pagination pagination-sm" style="margin: 15px 0;">
-                    <li {~ if(@issues.pos == 0) echo 'class="disabled"' ~}><a href="{{ @BASE }}/issues?page={{ @issues.pos ? @issues.pos - 1 : 0 }}&amp;{{ @filter_get | esc }}">&laquo;</a></li>
-                    <repeat group="{{ @pages }}" value="{{ @page }}">
-                        <li {~ if(@page == @issues.pos) echo 'class="active"' ~}><a href="{{ @BASE }}/issues?page={{ @page }}&amp;{{ @filter_get }}">{{ @page + 1 }}</a></li>
-                    </repeat>
-                    <li {~ if(@issues.pos == @issues.count - 1) echo 'class="disabled"' ~}><a href="{{ @BASE }}/issues?page={{ (@issues.pos < @issues.count - 1) ? @issues.pos + 1 : @issues.count - 1 }}&amp;{{ @filter_get | esc }}">&raquo;</a></li>
-                </ul>
-            </div>
+            <ul class="pagination pagination-sm justify-content-center my-4">
+                <li class="page-item {~ if(@issues.pos == 0) echo 'disabled' ~}">
+                    <a class="page-link" href="{{ @BASE }}/issues?page={{ @issues.pos ? @issues.pos - 1 : 0 }}&amp;{{ @filter_get | esc }}">
+                        <span class="sr-only">{{ @dict.go_previous }}</span>
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <repeat group="{{ @pages }}" value="{{ @page }}">
+                    <li class="page-item {~ if(@page == @issues.pos) echo 'active' ~}">
+                        <a class="page-link" href="{{ @BASE }}/issues?page={{ @page }}&amp;{{ @filter_get }}">{{ @page + 1 }}</a>
+                    </li>
+                </repeat>
+                <li class="page-item {~ if(@issues.pos == @issues.count - 1) echo 'disabled' ~}">
+                    <a class="page-link" href="{{ @BASE }}/issues?page={{ (@issues.pos < @issues.count - 1) ? @issues.pos + 1 : @issues.count - 1 }}&amp;{{ @filter_get | esc }}">
+                        <span class="sr-only">{{ @dict.go_next }}</span>
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
         </check>
         <include href="blocks/footer.html" />
     </div>

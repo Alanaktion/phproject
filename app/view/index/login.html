@@ -20,17 +20,17 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-4 {{ @site.public_registration ? 'col-sm-offset-2' : 'col-sm-offset-4' }}">
+        <div class="col-sm-4 {{ @site.public_registration ? 'offset-sm-2' : 'offset-sm-4' }}">
             <form action="{{ @BASE }}/login" method="post" class="form-horizontal">
                 <div class="clearfix">
-                    <h3 class="col-md-8 col-md-offset-4">{{ @dict.log_in }}</h3>
+                    <h3 class="col-md-8 offset-md-4">{{ @dict.log_in }}</h3>
                 </div>
                 <input type="hidden" name="to" value="{{ (empty(@to) ? '/' : @to) | esc }}">
                 <check if="{{ !empty(@login.error) }}">
                     <p class="alert alert-danger">{{ @login.error }}</p>
                 </check>
-                <div class="form-group">
-                    <label for="username" class="col-md-4 control-label">{{ @dict.username }}</label>
+                <div class="form-group row">
+                    <label for="username" class="col-md-4 col-form-label">{{ @dict.username }}</label>
                     <div class="col-md-8">
                         <check if="{{ !empty(@POST.username) }}">
                             <true>
@@ -42,8 +42,8 @@
                         </check>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="password" class="col-md-4 control-label">{{ @dict.password }}</label>
+                <div class="form-group row">
+                    <label for="password" class="col-md-4 col-form-label">{{ @dict.password }}</label>
                     <div class="col-md-8">
                         <check if="{{ !empty(@POST.username) }}">
                             <true>
@@ -55,8 +55,8 @@
                         </check>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="col-lg-8 col-lg-offset-4">
+                <div class="form-group row">
+                    <div class="col-lg-8 offset-lg-4">
                         <button type="submit" class="btn btn-primary">{{ @dict.log_in }}</button>
                         <a href="{{ @BASE }}/reset" class="btn btn-link">{{ @dict.reset_password }}</a>
                     </div>
@@ -68,38 +68,38 @@
             <div class="col-sm-4">
                 <form action="{{ @BASE }}/register" method="post" class="form-horizontal">
                     <div class="clearfix">
-                        <h3 class="col-md-8 col-md-offset-4">{{ @dict.register }}</h3>
+                        <h3 class="col-md-8 offset-md-4">{{ @dict.register }}</h3>
                     </div>
                     <input type="hidden" name="to" value="{{ empty(@to) ? '/' : @to }}">
                     <check if="{{ !empty(@register.error) }}">
                         <p class="alert alert-danger">{{ @register.error | raw }}</p>
                     </check>
                     <div class="form-group">
-                        <label for="register-name" class="col-md-4 control-label">{{ @dict.name }}</label>
+                        <label for="register-name" class="col-md-4 col-form-label">{{ @dict.name }}</label>
                         <div class="col-md-8">
                             <input class="form-control" placeholder="{{ @dict.name }}" id="register-name" name="register-name" type="text" value="{{ @@POST['register-name'] | esc }}" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="register-username" class="col-md-4 control-label">{{ @dict.username }}</label>
+                        <label for="register-username" class="col-md-4 col-form-label">{{ @dict.username }}</label>
                         <div class="col-md-8">
                             <input class="form-control" placeholder="{{ @dict.username }}" id="register-username" name="register-username" type="text" value="{{ @@POST['register-username'] | esc }}" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="register-email" class="col-md-4 control-label">{{ @dict.email_address }}</label>
+                        <label for="register-email" class="col-md-4 col-form-label">{{ @dict.email_address }}</label>
                         <div class="col-md-8">
                             <input class="form-control" placeholder="{{ @dict.email }}" id="register-email" name="register-email" type="text" required autofocus>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="register-password" class="col-md-4 control-label">{{ @dict.password }}</label>
+                        <label for="register-password" class="col-md-4 col-form-label">{{ @dict.password }}</label>
                         <div class="col-md-8">
                             <input class="form-control" placeholder="{{ @dict.password }}" id="register-username" name="register-password" type="password" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-lg-8 col-lg-offset-4">
+                        <div class="col-lg-8 offset-lg-4">
                             <button type="submit" class="btn btn-primary">{{ @dict.register }}</button>
                         </div>
                     </div>

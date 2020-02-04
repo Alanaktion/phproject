@@ -7,30 +7,30 @@
 <include href="blocks/navbar.html" />
 <div class="container">
     <include href="blocks/admin/tabs.html" />
-    <form action="{{ @BASE }}/admin/sprints/new" method="post" class="form-horizontal" autocomplete="off">
+    <form action="{{ @BASE }}/admin/sprints/new" method="post" class="form-horizontal" autocomplete="off" style="max-width: 32rem;">
         <legend>{{ @dict.new_sprint }}</legend>
-        <div class="form-group">
-            <label for="name" class="col-md-2 control-label label-sm">{{ @dict.name }}</label>
-            <div class="col-md-10">
-                <input class="form-control input-sm" id="name" type="text" name="name" value="{{ empty(@POST) ? "" : @POST.name | esc }}">
+        <div class="form-group row">
+            <label for="name" class="col-md-4 col-form-label label-sm">{{ @dict.name }}</label>
+            <div class="col-md-8">
+                <input class="form-control form-control-sm" id="name" type="text" name="name" value="{{ empty(@POST) ? "" : @POST.name | esc }}">
             </div>
         </div>
-        <div class="form-group">
-            <label for="start_date" class="col-md-2 control-label label-sm">{{ @dict.start_date }}</label>
-            <div class="col-md-4">
-                <input class="form-control input-sm" id="start_date" type="date" name="start_date" value="{{ empty(@POST) ? "" : @POST.start_date | esc }}" required>
+        <div class="form-group row">
+            <label for="start_date" class="col-md-4 col-form-label label-sm">{{ @dict.start_date }}</label>
+            <div class="col-md-8">
+                <input class="form-control form-control-sm" id="start_date" type="date" name="start_date" value="{{ empty(@POST) ? "" : @POST.start_date | esc }}" required>
             </div>
         </div>
-        <div class="form-group">
-            <label for="end_date" class="col-md-2 control-label label-sm">{{ @dict.end_date }}</label>
-            <div class="col-md-4">
-                <input class="form-control input-sm" id="end_date" type="date" name="end_date" value="{{ empty(@POST) ? "" : @POST.end_date | esc }}" required>
+        <div class="form-group row">
+            <label for="end_date" class="col-md-4 col-form-label label-sm">{{ @dict.end_date }}</label>
+            <div class="col-md-8">
+                <input class="form-control form-control-sm" id="end_date" type="date" name="end_date" value="{{ empty(@POST) ? "" : @POST.end_date | esc }}" required>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-md-10 col-md-offset-2">
+        <div class="form-group row">
+            <div class="col-md-8 offset-md-4">
                 <button type="submit" class="btn btn-primary btn-sm">{{ @dict.save }}</button>
-                <a href="{{ @BASE }}/admin/sprints" class="btn btn-default btn-sm">{{ @dict.cancel }}</a>
+                <a href="{{ @BASE }}/admin/sprints" class="btn btn-secondary btn-sm">{{ @dict.cancel }}</a>
             </div>
         </div>
     </form>

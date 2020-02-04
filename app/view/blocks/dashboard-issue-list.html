@@ -1,25 +1,26 @@
 <div class="list-group issue-list-group">
     <repeat group="{{ @issues }}" value="{{ @item }}">
-        <a class="list-group-item" href="{{ @BASE }}/issues/{{ @item.id }}">
-            <span class="badge status">{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) | esc }}</span>
-            <check if="{{ @item.owner_id != @user.id }}">
-                <p class="pull-right badge-sibling hidden-xs group has-tooltip" title="{{ @dict.cols.assignee }}">
-                    <span class="fa fa-user"></span>&ensp;{{ @item.owner_name | esc }}
-                </p>
-            </check>
-            <check if="{{ @item.repeat_cycle }}">
-                <p class="pull-right badge-sibling hidden-xs group has-tooltip" title="{{ @dict.cols.repeat_cycle }}">
-                    <span class="fa fa-repeat"></span>&ensp;{{ @dict[@item.repeat_cycle] ?: @item.repeat_cycle }}
-                </p>
-            </check>
-            <p class="list-group-item-heading">
-                #{{ @item.id }} - {{ @item.name | esc }}
-                <check if="{{ @item.priority != 0 }}">
-                    <span class="label-{{ @item.priority < 0 ? 'default' : 'danger' }} priority" style="width: {{ !@item.priority ? 0 : 1 + 1 * abs(@item.priority) }}px;"></span>
-                </check>
-            </p>
+        <a class="list-group-item list-group-item-action" href="{{ @BASE }}/issues/{{ @item.id }}">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    {{ @item.name | esc }}
+                </div>
+                <div class="d-flex">
+                    <check if="{{ @item.repeat_cycle }}">
+                        <div class="d-none d-sm-block ml-2 has-tooltip" title="{{ @dict.cols.repeat_cycle }}">
+                            <span class="fa fa-repeat"></span>&ensp;{{ @dict[@item.repeat_cycle] ?: @item.repeat_cycle }}
+                        </div>
+                    </check>
+                    <check if="{{ @item.owner_id != @user.id }}">
+                        <div class="d-none d-sm-block ml-2 has-tooltip" title="{{ @dict.cols.assignee }}">
+                            <span class="fa fa-user"></span>&ensp;{{ @item.owner_name | esc }}
+                        </div>
+                    </check>
+                    <span class="badge badge-secondary badge-pill status">{{ isset(@dict[@item.status_name]) ? @dict[@item.status_name] : str_replace('_', ' ', @item.status_name) | esc }}</span>
+                </div>
+            </div>
             <check if="{{ strtotime(@item.due_date) }}">
-                <p class="list-group-item-text">Due {{ date("l, F j", strtotime(@item.due_date)) }}</p>
+                <div>Due {{ date("l, F j", strtotime(@item.due_date)) }}</div>
             </check>
             <check if="{{ @item.sprint_id }}">
                 <set sprint_date_range="{{ date('M j-', strtotime(@item.sprint_start_date)) }}" />
@@ -30,12 +31,12 @@
                         @sprint_date_range = @sprint_date_range . date('M j', strtotime(@item.sprint_end_date));
                     }
                 ~}
-                <p class="list-group-item-text text-muted">
+                <div class="text-muted">
                     <span class="has-tooltip" title="{{ @dict.sprint }} #{{ @item.sprint_id }}: {{ @sprint_date_range }}">{{ @item.sprint_name | esc }}</span>
                     <check if="{{ @item.type_id == @issue_type.project && @item.parent_id }}">
                         &mdash; <span class="has-tooltip" title="{{ @dict.parent_project}}">{{ @dict.under_n, '#' . @item.parent_id . ' - ' . @@item.parent_name | format }}</span>
                     </check>
-                </p>
+                </div>
             </check>
         </a>
     </repeat>

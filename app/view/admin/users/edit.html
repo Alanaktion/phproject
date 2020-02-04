@@ -7,7 +7,7 @@
 <include href="blocks/navbar.html" />
 <div class="container">
     <include href="blocks/admin/tabs.html" />
-    <form action="{{ @BASE }}/admin/users/save" method="post" class="form-horizontal" autocomplete="off">
+    <form action="{{ @BASE }}/admin/users/save" method="post" class="form-horizontal" autocomplete="off" style="max-width: 32rem;">
         <check if="{{ empty(@this_user) }}">
             <true>
                 <legend>{{ @dict.new_user }}</legend>
@@ -17,39 +17,39 @@
                 <input type="hidden" name="user_id" value="{{ @this_user.id }}">
             </false>
         </check>
-        <div class="form-group">
-            <label for="username" class="col-lg-2 control-label label-sm">{{ @dict.username }}</label>
-            <div class="col-lg-10">
-                <input class="form-control input-sm" id="username" type="text" name="username" value="{{ @@this_user.username ?: @@POST.username | esc }}">
+        <div class="form-group row">
+            <label for="username" class="col-md-4 col-form-label label-sm">{{ @dict.username }}</label>
+            <div class="col-md-8">
+                <input class="form-control form-control-sm" id="username" type="text" name="username" value="{{ @@this_user.username ?: @@POST.username | esc }}">
             </div>
         </div>
-        <div class="form-group">
-            <label for="email" class="col-lg-2 control-label label-sm">{{ @dict.email }}</label>
-            <div class="col-lg-10">
-                <input class="form-control input-sm" id="email" type="email" name="email" value="{{ @@this_user.email ?: @@POST.email | esc }}">
+        <div class="form-group row">
+            <label for="email" class="col-md-4 col-form-label label-sm">{{ @dict.email }}</label>
+            <div class="col-md-8">
+                <input class="form-control form-control-sm" id="email" type="email" name="email" value="{{ @@this_user.email ?: @@POST.email | esc }}">
             </div>
         </div>
-        <div class="form-group">
-            <label for="name" class="col-lg-2 control-label label-sm">{{ @dict.name | esc }}</label>
-            <div class="col-lg-10">
-                <input class="form-control input-sm" id="name" type="text" name="name" value="{{ @@this_user.name ?: @@POST.name | esc }}">
+        <div class="form-group row">
+            <label for="name" class="col-md-4 col-form-label label-sm">{{ @dict.name | esc }}</label>
+            <div class="col-md-8">
+                <input class="form-control form-control-sm" id="name" type="text" name="name" value="{{ @@this_user.name ?: @@POST.name | esc }}">
             </div>
         </div>
         <br>
-        <div class="form-group">
-            <label for="password" class="col-lg-2 control-label label-sm">{{ @dict.password }}</label>
-            <div class="col-lg-10">
-                <input class="form-control input-sm" id="password" type="password" name="password">
+        <div class="form-group row">
+            <label for="password" class="col-md-4 col-form-label label-sm">{{ @dict.password }}</label>
+            <div class="col-md-8">
+                <input class="form-control form-control-sm" id="password" type="password" name="password">
             </div>
         </div>
-        <div class="form-group">
-            <label for="password_confirm" class="col-lg-2 control-label label-sm">{{ @dict.confirm_password }}</label>
-            <div class="col-lg-10">
-                <input class="form-control input-sm" id="password_confirm" type="password" name="password_confirm">
+        <div class="form-group row">
+            <label for="password_confirm" class="col-md-4 col-form-label label-sm">{{ @dict.confirm_password }}</label>
+            <div class="col-md-8">
+                <input class="form-control form-control-sm" id="password_confirm" type="password" name="password_confirm">
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-lg-10 col-lg-offset-2">
+        <div class="form-group row">
+            <div class="col-md-8 offset-md-4">
                 <div class="checkbox checkbox-sm">
                     <label>
                         <input type="checkbox" name="temporary_password" value="1"> {{ @dict.require_new_password }}
@@ -58,10 +58,10 @@
             </div>
         </div>
         <check if="{{ @@this_user.id != @user.id }}">
-            <div class="form-group">
-                <label for="rank" class="col-lg-2 control-label label-sm">{{ @dict.rank }}</label>
-                <div class="col-lg-10">
-                    <select class="form-control input-sm" id="rank" name="rank">
+            <div class="form-group row">
+                <label for="rank" class="col-md-4 col-form-label label-sm">{{ @dict.rank }}</label>
+                <div class="col-md-8">
+                    <select class="form-control form-control-sm" id="rank" name="rank">
                         <repeat group="{{ @user.rank >= \Model\User::RANK_SUPER ? range(0, 5) : range(0, 4) }}" value="{{ @rank }}">
                             <option value="{{ @rank }}" {{ (empty(@this_user) && @rank == \Model\User::RANK_USER || @@this_user.rank == @rank) ? "selected" : "" }}>{{ @dict.ranks[@rank] }} &mdash; {{ @dict.rank_permissions[@rank] }}</option>
                         </repeat>
@@ -69,17 +69,17 @@
                 </div>
             </div>
         </check>
-        <div class="form-group">
-            <label for="task_color" class="col-lg-2 control-label label-sm">{{ @dict.task_color }}</label>
-            <div class="col-lg-10">
+        <div class="form-group row">
+            <label for="task_color" class="col-md-4 col-form-label label-sm">{{ @dict.task_color }}</label>
+            <div class="col-md-8">
                 {~ if(!empty(@this_user)) @task_color = '#' . @this_user.task_color; elseif(!empty(@POST.task_color)) @task_color = @POST.task_color; ~}
-                <input class="form-control input-sm" id="task_color" type="color" name="task_color" value="{{ @@task_color ?: @rand_color | esc }}" maxlength="7">
+                <input class="form-control form-control-sm p-0" id="task_color" type="color" name="task_color" value="{{ @@task_color ?: @rand_color | esc }}" maxlength="7">
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-lg-10 col-lg-offset-2">
+        <div class="form-group row">
+            <div class="col-md-8 offset-md-4">
                 <button type="submit" class="btn btn-primary btn-sm">{{ @dict.save }}</button>
-                <a href="{{ @BASE }}/admin/users" class="btn btn-default btn-sm">{{ @dict.cancel }}</a>
+                <a href="{{ @BASE }}/admin/users" class="btn btn-secondary btn-sm">{{ @dict.cancel }}</a>
             </div>
         </div>
     </form>

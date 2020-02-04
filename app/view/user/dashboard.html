@@ -12,15 +12,16 @@
 <set fullwidth="{{ true }}" />
 <include href="blocks/navbar.html" />
 <div class="container-fluid dashboard-container">
-
-    <a class="btn btn-default btn-xs" data-toggle="modal" data-target="#mdl-manage-widgets">
-        <span class="fa fa-bars"></span>&ensp;{{ @dict.manage_widgets }}
-    </a>
-    <check if="{{ @sprint && @sprint.id }}">
-        <a class="btn btn-default btn-xs" href="{{ @BASE }}/taskboard">
-            <span class="fa fa-list"></span>&ensp;{{ @dict.taskboard }}
-        </a>
-    </check>
+    <div class="my-3">
+        <button class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#mdl-manage-widgets">
+            <span class="fa fa-bars"></span>&ensp;{{ @dict.manage_widgets }}
+        </button>
+        <check if="{{ @sprint && @sprint.id }}">
+            <a class="btn btn-secondary btn-sm" href="{{ @BASE }}/taskboard">
+                <span class="fa fa-list"></span>&ensp;{{ @dict.taskboard }}
+            </a>
+        </check>
+    </div>
 
     <div class="row">
         <div class="col-sm-5">

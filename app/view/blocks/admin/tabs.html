@@ -1,8 +1,20 @@
-<ul class="nav nav-tabs">
-    <li class="{{ @PATH == '/admin' ? 'active':'' }}"><a href="{{ @BASE }}/admin/">{{ @dict.overview }}</a></li>
-    <li class="{{ strpos(@PATH, 'config') ? 'active':'' }}"><a href="{{ @BASE }}/admin/config">{{ @dict.configuration }}</a></li>
-    <li class="{{ strpos(@PATH, 'plugins') ? 'active':'' }}"><a href="{{ @BASE }}/admin/plugins">{{ @dict.plugins }}</a></li>
-    <li class="{{ strpos(@PATH, 'users') ? 'active':'' }}"><a href="{{ @BASE }}/admin/users">{{ @dict.users }}</a></li>
-    <li class="{{ strpos(@PATH, 'groups') ? 'active':'' }}"><a href="{{ @BASE }}/admin/groups">{{ @dict.groups }}</a></li>
-    <li class="{{ strpos(@PATH, 'sprints') ? 'active':'' }}"><a href="{{ @BASE }}/admin/sprints">{{ @dict.sprints }}</a></li>
+<ul class="nav nav-tabs my-3">
+    <li class="nav-item">
+        <a class="nav-link {{ @PATH == '/admin' ? 'active':'' }}" href="{{ @BASE }}/admin/">{{ @dict.overview }}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ strpos(@PATH, 'config') ? 'active':'' }}" href="{{ @BASE }}/admin/config">{{ @dict.configuration }}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ strpos(@PATH, 'plugins') ? 'active':'' }}" href="{{ @BASE }}/admin/plugins">{{ @dict.plugins }}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ strpos(@PATH, 'users') ? 'active':'' }}" href="{{ @BASE }}/admin/users">{{ @dict.users }}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ strpos(@PATH, 'groups') ? 'active':'' }}" href="{{ @BASE }}/admin/groups">{{ @dict.groups }}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ strpos(@PATH, 'sprints') ? 'active':'' }}" href="{{ @BASE }}/admin/sprints">{{ @dict.sprints }}</a>
+    </li>
 </ul>

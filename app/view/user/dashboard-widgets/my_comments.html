@@ -1,5 +1,5 @@
-<div class="dashboard-widget" data-widget="my_comments">
-    <h3 class="dashboard-widget-handle">{{ @dict.my_comments }}</h3>
+<div class="dashboard-widget mb-4" data-widget="my_comments">
+    <h3 class="dashboard-widget mb-4-handle">{{ @dict.my_comments }}</h3>
     <div class="comments">
         {~ @issue = new \Model\Issue() ~}
         <repeat group="{{ @my_comments }}" value="{{ @comment }}">

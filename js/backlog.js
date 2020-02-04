@@ -83,7 +83,7 @@ var Backlog = {
 		}
 
 		// Open issue in new window on double-click
-		$('.sortable').on('dblclick', 'li', function() {
+		$('.sortable').on('dblclick', '.list-group-item', function() {
 			window.open(BASE + '/issues/' + $(this).data('id'));
 		});
 
@@ -92,8 +92,8 @@ var Backlog = {
 			var $this = $(this),
 				userIds = $this.attr('data-user-ids').split(',');
 
-			$this.parents('ul').children('li').removeClass('active');
-			$this.parents('li').addClass('active');
+			$this.siblings('.dropdown-item').removeClass('active');
+			$this.addClass('active');
 
 			if (userIds == 'all') {
 				$('.list-group-item[data-user-id]').removeClass('hidden-group');
@@ -114,7 +114,7 @@ var Backlog = {
 		$('.dropdown-menu a[data-type-id]').click(function(e) {
 			var $this = $(this),
 				typeId = $this.attr('data-type-id');
-			$this.parents('li').toggleClass('active');
+			$this.toggleClass('active');
 			$('.list-group-item[data-type-id=' + typeId + ']').toggleClass('hidden-type');
 			refreshPoints();
 			Backlog.updateUrl();
@@ -125,9 +125,9 @@ var Backlog = {
 		var typeIdString = getQueryVariable('type_ids');
 		if (typeIdString) {
 			$('.list-group-item[data-type-id]').addClass('hidden-type');
-			$('.dropdown-menu a[data-type-id]').parents('li').removeClass('active');
+			$('.dropdown-menu a[data-type-id]').removeClass('active');
 			$.each(decodeURIComponent(typeIdString).split(','), function (i, val) {
-				$('.dropdown-menu a[data-type-id=' + val + ']').parents('li').addClass('active');
+				$('.dropdown-menu a[data-type-id=' + val + ']').addClass('active');
 				$('.list-group-item[data-type-id=' + val + ']').removeClass('hidden-type');
 			});
 		}
@@ -144,12 +144,12 @@ var Backlog = {
 	updateUrl: function() {
 		if (window.history && history.replaceState) {
 			var state = {};
-			state.groupId = $('.dropdown-menu .active a[data-user-ids]').attr('data-group-id');
+			state.groupId = $('.dropdown-menu a.active[data-user-ids]').attr('data-group-id');
 			state.typeIds = [];
-			$('.dropdown-menu .active a[data-type-id]').each(function() {
+			$('.dropdown-menu a.active[data-type-id]').each(function() {
 				state.typeIds.push($(this).attr('data-type-id'));
 			});
-			state.allStatesApplied = !$('.dropdown-menu li:not(.active) a[data-type-id]').length;
+			state.allStatesApplied = !$('.dropdown-menu a[data-type-id]:not(.active)').length;
 
 			var path = '/backlog';
 			if (state.groupId || (!state.allStatesApplied && state.typeIds)) {
@@ -168,7 +168,7 @@ var Backlog = {
 		}
 		// Updates href attr if group_id is set
 		$('.sprint-board').each(function() {
-			var clickGroupId = $('.dropdown-menu .active a[data-user-ids]').attr('data-group-id');
+			var clickGroupId = $('.dropdown-menu a.active[data-user-ids]').attr('data-group-id');
 			var hrefLink = $(this).attr('data-base-href');
 			if (clickGroupId) {
 				$(this).attr('href', hrefLink + '/' + clickGroupId);

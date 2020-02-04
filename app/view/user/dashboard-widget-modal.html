@@ -3,21 +3,21 @@
         <form class="modal-content" action="{{ @BASE }}/user/dashboard" method="post">
             <input type="hidden" id="input-widgets" name="widgets" value="">
             <div class="modal-header">
+                <h4 class="modal-title">{{ @dict.manage_widgets }}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="{{ @dict.close }}">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">{{ @dict.manage_widgets }}</h4>
             </div>
             <div class="modal-body manage-widgets-list" style="text-transform: capitalize;">
-                <h3>{{ @dict.available_widgets }}</h3>
-                <div class="list-group widget-modal-box-disabled">
+                <div class="h5">{{ @dict.available_widgets }}</div>
+                <div class="list-group widget-modal-box-disabled mb-4">
                     <repeat group="{{ @unused_widgets }}" value="{{ @widget }}">
                         <div class="list-group-item widget-modal-widget" data-name="{{ @widget }}">
                             {{ isset(@dict[@widget]) ? @dict[@widget] : str_replace('_', ' ', @widget) }}
                         </div>
                     </repeat>
                 </div>
-                <h3>{{ @dict.enabled_widgets }}</h3>
+                <div class="h5">{{ @dict.enabled_widgets }}</div>
                 <div class="row">
                     <div class="col-sm-5">
                         <div class="list-group widget-modal-box">
@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{ @dict.cancel }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{{ @dict.cancel }}</button>
                 <button type="submit" class="btn btn-primary btn-sm">{{ @dict.save }}</button>
             </div>
         </form>

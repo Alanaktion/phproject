@@ -9,27 +9,33 @@
     <include href="blocks/admin/tabs.html" />
 
     <p id="alert-release" class="alert alert-info clearfix hidden" aria-hidden="true">
-        <a href="https://github.com/Alanaktion/phproject/releases" target="_blank" class="btn btn-default btn-xs pull-right">{{ @dict.releases }}</a>
+        <a href="https://github.com/Alanaktion/phproject/releases" target="_blank" class="btn btn-secondary btn-sm pull-right">{{ @dict.releases }}</a>
         {{ @dict.release_available }}
     </p>
 
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-sm-4">
-            <div class="well well-sm text-center">
-                <h4>{{ @dict.users }}</h4>
-                <h2>{{ @count_user }}</h2>
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h4>{{ @dict.users }}</h4>
+                    <h2 class="mb-0">{{ @count_user }}</h2>
+                </div>
             </div>
         </div>
         <div class="col-sm-4">
-            <div class="well well-sm text-center">
-                <h4>{{ @dict.issues }}</h4>
-                <h2>{{ @count_issue }}</h2>
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h4>{{ @dict.issues }}</h4>
+                    <h2 class="mb-0">{{ @count_issue }}</h2>
+                </div>
             </div>
         </div>
         <div class="col-sm-4">
-            <div class="well well-sm text-center">
-                <h4>{{ @dict.comments }}</h4>
-                <h2>{{ @count_issue_comment }}</h2>
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h4>{{ @dict.comments }}</h4>
+                    <h2 class="mb-0">{{ @count_issue_comment }}</h2>
+                </div>
             </div>
         </div>
     </div>
@@ -45,11 +51,11 @@
             <b>MySQL version:</b> {{ @db.instance->getAttribute(\PDO::ATTR_SERVER_VERSION) }}
         </div>
         <div class="col-md-3 col-sm-6">
-            <div class="clearfix">
-                <h4 class="pull-left">{{ @dict.cache }}</h4>
-                <form class="pull-right" action="{{ @BASE }}/admin" method="post" style="margin-top: 10px;">
+            <div class="d-flex">
+                <h4>{{ @dict.cache }}</h4>
+                <form class="ml-auto" action="{{ @BASE }}/admin" method="post">
                     <input type="hidden" name="action" value="clearcache">
-                    <button type="submit" class="btn btn-warning btn-xs">{{ @dict.clear_cache }}</button>
+                    <button type="submit" class="btn btn-warning btn-sm">{{ @dict.clear_cache }}</button>
                 </form>
             </div>
             <p><b>{{ @dict.cache_mode }}:</b> {{ @CACHE }}</p>
