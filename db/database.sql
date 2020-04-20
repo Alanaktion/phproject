@@ -323,4 +323,5 @@ CREATE TABLE `config` (
 );
 
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.reset_ttl', '86400');
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '18.02.19');
+INSERT INTO `config` (`attribute`,`value`) VALUES ('security.file_blacklist', '/\.(ph(p([3457s]|\-s)?|t|tml)|aspx?|shtml|exe|dll)$/i');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '20.04.20');
