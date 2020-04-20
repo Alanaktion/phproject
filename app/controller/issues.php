@@ -1187,6 +1187,14 @@ class Issues extends \Controller
         $orig_name = preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']);
         $_FILES['attachment']['name'] = time() . "_" . $orig_name;
 
+        // Blacklist certain file types
+        if ($f3->get('security.file_blacklist')) {
+            if (preg_match($f3->get('security.file_blacklist'), $orig_name)) {
+                $f3->error(415);
+                return;
+            }
+        }
+
         $i = 0;
         $parts = pathinfo($_FILES['attachment']['name']);
         while (file_exists($f3->get("UPLOADS") . $_FILES['attachment']['name'])) {

@@ -261,7 +261,7 @@ class User extends \Controller
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $allowedTypes = ['image/jpeg', 'image/gif', 'image/png', 'image/bmp'];
         if (!in_array(finfo_file($finfo, $_FILES['avatar']['tmp_name']), $allowedTypes)) {
-            $f3->error(400);
+            $f3->error(415);
             return;
         }
         finfo_close($finfo);
