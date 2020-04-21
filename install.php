@@ -28,7 +28,7 @@ if ((float)PCRE_VERSION < 7.9) {
 
 // Check for MySQL PDO
 if (!in_array("mysql", PDO::getAvailableDrivers())) {
-    $f3->set("error", "MySQL PDO driver is not avaialble.");
+    $f3->set("error", "MySQL PDO driver is not available.");
 }
 
 // Check for GD library
