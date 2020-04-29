@@ -30,10 +30,6 @@ class Project extends \Controller
             $f3->error(404);
             return;
         }
-        if ($project->type_id != $f3->get("issue_type.project")) {
-            $f3->error(400, "Issue is not a project.");
-            return;
-        }
 
         $f3->set("stats", $project->projectStats());
 
@@ -104,10 +100,6 @@ class Project extends \Controller
         $project->load($params["id"]);
         if (!$project->id) {
             $f3->error(404);
-            return;
-        }
-        if ($project->type_id != $f3->get("issue_type.project")) {
-            $f3->error(400, "Issue is not a project.");
             return;
         }
 

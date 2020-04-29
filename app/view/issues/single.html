@@ -91,7 +91,7 @@
     </div>
     <div class="row">
         <div class="col-lg-5">
-            <check if="{{ @issue.type_id == @issue_type.project }}">
+            <check if="{{ @type.role == 'project' }}">
                 <p><a href="{{ @BASE }}/issues/project/{{ @issue.id }}" class="btn btn-default btn-sm">{{ @dict.project_overview }}</a></p>
             </check>
 
