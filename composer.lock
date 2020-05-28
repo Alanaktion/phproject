@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "bcosca/fatfree-core",
-            "version": "3.7.1",
+            "version": "3.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bcosca/fatfree-core.git",
-                "reference": "64318caa00de4da0f558d2334dc70538bdbcd1ad"
+                "reference": "a0f7ecf456a2f1e099a9b6d7aedc22970be56030"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bcosca/fatfree-core/zipball/64318caa00de4da0f558d2334dc70538bdbcd1ad",
-                "reference": "64318caa00de4da0f558d2334dc70538bdbcd1ad",
+                "url": "https://api.github.com/repos/bcosca/fatfree-core/zipball/a0f7ecf456a2f1e099a9b6d7aedc22970be56030",
+                "reference": "a0f7ecf456a2f1e099a9b6d7aedc22970be56030",
                 "shasum": ""
             },
             "require": {
@@ -35,7 +35,7 @@
             ],
             "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
             "homepage": "http://fatfreeframework.com/",
-            "time": "2019-12-30T20:49:06+00:00"
+            "time": "2020-05-28T16:14:27+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -127,7 +127,7 @@
         },
         {
             "name": "neos/diff",
-            "version": "4.3.12",
+            "version": "4.3.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/neos/diff.git",
@@ -255,16 +255,16 @@
         },
         {
             "name": "symfony/intl",
-            "version": "v3.4.39",
+            "version": "v3.4.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/intl.git",
-                "reference": "2eb3cb54e880c4c83e82cfebeab951abbc7467b9"
+                "reference": "1346a5be35df869344078b89be1581138cb9745f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/2eb3cb54e880c4c83e82cfebeab951abbc7467b9",
-                "reference": "2eb3cb54e880c4c83e82cfebeab951abbc7467b9",
+                "url": "https://api.github.com/repos/symfony/intl/zipball/1346a5be35df869344078b89be1581138cb9745f",
+                "reference": "1346a5be35df869344078b89be1581138cb9745f",
                 "shasum": ""
             },
             "require": {
@@ -326,7 +326,21 @@
                 "l10n",
                 "localization"
             ],
-            "time": "2020-03-16T15:51:59+00:00"
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-04-12T14:33:46+00:00"
         },
         {
             "name": "symfony/polyfill",
@@ -492,16 +506,16 @@
         },
         {
             "name": "voku/portable-ascii",
-            "version": "1.4.10",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voku/portable-ascii.git",
-                "reference": "240e93829a5f985fab0984a6e55ae5e26b78a334"
+                "reference": "e7f9bd5deff09a57318f9b900ab33a05acfcf4d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/portable-ascii/zipball/240e93829a5f985fab0984a6e55ae5e26b78a334",
-                "reference": "240e93829a5f985fab0984a6e55ae5e26b78a334",
+                "url": "https://api.github.com/repos/voku/portable-ascii/zipball/e7f9bd5deff09a57318f9b900ab33a05acfcf4d3",
+                "reference": "e7f9bd5deff09a57318f9b900ab33a05acfcf4d3",
                 "shasum": ""
             },
             "require": {
@@ -516,8 +530,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "voku\\": "src/voku/",
-                    "voku\\tests\\": "tests/"
+                    "voku\\": "src/voku/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -537,20 +550,38 @@
                 "clean",
                 "php"
             ],
-            "time": "2020-03-13T01:23:26+00:00"
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/moelleken",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/voku",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/voku",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/voku/portable-ascii",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-05-26T06:40:44+00:00"
         },
         {
             "name": "voku/portable-utf8",
-            "version": "5.4.41",
+            "version": "5.4.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voku/portable-utf8.git",
-                "reference": "e34247dce28f9aebebd2d752d8813b91de689aec"
+                "reference": "5445d44086ea7b53dcd6dd1b182ae5bdcb1fbb07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/portable-utf8/zipball/e34247dce28f9aebebd2d752d8813b91de689aec",
-                "reference": "e34247dce28f9aebebd2d752d8813b91de689aec",
+                "url": "https://api.github.com/repos/voku/portable-utf8/zipball/5445d44086ea7b53dcd6dd1b182ae5bdcb1fbb07",
+                "reference": "5445d44086ea7b53dcd6dd1b182ae5bdcb1fbb07",
                 "shasum": ""
             },
             "require": {
@@ -560,7 +591,7 @@
                 "symfony/polyfill-intl-normalizer": "~1.0",
                 "symfony/polyfill-mbstring": "~1.0",
                 "symfony/polyfill-php72": "~1.0",
-                "voku/portable-ascii": "~1.4"
+                "voku/portable-ascii": "~1.5"
             },
             "require-dev": {
                 "phpunit/phpunit": "~6.0 || ~7.0"
@@ -576,8 +607,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "voku\\": "src/voku/",
-                    "voku\\tests\\": "tests/"
+                    "voku\\": "src/voku/"
                 },
                 "files": [
                     "bootstrap.php"
@@ -611,7 +641,29 @@
                 "utf-8",
                 "utf8"
             ],
-            "time": "2020-03-06T01:23:48+00:00"
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/moelleken",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/voku",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/portable-utf8",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://www.patreon.com/voku",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/voku/portable-utf8",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-05-26T07:35:55+00:00"
         }
     ],
     "packages-dev": [],
