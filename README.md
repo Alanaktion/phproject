@@ -3,6 +3,7 @@
 [![SensioLabs Insight](https://img.shields.io/sensiolabs/i/51fe626f-4fef-4692-90ea-c0f903aba1b6.svg)](https://insight.sensiolabs.com/projects/51fe626f-4fef-4692-90ea-c0f903aba1b6)
 [![Build Status](https://api.travis-ci.org/Alanaktion/phproject.svg)](https://travis-ci.org/Alanaktion/phproject)
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/phproject/localized.png)](https://crowdin.com/project/phproject)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAlanaktion%2Fphproject.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FAlanaktion%2Fphproject?ref=badge_shield)
 
 Interested in **managed hosting**? [Take a brief survey](https://docs.google.com/forms/d/e/1FAIpQLSdzsvlbmLm4hgkWXspXVW7hyCb4CNTItNaC7LdVpyM1r48EmQ/viewform) to help us know what to build!
 
@@ -20,3 +21,7 @@ Phproject uses [Composer](https://getcomposer.org/) for dependency management. A
 
 ### Contributing
 Phproject is maintained as an open source project for use by anyone around the world under the [GNU General Public License](http://www.gnu.org/licenses/gpl-3.0.txt). If you find a bug or would like a new feature added, [open an issue](https://github.com/Alanaktion/phproject/issues/new) or [submit a pull request](https://github.com/Alanaktion/phproject/compare/) with new code. If you want to help with translation, [you can submit translations via Crowdin](https://crowdin.com/project/phproject).
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAlanaktion%2Fphproject.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FAlanaktion%2Fphproject?ref=badge_large)
