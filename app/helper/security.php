@@ -29,16 +29,16 @@ class Security extends \Prefab
      */
     public function salt()
     {
-        return md5($this->randBytes(64));
+        return md5(random_bytes(64));
     }
 
     /**
-     * Generate a secure SHA1 salt for hasing
+     * Generate a secure SHA1 salt for hashing
      * @return string
      */
     public function salt_sha1()
     {
-        return sha1($this->randBytes(64));
+        return sha1(random_bytes(64));
     }
 
     /**
@@ -52,38 +52,18 @@ class Security extends \Prefab
         if (!in_array($size, $allSizes)) {
             throw new \Exception("Hash size must be one of: " . implode(", ", $allSizes));
         }
-        return hash("sha$size", $this->randBytes(512), false);
+        return hash("sha$size", random_bytes(512), false);
     }
 
     /**
      * Generate secure random bytes
+     * @deprecated
      * @param  integer $length
-     * @return binary
+     * @return string
      */
     public function randBytes($length = 16)
     {
-        // Try to use native secure random
-        if (function_exists('random_bytes')) {
-            return random_bytes($length);
-        }
-
-        // Fall back to OpenSSL cryptography extension if available
-        if (function_exists("openssl_random_pseudo_bytes")) {
-            $strong = false;
-            $rnd = openssl_random_pseudo_bytes($length, $strong);
-            if ($strong === true) {
-                return $rnd;
-            }
-        }
-
-        // Use SHA256 of mt_rand if OpenSSL is not available
-        $rnd = "";
-        for ($i = 0; $i < $length; $i++) {
-            $sha = hash("sha256", mt_rand());
-            $char = mt_rand(0, 30);
-            $rnd .= chr(hexdec($sha[$char] . $sha[$char + 1]));
-        }
-        return (binary)$rnd;
+        return random_bytes($length);
     }
 
     /**

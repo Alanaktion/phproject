@@ -5,7 +5,6 @@
     "require": {
         "php": ">=7.0.0",
         "bcosca/fatfree-core": "^3.7",
-        "paragonie/random_compat": "^9.99",
         "voku/anti-xss": "^4.1",
         "netcarver/textile": "^3.7",
         "erusev/parsedown": "^1.7",
