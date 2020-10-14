@@ -6,6 +6,6 @@ CREATE TABLE `issue_tag`(
 	PRIMARY KEY (`id`),
 	INDEX `issue_tag_tag` (`tag`, `issue_id`),
 	CONSTRAINT `issue_tag_issue` FOREIGN KEY (`issue_id`) REFERENCES `issue`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=INNODB CHARSET=utf8;
+) ENGINE=INNODB CHARSET=utf8mb4;
 
 UPDATE `config` SET `value` = '15.01.31' WHERE `attribute` = 'version';

@@ -1,6 +1,6 @@
 /* Demo content should be imported immediately after the database.sql file */
 
-SET NAMES utf8;
+SET NAMES utf8mb4;
 
 INSERT INTO `user` (`username`, `email`, `name`, `password`, `salt`, `role`,`created_date`) VALUES
 	('demo', 'demo@demo', 'Demo User', NULL, NULL, 'user', NOW()),
