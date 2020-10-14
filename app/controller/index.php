@@ -119,7 +119,7 @@ class Index extends \Controller
         }
 
         $errors = array();
-        $user = new \Model\User;
+        $user = new \Model\User();
 
         // Check for existing users
         $user->load(array("email=?", $f3->get("POST.register-email")));
@@ -184,7 +184,7 @@ class Index extends \Controller
             $f3->reroute("/");
         } else {
             if ($f3->get("POST.email")) {
-                $user = new \Model\User;
+                $user = new \Model\User();
                 $user->load(array("email = ?", $f3->get("POST.email")));
                 if ($user->id && !$user->deleted_date) {
                     // Re-generate reset token
@@ -224,7 +224,7 @@ class Index extends \Controller
             return;
         }
 
-        $user = new \Model\User;
+        $user = new \Model\User();
         $user->load(array("reset_token = ?", hash("sha384", $params["token"])));
         if (!$user->id || !$user->validateResetToken($params["token"])) {
             $f3->set("reset.error", "Invalid reset URL.");
@@ -260,7 +260,7 @@ class Index extends \Controller
      */
     public function reset_forced($f3)
     {
-        $user = new \Model\User;
+        $user = new \Model\User();
         $user->loadCurrent();
 
         if ($f3->get("POST.password1") != $f3->get("POST.password2")) {
@@ -286,7 +286,7 @@ class Index extends \Controller
      */
     public function logout($f3)
     {
-        $session = new \Model\Session;
+        $session = new \Model\Session();
         $session->loadCurrent();
         $session->delete();
         $f3->reroute("/");
@@ -302,7 +302,7 @@ class Index extends \Controller
     {
         // Authenticate user
         if ($f3->get("GET.key")) {
-            $user = new \Model\User;
+            $user = new \Model\User();
             $user->load(array("api_key = ?", $f3->get("GET.key")));
             if (!$user->id) {
                 $f3->error(403);
@@ -318,7 +318,7 @@ class Index extends \Controller
         unset($user);
 
         // Load target user
-        $user = new \Model\User;
+        $user = new \Model\User();
         $user->load(array("username = ?", $get["user"]));
         if (!$user->id) {
             $f3->error(404);
@@ -326,7 +326,7 @@ class Index extends \Controller
         }
 
         // Load issues
-        $issue = new \Model\Issue\Detail;
+        $issue = new \Model\Issue\Detail();
         $options = array("order" => "created_date DESC");
         if ($get["type"] == "assigned") {
             $issues = $issue->find(array("author_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);

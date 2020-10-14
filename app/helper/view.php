@@ -108,7 +108,7 @@ class View extends \Template
             $ids[] = $match;
         }
         $idsStr = implode(",", array_unique($ids));
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issues = $issue->find(array("id IN ($idsStr)"));
 
         return preg_replace_callback("/(?<=[^a-z\\/&]|^)#[0-9]+(?=[^a-z\\/]|$)/i", function ($matches) use ($url, $issues) {
@@ -167,9 +167,9 @@ class View extends \Template
             // removed trailing [.,;:] from URL
             if (in_array(substr($url, -1), array('.',',',';',':')) === true) {
                 $ret = substr($url, -1);
-                $url = substr($url, 0, strlen($url)-1);
+                $url = substr($url, 0, strlen($url) - 1);
             }
-            return $matches[1] . "<a href=\"$url\" rel=\"nofollow\" target=\"_blank\">$url</a>".$ret;
+            return $matches[1] . "<a href=\"$url\" rel=\"nofollow\" target=\"_blank\">$url</a>" . $ret;
         }, $str);
 
         $str = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', function ($m) {
@@ -183,14 +183,14 @@ class View extends \Template
             // removed trailing [,;:] from URL
             if (in_array(substr($d, -1), array('.',',',';',':')) === true) {
                 $s = substr($d, -1);
-                $d = substr($d, 0, strlen($d)-1);
+                $d = substr($d, 0, strlen($d) - 1);
             }
-            return $m[1] . "<a href=\"http://$d\" rel=\"nofollow\" target=\"_blank\">$d</a>".$s;
+            return $m[1] . "<a href=\"http://$d\" rel=\"nofollow\" target=\"_blank\">$d</a>" . $s;
         }, $str);
 
         $str = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', function ($m) {
-            $email = $m[2].'@'.$m[3];
-            return $m[1]."<a href=\"mailto:$email\">$email</a>";
+            $email = $m[2] . '@' . $m[3];
+            return $m[1] . "<a href=\"mailto:$email\">$email</a>";
         }, $str);
 
         // This one is not in an array because we need it to run last, for cleanup of accidental links within links

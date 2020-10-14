@@ -18,7 +18,7 @@ class Dashboard extends \Prefab
 
     public function getIssue()
     {
-        return $this->_issue === null ? $this->_issue = new \Model\Issue\Detail : $this->_issue;
+        return $this->_issue === null ? $this->_issue = new \Model\Issue\Detail() : $this->_issue;
     }
 
     public function getOwnerIds()
@@ -139,7 +139,7 @@ class Dashboard extends \Prefab
     public function my_comments()
     {
         $f3 = \Base::instance();
-        $comment = new \Model\Issue\Comment\Detail;
+        $comment = new \Model\Issue\Comment\Detail();
         return $comment->find(array("user_id = ? AND issue_deleted_date IS NULL", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 10));
     }
 
@@ -147,7 +147,7 @@ class Dashboard extends \Prefab
     {
         $f3 = \Base::instance();
 
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $ownerString = implode(",", $this->getOwnerIds());
         $issues = $issue->find(array("owner_id IN ($ownerString) OR author_id = ? AND deleted_date IS NULL", $f3->get("user.id")));
         if (!$issues) {
@@ -163,7 +163,7 @@ class Dashboard extends \Prefab
             return [];
         }
         $issueIds = implode(",", $ids);
-        $comment = new \Model\Issue\Comment\Detail;
+        $comment = new \Model\Issue\Comment\Detail();
         return $comment->find(array("issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 15));
     }
 
@@ -171,7 +171,7 @@ class Dashboard extends \Prefab
     {
         $f3 = \Base::instance();
 
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $ownerString = implode(",", $this->getOwnerIds());
         $issues = $issue->find(array("(owner_id IN ($ownerString) OR author_id = ?) AND closed_date IS NULL AND deleted_date IS NULL", $f3->get("user.id")));
         if (!$issues) {
@@ -187,7 +187,7 @@ class Dashboard extends \Prefab
             return [];
         }
         $issueIds = implode(",", $ids);
-        $comment = new \Model\Issue\Comment\Detail;
+        $comment = new \Model\Issue\Comment\Detail();
         return $comment->find(array("issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 15));
     }
 
@@ -201,7 +201,7 @@ class Dashboard extends \Prefab
         $userId = $f3->get("this_user") ? $f3->get("this_user")->id : $f3->get("user.id");
 
         // Load assigned issues
-        $issue = new \Model\Issue\Detail;
+        $issue = new \Model\Issue\Detail();
         $assigned = $issue->find(array("closed_date IS NULL AND deleted_date IS NULL AND owner_id = ?", $userId));
 
         // Build issue list

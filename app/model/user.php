@@ -44,7 +44,7 @@ class User extends \Model
         $f3 = \Base::instance();
 
         // Load current session
-        $session = new Session;
+        $session = new Session();
         $session->loadCurrent();
 
         // Load user
@@ -117,7 +117,7 @@ class User extends \Model
             if ($this->_groupUsers !== null) {
                 return $this->_groupUsers;
             }
-            $ug = new User\Group;
+            $ug = new User\Group();
             /** @var User\Group[] $users */
             $users = $ug->find(array("group_id = ?", $this->id));
             $userIds = [];
@@ -156,7 +156,7 @@ class User extends \Model
      */
     public function getSharedGroupUserIds(): array
     {
-        $groupModel = new \Model\User\Group;
+        $groupModel = new \Model\User\Group();
         $groups = $groupModel->find(["user_id = ?", $this->id]);
         $groupIds = [];
         foreach ($groups as $g) {
@@ -225,12 +225,12 @@ class User extends \Model
         $ownerStr = implode(",", $ownerIds);
 
         // Find issues assigned to user or user's group
-        $issue = new Issue;
+        $issue = new Issue();
         $due = $issue->find(["due_date = ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date], ["order" => "priority DESC"]);
         $overdue = $issue->find(["due_date < ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date], ["order" => "priority DESC"]);
 
         if ($due || $overdue) {
-            $notif = new \Helper\Notification;
+            $notif = new \Helper\Notification();
             return $notif->user_due_issues($this, $due, $overdue);
         } else {
             return false;
@@ -323,7 +323,7 @@ class User extends \Model
         if (!$this->id) {
             throw new \Exception("User is not initialized.");
         }
-        $issueModel = new Issue;
+        $issueModel = new Issue();
         $issues = $issueModel->find(["owner_id = ? AND deleted_date IS NULL AND closed_date IS NULL", $this->id]);
         foreach ($issues as $issue) {
             $issue->owner_id = $userId;

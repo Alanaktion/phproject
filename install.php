@@ -55,7 +55,7 @@ if ($_POST) {
         // Create admin user
         $f3->set("db.instance", $db);
         $security = \Helper\Security::instance();
-        $user = new \Model\User;
+        $user = new \Model\User();
         $user->role = "admin";
         $user->rank = \Model\User::RANK_SUPER;
         $user->name = "Admin";

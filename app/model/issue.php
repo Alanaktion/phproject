@@ -278,7 +278,8 @@ class Issue extends \Model
         $update->save();
 
         // Set hours_total to the hours_remaining value under certain conditions
-        if ($this->hours_remaining && !$this->hours_total &&
+        if (
+            $this->hours_remaining && !$this->hours_total &&
             !$this->_getPrev('hours_remaining') &&
             !$this->_getPrev('hours_total')
         ) {
@@ -383,7 +384,7 @@ class Issue extends \Model
         } else {
             // Set closed date if status is closed
             if (!$this->closed_date && $this->status) {
-                $status = new Issue\Status;
+                $status = new Issue\Status();
                 $status->load($this->status);
                 if ($status->closed) {
                     $this->closed_date = date("Y-m-d H:i:s");
@@ -402,7 +403,7 @@ class Issue extends \Model
      */
     public function saveTags(): Issue
     {
-        $tag = new \Model\Issue\Tag;
+        $tag = new \Model\Issue\Tag();
         if ($this->id) {
             $tag->deleteByIssueId($this->id);
         }
@@ -439,7 +440,7 @@ class Issue extends \Model
         $f3->clear("duplicating_issue.due_date");
         $f3->clear("duplicating_issue.hours_spent");
 
-        $newIssue = new Issue;
+        $newIssue = new Issue();
         $newIssue->copyfrom("duplicating_issue");
         $newIssue->author_id = $f3->get("user.id");
         $newIssue->hours_remaining = $newIssue->hours_total;
@@ -474,7 +475,7 @@ class Issue extends \Model
                     $f3->clear("duplicating_issue.due_date");
                     $f3->clear("duplicating_issue.hours_spent");
 
-                    $newChild = new Issue;
+                    $newChild = new Issue();
                     $newChild->copyfrom("duplicating_issue");
                     $newChild->author_id = $f3->get("user.id");
                     $newChild->hours_remaining = $newChild->hours_total;
@@ -548,7 +549,7 @@ class Issue extends \Model
     public function close(): Issue
     {
         if ($this->id && !$this->closed_date) {
-            $status = new \Model\Issue\Status;
+            $status = new \Model\Issue\Status();
             $status->load(array("closed = ?", 1));
             $this->status = $status->id;
             $this->closed_date = date("Y-m-d H:i:s");
@@ -582,9 +583,9 @@ class Issue extends \Model
         $hoursSpent = 0;
         $hoursTotal = 0;
         if ($this->id) {
-            $total ++;
+            $total++;
             if ($this->closed_date) {
-                $complete ++;
+                $complete++;
             }
             if ($this->hours_spent > 0) {
                 $hoursSpent += $this->hours_spent;

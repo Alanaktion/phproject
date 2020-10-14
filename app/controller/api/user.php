@@ -65,7 +65,7 @@ class User extends \Controller\Api
             $pagLimit = 30;
         }
 
-        $user = new \Model\User;
+        $user = new \Model\User();
         $result = $user->paginate(
             $f3->get("GET.offset") / $pagLimit,
             $pagLimit,
@@ -97,7 +97,7 @@ class User extends \Controller\Api
             $pagLimit = 30;
         }
 
-        $user = new \Model\User;
+        $user = new \Model\User();
         $result = $user->paginate(
             $f3->get("GET.offset") / $pagLimit,
             $pagLimit,

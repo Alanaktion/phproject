@@ -159,7 +159,7 @@ class Issues extends \Controller\Api
 
         // Verify given values are valid (types, statueses, priorities)
         if (!empty($post["type_id"])) {
-            $type = new \Model\Issue\Type;
+            $type = new \Model\Issue\Type();
             $type->load($post["type_id"]);
             if (!$type->id) {
                 $f3->error("The 'type_id' field is not valid.");
@@ -167,7 +167,7 @@ class Issues extends \Controller\Api
             }
         }
         if (!empty($post["parent_id"])) {
-            $parent = new \Model\Issue;
+            $parent = new \Model\Issue();
             $parent->load($post["parent_id"]);
             if (!$parent->id) {
                 $f3->error("The 'type_id' field is not valid.");
@@ -175,7 +175,7 @@ class Issues extends \Controller\Api
             }
         }
         if (!empty($post["status"])) {
-            $status = new \Model\Issue\Status;
+            $status = new \Model\Issue\Status();
             $status->load($post["status"]);
             if (!$status->id) {
                 $f3->error("The 'status' field is not valid.");
@@ -183,7 +183,7 @@ class Issues extends \Controller\Api
             }
         }
         if (!empty($post["priority_id"])) {
-            $priority = new \Model\Issue\Priority;
+            $priority = new \Model\Issue\Priority();
             $priority->load(array("value" => $post["priority_id"]));
             if (!$priority->id) {
                 $f3->error("The 'priority_id' field is not valid.");
@@ -230,7 +230,7 @@ class Issues extends \Controller\Api
     // Update an existing issue
     public function single_put($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
         if (!$issue->id) {
@@ -256,7 +256,7 @@ class Issues extends \Controller\Api
     // Get a single issue's details
     public function single_get($f3, $params)
     {
-        $issue = new \Model\Issue\Detail;
+        $issue = new \Model\Issue\Detail();
         $issue->load($params["id"]);
         if ($issue->id) {
             $this->_printJson(array("issue" => $this->_issueMultiArray($issue)));
@@ -268,7 +268,7 @@ class Issues extends \Controller\Api
     // Delete a single issue
     public function single_delete($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
         $issue->delete();
 
@@ -285,14 +285,14 @@ class Issues extends \Controller\Api
     // List issue comments
     public function single_comments($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
         if (!$issue->id) {
             $f3->error(404);
             return;
         }
 
-        $comment = new \Model\Issue\Comment\Detail;
+        $comment = new \Model\Issue\Comment\Detail();
         $comments = $comment->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC"));
 
         $return = array();
@@ -306,7 +306,7 @@ class Issues extends \Controller\Api
     // Add a comment on an issue
     public function single_comments_post($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
         if (!$issue->id) {
             $f3->error(404);
@@ -332,7 +332,7 @@ class Issues extends \Controller\Api
     // List issue tags
     public function tag()
     {
-        $tag = new \Model\Issue\Tag;
+        $tag = new \Model\Issue\Tag();
         $tags = $tag->cloud();
         $this->_printJson($tags);
     }
@@ -340,11 +340,11 @@ class Issues extends \Controller\Api
     // List issues by tag
     public function tag_single($f3, $params)
     {
-        $tag = new \Model\Issue\Tag;
+        $tag = new \Model\Issue\Tag();
         $issueIds = $tag->issues($params['tag']);
         $return = array();
         if ($issueIds) {
-            $issue = new \Model\Issue\Detail;
+            $issue = new \Model\Issue\Detail();
             $issues = $issue->find(array("id IN (" . implode(",", $issueIds) . ") AND deleted_date IS NULL"));
             foreach ($issues as $item) {
                 $return[] = $this->_issueMultiArray($item);
@@ -357,7 +357,7 @@ class Issues extends \Controller\Api
     // List sprints
     public function sprints()
     {
-        $sprint_model = new \Model\Sprint;
+        $sprint_model = new \Model\Sprint();
         $sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
         $return = array();
         foreach ($sprints as $sprint) {
@@ -369,7 +369,7 @@ class Issues extends \Controller\Api
     // List past sprints
     public function sprints_old()
     {
-        $sprint_model = new \Model\Sprint;
+        $sprint_model = new \Model\Sprint();
         $sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date ASC"));
         $return = array();
         foreach ($sprints as $sprint) {

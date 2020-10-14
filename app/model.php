@@ -70,14 +70,14 @@ abstract class Model extends \DB\SQL\Mapper
         // Call before_save hooks
         $hookName = str_replace("\\", "/", strtolower(get_class($this)));
         \Helper\Plugin::instance()->callHook("model.before_save", $this);
-        \Helper\Plugin::instance()->callHook($hookName.".before_save", $this);
+        \Helper\Plugin::instance()->callHook($hookName . ".before_save", $this);
 
         // Save object
         $result = parent::save();
 
         // Call after save hooks
         \Helper\Plugin::instance()->callHook("model.after_save", $this);
-        \Helper\Plugin::instance()->callHook($hookName.".after_save", $this);
+        \Helper\Plugin::instance()->callHook($hookName . ".after_save", $this);
 
         return $result;
     }

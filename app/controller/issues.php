@@ -35,7 +35,7 @@ class Issues extends \Controller
     {
         $f3 = \Base::instance();
         $db = $f3->get("db.instance");
-        $issues = new \Model\Issue\Detail;
+        $issues = new \Model\Issue\Detail();
 
         // Filter issue listing by URL parameters
         $filter = [];
@@ -64,21 +64,21 @@ class Issues extends \Controller
                 $filter_str .= "repeat_cycle IS NOT NULL AND ";
             } elseif ($field == "repeat_cycle" && $val == "none") {
                 $filter_str .= "repeat_cycle IS NULL AND ";
-            } elseif (($field == "author_id" || $field== "owner_id") && !empty($val) && is_numeric($val)) {
+            } elseif (($field == "author_id" || $field == "owner_id") && !empty($val) && is_numeric($val)) {
                 // Find all users in a group if necessary
-                $user = new \Model\User;
+                $user = new \Model\User();
                 $user->load($val);
                 if ($user->role == 'group') {
-                    $group_users = new \Model\User\Group;
+                    $group_users = new \Model\User\Group();
                     $list = $group_users->find(array('group_id = ?', $val));
                     $garray = array($val); // Include the group in the search
                     foreach ($list as $obj) {
                         $garray[] = $obj->user_id;
                     }
-                    $filter_str .= "$field in (". implode(",", $garray) .") AND ";
+                    $filter_str .= "$field in (" . implode(",", $garray) . ") AND ";
                 } else {
                     // Just select by user
-                    $filter_str .= "$field = ". $db->quote($val) ." AND ";
+                    $filter_str .= "$field = " . $db->quote($val) . " AND ";
                 }
             } elseif ($val === null) {
                 $filter_str .= "`$field` IS NULL AND ";
@@ -145,14 +145,14 @@ class Issues extends \Controller
      */
     public function index($f3)
     {
-        $issues = new \Model\Issue\Detail;
+        $issues = new \Model\Issue\Detail();
 
         // Get filter
         $args = $f3->get("GET");
         list($filter, $filter_str) = $this->_buildFilter();
 
         // Load type if a type_id was passed
-        $type = new \Model\Issue\Type;
+        $type = new \Model\Issue\Type();
         if (!empty($args["type_id"])) {
             $type->load($args["type_id"]);
             if ($type->id) {
@@ -163,19 +163,19 @@ class Issues extends \Controller
             $f3->set("title", $f3->get("dict.issues"));
         }
 
-        $status = new \Model\Issue\Status;
+        $status = new \Model\Issue\Status();
         $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
-        $priority = new \Model\Issue\Priority;
+        $priority = new \Model\Issue\Priority();
         $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
         $f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
-        $sprint = new \Model\Sprint;
+        $sprint = new \Model\Sprint();
         $f3->set("sprints", $sprint->find(array("end_date >= ?", date("Y-m-d")), array("order" => "start_date ASC, id ASC")));
         $f3->set("old_sprints", $sprint->find(array("end_date < ?", date("Y-m-d")), array("order" => "start_date ASC, id ASC")));
 
-        $users = new \Model\User;
+        $users = new \Model\User();
         $f3->set("users", $users->getAll());
         $f3->set("deleted_users", $users->getAllDeleted());
         $f3->set("groups", $users->getAllGroups());
@@ -229,7 +229,7 @@ class Issues extends \Controller
     {
         $post = $f3->get("POST");
 
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         if (!empty($post["id"]) && is_array($post["id"])) {
             foreach ($post["id"] as $id) {
                 // Updating existing issue.
@@ -241,7 +241,8 @@ class Issues extends \Controller
 
                     // Diff contents and save what's changed.
                     foreach ($post as $i => $val) {
-                        if ($issue->exists($i)
+                        if (
+                            $issue->exists($i)
                             && $i != "id"
                             && $issue->$i != $val
                             && (!empty($val) || $val === "0")
@@ -252,7 +253,7 @@ class Issues extends \Controller
                             }
                             $issue->$i = $val;
                             if ($i == "status") {
-                                $status = new \Model\Issue\Status;
+                                $status = new \Model\Issue\Status();
                                 $status->load($val);
 
                                 // Toggle closed_date if issue has been closed/restored
@@ -269,14 +270,14 @@ class Issues extends \Controller
 
                     // Save to the sprint of the due date if no sprint selected
                     if (!empty($post['due_date']) && empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
-                        $sprint = new \Model\Sprint;
+                        $sprint = new \Model\Sprint();
                         $sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
                         $issue->sprint_id = $sprint->id;
                     }
 
                     // If it's a child issue and the parent is in a sprint, assign to that sprint
                     if (!empty($post['bulk']['parent_id']) && !$issue->sprint_id) {
-                        $parent = new \Model\Issue;
+                        $parent = new \Model\Issue();
                         $parent->load($issue->parent_id);
                         if ($parent->sprint_id) {
                             $issue->sprint_id = $parent->sprint_id;
@@ -303,7 +304,7 @@ class Issues extends \Controller
      */
     public function export($f3)
     {
-        $issue = new \Model\Issue\Detail;
+        $issue = new \Model\Issue\Detail();
 
         // Get filter data and load issues
         $filter = $this->_buildFilter();
@@ -362,7 +363,7 @@ class Issues extends \Controller
             $type_id = 1;
         }
 
-        $type = new \Model\Issue\Type;
+        $type = new \Model\Issue\Type();
         $type->load($type_id);
 
         if (!$type->id) {
@@ -372,23 +373,23 @@ class Issues extends \Controller
 
         if ($f3->get("PARAMS.parent")) {
             $parent_id = $f3->get("PARAMS.parent");
-            $parent = new \Model\Issue;
+            $parent = new \Model\Issue();
             $parent->load(array("id = ?", $parent_id));
             if ($parent->id) {
                 $f3->set("parent", $parent);
             }
         }
 
-        $status = new \Model\Issue\Status;
+        $status = new \Model\Issue\Status();
         $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
-        $priority = new \Model\Issue\Priority;
+        $priority = new \Model\Issue\Priority();
         $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
-        $sprint = new \Model\Sprint;
+        $sprint = new \Model\Sprint();
         $f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC, id ASC")));
 
-        $users = new \Model\User;
+        $users = new \Model\User();
         $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
         $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
@@ -404,7 +405,7 @@ class Issues extends \Controller
      */
     public function add_selecttype($f3)
     {
-        $type = new \Model\Issue\Type;
+        $type = new \Model\Issue\Type();
         $f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
         $f3->set("title", $f3->get("dict.new_n", $f3->get("dict.issues")));
@@ -419,7 +420,7 @@ class Issues extends \Controller
      */
     public function edit($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
         if (!$issue->id) {
@@ -427,7 +428,7 @@ class Issues extends \Controller
             return;
         }
 
-        $type = new \Model\Issue\Type;
+        $type = new \Model\Issue\Type();
         $type->load($issue->type_id);
 
         $this->loadIssueMeta($issue);
@@ -451,16 +452,16 @@ class Issues extends \Controller
     protected function loadIssueMeta(\Model\Issue $issue)
     {
         $f3 = \Base::instance();
-        $status = new \Model\Issue\Status;
+        $status = new \Model\Issue\Status();
         $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
-        $priority = new \Model\Issue\Priority;
+        $priority = new \Model\Issue\Priority();
         $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
-        $sprint = new \Model\Sprint;
+        $sprint = new \Model\Sprint();
         $f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", $this->now(false), $issue->sprint_id), array("order" => "start_date ASC, id ASC")));
 
-        $users = new \Model\User;
+        $users = new \Model\User();
         $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
         $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
     }
@@ -475,7 +476,7 @@ class Issues extends \Controller
      */
     public function close($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
         if (!$issue->id) {
@@ -498,7 +499,7 @@ class Issues extends \Controller
      */
     public function reopen($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
         if (!$issue->id) {
@@ -507,7 +508,7 @@ class Issues extends \Controller
         }
 
         if ($issue->closed_date) {
-            $status = new \Model\Issue\Status;
+            $status = new \Model\Issue\Status();
             $status->load(array("closed = ?", 0));
             $issue->status = $status->id;
             $issue->closed_date = null;
@@ -527,7 +528,7 @@ class Issues extends \Controller
      */
     public function copy($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
         if (!$issue->id) {
@@ -553,7 +554,7 @@ class Issues extends \Controller
     {
         $f3 = \Base::instance();
         $post = array_map("trim", $f3->get("POST"));
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
 
         // Load issue and return if not set
         $issue->load($post["id"]);
@@ -564,7 +565,8 @@ class Issues extends \Controller
         // Diff contents and save what's changed.
         $hashState = json_decode($post["hash_state"]);
         foreach ($post as $i => $val) {
-            if ($issue->exists($i)
+            if (
+                $issue->exists($i)
                 && $i != "id"
                 && $issue->$i != $val
                 && md5($val) != $hashState->$i
@@ -575,7 +577,7 @@ class Issues extends \Controller
                     $issue->$i = $val;
 
                     if ($i == "status") {
-                        $status = new \Model\Issue\Status;
+                        $status = new \Model\Issue\Status();
                         $status->load($val);
 
                         // Toggle closed_date if issue has been closed/restored
@@ -589,9 +591,9 @@ class Issues extends \Controller
                     }
 
                     // Save to the sprint of the due date unless one already set
-                    if ($i=="due_date" && !empty($val)) {
+                    if ($i == "due_date" && !empty($val)) {
                         if (empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
-                            $sprint = new \Model\Sprint;
+                            $sprint = new \Model\Sprint();
                             $sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
                             $issue->sprint_id = $sprint->id;
                         }
@@ -602,7 +604,7 @@ class Issues extends \Controller
 
         // Save comment if given
         if (!empty($post["comment"])) {
-            $comment = new \Model\Issue\Comment;
+            $comment = new \Model\Issue\Comment();
             $comment->user_id = $this->_userId;
             $comment->issue_id = $issue->id;
             $comment->text = $post["comment"];
@@ -679,7 +681,7 @@ class Issues extends \Controller
      */
     public function single($f3, $params)
     {
-        $issue = new \Model\Issue\Detail;
+        $issue = new \Model\Issue\Detail();
         $issue->load(array("id=?", $params["id"]));
         $user = $f3->get("user_obj");
 
@@ -701,7 +703,7 @@ class Issues extends \Controller
             $owner->load($issue->owner_id);
         }
 
-        $files = new \Model\Issue\File\Detail;
+        $files = new \Model\Issue\File\Detail();
         $f3->set("files", $files->find(array("issue_id = ? AND deleted_date IS NULL", $issue->id)));
 
         if ($issue->sprint_id) {
@@ -710,7 +712,7 @@ class Issues extends \Controller
             $f3->set("sprint", $sprint);
         }
 
-        $watching = new \Model\Issue\Watcher;
+        $watching = new \Model\Issue\Watcher();
         $watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $this->_userId));
         $f3->set("watching", !!$watching->id);
 
@@ -720,7 +722,7 @@ class Issues extends \Controller
         $f3->set("author", $author);
         $f3->set("owner", $owner);
 
-        $comments = new \Model\Issue\Comment\Detail;
+        $comments = new \Model\Issue\Comment\Detail();
         $f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC, id DESC")));
 
         $this->loadIssueMeta($issue);
@@ -737,13 +739,13 @@ class Issues extends \Controller
      */
     public function add_watcher($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load(array("id=?", $params["id"]));
         if (!$issue->id) {
             $f3->error(404);
         }
 
-        $watcher = new \Model\Issue\Watcher;
+        $watcher = new \Model\Issue\Watcher();
 
         // Loads just in case the user is already a watcher
         $watcher->load(array("issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")));
@@ -763,13 +765,13 @@ class Issues extends \Controller
      */
     public function delete_watcher($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load(array("id=?", $params["id"]));
         if (!$issue->id) {
             $f3->error(404);
         }
 
-        $watcher = new \Model\Issue\Watcher;
+        $watcher = new \Model\Issue\Watcher();
 
         $watcher->load(array("issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")));
         $watcher->delete();
@@ -784,13 +786,13 @@ class Issues extends \Controller
      */
     public function add_dependency($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load(array("id=?", $params["id"]));
         if (!$issue->id) {
             $f3->error(404);
         }
 
-        $dependency = new \Model\Issue\Dependency;
+        $dependency = new \Model\Issue\Dependency();
 
         // Loads just in case the task is already a dependency
         $dependency->load(array("issue_id = ? AND dependency_id = ?", $issue->id, $f3->get("POST.id")));
@@ -809,13 +811,13 @@ class Issues extends \Controller
      */
     public function delete_dependency($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load(array("id=?", $params["id"]));
         if (!$issue->id) {
             $f3->error(404);
         }
 
-        $dependency = new \Model\Issue\Dependency;
+        $dependency = new \Model\Issue\Dependency();
         $dependency->load($f3->get("POST.id"));
         $dependency->delete();
     }
@@ -835,7 +837,7 @@ class Issues extends \Controller
         $updates = $update_model->find(array("issue_id = ?", $params["id"]), array("order" => "created_date DESC, id DESC"));
         foreach ($updates as $update) {
             $update_array = $update->cast();
-            $update_field_model = new \Model\Issue\Update\Field;
+            $update_field_model = new \Model\Issue\Update\Field();
             $update_array["changes"] = $update_field_model->find(array("issue_update_id = ?", $update["id"]));
             $updates_array[] = $update_array;
         }
@@ -858,13 +860,13 @@ class Issues extends \Controller
      */
     public function single_related($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
         if ($issue->id) {
             $f3->set("parent", $issue);
 
-            $issues = new \Model\Issue\Detail;
+            $issues = new \Model\Issue\Detail();
             if ($exclude = $f3->get("GET.exclude")) {
                 $searchparams = array("parent_id = ? AND id != ? AND deleted_date IS NULL", $issue->id, $exclude);
             } else {
@@ -897,7 +899,7 @@ class Issues extends \Controller
     {
         $watchers = new \Model\Custom("issue_watcher_user");
         $f3->set("watchers", $watchers->find(array("issue_id = ?", $params["id"])));
-        $users = new \Model\User;
+        $users = new \Model\User();
         $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 
         $this->_printJson(array(
@@ -916,12 +918,12 @@ class Issues extends \Controller
      */
     public function single_dependencies($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
         if ($issue->id) {
             $f3->set("issue", $issue);
-            $dependencies = new \Model\Issue\Dependency;
+            $dependencies = new \Model\Issue\Dependency();
             $f3->set("dependencies", $dependencies->findby_issue($issue->id));
             $f3->set("dependents", $dependencies->findby_dependent($issue->id));
 
@@ -944,7 +946,7 @@ class Issues extends \Controller
      */
     public function single_delete($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
         $user = $f3->get("user_obj");
         if ($user->role == "admin" || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id) {
@@ -965,7 +967,7 @@ class Issues extends \Controller
      */
     public function single_undelete($f3, $params)
     {
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($params["id"]);
         $user = $f3->get("user_obj");
         if ($user->role == "admin" || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id) {
@@ -987,7 +989,7 @@ class Issues extends \Controller
     {
         $post = $f3->get("POST");
 
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load($post["issue_id"]);
 
         if (!$issue->id || empty($post["text"])) {
@@ -1037,7 +1039,7 @@ class Issues extends \Controller
     public function comment_delete($f3)
     {
         $this->_requireAdmin();
-        $comment = new \Model\Issue\Comment;
+        $comment = new \Model\Issue\Comment();
         $comment->load($f3->get("POST.id"));
         $comment->delete();
         $this->_printJson(array("id" => $f3->get("POST.id")) + $comment->cast());
@@ -1052,7 +1054,7 @@ class Issues extends \Controller
      */
     public function file_delete($f3)
     {
-        $file = new \Model\Issue\File;
+        $file = new \Model\Issue\File();
         $file->load($f3->get("POST.id"));
         $file->delete();
         $this->_printJson($file->cast());
@@ -1067,7 +1069,7 @@ class Issues extends \Controller
      */
     public function file_undelete($f3)
     {
-        $file = new \Model\Issue\File;
+        $file = new \Model\Issue\File();
         $file->load($f3->get("POST.id"));
         $file->deleted_date = null;
         $file->save();
@@ -1120,7 +1122,7 @@ class Issues extends \Controller
             $f3->reroute("/issues/{$matches[1]}");
         }
 
-        $issues = new \Model\Issue\Detail;
+        $issues = new \Model\Issue\Detail();
 
         $args = $f3->get("GET");
         if (empty($args["page"])) {
@@ -1167,7 +1169,7 @@ class Issues extends \Controller
     {
         $user_id = $this->_userId;
 
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         $issue->load(array("id=? AND deleted_date IS NULL", $f3->get("POST.issue_id")));
         if (!$issue->id) {
             $f3->error(404);
@@ -1176,7 +1178,7 @@ class Issues extends \Controller
 
         $web = \Web::instance();
 
-        $f3->set("UPLOADS", "uploads/".date("Y")."/".date("m")."/");
+        $f3->set("UPLOADS", "uploads/" . date("Y") . "/" . date("m") . "/");
         if (!is_dir($f3->get("UPLOADS"))) {
             mkdir($f3->get("UPLOADS"), 0777, true);
         }
@@ -1208,7 +1210,7 @@ class Issues extends \Controller
                     return false;
                 }
 
-                $newfile = new \Model\Issue\File;
+                $newfile = new \Model\Issue\File();
                 $newfile->issue_id = $issue->id;
                 $newfile->user_id = $user_id;
                 $newfile->filename = $orig_name;
@@ -1228,7 +1230,7 @@ class Issues extends \Controller
         );
 
         if ($f3->get("POST.text")) {
-            $comment = new \Model\Issue\Comment;
+            $comment = new \Model\Issue\Comment();
             $comment->user_id = $this->_userId;
             $comment->issue_id = $issue->id;
             $comment->text = $f3->get("POST.text");
@@ -1262,26 +1264,26 @@ class Issues extends \Controller
         $term = trim($f3->get('GET.q'));
         $results = array();
 
-        $issue = new \Model\Issue;
+        $issue = new \Model\Issue();
         if ((substr($term, 0, 1) == '#') && is_numeric(substr($term, 1))) {
             $id = (int) substr($term, 1);
-            $issues = $issue->find(array('id LIKE ?', $id. '%'), array('limit' => 20));
+            $issues = $issue->find(array('id LIKE ?', $id . '%'), array('limit' => 20));
 
             foreach ($issues as $row) {
-                $results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+                $results[] = array('id' => $row->get('id'), 'text' => $row->get('name'));
             }
         } elseif (is_numeric($term)) {
             $id = (int) $term;
             $issues = $issue->find(array('(id LIKE ?) OR (name LIKE ?)', $id . '%', '%' . $id . '%'), array('limit' => 20));
 
             foreach ($issues as $row) {
-                $results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+                $results[] = array('id' => $row->get('id'), 'text' => $row->get('name'));
             }
         } else {
             $issues = $issue->find(array('name LIKE ?', '%' . addslashes($term) . '%'), array('limit' => 20));
 
             foreach ($issues as $row) {
-                $results[] = array('id'=>$row->get('id'), 'text'=>$row->get('name'));
+                $results[] = array('id' => $row->get('id'), 'text' => $row->get('name'));
             }
         }
 

@@ -17,7 +17,7 @@ class Tag extends \Controller
      */
     public function index($f3)
     {
-        $tag = new \Model\Issue\Tag;
+        $tag = new \Model\Issue\Tag();
         $cloud = $tag->cloud();
         $f3->set("list", $cloud);
         shuffle($cloud);
@@ -34,7 +34,7 @@ class Tag extends \Controller
      */
     public function single($f3, $params)
     {
-        $tag = new \Model\Issue\Tag;
+        $tag = new \Model\Issue\Tag();
         $tag->load(array("tag = ?", $params["tag"]));
 
         if (!$tag->id) {
@@ -42,7 +42,7 @@ class Tag extends \Controller
             return;
         }
 
-        $issue = new \Model\Issue\Detail;
+        $issue = new \Model\Issue\Detail();
         $issue_ids = implode(',', $tag->issues());
 
         $f3->set("title", "#" . $params["tag"] . " - " . $f3->get("dict.issue_tags"));

@@ -21,5 +21,8 @@
         "platform": {
             "php": "7.0.33"
         }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "*"
     }
 }

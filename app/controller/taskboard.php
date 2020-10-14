@@ -117,7 +117,7 @@ class Taskboard extends \Controller
         $issue = new \Model\Issue\Detail();
 
         // Determine type filtering
-        $type = new \Model\Issue\Type;
+        $type = new \Model\Issue\Type();
         $projectTypes = $type->find(["role = ?", "project"]);
         $f3->set("project_types", $projectTypes);
         if ($f3->get("GET.type_id")) {
@@ -158,7 +158,7 @@ class Taskboard extends \Controller
         $projects = $issue->find($queryArray, array("order" => "owner_id ASC, priority DESC"));
 
         // Sort projects if a filter is given
-        $sortModel = new \Model\Issue\Backlog;
+        $sortModel = new \Model\Issue\Backlog();
         $sortOrder = $sortModel->load(array("sprint_id = ?", $sprint->id));
         if ($sortOrder) {
             $sortArray = json_decode($sortOrder->issues) ?: array();
@@ -227,7 +227,7 @@ class Taskboard extends \Controller
      */
     public function burndown($f3, $params)
     {
-        $sprint = new \Model\Sprint;
+        $sprint = new \Model\Sprint();
         $sprint->load($params["id"]);
 
         if (!$sprint->id) {
@@ -237,7 +237,7 @@ class Taskboard extends \Controller
 
         $db = $f3->get("db.instance");
 
-        $user = new \Model\User;
+        $user = new \Model\User();
         $user->load(array("id = ?", $params["filter"]));
         if (!$user->id) {
             $f3->error(404);
@@ -301,7 +301,7 @@ class Taskboard extends \Controller
      */
     public function saveManHours($f3)
     {
-        $user = new \Model\User;
+        $user = new \Model\User();
         $user->load(array("id = ?", $f3->get("POST.user_id")));
         if (!$user->id) {
             $f3->error(404);
@@ -382,7 +382,7 @@ class Taskboard extends \Controller
         }
 
         if (!empty($post["comment"])) {
-            $comment = new \Model\Issue\Comment;
+            $comment = new \Model\Issue\Comment();
             $comment->user_id = $this->_userId;
             $comment->issue_id = $issue->id;
             if (!empty($post["hours_spent"])) {

@@ -1,10 +1,13 @@
 dist: bionic
-sudo: false
+os: linux
 language: php
 php:
   - '7.2'
   - '7.3'
+  - '7.4'
 install:
   - composer install
 before_script:
   - if find . -name "*.php" ! -path "./vendor/*"  -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi
+script:
+  - php vendor/bin/phpcs
