@@ -149,7 +149,19 @@ class Issues extends \Controller
 
         // Get filter
         $args = $f3->get("GET");
-        list($filter, $filter_str) = $this->_buildFilter();
+
+        // load all issues if user is admin, otherwise load by group access
+        $user = $f3->get("user_obj");
+        if ($user->role == 'admin') {
+            list($filter, $filter_str) = $this->_buildFilter();
+        } else {
+            $helper = \Helper\Dashboard::instance();
+            $groupString = implode(",", $helper->getGroupIds()) . "," . $user->id;
+
+            // Get filter
+            list($filter, $filter_str) = $this->_buildFilter();
+            $filter_str = "(owner_id IN (". $groupString .")) AND " . $filter_str;
+        }
 
         // Load type if a type_id was passed
         $type = new \Model\Issue\Type();
@@ -390,9 +402,25 @@ class Issues extends \Controller
         $f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC, id ASC")));
 
         $users = new \Model\User();
-        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
 
+        $helper = \Helper\Dashboard::instance();
+
+        // load all issues if user is admin, otherwise load by group access
+        $groupUserFilter ="";
+        $groupFilter = "";
+
+        $user = $f3->get("user_obj");
+        if ($user->role != 'admin')  {
+            if($helper->getGroupUserIds()){
+                $groupUserFilter = " AND id IN (" . implode(",", $helper->getGroupUserIds()) . "," . $user->id . ")";
+            }
+            if($helper->getGroupIds()){
+                $groupFilter = " AND id IN (" .  implode(",", $helper->getGroupIds()) . ")";
+            }
+        }
+
+        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'". $groupUserFilter , array("order" => "name ASC")));
+        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'" . $groupFilter , array("order" => "name ASC")));
         $f3->set("title", $f3->get("dict.new_n", $type->name));
         $f3->set("menuitem", "new");
         $f3->set("type", $type);
@@ -420,10 +448,14 @@ class Issues extends \Controller
      */
     public function edit($f3, $params)
     {
-        $issue = new \Model\Issue();
+        $issue = new \Model\Issue\Detail;
         $issue->load($params["id"]);
 
-        if (!$issue->id) {
+        // load issue if user is admin, otherwise load by group access
+        $user = $f3->get("user_obj");
+        $helper = \Helper\Dashboard::instance();
+        $userGroups = $helper->getGroupIds();
+        if ( !$issue->id || !(($user->role == 'admin') || in_array($issue->owner_id, $userGroups) || ($issue->owner_id == $user->id))) {
             $f3->error(404, "Issue does not exist");
             return;
         }
@@ -462,8 +494,24 @@ class Issues extends \Controller
         $f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", $this->now(false), $issue->sprint_id), array("order" => "start_date ASC, id ASC")));
 
         $users = new \Model\User();
-        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
-        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC")));
+        $helper = \Helper\Dashboard::instance();
+
+        // load all issues if user is admin, otherwise load by group access
+        $groupUserFilter ="";
+        $groupFilter = "";
+
+        $user = $f3->get("user_obj");
+        if ($user->role != 'admin')  {
+            if($helper->getGroupUserIds()){
+                $groupUserFilter = " AND id IN (" . implode(",", $helper->getGroupUserIds()) . "," . $user->id . ")";
+            }
+            if($helper->getGroupIds()){
+                $groupFilter = " AND id IN (" .  implode(",", $helper->getGroupIds()) . ")";
+            }
+        }
+
+        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'". $groupUserFilter , array("order" => "name ASC")));
+        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'" . $groupFilter , array("order" => "name ASC")));
     }
 
     /**
@@ -553,6 +601,20 @@ class Issues extends \Controller
     protected function _saveUpdate()
     {
         $f3 = \Base::instance();
+
+        //remove parent if user has no rights to it
+        $validateUser = $f3->get("user_obj");
+        if (( $f3->get("POST.parent_id")) && !($validateUser->role == 'admin')) {
+            $helper = \Helper\Dashboard::instance();
+            $groupString = implode(",", $helper->getGroupIds()) . "," . $validateUser->id;
+            $searchFilter = " id = " . $f3->get("POST.parent_id") . " AND owner_id IN (". $groupString .")";
+            //$searchFilter = "id = 10" . $issue->id ;
+            $parentIssue = (new \Model\Issue())->find($searchFilter);
+        }
+        if(!$parentIssue){
+            $f3->set("POST.parent_id", null);
+        }
+
         $post = array_map("trim", $f3->get("POST"));
         $issue = new \Model\Issue();
 
@@ -561,6 +623,7 @@ class Issues extends \Controller
         if (!$issue->id) {
             return $issue;
         }
+        ////////////////////////////////////////////////////
 
         // Diff contents and save what's changed.
         $hashState = json_decode($post["hash_state"]);
@@ -634,6 +697,23 @@ class Issues extends \Controller
             $originalAuthor = $data['author_id'];
             $data['author_id'] = $this->_userId;
         }
+
+        ////////////////////////////////////////////////////
+        //remove parent if user has no rights to it
+        $validateUser = $f3->get("user_obj");
+        if (($data['parent_id']) && !($validateUser->role == 'admin')) {
+            $helper = \Helper\Dashboard::instance();
+            $groupString = implode(",", $helper->getGroupIds()) . "," . $validateUser->id;
+            $searchFilter = " id = " . $data['parent_id']  . " AND owner_id IN (". $groupString .")";
+            //$searchFilter = "id = " . $data['id'];
+            $parentIssue = (new \Model\Issue())->find($searchFilter);
+        }
+        if(!$parentIssue)
+        {
+            $data['parent_id']  = null;
+        }
+        ////////////////////////////////////////////////////
+
         $issue = \Model\Issue::create($data, !!$f3->get("POST.notify"));
         if ($originalAuthor) {
             $issue->author_id = $originalAuthor;
@@ -683,9 +763,13 @@ class Issues extends \Controller
     {
         $issue = new \Model\Issue\Detail();
         $issue->load(array("id=?", $params["id"]));
-        $user = $f3->get("user_obj");
 
-        if (!$issue->id || ($issue->deleted_date && !($user->role == 'admin' || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id))) {
+        // load issue if user is admin, otherwise load by group access
+        $user = $f3->get("user_obj");
+        $helper = \Helper\Dashboard::instance();
+        $userGroups = $helper->getGroupIds();
+        if (!$issue->id || ($issue->deleted_date && !($user->role == 'admin'))
+                || !(($user->role == 'admin') || in_array($issue->owner_id, $userGroups) || ($issue->owner_id == $user->id))) {
             $f3->error(404);
             return;
         }
@@ -1134,6 +1218,14 @@ class Issues extends \Controller
             $where[0] .= " AND status_closed = '0'";
         }
 
+        // load search for all issues if user is admin, otherwise load by group access
+        $user = $f3->get("user_obj");
+        if (!($user->role == 'admin')) {
+            $helper = \Helper\Dashboard::instance();
+            $groupString = implode(",", $helper->getGroupIds()) . "," . $user->id;
+            $where[0] .= " AND (owner_id IN (". $groupString ."))";
+        }
+
         $issue_page = $issues->paginate($args["page"], 50, $where, array("order" => "created_date DESC, id DESC"));
         $f3->set("issues", $issue_page);
 
@@ -1261,26 +1353,38 @@ class Issues extends \Controller
             $f3->error(400);
         }
 
+        //determine the search string if user is not admin
+        $user = $f3->get("user_obj");
+        if (!($user->role == 'admin')) {
+            $helper = \Helper\Dashboard::instance();
+            $groupString = implode(",", $helper->getGroupIds()) . "," . $user->id;
+            $searchFilter = "(owner_id IN (". $groupString .")) AND";
+        }
+        else{
+            //leave filter empty
+            $searchFilter = "";
+        }
+
         $term = trim($f3->get('GET.q'));
         $results = array();
 
         $issue = new \Model\Issue();
         if ((substr($term, 0, 1) == '#') && is_numeric(substr($term, 1))) {
             $id = (int) substr($term, 1);
-            $issues = $issue->find(array('id LIKE ?', $id . '%'), array('limit' => 20));
+            $issues = $issue->find(array($searchFilter . 'id LIKE ?', $id . '%'), array('limit' => 20));
 
             foreach ($issues as $row) {
                 $results[] = array('id' => $row->get('id'), 'text' => $row->get('name'));
             }
         } elseif (is_numeric($term)) {
             $id = (int) $term;
-            $issues = $issue->find(array('(id LIKE ?) OR (name LIKE ?)', $id . '%', '%' . $id . '%'), array('limit' => 20));
+            $issues = $issue->find(array($searchFilter . '((id LIKE ?) OR (name LIKE ?))', $id . '%', '%' . $id . '%'), array('limit' => 20));
 
             foreach ($issues as $row) {
                 $results[] = array('id' => $row->get('id'), 'text' => $row->get('name'));
             }
         } else {
-            $issues = $issue->find(array('name LIKE ?', '%' . addslashes($term) . '%'), array('limit' => 20));
+            $issues = $issue->find(array($searchFilter . 'name LIKE ?', '%' . addslashes($term) . '%'), array('limit' => 20));
 
             foreach ($issues as $row) {
                 $results[] = array('id' => $row->get('id'), 'text' => $row->get('name'));

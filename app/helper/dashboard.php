@@ -6,6 +6,8 @@ class Dashboard extends \Prefab
 {
     protected $_issue;
     protected $_ownerIds;
+    protected $_groupIds;
+    protected $_groupUserIds;
     protected $_projects;
     protected $_order = "priority DESC, has_due_date ASC, due_date ASC, created_date DESC";
 
@@ -33,6 +35,35 @@ class Dashboard extends \Prefab
             $this->_ownerIds[] = $r->group_id;
         }
         return $this->_ownerIds;
+    }
+
+    public function getGroupIds()
+    {
+        if ($this->_groupIds) {
+            return $this->_groupIds;
+        }
+        $f3 = \Base::instance();
+        $groups = new \Model\User\Group();
+        foreach ($groups->find(array("user_id = ?", $f3->get("user.id"))) as $r) {
+            $this->_groupIds[] = $r->group_id;
+        }
+        return $this->_groupIds;
+    }
+
+    public function getGroupUserIds()
+    {
+        if ($this->_groupUserIds) {
+            return $this->_groupUserIds;
+        }
+        $f3 = \Base::instance();
+        $groups = new \Model\User\Group();
+        
+        $groupString = implode(",", $this->getGroupIds()) ;     
+
+        foreach ($groups->find(array("group_id IN (" . $groupString  . ")"  ) ) as $r) {
+            $this->_groupUserIds[] = $r->user_id;
+        }
+        return $this->_groupUserIds;
     }
 
     public function projects()
