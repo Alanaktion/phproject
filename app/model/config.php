@@ -34,7 +34,7 @@ class Config extends \Model
 
         // Set some basic config values if they're not already there
         if (!in_array("site.theme", $foundAttributes)) {
-            \Model\Config::setVal('site.theme', 'css/bootstrap-phproject.css');
+            self::setVal('site.theme', 'css/bootstrap-phproject.css');
         }
         if (!in_array("site.name", $foundAttributes)) {
             self::importAll();

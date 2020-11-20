@@ -69,13 +69,13 @@ class Issues extends \Controller
                 $user = new \Model\User();
                 $user->load($val);
                 if ($user->role == 'group') {
-                    $group_users = new \Model\User\Group();
-                    $list = $group_users->find(array('group_id = ?', $val));
-                    $garray = array($val); // Include the group in the search
+                    $groupUsers = new \Model\User\Group();
+                    $list = $groupUsers->find(array('group_id = ?', $val));
+                    $groupUserArray = array($val); // Include the group in the search
                     foreach ($list as $obj) {
-                        $garray[] = $obj->user_id;
+                        $groupUserArray[] = $obj->user_id;
                     }
-                    $filter_str .= "$field in (" . implode(",", $garray) . ") AND ";
+                    $filter_str .= "$field in (" . implode(",", $groupUserArray) . ") AND ";
                 } else {
                     // Just select by user
                     $filter_str .= "$field = " . $db->quote($val) . " AND ";
@@ -283,7 +283,7 @@ class Issues extends \Controller
                     // Save to the sprint of the due date if no sprint selected
                     if (!empty($post['due_date']) && empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
                         $sprint = new \Model\Sprint();
-                        $sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$issue->due_date));
+                        $sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $issue->due_date));
                         $issue->sprint_id = $sprint->id;
                     }
 
@@ -669,7 +669,7 @@ class Issues extends \Controller
                     if ($i == "due_date" && !empty($val)) {
                         if (empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
                             $sprint = new \Model\Sprint();
-                            $sprint->load(array("DATE(?) BETWEEN start_date AND end_date",$val));
+                            $sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $val));
                             $issue->sprint_id = $sprint->id;
                         }
                     }
