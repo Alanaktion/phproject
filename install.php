@@ -22,7 +22,7 @@ if (is_file("config.php")) {
 }
 
 // Check PCRE version
-if ((float)PCRE_VERSION < 7.9) {
+if (version_compare((float)PCRE_VERSION, '7.9', '<')) {
     $f3->set("error", "PCRE version is out of date");
 }
 
@@ -37,8 +37,51 @@ if (!function_exists("imagecreatetruecolor")) {
 }
 
 // Run installation process if post data received
-if ($_POST) {
-    $post = $_POST;
+if (
+    ($_POST && !$f3->exists('success') && !$f3->exists('error'))
+    || (php_sapi_name() == 'cli')
+) {
+    if (php_sapi_name() == 'cli') {
+        if ($f3->get('error')) {
+            echo $f3->get('error'), PHP_EOL;
+            exit(3);
+        }
+
+        $longOpts = [
+            'site-url:' => null,
+            'site-name:' => null,
+            'timezone::' => 'Etc/UTC',
+            'from-email::' => null,
+            'lang::' => 'en',
+            'parser::' => 'markdown',
+            'disable-registration' => false,
+            'db-host::' => 'localhost',
+            'db-port::' => 3306,
+            'db-user::' => 'root',
+            'db-password::' => '',
+            'db-name::' => 'phproject',
+            'admin-username:' => null,
+            'admin-email:' => null,
+            'admin-password:' => null,
+        ];
+        $helper = \Helper\Cli::instance();
+        $data = $helper->parseOptions($longOpts, $argv);
+        if ($data === null) {
+            return;
+        }
+
+        // Map data to expected $post values
+        $post = $data;
+        $post['db-pass'] = $data['db-password'];
+        $post['site-timezone'] = $data['timezone'];
+        $post['mail-from'] = $data['from-email'];
+        $post['site-public_registration'] = !$data['disable-registration'];
+        $post['user-username'] = $data['admin-username'];
+        $post['user-email'] = $data['admin-email'];
+        $post['user-password'] = $data['admin-password'];
+    } else {
+        $post = $_POST;
+    }
 
     try {
         // Connect to database
@@ -125,16 +168,23 @@ if ($_POST) {
             'db.user' => $post['db-user'],
             'db.pass' => $post['db-pass'],
             'db.name' => $post['db-name'],
-            'site.url' => $f3->get('SCHEME') . '://' . $f3->get('HOST') . $f3->get('BASE') . '/',
+            'site.url' => $post['site-url'] ?? ($f3->get('SCHEME') . '://' . $f3->get('HOST') . $f3->get('BASE') . '/'),
         ];
         $data = "<?php\nreturn " . var_export($config, true) . ";\n";
         file_put_contents("config.php", $data);
 
         $f3->set("success", "Installation complete.");
     } catch (PDOException $e) {
-        $f3->set("warning", $e->getMessage());
+        if (php_sapi_name() == 'cli') {
+            echo $e->getMessage(), PHP_EOL;
+            exit(2);
+        } else {
+            $f3->set("warning", $e->getMessage());
+        }
     }
 }
 
 // Render installer template
-echo Template::instance()->render("install.html");
+if (php_sapi_name() != 'cli') {
+    echo Template::instance()->render("install.html");
+}

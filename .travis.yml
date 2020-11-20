@@ -5,9 +5,14 @@ php:
   - '7.2'
   - '7.3'
   - '7.4'
+services:
+  - mysql
+before_install:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS phproject;'
 install:
-  - composer install
+  - composer install --no-ansi --no-interaction
 before_script:
   - if find . -name "*.php" ! -path "./vendor/*"  -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi
 script:
   - php vendor/bin/phpcs
+  - php install.php --site-name=Test --site-url=http://localhost/ --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=127.0.0.1
