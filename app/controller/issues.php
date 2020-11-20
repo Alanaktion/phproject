@@ -152,15 +152,15 @@ class Issues extends \Controller
 
         // load all issues if user is admin, otherwise load by group access
         $user = $f3->get("user_obj");
-        if ($user->role == 'admin') {
+        if ($user->role == 'admin' || !$f3->get('security.restrict_access')) {
             list($filter, $filter_str) = $this->_buildFilter();
         } else {
             $helper = \Helper\Dashboard::instance();
-            $groupString = implode(",", $helper->getGroupIds()) . "," . $user->id;
+            $groupString = implode(",", array_merge($helper->getGroupIds(), [$user->id]));
 
             // Get filter
             list($filter, $filter_str) = $this->_buildFilter();
-            $filter_str = "(owner_id IN (". $groupString .")) AND " . $filter_str;
+            $filter_str = "(owner_id IN (" . $groupString . ")) AND " . $filter_str;
         }
 
         // Load type if a type_id was passed
@@ -405,22 +405,23 @@ class Issues extends \Controller
 
         $helper = \Helper\Dashboard::instance();
 
-        // load all issues if user is admin, otherwise load by group access
-        $groupUserFilter ="";
+        // Load all issues if user is admin, otherwise load by group access
+        $groupUserFilter = "";
         $groupFilter = "";
 
         $user = $f3->get("user_obj");
-        if ($user->role != 'admin')  {
-            if($helper->getGroupUserIds()){
-                $groupUserFilter = " AND id IN (" . implode(",", $helper->getGroupUserIds()) . "," . $user->id . ")";
+        if ($user->role != 'admin' && $f3->get('security.restrict_access')) {
+            // TODO: restrict user/group list when user is not in any groups
+            if ($helper->getGroupUserIds()) {
+                $groupUserFilter = " AND id IN (" . implode(",", array_merge($helper->getGroupUserIds(), [$user->id])) . ")";
             }
-            if($helper->getGroupIds()){
-                $groupFilter = " AND id IN (" .  implode(",", $helper->getGroupIds()) . ")";
+            if ($helper->getGroupIds()) {
+                $groupFilter = " AND id IN (" . implode(",", $helper->getGroupIds()) . ")";
             }
         }
 
-        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'". $groupUserFilter , array("order" => "name ASC")));
-        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'" . $groupFilter , array("order" => "name ASC")));
+        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'" . $groupUserFilter, array("order" => "name ASC")));
+        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'" . $groupFilter, array("order" => "name ASC")));
         $f3->set("title", $f3->get("dict.new_n", $type->name));
         $f3->set("menuitem", "new");
         $f3->set("type", $type);
@@ -448,15 +449,16 @@ class Issues extends \Controller
      */
     public function edit($f3, $params)
     {
-        $issue = new \Model\Issue\Detail;
+        $issue = new \Model\Issue\Detail();
         $issue->load($params["id"]);
 
-        // load issue if user is admin, otherwise load by group access
-        $user = $f3->get("user_obj");
-        $helper = \Helper\Dashboard::instance();
-        $userGroups = $helper->getGroupIds();
-        if ( !$issue->id || !(($user->role == 'admin') || in_array($issue->owner_id, $userGroups) || ($issue->owner_id == $user->id))) {
+        if (!$issue->id) {
             $f3->error(404, "Issue does not exist");
+            return;
+        }
+
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
             return;
         }
 
@@ -497,21 +499,22 @@ class Issues extends \Controller
         $helper = \Helper\Dashboard::instance();
 
         // load all issues if user is admin, otherwise load by group access
-        $groupUserFilter ="";
+        $groupUserFilter = "";
         $groupFilter = "";
 
         $user = $f3->get("user_obj");
-        if ($user->role != 'admin')  {
-            if($helper->getGroupUserIds()){
-                $groupUserFilter = " AND id IN (" . implode(",", $helper->getGroupUserIds()) . "," . $user->id . ")";
+        if ($user->role != 'admin' && $f3->get('security.restrict_access')) {
+            // TODO: restrict user/group list when user is not in any groups
+            if ($helper->getGroupUserIds()) {
+                $groupUserFilter = " AND id IN (" . implode(",", array_merge($helper->getGroupUserIds(), [$user->id])) . ")";
             }
-            if($helper->getGroupIds()){
-                $groupFilter = " AND id IN (" .  implode(",", $helper->getGroupIds()) . ")";
+            if ($helper->getGroupIds()) {
+                $groupFilter = " AND id IN (" . implode(",", $helper->getGroupIds()) . ")";
             }
         }
 
-        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'". $groupUserFilter , array("order" => "name ASC")));
-        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'" . $groupFilter , array("order" => "name ASC")));
+        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'" . $groupUserFilter, array("order" => "name ASC")));
+        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'" . $groupFilter, array("order" => "name ASC")));
     }
 
     /**
@@ -529,6 +532,11 @@ class Issues extends \Controller
 
         if (!$issue->id) {
             $f3->error(404, "Issue does not exist");
+            return;
+        }
+
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
             return;
         }
 
@@ -552,6 +560,11 @@ class Issues extends \Controller
 
         if (!$issue->id) {
             $f3->error(404, "Issue does not exist");
+            return;
+        }
+
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
             return;
         }
 
@@ -584,6 +597,11 @@ class Issues extends \Controller
             return;
         }
 
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
+            return;
+        }
+
         $new_issue = $issue->duplicate();
 
         if ($new_issue->id) {
@@ -602,17 +620,12 @@ class Issues extends \Controller
     {
         $f3 = \Base::instance();
 
-        //remove parent if user has no rights to it
-        $validateUser = $f3->get("user_obj");
-        if (( $f3->get("POST.parent_id")) && !($validateUser->role == 'admin')) {
-            $helper = \Helper\Dashboard::instance();
-            $groupString = implode(",", $helper->getGroupIds()) . "," . $validateUser->id;
-            $searchFilter = " id = " . $f3->get("POST.parent_id") . " AND owner_id IN (". $groupString .")";
-            //$searchFilter = "id = 10" . $issue->id ;
-            $parentIssue = (new \Model\Issue())->find($searchFilter);
-        }
-        if(!$parentIssue){
-            $f3->set("POST.parent_id", null);
+        // Remove parent if user has no rights to it
+        if ($f3->get("POST.parent_id")) {
+            $parentIssue = (new \Model\Issue())->load(intval($f3->get("POST.parent_id")));
+            if (!$parentIssue->allowAccess()) {
+                $f3->set("POST.parent_id", null);
+            }
         }
 
         $post = array_map("trim", $f3->get("POST"));
@@ -623,7 +636,6 @@ class Issues extends \Controller
         if (!$issue->id) {
             return $issue;
         }
-        ////////////////////////////////////////////////////
 
         // Diff contents and save what's changed.
         $hashState = json_decode($post["hash_state"]);
@@ -698,21 +710,13 @@ class Issues extends \Controller
             $data['author_id'] = $this->_userId;
         }
 
-        ////////////////////////////////////////////////////
-        //remove parent if user has no rights to it
-        $validateUser = $f3->get("user_obj");
-        if (($data['parent_id']) && !($validateUser->role == 'admin')) {
-            $helper = \Helper\Dashboard::instance();
-            $groupString = implode(",", $helper->getGroupIds()) . "," . $validateUser->id;
-            $searchFilter = " id = " . $data['parent_id']  . " AND owner_id IN (". $groupString .")";
-            //$searchFilter = "id = " . $data['id'];
-            $parentIssue = (new \Model\Issue())->find($searchFilter);
+        // Remove parent if user has no rights to it
+        if (!empty($data['parent_id'])) {
+            $parentIssue = (new \Model\Issue())->load(intval($data['parent_id']));
+            if (!$parentIssue->allowAccess()) {
+                $data['parent_id'] = null;
+            }
         }
-        if(!$parentIssue)
-        {
-            $data['parent_id']  = null;
-        }
-        ////////////////////////////////////////////////////
 
         $issue = \Model\Issue::create($data, !!$f3->get("POST.notify"));
         if ($originalAuthor) {
@@ -765,11 +769,7 @@ class Issues extends \Controller
         $issue->load(array("id=?", $params["id"]));
 
         // load issue if user is admin, otherwise load by group access
-        $user = $f3->get("user_obj");
-        $helper = \Helper\Dashboard::instance();
-        $userGroups = $helper->getGroupIds();
-        if (!$issue->id || ($issue->deleted_date && !($user->role == 'admin'))
-                || !(($user->role == 'admin') || in_array($issue->owner_id, $userGroups) || ($issue->owner_id == $user->id))) {
+        if (!$issue->id || !$issue->allowAccess()) {
             $f3->error(404);
             return;
         }
@@ -947,29 +947,33 @@ class Issues extends \Controller
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
-        if ($issue->id) {
-            $f3->set("parent", $issue);
-
-            $issues = new \Model\Issue\Detail();
-            if ($exclude = $f3->get("GET.exclude")) {
-                $searchparams = array("parent_id = ? AND id != ? AND deleted_date IS NULL", $issue->id, $exclude);
-            } else {
-                $searchparams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
-            }
-            $orderparams = array("order" => "status_closed, priority DESC, due_date");
-            $f3->set("issues", $issues->find($searchparams, $orderparams));
-
-            $searchparams[0] = $searchparams[0]  . " AND status_closed = 0";
-            $openissues = $issues->count($searchparams);
-
-            $this->_printJson(array(
-                "total" => count($f3->get("issues")),
-                "open" => $openissues,
-                "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/related.html"))
-            ));
-        } else {
-            $f3->error(404);
+        if (!$issue->id) {
+            return $f3->error(404);
         }
+
+        if (!$issue->allowAccess()) {
+            return $f3->error(403);
+        }
+
+        $f3->set("parent", $issue);
+
+        $issues = new \Model\Issue\Detail();
+        if ($exclude = $f3->get("GET.exclude")) {
+            $searchParams = array("parent_id = ? AND id != ? AND deleted_date IS NULL", $issue->id, $exclude);
+        } else {
+            $searchParams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
+        }
+        $orderParams = array("order" => "status_closed, priority DESC, due_date");
+        $f3->set("issues", $issues->find($searchParams, $orderParams));
+
+        $searchParams[0] = $searchParams[0] . " AND status_closed = 0";
+        $openIssues = $issues->count($searchParams);
+
+        $this->_printJson(array(
+            "total" => count($f3->get("issues")),
+            "open" => $openIssues,
+            "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/related.html"))
+        ));
     }
 
     /**
@@ -1220,10 +1224,10 @@ class Issues extends \Controller
 
         // load search for all issues if user is admin, otherwise load by group access
         $user = $f3->get("user_obj");
-        if (!($user->role == 'admin')) {
+        if ($user->role != 'admin') {
             $helper = \Helper\Dashboard::instance();
-            $groupString = implode(",", $helper->getGroupIds()) . "," . $user->id;
-            $where[0] .= " AND (owner_id IN (". $groupString ."))";
+            $groupString = implode(",", array_merge($helper->getGroupIds(), [$user->id]));
+            $where[0] .= " AND (owner_id IN (" . $groupString . "))";
         }
 
         $issue_page = $issues->paginate($args["page"], 50, $where, array("order" => "created_date DESC, id DESC"));
@@ -1353,16 +1357,13 @@ class Issues extends \Controller
             $f3->error(400);
         }
 
-        //determine the search string if user is not admin
         $user = $f3->get("user_obj");
-        if (!($user->role == 'admin')) {
+        $searchFilter = "";
+        if ($user->role != 'admin' && $f3->get('security.restrict_access')) {
+            // Determine the search string if user is not admin
             $helper = \Helper\Dashboard::instance();
-            $groupString = implode(",", $helper->getGroupIds()) . "," . $user->id;
-            $searchFilter = "(owner_id IN (". $groupString .")) AND";
-        }
-        else{
-            //leave filter empty
-            $searchFilter = "";
+            $groupString = implode(",", array_merge($helper->getGroupIds(), [$user->id]));
+            $searchFilter = "(owner_id IN (" . $groupString . ")) AND ";
         }
 
         $term = trim($f3->get('GET.q'));

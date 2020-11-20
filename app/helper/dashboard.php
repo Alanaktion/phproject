@@ -39,7 +39,7 @@ class Dashboard extends \Prefab
 
     public function getGroupIds()
     {
-        if ($this->_groupIds) {
+        if ($this->_groupIds !== null) {
             return $this->_groupIds;
         }
         $f3 = \Base::instance();
@@ -52,15 +52,12 @@ class Dashboard extends \Prefab
 
     public function getGroupUserIds()
     {
-        if ($this->_groupUserIds) {
+        if ($this->_groupUserIds !== null) {
             return $this->_groupUserIds;
         }
-        $f3 = \Base::instance();
         $groups = new \Model\User\Group();
-        
-        $groupString = implode(",", $this->getGroupIds()) ;     
-
-        foreach ($groups->find(array("group_id IN (" . $groupString  . ")"  ) ) as $r) {
+        $groupString = implode(",", $this->getGroupIds());
+        foreach ($groups->find(array("group_id IN (" . $groupString . ")")) as $r) {
             $this->_groupUserIds[] = $r->user_id;
         }
         return $this->_groupUserIds;

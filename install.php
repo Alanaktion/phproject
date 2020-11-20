@@ -89,6 +89,7 @@ if ($_POST) {
         \Model\Config::setVal('site.public_registration', 0);
         \Model\Config::setVal('security.block_ccs', 0);
         \Model\Config::setVal('security.min_pass_len', 6);
+        \Model\Config::setVal('security.restrict_access', 0);
         \Model\Config::setVal('issue_type.task', 1);
         \Model\Config::setVal('issue_type.project', 2);
         \Model\Config::setVal('issue_type.bug', 3);

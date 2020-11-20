@@ -608,4 +608,31 @@ class Issue extends \Model
             "hours_total" => $hoursTotal,
         ];
     }
+
+    /**
+     * Check if the current/given should be allowed access to the issue.
+     * @return bool
+     */
+    public function allowAccess(\Model\User $user = null): bool
+    {
+        $f3 = \Base::instance();
+        if ($user === null) {
+            $user = $f3->get("user_obj");
+        }
+
+        if ($user->role == 'admin') {
+            return true;
+        }
+
+        if ($this->deleted_date) {
+            return false;
+        }
+
+        if (!$f3->get('security.restrict_access')) {
+            return true;
+        }
+
+        $helper = \Helper\Dashboard::instance();
+        return ($this->owner_id == $user->id) || in_array($this->owner_id, $helper->getGroupIds());
+    }
 }

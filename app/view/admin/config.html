@@ -198,6 +198,17 @@
                             </label>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="security-restrict_access" value="1" {{ @security.restrict_access ? 'checked' : '' }} aria-describedby="restrictIssueHelp">
+                                {{ @dict.restrict_access }}
+                            </label>
+                        </div>
+                        <span id="restrictIssueHelp" class="help-block">
+                            {{ @dict.restrict_access_detail }}
+                        </span>
+                    </div>
 
                     <h3>{{ @dict.general }}</h3>
                     <div class="form-group">
