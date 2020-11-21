@@ -45,7 +45,7 @@ class Cli extends \Prefab
         $result = [];
         foreach ($keys as $o) {
             $key = rtrim($o, ':');
-            $result[$key] = $data[$key] ?? $options[$key];
+            $result[$key] = $data[$key] ?? $options[$o];
         }
         return $result;
     }
