@@ -11,8 +11,12 @@ before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS phproject;'
 install:
   - composer install --no-ansi --no-interaction
+  - wget -O phpunit https://phar.phpunit.de/phpunit-8.phar
+  - chmod +x phpunit
 before_script:
   - if find . -name "*.php" ! -path "./vendor/*"  -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi
+  - ./phpunit --version
 script:
   - php vendor/bin/phpcs
   - php install.php --site-name=Test --site-url=http://localhost/ --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=127.0.0.1 --db-user=root
+  - ./phpunit

@@ -250,7 +250,7 @@ class Issues extends \Controller\Api
             $issue->save();
         }
 
-        $this->printJson(array("updated_fields" => $updated, "issue" => $this->_issueMultiArray($issue)));
+        $this->_printJson(array("updated_fields" => $updated, "issue" => $this->_issueMultiArray($issue)));
     }
 
     // Get a single issue's details
