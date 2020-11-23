@@ -57,7 +57,11 @@ class StringTest extends TestCase
     {
         $helper = \Helper\Update::instance();
         $time = '2016-01-01 12:34:56';
+        $f3 = \Base::instance();
+        $tz = $f3->get('TZ');
+        $f3->set('TZ', 'America/Phoenix');
         $result = $helper->convertClosedDate($time);
+        $f3->set('TZ', $tz);
         $this->assertEquals('Fri, Jan 1, 2016 5:34am', $result);
     }
 }

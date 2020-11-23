@@ -18,5 +18,5 @@ before_script:
   - ./phpunit --version
 script:
   - php vendor/bin/phpcs
-  - php install.php --site-name=Test --site-url=http://localhost/ --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=127.0.0.1 --db-user=root
+  - php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=127.0.0.1 --db-user=root
   - ./phpunit
