@@ -42,5 +42,5 @@ jobs:
 
     - name: PHPUnit
       run: |
-        curl https://phar.phpunit.de/phpunit-8.phar > phpunit.phar
+        curl -L -o phpunit.phar https://phar.phpunit.de/phpunit-8.phar
         php phpunit.phar
