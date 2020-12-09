@@ -32,7 +32,7 @@ jobs:
 
     - name: Composer
       run: |
-        curl https://getcomposer.org/download/2.0.6/composer.phar > composer.phar
+        curl -o composer.phar -L https://getcomposer.org/composer-stable.phar
         php composer.phar install --no-ansi --no-interaction
 
     - run: vendor/bin/phpcs
@@ -42,5 +42,47 @@ jobs:
 
     - name: PHPUnit
       run: |
-        curl -L -o phpunit.phar https://phar.phpunit.de/phpunit-8.phar
+        curl -o phpunit.phar -L https://phar.phpunit.de/phpunit-8.phar
+        php phpunit.phar
+
+  php8:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/php-actions/php-build:v1
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: phproject
+        ports:
+          - 3306
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - run: switch-php-version 8.0
+
+    - name: Syntax check
+      run: if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi
+
+    - name: Composer
+      run: |
+        curl -o composer.phar -L https://getcomposer.org/composer-stable.phar
+        php composer.phar install --no-ansi --no-interaction
+
+    - run: vendor/bin/phpcs
+
+    - name: Install Phproject
+      run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=mysql --db-user=root
+
+    - name: PHPUnit
+      run: |
+        curl -o phpunit.phar -L https://phar.phpunit.de/phpunit-8.phar
         php phpunit.phar
