@@ -93,7 +93,9 @@ if (
 
         // Run installation scripts
         $install_db = file_get_contents("db/database.sql");
-        $db->exec(explode(";", $install_db));
+        foreach (explode(";", $install_db) as $stmt) {
+            $db->exec($stmt);
+        }
 
         // Create admin user
         $f3->set("db.instance", $db);

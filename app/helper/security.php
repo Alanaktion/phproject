@@ -103,7 +103,9 @@ class Security extends \Prefab
         if (file_exists("db/{$version}.sql")) {
             $update_db = file_get_contents("db/{$version}.sql");
             $db = $f3->get("db.instance");
-            $db->exec(explode(";", $update_db));
+            foreach (explode(";", $update_db) as $stmt) {
+                $db->exec($stmt);
+            }
             \Cache::instance()->reset();
             $f3->set("success", " Database updated to version: {$version}");
         } else {
