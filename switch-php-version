@@ -1,0 +1,27 @@
+#!/bin/bash
+# Based on https://github.com/php-actions/php-build/blob/197baf6a90f033bdcd2d08a1e00b190ce2f4f6b7/switch-php-version
+set -e
+
+if [ "$1" = "latest" ]
+then
+	version=8.0
+else
+	version="$1"
+fi
+
+# Re-add missing decimal on whole-numbers from yaml conversion
+if [[ $version != *"."* ]]; then
+	version="$version.0"
+fi
+
+php_bin="/etc/php/$version/bin/php"
+
+if test -f $php_bin
+then
+	rm -f /usr/bin/php
+	ln -s "$php_bin" "/usr/bin/php"
+	echo "Successfully linked $php_bin"
+else
+	echo "Error linking $php_bin: version doesn't exist"
+	exit 1
+fi
