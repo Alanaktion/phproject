@@ -2,6 +2,6 @@
     "recommendations": [
         "bmewburn.vscode-intelephense-client",
         "felixfbecker.php-debug",
-        "ikappas.phpcs"
+        "shevaua.phpcs"
     ]
 }
