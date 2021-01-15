@@ -69,7 +69,7 @@
                 </false>
             </check>
             <h4>{{ @dict.incoming_mail }}</h4>
-            <check if="{{ @imap.hostname }}">
+            <check if="{{ @@imap.hostname }}">
                 <true>
                     <b>{{ @dict.hostname }}:</b> {{ @imap.hostname }}<br>
                     <b>{{ @dict.username }}:</b> {{ @imap.username }}<br>
