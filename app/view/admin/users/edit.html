@@ -62,7 +62,7 @@
                 <label for="rank" class="col-md-4 col-form-label label-sm">{{ @dict.rank }}</label>
                 <div class="col-md-8">
                     <select class="form-control form-control-sm" id="rank" name="rank">
-                        <repeat group="{{ @user.rank >= \Model\User::RANK_SUPER ? range(0, 5) : range(0, 4) }}" value="{{ @rank }}">
+                        <repeat group="{{ ((@user.rank >= \Model\User::RANK_SUPER) ? range(0, 5) : range(0, 4)) }}" value="{{ @rank }}">
                             <option value="{{ @rank }}" {{ (empty(@this_user) && @rank == \Model\User::RANK_USER || @@this_user.rank == @rank) ? "selected" : "" }}>{{ @dict.ranks[@rank] }} &mdash; {{ @dict.rank_permissions[@rank] }}</option>
                         </repeat>
                     </select>
