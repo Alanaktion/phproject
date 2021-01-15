@@ -6,7 +6,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/php-actions/php-build:v1
+      image: alanaktion/phproject-ci
 
     strategy:
       matrix:
@@ -46,14 +46,17 @@ jobs:
       run: if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi
 
     - name: Composer
-      run: |
-        curl -o composer.phar -L https://getcomposer.org/composer-stable.phar
-        php composer.phar install --no-ansi --no-interaction
+      run: composer install --no-ansi --no-interaction
 
     - run: vendor/bin/phpcs
 
     - name: Install Phproject
       run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=mysql --db-user=root
+
+    - name: Build front-end files
+      run: |
+        npm ci
+        npm run development
 
     - name: PHPUnit
       run: |
