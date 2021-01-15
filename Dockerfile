@@ -26,5 +26,5 @@ RUN curl -o /usr/local/bin/composer -L https://getcomposer.org/composer-stable.p
 RUN chmod +x /usr/local/bin/composer
 
 # Install node+npm
-RUN curl -sL https://deb.nodesource.com/setup_14.x | -E bash -
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs

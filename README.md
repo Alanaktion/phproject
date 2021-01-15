@@ -22,7 +22,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     container:
-      image: alanaktion/phproject-ci:v1
+      image: alanaktion/phproject-ci
 
     strategy:
       matrix:
