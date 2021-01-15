@@ -3,3 +3,6 @@
 /vendor
 config.php
 plugin
+/vendor/
+/phpunit
+*.cache

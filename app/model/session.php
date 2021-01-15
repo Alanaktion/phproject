@@ -44,7 +44,7 @@ class Session extends \Model
     public function loadCurrent(): Session
     {
         $f3 = \Base::instance();
-        $token = $f3->get("COOKIE.".self::COOKIE_NAME);
+        $token = $f3->get("COOKIE." . self::COOKIE_NAME);
         if ($token) {
             $this->load(array("token = ?", $token));
             $lifetime = $f3->get("session_lifetime");
@@ -85,7 +85,7 @@ class Session extends \Model
             $log->write("Setting current session: " . json_encode($this->cast()));
         }
 
-        $f3->set("COOKIE.".self::COOKIE_NAME, $this->token, $f3->get("session_lifetime"));
+        $f3->set("COOKIE." . self::COOKIE_NAME, $this->token, $f3->get("session_lifetime"));
         return $this;
     }
 
@@ -107,8 +107,8 @@ class Session extends \Model
         }
 
         // Empty the session cookie if it matches the current token
-        if ($this->token == $f3->get("COOKIE.".self::COOKIE_NAME)) {
-            $f3->set("COOKIE.".self::COOKIE_NAME, "");
+        if ($this->token == $f3->get("COOKIE." . self::COOKIE_NAME)) {
+            $f3->set("COOKIE." . self::COOKIE_NAME, "");
         }
 
         // Delete the session row

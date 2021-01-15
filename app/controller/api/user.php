@@ -19,11 +19,11 @@ class User extends \Controller\Api
         }
 
         $result = array(
-                "id" => $group_id,
-                "name" => $user->name,
-                "username" => $user->username,
-                "email" => $user->email
-            );
+            "id" => $group_id,
+            "name" => $user->name,
+            "username" => $user->username,
+            "email" => $user->email
+        );
 
         return ($result);
     }
@@ -65,7 +65,7 @@ class User extends \Controller\Api
             $pagLimit = 30;
         }
 
-        $user = new \Model\User;
+        $user = new \Model\User();
         $result = $user->paginate(
             $f3->get("GET.offset") / $pagLimit,
             $pagLimit,
@@ -78,11 +78,11 @@ class User extends \Controller\Api
         }
 
         $this->_printJson(array(
-                "total_count" => $result["total"],
-                "limit" => $result["limit"],
-                "users" => $users,
-                "offset" => $result["pos"] * $result["limit"]
-            ));
+            "total_count" => $result["total"],
+            "limit" => $result["limit"],
+            "users" => $users,
+            "offset" => $result["pos"] * $result["limit"]
+        ));
     }
 
 
@@ -97,7 +97,7 @@ class User extends \Controller\Api
             $pagLimit = 30;
         }
 
-        $user = new \Model\User;
+        $user = new \Model\User();
         $result = $user->paginate(
             $f3->get("GET.offset") / $pagLimit,
             $pagLimit,
@@ -110,10 +110,10 @@ class User extends \Controller\Api
         }
 
         $this->_printJson(array(
-                "total_count" => $result["total"],
-                "limit" => $result["limit"],
-                "groups" => $groups,
-                "offset" => $result["pos"] * $result["limit"]
-            ));
+            "total_count" => $result["total"],
+            "limit" => $result["limit"],
+            "groups" => $groups,
+            "offset" => $result["pos"] * $result["limit"]
+        ));
     }
 }

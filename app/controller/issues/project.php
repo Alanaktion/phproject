@@ -24,14 +24,10 @@ class Project extends \Controller
     public function overview($f3, $params)
     {
         // Load issue
-        $project = new \Model\Issue\Detail;
+        $project = new \Model\Issue\Detail();
         $project->load($params["id"]);
         if (!$project->id) {
             $f3->error(404);
-            return;
-        }
-        if ($project->type_id != $f3->get("issue_type.project")) {
-            $f3->error(400, "Issue is not a project.");
             return;
         }
 
@@ -39,7 +35,7 @@ class Project extends \Controller
 
 
         // Find all nested issues
-        $model = new \Model\Issue\Detail;
+        $model = new \Model\Issue\Detail();
         $parentMap = [];
         $parents = [$project->id];
         do {
@@ -100,18 +96,14 @@ class Project extends \Controller
     public function files($f3, array $params)
     {
         // Load issue
-        $project = new \Model\Issue;
+        $project = new \Model\Issue();
         $project->load($params["id"]);
         if (!$project->id) {
             $f3->error(404);
             return;
         }
-        if ($project->type_id != $f3->get("issue_type.project")) {
-            $f3->error(400, "Issue is not a project.");
-            return;
-        }
 
-        $files = new \Model\Issue\File\Detail;
+        $files = new \Model\Issue\File\Detail();
         $issueIds = $project->descendantIds();
         $idStr = implode(',', $issueIds);
 

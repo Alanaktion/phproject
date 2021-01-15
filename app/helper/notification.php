@@ -31,11 +31,13 @@ class Notification extends \Prefab
                 $length--;
                 $lp = 0;
             } else {
-                if (ctype_cntrl($c)
+                if (
+                    ctype_cntrl($c)
                     || (ord($c) == 0x7f)
                     || (ord($c) & 0x80)
                     || ($c == '=')
-                    || (($c == ' ') && ($str[$str_index] == "\015"))) {
+                    || (($c == ' ') && ($str[$str_index] == "\015"))
+                ) {
                     if (($lp += 3) > self::QPRINT_MAXL) {
                         $ret .= '=';
                         $ret .= "\015";
@@ -79,7 +81,7 @@ class Notification extends \Prefab
 
         // Add basic headers
         $headers  = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'From: '. $f3->get("mail.from") . "\r\n";
+        $headers .= 'From: ' . $f3->get("mail.from") . "\r\n";
 
         // Build multipart message if necessary
         if ($text) {
@@ -128,14 +130,14 @@ class Notification extends \Prefab
             $log = new \Log("mail.log");
 
             // Get issue and comment data
-            $issue = new \Model\Issue;
+            $issue = new \Model\Issue();
             $issue->load($issue_id);
-            $comment = new \Model\Issue\Comment\Detail;
+            $comment = new \Model\Issue\Comment\Detail();
             $comment->load($comment_id);
 
             // Get issue parent if set
             if ($issue->parent_id) {
-                $parent = new \Model\Issue;
+                $parent = new \Model\Issue();
                 $parent->load($issue->parent_id);
                 $f3->set("parent", $parent);
             }
@@ -181,7 +183,7 @@ class Notification extends \Prefab
 
             // Get issue parent if set
             if ($issue->parent_id) {
-                $parent = new \Model\Issue;
+                $parent = new \Model\Issue();
                 $parent->load($issue->parent_id);
                 $f3->set("parent", $parent);
             }
@@ -237,14 +239,14 @@ class Notification extends \Prefab
 
             // Get issue parent if set
             if ($issue->parent_id) {
-                $parent = new \Model\Issue;
+                $parent = new \Model\Issue();
                 $parent->load($issue->parent_id);
                 $f3->set("parent", $parent);
             }
 
             // Get recipient list, conditionally removing the author
             $recipients = $this->_issue_watchers($issue_id);
-            $user = new \Model\User;
+            $user = new \Model\User();
             $user->load($issue->author_id);
             if ($user->option('disable_self_notifications')) {
                 $recipients = array_diff($recipients, array($user->email));
@@ -278,9 +280,9 @@ class Notification extends \Prefab
             $log = new \Log("mail.log");
 
             // Get issue and comment data
-            $issue = new \Model\Issue;
+            $issue = new \Model\Issue();
             $issue->load($issue_id);
-            $file = new \Model\Issue\File\Detail;
+            $file = new \Model\Issue\File\Detail();
             $file->load($file_id);
 
             // This should catch a bug I can't currently find the source of. --Alan
@@ -290,7 +292,7 @@ class Notification extends \Prefab
 
             // Get issue parent if set
             if ($issue->parent_id) {
-                $parent = new \Model\Issue;
+                $parent = new \Model\Issue();
                 $parent->load($issue->parent_id);
                 $f3->set("parent", $parent);
             }
@@ -325,7 +327,7 @@ class Notification extends \Prefab
     {
         $f3 = \Base::instance();
         if ($f3->get("mail.from")) {
-            $user = new \Model\User;
+            $user = new \Model\User();
             $user->load($user_id);
 
             if (!$user->id) {

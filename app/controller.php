@@ -15,7 +15,6 @@ abstract class Controller
                 return $id;
             } else {
                 $f3->error(403);
-                $f3->unload();
                 return false;
             }
         } else {
@@ -37,7 +36,6 @@ abstract class Controller
             } else {
                 $f3->reroute("/login?to=" . urlencode($f3->get("PATH")) . urlencode("?" . http_build_query($_GET)));
             }
-            $f3->unload();
             return false;
         }
     }
@@ -56,7 +54,6 @@ abstract class Controller
             return $id;
         } else {
             $f3->error(403);
-            $f3->unload();
             return false;
         }
     }

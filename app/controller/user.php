@@ -64,7 +64,7 @@ class User extends \Controller
         $f3->set("unused_widgets", $allWidgets);
 
         // Get current sprint if there is one
-        $sprint = new \Model\Sprint;
+        $sprint = new \Model\Sprint();
         $localDate = date('Y-m-d', \Helper\View::instance()->utc2local());
         $sprint->load(array("? BETWEEN start_date AND end_date", $localDate));
         $f3->set("sprint", $sprint);
@@ -261,7 +261,7 @@ class User extends \Controller
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $allowedTypes = ['image/jpeg', 'image/gif', 'image/png', 'image/bmp'];
         if (!in_array(finfo_file($finfo, $_FILES['avatar']['tmp_name']), $allowedTypes)) {
-            $f3->error(400);
+            $f3->error(415);
             return;
         }
         finfo_close($finfo);
@@ -304,7 +304,7 @@ class User extends \Controller
     {
         $this->_requireLogin();
 
-        $user = new \Model\User;
+        $user = new \Model\User();
         $user->load(array("username = ?", $params["username"]));
 
         if ($user->id && (!$user->deleted_date || $f3->get("user.rank") >= 3)) {
@@ -312,19 +312,19 @@ class User extends \Controller
             $f3->set("this_user", $user);
 
             // Extra arrays required for bulk update
-            $status = new \Model\Issue\Status;
+            $status = new \Model\Issue\Status();
             $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
             $f3->set("users", $user->getAll());
             $f3->set("groups", $user->getAllGroups());
 
-            $priority = new \Model\Issue\Priority;
+            $priority = new \Model\Issue\Priority();
             $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
-            $type = new \Model\Issue\Type;
+            $type = new \Model\Issue\Type();
             $f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
-            $issue = new \Model\Issue\Detail;
+            $issue = new \Model\Issue\Detail();
             $f3->set("created_issues", $issue->paginate(
                 0,
                 200,
@@ -391,7 +391,7 @@ class User extends \Controller
     {
         $this->_requireLogin();
 
-        $user = new \Model\User;
+        $user = new \Model\User();
         $user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
 
         if ($user->id) {

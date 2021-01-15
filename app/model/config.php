@@ -34,7 +34,7 @@ class Config extends \Model
 
         // Set some basic config values if they're not already there
         if (!in_array("site.theme", $foundAttributes)) {
-            \Model\Config::setVal('site.theme', 'css/bootstrap-phproject.css');
+            self::setVal('site.theme', 'css/bootstrap-phproject.css');
         }
         if (!in_array("site.name", $foundAttributes)) {
             self::importAll();
@@ -53,13 +53,13 @@ class Config extends \Model
         $root = $f3->get("ROOT") . $f3->get("BASE");
 
         // Import existing config
-        $ini = parse_ini_file($root."/config.ini");
-        $ini = $ini + parse_ini_file($root."/config-base.ini");
+        $ini = parse_ini_file($root . "/config.ini");
+        $ini = $ini + parse_ini_file($root . "/config-base.ini");
         foreach ($ini as $key => $val) {
             if (substr($key, 0, 3) == "db.") {
                 continue;
             }
-            $conf = new Config;
+            $conf = new Config();
             $conf->attribute = $key;
             $conf->value = $val;
             $conf->save();
@@ -85,7 +85,7 @@ class Config extends \Model
 
         // Move the config from INI to PHP
         $root = $f3->get("ROOT") . $f3->get("BASE");
-        $ini = parse_ini_file($root."/config.ini");
+        $ini = parse_ini_file($root . "/config.ini");
         $data = "<?php\nreturn " . var_export($ini, true) . ";\n";
         file_put_contents("$root/config.php", $data);
         unlink("$root/config.ini");

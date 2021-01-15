@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `config` (
   `attribute` varchar(255)  NULL,
   `value` varchar(255)  NULL,
   UNIQUE KEY `attribute` (`attribute`)
-)  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '0.0.0');
 

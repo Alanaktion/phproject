@@ -57,7 +57,7 @@ class Update extends \Prefab
         if (isset($this->cache['user.' . $id])) {
             $user = $this->cache['user.' . $id];
         } else {
-            $user = new \Model\User;
+            $user = new \Model\User();
             $user->load($id);
             $this->cache['user.' . $id] = $user;
         }
@@ -94,7 +94,7 @@ class Update extends \Prefab
         if (isset($this->cache['status.' . $id])) {
             $status = $this->cache['status.' . $id];
         } else {
-            $status = new \Model\Issue\Status;
+            $status = new \Model\Issue\Status();
             $status->load($id);
             $this->cache['status.' . $id] = $status;
         }
@@ -111,7 +111,7 @@ class Update extends \Prefab
         if (isset($this->cache['priority.' . $value])) {
             $priority = $this->cache['priority.' . $value];
         } else {
-            $priority = new \Model\Issue\Priority;
+            $priority = new \Model\Issue\Priority();
             $priority->load(array("value = ?", $value));
             $this->cache['priority.' . $value] = $priority;
         }
@@ -128,7 +128,7 @@ class Update extends \Prefab
         if (isset($this->cache['issue.' . $id])) {
             $issue = $this->cache['issue.' . $id];
         } else {
-            $issue = new \Model\Issue;
+            $issue = new \Model\Issue();
             $issue->load($id);
             $this->cache['issue.' . $id] = $issue;
         }
@@ -155,7 +155,7 @@ class Update extends \Prefab
         if (isset($this->cache['sprint.' . $id])) {
             $sprint = $this->cache['sprint.' . $id];
         } else {
-            $sprint = new \Model\Sprint;
+            $sprint = new \Model\Sprint();
             $sprint->load($id);
             $this->cache['sprint.' . $id] = $sprint;
         }
@@ -174,7 +174,7 @@ class Update extends \Prefab
         if (isset($this->cache['type.' . $id])) {
             $type = $this->cache['type.' . $id];
         } else {
-            $type = new \Model\Issue\Type;
+            $type = new \Model\Issue\Type();
             $type->load($id);
             $this->cache['type.' . $id] = $type;
         }

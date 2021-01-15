@@ -119,7 +119,7 @@ class Admin extends \Controller
 
         if (!headers_sent()) {
             header('Content-Type: application/json');
-            header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 3600*12) . ' GMT');
+            header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 3600 * 12) . ' GMT');
         }
         if (!empty($return->description)) {
             // Render markdown description as HTML
@@ -137,7 +137,7 @@ class Admin extends \Controller
      */
     public function config(\Base $f3)
     {
-        $status = new \Model\Issue\Status;
+        $status = new \Model\Issue\Status();
         $f3->set("issue_statuses", $status->find());
 
         $f3->set("title", $f3->get("dict.configuration"));
@@ -161,7 +161,7 @@ class Admin extends \Controller
             return;
         }
 
-        $config = new \Model\Config;
+        $config = new \Model\Config();
         $config->load(array("attribute = ?", $attribute));
 
         $config->attribute = $attribute;
@@ -300,7 +300,7 @@ class Admin extends \Controller
     public function user_save(\Base $f3)
     {
         $security = \Helper\Security::instance();
-        $user = new \Model\User;
+        $user = new \Model\User();
 
         try {
             // Check for existing users with same info
@@ -685,7 +685,7 @@ class Admin extends \Controller
     {
         $f3->set("title", $f3->get("dict.sprints"));
 
-        $sprint = new \Model\Sprint;
+        $sprint = new \Model\Sprint();
         $sprint->load($params["id"]);
         if (!$sprint->id) {
             $f3->error(404);

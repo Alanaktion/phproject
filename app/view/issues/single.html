@@ -3,7 +3,7 @@
 <head>
     <include href="blocks/head.html" />
     <check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
-        <link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/simplemde.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/easymde.min.css">
     </check>
 </head>
 <body>
@@ -89,7 +89,7 @@
     </div>
     <div class="row">
         <div class="col-lg-5">
-            <check if="{{ @issue.type_id == @issue_type.project }}">
+            <check if="{{ @type.role == 'project' }}">
                 <p><a href="{{ @BASE }}/issues/project/{{ @issue.id }}" class="btn btn-secondary btn-sm">{{ @dict.project_overview }}</a></p>
             </check>
 
@@ -407,7 +407,7 @@
     <script src="{{ @BASE }}/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
 </check>
 <check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
-    <script src="{{ @BASE }}/js/simplemde.min.js"></script>
+    <script src="{{ @BASE }}/js/easymde.min.js"></script>
 </check>
 <script type="text/javascript">
 $(function() {
@@ -610,14 +610,14 @@ $(function() {
             }
             if(!hasClickedEdit) {
                 hasClickedEdit = true;
-                if('SimpleMDE' in window) {
-                    var simplemde = new SimpleMDE({
+                if ('EasyMDE' in window) {
+                    var mde = new EasyMDE({
                         autoDownloadFontAwesome: false,
                         element: $('input[name="description"]')[0],
                         toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
                         forceSync: true
                     });
-                    simplemde.render();
+                    mde.render();
                 }
             }
             e.preventDefault();

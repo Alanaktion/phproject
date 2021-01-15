@@ -26,13 +26,13 @@ if (is_file("config.php")) {
 }
 
 // Check PCRE version
-if ((float)PCRE_VERSION < 7.9) {
+if (version_compare((float)PCRE_VERSION, '7.9', '<')) {
     $f3->set("error", "PCRE version is out of date");
 }
 
 // Check for MySQL PDO
 if (!in_array("mysql", PDO::getAvailableDrivers())) {
-    $f3->set("error", "MySQL PDO driver is not avaialble.");
+    $f3->set("error", "MySQL PDO driver is not available.");
 }
 
 // Check for GD library
@@ -41,8 +41,51 @@ if (!function_exists("imagecreatetruecolor")) {
 }
 
 // Run installation process if post data received
-if ($_POST) {
-    $post = $_POST;
+if (
+    ($_POST && !$f3->exists('success') && !$f3->exists('error'))
+    || (php_sapi_name() == 'cli')
+) {
+    if (php_sapi_name() == 'cli') {
+        if ($f3->get('error')) {
+            echo $f3->get('error'), PHP_EOL;
+            exit(3);
+        }
+
+        $longOpts = [
+            'site-url:' => null,
+            'site-name:' => null,
+            'timezone::' => 'Etc/UTC',
+            'from-email::' => null,
+            'lang::' => 'en',
+            'parser::' => 'markdown',
+            'disable-registration' => false,
+            'db-host::' => 'localhost',
+            'db-port::' => 3306,
+            'db-user::' => 'root',
+            'db-password::' => '',
+            'db-name::' => 'phproject',
+            'admin-username:' => null,
+            'admin-email:' => null,
+            'admin-password:' => null,
+        ];
+        $helper = \Helper\Cli::instance();
+        $data = $helper->parseOptions($longOpts, $argv);
+        if ($data === null) {
+            return;
+        }
+
+        // Map data to expected $post values
+        $post = $data;
+        $post['db-pass'] = $data['db-password'];
+        $post['site-timezone'] = $data['timezone'];
+        $post['mail-from'] = $data['from-email'];
+        $post['site-public_registration'] = !$data['disable-registration'];
+        $post['user-username'] = $data['admin-username'];
+        $post['user-email'] = $data['admin-email'];
+        $post['user-password'] = $data['admin-password'];
+    } else {
+        $post = $_POST;
+    }
 
     try {
         // Connect to database
@@ -54,12 +97,14 @@ if ($_POST) {
 
         // Run installation scripts
         $install_db = file_get_contents("db/database.sql");
-        $db->exec(explode(";", $install_db));
+        foreach (explode(";", $install_db) as $stmt) {
+            $db->exec($stmt);
+        }
 
         // Create admin user
         $f3->set("db.instance", $db);
         $security = \Helper\Security::instance();
-        $user = new \Model\User;
+        $user = new \Model\User();
         $user->role = "admin";
         $user->rank = \Model\User::RANK_SUPER;
         $user->name = "Admin";
@@ -93,6 +138,7 @@ if ($_POST) {
         \Model\Config::setVal('site.public_registration', 0);
         \Model\Config::setVal('security.block_ccs', 0);
         \Model\Config::setVal('security.min_pass_len', 6);
+        \Model\Config::setVal('security.restrict_access', 0);
         \Model\Config::setVal('issue_type.task', 1);
         \Model\Config::setVal('issue_type.project', 2);
         \Model\Config::setVal('issue_type.bug', 3);
@@ -128,16 +174,23 @@ if ($_POST) {
             'db.user' => $post['db-user'],
             'db.pass' => $post['db-pass'],
             'db.name' => $post['db-name'],
-            'site.url' => $f3->get('SCHEME') . '://' . $f3->get('HOST') . $f3->get('BASE') . '/',
+            'site.url' => $post['site-url'] ?? ($f3->get('SCHEME') . '://' . $f3->get('HOST') . $f3->get('BASE') . '/'),
         ];
         $data = "<?php\nreturn " . var_export($config, true) . ";\n";
         file_put_contents("config.php", $data);
 
         $f3->set("success", "Installation complete.");
     } catch (PDOException $e) {
-        $f3->set("warning", $e->getMessage());
+        if (php_sapi_name() == 'cli') {
+            echo $e->getMessage(), PHP_EOL;
+            exit(2);
+        } else {
+            $f3->set("warning", $e->getMessage());
+        }
     }
 }
 
 // Render installer template
-echo Template::instance()->render("install.html");
+if (php_sapi_name() != 'cli') {
+    echo Template::instance()->render("install.html");
+}

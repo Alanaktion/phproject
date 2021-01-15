@@ -22,8 +22,8 @@ class Watcher extends \Model
     public function findby_watcher(int $userId, string $orderby = 'id')
     {
         return $this->db->exec(
-            'SELECT i.* FROM issue_detail i JOIN issue_watcher w on i.id = w.issue_id '.
-            'WHERE w.user_id = :user_id AND  i.deleted_date IS NULL AND i.closed_date IS NULL AND i.status_closed = 0 AND i.owner_id != :user_id2 '.
+            'SELECT i.* FROM issue_detail i JOIN issue_watcher w on i.id = w.issue_id ' .
+            'WHERE w.user_id = :user_id AND i.deleted_date IS NULL AND i.closed_date IS NULL AND i.status_closed = 0 AND i.owner_id != :user_id2 ' .
             'ORDER BY :orderby',
             [':user_id' => $userId, ':user_id2' => $userId, ':orderby' => $orderby]
         );

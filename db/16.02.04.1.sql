@@ -5,7 +5,7 @@ CREATE TABLE `issue_backlog`(
 	`issues` BLOB NOT NULL,
 	PRIMARY KEY (`id`),
 	CONSTRAINT `issue_backlog_user_id` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=INNODB CHARSET=utf8;
+) ENGINE=INNODB CHARSET=utf8mb4;
 
 # Update version
 UPDATE `config` SET `value` = '16.02.04.1' WHERE `attribute` = 'version';

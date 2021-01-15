@@ -21,7 +21,7 @@ class Backlog extends \Controller
         $sprint_model = new \Model\Sprint();
         $sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
 
-        $type = new \Model\Issue\Type;
+        $type = new \Model\Issue\Type();
         $projectTypes = $type->find(["role = ?", "project"]);
         $f3->set("project_types", $projectTypes);
         $typeIds = [];
@@ -41,7 +41,7 @@ class Backlog extends \Controller
 
             // Add sorted projects
             $sprintBacklog = [];
-            $sortOrder = new \Model\Issue\Backlog;
+            $sortOrder = new \Model\Issue\Backlog();
             $sortOrder->load(array("sprint_id = ?", $sprint->id));
             $sortArray = [];
             if ($sortOrder->id) {
@@ -88,7 +88,7 @@ class Backlog extends \Controller
 
         // Add sorted projects
         $backlog = [];
-        $sortOrder = new \Model\Issue\Backlog;
+        $sortOrder = new \Model\Issue\Backlog();
         $sortOrder->load(array("sprint_id IS NULL"));
         $sortArray = [];
         if ($sortOrder->id) {
@@ -157,7 +157,7 @@ class Backlog extends \Controller
     public function sort($f3)
     {
         $this->_requireLogin(\Model\User::RANK_MANAGER);
-        $backlog = new \Model\Issue\Backlog;
+        $backlog = new \Model\Issue\Backlog();
         if ($f3->get("POST.sprint_id")) {
             $backlog->load(array("sprint_id = ?", $f3->get("POST.sprint_id")));
             $backlog->sprint_id = $f3->get("POST.sprint_id");
@@ -177,7 +177,7 @@ class Backlog extends \Controller
         $sprint_model = new \Model\Sprint();
         $sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date DESC"));
 
-        $type = new \Model\Issue\Type;
+        $type = new \Model\Issue\Type();
         $projectTypes = $type->find(["role = ?", "project"]);
         $f3->set("project_types", $projectTypes);
         $typeIds = [];
