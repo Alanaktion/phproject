@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [7.1, 7.2, 7.3, 7.4, 8.0]
+        php: [7.2, 7.3, 7.4, 8.0]
 
     services:
       mysql:
@@ -56,7 +56,6 @@ jobs:
       run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=mysql --db-user=root
 
     - name: PHPUnit
-      if: ${{ matrix.php != 7.1 }}
       run: |
         curl -o phpunit.phar -L https://phar.phpunit.de/phpunit-8.phar
         php phpunit.phar
