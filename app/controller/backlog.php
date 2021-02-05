@@ -141,19 +141,22 @@ class Backlog extends \Controller
      */
     public function edit($f3)
     {
+        // Move project
         $post = $f3->get("POST");
         $issue = new \Model\Issue();
         $issue->load($post["id"]);
         $issue->sprint_id = empty($post["sprint_id"]) ? null : $post["sprint_id"];
         $issue->save();
-        /** @var \DB\SQL */
-        $db = $f3->get("db.instance");
-        $db->exec('UPDATE issue SET sprint_id = :sprint
-            WHERE parent_id = :parent
-            AND type_id IN (SELECT id FROM issue_types WHERE role = "task")', [
-            ':sprint' => $issue->sprint_id,
-            ':parent' => $issue->id,
+
+        // Move tasks within project
+        $tasks = $issue->find([
+            'parent_id = ? AND type_id IN (SELECT id FROM issue_types WHERE role = "task")',
+            $issue->id,
         ]);
+        foreach ($tasks as $task) {
+            $task->sprint_id = $issue->sprint_id;
+        }
+
         $this->_printJson($issue);
     }
 
