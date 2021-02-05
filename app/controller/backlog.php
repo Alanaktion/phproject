@@ -150,14 +150,13 @@ class Backlog extends \Controller
 
         // Move tasks within project
         $tasks = $issue->find([
-            'parent_id = ? AND type_id IN (SELECT id FROM issue_types WHERE role = "task")',
+            'parent_id = ? AND type_id IN (SELECT id FROM issue_type WHERE role = "task")',
             $issue->id,
         ]);
         foreach ($tasks as $task) {
             $task->sprint_id = $issue->sprint_id;
+            $task->save();
         }
-
-        $this->_printJson($issue);
     }
 
     /**
