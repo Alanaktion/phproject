@@ -146,6 +146,14 @@ class Backlog extends \Controller
         $issue->load($post["id"]);
         $issue->sprint_id = empty($post["sprint_id"]) ? null : $post["sprint_id"];
         $issue->save();
+        /** @var \DB\SQL */
+        $db = $f3->get("db.instance");
+        $db->exec('UPDATE issue SET sprint_id = :sprint
+            WHERE parent_id = :parent
+            AND type_id IN (SELECT id FROM issue_types WHERE role = "task")', [
+            ':sprint' => $issue->sprint_id,
+            ':parent' => $issue->id,
+        ]);
         $this->_printJson($issue);
     }
 
