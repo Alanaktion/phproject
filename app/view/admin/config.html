@@ -165,16 +165,16 @@
                         <legend>{{ @dict.incoming_mail }}</legend>
                         <div class="form-group">
                             <label class="control-label" for="imap-hostname">{{ @dict.mailbox }}</label>
-                            <input type="text" class="form-control input-sm" name="imap-hostname" value="{{ @imap.hostname | esc }}">
+                            <input type="text" class="form-control input-sm" name="imap-hostname" value="{{ @@imap.hostname | esc }}">
                             <span class="help-block"><a href="https://www.php.net/manual/en/function.imap-open.php#refsect1-function.imap-open-parameters" target="_blank" rel="noreferrer noopener">{{ @dict.mailbox_help }}</a></span>
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="imap-username">{{ @dict.username }}</label>
-                            <input type="text" class="form-control input-sm" name="imap-username" value="{{ @imap.username | esc }}">
+                            <input type="text" class="form-control input-sm" name="imap-username" value="{{ @@imap.username | esc }}">
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="imap-password">{{ @dict.password }}</label>
-                            <input type="text" class="form-control input-sm" name="imap-password" value="{{ str_repeat('*', strlen(@imap.password)) }}">
+                            <input type="text" class="form-control input-sm" name="imap-password" value="{{ str_repeat('*', strlen(@@imap.password)) }}">
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
@@ -201,7 +201,7 @@
                     <div class="form-group">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" name="security-restrict_access" value="1" {{ @security.restrict_access ? 'checked' : '' }} aria-describedby="restrictIssueHelp">
+                                <input type="checkbox" name="security-restrict_access" value="1" {{ (!empty(@security.restrict_access) && @security.restrict_access) ? 'checked' : '' }} aria-describedby="restrictIssueHelp">
                                 {{ @dict.restrict_access }}
                             </label>
                         </div>
