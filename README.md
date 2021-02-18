@@ -2,6 +2,8 @@
 
 This Docker image used in automated testing for Phproject. It is a general-purpose PHP image with versions 7.1-8.0 available, bundled with the latest Node.js LTS.
 
+If you're looking for a general-purpose container for running Phproject in production, try the [alanaktion/phproject](https://github.com/Alanaktion/phproject-docker) image instead. This one is meant for CI environments that need support for multiple PHP versions and package managers.
+
 ## Building
 
 To build and publish the container, use something similar to this:
