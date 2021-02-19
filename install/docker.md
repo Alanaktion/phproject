@@ -4,7 +4,7 @@ title: Install with Docker
 ---
 <h1 class="page-header">Install with Docker</h1>
 
-If you'd prefer to run your Phproject instance in a Docker container, this is fairly simple to do with the official PHP image. If you need support for thumbnails and avatar images, you may need an alternate image that includes the `gd` library. We plan to provide an optimized custom PHP image in the future.
+If you'd prefer to run your Phproject instance in a Docker container, this is fairly simple to do with the our optimized PHP image.
 
 You should have some familiarity with Docker and ideally PHP and nginx before trying this setup, but it's fairly straightforward.
 
@@ -19,7 +19,7 @@ docker run -d \
   -v /var/www/phproject:/var/www/phproject
   -p 127.0.0.1:9000:9000/tcp \
   --name phproject \
-  php:8.0-fpm
+  alanaktion/phproject
 ```
 
 From there, just configure your web server to connect to the FastCGI server on port 9000, and your site should work. Visit the site in a browser to complete the setup.
@@ -36,7 +36,7 @@ version: '3.1'
 services:
 
   phproject:
-    image: php:8.0-fpm
+    image: alanaktion/phproject:latest
     restart: always
     volumes:
       - /var/www/phproject:/var/www/phproject
