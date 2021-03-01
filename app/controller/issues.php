@@ -637,6 +637,8 @@ class Issues extends \Controller
             return $issue;
         }
 
+        $newSprint = false;
+
         // Diff contents and save what's changed.
         $hashState = json_decode($post["hash_state"]);
         foreach ($post as $i => $val) {
@@ -646,6 +648,9 @@ class Issues extends \Controller
                 && $issue->$i != $val
                 && md5($val) != $hashState->$i
             ) {
+                if ($i == 'sprint_id') {
+                    $newSprint = empty($val) ? null : $val;
+                }
                 if (empty($val)) {
                     $issue->$i = null;
                 } else {
@@ -671,9 +676,19 @@ class Issues extends \Controller
                             $sprint = new \Model\Sprint();
                             $sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $val));
                             $issue->sprint_id = $sprint->id;
+                            $newSprint = $sprint->id;
                         }
                     }
                 }
+            }
+        }
+
+        // Update child issues' sprint if sprint was changed
+        if ($newSprint !== false) {
+            $children = $issue->find(['parent_id = ?', $issue->id]);
+            foreach ($children as $child) {
+                $child->sprint_id = $newSprint;
+                $child->save(false);
             }
         }
 
