@@ -685,7 +685,10 @@ class Issues extends \Controller
 
         // Update child issues' sprint if sprint was changed
         if ($newSprint !== false) {
-            $children = $issue->find(['parent_id = ?', $issue->id]);
+            $children = $issue->find([
+                'parent_id = ? AND type_id IN (SELECT id FROM issue_type WHERE role = "task")',
+                $issue->id,
+            ]);
             foreach ($children as $child) {
                 $child->sprint_id = $newSprint;
                 $child->save(false);
