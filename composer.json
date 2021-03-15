@@ -3,7 +3,7 @@
     "description": "A high performance full-featured project management system",
     "type": "project",
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.1.0",
         "bcosca/fatfree-core": "^3.7",
         "voku/anti-xss": "^4.1",
         "netcarver/textile": "^3.7",
@@ -19,7 +19,7 @@
     ],
     "config": {
         "platform": {
-            "php": "7.0.33"
+            "php": "7.1.33"
         }
     },
     "require-dev": {

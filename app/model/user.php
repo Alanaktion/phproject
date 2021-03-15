@@ -313,12 +313,12 @@ class User extends \Model
     }
 
     /**
-     * Reassign assigned issues
-     * @param  int $userId
+     * Reassign open assigned issues
+     * @param  int|null $userId
      * @return int Number of issues affected
      * @throws \Exception
      */
-    public function reassignIssues(int $userId): int
+    public function reassignIssues(?int $userId): int
     {
         if (!$this->id) {
             throw new \Exception("User is not initialized.");
