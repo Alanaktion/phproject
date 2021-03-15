@@ -219,6 +219,20 @@
                         </false>
                     </check>
                 </repeat>
+                <check if="{{ !empty(@old_sprints) }}">
+                    <optgroup label="{{ @dict.previous_sprints }}">
+                        <repeat group="{{ @old_sprints }}" value="{{ @item }}">
+                            <check if="{{ !empty(@issue) && @issue.sprint_id == @item.id || empty(@issue) && !empty(@parent) && @parent.sprint_id == @item.id }}">
+                                <true>
+                                    <option value="{{ @item.id }}" selected>{{ @item.name | esc }} &ndash; {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+                                </true>
+                                <false>
+                                    <option value="{{ @item.id }}">{{ @item.name | esc }} &ndash; {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+                                </false>
+                            </check>
+                        </repeat>
+                    </optgroup>
+                </check>
             </select>
         </div>
     </div>

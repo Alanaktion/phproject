@@ -493,7 +493,9 @@ class Issues extends \Controller
         $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
 
         $sprint = new \Model\Sprint();
-        $f3->set("sprints", $sprint->find(array("end_date >= ? OR id = ?", $this->now(false), $issue->sprint_id), array("order" => "start_date ASC, id ASC")));
+        $sprintOrder = ["order" => "start_date ASC, id ASC"];
+        $f3->set("sprints", $sprint->find(["end_date >= ?", $this->now(false)], $sprintOrder));
+        $f3->set("old_sprints", $sprint->find(["end_date < ?", $this->now(false)], $sprintOrder));
 
         $users = new \Model\User();
         $helper = \Helper\Dashboard::instance();
@@ -513,8 +515,8 @@ class Issues extends \Controller
             }
         }
 
-        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'" . $groupUserFilter, array("order" => "name ASC")));
-        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'" . $groupFilter, array("order" => "name ASC")));
+        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'" . $groupUserFilter, ["order" => "name ASC"]));
+        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'" . $groupFilter, ["order" => "name ASC"]));
     }
 
     /**
