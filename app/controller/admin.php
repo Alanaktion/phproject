@@ -301,6 +301,7 @@ class Admin extends \Controller
     {
         $security = \Helper\Security::instance();
         $user = new \Model\User();
+        $user_id = $f3->get("POST.user_id");
 
         try {
             // Check for existing users with same info
@@ -313,7 +314,7 @@ class Admin extends \Controller
                 throw new \Exception("Another user already exists with this email address");
             }
 
-            if ($user_id = $f3->get("POST.user_id")) {
+            if ($user_id) {
                 $f3->set("title", $f3->get("dict.edit_user"));
                 $user->load($user_id);
                 $f3->set("this_user", $user);
