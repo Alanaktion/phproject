@@ -55,7 +55,7 @@
                                     <th>{{ @dict.cols.id }}</th>
                                     <th>{{ @dict.name }}</th>
                                     <th>{{ @dict.role }}</th>
-                                    <th></th>
+                                    <th>{{ @dict.cols.description }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,6 +64,7 @@
                                         <td>{{ @item.id }}</td>
                                         <td>{{ isset(@dict[@item.name]) ? @dict[@item.name] : str_replace('_', ' ', @item.name) | esc }}</td>
                                         <td>{{ ucfirst(isset(@dict[@item.role]) ? @dict[@item.role] : @item.role) | esc }}</td>
+                                        <td style="white-space: pre-wrap;">{{ @item.default_description | esc }}</td>
                                     </tr>
                                 </repeat>
                             </tbody>
