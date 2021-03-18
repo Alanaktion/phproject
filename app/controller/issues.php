@@ -362,7 +362,8 @@ class Issues extends \Controller
     }
 
     /**
-     * Get /issues/new/@type
+     * GET /issues/new/@type
+     * GET /issues/new/@type/@parent
      * Create a new issue
      *
      * @param \Base $f3
@@ -386,20 +387,25 @@ class Issues extends \Controller
         if ($f3->get("PARAMS.parent")) {
             $parent_id = $f3->get("PARAMS.parent");
             $parent = new \Model\Issue();
-            $parent->load(array("id = ?", $parent_id));
+            $parent->load(["id = ?", $parent_id]);
             if ($parent->id) {
                 $f3->set("parent", $parent);
             }
+        }
+
+        $f3->set('owner_id', null);
+        if ($f3->get("GET.owner")) {
+            $f3->set("owner_id", $f3->get("GET.owner_id"));
         }
 
         $status = new \Model\Issue\Status();
         $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
         $priority = new \Model\Issue\Priority();
-        $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
+        $f3->set("priorities", $priority->find(null, ["order" => "value DESC"], $f3->get("cache_expire.db")));
 
         $sprint = new \Model\Sprint();
-        $f3->set("sprints", $sprint->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC, id ASC")));
+        $f3->set("sprints", $sprint->find(["end_date >= ?", $this->now(false)], ["order" => "start_date ASC, id ASC"]));
 
         $users = new \Model\User();
 
@@ -420,8 +426,8 @@ class Issues extends \Controller
             }
         }
 
-        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'" . $groupUserFilter, array("order" => "name ASC")));
-        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'" . $groupFilter, array("order" => "name ASC")));
+        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'" . $groupUserFilter, ["order" => "name ASC"]));
+        $f3->set("groups", $users->find("deleted_date IS NULL AND role = 'group'" . $groupFilter, ["order" => "name ASC"]));
         $f3->set("title", $f3->get("dict.new_n", $type->name));
         $f3->set("menuitem", "new");
         $f3->set("type", $type);

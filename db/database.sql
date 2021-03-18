@@ -156,6 +156,7 @@ CREATE TABLE `issue_type` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(32) NOT NULL,
 	`role` ENUM('task','project','bug') DEFAULT 'task' NOT NULL,
+	`default_description` text NULL,
 	PRIMARY KEY (`id`),
 	KEY `issue_type_role` (`role`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -324,4 +325,4 @@ CREATE TABLE `config` (
 
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.reset_ttl', '86400');
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.file_blacklist', '/\.(ph(p([3457s]|\-s)?|t|tml)|aspx?|shtml|exe|dll)$/i');
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '20.10.14');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '21.03.18');
