@@ -394,7 +394,7 @@ class Issues extends \Controller
         }
 
         $f3->set('owner_id', null);
-        if ($f3->get("GET.owner")) {
+        if ($f3->get("GET.owner_id")) {
             $f3->set("owner_id", $f3->get("GET.owner_id"));
         }
 
