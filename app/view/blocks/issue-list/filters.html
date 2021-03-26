@@ -99,7 +99,7 @@
                     </check>
                 </repeat>
             </optgroup>
-            <check if="{{ @user.rank >= 3 && !empty(@deleted_users) }}">
+            <check if="{{ @user.rank >= \Model\User::RANK_MANAGER && !empty(@deleted_users) }}">
                 <optgroup label="{{ @dict.deactivated_users }}">
                     <repeat group="{{ @deleted_users }}" value="{{ @item }}">
                         <check if="{{ !empty(@GET.owner_id) && @GET.owner_id == @item.id }}">

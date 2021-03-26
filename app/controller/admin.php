@@ -137,6 +137,8 @@ class Admin extends \Controller
      */
     public function config(\Base $f3)
     {
+        $this->_requireAdmin(\Model\User::RANK_SUPER);
+
         $status = new \Model\Issue\Status();
         $f3->set("issue_statuses", $status->find());
 
@@ -151,6 +153,8 @@ class Admin extends \Controller
      */
     public function config_post_saveattribute(\Base $f3)
     {
+        $this->_requireAdmin(\Model\User::RANK_SUPER);
+
         $attribute = str_replace("-", ".", $f3->get("POST.attribute"));
         $value = $f3->get("POST.value");
         $response = array("error" => null);
@@ -212,7 +216,8 @@ class Admin extends \Controller
      */
     public function plugin_single(\Base $f3, array $params)
     {
-        $this->_userId = $this->_requireAdmin(5);
+        $this->_requireAdmin(\Model\User::RANK_SUPER);
+
         $plugins = $f3->get("plugins");
         if ($plugin = $plugins[$params["id"]]) {
             $f3->set("plugin", $plugin);
