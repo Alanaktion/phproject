@@ -216,6 +216,10 @@ class Taskboard extends \Controller
         $f3->set("users", $users->getAll());
         $f3->set("groups", $users->getAllGroups());
 
+        // Get next/previous sprints
+        $f3->set("nextSprint", $sprint->findone(['start_date >= ?', $sprint->end_date], ['order' => 'start_date asc']));
+        $f3->set("prevSprint", $sprint->findone(['end_date <= ?', $sprint->start_date], ['order' => 'end_date desc']));
+
         $this->_render("taskboard/index.html");
     }
 

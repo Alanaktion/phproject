@@ -56,6 +56,34 @@
     <set fullwidth="{{ true }}" />
     <include href="blocks/navbar.html" />
     <section id="taskboard">
+        <div class="floating-buttons">
+            <div class="btn-group" role="navigation">
+                <check if="{{ @prevSprint }}">
+                    <true>
+                        <a href="/taskboard/{{ @prevSprint.id }}" class="btn btn-default btn-xs" title="Previous Sprint">
+                            ◀
+                        </a>
+                    </true>
+                    <false>
+                        <span class="btn btn-default btn-xs disabled" title="Previous Sprint">
+                            ◀
+                        </span>
+                    </false>
+                </check>
+                <check if="{{ @nextSprint }}">
+                    <true>
+                        <a href="/taskboard/{{ @nextSprint.id }}" class="btn btn-default btn-xs" title="Next Sprint">
+                            ▶
+                        </a>
+                    </true>
+                    <false>
+                        <span class="btn btn-default btn-xs disabled" title="Next Sprint">
+                            ▶
+                        </span>
+                    </false>
+                </check>
+            </div>
+        </div>
         <table class="taskboard-head">
             <tr class="tb-row">
                 <th class="column column-1">
