@@ -625,7 +625,7 @@ $(function() {
         var $file = $(this).parents('li, tr');
         $file.fadeTo(100, 0.5).popover('hide');
         $.post(BASE + '/issues/file/delete', {id: $file.data('id')}, function(data) {
-            $('#alert span').html('{{ addslashes(@dict.file_deleted) }} <a href="{{ @BASE }}/javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
+            $('#alert span').html('{{ addslashes(@dict.file_deleted) }} <a class="alert-link" href="javascript:void(0);" onclick="restoreFile(' + data.id + ')">{{ @dict.undo }}</a>');
             $('#alert').show();
             $(".file-list li[data-id='" + data.id + "'], .file-list tr[data-id='" + data.id + "']").remove();
         }, 'json').fail(function() {
