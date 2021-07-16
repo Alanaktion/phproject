@@ -40,7 +40,7 @@ abstract class Model extends \DB\SQL\Mapper
         // Set field values
         foreach ($data as $key => $val) {
             if ($item->exists($key)) {
-                if (empty($val)) {
+                if (empty($val) && $val != 0) {
                     $val = null;
                 }
                 $item->set($key, $val);
