@@ -14,14 +14,23 @@
         </p>
         <div class="tex">{{ @comment.text, array('hashtags' => false) | parseText }}</div>
         <check if="{{ @comment.file_id }}">
-            <check if="{{ @comment.file_deleted_date }}">
-                <true>
-                    <div><b>{{ @dict.attached_file }}:</b> <span style="text-decoration: line-through;">{{ @comment.file_filename | esc }}</span> <span class="text-danger">[{{ @dict.deleted }}]</span></div>
-                </true>
-                <false>
-                    <div><b>{{ @dict.attached_file }}:</b> <a class="file-attachment" data-mime="{{ @comment.file_content_type }}" href="{{ @BASE }}/files/{{ @comment.file_id }}/{{ @comment.file_filename | esc }}" target="_blank">{{ @comment.file_filename | esc }}</a></div>
-                </false>
-            </check>
+            <div class="list-group" style="margin: 10px 0; display: inline-block;">
+                <check if="{{ @comment.file_deleted_date }}">
+                    <true>
+                        <div style="display: flex; align-items: center;" data-mime="{{ @comment.file_content_type }}" target="_blank" class="list-group-item">
+                            <img style="margin-right: 5px;" src="{{ @BASE }}/img/mime/16/{{ \Helper\File::mimeIcon(@comment.file_content_type) }}.svg" alt>
+                            <span style="text-decoration: line-through;">{{ @comment.file_filename | esc }}</span>
+                            <span style="margin-left: 5px;" class="text-danger">[{{ @dict.deleted }}]</span>
+                        </div>
+                    </true>
+                    <false>
+                        <a style="display: flex; align-items: center;" href="{{ @BASE }}/files/{{ @comment.file_id }}/{{ @comment.file_filename | esc }}" data-mime="{{ @comment.file_content_type }}" target="_blank" class="list-group-item file-attachment">
+                            <img style="margin-right: 5px;" src="{{ @BASE }}/img/mime/16/{{ \Helper\File::mimeIcon(@comment.file_content_type) }}.svg" alt>
+                            {{ @comment.file_filename | esc }}
+                        </a>
+                    </false>
+                </check>
+            </div>
         </check>
         <p class="text-muted">
             <small title="{{ date('Y-m-d H:i:s', @this->utc2local(@comment.created_date)) }}">{{ date("D, M j, Y \\a\\t g:ia", $this->utc2local(@comment.created_date)) }}</small>
