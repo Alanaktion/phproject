@@ -425,6 +425,7 @@ $(function() {
                             '</div>' +
                         '</div>');
                 $('#comment_textarea').val('').html('');
+                autosize.update($('#comment_textarea'));
                 $('#comment_badge').text(parseInt($('#comment_badge').text()) + 1);
             }, 'json').fail(function() {
                 $('#comment_form .btn').prop('disabled', false);
