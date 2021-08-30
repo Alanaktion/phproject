@@ -18,8 +18,8 @@ class Taskboard extends \Controller
     {
         if ($params["filter"] == "groups") {
             $group_model = new \Model\User\Group();
-            $groups_result = $group_model->find(array("user_id = ?", $this->_userId));
-            $filter_users = array($this->_userId);
+            $groups_result = $group_model->find(["user_id = ?", $this->_userId]);
+            $filter_users = [$this->_userId];
             foreach ($groups_result as $g) {
                 $filter_users[] = $g["group_id"];
             }
@@ -29,25 +29,25 @@ class Taskboard extends \Controller
                 $filter_users[] = $u["user_id"];
             }
         } elseif ($params["filter"] == "me") {
-            $filter_users = array($this->_userId);
+            $filter_users = [$this->_userId];
         } elseif (is_numeric($params["filter"])) {
             $user = new \Model\User();
             $user->load($params["filter"]);
             if ($user->role == 'group') {
                 \Base::instance()->set("filterGroup", $user);
                 $group_model = new \Model\User\Group();
-                $users_result = $group_model->find(array("group_id = ?", $user->id));
-                $filter_users = array(intval($params["filter"]));
+                $users_result = $group_model->find(["group_id = ?", $user->id]);
+                $filter_users = [intval($params["filter"])];
                 foreach ($users_result as $u) {
                     $filter_users[] = $u["user_id"];
                 }
             } else {
-                $filter_users = array($params["filter"]);
+                $filter_users = [$params["filter"]];
             }
         } elseif ($params["filter"] == "all") {
-            return array();
+            return [];
         } else {
-            return array($this->_userId);
+            return [$this->_userId];
         }
         return $filter_users;
     }
@@ -65,7 +65,7 @@ class Taskboard extends \Controller
         // Load current sprint if no sprint ID is given
         if (empty($params["id"]) || !intval($params["id"])) {
             $localDate = date('Y-m-d', \Helper\View::instance()->utc2local());
-            $sprint->load(array("? BETWEEN start_date AND end_date", $localDate));
+            $sprint->load(["? BETWEEN start_date AND end_date", $localDate]);
             if (!$sprint->id) {
                 $f3->error(404);
                 return;
@@ -95,9 +95,9 @@ class Taskboard extends \Controller
 
         // Load issue statuses
         $status = new \Model\Issue\Status();
-        $statuses = $status->find(array('taskboard > 0'), array('order' => 'taskboard_sort ASC'));
-        $mapped_statuses = array();
-        $visible_status_ids = array();
+        $statuses = $status->find(['taskboard > 0'], ['order' => 'taskboard_sort ASC']);
+        $mapped_statuses = [];
+        $visible_status_ids = [];
         $column_count = 0;
         foreach ($statuses as $s) {
             $visible_status_ids[] = $s->id;
@@ -111,7 +111,7 @@ class Taskboard extends \Controller
 
         // Load issue priorities
         $priority = new \Model\Issue\Priority();
-        $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
+        $f3->set("priorities", $priority->find(null, ["order" => "value DESC"], $f3->get("cache_expire.db")));
 
         // Load project list
         $issue = new \Model\Issue\Detail();
@@ -121,7 +121,7 @@ class Taskboard extends \Controller
         $projectTypes = $type->find(["role = ?", "project"]);
         $f3->set("project_types", $projectTypes);
         if ($f3->get("GET.type_id")) {
-            $typeIds =    array_filter($f3->split($f3->get("GET.type_id")), "is_numeric");
+            $typeIds = array_filter($f3->split($f3->get("GET.type_id")), "is_numeric");
         } else {
             $typeIds = [];
             foreach ($projectTypes as $type) {
@@ -132,13 +132,13 @@ class Taskboard extends \Controller
         sort($typeIds, SORT_NUMERIC);
 
         // Find all visible tasks
-        $tasks = $issue->find(array(
+        $tasks = $issue->find([
             "sprint_id = ? AND type_id NOT IN ($typeStr) AND deleted_date IS NULL AND status IN ($visible_status_ids)"
                 . (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
             $sprint->id
-        ), array("order" => "priority DESC"));
-        $task_ids = array();
-        $parent_ids = array(0);
+        ], ["order" => "priority DESC, id ASC"]);
+        $task_ids = [];
+        $parent_ids = [0];
         foreach ($tasks as $task) {
             $task_ids[] = $task->id;
             if ($task->parent_id) {
@@ -150,18 +150,18 @@ class Taskboard extends \Controller
         $f3->set("tasks", $task_ids_str);
 
         // Find all visible projects or parent tasks if no type filter is given
-        $queryArray = array(
+        $queryArray = [
             "(id IN ($parent_ids_str) AND type_id IN ($typeStr)) OR (sprint_id = ? AND type_id IN ($typeStr) AND deleted_date IS NULL"
                 . (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
             $sprint->id
-        );
-        $projects = $issue->find($queryArray, array("order" => "owner_id ASC, priority DESC"));
+        ];
+        $projects = $issue->find($queryArray, ["order" => "owner_id ASC, priority DESC"]);
 
         // Sort projects if a filter is given
         $sortModel = new \Model\Issue\Backlog();
-        $sortOrder = $sortModel->load(array("sprint_id = ?", $sprint->id));
+        $sortOrder = $sortModel->load(["sprint_id = ?", $sprint->id]);
         if ($sortOrder) {
-            $sortArray = json_decode($sortOrder->issues) ?: array();
+            $sortArray = json_decode($sortOrder->issues) ?: [];
             $sortArray = array_unique($sortArray);
             usort($projects, function (\Model\Issue $a, \Model\Issue $b) use ($sortArray) {
                 $ka = array_search($a->id, $sortArray);
@@ -172,25 +172,17 @@ class Taskboard extends \Controller
                 if ($ka !== false && $kb === false) {
                     return 1;
                 }
-                if ($ka === $kb) {
-                    return 0;
-                }
-                if ($ka > $kb) {
-                    return 1;
-                }
-                if ($ka < $kb) {
-                    return -1;
-                }
+                return $ka <=> $kb;
             });
         }
 
         // Build multidimensional array of all tasks and projects
-        $taskboard = array();
+        $taskboard = [];
         foreach ($projects as $project) {
             // Build array of statuses to put tasks under
-            $columns = array();
+            $columns = [];
             foreach ($statuses as $status) {
-                $columns[$status["id"]] = array();
+                $columns[$status["id"]] = [];
             }
 
             // Add current project's tasks
@@ -201,10 +193,10 @@ class Taskboard extends \Controller
             }
 
             // Add hierarchical structure to taskboard array
-            $taskboard[] = array(
+            $taskboard[] = [
                 "project" => $project,
                 "columns" => $columns
-            );
+            ];
         }
 
         $f3->set("type_ids", $typeIds);
@@ -242,7 +234,7 @@ class Taskboard extends \Controller
         $db = $f3->get("db.instance");
 
         $user = new \Model\User();
-        $user->load(array("id = ?", $params["filter"]));
+        $user->load(["id = ?", $params["filter"]]);
         if (!$user->id) {
             $f3->error(404);
             return;
@@ -306,7 +298,7 @@ class Taskboard extends \Controller
     public function saveManHours($f3)
     {
         $user = new \Model\User();
-        $user->load(array("id = ?", $f3->get("POST.user_id")));
+        $user->load(["id = ?", $f3->get("POST.user_id")]);
         if (!$user->id) {
             $f3->error(404);
         }
@@ -331,7 +323,7 @@ class Taskboard extends \Controller
         $post['due_date'] = $post['dueDate'];
         $post['parent_id'] = $post['storyId'];
         $issue = \Model\Issue::create($post);
-        $this->_printJson($issue->cast() + array("taskId" => $issue->id));
+        $this->_printJson($issue->cast() + ["taskId" => $issue->id]);
     }
 
     /**
@@ -401,6 +393,6 @@ class Taskboard extends \Controller
 
         $issue->save();
 
-        $this->_printJson($issue->cast() + array("taskId" => $issue->id));
+        $this->_printJson($issue->cast() + ["taskId" => $issue->id]);
     }
 }
