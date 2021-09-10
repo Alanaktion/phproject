@@ -22,10 +22,13 @@
     </div>
 
     <check if="{{ @issue.deleted_date }}">
-        <p id="alert" class="alert alert-danger">
+        <div id="alert" class="alert alert-danger">
             {{ @dict.deleted_notice }}&ensp;
-            <a href="{{ @BASE }}/issues/undelete/{{ @issue.id }}" class="btn btn-default btn-xs">{{ @dict.restore_issue }}</a>
-        </p>
+            <form style="display: inline-block;" action="{{ @BASE }}/issues/undelete/{{ @issue.id }}" method="post">
+                <csrf-token />
+                <button type="submit" class="btn btn-default btn-xs">{{ @dict.restore_issue }}</button>
+            </form>
+        </div>
     </check>
 
     <check if="{{ count(@ancestors) > 1 }}">
@@ -54,17 +57,22 @@
         <div class="pull-right">
             <check if="{{ @issue.status_closed }}">
                 <false>
-                    <a id="btn-issue-close" href="{{ @BASE }}/issues/close/{{ @issue.id }}" class="btn btn-success btn-xs">
-                        <span class="fa fa-check"></span>&ensp;{{ @dict.complete }}
-                    </a>
+                    <form style="display: inline-block;" action="{{ @BASE }}/issues/close/{{ @issue.id }}" method="post">
+                        <csrf-token />
+                        <button type="submit" id="btn-issue-close" class="btn btn-success btn-xs">
+                            <span class="fa fa-check"></span>&ensp;{{ @dict.complete }}
+                        </button>
+                    </form>
                 </false>
                 <true>
-                    <a id="btn-issue-reopen" href="{{ @BASE }}/issues/reopen/{{ @issue.id }}" class="btn btn-warning btn-xs">
-                        <span class="fa fa-repeat"></span>&ensp;{{ @dict.reopen }}
-                    </a>
+                    <form style="display: inline-block;" action="{{ @BASE }}/issues/reopen/{{ @issue.id }}" method="post">
+                        <button type="submit" id="btn-issue-reopen" class="btn btn-warning btn-xs">
+                            <span class="fa fa-repeat"></span>&ensp;{{ @dict.reopen }}
+                        </button>
+                    </form>
                 </true>
             </check>
-            <a id="btn-copy" href="{{ @BASE }}/issues/copy/{{ @issue.id }}" class="btn btn-default btn-xs">
+            <a id="btn-copy" href="#" class="btn btn-default btn-xs">
                 <span class="fa fa-file"></span>&ensp;{{ @dict.copy }}
             </a>
             <check if="{{ @watching }}">
@@ -83,9 +91,12 @@
                 <span class="fa fa-pencil"></span>&ensp;{{ @dict.edit }}
             </a>
             <check if="{{ @user.role == 'admin' || @user.rank >= \Model\User::RANK_MANAGER || @user.id == @issue.author_id }}">
-                <a href="{{ @BASE }}/issues/delete/{{ @issue.id }}" class="btn btn-danger btn-xs">
-                    <span class="fa fa-remove"></span><span class="hidden-xs">&ensp;{{ @dict.delete }}</span>
-                </a>
+                <form style="display: inline-block;" action="{{ @BASE }}/issues/delete/{{ @issue.id }}" method="post">
+                    <csrf-token />
+                    <button type="submit" class="btn btn-danger btn-xs">
+                        <span class="fa fa-remove"></span><span class="hidden-xs">&ensp;{{ @dict.delete }}</span>
+                    </button>
+                </form>
             </check>
         </div>
     </div>
@@ -259,6 +270,7 @@
                 <div class="tab-pane fade in active" id="comments">
                     <div class="comments">
                         <form action="{{ @BASE }}/issues/comment/save" method="POST" id="comment_form" class="form-horizontal">
+                            <csrf-token />
                             <input type="hidden" name="issue_id" value="{{ @issue.id }}">
                             <div class="form-group">
                                 <div class="col-md-12">
@@ -326,6 +338,7 @@
 </div>
 
 <form class="modal fade in" id="upload" tabindex="-1" method="post" enctype="multipart/form-data" action="{{ @BASE }}/issues/upload">
+    <csrf-token />
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -355,7 +368,8 @@
 
 <div class="modal fade" id="modal-copy" tabindex="-1" role="dialog" aria-labelledby="modal-copy-label" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <form class="modal-content" action="{{ @BASE }}/issues/copy/{{ @issue.id }}" method="post">
+            <csrf-token />
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span></button>
                 <h4 class="modal-title" id="modal-copy-label">{{ @dict.copy_issue }}</h4>
@@ -365,7 +379,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{ @dict.cancel }}</button>
-                <a id="btn-copy-confirm" class="btn btn-primary btn-sm" href="{{ @BASE }}/issues/copy/{{ @issue.id }}">{{ @dict.copy_issue }}</a>
+                <button type="submit" id="btn-copy-confirm" class="btn btn-primary btn-sm">{{ @dict.copy_issue }}</button>
             </div>
         </div>
     </div>
@@ -389,9 +403,12 @@ $(function() {
         e.preventDefault();
     });
     $("#btn-copy-confirm").click(function(e) {
-        $(this).prop('disabled', true)
-            .addClass('disabled')
-            .html('{{ addslashes(@dict.loading) }}');
+        var $btn = $(this);
+        setTimeout(function () {
+            $btn.prop('disabled', true)
+                .addClass('disabled')
+                .html('{{ addslashes(@dict.loading) }}');
+        }, 100);
     });
 
     var canDelete = parseInt("{{ (@user.role == 'admin' || @user.rank >= \Model\User::RANK_MANAGER) && @menuitem != 'index' }}");

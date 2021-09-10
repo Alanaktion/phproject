@@ -22,6 +22,7 @@
     <div class="row">
         <div class="col-sm-4 {{ @site.public_registration ? 'col-sm-offset-2' : 'col-sm-offset-4' }}">
             <form action="{{ @BASE }}/login" method="post" class="form-horizontal">
+                <csrf-token />
                 <div class="clearfix">
                     <h3 class="col-md-8 col-md-offset-4">{{ @dict.log_in }}</h3>
                 </div>
@@ -67,6 +68,7 @@
         <check if="{{ @site.public_registration }}">
             <div class="col-sm-4">
                 <form action="{{ @BASE }}/register" method="post" class="form-horizontal">
+                    <csrf-token />
                     <div class="clearfix">
                         <h3 class="col-md-8 col-md-offset-4">{{ @dict.register }}</h3>
                     </div>

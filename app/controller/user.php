@@ -82,6 +82,7 @@ class User extends \Controller
      */
     public function dashboardPost($f3)
     {
+        $this->validateCsrf();
         $helper = \Helper\Dashboard::instance();
         $widgets = json_decode($f3->get("POST.widgets"));
         $allWidgets = $helper->allWidgets;
@@ -145,6 +146,7 @@ class User extends \Controller
      */
     public function save($f3)
     {
+        $this->validateCsrf();
         $f3 = \Base::instance();
         $post = array_map("trim", $f3->get("POST"));
 
@@ -234,6 +236,7 @@ class User extends \Controller
      */
     public function avatar($f3)
     {
+        $this->validateCsrf();
         $f3 = \Base::instance();
 
         $user = new \Model\User();

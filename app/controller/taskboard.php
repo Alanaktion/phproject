@@ -297,6 +297,7 @@ class Taskboard extends \Controller
      */
     public function saveManHours($f3)
     {
+        $this->validateCsrf();
         $user = new \Model\User();
         $user->load(["id = ?", $f3->get("POST.user_id")]);
         if (!$user->id) {
@@ -316,6 +317,7 @@ class Taskboard extends \Controller
      */
     public function add($f3)
     {
+        $this->validateCsrf();
         $post = $f3->get("POST");
         $post['sprint_id'] = $post['sprintId'];
         $post['name'] = $post['title'];
@@ -333,6 +335,7 @@ class Taskboard extends \Controller
      */
     public function edit($f3)
     {
+        $this->validateCsrf();
         $post = $f3->get("POST");
         $issue = new \Model\Issue();
         $issue->load($post["taskId"]);

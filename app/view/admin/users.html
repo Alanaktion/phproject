@@ -33,12 +33,12 @@
                         <td>{{ @user.email | esc }}</td>
                         <td class="user-name">{{ @user.name | esc }}</td>
                         <td>{{ ucfirst(@user.role) }}</td>
-                        <td><span class="badge" style="background-color: #{{ @user.task_color }};">&ensp;</span>&ensp;#{{ @user.task_color }}</td>
+                        <td><span class="badge" style="background-color: #{{ @user.task_color | esc }};">&ensp;</span>&ensp;#{{ @user.task_color }}</td>
                         <td>
                             <check if="{{ @user.id != @user_obj.id }}">
-                                <a href="{{ @BASE }}/admin/users/{{ @user.id }}/delete" class="delete has-tooltip" title="{{ @dict.deactivate }}">
+                                <button type="button" class="delete has-tooltip" title="{{ @dict.deactivate }}" aria-label="{{ @dict.deactivate }}">
                                     <span class="fa fa-remove"></span>
-                                </a>
+                                </button>
                             </check>
                         </td>
                     </tr>
@@ -77,6 +77,7 @@
 <div class="modal" id="mdl-delete" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <form class="modal-content" action="#" method="post">
+            <csrf-token />
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">{{ @dict.deactivate }} <span class="user-name"></span></h4>

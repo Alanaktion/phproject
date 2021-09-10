@@ -48,6 +48,7 @@
             <div class="clearfix">
                 <h4 class="pull-left">{{ @dict.cache }}</h4>
                 <form class="pull-right" action="{{ @BASE }}/admin" method="post" style="margin-top: 10px;">
+                    <csrf-token />
                     <input type="hidden" name="action" value="clearcache">
                     <button type="submit" class="btn btn-warning btn-xs">{{ @dict.clear_cache }}</button>
                 </form>

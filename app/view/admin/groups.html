@@ -32,7 +32,14 @@
                         <td>{{ @group.name | esc }}</td>
                         <td>{{ @group.count }}</td>
                         <td><span class="badge" style="background-color: #{{ @group.task_color }};">&ensp;</span>&ensp;#{{ @group.task_color }}</td>
-                        <td><a href="{{ @BASE }}/admin/groups/{{ @group.id }}/delete" class="has-tooltip" title="{{ @dict.delete }}"><span class="fa fa-trash"></span></a></td>
+                        <td class="clearfix">
+                            <form class="pull-right" action="{{ @BASE }}/admin/groups/{{ @group.id }}/delete" method="post">
+                                <csrf-token />
+                                <button type="submit" class="has-tooltip" title="{{ @dict.delete }}" aria-label="{{ @dict.delete }}">
+                                    <span class="fa fa-trash"></span>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 </repeat>
             </tbody>
@@ -52,6 +59,7 @@
 <div class="modal" id="new" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <form class="modal-content" action="{{ @BASE }}/admin/groups/new" method="post">
+            <csrf-token />
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#input_name').val('');">&times;</button>
                 <h4 class="modal-title">{{ @dict.new }}</h4>

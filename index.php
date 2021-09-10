@@ -1,5 +1,5 @@
 <?php
-define('PHPROJECT_VERSION', '1.7.9');
+define('PHPROJECT_VERSION', '1.7.10');
 
 // Initialize core
 require_once "vendor/autoload.php";
@@ -14,6 +14,7 @@ $f3->mset(array(
     "FALLBACK" => "en",
     "CACHE" => true,
     "AUTOLOAD" => "app/;lib/vendor/",
+    "JAR.samesite" => "Strict",
     "PACKAGE" => "Phproject",
     "TZ" => "UTC",
     "microtime" => microtime(true),
@@ -88,6 +89,12 @@ $version = \Helper\Security::instance()->checkDatabaseVersion();
 if ($version !== true) {
     \Helper\Security::instance()->updateDatabase($version);
 }
+
+// Set up CSRF protection
+\Helper\Security::instance()->initCsrfToken();
+
+// Initialize template extensions
+\Helper\View::instance()->extend("csrf-token", "Helper\Template::csrfToken");
 
 // Minify static resources
 // Cache for 1 week

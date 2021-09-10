@@ -141,6 +141,8 @@ class Backlog extends \Controller
      */
     public function edit($f3)
     {
+        $this->validateCsrf();
+
         // Move project
         $post = $f3->get("POST");
         $issue = new \Model\Issue();
@@ -166,6 +168,7 @@ class Backlog extends \Controller
      */
     public function sort($f3)
     {
+        $this->validateCsrf();
         $this->_requireLogin(\Model\User::RANK_MANAGER);
         $backlog = new \Model\Issue\Backlog();
         if ($f3->get("POST.sprint_id")) {

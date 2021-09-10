@@ -2,6 +2,7 @@
 <div class="modal fade" id="bulk-actions" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form class="modal-content form-horizontal" action="{{ @BASE }}/issues/bulk_update" method="post">
+            <csrf-token />
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">
                     <span aria-hidden="true">&times;</span><span class="sr-only">{{ @dict.close }}</span>

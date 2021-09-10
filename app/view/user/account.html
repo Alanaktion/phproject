@@ -14,6 +14,7 @@
     <div class="tab-content">
         <div class="tab-pane fade in active" id="profile">
             <form class="form-horizontal" action="{{ @BASE }}/user" method="post">
+                <csrf-token />
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -86,6 +87,7 @@
                             </false>
                         </check>
                         <form class="clearfix" method="post" enctype="multipart/form-data" action="{{ @BASE }}/user/avatar">
+                            <csrf-token />
                             <input type="file" name="avatar" id="input_avatar" class="pull-left">
                             <button type="submit" class="btn btn-default btn-sm pull-left nojs">{{ @dict.upload }}</button>
                         </form>
@@ -98,6 +100,7 @@
         </div>
         <div class="tab-pane fade" id="settings">
             <form action="{{ @BASE }}/user" method="post">
+                <csrf-token />
                 <input type="hidden" name="action" value="options">
                 <div class="checkbox">
                     <label>
@@ -122,6 +125,7 @@
         </div>
         <div class="tab-pane fade" id="password">
             <form class="form-horizontal" action="{{ @BASE }}/user" method="post">
+                <csrf-token />
                 <div class="form-group">
                     <label for="opass" class="col-lg-4 col-sm-2 control-label label-sm">{{ @dict.current_password }}</label>
                     <div class="col-lg-6 col-sm-10">

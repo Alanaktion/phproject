@@ -19,15 +19,25 @@
             <ul id="members" class="list-unstyled">
                 <repeat group="{{ @members }}" value="{{ @member }}">
                     <li data-user-id="{{ @member.user_id }}">
-                        <a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}"><span class="fa fa-remove"></span></a>&nbsp;
+                        <a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}" aria-label="{{ @dict.delete }}">
+                            <span class="fa fa-remove"></span>
+                        </a>&nbsp;
                         <check if="{{ @member.manager }}">
                             <true>
-                                <span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}"><span class="fa fa-star"></span></span>&nbsp;
+                                <span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}" aria-label="{{ @dict.manager }}">
+                                    <span class="fa fa-star"></span>
+                                </span>
                             </true>
                             <false>
-                                <a href="{{ @BASE }}/admin/groups/{{ @group.id }}/setmanager/{{ @member.id }}" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}"><span class="fa fa-star-o"></span></a>&nbsp;
+                                <form style="display: inline-block;" action="{{ @BASE }}/admin/groups/{{ @group.id }}/setmanager/{{ @member.id }}" method="post">
+                                    <csrf-token />
+                                    <button type="submit" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}">
+                                        <span class="fa fa-star-o"></span>
+                                    </button>
+                                </form>
                             </false>
                         </check>
+                        &nbsp;
                         {{ @member.user_name }}
                     </li>
                 </repeat>

@@ -91,4 +91,12 @@ abstract class Controller
     {
         return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
     }
+
+    /**
+     * Validate the request's CSRF token, exiting if invalid
+     */
+    protected function validateCsrf()
+    {
+        \Helper\Security::instance()->validateCsrfToken();
+    }
 }

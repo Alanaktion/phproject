@@ -8,6 +8,7 @@
 <div class="container">
     <include href="blocks/admin/tabs.html" />
     <form action="{{ @BASE }}/admin/config" method="post" id="frm-config">
+        <csrf-token />
         <div class="row">
 
             <div class="col-sm-3">
