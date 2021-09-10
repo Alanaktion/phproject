@@ -68,6 +68,7 @@ class Index extends \Controller
      */
     public function loginpost($f3)
     {
+        $this->validateCsrf();
         $user = new \Model\User();
 
         // Load user by username or email address
@@ -111,6 +112,7 @@ class Index extends \Controller
      */
     public function registerpost($f3)
     {
+        $this->validateCsrf();
 
         // Exit immediately if public registrations are disabled
         if (!$f3->get("site.public_registration")) {
@@ -184,6 +186,7 @@ class Index extends \Controller
             $f3->reroute("/");
         } else {
             if ($f3->get("POST.email")) {
+                $this->validateCsrf();
                 $user = new \Model\User();
                 $user->load(array("email = ?", $f3->get("POST.email")));
                 if ($user->id && !$user->deleted_date) {
@@ -233,6 +236,8 @@ class Index extends \Controller
         }
 
         if ($f3->get("POST.password1")) {
+            $this->validateCsrf();
+
             // Validate new password
             if ($f3->get("POST.password1") != $f3->get("POST.password2")) {
                 $f3->set("reset.error", "The given passwords don't match.");
@@ -263,6 +268,10 @@ class Index extends \Controller
         $user = new \Model\User();
         $user->loadCurrent();
 
+        if ($f3->get('POST')) {
+            $this->validateCsrf();
+        }
+
         if ($f3->get("POST.password1") != $f3->get("POST.password2")) {
             $f3->set("reset.error", "The given passwords don't match.");
         } elseif (strlen($f3->get("POST.password1")) < 6) {
@@ -280,12 +289,13 @@ class Index extends \Controller
     }
 
     /**
-     * GET|POST /logout
+     * POST /logout
      *
      * @param \Base $f3
      */
     public function logout($f3)
     {
+        $this->validateCsrf();
         $session = new \Model\Session();
         $session->loadCurrent();
         $session->delete();

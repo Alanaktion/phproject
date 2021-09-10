@@ -239,6 +239,7 @@ class Issues extends \Controller
      */
     public function bulk_update($f3)
     {
+        $this->validateCsrf();
         $post = $f3->get("POST");
 
         $issue = new \Model\Issue();
@@ -526,7 +527,7 @@ class Issues extends \Controller
     }
 
     /**
-     * GET /issues/close/@id
+     * POST /issues/close/@id
      * Close an issue
      *
      * @param \Base $f3
@@ -535,6 +536,7 @@ class Issues extends \Controller
      */
     public function close($f3, $params)
     {
+        $this->validateCsrf();
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
@@ -554,7 +556,7 @@ class Issues extends \Controller
     }
 
     /**
-     * GET /issues/reopen/@id
+     * POST /issues/reopen/@id
      * Reopen an issue
      *
      * @param \Base $f3
@@ -563,6 +565,7 @@ class Issues extends \Controller
      */
     public function reopen($f3, $params)
     {
+        $this->validateCsrf();
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
@@ -588,7 +591,7 @@ class Issues extends \Controller
     }
 
     /**
-     * GET /issues/copy/@id
+     * POST /issues/copy/@id
      * Copy an issue
      *
      * @param \Base $f3
@@ -597,6 +600,7 @@ class Issues extends \Controller
      */
     public function copy($f3, $params)
     {
+        $this->validateCsrf();
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
@@ -760,6 +764,7 @@ class Issues extends \Controller
      */
     public function save($f3)
     {
+        $this->validateCsrf();
         if ($f3->get("POST.id")) {
             // Updating existing issue.
             $issue = $this->_saveUpdate();
@@ -849,6 +854,8 @@ class Issues extends \Controller
      */
     public function add_watcher($f3, $params)
     {
+        $this->validateCsrf();
+
         $issue = new \Model\Issue();
         $issue->load(array("id=?", $params["id"]));
         if (!$issue->id) {
@@ -875,6 +882,8 @@ class Issues extends \Controller
      */
     public function delete_watcher($f3, $params)
     {
+        $this->validateCsrf();
+
         $issue = new \Model\Issue();
         $issue->load(array("id=?", $params["id"]));
         if (!$issue->id) {
@@ -896,6 +905,8 @@ class Issues extends \Controller
      */
     public function add_dependency($f3, $params)
     {
+        $this->validateCsrf();
+
         $issue = new \Model\Issue();
         $issue->load(array("id=?", $params["id"]));
         if (!$issue->id) {
@@ -921,6 +932,8 @@ class Issues extends \Controller
      */
     public function delete_dependency($f3, $params)
     {
+        $this->validateCsrf();
+
         $issue = new \Model\Issue();
         $issue->load(array("id=?", $params["id"]));
         if (!$issue->id) {
@@ -1060,6 +1073,7 @@ class Issues extends \Controller
      */
     public function single_delete($f3, $params)
     {
+        $this->validateCsrf();
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
         $user = $f3->get("user_obj");
@@ -1081,6 +1095,7 @@ class Issues extends \Controller
      */
     public function single_undelete($f3, $params)
     {
+        $this->validateCsrf();
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
         $user = $f3->get("user_obj");
@@ -1101,6 +1116,7 @@ class Issues extends \Controller
      */
     public function comment_save($f3)
     {
+        $this->validateCsrf();
         $post = $f3->get("POST");
 
         $issue = new \Model\Issue();
@@ -1152,6 +1168,7 @@ class Issues extends \Controller
      */
     public function comment_delete($f3)
     {
+        $this->validateCsrf();
         $this->_requireAdmin();
         $comment = new \Model\Issue\Comment();
         $comment->load($f3->get("POST.id"));
@@ -1168,6 +1185,7 @@ class Issues extends \Controller
      */
     public function file_delete($f3)
     {
+        $this->validateCsrf();
         $file = new \Model\Issue\File();
         $file->load($f3->get("POST.id"));
         $file->delete();
@@ -1183,6 +1201,7 @@ class Issues extends \Controller
      */
     public function file_undelete($f3)
     {
+        $this->validateCsrf();
         $file = new \Model\Issue\File();
         $file->load($f3->get("POST.id"));
         $file->deleted_date = null;
@@ -1289,6 +1308,7 @@ class Issues extends \Controller
      */
     public function upload($f3)
     {
+        $this->validateCsrf();
         $user_id = $this->_userId;
 
         $issue = new \Model\Issue();

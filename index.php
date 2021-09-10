@@ -90,6 +90,12 @@ if ($version !== true) {
     \Helper\Security::instance()->updateDatabase($version);
 }
 
+// Set up CSRF protection
+\Helper\Security::instance()->initCsrfToken();
+
+// Initialize template extensions
+\Helper\View::instance()->extend("csrf-token", "Helper\Template::csrfToken");
+
 // Minify static resources
 // Cache for 1 week
 // This route is deprecated, and will be removed in a future release.

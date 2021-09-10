@@ -114,6 +114,36 @@ class Security extends \Prefab
     }
 
     /**
+     * Initialize a CSRF token
+     */
+    public function initCsrfToken()
+    {
+        $f3 = \Base::instance();
+        if (!($token = $f3->get('COOKIE.XSRF-TOKEN'))) {
+            $token = $this->salt_sha2();
+            $f3->set('COOKIE.XSRF-TOKEN', $token);
+        }
+        $f3->set('csrf_token', $token);
+    }
+
+    /**
+     * Validate a CSRF token, exiting if invalid
+     */
+    public function validateCsrfToken()
+    {
+        $f3 = \Base::instance();
+        $cookieToken = $f3->get('COOKIE.XSRF-TOKEN');
+        $requestToken = $f3->get('POST.csrf-token');
+        if (!$requestToken) {
+            $requestToken = $f3->get('HEADERS.X-Xsrf-Token');
+        }
+        if (!$cookieToken || !$requestToken || !hash_equals($cookieToken, $requestToken)) {
+            $f3->error(400, 'Invalid CSRF token');
+            exit;
+        }
+    }
+
+    /**
      * Check if two hashes are equal, safe against timing attacks
      *
      * This is a userland implementation of the hash_equals function from 5.6

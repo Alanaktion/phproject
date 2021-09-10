@@ -114,7 +114,17 @@
                             </repeat>
                         </check>
                         <li role="presentation" class="divider"></li>
-                        <li><a href="{{ @BASE }}/logout">{{ @dict.log_out }}</a></li>
+                        <li>
+                            <a style="position: relative;">
+                                <form action="{{ @BASE }}/logout" method="post">
+                                    <csrf-token />
+                                    <button type="submit" style="appearance: none; border: none; background: transparent; padding: 0; line-height: inherit;">
+                                        {{ @dict.log_out }}
+                                        <div style="position: absolute; inset: 0;">
+                                    </button>
+                                </form>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>

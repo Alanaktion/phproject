@@ -8,6 +8,7 @@
 <div class="container">
     <include href="blocks/admin/tabs.html" />
     <form action="{{ @BASE }}/admin/users/save" method="post" class="form-horizontal" autocomplete="off">
+        <csrf-token />
         <check if="{{ empty(@this_user) }}">
             <true>
                 <legend>{{ @dict.new_user }}</legend>

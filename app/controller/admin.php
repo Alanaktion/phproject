@@ -22,6 +22,8 @@ class Admin extends \Controller
         $f3->set("menuitem", "admin");
 
         if ($f3->get("POST.action") == "clearcache") {
+            $this->validateCsrf();
+
             $cache = \Cache::instance();
 
             // Clear configured cache
@@ -153,6 +155,7 @@ class Admin extends \Controller
      */
     public function config_post_saveattribute(\Base $f3)
     {
+        $this->validateCsrf();
         $this->_requireAdmin(\Model\User::RANK_SUPER);
 
         $attribute = str_replace("-", ".", $f3->get("POST.attribute"));
@@ -304,6 +307,7 @@ class Admin extends \Controller
      */
     public function user_save(\Base $f3)
     {
+        $this->validateCsrf();
         $security = \Helper\Security::instance();
         $user = new \Model\User();
         $user_id = $f3->get("POST.user_id");
@@ -399,6 +403,7 @@ class Admin extends \Controller
      */
     public function user_delete(\Base $f3, array $params)
     {
+        $this->validateCsrf();
         $user = new \Model\User();
         $user->load($params["id"]);
         if (!$user->id) {
@@ -434,6 +439,7 @@ class Admin extends \Controller
      */
     public function user_undelete(\Base $f3, array $params)
     {
+        $this->validateCsrf();
         $user = new \Model\User();
         $user->load($params["id"]);
         if (!$user->id) {
@@ -485,20 +491,15 @@ class Admin extends \Controller
      */
     public function group_new(\Base $f3)
     {
-        $f3->set("title", $f3->get("dict.groups"));
-
-        if ($f3->get("POST")) {
-            $group = new \Model\User();
-            $group->name = $f3->get("POST.name");
-            $group->username = \Web::instance()->slug($group->name);
-            $group->role = "group";
-            $group->task_color = sprintf("%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
-            $group->created_date = $this->now();
-            $group->save();
-            $f3->reroute("/admin/groups");
-        } else {
-            $f3->error(405);
-        }
+        $this->validateCsrf();
+        $group = new \Model\User();
+        $group->name = $f3->get("POST.name");
+        $group->username = \Web::instance()->slug($group->name);
+        $group->role = "group";
+        $group->task_color = sprintf("%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
+        $group->created_date = $this->now();
+        $group->save();
+        $f3->reroute("/admin/groups");
     }
 
     /**
@@ -532,6 +533,7 @@ class Admin extends \Controller
      */
     public function group_delete(\Base $f3, array $params)
     {
+        $this->validateCsrf();
         $group = new \Model\User();
         $group->load($params["id"]);
         $group->delete();
@@ -549,6 +551,7 @@ class Admin extends \Controller
      */
     public function group_ajax(\Base $f3)
     {
+        $this->validateCsrf();
         if (!$f3->get("AJAX")) {
             $f3->error(400);
         }
@@ -608,6 +611,7 @@ class Admin extends \Controller
      */
     public function group_setmanager(\Base $f3, array $params)
     {
+        $this->validateCsrf();
         $db = $f3->get("db.instance");
 
         $group = new \Model\User();
@@ -645,6 +649,7 @@ class Admin extends \Controller
      */
     public function sprint_new(\Base $f3)
     {
+        $this->validateCsrf();
         $f3->set("title", $f3->get("dict.sprints"));
 
         if ($post = $f3->get("POST")) {

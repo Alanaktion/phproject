@@ -8,6 +8,7 @@
 <div class="container">
     <include href="blocks/admin/tabs.html" />
     <form action="{{ @BASE }}/admin/sprints/{{@sprint.id}}" method="post" class="form-horizontal" autocomplete="off">
+        <csrf-token />
         <legend>{{ @dict.edit_sprint }}</legend>
         <div class="form-group">
             <label for="name" class="col-md-2 control-label label-sm">{{ @dict.name }}</label>

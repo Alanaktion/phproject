@@ -1,6 +1,13 @@
 /* globals $ BASE Mousetrap issue_types */
 $(function() {
 
+	// Set XSRF-TOKEN header
+	$.ajaxSetup({
+		headers: {
+			'X-XSRF-Token': $('meta[name="csrf-token"]').attr('content')
+		}
+	});
+
 	// Tooltips and popovers
 	$('.has-tooltip').tooltip();
 	$('.has-popover').popover({delay: {show: 500, hide: 100}});
