@@ -1,5 +1,5 @@
 <?php
-define('PHPROJECT_VERSION', '1.7.9');
+define('PHPROJECT_VERSION', '1.7.10');
 
 // Initialize core
 require_once "vendor/autoload.php";
