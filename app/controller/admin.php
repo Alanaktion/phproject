@@ -649,10 +649,11 @@ class Admin extends \Controller
      */
     public function sprint_new(\Base $f3)
     {
-        $this->validateCsrf();
         $f3->set("title", $f3->get("dict.sprints"));
 
         if ($post = $f3->get("POST")) {
+            $this->validateCsrf();
+
             if (empty($post["start_date"]) || empty($post["end_date"])) {
                 $f3->set("error", "Start and end date are required");
                 $this->_render("admin/sprints/new.html");
