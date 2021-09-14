@@ -53,6 +53,10 @@ class Taskboard extends \Controller
     }
 
     /**
+     * GET /taskboard
+     * GET /taskboard/@id
+     * GET /taskboard/@id/@filter
+     *
      * View a taskboard
      *
      * @param \Base $f3
@@ -216,6 +220,9 @@ class Taskboard extends \Controller
     }
 
     /**
+     * GET /taskboard/@id/burndown
+     * GET /taskboard/@id/burndown/@filter
+     *
      * Load the hourly burndown chart data
      *
      * @param  \Base $f3
@@ -291,6 +298,8 @@ class Taskboard extends \Controller
     }
 
     /**
+     * POST /taskboard/saveManHours
+     *
      * Save man hours for a group/user
      *
      * @param  \Base $f3
@@ -311,6 +320,8 @@ class Taskboard extends \Controller
     }
 
     /**
+     * POST /taskboard/add
+     *
      * Add a new task
      *
      * @param \Base $f3
@@ -329,6 +340,8 @@ class Taskboard extends \Controller
     }
 
     /**
+     * POST /taskboard/edit/@id
+     *
      * Update an existing task
      *
      * @param \Base $f3

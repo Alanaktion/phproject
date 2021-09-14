@@ -644,7 +644,7 @@ class Admin extends \Controller
     }
 
     /**
-     * POST /admin/sprints/new
+     * GET|POST /admin/sprints/new
      * @param \Base $f3
      */
     public function sprint_new(\Base $f3)
