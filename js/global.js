@@ -162,7 +162,7 @@ $(function() {
 	Mousetrap.bind('shift+c', function() {
 		let $close = $('#btn-issue-close');
 		if ($close.length) {
-			window.location = $close.attr('href');
+			$close.click();
 		}
 	});
 	Mousetrap.bind('c', function() {
@@ -171,7 +171,7 @@ $(function() {
 	Mousetrap.bind('shift+r', function() {
 		let $reopen = $('#btn-issue-reopen');
 		if ($reopen.length) {
-			window.location = $reopen.attr('href');
+			$reopen.click();
 		}
 	});
 	Mousetrap.bind('r', function() {
