@@ -14,7 +14,7 @@ $f3->mset(array(
     "FALLBACK" => "en",
     "CACHE" => true,
     "AUTOLOAD" => "app/;lib/vendor/",
-    "JAR.samesite" => "Strict",
+    "JAR.samesite" => "Lax",
     "PACKAGE" => "Phproject",
     "TZ" => "UTC",
     "microtime" => microtime(true),
