@@ -66,6 +66,7 @@
                 </false>
                 <true>
                     <form style="display: inline-block;" action="{{ @BASE }}/issues/reopen/{{ @issue.id }}" method="post">
+                        <csrf-token />
                         <button type="submit" id="btn-issue-reopen" class="btn btn-warning btn-xs">
                             <span class="fa fa-repeat"></span>&ensp;{{ @dict.reopen }}
                         </button>
