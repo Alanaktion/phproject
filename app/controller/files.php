@@ -268,6 +268,11 @@ class Files extends \Controller
             $force = false;
         }
 
+        // Force download of SVG images
+        if ($file->content_type == 'image/svg+xml') {
+            $force = true;
+        }
+
         if (!$this->_sendFile($file->disk_filename, $file->content_type, $file->filename, $force)) {
             $f3->error(404);
         }

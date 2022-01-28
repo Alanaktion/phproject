@@ -50,7 +50,11 @@ class Index extends \Controller
             if (!$f3->get("GET.to")) {
                 $f3->reroute("/");
             } else {
-                $f3->reroute($f3->get("GET.to"));
+                if (strpos($f3->get("GET.to"), "://") === false) {
+                    $f3->reroute($f3->get("GET.to"));
+                } else {
+                    $f3->reroute("/");
+                }
             }
         } else {
             if ($f3->get("GET.to")) {
@@ -89,7 +93,11 @@ class Index extends \Controller
                 if (!$f3->get("POST.to")) {
                     $f3->reroute("/");
                 } else {
-                    $f3->reroute($f3->get("POST.to"));
+                    if (strpos($f3->get("POST.to"), "://") === false) {
+                        $f3->reroute($f3->get("POST.to"));
+                    } else {
+                        $f3->reroute("/");
+                    }
                 }
             } else {
                 $f3->set("user", $user->cast());
