@@ -4,7 +4,7 @@
     "type": "project",
     "require": {
         "php": ">=7.1.0",
-        "bcosca/fatfree-core": "^3.7",
+        "bcosca/fatfree-core": "^3.8",
         "voku/anti-xss": "^4.1",
         "netcarver/textile": "^3.7",
         "erusev/parsedown": "^1.7",
