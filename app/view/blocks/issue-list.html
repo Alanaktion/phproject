@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 },
                 templates: {
                     suggestion: function(element) {
-                        return '<div><span class="text-muted">#' + element.id + '</span> ' + element.text + '</div>';
+                        return '<div><span class="text-muted">#' + element.id + '</span> ' + new Option(element.text).innerHTML + '</div>';
                     }
                 }
             }).bind('typeahead:select', function() {
