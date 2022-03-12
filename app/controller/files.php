@@ -215,42 +215,6 @@ class Files extends \Controller
     }
 
     /**
-     * GET /files/preview/@id
-     *
-     * @param \Base $f3
-     * @param array $params
-     * @throws \Exception
-     */
-    public function preview($f3, $params)
-    {
-        $file = new \Model\Issue\File();
-        $file->load($params["id"]);
-
-        if (!$file->id || !is_file($file->disk_filename)) {
-            $f3->error(404);
-            return;
-        }
-
-        if (substr($file->content_type, 0, 5) == "image" || $file->content_type == "text/plain") {
-            $this->_sendFile($file->disk_filename, $file->content_type, null, false);
-            return;
-        }
-
-        if ($file->content_type == "text/csv" || $file->content_type == "text/tsv") {
-            $delimiter = ",";
-            if ($file->content_type == "text/tsv") {
-                $delimiter = "\t";
-            }
-            $f3->set("file", $file);
-            $f3->set("delimiter", $delimiter);
-            $this->_render("issues/file/preview/table.html");
-            return;
-        }
-
-        $f3->reroute("/files/{$file->id}/{$file->filename}");
-    }
-
-    /**
      * GET /files/@id/@name
      *
      * @param \Base $f3
