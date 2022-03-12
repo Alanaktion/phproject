@@ -5,6 +5,14 @@ namespace Controller;
 class Files extends \Controller
 {
     /**
+     * Require login to access files
+     */
+    public function __construct()
+    {
+        $this->_requireLogin();
+    }
+
+    /**
      * Force the framework to use the local filesystem cache method if possible
      */
     protected function _useFileCache()
