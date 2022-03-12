@@ -25,7 +25,7 @@
         </false>
     </check>
     <td>{{ !empty(@item.sprint_start_date) ? date("n/j/y", strtotime(@item.sprint_start_date)) : "" }}</td>
-    <td>{{ ucwords(@@dict[@item.repeat_cycle]) ?: @dict.not_repeating }}</td>
+    <td>{{ isset(@dict[@item.repeat_cycle]) ? ucwords(@dict[@item.repeat_cycle]) : @dict.not_repeating }}</td>
     <td title="{{ date('Y-m-d H:i:s', @this->utc2local(@item.created_date)) }}">{{ date("n/j/y", @this->utc2local(@item.created_date)) }}</td>
     <td>{{ !empty(@item.due_date) ? date("n/j/y", strtotime(@item.due_date)) : "" }}</td>
     <check if="{{ !empty(@GET.status) && @GET.status != 'open' }}">

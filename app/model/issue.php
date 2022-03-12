@@ -10,20 +10,20 @@ namespace Model;
  * @property int $type_id
  * @property string $name
  * @property string $description
- * @property int $parent_id
+ * @property ?int $parent_id
  * @property int $author_id
- * @property int $owner_id
+ * @property ?int $owner_id
  * @property int $priority
- * @property float $hours_total
- * @property float $hours_remaining
- * @property float $hours_spent
+ * @property ?float $hours_total
+ * @property ?float $hours_remaining
+ * @property ?float $hours_spent
  * @property string $created_date
- * @property string $closed_date
- * @property string $deleted_date
- * @property string $start_date
- * @property string $due_date
- * @property string $repeat_cycle
- * @property int $sprint_id
+ * @property ?string $closed_date
+ * @property ?string $deleted_date
+ * @property ?string $start_date
+ * @property ?string $due_date
+ * @property ?string $repeat_cycle
+ * @property ?int $sprint_id
  */
 class Issue extends \Model
 {
@@ -302,7 +302,7 @@ class Issue extends \Model
         $importantChanges = 0;
         $importantFields = array('status', 'name', 'description', 'owner_id', 'priority', 'due_date');
         foreach ($this->fields as $key => $field) {
-            if ($field["changed"] && rtrim($field["value"]) != rtrim($this->_getPrev($key))) {
+            if ($field["changed"] && rtrim($field["value"] ?? '') != rtrim($this->_getPrev($key) ?? '')) {
                 $updateField = new \Model\Issue\Update\Field();
                 $updateField->issue_update_id = $update->id;
                 $updateField->field = $key;
@@ -537,7 +537,11 @@ class Issue extends \Model
     {
         $result = $this->cast();
         foreach ($result as &$value) {
-            $value = md5($value);
+            if ($value === null) {
+                $value = md5('');
+            } else {
+                $value = md5($value);
+            }
         }
         return $result;
     }

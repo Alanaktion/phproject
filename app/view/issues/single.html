@@ -177,7 +177,7 @@
                     <dd>{{ @issue.hours_remaining ?: 0 }}</dd>
                 </check>
 
-                <check if="{{ strtotime(@issue.start_date) }}">
+                <check if="{{ @issue.start_date && strtotime(@issue.start_date) }}">
                     <dt>{{ @dict.cols.start_date }}</dt>
                     <dd>{{ date("D, M j, Y", strtotime(@issue.start_date)) }}</dd>
                 </check>

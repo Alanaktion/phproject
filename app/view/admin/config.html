@@ -176,7 +176,7 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="imap-password">{{ @dict.password }}</label>
-                            <input type="text" class="form-control input-sm" name="imap-password" value="{{ str_repeat('*', strlen(@@imap.password)) }}">
+                            <input type="text" class="form-control input-sm" name="imap-password" value="{{ isset(@imap.password) ? str_repeat('*', strlen(@@imap.password)) : '' }}">
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>

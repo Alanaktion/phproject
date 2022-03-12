@@ -142,11 +142,20 @@ class Files extends \Controller
             $c1 = imagecolorallocate($frame, 243, 243, 243);
             imagefilledrectangle($frame, $ox - $fb, $oy - $fb, $size - $ox + $fb, $size - $oy + $fb, $c1);
             $c2 = imagecolorallocate($frame, 230, 230, 230);
-            imagefilledpolygon($frame, array(
-                $size - $ox + $fb, $oy - $fb,
-                $size - $ox + $fb, $size - $oy + $fb,
-                $ox - $fb, $size - $oy + $fb,
-            ), 3, $c2);
+            // This is an incredibly stupid way of deprecating a parameter, thanks PHP.
+            if (PHP_VERSION_ID >= 80000) {
+                imagefilledpolygon($frame, array(
+                    $size - $ox + $fb, $oy - $fb,
+                    $size - $ox + $fb, $size - $oy + $fb,
+                    $ox - $fb, $size - $oy + $fb,
+                ), $c2);
+            } else {
+                imagefilledpolygon($frame, array(
+                    $size - $ox + $fb, $oy - $fb,
+                    $size - $ox + $fb, $size - $oy + $fb,
+                    $ox - $fb, $size - $oy + $fb,
+                ), 3, $c2);
+            }
         }
 
         // Copy thumbnail onto frame

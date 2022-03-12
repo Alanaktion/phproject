@@ -1,7 +1,7 @@
 <form id="dependency_form" class="form-horizontal">
     <input type="hidden" name="issue_id" value="{{ @issue.id }}">
     <div class="form-group">
-        <label class="col-md-4"><b>{{ @dict.task_depends }}</b></label>
+        <label class="col-md-5"><b>{{ @dict.task_depends }}</b></label>
         <div class="col-md-3">
             <input type="text" class="form-control input-sm" name="dependency_id" required>
         </div>
@@ -42,8 +42,8 @@
                         <td>{{ @item.dependency_type }}</td>
                         <td><a href="{{ @BASE }}/user/{{ @item.author_username }}">{{ @item.author_name | esc }}</a></td>
                         <td><a href="{{ @BASE }}/user/{{ @item.owner_username }}">{{ @item.owner_name | esc }}</a></td>
-                        <td data-sort-value="{{ strtotime(@item.start_date) }}" title="{{ date('M j, Y \\a\\t g:ia', strtotime(@item.start_date)) }}">{{ date("n/j/y", strtotime(@item.start_date)) }}</td>
-                        <td data-sort-value="{{ strtotime(@item.due_date) ?: 0 }}">{{ !empty(@item.due_date) ? date("n/j", strtotime(@item.due_date)) : "" }}</td>
+                        <td data-sort-value="{{ @item.start_date ? strtotime(@item.start_date) : 0 }}" title="{{ @item.start_date ? date('M j, Y \\a\\t g:ia', strtotime(@item.start_date)) : '' }}">{{ @item.start_date ? date("n/j/y", strtotime(@item.start_date)) : '' }}</td>
+                        <td data-sort-value="{{ @item.due_date ? strtotime(@item.due_date) : 0 }}">{{ !empty(@item.due_date) ? date("n/j", strtotime(@item.due_date)) : "" }}</td>
                         <td data-sort-value="{{ @item.status }}">{{ @item.status_name }}</td>
                         <td><a href="#" class="delete"><span class="fa fa-remove"></span></a></td>
                     </tr>
@@ -56,7 +56,7 @@
 <form id="dependent_form" class="form-horizontal">
     <input type="hidden" name="dependency_id" value="{{ @issue.id }}">
     <div class="form-group">
-        <label class="col-md-4"><strong>{{ @dict.task_dependency }}</strong></label>
+        <label class="col-md-5"><strong>{{ @dict.task_dependency }}</strong></label>
         <div class="col-md-3">
             <input type="text" class="form-control input-sm" name="issue_id" required>
         </div>
@@ -97,8 +97,8 @@
                         <td>{{ @item.dependency_type }}</td>
                         <td><a href="{{ @BASE }}/user/{{ @item.author_username }}">{{ @item.author_name | esc }}</a></td>
                         <td><a href="{{ @BASE }}/user/{{ @item.owner_username }}">{{ @item.owner_name | esc }}</a></td>
-                        <td data-sort-value="{{ strtotime(@item.start_date) }}" title="{{ date('M j, Y \\a\\t g:ia', strtotime(@item.start_date)) }}">{{ date("n/j/y", strtotime(@item.start_date)) }}</td>
-                        <td data-sort-value="{{ strtotime(@item.due_date) ?: 0 }}">{{ !empty(@item.due_date) ? date("n/j", strtotime(@item.due_date)) : "" }}</td>
+                        <td data-sort-value="{{ @item.start_date ? strtotime(@item.start_date) : 0 }}" title="{{ @item.start_date ? date('M j, Y \\a\\t g:ia', strtotime(@item.start_date)) : '' }}">{{ @item.start_date ? date("n/j/y", strtotime(@item.start_date)) : '' }}</td>
+                        <td data-sort-value="{{ @item.due_date ? strtotime(@item.due_date) : 0 }}">{{ !empty(@item.due_date) ? date("n/j", strtotime(@item.due_date)) : "" }}</td>
                         <td data-sort-value="{{ @item.status }}">{{ @item.status_name }}</td>
                         <td><a href="#" class="delete"><span class="fa fa-remove"></span></a></td>
                     </tr>

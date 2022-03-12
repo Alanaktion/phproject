@@ -22,6 +22,9 @@ class View extends \Template
      */
     public function parseText($str, $options = array(), $ttl = null)
     {
+        if ($str === null || $str === '') {
+            return '';
+        }
         if ($options === null) {
             $options = array();
         }
@@ -238,6 +241,7 @@ class View extends \Template
      */
     protected function _parseTextile($str, $escape = true)
     {
+        error_reporting(E_ALL ^ E_DEPRECATED); // Temporarily ignore deprecations because this lib is incompatible
         $tex = new \Netcarver\Textile\Parser('html5');
         $tex->setDimensionlessImages(true);
         $tex->setRestricted($escape);
@@ -286,7 +290,7 @@ class View extends \Template
         $f3 = \Base::instance();
         $rating = $f3->get("gravatar.rating") ? $f3->get("gravatar.rating") : "pg";
         $default = $f3->get("gravatar.default") ? $f3->get("gravatar.default") : "mm";
-        return "//gravatar.com/avatar/" . md5(strtolower($email)) .
+        return "https://gravatar.com/avatar/" . md5(strtolower($email ?? '')) .
                 "?s=" . intval($size) .
                 "&d=" . urlencode($default) .
                 "&r=" . urlencode($rating);
