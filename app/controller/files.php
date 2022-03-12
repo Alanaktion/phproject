@@ -240,21 +240,22 @@ class Files extends \Controller
         }
 
         $force = true;
+        $type = mime_content_type($file->disk_filename);
         if (
-            substr($file->content_type, 0, 5) == "image" ||
-            $file->content_type == "text/plain" ||
-            $file->content_type == "application/pdf" ||
-            in_array($file->content_type, ['video/mp4', 'video/webm'])
+            substr($type, 0, 5) == "image" ||
+            $type == "text/plain" ||
+            $type == "application/pdf" ||
+            in_array($type, ['video/mp4', 'video/webm'])
         ) {
             $force = false;
         }
 
         // Force download of SVG images
-        if ($file->content_type == 'image/svg+xml') {
+        if ($type == 'image/svg+xml') {
             $force = true;
         }
 
-        if (!$this->_sendFile($file->disk_filename, $file->content_type, $file->filename, $force)) {
+        if (!$this->_sendFile($file->disk_filename, $type, $file->filename, $force)) {
             $f3->error(404);
         }
     }
