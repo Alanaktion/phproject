@@ -55,7 +55,7 @@ class User extends \Controller\Api
     }
 
 
-    // Gets a List of uers
+    // Gets a List of users
     public function get($f3)
     {
         $pagLimit = $f3->get("GET.limit") ?: 30;
@@ -86,7 +86,7 @@ class User extends \Controller\Api
     }
 
 
-    // Gets a list of Uers
+    // Gets a list of Users
     public function get_group($f3)
     {
         $pagLimit = $f3->get("GET.limit") ?: 30;

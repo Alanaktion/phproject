@@ -10,11 +10,11 @@ jobs:
 
     strategy:
       matrix:
-        php: [7.1, 7.2, 7.3, 7.4, 8.0]
+        php: [7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
 
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: phproject
@@ -27,9 +27,9 @@ jobs:
           --health-retries 3
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       env:
         cache-name: cache-composer
       with:

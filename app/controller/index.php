@@ -84,7 +84,7 @@ class Index extends \Controller
 
         // Verify password
         $security = \Helper\Security::instance();
-        if ($security->hashEquals($security->hash($f3->get("POST.password"), $user->salt ?: ""), $user->password)) {
+        if ($user->id && hash_equals($security->hash($f3->get("POST.password"), $user->salt ?: ""), $user->password)) {
             // Create a session and use it
             $session = new \Model\Session($user->id);
             $session->setCurrent();

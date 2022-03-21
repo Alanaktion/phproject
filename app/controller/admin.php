@@ -51,7 +51,7 @@ class Admin extends \Controller
         $result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
         $f3->set("version", $result[0]["version"]);
 
-        if ($f3->get("CACHE") == "apc") {
+        if ($f3->get("CACHE") == "apc" && function_exists("apc_cache_info")) {
             $f3->set("apc_stats", apc_cache_info("user", true));
         }
 

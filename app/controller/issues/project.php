@@ -60,7 +60,7 @@ class Project extends \Controller
         $renderTree = function (\Model\Issue &$issue, $level = 0) use ($parentMap, &$renderTree) {
             if ($issue->id) {
                 $f3 = \Base::instance();
-                $children = $parentMap[$issue->id] ?: [];
+                $children = $parentMap[$issue->id] ?? [];
                 $hive = [
                     "issue" => $issue,
                     "children" => $children,

@@ -45,7 +45,7 @@ class Backlog extends \Controller
             $sortOrder->load(array("sprint_id = ?", $sprint->id));
             $sortArray = [];
             if ($sortOrder->id) {
-                $sortArray = json_decode($sortOrder->issues) ?: [];
+                $sortArray = json_decode($sortOrder->issues) ?? [];
                 $sortArray = array_unique($sortArray);
                 foreach ($sortArray as $id) {
                     foreach ($projects as $p) {
@@ -92,7 +92,7 @@ class Backlog extends \Controller
         $sortOrder->load(array("sprint_id IS NULL"));
         $sortArray = [];
         if ($sortOrder->id) {
-            $sortArray = json_decode($sortOrder->issues) ?: [];
+            $sortArray = json_decode($sortOrder->issues) ?? [];
             $sortArray = array_unique($sortArray);
             foreach ($sortArray as $id) {
                 foreach ($unset_projects as $p) {

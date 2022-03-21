@@ -113,7 +113,7 @@ class Files extends \Controller
         $alpha = (imagecolorat($img->data(), 0, 0) & 0x7F000000) >> 24;
 
         // 1.1 fits perfectly but crops shadow, so we compare width vs height
-        $size = intval($params["size"]) ?: 96;
+        $size = intval($params["size"] ?? null) ?: 96;
         if ($alpha) {
             $thumbSize = $size;
         } elseif ($img->width() > $img->height()) {
