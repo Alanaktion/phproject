@@ -4,13 +4,11 @@ on: [push, pull_request]
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/php-actions/php-build:v1
+    runs-on: ubuntu-18.04
 
     strategy:
       matrix:
-        php: [7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
+        php: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
 
     services:
       mysql:
@@ -27,6 +25,13 @@ jobs:
           --health-retries 3
 
     steps:
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        tools: phpunit:8.5
+      env:
+        COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - uses: actions/checkout@v3
 
     - uses: actions/cache@v3
@@ -40,15 +45,11 @@ jobs:
           ${{ runner.os }}-ci-
           ${{ runner.os }}-
 
-    - run: switch-php-version ${{ matrix.php }}
-
     - name: Syntax check
       run: if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi
 
     - name: Composer
-      run: |
-        curl -o composer.phar -L https://getcomposer.org/composer-stable.phar
-        php composer.phar install --no-ansi --no-interaction
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
     - run: vendor/bin/phpcs
 
@@ -57,6 +58,4 @@ jobs:
 
     - name: PHPUnit
       if: ${{ matrix.php != 7.1 }}
-      run: |
-        curl -o phpunit.phar -L https://phar.phpunit.de/phpunit-8.phar
-        php phpunit.phar
+      run: phpunit
