@@ -8,11 +8,25 @@ jobs:
 
     strategy:
       matrix:
-        php: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
+        include:
+          - php: '7.1'
+            mysql: '5.7'
+          - php: '7.2'
+            mysql: '5.7'
+          - php: '7.3'
+            mysql: '5.7'
+          - php: '7.4'
+            mysql: '8'
+          - php: '8.0'
+            mysql: '8'
+          - php: '8.1'
+            mysql: '8'
+
+    name: PHP ${{ matrix.php }}
 
     services:
       mysql:
-        image: mysql:8
+        image: mysql:${{ matrix.mysql }}
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: phproject
