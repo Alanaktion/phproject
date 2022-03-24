@@ -2,6 +2,20 @@
 require_once "base.php";
 $log = new \Log("checkmail.log");
 
+function utf8_decode_email_subject($str)
+{
+	$wordStart = '=\?UTF-8\?Q\?';
+	$wordEnd = '\?='; 
+	$output = "";
+
+	$output = preg_replace('#' . $wordStart . '#', '', $str);//Remove start of UTF8 encoding
+	$output = preg_replace('#' . $wordEnd . '#', '', $output);//Remove end of tUTF8 encoding
+	$output = quoted_printable_decode($output);//decode special chars
+	$output = preg_replace('#_#', ' ', $output);//replace spacing
+
+	return $output;
+}
+
 $imap = $f3->get("imap");
 if (!isset($imap["hostname"])) {
     throw new Exception("No IMAP hostname specified in configuration");
@@ -127,20 +141,21 @@ foreach ($emails as $msg_number) {
     }
 
     $from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
+    $subject = utf8_decode_email_subject($header->subject);
     $from_user = new \Model\User;
     $from_user->load(array('email = ? AND deleted_date IS NULL', $from));
     if (!$from_user->id) {
         if (isset($imap['default_user'])) {
             $from_user->load($imap['default_user']);
-            $log->write(sprintf('No matching user, using default - From: %s; Subject: %s', $from, $header->subject));
+            $log->write(sprintf('No matching user, using default - From: %s; Subject: %s', $from, $subject));
         } else {
-            $log->write(sprintf('Skipping message, no matching user - From: %s; Subject: %s', $from, $header->subject));
+            $log->write(sprintf('Skipping message, no matching user - From: %s; Subject: %s', $from, $subject));
             continue;
         }
     }
 
     $to_user = new \Model\User;
-    $owner = $from_user->id;
+    $owner = $from_user->id;//imap default user
     foreach ($header->to as $to_email) {
         $to = $to_email->mailbox . "@" . $to_email->host;
         $to_user->load(array('email = ? AND deleted_date IS NULL', $to));
@@ -151,7 +166,7 @@ foreach ($emails as $msg_number) {
     }
 
     // Find issue IDs in subject
-    preg_match("/\[#([0-9]+)\] -/", $header->subject, $matches);
+    preg_match("/\[#([0-9]+)\] -/", $subject, $matches);
 
     // Get issue instance
     $issue = new \Model\Issue;
@@ -159,7 +174,7 @@ foreach ($emails as $msg_number) {
         $issue->load(intval($matches[1]));
     }
     if (!$issue->id) {
-        $subject = trim(preg_replace("/^((Re|Fwd?):\s)*/i", "", $header->subject));
+        $subject = trim(preg_replace("/^((Re|Fwd?):\s)*/i", "", $subject));
         $issue->load(array('name=? AND deleted_date IS NULL AND closed_date IS NULL', $subject));
     }
 
@@ -173,8 +188,15 @@ foreach ($emails as $msg_number) {
             $log->write(sprintf("Added comment %s on issue #%s - %s", $comment->id, $issue->id, $issue->name));
         }
     } else {
+        //No matching issue, creating a new issue
+        //if user is mailbox of the group, the issue is assigned to the group.
+        $is_group_mailbox = new \Model\Custom("user_group_user");
+        $is_group_mailbox->load(array("user_id = ? AND deleted_date IS NULL", $owner));
+        if($is_group_mailbox->mailbox){
+                $owner = $is_group_mailbox->group_id;
+        }
         $issue = \Model\Issue::create(array(
-            'name' => $header->subject,
+            'name' => $subject,
             'description' => $text,
             'author_id' => $from_user->id,
             'owner_id' => $owner,

@@ -21,7 +21,8 @@
                     <li data-user-id="{{ @member.user_id }}">
                         <a href="#" class="delete text-danger has-tooltip" data-placement="right" title="{{ @dict.delete }}" aria-label="{{ @dict.delete }}">
                             <span class="fa fa-remove"></span>
-                        </a>&nbsp;
+                        </a>
+                        &nbsp;
                         <check if="{{ @member.manager }}">
                             <true>
                                 <span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.manager }}" aria-label="{{ @dict.manager }}">
@@ -33,6 +34,22 @@
                                     <csrf-token />
                                     <button type="submit" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_manager }}">
                                         <span class="fa fa-star-o"></span>
+                                    </button>
+                                </form>
+                            </false>
+                        </check>
+                        &nbsp;
+                        <check if="{{ @member.mailbox }}">
+                            <true>
+                                <span class="manager text-warning has-tooltip" data-placement="right" title="{{ @dict.mailbox }}" aria-label="{{ @dict.mailbox }}">
+                                    <span class="fa fa-envelope"></span>
+                                </span>
+                            </true>
+                            <false>
+                                <form style="display: inline-block;" action="{{ @BASE }}/admin/groups/{{ @group.id }}/setmailbox/{{ @member.id }}" method="post">
+                                    <csrf-token />
+                                    <button type="submit" class="manager text-muted has-tooltip" data-placement="right" title="{{ @dict.set_as_mailbox }}">
+                                        <span class="fa fa-envelope-o"></span>
                                     </button>
                                 </form>
                             </false>

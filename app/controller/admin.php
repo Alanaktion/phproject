@@ -518,7 +518,14 @@ class Admin extends \Controller
 
         $members = new \Model\Custom("user_group_user");
         $f3->set("members", $members->find(array("group_id = ? AND deleted_date IS NULL", $group->id)));
-
+        
+        $to_user = new \Model\User;
+        $members2 = new \Model\Custom("user_group_user");
+        $to_user->load(array('email = ? AND deleted_date IS NULL', 'contact@interfast-intl.be'));
+        $members2->load(array("user_id = ? AND user_email = ? AND deleted_date IS NULL", $to_user->id, $to_user->email));
+        if($members2->mailbox){
+            $owner = $members2->group_id;
+        }
         $users = new \Model\User();
         $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 
@@ -625,6 +632,31 @@ class Admin extends \Controller
         // Remove Manager status from all members and set manager status on specified user
         $db->exec("UPDATE user_group SET manager = 0 WHERE group_id = ?", $group->id);
         $db->exec("UPDATE user_group SET manager = 1 WHERE id = ?", $params["user_group_id"]);
+
+        $f3->reroute("/admin/groups/" . $group->id);
+    }
+
+    /**
+      * POST /admin/groups/@id/setmailbox/@user_group_id
+     * @param \Base $f3
+     * @param array $params
+     * @throws \Exception
+     */
+    public function group_setmailbox(\Base $f3, array $params)
+    {
+        $this->validateCsrf();
+        $db = $f3->get("db.instance");
+
+        $group = new \Model\User();
+        $group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
+
+        if (!$group->id) {
+            $f3->error(404);
+            return;
+        }
+
+        $db->exec("UPDATE user_group SET mailbox = 0 WHERE group_id = ?", $group->id);
+        $db->exec("UPDATE user_group SET mailbox = 1 WHERE id = ?", $params["user_group_id"]);
 
         $f3->reroute("/admin/groups/" . $group->id);
     }
