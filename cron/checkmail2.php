@@ -127,7 +127,6 @@ foreach ($emails as $msg_number) {
     }
     
     $from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
-    $text .= "\n\nSender: " . $from;
     $subject = imap_utf8($header->subject);
     $from_user = new \Model\User;
     $from_user->load(array('email = ? AND deleted_date IS NULL', $from));
@@ -140,6 +139,7 @@ foreach ($emails as $msg_number) {
             $log->write(sprintf('No matching user, No default IMAP user set, using mail.from - From: %s; Subject: %s', $from, $subject));
             //continue;
         }
+        $text .= "\n\nSender: " . $from;//This will insert sender mail in the incident if it's not a known user.
     }
 
     $to_user = new \Model\User;
