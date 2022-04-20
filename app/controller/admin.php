@@ -519,13 +519,6 @@ class Admin extends \Controller
         $members = new \Model\Custom("user_group_user");
         $f3->set("members", $members->find(array("group_id = ? AND deleted_date IS NULL", $group->id)));
         
-        $to_user = new \Model\User;
-        $members2 = new \Model\Custom("user_group_user");
-        $to_user->load(array('email = ? AND deleted_date IS NULL', 'contact@interfast-intl.be'));
-        $members2->load(array("user_id = ? AND user_email = ? AND deleted_date IS NULL", $to_user->id, $to_user->email));
-        if($members2->mailbox){
-            $owner = $members2->group_id;
-        }
         $users = new \Model\User();
         $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
 
