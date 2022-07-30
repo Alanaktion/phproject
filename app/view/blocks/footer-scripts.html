@@ -7,11 +7,10 @@
     }
 ~}
 <script>var BASE = '{{ @BASE }}', issue_types = {{ json_encode(@types) }};</script>
-<script src="{{ @BASE }}/js/jquery-3.2.1.min.js"></script>
+<script src="{{ @BASE }}/js/jquery-3.6.0.min.js"></script>
 <script src="{{ @BASE }}/js/bootstrap.min.js"></script>
-<script src="{{ @BASE }}/js/mousetrap-1.6.2.min.js"></script>
+<script src="{{ @BASE }}/js/mousetrap-1.6.5.min.js"></script>
 <script src="{{ @BASE }}/js/global.js"></script>
-<script src="{{ @BASE }}/js/respond.min.js"></script>
 
 <repeat group="{{ \Helper\Plugin::instance()->getJsFiles(@PATH) }}" value="{{ @file }}">
     <script src="{{ @file }}"></script>

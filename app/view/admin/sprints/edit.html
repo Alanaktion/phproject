@@ -39,7 +39,7 @@
 </div>
 <script src="{{ @BASE }}/js/bootstrap-datepicker.js"></script>
 <check if="{{ @user_obj->date_picker()->js && @user_obj->date_picker()->language != 'en-US' }}">
-<script src="{{ @BASE }}/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+<script src="{{ @BASE }}/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.min.js"></script>
 </check>
 <script>
     $(function() {
