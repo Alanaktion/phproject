@@ -154,7 +154,7 @@
             <repeat group="{{ @taskboard }}" value="{{ @row }}">
                 <tr data-story-id="{{ @row.project.id }}" class="tb-row">
                     <td class="column column-1">
-                        <div id="project_{{ @row.project.id}}" class="card story {{ @row.project.status_closed ? 'completed' : '' }}" style="border-color: #{{ @row.project.owner_task_color | esc }};">
+                        <div id="project_{{ @row.project.id }}" class="card story {{ @row.project.status_closed ? 'completed' : '' }}" style="border-color: #{{ @row.project.owner_task_color | esc }};">
                             <div class="top">
                                 <a href="{{ @BASE }}/issues/new/{{ @issue_type.task }}/{{ @row.project.id }}" title="Add Task" class="add-task has-tooltip pull-right" data-placement="right">
                                     <span class="fa fa-plus"></span>
@@ -204,7 +204,7 @@
                                     </div>
                                     <div class="title">{{ @task.name | esc }}</div>
                                     <div class="description">{{ @task.description | esc }}</div>
-                                    <check if="{{ strtotime(@task.due_date) > 0 }}">
+                                    <check if="{{ !empty(@task.due_date) && strtotime(@task.due_date) > 0 }}">
                                         <true>
                                             <div class="dueDate">{{ date('n/j/Y', strtotime(@task.due_date)) }}</div>
                                         </true>
@@ -397,7 +397,7 @@
     <script src="{{ @BASE }}/js/jquery.ui.touch-punch.min.js"></script>
     <script src="{{ @BASE }}/js/bootstrap-datepicker.js"></script>
     <check if="{{ @user_obj->date_picker()->js && @user_obj->date_picker()->language != 'en-US' }}">
-        <script src="{{ @BASE }}/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+        <script src="{{ @BASE }}/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.min.js"></script>
     </check>
     <script>
         var datepickerLanguage='{{ @user_obj->date_picker()->language }}';

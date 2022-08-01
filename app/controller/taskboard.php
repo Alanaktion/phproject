@@ -332,7 +332,7 @@ class Taskboard extends \Controller
         $post = $f3->get("POST");
         $post['sprint_id'] = $post['sprintId'];
         $post['name'] = $post['title'];
-        $post['owner_id'] = $post['assigned'];
+        $post['owner_id'] = $post['assigned'] ?: null;
         $post['due_date'] = $post['dueDate'];
         $post['parent_id'] = $post['storyId'];
         $issue = \Model\Issue::create($post);
@@ -369,7 +369,7 @@ class Taskboard extends \Controller
         } else {
             $issue->name = $post["title"];
             $issue->description = $post["description"];
-            $issue->owner_id = $post["assigned"];
+            $issue->owner_id = $post["assigned"] ?: null;
             $issue->hours_remaining = floatval($post["hours"] ?? null) ?: 0;
             $issue->hours_spent += floatval($post["hours_spent"] ?? null) ?: 0;
             if (!empty($post["hours_spent"]) && !empty($post["burndown"])) {

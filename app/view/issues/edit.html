@@ -15,7 +15,7 @@
 <script src="{{ @BASE }}/js/bootstrap-datepicker.js"></script>
 <script src="{{ @BASE }}/js/typeahead.jquery.js"></script>
 <check if="{{ @user_obj->date_picker()->js && @user_obj->date_picker()->language != 'en-US' }}">
-    <script src="{{ @BASE }}/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.js"></script>
+    <script src="{{ @BASE }}/js/bootstrap-datepicker.{{ @user_obj->date_picker()->language }}.min.js"></script>
 </check>
 <check if="{{ @parse.markdown && !@user_obj->option('disable_mde') }}">
     <script src="{{ @BASE }}/js/easymde.min.js"></script>
