@@ -6,7 +6,7 @@ title: Install
 
 ## Requirements
 
-* PHP 7.0 or later (PHP 8.0 recommended)
+* PHP 7.4 or later (PHP 8.0 recommended)
     * MySQL PDO extension
     * GD extension (required for thumbnails and avatars)
 * MySQL 5.6 or later (MySQL 8 recommended)
