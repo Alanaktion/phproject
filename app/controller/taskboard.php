@@ -165,7 +165,7 @@ class Taskboard extends \Controller
         $sortModel = new \Model\Issue\Backlog();
         $sortOrder = $sortModel->load(["sprint_id = ?", $sprint->id]);
         if ($sortOrder) {
-            $sortArray = json_decode($sortOrder->issues) ?: [];
+            $sortArray = json_decode($sortOrder->issues, null, 512, JSON_THROW_ON_ERROR) ?: [];
             $sortArray = array_unique($sortArray);
             usort($projects, function (\Model\Issue $a, \Model\Issue $b) use ($sortArray) {
                 $ka = array_search($a->id, $sortArray);

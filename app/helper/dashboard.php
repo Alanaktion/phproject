@@ -20,7 +20,7 @@ class Dashboard extends \Prefab
 
     public function getIssue()
     {
-        return $this->_issue === null ? $this->_issue = new \Model\Issue\Detail() : $this->_issue;
+        return $this->_issue ?? ($this->_issue = new \Model\Issue\Detail());
     }
 
     public function getOwnerIds()

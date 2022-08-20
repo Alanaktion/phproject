@@ -11,11 +11,11 @@ class Index extends \Controller
      * @param array $params
      * @throws \Exception
      */
-    public function index($f3, $params)
+    public function index($f3)
     {
         if ($f3->get("user.id")) {
             $user_controller = new \Controller\User();
-            return $user_controller->dashboard($f3, $params);
+            return $user_controller->dashboard($f3);
         } else {
             if ($f3->get("site.public")) {
                 $this->_render("index/index.html");
@@ -29,7 +29,7 @@ class Index extends \Controller
                         $f3->set("user", $user->cast());
                         $f3->set("user_obj", $user);
                         $user_controller = new \Controller\User();
-                        return $user_controller->dashboard($f3, $params);
+                        return $user_controller->dashboard($f3);
                     } else {
                         $f3->set("error", "Auto-login failed, demo user was not found.");
                     }
@@ -167,10 +167,11 @@ class Index extends \Controller
             $user->email = trim($f3->get("POST.register-email"));
             $user->name = trim($f3->get("POST.register-name"));
             $security = \Helper\Security::instance();
-            extract($security->hash($f3->get("POST.register-password")));
+            $hash = $security->hash($f3->get("POST.register-password"));
+            extract($hash);
             $user->password = $hash;
             $user->salt = $salt;
-            $user->task_color = sprintf("%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
+            $user->task_color = sprintf("%02X%02X%02X", random_int(0, 0xFF), random_int(0, 0xFF), random_int(0, 0xFF));
             $user->rank = \Model\User::RANK_CLIENT;
             $user->save();
 

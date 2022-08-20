@@ -14,7 +14,7 @@ class Matrix extends \Matrix
     {
         $lengths = array();
         foreach ($arrays as $k => $v) {
-            $lengths[$k] = count($v);
+            $lengths[$k] = is_countable($v) ? count($v) : 0;
         }
         $max = max($lengths);
         $result = array();

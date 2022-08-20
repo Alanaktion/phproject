@@ -153,13 +153,13 @@ class Issues extends \Controller
         // load all issues if user is admin, otherwise load by group access
         $user = $f3->get("user_obj");
         if ($user->role == 'admin' || !$f3->get('security.restrict_access')) {
-            list($filter, $filter_str) = $this->_buildFilter();
+            [$filter, $filter_str] = $this->_buildFilter();
         } else {
             $helper = \Helper\Dashboard::instance();
             $groupString = implode(",", array_merge($helper->getGroupIds(), [$user->id]));
 
             // Get filter
-            list($filter, $filter_str) = $this->_buildFilter();
+            [$filter, $filter_str] = $this->_buildFilter();
             $filter_str = "(owner_id IN (" . $groupString . ")) AND " . $filter_str;
         }
 
@@ -652,7 +652,7 @@ class Issues extends \Controller
         $newSprint = false;
 
         // Diff contents and save what's changed.
-        $hashState = json_decode($post["hash_state"]);
+        $hashState = json_decode($post["hash_state"], null, 512, JSON_THROW_ON_ERROR);
         foreach ($post as $i => $val) {
             if (
                 $issue->exists($i)

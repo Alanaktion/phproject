@@ -24,7 +24,7 @@ namespace Model;
  */
 class User extends \Model
 {
-    const
+    public const
         RANK_GUEST = 0,
         RANK_CLIENT = 1,
         RANK_USER = 2,
@@ -181,7 +181,7 @@ class User extends \Model
      */
     public function options(): array
     {
-        return $this->options ? json_decode($this->options, true) : [];
+        return $this->options ? json_decode($this->options, true, 512, JSON_THROW_ON_ERROR) : [];
     }
 
     /**
@@ -194,10 +194,10 @@ class User extends \Model
     {
         $options = $this->options();
         if ($value === null) {
-            return isset($options[$key]) ? $options[$key] : null;
+            return $options[$key] ?? null;
         }
         $options[$key] = $value;
-        $this->options = json_encode($options);
+        $this->options = json_encode($options, JSON_THROW_ON_ERROR);
         return $this;
     }
 
@@ -345,7 +345,7 @@ class User extends \Model
      */
     public function generateResetToken(): string
     {
-        $random = \Helper\Security::instance()->randBytes(512);
+        $random = random_bytes(512);
         $token = hash("sha384", $random) . time();
         $this->reset_token = hash("sha384", $token);
         return $token;

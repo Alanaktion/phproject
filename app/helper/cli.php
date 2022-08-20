@@ -22,7 +22,7 @@ class Cli extends \Prefab
         }
 
         // Show argument help
-        if (getopt('h', ['help']) || count($argv) == 1) {
+        if (getopt('h', ['help']) || (is_countable($argv) ? count($argv) : 0) == 1) {
             return $this->showHelp($keys, $options);
         }
 

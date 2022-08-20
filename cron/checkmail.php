@@ -120,7 +120,7 @@ if ($emails) {
 
             if (!empty($issue->id)) {
                 // add other recipients as watchers
-                if (!empty($header->cc) || count($header->to) > 1) {
+                if (!empty($header->cc) || (is_countable($header->to) ? count($header->to) : 0) > 1) {
                     if (!empty($header->cc)) {
                         $watchers = array_merge($header->to, $header->cc);
                     } else {
@@ -151,7 +151,7 @@ if ($emails) {
                 $attachments = array();
 
                 /* if any attachments found... */
-                if (isset($structure->parts) && count($structure->parts)) {
+                if (isset($structure->parts) && (is_countable($structure->parts) ? count($structure->parts) : 0)) {
                     $count = count($structure->parts);
                     for ($i = 0; $i < $count; $i++) {
                         $attachments[$i] = array(

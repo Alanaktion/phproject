@@ -69,7 +69,7 @@ class Admin extends \Controller
     public function releaseCheck(\Base $f3)
     {
         if (!$f3->get('site.key')) {
-            \Model\Config::setVal('site.key', sha1(mt_rand() . mt_rand()));
+            \Model\Config::setVal('site.key', sha1(random_bytes(512)));
         }
 
         // Gather basic stats
@@ -130,7 +130,7 @@ class Admin extends \Controller
             $parsedown->setMarkupEscaped(true);
             $return->description_html = $parsedown->text($return->description);
         }
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -296,7 +296,7 @@ class Admin extends \Controller
     public function user_new(\Base $f3)
     {
         $f3->set("title", $f3->get("dict.new_user"));
-        $f3->set("rand_color", sprintf("#%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF)));
+        $f3->set("rand_color", sprintf("#%02X%02X%02X", random_int(0, 0xFF), random_int(0, 0xFF), random_int(0, 0xFF)));
         $this->_render("admin/users/edit.html");
     }
 
@@ -496,7 +496,7 @@ class Admin extends \Controller
         $group->name = $f3->get("POST.name");
         $group->username = \Web::instance()->slug($group->name);
         $group->role = "group";
-        $group->task_color = sprintf("%02X%02X%02X", mt_rand(0, 0xFF), mt_rand(0, 0xFF), mt_rand(0, 0xFF));
+        $group->task_color = sprintf("%02X%02X%02X", random_int(0, 0xFF), random_int(0, 0xFF), random_int(0, 0xFF));
         $group->created_date = $this->now();
         $group->save();
         $f3->reroute("/admin/groups");

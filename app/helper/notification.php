@@ -4,7 +4,7 @@ namespace Helper;
 
 class Notification extends \Prefab
 {
-    const QPRINT_MAXL = 75;
+    public const QPRINT_MAXL = 75;
 
     /**
      * Convert a 8 bit string to a quoted-printable string

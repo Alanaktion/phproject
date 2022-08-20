@@ -20,7 +20,7 @@ abstract class Api extends \Controller
             if ($f3->get("DEBUG") >= 2) {
                 $out["trace"] = strip_tags($f3->get("ERROR.trace"));
             }
-            echo json_encode($out);
+            echo json_encode($out, JSON_THROW_ON_ERROR);
         });
 
         $this->_userId = $this->_requireAuth();

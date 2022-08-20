@@ -7,7 +7,7 @@ if (PHP_SAPI != 'cli') {
     throw new Exception("Cron jobs must be run from the command line.");
 }
 
-$homedir = dirname(dirname(__FILE__)) . "/";
+$homedir = dirname(__FILE__, 2) . "/";
 set_include_path($homedir);
 
 require_once $homedir."vendor/autoload.php";

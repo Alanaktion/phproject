@@ -84,7 +84,7 @@ class User extends \Controller
     {
         $this->validateCsrf();
         $helper = \Helper\Dashboard::instance();
-        $widgets = json_decode($f3->get("POST.widgets"));
+        $widgets = json_decode($f3->get("POST.widgets"), null, 512, JSON_THROW_ON_ERROR);
         $allWidgets = $helper->allWidgets;
 
         // Validate widget list
@@ -181,11 +181,11 @@ class User extends \Controller
         } else {
             // Update profile
             if (!empty($post["name"])) {
-                $user->name = filter_var($post["name"], FILTER_SANITIZE_STRING);
+                $user->name = $post["name"];
             } else {
                 $error = "Please enter your name.";
             }
-            if (preg_match("/^([\p{L}\.\-\d]+)@([\p{L}\-\.\d]+)((\.(\p{L})+)+)$/im", $post["email"])) {
+            if (preg_match("/^([\p{L}\.\\-\d]+)@([\p{L}\-\.\d]+)((\.(\p{L})+)+)$/im", $post["email"])) {
                 $user->email = $post["email"];
             } else {
                 $error = $post["email"] . " is not a valid email address.";

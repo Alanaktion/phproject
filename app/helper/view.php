@@ -31,9 +31,10 @@ class View extends \Template
         $options = $options + \Base::instance()->get("parse");
 
         // Check for cached value if $ttl is set
+        $cache = \Cache::instance();
+        $hash = null;
         if ($ttl !== null) {
-            $cache = \Cache::instance();
-            $hash = sha1($str . json_encode($options));
+            $hash = sha1($str . json_encode($options, JSON_THROW_ON_ERROR));
 
             // Return value if cached
             if (($str = $cache->get("$hash.tex")) !== false) {
@@ -115,6 +116,7 @@ class View extends \Template
         $issues = $issue->find(array("id IN ($idsStr)"));
 
         return preg_replace_callback("/(?<=[^a-z\\/&]|^)#[0-9]+(?=[^a-z\\/]|$)/i", function ($matches) use ($url, $issues) {
+            $issue = null;
             $id = ltrim($matches[0], "#");
             foreach ($issues as $i) {
                 if ($i->id == $id) {
@@ -224,14 +226,10 @@ class View extends \Template
             '8O' => "\xF0\x9F\x98\xB2", // oops
         ];
 
-        $match = implode('|', array_map(function ($str) {
-            return preg_quote($str, '/');
-        }, array_keys($map)));
+        $match = implode('|', array_map(fn($str) => preg_quote($str, '/'), array_keys($map)));
         $regex = "/([^a-z\\/&]|^)($match)([^a-z\\/]|$)/m";
 
-        return preg_replace_callback($regex, function ($match) use ($map) {
-            return $match[1] . $map[$match[2]] . $match[3];
-        }, $str);
+        return preg_replace_callback($regex, fn($match) => $match[1] . $map[$match[2]] . $match[3], $str);
     }
 
     /**
@@ -268,10 +266,10 @@ class View extends \Template
      */
     public function formatFilesize($filesize)
     {
-        if ($filesize > 1073741824) {
-            return round($filesize / 1073741824, 2) . " GB";
-        } elseif ($filesize > 1048576) {
-            return round($filesize / 1048576, 2) . " MB";
+        if ($filesize > 1_073_741_824) {
+            return round($filesize / 1_073_741_824, 2) . " GB";
+        } elseif ($filesize > 1_048_576) {
+            return round($filesize / 1_048_576, 2) . " MB";
         } elseif ($filesize > 1024) {
             return round($filesize / 1024, 2) . " KB";
         } else {
@@ -288,8 +286,8 @@ class View extends \Template
     public function gravatar($email, $size = 80)
     {
         $f3 = \Base::instance();
-        $rating = $f3->get("gravatar.rating") ? $f3->get("gravatar.rating") : "pg";
-        $default = $f3->get("gravatar.default") ? $f3->get("gravatar.default") : "mm";
+        $rating = $f3->get("gravatar.rating") ?: "pg";
+        $default = $f3->get("gravatar.default") ?: "mm";
         return "https://gravatar.com/avatar/" . md5(strtolower($email ?? '')) .
                 "?s=" . intval($size) .
                 "&d=" . urlencode($default) .
@@ -345,6 +343,6 @@ class View extends \Template
     {
         $f3 = \Base::instance();
         $langs = $f3->split($f3->get("LANGUAGE"));
-        return isset($langs[0]) ? $langs[0] : $f3->get("FALLBACK");
+        return $langs[0] ?? $f3->get("FALLBACK");
     }
 }

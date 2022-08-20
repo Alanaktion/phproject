@@ -14,7 +14,7 @@ namespace Model;
 class Session extends \Model
 {
     protected $_table_name = "session";
-    const COOKIE_NAME = "phproj_token";
+    public const COOKIE_NAME = "phproj_token";
 
     /**
      * Create a new session
@@ -60,7 +60,7 @@ class Session extends \Model
             if ($duration > $lifetime / 2) {
                 if ($f3->get("DEBUG")) {
                     $log = new \Log("session.log");
-                    $log->write("Updating expiration: " . json_encode($this->cast())
+                    $log->write("Updating expiration: " . json_encode($this->cast(), JSON_THROW_ON_ERROR)
                             . "; new date: " . date("Y-m-d H:i:s"));
                 }
                 $this->created = date("Y-m-d H:i:s");
@@ -82,7 +82,7 @@ class Session extends \Model
 
         if ($f3->get("DEBUG")) {
             $log = new \Log("session.log");
-            $log->write("Setting current session: " . json_encode($this->cast()));
+            $log->write("Setting current session: " . json_encode($this->cast(), JSON_THROW_ON_ERROR));
         }
 
         $f3->set("COOKIE." . self::COOKIE_NAME, $this->token, $f3->get("session_lifetime"));
@@ -103,7 +103,7 @@ class Session extends \Model
 
         if ($f3->get("DEBUG")) {
             $log = new \Log("session.log");
-            $log->write("Deleting session: " . json_encode($this->cast()));
+            $log->write("Deleting session: " . json_encode($this->cast(), JSON_THROW_ON_ERROR));
         }
 
         // Empty the session cookie if it matches the current token

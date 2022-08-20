@@ -82,8 +82,8 @@ class Files extends \Controller
         }
 
         // Output cached image if one exists
+        $hash = $f3->hash($f3->get('VERB') . " " . $f3->get('URI')) . ".thm";
         if ($f3->get("DEBUG") < 2) {
-            $hash = $f3->hash($f3->get('VERB') . " " . $f3->get('URI')) . ".thm";
             if ($cache->exists($hash, $data)) {
                 header("Content-type: image/" . $params["format"]);
                 echo $data;

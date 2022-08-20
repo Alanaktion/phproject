@@ -115,7 +115,7 @@ class Issues extends \Controller\Api
         } else {
             // For Redmine compatibility, also accept a JSON object
             try {
-                $post = json_decode(file_get_contents('php://input'), true);
+                $post = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
             } catch (\Exception $e) {
                 throw new \Exception("Unable to parse input");
             }
@@ -157,7 +157,7 @@ class Issues extends \Controller\Api
             return;
         }
 
-        // Verify given values are valid (types, statueses, priorities)
+        // Verify given values are valid (types, statuses, priorities)
         if (!empty($post["type_id"])) {
             $type = new \Model\Issue\Type();
             $type->load($post["type_id"]);

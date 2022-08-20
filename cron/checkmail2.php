@@ -185,7 +185,7 @@ foreach ($emails as $msg_number) {
     }
 
     // Add other recipients as watchers
-    if (!empty($header->cc) || count($header->to) > 1) {
+    if (!empty($header->cc) || (is_countable($header->to) ? count($header->to) : 0) > 1) {
         if (!empty($header->cc)) {
             $watchers = array_merge($header->to, $header->cc);
         } else {
