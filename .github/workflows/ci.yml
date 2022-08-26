@@ -4,29 +4,17 @@ on: [push, pull_request]
 
 jobs:
   ci:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
-        include:
-          - php: '7.1'
-            mysql: '5.7'
-          - php: '7.2'
-            mysql: '5.7'
-          - php: '7.3'
-            mysql: '5.7'
-          - php: '7.4'
-            mysql: '8'
-          - php: '8.0'
-            mysql: '8'
-          - php: '8.1'
-            mysql: '8'
+        php: ['7.4', '8.0', '8.1']
 
     name: PHP ${{ matrix.php }}
 
     services:
       mysql:
-        image: mysql:${{ matrix.mysql }}
+        image: mysql:8
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: phproject
@@ -69,7 +57,3 @@ jobs:
 
     - name: Install Phproject
       run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=127.0.0.1 --db-port=${{ job.services.mysql.ports['3306'] }} --db-user=root
-
-    - name: PHPUnit
-      if: ${{ matrix.php != 7.1 }}
-      run: phpunit

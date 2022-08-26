@@ -11,7 +11,7 @@ Download and extract [the latest release](https://github.com/Alanaktion/phprojec
 Detailed requirements and installation instructions are available at [phproject.org](http://www.phproject.org/install.html).
 
 ### Development
-Phproject uses [Composer](https://getcomposer.org/) for dependency management. After cloning the repository, run `composer install --no-dev` to install the required packages.
+Phproject uses [Composer](https://getcomposer.org/) for dependency management. After cloning the repository, run `composer install` to install the required packages.
 
 ### Contributing
 Phproject is maintained as an open source project for use by anyone around the world under the [GNU General Public License](http://www.gnu.org/licenses/gpl-3.0.txt). If you find a bug or would like a new feature added, [open an issue](https://github.com/Alanaktion/phproject/issues/new) or [submit a pull request](https://github.com/Alanaktion/phproject/compare/) with new code. If you want to help with translation, [you can submit translations via Crowdin](https://crowdin.com/project/phproject).
