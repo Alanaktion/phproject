@@ -1,4 +1,4 @@
-SET NAMES utf8mb4;
+SET NAMES utf8;
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
@@ -25,7 +25,7 @@ CREATE TABLE `user` (
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `username` (`username`),
 	UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `user_group`;
 CREATE TABLE `user_group` (
@@ -33,10 +33,11 @@ CREATE TABLE `user_group` (
 	`user_id` int(10) unsigned NOT NULL,
 	`group_id` int(10) unsigned NOT NULL,
 	`manager` tinyint(1) NOT NULL DEFAULT '0',
+        `mailbox` tinyint(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	KEY `group_id` (`group_id`),
 	KEY `group_user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `issue`;
 CREATE TABLE `issue` (
@@ -74,7 +75,7 @@ CREATE TABLE `issue` (
 	CONSTRAINT `issue_owner_id` FOREIGN KEY (`owner_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE SET NULL,
 	CONSTRAINT `issue_priority` FOREIGN KEY (`priority`) REFERENCES `issue_priority`(`value`) ON UPDATE CASCADE ON DELETE RESTRICT,
 	CONSTRAINT `issue_status` FOREIGN KEY (`status`) REFERENCES `issue_status`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `issue_backlog`;
 CREATE TABLE `issue_backlog` (
@@ -84,7 +85,7 @@ CREATE TABLE `issue_backlog` (
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `issue_backlog_sprint_id` (`sprint_id`),
 	CONSTRAINT `issue_backlog_sprint_id` FOREIGN KEY (`sprint_id`) REFERENCES `sprint` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `issue_comment`;
 CREATE TABLE `issue_comment` (
@@ -99,7 +100,7 @@ CREATE TABLE `issue_comment` (
 	KEY `user` (`user_id`),
 	CONSTRAINT `comment_issue` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `comment_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `issue_file`;
 CREATE TABLE `issue_file` (
@@ -119,7 +120,7 @@ CREATE TABLE `issue_file` (
 	KEY `index_issue_id` (`issue_id`),
 	KEY `index_user_id` (`user_id`),
 	KEY `index_created_on` (`created_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `issue_priority`;
 CREATE TABLE `issue_priority` (
@@ -128,7 +129,7 @@ CREATE TABLE `issue_priority` (
 	`name` varchar(64) NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `priority` (`value`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `issue_priority` (`id`, `value`, `name`) VALUES
 (1, 0, 'Normal'),
@@ -143,7 +144,7 @@ CREATE TABLE `issue_status` (
 	`taskboard` tinyint(1) NOT NULL DEFAULT '1',
 	`taskboard_sort` INT UNSIGNED NULL,
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `issue_status` (`id`, `name`, `closed`, `taskboard`, `taskboard_sort`) VALUES
 (1, 'New', 0, 2, 1),
@@ -159,7 +160,7 @@ CREATE TABLE `issue_type` (
 	`default_description` text NULL,
 	PRIMARY KEY (`id`),
 	KEY `issue_type_role` (`role`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `issue_type` (`id`, `name`, `role`) VALUES
 (1, 'Task', 'task'),
@@ -178,7 +179,7 @@ CREATE TABLE `issue_update` (
 	KEY `issue` (`issue_id`),
 	KEY `user` (`user_id`),
 	CONSTRAINT `update_issue` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `issue_update_field`;
 CREATE TABLE `issue_update_field` (
@@ -190,7 +191,7 @@ CREATE TABLE `issue_update_field` (
 	PRIMARY KEY (`id`),
 	KEY `issue_update_field_update_id` (`issue_update_id`),
 	CONSTRAINT `issue_update_field_update` FOREIGN KEY (`issue_update_id`) REFERENCES `issue_update` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `issue_watcher`;
 CREATE TABLE `issue_watcher` (
@@ -199,7 +200,7 @@ CREATE TABLE `issue_watcher` (
 	`user_id` int(10) unsigned NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `unique_watch` (`issue_id`,`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `issue_tag`;
 CREATE TABLE `issue_tag`(
@@ -209,20 +210,20 @@ CREATE TABLE `issue_tag`(
 	PRIMARY KEY (`id`),
 	INDEX `issue_tag_tag` (`tag`, `issue_id`),
 	CONSTRAINT `issue_tag_issue` FOREIGN KEY (`issue_id`) REFERENCES `issue`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=INNODB CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=INNODB CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `issue_dependency`;
 CREATE TABLE `issue_dependency` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`issue_id` int(10) unsigned NOT NULL,
 	`dependency_id` int(10) unsigned NOT NULL,
-	`dependency_type` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+	`dependency_type` char(2) COLLATE utf8_unicode_ci NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `issue_id_dependency_id` (`issue_id`,`dependency_id`),
 	KEY `dependency_id` (`dependency_id`),
 	CONSTRAINT `issue_dependency_ibfk_2` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `issue_dependency_ibfk_3` FOREIGN KEY (`dependency_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `sprint`;
 CREATE TABLE `sprint` (
@@ -231,10 +232,10 @@ CREATE TABLE `sprint` (
 	`start_date` date NOT NULL,
 	`end_date` date NOT NULL,
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP VIEW IF EXISTS `user_group_user`;
-CREATE VIEW `user_group_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color`,`u`.`deleted_date` AS `deleted_date`,`g`.`manager` AS `manager` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));
+CREATE VIEW `user_group_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color`,`u`.`deleted_date` AS `deleted_date`,`g`.`manager` AS `manager`,`g`.`mailbox` AS `mailbox` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));
 
 DROP VIEW IF EXISTS `issue_comment_user`;
 CREATE VIEW `issue_comment_user` AS (select `c`.`id` AS `id`,`c`.`issue_id` AS `issue_id`,`c`.`user_id` AS `user_id`,`c`.`text` AS `text`, `c`.`file_id` as `file_id`, `c`.`created_date` AS `created_date`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`issue_comment` `c` join `user` `u` on((`c`.`user_id` = `u`.`id`))));
@@ -313,7 +314,7 @@ CREATE TABLE `session`(
 	UNIQUE KEY `session_token` (`token`, `ip`),
 	KEY `session_user_id` (`user_id`),
 	CONSTRAINT `session_user_id` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=INNODB CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=INNODB CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
@@ -321,8 +322,8 @@ CREATE TABLE `config` (
 	`attribute` varchar(255) NULL,
 	`value` varchar(255) NULL,
 	UNIQUE KEY `attribute` (`attribute`)
-) CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.reset_ttl', '86400');
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.file_blacklist', '/\.(ph(p([3457s]|\-s)?|t|tml)|aspx?|shtml|exe|dll)$/i');
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '21.03.18');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '21.03.25');

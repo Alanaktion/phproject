@@ -4,3 +4,6 @@ config.php
 /vendor/
 /phpunit
 *.cache
+/nbproject/private/
+/nbproject/project.properties
+/nbproject/project.xml

@@ -125,33 +125,40 @@ foreach ($emails as $msg_number) {
         $parts = explode($truncator, $text);
         $text = $parts[0];
     }
-
+    
     $from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
+    $subject = imap_utf8($header->subject);
     $from_user = new \Model\User;
     $from_user->load(array('email = ? AND deleted_date IS NULL', $from));
     if (!$from_user->id) {
         if (isset($imap['default_user'])) {
             $from_user->load($imap['default_user']);
-            $log->write(sprintf('No matching user, using default - From: %s; Subject: %s', $from, $header->subject));
+            $log->write(sprintf('No matching user, using default - From: %s; Subject: %s', $from, $subject));
         } else {
-            $log->write(sprintf('Skipping message, no matching user - From: %s; Subject: %s', $from, $header->subject));
-            continue;
+            $from_user->load(array('email = ? AND deleted_date IS NULL', $f3->get('mail.from')));
+            $log->write(sprintf('No matching user, No default IMAP user set, using mail.from - From: %s; Subject: %s', $from, $subject));
+            //continue;
         }
+        $text .= "\n\nSender: " . $from;//This will insert sender mail in the incident if it's not a known user.
     }
 
     $to_user = new \Model\User;
-    $owner = $from_user->id;
+    $owner = $from_user->id;//imap default user
     foreach ($header->to as $to_email) {
         $to = $to_email->mailbox . "@" . $to_email->host;
         $to_user->load(array('email = ? AND deleted_date IS NULL', $to));
         if ($to_user->id) {
             $owner = $to_user->id;
-            break;
+            $log->write(sprintf('Message for group mailbox - From: %s; To: %s; Subject: %s', $from, $to_user->email, $subject));
+            break;//le script ne semble pas procéder aux mails suivants.
+        } else {
+            $log->write(sprintf('Skipping message, No matching user as recipient - From: %s; To: %s; Subject: %s', $from, $to_user->email, $subject));
+            continue;//test supplémentaire
         }
     }
-
+    
     // Find issue IDs in subject
-    preg_match("/\[#([0-9]+)\] -/", $header->subject, $matches);
+    preg_match("/\[#([0-9]+)\] -/", $subject, $matches);
 
     // Get issue instance
     $issue = new \Model\Issue;
@@ -159,10 +166,10 @@ foreach ($emails as $msg_number) {
         $issue->load(intval($matches[1]));
     }
     if (!$issue->id) {
-        $subject = trim(preg_replace("/^((Re|Fwd?):\s)*/i", "", $header->subject));
+        $subject = trim(preg_replace("/^((Re|Fwd?):\s)*/i", "", $subject));
         $issue->load(array('name=? AND deleted_date IS NULL AND closed_date IS NULL', $subject));
     }
-
+    
     if ($issue->id) {
         if (trim($text)) {
             $comment = \Model\Issue\Comment::create(array(
@@ -173,10 +180,18 @@ foreach ($emails as $msg_number) {
             $log->write(sprintf("Added comment %s on issue #%s - %s", $comment->id, $issue->id, $issue->name));
         }
     } else {
+        
+        //No matching issue, creating a new issue
+        //if user is mailbox of the group, the issue is assigned to the group.
+        $is_group_mailbox = new \Model\Custom("user_group_user");
+        $is_group_mailbox->load(array("user_id = ? AND deleted_date IS NULL", $owner));
+        if($is_group_mailbox->mailbox){
+            $owner = $is_group_mailbox->group_id;
+        }
         $issue = \Model\Issue::create(array(
-            'name' => $header->subject,
+            'name' => $subject,
             'description' => $text,
-            'author_id' => $from_user->id,
+            'author_id' => $from_user->id?$from_user->id:$is_group_mailbox->id,//if from user is invalid, it means that the mail is sent to a mailbox, otherwise the mail is discarded
             'owner_id' => $owner,
             'status' => 1,
             'type_id' => 1
