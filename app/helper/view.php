@@ -20,13 +20,13 @@ class View extends \Template
      * @param  int    $ttl
      * @return string
      */
-    public function parseText($str, $options = array(), $ttl = null)
+    public function parseText($str, $options = [], $ttl = null)
     {
         if ($str === null || $str === '') {
             return '';
         }
         if ($options === null) {
-            $options = array();
+            $options = [];
         }
         $options = $options + \Base::instance()->get("parse");
 
@@ -107,13 +107,13 @@ class View extends \Template
         }
 
         // Load IDs
-        $ids = array();
+        $ids = [];
         foreach ($matches[0] as $match) {
             $ids[] = $match;
         }
         $idsStr = implode(",", array_unique($ids));
         $issue = new \Model\Issue();
-        $issues = $issue->find(array("id IN ($idsStr)"));
+        $issues = $issue->find(["id IN ($idsStr)"]);
 
         return preg_replace_callback("/(?<=[^a-z\\/&]|^)#[0-9]+(?=[^a-z\\/]|$)/i", function ($matches) use ($url, $issues) {
             $issue = null;
@@ -170,7 +170,7 @@ class View extends \Template
                 return $matches[0];
             }
             // removed trailing [.,;:] from URL
-            if (in_array(substr($url, -1), array('.',',',';',':')) === true) {
+            if (in_array(substr($url, -1), ['.', ',', ';', ':']) === true) {
                 $ret = substr($url, -1);
                 $url = substr($url, 0, strlen($url) - 1);
             }
@@ -186,7 +186,7 @@ class View extends \Template
             }
 
             // removed trailing [,;:] from URL
-            if (in_array(substr($d, -1), array('.',',',';',':')) === true) {
+            if (in_array(substr($d, -1), ['.', ',', ';', ':']) === true) {
                 $s = substr($d, -1);
                 $d = substr($d, 0, strlen($d) - 1);
             }
@@ -226,10 +226,10 @@ class View extends \Template
             '8O' => "\xF0\x9F\x98\xB2", // oops
         ];
 
-        $match = implode('|', array_map(fn($str) => preg_quote($str, '/'), array_keys($map)));
+        $match = implode('|', array_map(fn ($str) => preg_quote($str, '/'), array_keys($map)));
         $regex = "/([^a-z\\/&]|^)($match)([^a-z\\/]|$)/m";
 
-        return preg_replace_callback($regex, fn($match) => $match[1] . $map[$match[2]] . $match[3], $str);
+        return preg_replace_callback($regex, fn ($match) => $match[1] . $map[$match[2]] . $match[3], $str);
     }
 
     /**

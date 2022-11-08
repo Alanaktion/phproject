@@ -101,12 +101,12 @@ abstract class Plugin extends \Prefab
         preg_match_all("/\\s+@(package|author|version) (.+)/m", $str, $matches, PREG_SET_ORDER);
 
         // Build meta array from phpDoc comments
-        $meta = array();
+        $meta = [];
         foreach ($matches as $match) {
             $meta[$match[1]] = trim($match[2]);
         }
 
-        $this->_meta = $meta + array("package" => str_replace(array("Plugin\\", "\\Base"), "", get_class($this)), "author" => null, "version" => null);
+        $this->_meta = $meta + ["package" => str_replace(["Plugin\\", "\\Base"], "", get_class($this)), "author" => null, "version" => null];
         return $this->_meta;
     }
 

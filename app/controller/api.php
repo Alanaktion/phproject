@@ -13,10 +13,10 @@ abstract class Api extends \Controller
             if (!headers_sent()) {
                 header("Content-type: application/json");
             }
-            $out = array(
+            $out = [
                 "status" => $f3->get("ERROR.code"),
-                "error" => $f3->get("ERROR.text")
-            );
+                "error" => $f3->get("ERROR.text"),
+            ];
             if ($f3->get("DEBUG") >= 2) {
                 $out["trace"] = strip_tags($f3->get("ERROR.trace"));
             }

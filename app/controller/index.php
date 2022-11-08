@@ -77,9 +77,9 @@ class Index extends \Controller
 
         // Load user by username or email address
         if (strpos($f3->get("POST.username"), "@")) {
-            $user->load(array("email=? AND deleted_date IS NULL", $f3->get("POST.username")));
+            $user->load(["email=? AND deleted_date IS NULL", $f3->get("POST.username")]);
         } else {
-            $user->load(array("username=? AND deleted_date IS NULL", $f3->get("POST.username")));
+            $user->load(["username=? AND deleted_date IS NULL", $f3->get("POST.username")]);
         }
 
         // Verify password
@@ -128,16 +128,16 @@ class Index extends \Controller
             return;
         }
 
-        $errors = array();
+        $errors = [];
         $user = new \Model\User();
 
         // Check for existing users
-        $user->load(array("email=?", $f3->get("POST.register-email")));
+        $user->load(["email=?", $f3->get("POST.register-email")]);
         if ($user->id) {
             $user->reset();
             $errors[] = "A user already exists with this email address.";
         }
-        $user->load(array("username=?", $f3->get("POST.register-username")));
+        $user->load(["username=?", $f3->get("POST.register-username")]);
         if ($user->id) {
             $user->reset();
             $errors[] = "A user already exists with this username.";
@@ -197,7 +197,7 @@ class Index extends \Controller
             if ($f3->get("POST.email")) {
                 $this->validateCsrf();
                 $user = new \Model\User();
-                $user->load(array("email = ?", $f3->get("POST.email")));
+                $user->load(["email = ?", $f3->get("POST.email")]);
                 if ($user->id && !$user->deleted_date) {
                     // Re-generate reset token
                     $token = $user->generateResetToken();
@@ -237,7 +237,7 @@ class Index extends \Controller
         }
 
         $user = new \Model\User();
-        $user->load(array("reset_token = ?", hash("sha384", $params["token"])));
+        $user->load(["reset_token = ?", hash("sha384", $params["token"])]);
         if (!$user->id || !$user->validateResetToken($params["token"])) {
             $f3->set("reset.error", "Invalid reset URL.");
             $this->_render("index/reset.html");
@@ -322,7 +322,7 @@ class Index extends \Controller
         // Authenticate user
         if ($f3->get("GET.key")) {
             $user = new \Model\User();
-            $user->load(array("api_key = ?", $f3->get("GET.key")));
+            $user->load(["api_key = ?", $f3->get("GET.key")]);
             if (!$user->id) {
                 $f3->error(403);
                 return;
@@ -333,12 +333,12 @@ class Index extends \Controller
         }
 
         // Get requested array substituting defaults
-        $get = $f3->get("GET") + array("type" => "assigned", "user" => $user->username);
+        $get = $f3->get("GET") + ["type" => "assigned", "user" => $user->username];
         unset($user);
 
         // Load target user
         $user = new \Model\User();
-        $user->load(array("username = ?", $get["user"]));
+        $user->load(["username = ?", $get["user"]]);
         if (!$user->id) {
             $f3->error(404);
             return;
@@ -346,13 +346,13 @@ class Index extends \Controller
 
         // Load issues
         $issue = new \Model\Issue\Detail();
-        $options = array("order" => "created_date DESC");
+        $options = ["order" => "created_date DESC"];
         if ($get["type"] == "assigned") {
-            $issues = $issue->find(array("author_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
+            $issues = $issue->find(["author_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id], $options);
         } elseif ($get["type"] == "created") {
-            $issues = $issue->find(array("owner_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id), $options);
+            $issues = $issue->find(["owner_id = ? AND status_closed = 0 AND deleted_date IS NULL", $user->id], $options);
         } elseif ($get["type"] == "all") {
-            $issues = $issue->find("status_closed = 0 AND deleted_date IS NULL", $options + array("limit" => 50));
+            $issues = $issue->find("status_closed = 0 AND deleted_date IS NULL", $options + ["limit" => 50]);
         } else {
             $f3->error(400, "Invalid feed type");
             return;

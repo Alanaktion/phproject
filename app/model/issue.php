@@ -30,7 +30,7 @@ class Issue extends \Model
     protected $_table_name = "issue";
     protected $_heirarchy = null;
     protected $_children = null;
-    protected static $requiredFields = array("type_id", "status", "name", "author_id");
+    protected static $requiredFields = ["type_id", "status", "name", "author_id"];
 
     /**
      * Create and save a new issue
@@ -52,7 +52,7 @@ class Issue extends \Model
             }
             if (empty($data["sprint_id"]) && !empty($data['due_date_sprint'])) {
                 $sprint = new Sprint();
-                $sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $data["due_date"]));
+                $sprint->load(["DATE(?) BETWEEN start_date AND end_date", $data["due_date"]]);
                 $data["sprint_id"] = $sprint->id;
             }
         }
@@ -86,7 +86,7 @@ class Issue extends \Model
 
         $issues = [];
         $issues[] = $this;
-        $issueIds = array($this->id);
+        $issueIds = [$this->id];
         $parentId = $this->parent_id;
         while ($parentId) {
             // Catch infinite loops early on, in case server isn't running linux :)
@@ -145,7 +145,7 @@ class Issue extends \Model
      */
     protected function _deleteTree(): Issue
     {
-        $children = $this->find(array("parent_id = ?", $this->id));
+        $children = $this->find(["parent_id = ?", $this->id]);
         foreach ($children as $child) {
             $child->delete();
         }
@@ -172,7 +172,7 @@ class Issue extends \Model
      */
     protected function _restoreTree(): Issue
     {
-        $children = $this->find(array("parent_id = ? AND deleted_date IS NOT NULL", $this->id));
+        $children = $this->find(["parent_id = ? AND deleted_date IS NOT NULL", $this->id]);
         foreach ($children as $child) {
             $child->restore();
         }
@@ -227,7 +227,7 @@ class Issue extends \Model
                 break;
             case 'sprint':
                 $sprint = new \Model\Sprint();
-                $sprint->load(array("start_date > NOW()"), array('order' => 'start_date'));
+                $sprint->load(["start_date > NOW()"], ['order' => 'start_date']);
                 $repeatIssue->start_date = $this->start_date ? $sprint->start_date : null;
                 $repeatIssue->due_date = $sprint->end_date;
                 break;
@@ -238,7 +238,7 @@ class Issue extends \Model
         // If the issue was in a sprint before, put it in a sprint again.
         if ($this->sprint_id) {
             $sprint = new \Model\Sprint();
-            $sprint->load(array("end_date >= ? AND start_date <= ?", $repeatIssue->due_date, $repeatIssue->due_date), array('order' => 'start_date'));
+            $sprint->load(["end_date >= ? AND start_date <= ?", $repeatIssue->due_date, $repeatIssue->due_date], ['order' => 'start_date']);
             $repeatIssue->sprint_id = $sprint->id;
         }
 
@@ -300,7 +300,7 @@ class Issue extends \Model
         // Log updated fields
         $updated = 0;
         $importantChanges = 0;
-        $importantFields = array('status', 'name', 'description', 'owner_id', 'priority', 'due_date');
+        $importantFields = ['status', 'name', 'description', 'owner_id', 'priority', 'due_date'];
         foreach ($this->fields as $key => $field) {
             if ($field["changed"] && rtrim($field["value"] ?? '') != rtrim($this->_getPrev($key) ?? '')) {
                 $updateField = new \Model\Issue\Update\Field();
@@ -464,7 +464,7 @@ class Issue extends \Model
     protected function _duplicateTree(int $id, int $newId): Issue
     {
         // Find all child issues
-        $children = $this->find(array("parent_id = ?", $id));
+        $children = $this->find(["parent_id = ?", $id]);
         if (count($children)) {
             $f3 = \Base::instance();
             foreach ($children as $child) {
@@ -506,11 +506,11 @@ class Issue extends \Model
             }
             $this->db->exec(
                 $query,
-                array(
+                [
                     ":sprint" => $this->sprint_id,
                     ":issue" => $this->id,
                     ":type" => $f3->get("issue_type.project"),
-                )
+                ]
             );
         }
         return $this;
@@ -526,7 +526,7 @@ class Issue extends \Model
             return $this->_children;
         }
 
-        return $this->_children = $this->find(array("parent_id = ? AND deleted_date IS NULL", $this->id));
+        return $this->_children = $this->find(["parent_id = ? AND deleted_date IS NULL", $this->id]);
     }
 
     /**
@@ -554,7 +554,7 @@ class Issue extends \Model
     {
         if ($this->id && !$this->closed_date) {
             $status = new \Model\Issue\Status();
-            $status->load(array("closed = ?", 1));
+            $status->load(["closed = ?", 1]);
             $this->status = $status->id;
             $this->closed_date = date("Y-m-d H:i:s");
             $this->save();

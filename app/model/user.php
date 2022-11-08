@@ -26,11 +26,11 @@ class User extends \Model
 {
     public const
         RANK_GUEST = 0,
-        RANK_CLIENT = 1,
-        RANK_USER = 2,
-        RANK_MANAGER = 3,
-        RANK_ADMIN = 4,
-        RANK_SUPER = 5;
+    RANK_CLIENT = 1,
+    RANK_USER = 2,
+    RANK_MANAGER = 3,
+    RANK_ADMIN = 4,
+    RANK_SUPER = 5;
 
     protected $_table_name = "user";
     protected $_groupUsers = null;
@@ -49,7 +49,7 @@ class User extends \Model
 
         // Load user
         if ($session->user_id) {
-            $this->load(array("id = ? AND deleted_date IS NULL", $session->user_id));
+            $this->load(["id = ? AND deleted_date IS NULL", $session->user_id]);
             if ($this->id) {
                 $f3->set("user", $this->cast());
                 $f3->set("user_obj", $this);
@@ -86,7 +86,7 @@ class User extends \Model
      */
     public function getAll(): array
     {
-        return $this->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC"));
+        return $this->find("deleted_date IS NULL AND role != 'group'", ["order" => "name ASC"]);
     }
 
     /**
@@ -95,7 +95,7 @@ class User extends \Model
      */
     public function getAllDeleted(): array
     {
-        return $this->find("deleted_date IS NOT NULL AND role != 'group'", array("order" => "name ASC"));
+        return $this->find("deleted_date IS NOT NULL AND role != 'group'", ["order" => "name ASC"]);
     }
 
     /**
@@ -104,7 +104,7 @@ class User extends \Model
      */
     public function getAllGroups(): array
     {
-        return $this->find("deleted_date IS NULL AND role = 'group'", array("order" => "name ASC"));
+        return $this->find("deleted_date IS NULL AND role = 'group'", ["order" => "name ASC"]);
     }
 
     /**
@@ -119,7 +119,7 @@ class User extends \Model
             }
             $ug = new User\Group();
             /** @var User\Group[] $users */
-            $users = $ug->find(array("group_id = ?", $this->id));
+            $users = $ug->find(["group_id = ?", $this->id]);
             $userIds = [];
             foreach ($users as $user) {
                 $userIds[] = $user->user_id;
@@ -219,7 +219,7 @@ class User extends \Model
         // Get group owner IDs
         $ownerIds = [$this->id];
         $groups = new \Model\User\Group();
-        foreach ($groups->find(array("user_id = ?", $this->id)) as $r) {
+        foreach ($groups->find(["user_id = ?", $this->id]) as $r) {
             $ownerIds[] = $r->group_id;
         }
         $ownerStr = implode(",", $ownerIds);

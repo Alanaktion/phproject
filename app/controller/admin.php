@@ -160,7 +160,7 @@ class Admin extends \Controller
 
         $attribute = str_replace("-", ".", $f3->get("POST.attribute"));
         $value = $f3->get("POST.value");
-        $response = array("error" => null);
+        $response = ["error" => null];
 
         if (!$attribute) {
             $response["error"] = "No attribute specified.";
@@ -169,7 +169,7 @@ class Admin extends \Controller
         }
 
         $config = new \Model\Config();
-        $config->load(array("attribute = ?", $attribute));
+        $config->load(["attribute = ?", $attribute]);
 
         $config->attribute = $attribute;
         switch ($attribute) {
@@ -245,7 +245,7 @@ class Admin extends \Controller
 
         $users = new \Model\User();
         $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'"));
-        $f3->set("select_users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+        $f3->set("select_users", $users->find("deleted_date IS NULL AND role != 'group'", ["order" => "name ASC"]));
 
         $this->_render("admin/users.html");
     }
@@ -314,11 +314,11 @@ class Admin extends \Controller
 
         try {
             // Check for existing users with same info
-            $user->load(array("username = ? AND id != ?", $f3->get("POST.username"), $user_id));
+            $user->load(["username = ? AND id != ?", $f3->get("POST.username"), $user_id]);
             if ($user->id) {
                 throw new \Exception("Another user already exists with this username");
             }
-            $user->load(array("email = ? AND id != ?", $f3->get("POST.email"), $user_id));
+            $user->load(["email = ? AND id != ?", $f3->get("POST.email"), $user_id]);
             if ($user->id) {
                 throw new \Exception("Another user already exists with this email address");
             }
@@ -425,7 +425,7 @@ class Admin extends \Controller
 
         $user->delete();
         if ($f3->get("AJAX")) {
-            $this->_printJson(array("deleted" => 1));
+            $this->_printJson(["deleted" => 1]);
         } else {
             $f3->reroute("/admin/users");
         }
@@ -451,7 +451,7 @@ class Admin extends \Controller
         $user->save();
 
         if ($f3->get("AJAX")) {
-            $this->_printJson(array("deleted" => 1));
+            $this->_printJson(["deleted" => 1]);
         } else {
             $f3->reroute("/admin/users");
         }
@@ -468,17 +468,17 @@ class Admin extends \Controller
         $group = new \Model\User();
         $groups = $group->find("deleted_date IS NULL AND role = 'group'");
 
-        $group_array = array();
+        $group_array = [];
         $db = $f3->get("db.instance");
         foreach ($groups as $g) {
             $db->exec("SELECT g.id FROM user_group g JOIN user u ON g.user_id = u.id WHERE g.group_id = ? AND u.deleted_date IS NULL", $g["id"]);
             $count = $db->count();
-            $group_array[] = array(
+            $group_array[] = [
                 "id" => $g["id"],
                 "name" => $g["name"],
                 "task_color" => $g["task_color"],
-                "count" => $count
-            );
+                "count" => $count,
+            ];
         }
         $f3->set("groups", $group_array);
 
@@ -513,14 +513,14 @@ class Admin extends \Controller
         $f3->set("title", $f3->get("dict.groups"));
 
         $group = new \Model\User();
-        $group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
+        $group->load(["id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]]);
         $f3->set("group", $group);
 
         $members = new \Model\Custom("user_group_user");
-        $f3->set("members", $members->find(array("group_id = ? AND deleted_date IS NULL", $group->id)));
+        $f3->set("members", $members->find(["group_id = ? AND deleted_date IS NULL", $group->id]));
 
         $users = new \Model\User();
-        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", ["order" => "name ASC"]));
 
         $this->_render("admin/groups/edit.html");
     }
@@ -538,7 +538,7 @@ class Admin extends \Controller
         $group->load($params["id"]);
         $group->delete();
         if ($f3->get("AJAX")) {
-            $this->_printJson(array("deleted" => 1) + $group->cast());
+            $this->_printJson(["deleted" => 1] + $group->cast());
         } else {
             $f3->reroute("/admin/groups");
         }
@@ -557,7 +557,7 @@ class Admin extends \Controller
         }
 
         $group = new \Model\User();
-        $group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $f3->get("POST.group_id")));
+        $group->load(["id = ? AND deleted_date IS NULL AND role = 'group'", $f3->get("POST.group_id")]);
 
         if (!$group->id) {
             $f3->error(404);
@@ -568,7 +568,7 @@ class Admin extends \Controller
             case "add_member":
                 foreach ($f3->get("POST.user") as $user_id) {
                     $user_group = new \Model\User\Group();
-                    $user_group->load(array("user_id = ? AND group_id = ?", $user_id, $f3->get("POST.group_id")));
+                    $user_group->load(["user_id = ? AND group_id = ?", $user_id, $f3->get("POST.group_id")]);
                     if (!$user_group->id) {
                         $user_group->group_id = $f3->get("POST.group_id");
                         $user_group->user_id = $user_id;
@@ -580,25 +580,25 @@ class Admin extends \Controller
                 break;
             case "remove_member":
                 $user_group = new \Model\User\Group();
-                $user_group->load(array("user_id = ? AND group_id = ?", $f3->get("POST.user_id"), $f3->get("POST.group_id")));
+                $user_group->load(["user_id = ? AND group_id = ?", $f3->get("POST.user_id"), $f3->get("POST.group_id")]);
                 $user_group->delete();
-                $this->_printJson(array("deleted" => 1));
+                $this->_printJson(["deleted" => 1]);
                 break;
             case "change_title":
                 $group->name = trim($f3->get("POST.name"));
                 $group->username = \Web::instance()->slug($group->name);
                 $group->save();
-                $this->_printJson(array("changed" => 1));
+                $this->_printJson(["changed" => 1]);
                 break;
             case "change_task_color":
                 $group->task_color = ltrim($f3->get("POST.value"), '#');
                 $group->save();
-                $this->_printJson(array("changed" => 1));
+                $this->_printJson(["changed" => 1]);
                 break;
             case "change_api_visibility":
                 $group->api_visible = (int)!!$f3->get("POST.value");
                 $group->save();
-                $this->_printJson(array("changed" => 1));
+                $this->_printJson(["changed" => 1]);
                 break;
         }
     }
@@ -615,7 +615,7 @@ class Admin extends \Controller
         $db = $f3->get("db.instance");
 
         $group = new \Model\User();
-        $group->load(array("id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]));
+        $group->load(["id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]]);
 
         if (!$group->id) {
             $f3->error(404);

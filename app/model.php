@@ -2,8 +2,8 @@
 
 abstract class Model extends \DB\SQL\Mapper
 {
-    protected $fields = array();
-    protected static $requiredFields = array();
+    protected $fields = [];
+    protected static $requiredFields = [];
 
     public function __construct($table_name = null)
     {
@@ -106,7 +106,7 @@ abstract class Model extends \DB\SQL\Mapper
     public function load($filter = null, array $options = null, $ttl = 0)
     {
         if (is_numeric($filter)) {
-            return parent::load(array("id = ?", $filter), $options, $ttl);
+            return parent::load(["id = ?", $filter], $options, $ttl);
         } elseif (is_array($filter)) {
             return parent::load($filter, $options, $ttl);
         }
@@ -122,7 +122,7 @@ abstract class Model extends \DB\SQL\Mapper
      */
     protected function _createDateRangeArray($dateFrom, $dateTo)
     {
-        $range = array();
+        $range = [];
 
         $from = strtotime($dateFrom);
         $to = strtotime($dateTo);

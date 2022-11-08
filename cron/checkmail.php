@@ -1,4 +1,5 @@
 <?php
+
 /*
     checkmail2.php is now preferred over this script! You should use it instead if possible.
 */
@@ -21,11 +22,9 @@ if ($inbox === false) {
 $emails = imap_search($inbox, 'ALL UNSEEN');
 
 if ($emails) {
-
     // for every email...
     $reg_email = "/([_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3}))/i";
     foreach ($emails as $email_number) {
-
         // get the to and from and strip stuff from the body
         $header = imap_headerinfo($inbox, $email_number);
         $text = imap_fetchbody($inbox, $email_number, 2, FT_INTERNAL);
@@ -39,7 +38,7 @@ if ($emails) {
         $message = imap_qprint($text);
 
         // Clean up line breaks
-        $message = str_replace(array("<br>","<br />"), "\r\n", $message);
+        $message = str_replace(["<br>", "<br />"], "\r\n", $message);
 
 
         $truncate = $f3->get("mail.truncate_lines");
@@ -55,7 +54,7 @@ if ($emails) {
         $from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
 
         $user = new \Model\User();
-        $user->load(array('email=? AND (deleted_date IS NULL OR deleted_date = ?)', $from, '0000-00-00 00:00:00'));
+        $user->load(['email=? AND (deleted_date IS NULL OR deleted_date = ?)', $from, '0000-00-00 00:00:00']);
 
         if (!empty($user->id)) {
             $author = $user->id;
@@ -64,7 +63,7 @@ if ($emails) {
             foreach ($header->to as $owner_email) {
                 $user->reset();
                 $to = $owner_email->mailbox . "@" . $owner_email->host ;
-                $user->load(array('email=?', $to));
+                $user->load(['email=?', $to]);
                 if (!empty($user->id)) {
                     $owner = $user->id;
                     break;
@@ -94,7 +93,7 @@ if ($emails) {
             } else {
                 if (!empty($header->subject)) {
                     $subject = trim(preg_replace("/^((Re|Fwd?):\s)*/i", "", $header->subject));
-                    $issue->load(array('name=? AND (deleted_date IS NULL OR deleted_date = "0000-00-00 00:00:00") AND (closed_date IS NULL OR closed_date = "0000-00-00 00:00:00")', $subject));
+                    $issue->load(['name=? AND (deleted_date IS NULL OR deleted_date = "0000-00-00 00:00:00") AND (closed_date IS NULL OR closed_date = "0000-00-00 00:00:00")', $subject]);
                 }
 
                 if (!empty($issue->id)) {
@@ -124,18 +123,18 @@ if ($emails) {
                     if (!empty($header->cc)) {
                         $watchers = array_merge($header->to, $header->cc);
                     } else {
-                        $watchers =$header->to;
+                        $watchers = $header->to;
                     }
 
                     foreach ($watchers as $more_people) {
                         $watcher_email = $more_people->mailbox . "@" . $more_people->host;
                         $watcher = new \Model\User();
-                        $watcher->load(array('email=? AND (deleted_date IS NULL OR deleted_date != ?)', $watcher_email, '0000-00-00 00:00:00'));
+                        $watcher->load(['email=? AND (deleted_date IS NULL OR deleted_date != ?)', $watcher_email, '0000-00-00 00:00:00']);
 
                         if (!empty($watcher->id)) {
                             $watching = new \Model\Issue\Watcher();
                             // Loads just in case the user is already a watcher
-                            $watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $watcher->id));
+                            $watching->load(["issue_id = ? AND user_id = ?", $issue->id, $watcher->id]);
                             $watching->issue_id = $issue->id;
                             $watching->user_id =  $watcher->id;
                             $watching->save();
@@ -148,19 +147,19 @@ if ($emails) {
                 /* get mail structure */
                 $structure = imap_fetchstructure($inbox, $email_number);
 
-                $attachments = array();
+                $attachments = [];
 
                 /* if any attachments found... */
                 if (isset($structure->parts) && (is_countable($structure->parts) ? count($structure->parts) : 0)) {
                     $count = count($structure->parts);
                     for ($i = 0; $i < $count; $i++) {
-                        $attachments[$i] = array(
+                        $attachments[$i] = [
                             'is_attachment' => false,
                             'filename' => '',
                             'name' => '',
                             'attachment' => '',
-                            'size' => ''
-                        );
+                            'size' => '',
+                        ];
 
                         if ($structure->parts[$i]->ifdparameters) {
                             foreach ($structure->parts[$i]->dparameters as $object) {
@@ -181,7 +180,7 @@ if ($emails) {
                         }
 
                         if ($attachments[$i]['is_attachment']) {
-                            $attachments[$i]['attachment'] = imap_fetchbody($inbox, $email_number, $i+1);
+                            $attachments[$i]['attachment'] = imap_fetchbody($inbox, $email_number, $i + 1);
 
                             /* 4 = QUOTED-PRINTABLE encoding */
                             if ($structure->parts[$i]->encoding == 3) {
@@ -213,9 +212,9 @@ if ($emails) {
                          */
 
                         // don't forget to set an Upload directory, and make it writable!
-                        $f3->set("UPLOADS", 'uploads/'.date("Y")."/".date("m")."/");
-                        if (!is_dir(dirname(__DIR__).'/'.$f3->get("UPLOADS"))) {
-                            mkdir(dirname(__DIR__).'/'.$f3->get("UPLOADS"), 0777, true);
+                        $f3->set("UPLOADS", 'uploads/' . date("Y") . "/" . date("m") . "/");
+                        if (!is_dir(dirname(__DIR__) . '/' . $f3->get("UPLOADS"))) {
+                            mkdir(dirname(__DIR__) . '/' . $f3->get("UPLOADS"), 0777, true);
                         }
 
                         // Make a good name
@@ -224,9 +223,9 @@ if ($emails) {
 
                         $i = 0;
                         $parts = pathinfo($filename);
-                        while (file_exists(dirname(__DIR__).'/'.$f3->get("UPLOADS") . $filename)) {
+                        while (file_exists(dirname(__DIR__) . '/' . $f3->get("UPLOADS") . $filename)) {
                             $i++;
-                            $filename= $parts["filename"] . "-" . $i . "." . $parts["extension"];
+                            $filename = $parts["filename"] . "-" . $i . "." . $parts["extension"];
                         }
 
 
@@ -234,7 +233,7 @@ if ($emails) {
                         $newfile->issue_id = $issue->id;
                         $newfile->user_id = $user->id;
                         $newfile->filename = $orig_name;
-                        $newfile->disk_filename = $f3->get("UPLOADS").$filename;
+                        $newfile->disk_filename = $f3->get("UPLOADS") . $filename;
                         $newfile->disk_directory = $f3->get("UPLOADS");
                         $newfile->filesize = $file['size'];
                         $newfile->content_type = $file['type'];
@@ -242,7 +241,7 @@ if ($emails) {
                         $newfile->created_date = date("Y-m-d H:i:s");
                         $newfile->save();
 
-                        $fp = fopen(dirname(__DIR__).'/'.$f3->get("UPLOADS")  . $filename, "w+");
+                        $fp = fopen(dirname(__DIR__) . '/' . $f3->get("UPLOADS")  . $filename, "w+");
                         fwrite($fp, $attachment['attachment']);
                         fclose($fp);
                     }

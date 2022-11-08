@@ -4,7 +4,7 @@ namespace Helper;
 
 class Update extends \Prefab
 {
-    protected $cache = array();
+    protected $cache = [];
 
     /**
      * Generate human-readable data for issue updates
@@ -19,17 +19,17 @@ class Update extends \Prefab
 
         // Generate human readable values
         $func = $f3->camelcase("convert_$field");
-        if (is_callable(array($this, $func))) {
+        if (is_callable([$this, $func])) {
             if ($old_val !== null && $old_val !== '') {
                 $old_val = call_user_func_array(
-                    array($this, $func),
-                    array($old_val)
+                    [$this, $func],
+                    [$old_val]
                 );
             }
             if ($new_val !== null && $new_val !== '') {
                 $new_val = call_user_func_array(
-                    array($this, $func),
-                    array($new_val)
+                    [$this, $func],
+                    [$new_val]
                 );
             }
         }
@@ -38,13 +38,13 @@ class Update extends \Prefab
         $name = $f3->get("dict.cols." . $field);
         if ($name === null) {
             $name = ucwords(str_replace(
-                array("_", " id"),
-                array(" ", ""),
+                ["_", " id"],
+                [" ", ""],
                 $field
             ));
         }
 
-        return array("field" => $name, "old" => $old_val, "new" => $new_val);
+        return ["field" => $name, "old" => $old_val, "new" => $new_val];
     }
 
     /**
@@ -112,7 +112,7 @@ class Update extends \Prefab
             $priority = $this->cache['priority.' . $value];
         } else {
             $priority = new \Model\Issue\Priority();
-            $priority->load(array("value = ?", $value));
+            $priority->load(["value = ?", $value]);
             $this->cache['priority.' . $value] = $priority;
         }
         return $priority->name;

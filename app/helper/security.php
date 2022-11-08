@@ -14,10 +14,10 @@ class Security extends \Prefab
     {
         if ($salt === null) {
             $salt = $this->salt();
-            return array(
+            return [
                 "salt" => $salt,
-                "hash" => sha1($salt . sha1($string))
-            );
+                "hash" => sha1($salt . sha1($string)),
+            ];
         } else {
             return sha1($salt . sha1($string));
         }
@@ -48,7 +48,7 @@ class Security extends \Prefab
      */
     public function salt_sha2($size = 256)
     {
-        $allSizes = array(256, 384, 512);
+        $allSizes = [256, 384, 512];
         if (!in_array($size, $allSizes)) {
             throw new \Exception("Hash size must be one of: " . implode(", ", $allSizes));
         }

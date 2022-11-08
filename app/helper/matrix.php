@@ -12,12 +12,12 @@ class Matrix extends \Matrix
      */
     public function mergeSorted(array $arrays)
     {
-        $lengths = array();
+        $lengths = [];
         foreach ($arrays as $k => $v) {
             $lengths[$k] = is_countable($v) ? count($v) : 0;
         }
         $max = max($lengths);
-        $result = array();
+        $result = [];
         for ($i = 0; $i < $max; $i++) {
             foreach ($lengths as $k => $l) {
                 if ($l > $i) {

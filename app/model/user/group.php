@@ -33,7 +33,7 @@ class Group extends \Model
             JOIN user_group g ON u.id = g.group_id
             WHERE g.user_id = :user AND u.deleted_date IS NULL ORDER BY u.name";
 
-        $result = $db->exec($query_groups, array(":user" => $user_id));
+        $result = $db->exec($query_groups, [":user" => $user_id]);
         return $result;
     }
 
@@ -52,7 +52,7 @@ class Group extends \Model
         }
 
         $group = new static();
-        $group->load(array('user_id = ? AND group_id = ?', $user_id, $group_id));
+        $group->load(['user_id = ? AND group_id = ?', $user_id, $group_id]);
 
         return $group->id ? true : false;
     }

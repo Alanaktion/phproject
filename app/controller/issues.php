@@ -70,8 +70,8 @@ class Issues extends \Controller
                 $user->load($val);
                 if ($user->role == 'group') {
                     $groupUsers = new \Model\User\Group();
-                    $list = $groupUsers->find(array('group_id = ?', $val));
-                    $groupUserArray = array($val); // Include the group in the search
+                    $list = $groupUsers->find(['group_id = ?', $val]);
+                    $groupUserArray = [$val]; // Include the group in the search
                     foreach ($list as $obj) {
                         $groupUserArray[] = $obj->user_id;
                     }
@@ -179,13 +179,13 @@ class Issues extends \Controller
         $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
         $priority = new \Model\Issue\Priority();
-        $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
+        $f3->set("priorities", $priority->find(null, ["order" => "value DESC"], $f3->get("cache_expire.db")));
 
         $f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
         $sprint = new \Model\Sprint();
-        $f3->set("sprints", $sprint->find(array("end_date >= ?", date("Y-m-d")), array("order" => "start_date ASC, id ASC")));
-        $f3->set("old_sprints", $sprint->find(array("end_date < ?", date("Y-m-d")), array("order" => "start_date ASC, id ASC")));
+        $f3->set("sprints", $sprint->find(["end_date >= ?", date("Y-m-d")], ["order" => "start_date ASC, id ASC"]));
+        $f3->set("old_sprints", $sprint->find(["end_date < ?", date("Y-m-d")], ["order" => "start_date ASC, id ASC"]));
 
         $users = new \Model\User();
         $f3->set("users", $users->getAll());
@@ -284,7 +284,7 @@ class Issues extends \Controller
                     // Save to the sprint of the due date if no sprint selected
                     if (!empty($post['due_date']) && empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
                         $sprint = new \Model\Sprint();
-                        $sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $issue->due_date));
+                        $sprint->load(["DATE(?) BETWEEN start_date AND end_date", $issue->due_date]);
                         $issue->sprint_id = $sprint->id;
                     }
 
@@ -324,7 +324,7 @@ class Issues extends \Controller
         $issues = $issue->find($filter[1]);
 
         // Configure visible fields
-        $fields = array(
+        $fields = [
             "id" => $f3->get("dict.cols.id"),
             "name" => $f3->get("dict.cols.title"),
             "type_name" => $f3->get("dict.cols.type"),
@@ -336,7 +336,7 @@ class Issues extends \Controller
             "created_date" => $f3->get("dict.cols.created"),
             "due_date" => $f3->get("dict.cols.due_date"),
             "closed_date" => $f3->get("dict.cols.closed_date"),
-        );
+        ];
 
         // Notify browser that file is a CSV, send as attachment (force download)
         header("Content-type: text/csv");
@@ -352,7 +352,7 @@ class Issues extends \Controller
 
         // Add rows
         foreach ($issues as $row) {
-            $cols = array();
+            $cols = [];
             foreach (array_keys($fields) as $field) {
                 $cols[] = $row->get($field);
             }
@@ -497,7 +497,7 @@ class Issues extends \Controller
         $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
         $priority = new \Model\Issue\Priority();
-        $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
+        $f3->set("priorities", $priority->find(null, ["order" => "value DESC"], $f3->get("cache_expire.db")));
 
         $sprint = new \Model\Sprint();
         $sprintOrder = ["order" => "start_date ASC, id ASC"];
@@ -581,7 +581,7 @@ class Issues extends \Controller
 
         if ($issue->closed_date) {
             $status = new \Model\Issue\Status();
-            $status->load(array("closed = ?", 0));
+            $status->load(["closed = ?", 0]);
             $issue->status = $status->id;
             $issue->closed_date = null;
             $issue->save();
@@ -686,7 +686,7 @@ class Issues extends \Controller
                     if ($i == "due_date" && !empty($val)) {
                         if (empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
                             $sprint = new \Model\Sprint();
-                            $sprint->load(array("DATE(?) BETWEEN start_date AND end_date", $val));
+                            $sprint->load(["DATE(?) BETWEEN start_date AND end_date", $val]);
                             $issue->sprint_id = $sprint->id;
                             $newSprint = $sprint->id;
                         }
@@ -797,7 +797,7 @@ class Issues extends \Controller
     public function single($f3, $params)
     {
         $issue = new \Model\Issue\Detail();
-        $issue->load(array("id=?", $params["id"]));
+        $issue->load(["id=?", $params["id"]]);
 
         // load issue if user is admin, otherwise load by group access
         if (!$issue->id || !$issue->allowAccess()) {
@@ -819,7 +819,7 @@ class Issues extends \Controller
         }
 
         $files = new \Model\Issue\File\Detail();
-        $f3->set("files", $files->find(array("issue_id = ? AND deleted_date IS NULL", $issue->id)));
+        $f3->set("files", $files->find(["issue_id = ? AND deleted_date IS NULL", $issue->id]));
 
         if ($issue->sprint_id) {
             $sprint = new \Model\Sprint();
@@ -828,7 +828,7 @@ class Issues extends \Controller
         }
 
         $watching = new \Model\Issue\Watcher();
-        $watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $this->_userId));
+        $watching->load(["issue_id = ? AND user_id = ?", $issue->id, $this->_userId]);
         $f3->set("watching", !!$watching->id);
 
         $f3->set("issue", $issue);
@@ -838,7 +838,7 @@ class Issues extends \Controller
         $f3->set("owner", $owner);
 
         $comments = new \Model\Issue\Comment\Detail();
-        $f3->set("comments", $comments->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC, id DESC")));
+        $f3->set("comments", $comments->find(["issue_id = ?", $issue->id], ["order" => "created_date DESC, id DESC"]));
 
         $this->loadIssueMeta($issue);
 
@@ -857,7 +857,7 @@ class Issues extends \Controller
         $this->validateCsrf();
 
         $issue = new \Model\Issue();
-        $issue->load(array("id=?", $params["id"]));
+        $issue->load(["id=?", $params["id"]]);
         if (!$issue->id) {
             $f3->error(404);
         }
@@ -865,7 +865,7 @@ class Issues extends \Controller
         $watcher = new \Model\Issue\Watcher();
 
         // Loads just in case the user is already a watcher
-        $watcher->load(array("issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")));
+        $watcher->load(["issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")]);
         if (!$watcher->id) {
             $watcher->issue_id = $issue->id;
             $watcher->user_id = $f3->get("POST.user_id");
@@ -885,14 +885,14 @@ class Issues extends \Controller
         $this->validateCsrf();
 
         $issue = new \Model\Issue();
-        $issue->load(array("id=?", $params["id"]));
+        $issue->load(["id=?", $params["id"]]);
         if (!$issue->id) {
             $f3->error(404);
         }
 
         $watcher = new \Model\Issue\Watcher();
 
-        $watcher->load(array("issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")));
+        $watcher->load(["issue_id = ? AND user_id = ?", $issue->id, $f3->get("POST.user_id")]);
         $watcher->delete();
     }
 
@@ -908,7 +908,7 @@ class Issues extends \Controller
         $this->validateCsrf();
 
         $issue = new \Model\Issue();
-        $issue->load(array("id=?", $params["id"]));
+        $issue->load(["id=?", $params["id"]]);
         if (!$issue->id) {
             $f3->error(404);
         }
@@ -916,7 +916,7 @@ class Issues extends \Controller
         $dependency = new \Model\Issue\Dependency();
 
         // Loads just in case the task is already a dependency
-        $dependency->load(array("issue_id = ? AND dependency_id = ?", $issue->id, $f3->get("POST.id")));
+        $dependency->load(["issue_id = ? AND dependency_id = ?", $issue->id, $f3->get("POST.id")]);
         $dependency->issue_id = $f3->get("POST.issue_id");
         $dependency->dependency_id = $f3->get("POST.dependency_id");
         $dependency->dependency_type = $f3->get("POST.type");
@@ -935,7 +935,7 @@ class Issues extends \Controller
         $this->validateCsrf();
 
         $issue = new \Model\Issue();
-        $issue->load(array("id=?", $params["id"]));
+        $issue->load(["id=?", $params["id"]]);
         if (!$issue->id) {
             $f3->error(404);
         }
@@ -955,22 +955,22 @@ class Issues extends \Controller
     public function single_history($f3, $params)
     {
         // Build updates array
-        $updates_array = array();
+        $updates_array = [];
         $update_model = new \Model\Custom("issue_update_detail");
-        $updates = $update_model->find(array("issue_id = ?", $params["id"]), array("order" => "created_date DESC, id DESC"));
+        $updates = $update_model->find(["issue_id = ?", $params["id"]], ["order" => "created_date DESC, id DESC"]);
         foreach ($updates as $update) {
             $update_array = $update->cast();
             $update_field_model = new \Model\Issue\Update\Field();
-            $update_array["changes"] = $update_field_model->find(array("issue_update_id = ?", $update["id"]));
+            $update_array["changes"] = $update_field_model->find(["issue_update_id = ?", $update["id"]]);
             $updates_array[] = $update_array;
         }
 
         $f3->set("updates", $updates_array);
 
-        $this->_printJson(array(
+        $this->_printJson([
             "total" => count($updates),
-            "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/history.html"))
-        ));
+            "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/history.html")),
+        ]);
     }
 
     /**
@@ -998,21 +998,21 @@ class Issues extends \Controller
 
         $issues = new \Model\Issue\Detail();
         if ($exclude = $f3->get("GET.exclude")) {
-            $searchParams = array("parent_id = ? AND id != ? AND deleted_date IS NULL", $issue->id, $exclude);
+            $searchParams = ["parent_id = ? AND id != ? AND deleted_date IS NULL", $issue->id, $exclude];
         } else {
-            $searchParams = array("parent_id = ? AND deleted_date IS NULL", $issue->id);
+            $searchParams = ["parent_id = ? AND deleted_date IS NULL", $issue->id];
         }
-        $orderParams = array("order" => "status_closed, priority DESC, due_date");
+        $orderParams = ["order" => "status_closed, priority DESC, due_date"];
         $f3->set("issues", $issues->find($searchParams, $orderParams));
 
         $searchParams[0] = $searchParams[0] . " AND status_closed = 0";
         $openIssues = $issues->count($searchParams);
 
-        $this->_printJson(array(
+        $this->_printJson([
             "total" => count($f3->get("issues")),
             "open" => $openIssues,
-            "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/related.html"))
-        ));
+            "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/related.html")),
+        ]);
     }
 
     /**
@@ -1025,14 +1025,14 @@ class Issues extends \Controller
     public function single_watchers($f3, $params)
     {
         $watchers = new \Model\Custom("issue_watcher_user");
-        $f3->set("watchers", $watchers->find(array("issue_id = ?", $params["id"])));
+        $f3->set("watchers", $watchers->find(["issue_id = ?", $params["id"]]));
         $users = new \Model\User();
-        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", array("order" => "name ASC")));
+        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", ["order" => "name ASC"]));
 
-        $this->_printJson(array(
+        $this->_printJson([
             "total" => count($f3->get("watchers")),
-            "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/watchers.html"))
-        ));
+            "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/watchers.html")),
+        ]);
     }
 
     /**
@@ -1054,10 +1054,10 @@ class Issues extends \Controller
             $f3->set("dependencies", $dependencies->findby_issue($issue->id));
             $f3->set("dependents", $dependencies->findby_dependent($issue->id));
 
-            $this->_printJson(array(
+            $this->_printJson([
                 "total" => count($f3->get("dependencies")) + count($f3->get("dependents")),
-                "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/dependencies.html"))
-            ));
+                "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/dependencies.html")),
+            ]);
         } else {
             $f3->error(404);
         }
@@ -1124,7 +1124,7 @@ class Issues extends \Controller
 
         if (!$issue->id || empty($post["text"])) {
             if ($f3->get("AJAX")) {
-                $this->_printJson(array("error" => 1));
+                $this->_printJson(["error" => 1]);
             } else {
                 $f3->reroute("/issues/" . $post["issue_id"]);
             }
@@ -1135,24 +1135,18 @@ class Issues extends \Controller
             $issue->close();
         }
 
-        $comment = \Model\Issue\Comment::create(array(
-            "issue_id" => $post["issue_id"],
-            "user_id" => $this->_userId,
-            "text" => trim($post["text"])
-        ), !!$f3->get("POST.notify"));
+        $comment = \Model\Issue\Comment::create(["issue_id" => $post["issue_id"], "user_id" => $this->_userId, "text" => trim($post["text"])], !!$f3->get("POST.notify"));
 
         if ($f3->get("AJAX")) {
-            $this->_printJson(
-                array(
-                    "id" => $comment->id,
-                    "text" => \Helper\View::instance()->parseText($comment->text, array("hashtags" => false)),
-                    "date_formatted" => date("D, M j, Y \\a\\t g:ia", \Helper\View::instance()->utc2local(time())),
-                    "user_name" => $f3->get('user.name'),
-                    "user_username" => $f3->get('user.username'),
-                    "user_email" => $f3->get('user.email'),
-                    "user_email_md5" => md5(strtolower($f3->get('user.email'))),
-                )
-            );
+            $this->_printJson([
+                "id" => $comment->id,
+                "text" => \Helper\View::instance()->parseText($comment->text, ["hashtags" => false]),
+                "date_formatted" => date("D, M j, Y \\a\\t g:ia", \Helper\View::instance()->utc2local(time())),
+                "user_name" => $f3->get('user.name'),
+                "user_username" => $f3->get('user.username'),
+                "user_email" => $f3->get('user.email'),
+                "user_email_md5" => md5(strtolower($f3->get('user.email'))),
+            ]);
             return;
         } else {
             $f3->reroute("/issues/" . $comment->issue_id);
@@ -1173,7 +1167,7 @@ class Issues extends \Controller
         $comment = new \Model\Issue\Comment();
         $comment->load($f3->get("POST.id"));
         $comment->delete();
-        $this->_printJson(array("id" => $f3->get("POST.id")) + $comment->cast());
+        $this->_printJson(["id" => $f3->get("POST.id")] + $comment->cast());
     }
 
     /**
@@ -1218,12 +1212,12 @@ class Issues extends \Controller
     protected function _buildSearchWhere($q)
     {
         if (!$q) {
-            return array("deleted_date IS NULL");
+            return ["deleted_date IS NULL"];
         }
-        $return = array();
+        $return = [];
 
         // Build WHERE string
-        $keywordParts = array();
+        $keywordParts = [];
         foreach (explode(" ", $q) as $w) {
             $keywordParts[] = "CONCAT(name, description, author_name, owner_name,
                 author_username, owner_username) LIKE ?";
@@ -1275,7 +1269,7 @@ class Issues extends \Controller
             $where[0] .= " AND (owner_id IN (" . $groupString . "))";
         }
 
-        $issue_page = $issues->paginate($args["page"], 50, $where, array("order" => "created_date DESC, id DESC"));
+        $issue_page = $issues->paginate($args["page"], 50, $where, ["order" => "created_date DESC, id DESC"]);
         $f3->set("issues", $issue_page);
 
         if ($issue_page["count"] > 7) {
@@ -1312,7 +1306,7 @@ class Issues extends \Controller
         $user_id = $this->_userId;
 
         $issue = new \Model\Issue();
-        $issue->load(array("id=? AND deleted_date IS NULL", $f3->get("POST.issue_id")));
+        $issue->load(["id=? AND deleted_date IS NULL", $f3->get("POST.issue_id")]);
         if (!$issue->id) {
             $f3->error(404);
             return;
@@ -1413,31 +1407,31 @@ class Issues extends \Controller
         }
 
         $term = trim($f3->get('GET.q'));
-        $results = array();
+        $results = [];
 
         $issue = new \Model\Issue();
         if ((substr($term, 0, 1) == '#') && is_numeric(substr($term, 1))) {
             $id = (int) substr($term, 1);
-            $issues = $issue->find(array($searchFilter . 'id LIKE ?', $id . '%'), array('limit' => 20));
+            $issues = $issue->find([$searchFilter . 'id LIKE ?', $id . '%'], ['limit' => 20]);
 
             foreach ($issues as $row) {
-                $results[] = array('id' => $row->get('id'), 'text' => $row->get('name'));
+                $results[] = ['id' => $row->get('id'), 'text' => $row->get('name')];
             }
         } elseif (is_numeric($term)) {
             $id = (int) $term;
-            $issues = $issue->find(array($searchFilter . '((id LIKE ?) OR (name LIKE ?))', $id . '%', '%' . $id . '%'), array('limit' => 20));
+            $issues = $issue->find([$searchFilter . '((id LIKE ?) OR (name LIKE ?))', $id . '%', '%' . $id . '%'], ['limit' => 20]);
 
             foreach ($issues as $row) {
-                $results[] = array('id' => $row->get('id'), 'text' => $row->get('name'));
+                $results[] = ['id' => $row->get('id'), 'text' => $row->get('name')];
             }
         } else {
-            $issues = $issue->find(array($searchFilter . 'name LIKE ?', '%' . addslashes($term) . '%'), array('limit' => 20));
+            $issues = $issue->find([$searchFilter . 'name LIKE ?', '%' . addslashes($term) . '%'], ['limit' => 20]);
 
             foreach ($issues as $row) {
-                $results[] = array('id' => $row->get('id'), 'text' => $row->get('name'));
+                $results[] = ['id' => $row->get('id'), 'text' => $row->get('name')];
             }
         }
 
-        $this->_printJson(array('results' => $results));
+        $this->_printJson(['results' => $results]);
     }
 }

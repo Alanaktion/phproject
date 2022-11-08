@@ -4,14 +4,14 @@ namespace Helper;
 
 class File extends \Image
 {
-    public static $mimeMap = array(
-        "image" => array(
+    public static $mimeMap = [
+        "image" => [
             "image/jpeg",
             "image/png",
             "image/gif",
             "image/bmp",
-        ),
-        "icon" => array(
+        ],
+        "icon" => [
             "audio/.+" => "_audio",
             "application/.*zip" => "_archive",
             "application/x-php" => "_code",
@@ -32,8 +32,8 @@ class File extends \Image
             "application/(msword|vnd\.(ms-word|openxmlformats-officedocument\.wordprocessingml.+))" => "doc",
             "application/(msexcel|vnd\.(ms-excel|openxmlformats-officedocument\.spreadsheetml.+))" => "xls",
             "application/(mspowerpoint|vnd\.(ms-powerpoint|openxmlformats-officedocument\.presentationml.+))" => "ppt",
-        )
-    );
+        ],
+    ];
 
     /**
      * Get an icon name by MIME type

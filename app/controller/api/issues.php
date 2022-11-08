@@ -15,40 +15,40 @@ class Issues extends \Controller\Api
         $casted = $issue->cast();
 
         // Convert ALL the fields!
-        $result = array();
-        $result["tracker"] = array(
+        $result = [];
+        $result["tracker"] = [
             "id" => $issue->type_id,
             "name" => $issue->type_name
-        );
-        $result["status"] = array(
+        ];
+        $result["status"] = [
             "id" => $issue->status,
             "name" => $issue->status_name
-        );
-        $result["priority"] = array(
+        ];
+        $result["priority"] = [
             "id" => $issue->priority_id,
             "name" => $issue->priority_name
-        );
-        $result["author"] = array(
+        ];
+        $result["author"] = [
             "id" => $issue->author_id,
             "name" => $issue->author_name,
             "username" => $issue->author_username,
             "email" => $issue->author_email,
             "task_color" => $issue->author_task_color
-        );
-        $result["owner"] = array(
+        ];
+        $result["owner"] = [
             "id" => $issue->owner_id,
             "name" => $issue->owner_name,
             "username" => $issue->owner_username,
             "email" => $issue->owner_email,
             "task_color" => $issue->owner_task_color
-        );
+        ];
         if (!empty($issue->sprint_id)) {
-            $result["sprint"] = array(
+            $result["sprint"] = [
                 "id" => $issue->sprint_id,
                 "name" => $issue->sprint_name,
                 "start_date" => $issue->sprint_start_date,
-                "end_date" => $issue->sprint_end_date,
-            );
+                "end_date" => $issue->sprint_end_date
+            ];
         }
 
         // Remove redundant fields
@@ -67,7 +67,7 @@ class Issues extends \Controller\Api
         $issue = new \Model\Issue\Detail();
 
         // Build filter string
-        $filter = array();
+        $filter = [];
         $get = $f3->get("GET");
         $db = $f3->get("db.instance");
         foreach ($issue->fields(false) as $i) {
@@ -78,7 +78,7 @@ class Issues extends \Controller\Api
         $filter_str = $filter ? implode(' AND ', $filter) : null;
 
         // Build options
-        $options = array();
+        $options = [];
         if ($f3->get("GET.order")) {
             $options["order"] = $f3->get("GET.order") . " " . $f3->get("GET.ascdesc");
         }
@@ -92,18 +92,18 @@ class Issues extends \Controller\Api
         );
 
         // Build result objects
-        $issues = array();
+        $issues = [];
         foreach ($result["subset"] as $iss) {
             $issues[] = $this->_issueMultiArray($iss);
         }
 
         // Output response
-        $this->_printJson(array(
+        $this->_printJson([
             "total_count" => $result["total"],
             "limit" => $result["limit"],
             "issues" => $issues,
-            "offset" => $result["pos"] * $result["limit"]
-        ));
+            "offset" => $result["pos"] * $result["limit"],
+        ]);
     }
 
     // Create a new issue
@@ -184,7 +184,7 @@ class Issues extends \Controller\Api
         }
         if (!empty($post["priority_id"])) {
             $priority = new \Model\Issue\Priority();
-            $priority->load(array("value" => $post["priority_id"]));
+            $priority->load(["value" => $post["priority_id"]]);
             if (!$priority->id) {
                 $f3->error("The 'priority_id' field is not valid.");
                 return;
@@ -222,9 +222,7 @@ class Issues extends \Controller\Api
         $notification = \Helper\Notification::instance();
         $notification->issue_create($issue->id);
 
-        $this->_printJson(array(
-            "issue" => $issue->cast()
-        ));
+        $this->_printJson(["issue" => $issue->cast()]);
     }
 
     // Update an existing issue
@@ -238,7 +236,7 @@ class Issues extends \Controller\Api
             return;
         }
 
-        $updated = array();
+        $updated = [];
         foreach ($f3->get("REQUEST") as $key => $val) {
             if (is_scalar($val) && $issue->exists($key)) {
                 $updated[] = $key;
@@ -250,7 +248,7 @@ class Issues extends \Controller\Api
             $issue->save();
         }
 
-        $this->_printJson(array("updated_fields" => $updated, "issue" => $this->_issueMultiArray($issue)));
+        $this->_printJson(["updated_fields" => $updated, "issue" => $this->_issueMultiArray($issue)]);
     }
 
     // Get a single issue's details
@@ -259,7 +257,7 @@ class Issues extends \Controller\Api
         $issue = new \Model\Issue\Detail();
         $issue->load($params["id"]);
         if ($issue->id) {
-            $this->_printJson(array("issue" => $this->_issueMultiArray($issue)));
+            $this->_printJson(["issue" => $this->_issueMultiArray($issue)]);
         } else {
             $f3->error(404);
         }
@@ -277,9 +275,7 @@ class Issues extends \Controller\Api
             return;
         }
 
-        $this->_printJson(array(
-            "deleted" => $params["id"]
-        ));
+        $this->_printJson(["deleted" => $params["id"]]);
     }
 
     // List issue comments
@@ -293,9 +289,9 @@ class Issues extends \Controller\Api
         }
 
         $comment = new \Model\Issue\Comment\Detail();
-        $comments = $comment->find(array("issue_id = ?", $issue->id), array("order" => "created_date DESC"));
+        $comments = $comment->find(["issue_id = ?", $issue->id], ["order" => "created_date DESC"]);
 
-        $return = array();
+        $return = [];
         foreach ($comments as $item) {
             $return[] = $item->cast();
         }
@@ -313,7 +309,7 @@ class Issues extends \Controller\Api
             return;
         }
 
-        $data = array("issue_id" => $issue->id, "user_id" => $this->_userId, "text" => $f3->get("POST.text"));
+        $data = ["issue_id" => $issue->id, "user_id" => $this->_userId, "text" => $f3->get("POST.text")];
         $comment = \Model\Issue\Comment::create($data);
         $this->_printJson($comment->cast());
     }
@@ -322,7 +318,7 @@ class Issues extends \Controller\Api
     public function types($f3)
     {
         $types = $f3->get("issue_types");
-        $return = array();
+        $return = [];
         foreach ($types as $type) {
             $return[] = $type->cast();
         }
@@ -342,10 +338,10 @@ class Issues extends \Controller\Api
     {
         $tag = new \Model\Issue\Tag();
         $issueIds = $tag->issues($params['tag']);
-        $return = array();
+        $return = [];
         if ($issueIds) {
             $issue = new \Model\Issue\Detail();
-            $issues = $issue->find(array("id IN (" . implode(",", $issueIds) . ") AND deleted_date IS NULL"));
+            $issues = $issue->find(["id IN (" . implode(",", $issueIds) . ") AND deleted_date IS NULL"]);
             foreach ($issues as $item) {
                 $return[] = $this->_issueMultiArray($item);
             }
@@ -358,8 +354,8 @@ class Issues extends \Controller\Api
     public function sprints()
     {
         $sprint_model = new \Model\Sprint();
-        $sprints = $sprint_model->find(array("end_date >= ?", $this->now(false)), array("order" => "start_date ASC"));
-        $return = array();
+        $sprints = $sprint_model->find(["end_date >= ?", $this->now(false)], ["order" => "start_date ASC"]);
+        $return = [];
         foreach ($sprints as $sprint) {
             $return[] = $sprint->cast();
         }
@@ -370,8 +366,8 @@ class Issues extends \Controller\Api
     public function sprints_old()
     {
         $sprint_model = new \Model\Sprint();
-        $sprints = $sprint_model->find(array("end_date < ?", $this->now(false)), array("order" => "start_date ASC"));
-        $return = array();
+        $sprints = $sprint_model->find(["end_date < ?", $this->now(false)], ["order" => "start_date ASC"]);
+        $return = [];
         foreach ($sprints as $sprint) {
             $return[] = $sprint->cast();
         }

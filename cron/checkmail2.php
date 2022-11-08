@@ -1,4 +1,5 @@
 <?php
+
 require_once "base.php";
 $log = new \Log("checkmail.log");
 
@@ -24,7 +25,7 @@ foreach ($emails as $msg_number) {
     $structure = imap_fetchstructure($inbox, $msg_number);
 
     $text = "";
-    $attachments = array();
+    $attachments = [];
 
     // Use text from non-multipart messages directly
     if (empty($structure->parts)) {
@@ -42,8 +43,7 @@ foreach ($emails as $msg_number) {
 
     // Load message parts for multipart messages
     if (!empty($structure->parts)) {
-        foreach ($structure->parts as $part_number=>$part) {
-
+        foreach ($structure->parts as $part_number => $part) {
             // Handle plaintext
             if ($part->type === 0 && !trim($text)) {
                 $text = imap_fetchbody($inbox, $msg_number, $part_number + 1);
@@ -63,7 +63,7 @@ foreach ($emails as $msg_number) {
 
             // Handle multipart
             elseif ($part->type == 1 && !trim($text) && !empty($part->parts)) {
-                foreach ($part->parts as $multipart_number=>$multipart) {
+                foreach ($part->parts as $multipart_number => $multipart) {
                     $text = imap_fetchbody($inbox, $msg_number, ($part_number + 1) . '.' . $multipart_number);
 
                     // Decode body
@@ -82,7 +82,6 @@ foreach ($emails as $msg_number) {
 
             // Handle attachments
             elseif ($part->type > 1 && $part->ifdisposition && $part->disposition == 'ATTACHMENT') {
-
                 // Get filename
                 $filename = '';
                 if ($part->ifdparameters) {
@@ -102,12 +101,12 @@ foreach ($emails as $msg_number) {
                 }
 
                 // Store attachment metadata
-                $attachments[] = array(
+                $attachments[] = [
                     'part_number' => $part_number,
                     'filename' => $filename,
                     'size' => $part->bytes,
                     'encoding' => $part->encoding,
-                );
+                ];
             }
         }
     }
@@ -127,8 +126,8 @@ foreach ($emails as $msg_number) {
     }
 
     $from = $header->from[0]->mailbox . "@" . $header->from[0]->host;
-    $from_user = new \Model\User;
-    $from_user->load(array('email = ? AND deleted_date IS NULL', $from));
+    $from_user = new \Model\User();
+    $from_user->load(['email = ? AND deleted_date IS NULL', $from]);
     if (!$from_user->id) {
         if (isset($imap['default_user'])) {
             $from_user->load($imap['default_user']);
@@ -139,11 +138,11 @@ foreach ($emails as $msg_number) {
         }
     }
 
-    $to_user = new \Model\User;
+    $to_user = new \Model\User();
     $owner = $from_user->id;
     foreach ($header->to as $to_email) {
         $to = $to_email->mailbox . "@" . $to_email->host;
-        $to_user->load(array('email = ? AND deleted_date IS NULL', $to));
+        $to_user->load(['email = ? AND deleted_date IS NULL', $to]);
         if ($to_user->id) {
             $owner = $to_user->id;
             break;
@@ -154,33 +153,33 @@ foreach ($emails as $msg_number) {
     preg_match("/\[#([0-9]+)\] -/", $header->subject, $matches);
 
     // Get issue instance
-    $issue = new \Model\Issue;
+    $issue = new \Model\Issue();
     if (!empty($matches[1])) {
         $issue->load(intval($matches[1]));
     }
     if (!$issue->id) {
         $subject = trim(preg_replace("/^((Re|Fwd?):\s)*/i", "", $header->subject));
-        $issue->load(array('name=? AND deleted_date IS NULL AND closed_date IS NULL', $subject));
+        $issue->load(['name=? AND deleted_date IS NULL AND closed_date IS NULL', $subject]);
     }
 
     if ($issue->id) {
         if (trim($text)) {
-            $comment = \Model\Issue\Comment::create(array(
+            $comment = \Model\Issue\Comment::create([
                 'user_id' => $from_user->id,
                 'issue_id' => $issue->id,
                 'text' => $text,
-            ));
+            ]);
             $log->write(sprintf("Added comment %s on issue #%s - %s", $comment->id, $issue->id, $issue->name));
         }
     } else {
-        $issue = \Model\Issue::create(array(
+        $issue = \Model\Issue::create([
             'name' => $header->subject,
             'description' => $text,
             'author_id' => $from_user->id,
             'owner_id' => $owner,
             'status' => 1,
-            'type_id' => 1
-        ));
+            'type_id' => 1,
+        ]);
         $log->write(sprintf("Created issue #%s - %s", $issue->id, $issue->name));
     }
 
@@ -195,12 +194,12 @@ foreach ($emails as $msg_number) {
         foreach ($watchers as $more_people) {
             $watcher_email = $more_people->mailbox . '@' . $more_people->host;
             $watcher = new \Model\User();
-            $watcher->load(array('email=? AND deleted_date IS NULL', $watcher_email));
+            $watcher->load(['email=? AND deleted_date IS NULL', $watcher_email]);
 
             if ($watcher->id) {
                 $watching = new \Model\Issue\Watcher();
                 // Loads just in case the user is already a watcher
-                $watching->load(array("issue_id = ? AND user_id = ?", $issue->id, $watcher->id));
+                $watching->load(["issue_id = ? AND user_id = ?", $issue->id, $watcher->id]);
                 $watching->issue_id = $issue->id;
                 $watching->user_id = $watcher->id;
                 $watching->save();
@@ -209,7 +208,6 @@ foreach ($emails as $msg_number) {
     }
 
     foreach ($attachments as $item) {
-
         // Skip big files
         if ($item['size'] > $f3->get("files.maxsize")) {
             continue;
@@ -234,7 +232,7 @@ foreach ($emails as $msg_number) {
         }
         file_put_contents(dirname(__DIR__) . '/' . $disk_filename, $data);
 
-        $file = \Model\Issue\File::create(array(
+        $file = \Model\Issue\File::create([
             "issue_id" => $issue->id,
             "user_id" => $from_user->id,
             "filename" => $item['filename'],
@@ -243,7 +241,7 @@ foreach ($emails as $msg_number) {
             "filesize" => strlen($data),
             "content_type" => \Web::instance()->mime($item['filename']),
             "digest" => md5($data),
-        ));
+        ]);
 
         $log->write(sprintf("Saved file %s on issue #%s - %s", $file->id, $issue->id, $issue->name));
     }

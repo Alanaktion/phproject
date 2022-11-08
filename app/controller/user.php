@@ -11,7 +11,7 @@ class User extends \Controller
     public function __construct()
     {
         $this->_userId = $this->_requireLogin();
-        $this->_languages = array(
+        $this->_languages = [
             "en" => \ISO::LC_en,
             "en-GB" => \ISO::LC_en . " (Great Britain)",
             "es" => \ISO::LC_es . " (Español)",
@@ -26,7 +26,7 @@ class User extends \Controller
             "et" => \ISO::LC_et . " (Eesti)",
             "zh" => \ISO::LC_zh . " (中国)",
             "ja" => \ISO::LC_ja . " (日本語)",
-        );
+        ];
     }
 
     /**
@@ -46,14 +46,14 @@ class User extends \Controller
 
         // Load dashboard widget data
         $allWidgets = $helper->allWidgets;
-        $missing = array();
+        $missing = [];
         foreach ($dashboard as $k => $widgets) {
             foreach ($widgets as $l => $widget) {
                 if (in_array($widget, $allWidgets)) {
                     $f3->set($widget, $helper->$widget());
                 } else {
                     $f3->set("error", "Some dashboard widgets cannot be displayed.");
-                    $missing[] = array($k, $l);
+                    $missing[] = [$k, $l];
                 }
                 unset($allWidgets[array_search($widget, $allWidgets)]);
             }
@@ -66,7 +66,7 @@ class User extends \Controller
         // Get current sprint if there is one
         $sprint = new \Model\Sprint();
         $localDate = date('Y-m-d', \Helper\View::instance()->utc2local());
-        $sprint->load(array("? BETWEEN start_date AND end_date", $localDate));
+        $sprint->load(["? BETWEEN start_date AND end_date", $localDate]);
         $f3->set("sprint", $sprint);
 
         $f3->set("dashboard", $dashboard);
@@ -116,7 +116,7 @@ class User extends \Controller
      */
     private function _loadThemes()
     {
-        $themes = array("bootstrap.min");
+        $themes = ["bootstrap.min"];
         foreach (glob("css/bootstrap-*.css") as $file) {
             $themes[] = pathinfo($file, PATHINFO_FILENAME);
         }
@@ -308,7 +308,7 @@ class User extends \Controller
         $this->_requireLogin();
 
         $user = new \Model\User();
-        $user->load(array("username = ?", $params["username"]));
+        $user->load(["username = ?", $params["username"]]);
 
         if ($user->id && (!$user->deleted_date || $f3->get("user.rank") >= 3)) {
             $f3->set("title", $user->name);
@@ -322,7 +322,7 @@ class User extends \Controller
             $f3->set("groups", $user->getAllGroups());
 
             $priority = new \Model\Issue\Priority();
-            $f3->set("priorities", $priority->find(null, array("order" => "value DESC"), $f3->get("cache_expire.db")));
+            $f3->set("priorities", $priority->find(null, ["order" => "value DESC"], $f3->get("cache_expire.db")));
 
             $type = new \Model\Issue\Type();
             $f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
@@ -331,17 +331,16 @@ class User extends \Controller
             $f3->set("created_issues", $issue->paginate(
                 0,
                 200,
-                array("status_closed = '0' AND deleted_date IS NULL AND author_id = ?", $user->id),
-                array("order" => "priority DESC, due_date DESC")
+                ["status_closed = '0' AND deleted_date IS NULL AND author_id = ?", $user->id],
+                ["order" => "priority DESC, due_date DESC"]
             ));
             $f3->set("assigned_issues", $issue->paginate(
                 0,
                 200,
-                array("status_closed = '0' AND deleted_date IS NULL AND owner_id = ?", $user->id),
-                array("order" => "priority DESC, due_date DESC")
+                ["status_closed = '0' AND deleted_date IS NULL AND owner_id = ?", $user->id],
+                ["order" => "priority DESC, due_date DESC"]
             ));
-            $f3->set("overdue_issues", $issue->paginate(0, 200, array("status_closed = '0' AND deleted_date IS NULL AND owner_id = ? AND due_date IS NOT NULL AND due_date < ?",
-                    $user->id, date("Y-m-d", \Helper\View::instance()->utc2local())), array("order" => "due_date ASC")));
+            $f3->set("overdue_issues", $issue->paginate(0, 200, ["status_closed = '0' AND deleted_date IS NULL AND owner_id = ? AND due_date IS NOT NULL AND due_date < ?", $user->id, date("Y-m-d", \Helper\View::instance()->utc2local())], ["order" => "due_date ASC"]));
 
             $this->_render("user/single.html");
         } else {
@@ -357,7 +356,7 @@ class User extends \Controller
      */
     protected function _buildTree($array)
     {
-        $tree = array();
+        $tree = [];
 
         // Create an associative array with each key being the ID of the item
         foreach ($array as $k => &$v) {
@@ -395,7 +394,7 @@ class User extends \Controller
         $this->_requireLogin();
 
         $user = new \Model\User();
-        $user->load(array("username = ? AND deleted_date IS NULL", $params["username"]));
+        $user->load(["username = ? AND deleted_date IS NULL", $params["username"]]);
 
         if ($user->id) {
             $f3->set("title", $user->name);

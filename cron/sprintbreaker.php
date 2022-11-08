@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ~SprintBreaker~
  * Alanaktion's insane attempt at automated sprint management.
@@ -18,12 +19,12 @@ $issue_type_project = $f3->get("issue_type.project");
 
 // Get all current and future sprints
 $sprint = new \Model\Sprint();
-$sprints = $sprint->find(array("start_date >= :now OR end_date <= :now", ":now" => date("Y-m-d")));
+$sprints = $sprint->find(["start_date >= :now OR end_date <= :now", ":now" => date("Y-m-d")]);
 echo "Using " . count($sprints) . " sprints.\n";
 
 // Get all top level projects
 $project_model = new \Model\Issue();
-$projects = $project_model->find(array("type_id = ? AND parent_id IS NULL AND sprint_id IS NULL", $issue_type_project));
+$projects = $project_model->find(["type_id = ? AND parent_id IS NULL AND sprint_id IS NULL", $issue_type_project]);
 
 if ($projects && $sprints) {
     foreach ($projects as $project) {
@@ -31,12 +32,12 @@ if ($projects && $sprints) {
 
         // Get all tasks with due dates directly under project
         $due_date_tasks = new \Model\Issue();
-        $tasks = $due_date_tasks->find(array(
+        $tasks = $due_date_tasks->find([
             "parent_id = :project AND due_date >= :now AND type_id != :type",
             ":project" => $project->id,
             ":now" => date("Y-m-d"),
-            ":type" => $issue_type_project
-        ));
+            ":type" => $issue_type_project,
+        ]);
 
         if ($tasks) {
             foreach ($sprints as $sprint) {
@@ -44,7 +45,7 @@ if ($projects && $sprints) {
 
                 $start = strtotime($sprint->start_date);
                 $end = strtotime($sprint->end_date);
-                $tasks_for_this_sprint = array();
+                $tasks_for_this_sprint = [];
 
                 // Find tasks that fit into this sprint
                 foreach ($tasks as $task) {

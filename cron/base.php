@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cron job base initialization
  */
@@ -10,16 +11,16 @@ if (PHP_SAPI != 'cli') {
 $homedir = dirname(__FILE__, 2) . "/";
 set_include_path($homedir);
 
-require_once $homedir."vendor/autoload.php";
+require_once $homedir . "vendor/autoload.php";
 
 $f3 = Base::instance();
-$f3->mset(array(
-    "UI" => $homedir."app/view/",
-    "LOGS" => $homedir."log/",
-    "AUTOLOAD" => $homedir."app/;".$homedir."lib/vendor/",
-    "TEMP" => $homedir."tmp/",
+$f3->mset([
+    "UI" => $homedir . "app/view/",
+    "LOGS" => $homedir . "log/",
+    "AUTOLOAD" => $homedir . "app/;" . $homedir . "lib/vendor/",
+    "TEMP" => $homedir . "tmp/",
     "TZ" => "UTC",
-));
+]);
 
 // Load local configuration
 $f3->mset(require_once('config.php'));

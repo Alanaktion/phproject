@@ -35,7 +35,7 @@ class Tag extends \Controller
     public function single($f3, $params)
     {
         $tag = new \Model\Issue\Tag();
-        $tag->load(array("tag = ?", $params["tag"]));
+        $tag->load(["tag = ?", $params["tag"]]);
 
         if (!$tag->id) {
             $f3->error(404);

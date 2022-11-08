@@ -10,7 +10,7 @@ class User extends \Controller\Api
 
         if ($user->role == 'group') {
             $group = new \Model\Custom("user_group");
-            $man = $group->find(array("group_id = ? AND manager = 1", $user->id));
+            $man = $group->find(["group_id = ? AND manager = 1", $user->id]);
             $man = array_filter($man);
 
             if (!empty($man) && $man[0]->user_id > 0) {
@@ -18,12 +18,12 @@ class User extends \Controller\Api
             }
         }
 
-        $result = array(
+        $result = [
             "id" => $group_id,
             "name" => $user->name,
             "username" => $user->username,
-            "email" => $user->email
-        );
+            "email" => $user->email,
+        ];
 
         return ($result);
     }
@@ -34,7 +34,7 @@ class User extends \Controller\Api
             $user = $f3->get("user_obj");
         } else {
             $user = new \Model\User();
-            $user->load(array("username = ?", $params["username"]));
+            $user->load(["username = ?", $params["username"]]);
         }
         if ($user->id) {
             $this->_printJson($this->user_array($user));
@@ -46,7 +46,7 @@ class User extends \Controller\Api
     public function single_email($f3, $params)
     {
         $user = new \Model\User();
-        $user->load(array("email = ? AND deleted_date IS NULL", $params["email"]));
+        $user->load(["email = ? AND deleted_date IS NULL", $params["email"]]);
         if ($user->id) {
             $this->_printJson($this->user_array($user));
         } else {
@@ -72,17 +72,17 @@ class User extends \Controller\Api
             "deleted_date IS NULL AND role != 'group'"
         );
 
-        $users = array();
+        $users = [];
         foreach ($result["subset"] as $user) {
             $users[] = $this->user_array($user);
         }
 
-        $this->_printJson(array(
+        $this->_printJson([
             "total_count" => $result["total"],
             "limit" => $result["limit"],
             "users" => $users,
-            "offset" => $result["pos"] * $result["limit"]
-        ));
+            "offset" => $result["pos"] * $result["limit"],
+        ]);
     }
 
 
@@ -104,16 +104,16 @@ class User extends \Controller\Api
             "deleted_date IS NULL AND role = 'group' AND api_visible != '0'"
         );
 
-        $groups = array();
+        $groups = [];
         foreach ($result["subset"] as $user) {
             $groups[] = $this->user_array($user);
         }
 
-        $this->_printJson(array(
+        $this->_printJson([
             "total_count" => $result["total"],
             "limit" => $result["limit"],
             "groups" => $groups,
-            "offset" => $result["pos"] * $result["limit"]
-        ));
+            "offset" => $result["pos"] * $result["limit"],
+        ]);
     }
 }

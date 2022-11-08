@@ -21,7 +21,7 @@ namespace Model\Issue;
 class File extends \Model
 {
     protected $_table_name = "issue_file";
-    protected static $requiredFields = array("issue_id", "user_id", "filename", "disk_filename");
+    protected static $requiredFields = ["issue_id", "user_id", "filename", "disk_filename"];
 
     /**
      * Create and save a new file, optionally sending notifications

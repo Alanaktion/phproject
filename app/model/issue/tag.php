@@ -44,7 +44,7 @@ class Tag extends \Model
             $tag = $this->get("tag");
         }
         $result = $this->db->exec("SELECT DISTINCT issue_id FROM {$this->_table_name} WHERE tag = ?", $tag);
-        $return = array();
+        $return = [];
         foreach ($result as $r) {
             $return[] = $r["issue_id"];
         }

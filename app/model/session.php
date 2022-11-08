@@ -46,7 +46,7 @@ class Session extends \Model
         $f3 = \Base::instance();
         $token = $f3->get("COOKIE." . self::COOKIE_NAME);
         if ($token) {
-            $this->load(array("token = ?", $token));
+            $this->load(["token = ?", $token]);
             $lifetime = $f3->get("session_lifetime");
             $duration = time() - strtotime($this->created);
 

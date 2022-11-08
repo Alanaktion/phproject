@@ -152,17 +152,17 @@ class Files extends \Controller
             $c2 = imagecolorallocate($frame, 230, 230, 230);
             // This is an incredibly stupid way of deprecating a parameter, thanks PHP.
             if (PHP_VERSION_ID >= 80000) {
-                imagefilledpolygon($frame, array(
+                imagefilledpolygon($frame, [
                     $size - $ox + $fb, $oy - $fb,
                     $size - $ox + $fb, $size - $oy + $fb,
                     $ox - $fb, $size - $oy + $fb,
-                ), $c2);
+                ], $c2);
             } else {
-                imagefilledpolygon($frame, array(
+                imagefilledpolygon($frame, [
                     $size - $ox + $fb, $oy - $fb,
                     $size - $ox + $fb, $size - $oy + $fb,
                     $ox - $fb, $size - $oy + $fb,
-                ), 3, $c2);
+                ], 3, $c2);
             }
         }
 
@@ -177,7 +177,7 @@ class Files extends \Controller
 
         // Render and cache image
         ob_start();
-        call_user_func_array('image' . $params["format"], array($frame));
+        call_user_func_array('image' . $params["format"], [$frame]);
         $data = ob_get_clean();
         if ($f3->get("DEBUG") < 2) {
             $cache->set($hash, $data, $f3->get("cache_expire.attachments"));
@@ -197,7 +197,6 @@ class Files extends \Controller
      */
     public function avatar($f3, $params)
     {
-
         // Ensure proper content-type for JPEG images
         if ($params["format"] == "jpg") {
             $params["format"] = "jpeg";

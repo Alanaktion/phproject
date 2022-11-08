@@ -12,7 +12,7 @@ namespace Model;
 class Config extends \Model
 {
     protected $_table_name = "config";
-    protected static $requiredFields = array('attribute', 'value');
+    protected static $requiredFields = ['attribute', 'value'];
 
     /**
      * Loads the configuration for the site
@@ -23,7 +23,7 @@ class Config extends \Model
         $f3 = \Base::instance();
         $db = $f3->get("db.instance");
         $result = $db->exec("SELECT attribute,value FROM config");
-        $foundAttributes = array();
+        $foundAttributes = [];
         foreach ($result as $item) {
             $foundAttributes[] = $item["attribute"];
             if ($item["attribute"] == 'session_lifetime') {
@@ -102,7 +102,7 @@ class Config extends \Model
         $f3 = \Base::instance();
         $f3->set($key, $value);
         $item = new static();
-        $item->load(array('attribute = ?', $key));
+        $item->load(['attribute = ?', $key]);
         $item->attribute = $key;
         $item->value = $value;
         $item->save();

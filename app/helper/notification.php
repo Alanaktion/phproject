@@ -144,7 +144,7 @@ class Notification extends \Prefab
 
             // Get recipient list and remove current user
             $recipients = $this->_issue_watchers($issue_id);
-            $recipients = array_diff($recipients, array($comment->user_email));
+            $recipients = array_diff($recipients, [$comment->user_email]);
 
             // Render message body
             $f3->set("issue", $issue);
@@ -194,11 +194,11 @@ class Notification extends \Prefab
             }
 
             $changes = new \Model\Issue\Update\Field();
-            $f3->set("changes", $changes->find(array("issue_update_id = ?", $update->id)));
+            $f3->set("changes", $changes->find(["issue_update_id = ?", $update->id]));
 
             // Get recipient list and remove update user
             $recipients = $this->_issue_watchers($issue_id);
-            $recipients = array_diff($recipients, array($update->user_email));
+            $recipients = array_diff($recipients, [$update->user_email]);
 
             // Render message body
             $f3->set("issue", $issue);
@@ -206,7 +206,7 @@ class Notification extends \Prefab
             $text = $this->_render("notification/update.txt");
             $body = $this->_render("notification/update.html");
 
-            $changes->load(array("issue_update_id = ? AND `field` = 'closed_date' AND old_value = '' and new_value != ''", $update->id));
+            $changes->load(["issue_update_id = ? AND `field` = 'closed_date' AND old_value = '' and new_value != ''", $update->id]);
             if ($changes && $changes->id) {
                 $subject = "[#{$issue->id}] - {$issue->name} closed";
             } else {
@@ -249,7 +249,7 @@ class Notification extends \Prefab
             $user = new \Model\User();
             $user->load($issue->author_id);
             if ($user->option('disable_self_notifications')) {
-                $recipients = array_diff($recipients, array($user->email));
+                $recipients = array_diff($recipients, [$user->email]);
             }
 
             // Render message body
@@ -299,7 +299,7 @@ class Notification extends \Prefab
 
             // Get recipient list and remove current user
             $recipients = $this->_issue_watchers($issue_id);
-            $recipients = array_diff($recipients, array($file->user_email));
+            $recipients = array_diff($recipients, [$file->user_email]);
 
             // Render message body
             $f3->set("issue", $issue);
@@ -379,7 +379,7 @@ class Notification extends \Prefab
     protected function _issue_watchers($issue_id)
     {
         $db = \Base::instance()->get("db.instance");
-        $recipients = array();
+        $recipients = [];
 
         // Add issue author and owner
         $result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.author_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);

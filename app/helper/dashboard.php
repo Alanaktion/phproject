@@ -16,7 +16,7 @@ class Dashboard extends \Prefab
         "right" => ["tasks"]
     ];
 
-    public $allWidgets = array("projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments", "open_comments", "issue_tree");
+    public $allWidgets = ["projects", "subprojects", "tasks", "bugs", "repeat_work", "watchlist", "my_comments", "recent_comments", "open_comments", "issue_tree"];
 
     public function getIssue()
     {
@@ -29,9 +29,9 @@ class Dashboard extends \Prefab
             return $this->_ownerIds;
         }
         $f3 = \Base::instance();
-        $this->_ownerIds = array($f3->get("user.id"));
+        $this->_ownerIds = [$f3->get("user.id")];
         $groups = new \Model\User\Group();
-        foreach ($groups->find(array("user_id = ?", $f3->get("user.id"))) as $r) {
+        foreach ($groups->find(["user_id = ?", $f3->get("user.id")]) as $r) {
             $this->_ownerIds[] = $r->group_id;
         }
         return $this->_ownerIds;
@@ -44,7 +44,7 @@ class Dashboard extends \Prefab
         }
         $f3 = \Base::instance();
         $groups = new \Model\User\Group();
-        foreach ($groups->find(array("user_id = ?", $f3->get("user.id"))) as $r) {
+        foreach ($groups->find(["user_id = ?", $f3->get("user.id")]) as $r) {
             $this->_groupIds[] = $r->group_id;
         }
         return $this->_groupIds;
@@ -57,7 +57,7 @@ class Dashboard extends \Prefab
         }
         $groups = new \Model\User\Group();
         $groupString = implode(",", $this->getGroupIds());
-        foreach ($groups->find(array("group_id IN (" . $groupString . ")")) as $r) {
+        foreach ($groups->find(["group_id IN (" . $groupString . ")"]) as $r) {
             $this->_groupUserIds[] = $r->user_id;
         }
         return $this->_groupUserIds;
@@ -78,10 +78,8 @@ class Dashboard extends \Prefab
         $ownerString = implode(",", $this->getOwnerIds());
         $typeIdStr = implode(",", $typeIds);
         $this->_projects = $this->getIssue()->find(
-            array(
-                "owner_id IN ($ownerString) AND type_id IN ($typeIdStr) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-            ),
-            array("order" => $this->_order)
+            ["owner_id IN ($ownerString) AND type_id IN ($typeIdStr) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0"],
+            ["order" => $this->_order]
         );
         return $this->_projects;
     }
@@ -93,7 +91,7 @@ class Dashboard extends \Prefab
         }
 
         $projects = $this->_projects;
-        $subprojects = array();
+        $subprojects = [];
         foreach ($projects as $i => $project) {
             if ($project->parent_id) {
                 $subprojects[] = $project;
@@ -119,10 +117,8 @@ class Dashboard extends \Prefab
         $ownerString = implode(",", $this->getOwnerIds());
         $typeIdStr = implode(",", $typeIds);
         return $this->getIssue()->find(
-            array(
-                "owner_id IN ($ownerString) AND type_id IN ($typeIdStr) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-            ),
-            array("order" => $this->_order)
+            ["owner_id IN ($ownerString) AND type_id IN ($typeIdStr) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0"],
+            ["order" => $this->_order]
         );
     }
 
@@ -131,7 +127,7 @@ class Dashboard extends \Prefab
         $ownerString = implode(",", $this->getOwnerIds());
         return $this->getIssue()->find(
             "owner_id IN ($ownerString) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0 AND repeat_cycle IS NOT NULL",
-            array("order" => $this->_order)
+            ["order" => $this->_order]
         );
     }
 
@@ -157,10 +153,8 @@ class Dashboard extends \Prefab
         $ownerString = implode(",", $this->getOwnerIds());
         $typeIdStr = implode(",", $typeIds);
         return $this->getIssue()->find(
-            array(
-                "owner_id IN ($ownerString) AND type_id IN ($typeIdStr) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0",
-            ),
-            array("order" => $this->_order)
+            ["owner_id IN ($ownerString) AND type_id IN ($typeIdStr) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0"],
+            ["order" => $this->_order]
         );
     }
 
@@ -168,7 +162,7 @@ class Dashboard extends \Prefab
     {
         $f3 = \Base::instance();
         $comment = new \Model\Issue\Comment\Detail();
-        return $comment->find(array("user_id = ? AND issue_deleted_date IS NULL", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 10));
+        return $comment->find(["user_id = ? AND issue_deleted_date IS NULL", $f3->get("user.id")], ["order" => "created_date DESC", "limit" => 10]);
     }
 
     public function recent_comments()
@@ -177,12 +171,12 @@ class Dashboard extends \Prefab
 
         $issue = new \Model\Issue();
         $ownerString = implode(",", $this->getOwnerIds());
-        $issues = $issue->find(array("owner_id IN ($ownerString) OR author_id = ? AND deleted_date IS NULL", $f3->get("user.id")));
+        $issues = $issue->find(["owner_id IN ($ownerString) OR author_id = ? AND deleted_date IS NULL", $f3->get("user.id")]);
         if (!$issues) {
-            return array();
+            return [];
         }
 
-        $ids = array();
+        $ids = [];
         foreach ($issues as $item) {
             $ids[] = $item->id;
         }
@@ -192,7 +186,7 @@ class Dashboard extends \Prefab
         }
         $issueIds = implode(",", $ids);
         $comment = new \Model\Issue\Comment\Detail();
-        return $comment->find(array("issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 15));
+        return $comment->find(["issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")], ["order" => "created_date DESC", "limit" => 15]);
     }
 
     public function open_comments()
@@ -201,12 +195,12 @@ class Dashboard extends \Prefab
 
         $issue = new \Model\Issue();
         $ownerString = implode(",", $this->getOwnerIds());
-        $issues = $issue->find(array("(owner_id IN ($ownerString) OR author_id = ?) AND closed_date IS NULL AND deleted_date IS NULL", $f3->get("user.id")));
+        $issues = $issue->find(["(owner_id IN ($ownerString) OR author_id = ?) AND closed_date IS NULL AND deleted_date IS NULL", $f3->get("user.id")]);
         if (!$issues) {
-            return array();
+            return [];
         }
 
-        $ids = array();
+        $ids = [];
         foreach ($issues as $item) {
             $ids[] = $item->id;
         }
@@ -216,7 +210,7 @@ class Dashboard extends \Prefab
         }
         $issueIds = implode(",", $ids);
         $comment = new \Model\Issue\Comment\Detail();
-        return $comment->find(array("issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")), array("order" => "created_date DESC", "limit" => 15));
+        return $comment->find(["issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")], ["order" => "created_date DESC", "limit" => 15]);
     }
 
     /**
@@ -230,12 +224,12 @@ class Dashboard extends \Prefab
 
         // Load assigned issues
         $issue = new \Model\Issue\Detail();
-        $assigned = $issue->find(array("closed_date IS NULL AND deleted_date IS NULL AND owner_id = ?", $userId));
+        $assigned = $issue->find(["closed_date IS NULL AND deleted_date IS NULL AND owner_id = ?", $userId]);
 
         // Build issue list
-        $issues = array();
-        $assigned_ids = array();
-        $missing_ids = array();
+        $issues = [];
+        $assigned_ids = [];
+        $missing_ids = [];
         foreach ($assigned as $iss) {
             $issues[] = $iss->cast();
             $assigned_ids[] = $iss->id;
@@ -270,7 +264,7 @@ class Dashboard extends \Prefab
         $renderTree = function (&$issue, $level = 0) use (&$renderTree) {
             if (!empty($issue['id'])) {
                 $f3 = \Base::instance();
-                $hive = array("issue" => $issue, "dict" => $f3->get("dict"), "BASE" => $f3->get("BASE"), "level" => $level, "issue_type" => $f3->get("issue_type"));
+                $hive = ["issue" => $issue, "dict" => $f3->get("dict"), "BASE" => $f3->get("BASE"), "level" => $level, "issue_type" => $f3->get("issue_type")];
                 echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
                 if (!empty($issue['children'])) {
                     foreach ($issue['children'] as $item) {
@@ -292,7 +286,7 @@ class Dashboard extends \Prefab
      */
     protected function _buildTree($array)
     {
-        $tree = array();
+        $tree = [];
 
         // Create an associative array with each key being the ID of the item
         foreach ($array as $k => &$v) {

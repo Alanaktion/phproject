@@ -4,10 +4,10 @@ namespace Helper;
 
 class Plugin extends \Prefab
 {
-    protected $_hooks   = array();
-    protected $_nav     = array();
-    protected $_jsCode  = array();
-    protected $_jsFiles = array();
+    protected $_hooks   = [];
+    protected $_nav     = [];
+    protected $_jsCode  = [];
+    protected $_jsFiles = [];
 
     /**
      * Register a hook function
@@ -19,7 +19,7 @@ class Plugin extends \Prefab
         if (isset($this->_hooks[$hook])) {
             $this->_hooks[$hook][] = $action;
         } else {
-            $this->_hooks[$hook] = array($action);
+            $this->_hooks[$hook] = [$action];
         }
     }
 
@@ -50,12 +50,12 @@ class Plugin extends \Prefab
      */
     public function addNavItem($href, $title, $match = null, $location = 'root')
     {
-        $this->_nav[] = array(
+        $this->_nav[] = [
             "href"  => $href,
             "title" => $title,
             "match" => $match,
-            "location" => $location
-        );
+            "location" => $location,
+        ];
     }
 
     /**
@@ -65,10 +65,7 @@ class Plugin extends \Prefab
      */
     public function addJsCode($code, $match = null)
     {
-        $this->_jsCode[] = array(
-            "code"  => $code,
-            "match" => $match
-        );
+        $this->_jsCode[] = ["code"  => $code, "match" => $match];
     }
 
     /**
@@ -78,10 +75,7 @@ class Plugin extends \Prefab
      */
     public function addJsFile($file, $match = null)
     {
-        $this->_jsFiles[] = array(
-            "file"  => $file,
-            "match" => $match
-        );
+        $this->_jsFiles[] = ["file"  => $file, "match" => $match];
     }
 
     /**
@@ -93,10 +87,10 @@ class Plugin extends \Prefab
     public function getNav($path = null, $location = "root")
     {
         $all = $this->_nav;
-        $return = array();
+        $return = [];
         foreach ($all as $item) {
             if ($item['location'] == $location) {
-                $return[] = $item + array("active" => ($item["match"] && $path && preg_match($item["match"], $path)));
+                $return[] = $item + ["active" => ($item["match"] && $path && preg_match($item["match"], $path))];
             }
         }
         return $return;
@@ -109,12 +103,12 @@ class Plugin extends \Prefab
      */
     public function getAllNavs($path = null)
     {
-        return array(
+        return [
             "root" => $this->getNav($path, "root"),
             "user" => $this->getNav($path, "user"),
             "new" => $this->getNav($path, "new"),
-            "browse" => $this->getNav($path, "browse")
-        );
+            "browse" => $this->getNav($path, "browse"),
+        ];
     }
 
     /**
@@ -124,7 +118,7 @@ class Plugin extends \Prefab
      */
     public function getJsFiles($path = null)
     {
-        $return = array();
+        $return = [];
         foreach ($this->_jsFiles as $item) {
             if (
                 !$item['match'] || !$path ||
@@ -143,7 +137,7 @@ class Plugin extends \Prefab
      */
     public function getJsCode($path = null)
     {
-        $return = array();
+        $return = [];
         foreach ($this->_jsCode as $item) {
             if (
                 !$item['match'] || !$path ||
