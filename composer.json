@@ -6,7 +6,7 @@
         "php": ">=7.4.0",
         "bcosca/fatfree-core": "^3.8",
         "voku/anti-xss": "^4.1",
-        "netcarver/textile": "^3.7",
+        "netcarver/textile": "^4.0",
         "erusev/parsedown": "^1.7",
         "neos/diff": "^7.3"
     },
@@ -19,11 +19,11 @@
     ],
     "config": {
         "platform": {
-            "php": "7.4.30"
+            "php": "7.4.33"
         }
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "3.*",
-        "rector/rector": "^0.14.7"
+        "rector/rector": "^0.15"
     }
 }
