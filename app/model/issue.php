@@ -637,6 +637,8 @@ class Issue extends \Model
         }
 
         $helper = \Helper\Dashboard::instance();
-        return ($this->owner_id == $user->id) || in_array($this->owner_id, $helper->getGroupIds());
+        return ($this->owner_id == $user->id)
+            || ($this->author_id == $user->id)
+            || in_array($this->owner_id, $helper->getGroupIds());
     }
 }
