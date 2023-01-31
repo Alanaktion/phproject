@@ -69,7 +69,7 @@
 
         <include href="blocks/footer.html" />
     </div>
-    <script src="{{ @BASE }}/js/chart.js"></script>
+    <script src="{{ @BASE }}/js/chart.min.js"></script>
     <check if="{{ @this_user.role != 'group' }}">
         <set stats="{{ @this_user->stats() }}" />
         <script>
