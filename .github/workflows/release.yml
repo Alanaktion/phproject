@@ -1,14 +1,15 @@
 name: Release Assets
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - v1.**
 
 jobs:
   publish-assets:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install dependencies
       run: |
@@ -21,14 +22,11 @@ jobs:
         rm -f composer.phar
 
     - name: Build archive
-      run: zip -r /tmp/phproject.zip "$GITHUB_WORKSPACE"
+      run: zip -r /tmp/phproject-${{ github.ref_name }}.zip "$GITHUB_WORKSPACE"
 
     - name: Upload archive
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.upload_url }}
-        asset_path: /tmp/phproject.zip
-        asset_name: phproject-${{ github.event.tag_name }}.zip
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: |
+          /tmp/phproject-${{ github.ref_name }}.zip
