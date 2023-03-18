@@ -317,7 +317,7 @@ var Taskboard = {
 			data: data,
 			success: function(result) {
 				Taskboard.newUnBlock(taskId);
-				$(card).find('.task-id').html('<a href="/issues/' + result.id + '" target="_blank">' + result.id + '</a>');
+				$(card).find('.task-id').html('<a href="' + BASE + '/issues/' + result.id + '" target="_blank">' + result.id + '</a>');
 				$(card).attr('id', 'task_' + result.id);
 				Taskboard.makeDraggable(card);
 			},

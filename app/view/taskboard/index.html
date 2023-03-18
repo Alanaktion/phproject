@@ -60,7 +60,7 @@
             <div class="btn-group" role="navigation">
                 <check if="{{ @prevSprint }}">
                     <true>
-                        <a href="/taskboard/{{ @prevSprint.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Previous Sprint">
+                        <a href="{{ @BASE }}/taskboard/{{ @prevSprint.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Previous Sprint">
                             ◀
                         </a>
                     </true>
@@ -70,12 +70,12 @@
                         </span>
                     </false>
                 </check>
-                <a href="/taskboard/0/{{ @filter }}" class="btn btn-default btn-xs" title="Current Sprint">
+                <a href="{{ @BASE }}/taskboard/0/{{ @filter }}" class="btn btn-default btn-xs" title="Current Sprint">
                     📅
                 </a>
                 <check if="{{ @nextSprint }}">
                     <true>
-                        <a href="/taskboard/{{ @nextSprint.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Next Sprint">
+                        <a href="{{ @BASE }}/taskboard/{{ @nextSprint.id }}/{{ @filter }}" class="btn btn-default btn-xs" title="Next Sprint">
                             ▶
                         </a>
                     </true>
