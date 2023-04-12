@@ -4,6 +4,8 @@ namespace Controller;
 
 class Taskboard extends \Controller
 {
+    protected $_userId;
+
     public function __construct()
     {
         $this->_userId = $this->_requireLogin();

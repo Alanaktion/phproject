@@ -14,7 +14,7 @@ class Notification extends \Prefab
      * @link http://php.net/manual/en/function.quoted-printable-encode.php#115840
      *
      * @param string $str
-     * @return void
+     * @return string
      */
     public function quotePrintEncode($str)
     {
