@@ -63,59 +63,27 @@ class Admin extends \Controller
      *
      * Check for a new release and report some basic stats
      *
-     * @param \Base $f3
      * @return void
      */
-    public function releaseCheck(\Base $f3)
+    public function releaseCheck()
     {
-        if (!$f3->get('site.key')) {
-            \Model\Config::setVal('site.key', sha1(random_bytes(512)));
-        }
-
-        // Gather basic stats
-        $data = [
-            'release' => PHPROJECT_VERSION,
-            'key' => $f3->get('site.key'),
-        ];
-
-        if (!$f3->get('site.disable_stats')) {
-            $data['revision'] = $f3->get('revision');
-            $db = $f3->get('db.instance');
-            $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE role != 'group'");
-            $data['users'] = $result[0]['count'];
-            $result = $db->exec("SELECT COUNT(id) AS `count` FROM user WHERE role = 'group'");
-            $data['groups'] = $result[0]['count'];
-            $result = $db->exec("SELECT AVG(num) num FROM (SELECT COUNT(*) num FROM user_group GROUP BY group_id) g");
-            $data['avg_group_size'] = $result[0]['num'];
-            $result = $db->exec("SELECT COUNT(id) AS `count` FROM issue");
-            $data['issues'] = $result[0]['count'];
-            $result = $db->exec("SELECT COUNT(id) AS `count` FROM sprint");
-            $data['sprints'] = $result[0]['count'];
-            $result = $db->exec("SELECT value as version FROM config WHERE attribute = 'version'");
-            $data['version'] = $result[0]['version'];
-        }
-
-        // Make HTTP request
-        $endpoint = 'https://meta.phproject.org/release.php';
-        $options = [
+        // Set user agent to identify this instance
+        $context = stream_context_create([
             'http' => [
-                'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
-                'method' => 'POST',
-                'content' => http_build_query($data)
-            ]
-        ];
-
-        $context = stream_context_create($options);
+                'header' => 'User-Agent: Alanaktion/phproject',
+            ],
+        ]);
         try {
-            $result = file_get_contents($endpoint, false, $context);
+            $result = file_get_contents('https://api.github.com/repos/Alanaktion/phproject/releases/latest', false, $context);
+            $release = json_decode($result, false, 512, JSON_THROW_ON_ERROR);
         } catch (\Exception $e) {
             $this->_printJson(['error' => 1]);
             return;
         }
 
-        $return = json_decode($result);
-        if (json_last_error() != JSON_ERROR_NONE) {
-            $this->_printJson(['error' => 2]);
+        $latest = ltrim($release->tag_name, 'v');
+        if (!version_compare($latest, PHPROJECT_VERSION, '>')) {
+            $this->_printJson(['update_available' => false]);
             return;
         }
 
@@ -123,12 +91,18 @@ class Admin extends \Controller
             header('Content-Type: application/json');
             header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 3600 * 12) . ' GMT');
         }
-        if (!empty($return->description)) {
+        $return = [
+            'update_available' => true,
+            'name' => $release->tag_name,
+            'description' => $release->body,
+            'url' => $release->html_url,
+        ];
+        if (!empty($release->body)) {
             // Render markdown description as HTML
             $parsedown = new \Parsedown();
             $parsedown->setUrlsLinked(false);
             $parsedown->setMarkupEscaped(true);
-            $return->description_html = $parsedown->text($return->description);
+            $return['description_html'] = $parsedown->text($release->body);
         }
         echo json_encode($return, JSON_THROW_ON_ERROR);
     }
