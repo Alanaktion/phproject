@@ -5,6 +5,8 @@ Phproject
 =========
 *A high-performance project management system in PHP*
 
+[![20i FOSS Awards](https://i.imgur.com/KkovAqB.png)](https://www.20i.com/foss-awards/category/project-management)
+
 ### Installation
 Download and extract [the latest release](https://github.com/Alanaktion/phproject/releases/latest) a web accessible directory, go to the page in a browser, and fill in your database connection details.
 
