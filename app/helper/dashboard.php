@@ -261,7 +261,7 @@ class Dashboard extends \Prefab
          * @param   array $issue
          * @var     callable $renderTree This function, required for recursive calls
          */
-        $renderTree = function (&$issue, $level = 0) use (&$renderTree) {
+        $renderTree = function (&$issue, $level = 0) use (&$renderTree): void {
             if (!empty($issue['id'])) {
                 $f3 = \Base::instance();
                 $hive = ["issue" => $issue, "dict" => $f3->get("dict"), "BASE" => $f3->get("BASE"), "level" => $level, "issue_type" => $f3->get("issue_type")];

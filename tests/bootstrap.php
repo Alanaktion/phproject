@@ -6,7 +6,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__DIR__));
 require_once("vendor/autoload.php");
 
 $f3 = \Base::instance();
-$f3->mset(array(
+$f3->mset([
     "UI" => "app/view/;app/plugin/",
     "ESCAPE" => false,
     "LOGS" => "log/",
@@ -19,4 +19,4 @@ $f3->mset(array(
     "PACKAGE" => "Phproject",
     "TZ" => "UTC",
     "site.timezone" => "America/Phoenix"
-));
+]);

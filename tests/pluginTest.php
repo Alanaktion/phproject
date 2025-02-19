@@ -11,7 +11,7 @@ class PluginTest extends TestCase
         $helper = \Helper\Plugin::instance();
 
         // Set hook
-        $helper->addHook("test", function () {
+        $helper->addHook("test", function (): void {
             $GLOBALS["test--testHook"] = true;
         });
 
@@ -31,28 +31,28 @@ class PluginTest extends TestCase
 
         // Get all nav items
         $result = $helper->getAllNavs("/test1");
-        $expected = array(
-            "root" => array(
-                array(
+        $expected = [
+            "root" => [
+                [
                     "href"  => "test1",
                     "title" => "Test 1",
                     "match" => "/^\/test1/",
                     "location" => "root",
                     "active" => true
-                )
-            ),
-            "user" => array(
-                array(
+                ]
+            ],
+            "user" => [
+                [
                     "href"  => "test2",
                     "title" => "Test 2",
                     "match" => "/^\/test2/",
                     "location" => "user",
                     "active" => false
-                )
-            ),
-            "new" => array(),
-            "browse" => array(),
-        );
+                ]
+            ],
+            "new" => [],
+            "browse" => [],
+        ];
 
         $this->assertEquals($result, $expected);
     }
@@ -68,7 +68,7 @@ class PluginTest extends TestCase
         $result1 = $helper->getJsFiles("/test1");
         $result2 = $helper->getJsFiles("/test2");
 
-        $expected = array("test.js");
+        $expected = ["test.js"];
         $this->assertEquals($result1, $expected);
         $this->assertNotEquals($result2, $expected);
     }
@@ -84,7 +84,7 @@ class PluginTest extends TestCase
         $result1 = $helper->getJsCode("/test1");
         $result2 = $helper->getJsCode("/test2");
 
-        $expected = array("'test';");
+        $expected = ["'test';"];
         $this->assertEquals($result1, $expected);
         $this->assertNotEquals($result2, $expected);
     }

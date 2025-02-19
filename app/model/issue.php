@@ -571,7 +571,7 @@ class Issue extends \Model
         $ids = [$this->id];
         foreach ($this->getChildren() as $child) {
             $ids[] = $child->id;
-            $ids = $ids + $child->descendantIds();
+            $ids += $child->descendantIds();
         }
         return array_unique($ids);
     }

@@ -34,7 +34,7 @@ class StringTest extends TestCase
         $helper = \Helper\View::instance();
         $size = 1288490189;
         $result = $helper->formatFilesize($size);
-        $this->assertContains($result, array("1.2 GB", "1.20 GB"));
+        $this->assertContains($result, ["1.2 GB", "1.20 GB"]);
     }
 
     public function testGravatar()

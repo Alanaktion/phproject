@@ -42,7 +42,7 @@
             <b>{{ @dict.username }}:</b> {{ @db.user | esc }}<br>
             <b>{{ @dict.password }}:</b> ********<br>
             <b>{{ @dict.current_version }}:</b> {{@version}}<br>
-            <b>MySQL version:</b> {{ @db.instance->getAttribute(\PDO::ATTR_SERVER_VERSION) }}
+            <b>MySQL:</b> {{ @db.instance->getAttribute(\PDO::ATTR_SERVER_VERSION) }}
         </div>
         <div class="col-md-3 col-sm-6">
             <div class="clearfix">
@@ -84,6 +84,7 @@
         <div class="col-md-3 col-sm-6">
             <h4>{{ @dict.miscellaneous }}</h4>
             <p>
+                <b>PHP:</b> {{ phpversion() }}<br>
                 <b>{{ @dict.debug_level }}:</b> {{ @DEBUG }}<br>
                 <b>{{ @dict.session_lifetime }}:</b> {{ gmdate("z\\d G\\h", @JAR.expire) }}<br>
                 <b>{{ @dict.max_upload_size }}:</b> {{ round(@files.maxsize/1024/1024, 2) }}MB

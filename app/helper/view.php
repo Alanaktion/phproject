@@ -28,7 +28,7 @@ class View extends \Template
         if ($options === null) {
             $options = [];
         }
-        $options = $options + \Base::instance()->get("parse");
+        $options += \Base::instance()->get("parse");
 
         // Check for cached value if $ttl is set
         $cache = \Cache::instance();

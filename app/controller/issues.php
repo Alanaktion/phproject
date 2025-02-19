@@ -1005,7 +1005,7 @@ class Issues extends \Controller
         $orderParams = ["order" => "status_closed, priority DESC, due_date"];
         $f3->set("issues", $issues->find($searchParams, $orderParams));
 
-        $searchParams[0] = $searchParams[0] . " AND status_closed = 0";
+        $searchParams[0] .= " AND status_closed = 0";
         $openIssues = $issues->count($searchParams);
 
         $this->_printJson([

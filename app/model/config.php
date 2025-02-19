@@ -54,7 +54,7 @@ class Config extends \Model
 
         // Import existing config
         $ini = parse_ini_file($root . "/config.ini");
-        $ini = $ini + parse_ini_file($root . "/config-base.ini");
+        $ini += parse_ini_file($root . "/config-base.ini");
         foreach ($ini as $key => $val) {
             if (substr($key, 0, 3) == "db.") {
                 continue;
