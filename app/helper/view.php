@@ -77,8 +77,15 @@ class View extends \Template
         }
 
         // Simplistic XSS protection
+        // TODO: remove error_reporting hack after voku/portable-utf8 is updated
+        if (PHP_VERSION_ID >= 80400) {
+            error_reporting(E_ALL & ~(E_NOTICE | E_USER_NOTICE | E_DEPRECATED));
+        }
         $antiXss = new \voku\helper\AntiXSS();
         $str = $antiXss->xss_clean($str);
+        if (PHP_VERSION_ID >= 80400) {
+            error_reporting(E_ALL & ~(E_NOTICE | E_USER_NOTICE));
+        }
 
         // Pass to any plugin hooks
         $str = \Helper\Plugin::instance()->callHook("text.parse.after", $str);
