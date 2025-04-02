@@ -748,7 +748,7 @@ class Issues extends \Controller
             }
         }
 
-        $issue = \Model\Issue::create($data, !!$f3->get("POST.notify"));
+        $issue = \Model\Issue::create($data, (bool) $f3->get("POST.notify"));
         if ($originalAuthor) {
             $issue->author_id = $originalAuthor;
             $issue->save(false);
@@ -829,7 +829,7 @@ class Issues extends \Controller
 
         $watching = new \Model\Issue\Watcher();
         $watching->load(["issue_id = ? AND user_id = ?", $issue->id, $this->_userId]);
-        $f3->set("watching", !!$watching->id);
+        $f3->set("watching", (bool) $watching->id);
 
         $f3->set("issue", $issue);
         $f3->set("ancestors", $issue->getAncestors());
@@ -1135,7 +1135,7 @@ class Issues extends \Controller
             $issue->close();
         }
 
-        $comment = \Model\Issue\Comment::create(["issue_id" => $post["issue_id"], "user_id" => $this->_userId, "text" => trim($post["text"])], !!$f3->get("POST.notify"));
+        $comment = \Model\Issue\Comment::create(["issue_id" => $post["issue_id"], "user_id" => $this->_userId, "text" => trim($post["text"])], (bool) $f3->get("POST.notify"));
 
         if ($f3->get("AJAX")) {
             $this->_printJson([
@@ -1209,7 +1209,7 @@ class Issues extends \Controller
      * @param  string $q User query string
      * @return array  [string, keyword, ...]
      */
-    protected function _buildSearchWhere($q)
+    protected function _buildSearchWhere($q): array
     {
         if (!$q) {
             return ["deleted_date IS NULL"];
@@ -1373,11 +1373,11 @@ class Issues extends \Controller
             $comment->created_date = $this->now();
             $comment->file_id = $f3->get('file_id');
             $comment->save();
-            if (!!$f3->get("POST.notify")) {
+            if ((bool) $f3->get("POST.notify")) {
                 $notification = \Helper\Notification::instance();
                 $notification->issue_comment($issue->id, $comment->id);
             }
-        } elseif ($f3->get('file_id') && !!$f3->get("POST.notify")) {
+        } elseif ($f3->get('file_id') && (bool) $f3->get("POST.notify")) {
             $notification = \Helper\Notification::instance();
             $notification->issue_file($issue->id, $f3->get("file_id"));
         }

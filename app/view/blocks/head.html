@@ -5,7 +5,15 @@
 <meta name="generator" content="alanaktion/phproject">
 <meta name="csrf-token" content="{{ @csrf_token | esc }}">
 <title>{{ empty(@title) ? @site.name : @title . ' - ' . @site.name | esc }}</title>
-<link rel="stylesheet" href="{{ @BASE }}/{{ empty(@user.theme) ? @site.theme : @user.theme }}">
+<check if="{{ empty(@user.theme) && strpos(@site.theme, 'phproject.css') !== false }}">
+    <true>
+        <link rel="stylesheet" href="{{ @BASE }}/{{ @site.theme }}">
+        <link rel="stylesheet" href="{{ @BASE }}/css/bootstrap-phproject-dark.css" media="(prefers-color-scheme: dark)">
+    </true>
+    <false>
+        <link rel="stylesheet" href="{{ @BASE }}/{{ empty(@user.theme) ? @site.theme : @user.theme }}">
+    </false>
+</check>
 <link rel="stylesheet" href="{{ @BASE }}/css/style.css">
 <link rel="stylesheet" href="{{ @BASE }}/css/datepicker3.min.css">
 <link rel="stylesheet" href="{{ @BASE }}/css/font-awesome.min.css">

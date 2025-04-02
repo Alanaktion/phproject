@@ -6,21 +6,21 @@ use PHPUnit\Framework\TestCase;
 
 class StringTest extends TestCase
 {
-    public function testSalt()
+    public function testSalt(): void
     {
         $helper = \Helper\Security::instance();
         $result = $helper->salt();
         $this->assertRegexp("/[0-9a-f]{32}/", $result);
     }
 
-    public function testSaltSha1()
+    public function testSaltSha1(): void
     {
         $helper = \Helper\Security::instance();
         $result = $helper->salt_sha1();
         $this->assertRegexp("/[0-9a-f]{40}/", $result);
     }
 
-    public function testHash()
+    public function testHash(): void
     {
         $helper = \Helper\Security::instance();
         $string = "Hello world!";
@@ -29,7 +29,7 @@ class StringTest extends TestCase
         $this->assertEquals($result, $hash["hash"]);
     }
 
-    public function testFormatFilesize()
+    public function testFormatFilesize(): void
     {
         $helper = \Helper\View::instance();
         $size = 1288490189;
@@ -37,7 +37,7 @@ class StringTest extends TestCase
         $this->assertContains($result, ["1.2 GB", "1.20 GB"]);
     }
 
-    public function testGravatar()
+    public function testGravatar(): void
     {
         $helper = \Helper\View::instance();
         $email = "alan@phpizza.com";
@@ -45,7 +45,7 @@ class StringTest extends TestCase
         $this->assertStringContainsString("gravatar.com/avatar/996df14", $result);
     }
 
-    public function testUtc2local()
+    public function testUtc2local(): void
     {
         $helper = \Helper\View::instance();
         $time = 1420498500;
@@ -53,7 +53,7 @@ class StringTest extends TestCase
         $this->assertEquals(1420473300, $result);
     }
 
-    public function testConvertClosedDate()
+    public function testConvertClosedDate(): void
     {
         $helper = \Helper\Update::instance();
         $time = '2016-01-01 12:34:56';

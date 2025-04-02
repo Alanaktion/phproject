@@ -10,6 +10,7 @@
     <rule ref="PSR12">
         <!-- Backwards compatibilty exceptions -->
         <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
         <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps"/>
         <exclude name="PSR2.Methods.MethodDeclaration.Underscore"/>
     </rule>

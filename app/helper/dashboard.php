@@ -84,7 +84,7 @@ class Dashboard extends \Prefab
         return $this->_projects;
     }
 
-    public function subprojects()
+    public function subprojects(): array
     {
         if ($this->_projects === null) {
             $this->projects();
@@ -217,7 +217,7 @@ class Dashboard extends \Prefab
      * Get data for Issue Tree widget
      * @return array
      */
-    public function issue_tree()
+    public function issue_tree(): array
     {
         $f3 = \Base::instance();
         $userId = $f3->get("this_user") ? $f3->get("this_user")->id : $f3->get("user.id");
@@ -284,7 +284,7 @@ class Dashboard extends \Prefab
      * @param  array $array Flat array of issues, including all parents needed
      * @return array Tree array where each issue contains its child issues
      */
-    protected function _buildTree($array)
+    protected function _buildTree($array): array
     {
         $tree = [];
 

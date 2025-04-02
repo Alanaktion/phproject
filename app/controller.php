@@ -65,7 +65,7 @@ abstract class Controller
      * @param array   $hive
      * @param integer $ttl
      */
-    protected function _render($file, $mime = "text/html", array $hive = null, $ttl = 0)
+    protected function _render($file, $mime = "text/html", ?array $hive = null, $ttl = 0)
     {
         echo \Helper\View::instance()->render($file, $mime, $hive, $ttl);
     }

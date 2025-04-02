@@ -84,7 +84,7 @@ class Plugin extends \Prefab
      * @param  string $location
      * @return array
      */
-    public function getNav($path = null, $location = "root")
+    public function getNav($path = null, $location = "root"): array
     {
         $all = $this->_nav;
         $return = [];
@@ -116,7 +116,7 @@ class Plugin extends \Prefab
      * @param  string $path
      * @return array
      */
-    public function getJsFiles($path = null)
+    public function getJsFiles($path = null): array
     {
         $return = [];
         foreach ($this->_jsFiles as $item) {
@@ -135,7 +135,7 @@ class Plugin extends \Prefab
      * @param  string $path
      * @return array
      */
-    public function getJsCode($path = null)
+    public function getJsCode($path = null): array
     {
         $return = [];
         foreach ($this->_jsCode as $item) {

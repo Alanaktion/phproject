@@ -114,7 +114,7 @@ class User extends \Controller
      * Get array of theme names
      * @return array
      */
-    private function _loadThemes()
+    private function _loadThemes(): array
     {
         $themes = ["bootstrap.min"];
         foreach (glob("css/bootstrap-*.css") as $file) {
@@ -354,7 +354,7 @@ class User extends \Controller
      * @param  array $array Flat array of issues, including all parents needed
      * @return array Tree array where each issue contains its child issues
      */
-    protected function _buildTree($array)
+    protected function _buildTree($array): array
     {
         $tree = [];
 

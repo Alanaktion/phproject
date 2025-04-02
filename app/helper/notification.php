@@ -418,11 +418,11 @@ class Notification extends \Prefab
      * Render a view and return the result
      * @param  string  $file
      * @param  string  $mime
-     * @param  array   $hive
+     * @param  array|null $hive
      * @param  integer $ttl
      * @return string
      */
-    protected function _render($file, $mime = "text/html", array $hive = null, $ttl = 0)
+    protected function _render($file, $mime = "text/html", ?array $hive = null, $ttl = 0)
     {
         return \Helper\View::instance()->render($file, $mime, $hive, $ttl);
     }

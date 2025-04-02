@@ -99,11 +99,11 @@ abstract class Model extends \DB\SQL\Mapper
     /**
      * Load by ID directly if a string is passed
      * @param  int|array  $filter
-     * @param  array         $options
-     * @param  integer       $ttl
+     * @param  array|null $options
+     * @param  integer    $ttl
      * @return mixed
      */
-    public function load($filter = null, array $options = null, $ttl = 0)
+    public function load($filter = null, ?array $options = null, $ttl = 0)
     {
         if (is_numeric($filter)) {
             return parent::load(["id = ?", $filter], $options, $ttl);

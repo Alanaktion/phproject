@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -11,10 +10,12 @@ return RectorConfig::configure()
         __DIR__ . '/cron',
         __DIR__ . '/tests',
     ])
-    ->withPhpSets(php74: true)
-    ->withTypeCoverageLevel(0)
-    ->withDeadCodeLevel(0)
-    ->withCodeQualityLevel(0)
+    // ->withPhpSets(php81: true)
+    ->withPhp74Sets()
+    ->withTypeCoverageLevel(10)
+    ->withDeadCodeLevel(10)
+    ->withCodeQualityLevel(10)
+    ->withCodingStyleLevel(0)
     ->withSkip([
-        StringClassNameToClassConstantRector::class,
+        // StringClassNameToClassConstantRector::class,
     ]);

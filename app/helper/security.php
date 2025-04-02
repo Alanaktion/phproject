@@ -2,6 +2,8 @@
 
 namespace Helper;
 
+use Helper\Security\AntiXSS;
+
 class Security extends \Prefab
 {
     /**
@@ -155,5 +157,13 @@ class Security extends \Prefab
     public function hashEquals($str1, $str2)
     {
         return hash_equals($str1, $str2);
+    }
+
+    /**
+     * Clean a string to remove potential XSS attacks
+     */
+    public function cleanXss(string $str): string
+    {
+        return (new AntiXSS())->xss_clean($str);
     }
 }

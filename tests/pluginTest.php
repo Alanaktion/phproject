@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class PluginTest extends TestCase
 {
-    public function testHook()
+    public function testHook(): void
     {
         $helper = \Helper\Plugin::instance();
 
@@ -21,7 +21,7 @@ class PluginTest extends TestCase
         $this->assertArrayHasKey("test--testHook", $GLOBALS);
     }
 
-    public function testNav()
+    public function testNav(): void
     {
         $helper = \Helper\Plugin::instance();
 
@@ -57,7 +57,7 @@ class PluginTest extends TestCase
         $this->assertEquals($result, $expected);
     }
 
-    public function testJsFiles()
+    public function testJsFiles(): void
     {
         $helper = \Helper\Plugin::instance();
 
@@ -73,7 +73,7 @@ class PluginTest extends TestCase
         $this->assertNotEquals($result2, $expected);
     }
 
-    public function testJsCode()
+    public function testJsCode(): void
     {
         $helper = \Helper\Plugin::instance();
 

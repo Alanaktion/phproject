@@ -10,7 +10,7 @@ class Matrix extends \Matrix
      * @param  array $arrays  Array of sorted arrays to merge
      * @return array
      */
-    public function mergeSorted(array $arrays)
+    public function mergeSorted(array $arrays): array
     {
         $lengths = [];
         foreach ($arrays as $k => $v) {

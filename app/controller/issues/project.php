@@ -70,10 +70,8 @@ class Project extends \Controller
                     "issue_type" => $f3->get("issue_type")
                 ];
                 echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
-                if ($children) {
-                    foreach ($children as $item) {
-                        $renderTree($item, $level + 1);
-                    }
+                foreach ($children as $item) {
+                    $renderTree($item, $level + 1);
                 }
             }
         };

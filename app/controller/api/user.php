@@ -4,7 +4,7 @@ namespace Controller\Api;
 
 class User extends \Controller\Api
 {
-    protected function user_array(\Model\User $user)
+    protected function user_array(\Model\User $user): array
     {
         $group_id = $user->id;
 
@@ -25,7 +25,7 @@ class User extends \Controller\Api
             "email" => $user->email,
         ];
 
-        return ($result);
+        return $result;
     }
 
     public function single_get($f3, $params)

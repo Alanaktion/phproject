@@ -2,6 +2,8 @@
 
 namespace Controller;
 
+use League\CommonMark\GithubFlavoredMarkdownConverter;
+
 class Admin extends \Controller
 {
     protected $_userId;
@@ -99,10 +101,8 @@ class Admin extends \Controller
         ];
         if (!empty($release->body)) {
             // Render markdown description as HTML
-            $parsedown = new \Parsedown();
-            $parsedown->setUrlsLinked(false);
-            $parsedown->setMarkupEscaped(true);
-            $return['description_html'] = $parsedown->text($release->body);
+            $md = new GithubFlavoredMarkdownConverter();
+            $return['description_html'] = $md->convert($release->body);
         }
         echo json_encode($return, JSON_THROW_ON_ERROR);
     }
@@ -570,7 +570,7 @@ class Admin extends \Controller
                 $this->_printJson(["changed" => 1]);
                 break;
             case "change_api_visibility":
-                $group->api_visible = (int)!!$f3->get("POST.value");
+                $group->api_visible = (int)((bool) $f3->get("POST.value"));
                 $group->save();
                 $this->_printJson(["changed" => 1]);
                 break;

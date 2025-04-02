@@ -2,6 +2,8 @@
 
 namespace Helper;
 
+use League\CommonMark\GithubFlavoredMarkdownConverter;
+
 class View extends \Template
 {
     public function __construct()
@@ -77,15 +79,7 @@ class View extends \Template
         }
 
         // Simplistic XSS protection
-        // TODO: remove error_reporting hack after voku/portable-utf8 is updated
-        if (PHP_VERSION_ID >= 80400) {
-            error_reporting(E_ALL & ~(E_NOTICE | E_USER_NOTICE | E_DEPRECATED));
-        }
-        $antiXss = new \voku\helper\AntiXSS();
-        $str = $antiXss->xss_clean($str);
-        if (PHP_VERSION_ID >= 80400) {
-            error_reporting(E_ALL & ~(E_NOTICE | E_USER_NOTICE));
-        }
+        $str = Security::instance()->cleanXss($str);
 
         // Pass to any plugin hooks
         $str = \Helper\Plugin::instance()->callHook("text.parse.after", $str);
@@ -233,10 +227,10 @@ class View extends \Template
             '8O' => "\xF0\x9F\x98\xB2", // oops
         ];
 
-        $match = implode('|', array_map(fn ($str) => preg_quote($str, '/'), array_keys($map)));
+        $match = implode('|', array_map(fn ($str): string => preg_quote($str, '/'), array_keys($map)));
         $regex = "/([^a-z\\/&]|^)($match)([^a-z\\/]|$)/m";
 
-        return preg_replace_callback($regex, fn ($match) => $match[1] . $map[$match[2]] . $match[3], $str);
+        return preg_replace_callback($regex, fn ($match): string => $match[1] . $map[$match[2]] . $match[3], $str);
     }
 
     /**
@@ -258,12 +252,10 @@ class View extends \Template
      * @param  string $str
      * @return string
      */
-    protected function _parseMarkdown($str, $escape = true)
+    protected function _parseMarkdown($str)
     {
-        $mkd = new \Parsedown();
-        $mkd->setUrlsLinked(false);
-        $mkd->setMarkupEscaped($escape);
-        return $mkd->text($str);
+        $md = new GithubFlavoredMarkdownConverter();
+        return $md->convert($str);
     }
 
     /**

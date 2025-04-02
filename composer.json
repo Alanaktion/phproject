@@ -5,10 +5,9 @@
     "require": {
         "php": ">=7.4.0",
         "bcosca/fatfree-core": "^3.8",
-        "voku/anti-xss": "^4.1",
         "netcarver/textile": "^4.0",
-        "erusev/parsedown": "^1.7",
-        "neos/diff": "^7.3"
+        "neos/diff": "^7.3",
+        "league/commonmark": "^2.6"
     },
     "license": "GPL-3.0-or-later",
     "authors": [
