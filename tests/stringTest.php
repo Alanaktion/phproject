@@ -6,18 +6,24 @@ use PHPUnit\Framework\TestCase;
 
 class StringTest extends TestCase
 {
+    public function setUp(): void
+    {
+        $f3 = \Base::instance();
+        $f3->set('TZ', 'America/Phoenix');
+    }
+
     public function testSalt(): void
     {
         $helper = \Helper\Security::instance();
         $result = $helper->salt();
-        $this->assertRegexp("/[0-9a-f]{32}/", $result);
+        $this->assertMatchesRegularExpression("/[0-9a-f]{32}/", $result);
     }
 
     public function testSaltSha1(): void
     {
         $helper = \Helper\Security::instance();
         $result = $helper->salt_sha1();
-        $this->assertRegexp("/[0-9a-f]{40}/", $result);
+        $this->assertMatchesRegularExpression("/[0-9a-f]{40}/", $result);
     }
 
     public function testHash(): void
@@ -57,11 +63,7 @@ class StringTest extends TestCase
     {
         $helper = \Helper\Update::instance();
         $time = '2016-01-01 12:34:56';
-        $f3 = \Base::instance();
-        $tz = $f3->get('TZ');
-        $f3->set('TZ', 'America/Phoenix');
         $result = $helper->convertClosedDate($time);
-        $f3->set('TZ', $tz);
         $this->assertEquals('Fri, Jan 1, 2016 5:34am', $result);
     }
 }

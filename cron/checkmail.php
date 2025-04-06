@@ -4,7 +4,7 @@
     checkmail2.php is now preferred over this script! You should use it instead if possible.
 */
 
-require_once "base.php";
+require_once __DIR__ . "/base.php";
 $log = new \Log("checkmail.log");
 
 // connect to gmail
@@ -30,7 +30,7 @@ if ($emails) {
         $text = imap_fetchbody($inbox, $email_number, 2, FT_INTERNAL);
 
         // Ensure we get a message body on weird senders
-        if (!trim($text)) {
+        if (trim($text) === '' || trim($text) === '0') {
             $text = imap_fetchbody($inbox, $email_number, 1, FT_INTERNAL);
         }
 
@@ -72,10 +72,12 @@ if ($emails) {
                 }
             }
 
-            preg_match("/\[#([0-9]+)\] -/", $header->subject, $matches);
+            preg_match("/\\[#(\\d+)\\] -/", $header->subject, $matches);
 
             $issue = new \Model\Issue();
-            !empty($matches[1]) ? $issue->load($matches[1]) : '';
+            if (isset($matches[1]) && ($matches[1] !== '' && $matches[1] !== '0')) {
+                $issue->load($matches[1]);
+            }
 
             // post a comment if replying to an issue
             if (!empty($issue->id)) {
@@ -92,7 +94,7 @@ if ($emails) {
                 }
             } else {
                 if (!empty($header->subject)) {
-                    $subject = trim(preg_replace("/^((Re|Fwd?):\s)*/i", "", $header->subject));
+                    $subject = trim((string) preg_replace("/^((Re|Fwd?):\s)*/i", "", (string) $header->subject));
                     $issue->load(['name=? AND (deleted_date IS NULL OR deleted_date = "0000-00-00 00:00:00") AND (closed_date IS NULL OR closed_date = "0000-00-00 00:00:00")', $subject]);
                 }
 
@@ -120,12 +122,7 @@ if ($emails) {
             if (!empty($issue->id)) {
                 // add other recipients as watchers
                 if (!empty($header->cc) || (is_countable($header->to) ? count($header->to) : 0) > 1) {
-                    if (!empty($header->cc)) {
-                        $watchers = array_merge($header->to, $header->cc);
-                    } else {
-                        $watchers = $header->to;
-                    }
-
+                    $watchers = empty($header->cc) ? $header->to : array_merge($header->to, $header->cc);
                     foreach ($watchers as $more_people) {
                         $watcher_email = $more_people->mailbox . "@" . $more_people->host;
                         $watcher = new \Model\User();
@@ -163,7 +160,7 @@ if ($emails) {
 
                         if ($structure->parts[$i]->ifdparameters) {
                             foreach ($structure->parts[$i]->dparameters as $object) {
-                                if (strtolower($object->attribute) == 'filename') {
+                                if (strtolower((string) $object->attribute) === 'filename') {
                                     $attachments[$i]['is_attachment'] = true;
                                     $attachments[$i]['filename'] = $object->value;
                                 }
@@ -172,7 +169,7 @@ if ($emails) {
 
                         if ($structure->parts[$i]->ifparameters) {
                             foreach ($structure->parts[$i]->parameters as $object) {
-                                if (strtolower($object->attribute) == 'name') {
+                                if (strtolower((string) $object->attribute) === 'name') {
                                     $attachments[$i]['is_attachment'] = true;
                                     $attachments[$i]['name'] = $object->value;
                                 }
@@ -218,7 +215,7 @@ if ($emails) {
                         }
 
                         // Make a good name
-                        $orig_name = preg_replace("/[^A-Z0-9._-]/i", "_", $filename);
+                        $orig_name = preg_replace("/[^A-Z0-9._-]/i", "_", (string) $filename);
                         $filename = time() . "_" . $orig_name;
 
                         $i = 0;

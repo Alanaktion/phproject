@@ -15,8 +15,6 @@ class Watcher extends \Model
 
     /**
      * Find watched issues by user ID
-     * @param  int    $userId
-     * @param  string $orderby
      * @return array
      */
     public function findby_watcher(int $userId, string $orderby = 'id')

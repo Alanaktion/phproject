@@ -11,8 +11,6 @@ class Cli extends \Prefab
      * with a relevant message if required arguments are not specified.
      *
      * @param array $options Associative array, argument keys => default values
-     * @param array $argv
-     * @return array|null
      */
     public function parseOptions(array $options, ?array $argv = null): ?array
     {
@@ -60,7 +58,7 @@ class Cli extends \Prefab
         $optional = [];
         $flags = [];
         foreach ($options as $o) {
-            $colons = substr_count($o, ':');
+            $colons = substr_count((string) $o, ':');
             if ($colons == 2) {
                 $optional[] = $o;
             } elseif ($colons == 1) {
@@ -72,21 +70,21 @@ class Cli extends \Prefab
 
         echo 'Required values:', PHP_EOL;
         foreach ($required as $key) {
-            $o = rtrim($key, ':');
+            $o = rtrim((string) $key, ':');
             echo "--$o={$defaultMap[$key]}", PHP_EOL;
         }
         echo PHP_EOL;
 
         echo 'Optional values:', PHP_EOL;
         foreach ($optional as $key) {
-            $o = rtrim($key, ':');
+            $o = rtrim((string) $key, ':');
             echo "--$o={$defaultMap[$key]}", PHP_EOL;
         }
         echo PHP_EOL;
 
         echo 'Optional flags:', PHP_EOL;
         foreach ($flags as $key) {
-            $o = rtrim($key, ':');
+            $o = rtrim((string) $key, ':');
             echo "--$o", PHP_EOL;
         }
         echo PHP_EOL;

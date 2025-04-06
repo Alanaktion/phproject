@@ -122,7 +122,6 @@ if (
         // Save base configuration
         \Model\Config::setVal('session_lifetime', 604800);
         \Model\Config::setVal('cache_expire.db', 3600);
-        \Model\Config::setVal('cache_expire.minify', 86400);
         \Model\Config::setVal('cache_expire.attachments', 2592000);
         \Model\Config::setVal('parse.ids', true);
         \Model\Config::setVal('parse.hashtags', true);

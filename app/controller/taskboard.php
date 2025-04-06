@@ -64,7 +64,7 @@ class Taskboard extends \Controller
      * @param \Base $f3
      * @param array $params
      */
-    public function index($f3, $params)
+    public function index($f3, $params): void
     {
         $sprint = new \Model\Sprint();
 
@@ -86,7 +86,7 @@ class Taskboard extends \Controller
         // Load the requested sprint
         if (!$sprint->id) {
             $sprint->load($params["id"]);
-            if (!$sprint->id) {
+            if ($sprint->id === 0) {
                 $f3->error(404);
                 return;
             }
@@ -167,11 +167,11 @@ class Taskboard extends \Controller
         $sortModel = new \Model\Issue\Backlog();
         $sortOrder = $sortModel->load(["sprint_id = ?", $sprint->id]);
         if ($sortOrder) {
-            $sortArray = json_decode($sortOrder->issues, null, 512, JSON_THROW_ON_ERROR) ?: [];
+            $sortArray = json_decode((string) $sortOrder->issues, null, 512, JSON_THROW_ON_ERROR) ?: [];
             $sortArray = array_unique($sortArray);
-            usort($projects, function (\Model\Issue $a, \Model\Issue $b) use ($sortArray) {
-                $ka = array_search($a->id, $sortArray);
-                $kb = array_search($b->id, $sortArray);
+            usort($projects, function (\Model\Issue $a, \Model\Issue $b) use ($sortArray): int {
+                $ka = array_search($a->id, $sortArray, true);
+                $kb = array_search($b->id, $sortArray, true);
                 if ($ka === false && $kb !== false) {
                     return -1;
                 }
@@ -228,9 +228,8 @@ class Taskboard extends \Controller
      * Load the hourly burndown chart data
      *
      * @param  \Base $f3
-     * @param  array $params
      */
-    public function burndown($f3, $params)
+    public function burndown($f3, array $params): void
     {
         $sprint = new \Model\Sprint();
         $sprint->load($params["id"]);
@@ -275,7 +274,7 @@ class Taskboard extends \Controller
             WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
                 AND i.created_date < :date2";
 
-        $start = strtotime($sprint->getFirstWeekday());
+        $start = strtotime((string) $sprint->getFirstWeekday());
         $end = min(strtotime($sprint->getLastWeekday() . " 23:59:59"), time());
 
         $return = [];
@@ -306,7 +305,7 @@ class Taskboard extends \Controller
      *
      * @param  \Base $f3
      */
-    public function saveManHours($f3)
+    public function saveManHours($f3): void
     {
         $this->validateCsrf();
         $user = new \Model\User();
@@ -328,7 +327,7 @@ class Taskboard extends \Controller
      *
      * @param \Base $f3
      */
-    public function add($f3)
+    public function add($f3): void
     {
         $this->validateCsrf();
         $post = $f3->get("POST");
@@ -348,7 +347,7 @@ class Taskboard extends \Controller
      *
      * @param \Base $f3
      */
-    public function edit($f3)
+    public function edit($f3): void
     {
         $this->validateCsrf();
         $post = $f3->get("POST");
@@ -380,11 +379,7 @@ class Taskboard extends \Controller
             if (!$issue->hours_remaining || $issue->hours_remaining < 0) {
                 $issue->hours_remaining = 0;
             }
-            if (!empty($post["dueDate"])) {
-                $issue->due_date = date("Y-m-d", strtotime($post["dueDate"]));
-            } else {
-                $issue->due_date = null;
-            }
+            $issue->due_date = empty($post["dueDate"]) ? null : date("Y-m-d", strtotime((string) $post["dueDate"]));
             if (isset($post["repeat_cycle"])) {
                 $issue->repeat_cycle = $post["repeat_cycle"] ?: null;
             }
@@ -400,7 +395,7 @@ class Taskboard extends \Controller
             $comment->user_id = $this->_userId;
             $comment->issue_id = $issue->id;
             if (!empty($post["hours_spent"])) {
-                $comment->text = trim($post["comment"]) . sprintf(" (%s %s spent)", $post["hours_spent"], $post["hours_spent"] == 1 ? "hour" : "hours");
+                $comment->text = trim((string) $post["comment"]) . sprintf(" (%s %s spent)", $post["hours_spent"], $post["hours_spent"] == 1 ? "hour" : "hours");
             } else {
                 $comment->text = $post["comment"];
             }

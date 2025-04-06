@@ -26,20 +26,19 @@ class User extends \Model
 {
     public const
         RANK_GUEST = 0,
-    RANK_CLIENT = 1,
-    RANK_USER = 2,
-    RANK_MANAGER = 3,
-    RANK_ADMIN = 4,
-    RANK_SUPER = 5;
+        RANK_CLIENT = 1,
+        RANK_USER = 2,
+        RANK_MANAGER = 3,
+        RANK_ADMIN = 4,
+        RANK_SUPER = 5;
 
     protected $_table_name = "user";
-    protected $_groupUsers = null;
+    protected $_groupUsers;
 
     /**
      * Load currently logged in user, if any
-     * @return mixed
      */
-    public function loadCurrent()
+    public function loadCurrent(): static
     {
         $f3 = \Base::instance();
 
@@ -66,7 +65,6 @@ class User extends \Model
 
     /**
      * Get path to user's avatar or gravatar
-     * @param  int $size
      * @return string|bool
      */
     public function avatar(int $size = 80)
@@ -82,7 +80,6 @@ class User extends \Model
 
     /**
      * Load all active users
-     * @return array
      */
     public function getAll(): array
     {
@@ -91,7 +88,6 @@ class User extends \Model
 
     /**
      * Load all deleted users
-     * @return array
      */
     public function getAllDeleted(): array
     {
@@ -100,7 +96,6 @@ class User extends \Model
 
     /**
      * Load all active groups
-     * @return array
      */
     public function getAllGroups(): array
     {
@@ -124,7 +119,7 @@ class User extends \Model
             foreach ($users as $user) {
                 $userIds[] = $user->user_id;
             }
-            return $this->_groupUsers = $userIds ? $this->find("id IN (" . implode(",", $userIds) . ") AND deleted_date IS NULL") : [];
+            return $this->_groupUsers = $userIds !== [] ? $this->find("id IN (" . implode(",", $userIds) . ") AND deleted_date IS NULL") : [];
         } else {
             return null;
         }
@@ -152,7 +147,6 @@ class User extends \Model
 
     /**
      * Get all user IDs in a group with a user, and all group IDs the user is in
-     * @return array
      */
     public function getSharedGroupUserIds(): array
     {
@@ -163,21 +157,21 @@ class User extends \Model
             $groupIds[] = $g["group_id"];
         }
         $ids = $groupIds;
-        if ($groupIds) {
+        if ($groupIds !== []) {
             $groupIdString = implode(",", $groupIds);
             $users = $groupModel->find("group_id IN ({$groupIdString})", ["group" => "id,user_id"]);
             foreach ($users as $u) {
                 $ids[] = $u->user_id;
             }
         }
-        if (!count($ids)) {
+
+        if ($ids === []) {
             return [$this->id];
         }
         return $ids;
     }
     /**
      * Get all user options
-     * @return array
      */
     public function options(): array
     {
@@ -186,7 +180,6 @@ class User extends \Model
 
     /**
      * Get or set a user option
-     * @param  string $key
      * @param  mixed  $value
      * @return mixed
      */
@@ -203,8 +196,6 @@ class User extends \Model
 
     /**
      * Send an email alert with issues due on the given date
-     * @param  string $date
-     * @return bool
      */
     public function sendDueAlert(string $date = ''): bool
     {
@@ -212,7 +203,7 @@ class User extends \Model
             return false;
         }
 
-        if (!$date) {
+        if ($date === '' || $date === '0') {
             $date = date("Y-m-d", \Helper\View::instance()->utc2local());
         }
 
@@ -240,13 +231,12 @@ class User extends \Model
     /**
      * Get user statistics
      * @param  int $time  The lower limit on timestamps for stats collection
-     * @return array
      */
     public function stats(int $time = 0): array
     {
         $offset = \Helper\View::instance()->timeoffset();
 
-        if (!$time) {
+        if ($time === 0) {
             $time = strtotime("-2 weeks", time() + $offset);
         }
 
@@ -293,7 +283,7 @@ class User extends \Model
         }
 
         foreach ($dates as $date) {
-            $return["labels"][$date] = date("D j", strtotime($date));
+            $return["labels"][$date] = date("D j", strtotime((string) $date));
             if (!isset($return["spent"][$date])) {
                 $return["spent"][$date] = 0;
             }
@@ -314,7 +304,6 @@ class User extends \Model
 
     /**
      * Reassign open assigned issues
-     * @param  int|null $userId
      * @return int Number of issues affected
      * @throws \Exception
      */
@@ -335,13 +324,12 @@ class User extends \Model
     public function date_picker()
     {
         $lang = $this->language ?: \Base::instance()->get("LANGUAGE");
-        $lang = explode(',', $lang, 2)[0];
-        return (object)["language" => $lang, "js" => ($lang != "en")];
+        $lang = explode(',', (string) $lang, 2)[0];
+        return (object)["language" => $lang, "js" => ($lang !== "en")];
     }
 
     /**
      * Generate a password reset token and store hashed value
-     * @return string
      */
     public function generateResetToken(): string
     {
@@ -353,8 +341,6 @@ class User extends \Model
 
     /**
      * Validate a plaintext password reset token
-     * @param  string $token
-     * @return bool
      */
     public function validateResetToken(string $token): bool
     {

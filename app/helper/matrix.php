@@ -8,7 +8,6 @@ class Matrix extends \Matrix
      * Merge n sorted arrays into a single array with the same sort order
      *
      * @param  array $arrays  Array of sorted arrays to merge
-     * @return array
      */
     public function mergeSorted(array $arrays): array
     {
@@ -31,11 +30,10 @@ class Matrix extends \Matrix
     /**
      * Run array_merge on an array of arrays
      *
-     * @param  array  $arrays
      * @return array
      */
-    public function merge(array $arrays)
+    public function merge(array $arrays): mixed
     {
-        return call_user_func_array("array_merge", $arrays);
+        return array_merge(...$arrays);
     }
 }

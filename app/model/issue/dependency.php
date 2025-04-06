@@ -16,11 +16,8 @@ class Dependency extends \Model
 
     /**
      * Find dependency issues by issue ID
-     * @param  int    $issueId
-     * @param  string $orderby
-     * @return array
      */
-    public function findby_issue($issueId, $orderby = 'due_date'): array
+    public function findby_issue(int $issueId, string $orderby = 'due_date'): array
     {
         return $this->db->exec(
             'SELECT d.id as d_id,i.id, i.name, i.start_date, i.due_date, i.status_closed, i.author_name, i.author_username, i.owner_name, i.owner_username, i.status_name, i.status, d.dependency_type ' .
@@ -33,11 +30,8 @@ class Dependency extends \Model
 
     /**
      * Find dependent issues by issue ID
-     * @param  int    $issueId
-     * @param  string $orderby
-     * @return array
      */
-    public function findby_dependent($issueId, $orderby = 'due_date'): array
+    public function findby_dependent(int $issueId, string $orderby = 'due_date'): array
     {
         return  $this->db->exec(
             'SELECT  d.id as d_id, i.id, i.name, i.start_date, i.due_date, i.status_closed, i.author_name, i.author_username, i.owner_name, i.owner_username, i.status_name, i.status, d.dependency_type ' .

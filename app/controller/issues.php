@@ -19,19 +19,16 @@ class Issues extends \Controller
      * Collapses whitespace, then trims
      *
      * @param  string $string
-     * @return string
      */
-    protected function _cleanJson($string)
+    protected function _cleanJson($string): string
     {
-        return trim(preg_replace('/\s+/', ' ', $string));
+        return trim((string) preg_replace('/\s+/', ' ', $string));
     }
 
     /**
      * Build a WHERE clause for issue listings based on the current filters and sort options
-     *
-     * @return array
      */
-    protected function _buildFilter()
+    protected function _buildFilter(): array
     {
         $f3 = \Base::instance();
         $db = $f3->get("db.instance");
@@ -90,49 +87,24 @@ class Issues extends \Controller
         $filter_str .= " deleted_date IS NULL ";
 
         // Build SQL ORDER BY string
-        $orderby = !empty($args['orderby']) ? $args['orderby'] : "priority";
+        $orderby = empty($args['orderby']) ? "priority" : $args['orderby'];
         $filter["orderby"] = $orderby;
-        $ascdesc = !empty($args['ascdesc']) && strtolower($args['ascdesc']) == 'asc' ? "ASC" : "DESC";
+        $ascdesc = !empty($args['ascdesc']) && strtolower((string) $args['ascdesc']) === 'asc' ? "ASC" : "DESC";
         $filter["ascdesc"] = $ascdesc;
-        switch ($orderby) {
-            case "id":
-                $filter_str .= " ORDER BY id {$ascdesc} ";
-                break;
-            case "title":
-                $filter_str .= " ORDER BY name {$ascdesc}";
-                break;
-            case "type":
-                $filter_str .= " ORDER BY type_id {$ascdesc}, priority DESC, due_date DESC ";
-                break;
-            case "status":
-                $filter_str .= " ORDER BY status {$ascdesc}, priority DESC, due_date DESC ";
-                break;
-            case "parent_id":
-                $filter_str .= " ORDER BY parent_id {$ascdesc}, priority DESC, due_date DESC ";
-                break;
-            case "author":
-                $filter_str .= " ORDER BY author_name {$ascdesc}, priority DESC, due_date DESC ";
-                break;
-            case "assignee":
-                $filter_str .= " ORDER BY owner_name {$ascdesc}, priority DESC, due_date DESC ";
-                break;
-            case "created":
-                $filter_str .= " ORDER BY created_date {$ascdesc}, priority DESC, due_date DESC ";
-                break;
-            case "due":
-                $filter_str .= " ORDER BY due_date {$ascdesc}, priority DESC";
-                break;
-            case "sprint":
-                $filter_str .= " ORDER BY sprint_start_date {$ascdesc}, priority DESC, due_date DESC ";
-                break;
-            case "closed":
-                $filter_str .= " ORDER BY closed_date {$ascdesc}, priority DESC, due_date DESC ";
-                break;
-            case "priority":
-            default:
-                $filter_str .= " ORDER BY priority {$ascdesc}, due_date DESC ";
-                break;
-        }
+        match ($orderby) {
+            "id" => $filter_str .= " ORDER BY id {$ascdesc} ",
+            "title" => $filter_str .= " ORDER BY name {$ascdesc}",
+            "type" => $filter_str .= " ORDER BY type_id {$ascdesc}, priority DESC, due_date DESC ",
+            "status" => $filter_str .= " ORDER BY status {$ascdesc}, priority DESC, due_date DESC ",
+            "parent_id" => $filter_str .= " ORDER BY parent_id {$ascdesc}, priority DESC, due_date DESC ",
+            "author" => $filter_str .= " ORDER BY author_name {$ascdesc}, priority DESC, due_date DESC ",
+            "assignee" => $filter_str .= " ORDER BY owner_name {$ascdesc}, priority DESC, due_date DESC ",
+            "created" => $filter_str .= " ORDER BY created_date {$ascdesc}, priority DESC, due_date DESC ",
+            "due" => $filter_str .= " ORDER BY due_date {$ascdesc}, priority DESC",
+            "sprint" => $filter_str .= " ORDER BY sprint_start_date {$ascdesc}, priority DESC, due_date DESC ",
+            "closed" => $filter_str .= " ORDER BY closed_date {$ascdesc}, priority DESC, due_date DESC ",
+            default => $filter_str .= " ORDER BY priority {$ascdesc}, due_date DESC ",
+        };
 
         return [$filter, $filter_str];
     }
@@ -143,7 +115,7 @@ class Issues extends \Controller
      *
      * @param  \Base  $f3
      */
-    public function index($f3)
+    public function index($f3): void
     {
         $issues = new \Model\Issue\Detail();
 
@@ -205,16 +177,8 @@ class Issues extends \Controller
             $filter_get  .= "&orderby=" . $orderby;
         }
         if ($issue_page["count"] > 7) {
-            if ($issue_page["pos"] <= 3) {
-                $min = 0;
-            } else {
-                $min = $issue_page["pos"] - 3;
-            }
-            if ($issue_page["pos"] < $issue_page["count"] - 3) {
-                $max = $issue_page["pos"] + 3;
-            } else {
-                $max = $issue_page["count"] - 1;
-            }
+            $min = $issue_page["pos"] <= 3 ? 0 : $issue_page["pos"] - 3;
+            $max = $issue_page["pos"] < $issue_page["count"] - 3 ? $issue_page["pos"] + 3 : $issue_page["count"] - 1;
         } else {
             $min = 0;
             $max = $issue_page["count"] - 1;
@@ -237,7 +201,7 @@ class Issues extends \Controller
      *
      * @param \Base $f3
      */
-    public function bulk_update($f3)
+    public function bulk_update($f3): void
     {
         $this->validateCsrf();
         $post = $f3->get("POST");
@@ -315,7 +279,7 @@ class Issues extends \Controller
      *
      * @param  \Base  $f3
      */
-    public function export($f3)
+    public function export($f3): void
     {
         $issue = new \Model\Issue\Detail();
 
@@ -369,13 +333,9 @@ class Issues extends \Controller
      *
      * @param \Base $f3
      */
-    public function add($f3)
+    public function add($f3): void
     {
-        if ($f3->get("PARAMS.type")) {
-            $type_id = $f3->get("PARAMS.type");
-        } else {
-            $type_id = 1;
-        }
+        $type_id = $f3->get("PARAMS.type") ?: 1;
 
         $type = new \Model\Issue\Type();
         $type->load($type_id);
@@ -439,7 +399,7 @@ class Issues extends \Controller
     /**
      * @param \Base $f3
      */
-    public function add_selecttype($f3)
+    public function add_selecttype($f3): void
     {
         $type = new \Model\Issue\Type();
         $f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
@@ -451,10 +411,9 @@ class Issues extends \Controller
 
     /**
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function edit($f3, $params)
+    public function edit($f3, array $params): void
     {
         $issue = new \Model\Issue\Detail();
         $issue->load($params["id"]);
@@ -487,7 +446,6 @@ class Issues extends \Controller
 
     /**
      * Load metadata lists for displaying issue edit forms
-     * @param  \Model\Issue $issue
      * @return void
      */
     protected function loadIssueMeta(\Model\Issue $issue)
@@ -531,10 +489,9 @@ class Issues extends \Controller
      * Close an issue
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function close($f3, $params)
+    public function close($f3, array $params): void
     {
         $this->validateCsrf();
         $issue = new \Model\Issue();
@@ -560,10 +517,9 @@ class Issues extends \Controller
      * Reopen an issue
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function reopen($f3, $params)
+    public function reopen($f3, array $params): void
     {
         $this->validateCsrf();
         $issue = new \Model\Issue();
@@ -595,10 +551,9 @@ class Issues extends \Controller
      * Copy an issue
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function copy($f3, $params)
+    public function copy($f3, array $params): void
     {
         $this->validateCsrf();
         $issue = new \Model\Issue();
@@ -683,13 +638,11 @@ class Issues extends \Controller
                     }
 
                     // Save to the sprint of the due date unless one already set
-                    if ($i == "due_date" && !empty($val)) {
-                        if (empty($post['sprint_id']) && !empty($post['due_date_sprint'])) {
-                            $sprint = new \Model\Sprint();
-                            $sprint->load(["DATE(?) BETWEEN start_date AND end_date", $val]);
-                            $issue->sprint_id = $sprint->id;
-                            $newSprint = $sprint->id;
-                        }
+                    if ($i == "due_date" && !empty($val) && (empty($post['sprint_id']) && (isset($post['due_date_sprint']) && ($post['due_date_sprint'] !== '' && $post['due_date_sprint'] !== '0')))) {
+                        $sprint = new \Model\Sprint();
+                        $sprint->load(["DATE(?) BETWEEN start_date AND end_date", $val]);
+                        $issue->sprint_id = $sprint->id;
+                        $newSprint = $sprint->id;
                     }
                 }
             }
@@ -762,7 +715,7 @@ class Issues extends \Controller
      *
      * @param \Base $f3
      */
-    public function save($f3)
+    public function save($f3): void
     {
         $this->validateCsrf();
         if ($f3->get("POST.id")) {
@@ -791,10 +744,9 @@ class Issues extends \Controller
      * View an issue
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function single($f3, $params)
+    public function single($f3, array $params): void
     {
         $issue = new \Model\Issue\Detail();
         $issue->load(["id=?", $params["id"]]);
@@ -850,9 +802,8 @@ class Issues extends \Controller
      * Add a watcher
      *
      * @param \Base $f3
-     * @param array $params
      */
-    public function add_watcher($f3, $params)
+    public function add_watcher($f3, array $params): void
     {
         $this->validateCsrf();
 
@@ -878,9 +829,8 @@ class Issues extends \Controller
      * Delete a watcher
      *
      * @param \Base $f3
-     * @param array $params
      */
-    public function delete_watcher($f3, $params)
+    public function delete_watcher($f3, array $params): void
     {
         $this->validateCsrf();
 
@@ -901,9 +851,8 @@ class Issues extends \Controller
      * Add a dependency
      *
      * @param \Base $f3
-     * @param array $params
      */
-    public function add_dependency($f3, $params)
+    public function add_dependency($f3, array $params): void
     {
         $this->validateCsrf();
 
@@ -928,9 +877,8 @@ class Issues extends \Controller
      * Delete a dependency
      *
      * @param \Base $f3
-     * @param array $params
      */
-    public function delete_dependency($f3, $params)
+    public function delete_dependency($f3, array $params): void
     {
         $this->validateCsrf();
 
@@ -950,9 +898,8 @@ class Issues extends \Controller
      * AJAX call for issue history
      *
      * @param \Base $f3
-     * @param array $params
      */
-    public function single_history($f3, $params)
+    public function single_history($f3, array $params): void
     {
         // Build updates array
         $updates_array = [];
@@ -978,10 +925,9 @@ class Issues extends \Controller
      * AJAX call for related issues
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function single_related($f3, $params)
+    public function single_related($f3, array $params)
     {
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
@@ -1013,6 +959,7 @@ class Issues extends \Controller
             "open" => $openIssues,
             "html" => $this->_cleanJson(\Helper\View::instance()->render("issues/single/related.html")),
         ]);
+        return null;
     }
 
     /**
@@ -1020,9 +967,8 @@ class Issues extends \Controller
      * AJAX call for issue watchers
      *
      * @param \Base $f3
-     * @param array $params
      */
-    public function single_watchers($f3, $params)
+    public function single_watchers($f3, array $params): void
     {
         $watchers = new \Model\Custom("issue_watcher_user");
         $f3->set("watchers", $watchers->find(["issue_id = ?", $params["id"]]));
@@ -1040,10 +986,9 @@ class Issues extends \Controller
      * AJAX call for issue dependencies
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function single_dependencies($f3, $params)
+    public function single_dependencies($f3, array $params): void
     {
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
@@ -1068,10 +1013,9 @@ class Issues extends \Controller
      * Delete an issue
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function single_delete($f3, $params)
+    public function single_delete($f3, array $params): void
     {
         $this->validateCsrf();
         $issue = new \Model\Issue();
@@ -1090,10 +1034,9 @@ class Issues extends \Controller
      * Un-delete an issue
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function single_undelete($f3, $params)
+    public function single_undelete($f3, array $params): void
     {
         $this->validateCsrf();
         $issue = new \Model\Issue();
@@ -1114,7 +1057,7 @@ class Issues extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function comment_save($f3)
+    public function comment_save($f3): void
     {
         $this->validateCsrf();
         $post = $f3->get("POST");
@@ -1135,7 +1078,7 @@ class Issues extends \Controller
             $issue->close();
         }
 
-        $comment = \Model\Issue\Comment::create(["issue_id" => $post["issue_id"], "user_id" => $this->_userId, "text" => trim($post["text"])], (bool) $f3->get("POST.notify"));
+        $comment = \Model\Issue\Comment::create(["issue_id" => $post["issue_id"], "user_id" => $this->_userId, "text" => trim((string) $post["text"])], (bool) $f3->get("POST.notify"));
 
         if ($f3->get("AJAX")) {
             $this->_printJson([
@@ -1145,7 +1088,7 @@ class Issues extends \Controller
                 "user_name" => $f3->get('user.name'),
                 "user_username" => $f3->get('user.username'),
                 "user_email" => $f3->get('user.email'),
-                "user_email_md5" => md5(strtolower($f3->get('user.email'))),
+                "user_email_md5" => md5(strtolower((string) $f3->get('user.email'))),
             ]);
             return;
         } else {
@@ -1160,7 +1103,7 @@ class Issues extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function comment_delete($f3)
+    public function comment_delete($f3): void
     {
         $this->validateCsrf();
         $this->_requireAdmin();
@@ -1177,7 +1120,7 @@ class Issues extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function file_delete($f3)
+    public function file_delete($f3): void
     {
         $this->validateCsrf();
         $file = new \Model\Issue\File();
@@ -1193,7 +1136,7 @@ class Issues extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function file_undelete($f3)
+    public function file_undelete($f3): void
     {
         $this->validateCsrf();
         $file = new \Model\Issue\File();
@@ -1242,10 +1185,10 @@ class Issues extends \Controller
      *
      * @param \Base $f3
      */
-    public function search($f3)
+    public function search($f3): void
     {
         $q = $f3->get("GET.q");
-        if (preg_match("/^#([0-9]+)$/", $q, $matches)) {
+        if (preg_match("/^#(\\d+)\$/", (string) $q, $matches)) {
             $f3->reroute("/issues/{$matches[1]}");
         }
 
@@ -1273,16 +1216,8 @@ class Issues extends \Controller
         $f3->set("issues", $issue_page);
 
         if ($issue_page["count"] > 7) {
-            if ($issue_page["pos"] <= 3) {
-                $min = 0;
-            } else {
-                $min = $issue_page["pos"] - 3;
-            }
-            if ($issue_page["pos"] < $issue_page["count"] - 3) {
-                $max = $issue_page["pos"] + 3;
-            } else {
-                $max = $issue_page["count"] - 1;
-            }
+            $min = $issue_page["pos"] <= 3 ? 0 : $issue_page["pos"] - 3;
+            $max = $issue_page["pos"] < $issue_page["count"] - 3 ? $issue_page["pos"] + 3 : $issue_page["count"] - 1;
         } else {
             $min = 0;
             $max = $issue_page["count"] - 1;
@@ -1300,7 +1235,7 @@ class Issues extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function upload($f3)
+    public function upload($f3): void
     {
         $this->validateCsrf();
         $user_id = $this->_userId;
@@ -1322,15 +1257,13 @@ class Issues extends \Controller
         $slug = true; // rename file to filesystem-friendly version
 
         // Make a good name
-        $orig_name = preg_replace("/[^A-Z0-9._-]/i", "_", $_FILES['attachment']['name']);
+        $orig_name = preg_replace("/[^A-Z0-9._-]/i", "_", (string) $_FILES['attachment']['name']);
         $_FILES['attachment']['name'] = time() . "_" . $orig_name;
 
         // Blacklist certain file types
-        if ($f3->get('security.file_blacklist')) {
-            if (preg_match($f3->get('security.file_blacklist'), $orig_name)) {
-                $f3->error(415);
-                return;
-            }
+        if ($f3->get('security.file_blacklist') && preg_match($f3->get('security.file_blacklist'), (string) $orig_name)) {
+            $f3->error(415);
+            return;
         }
 
         $i = 0;
@@ -1341,7 +1274,7 @@ class Issues extends \Controller
         }
 
         $web->receive(
-            function ($file) use ($f3, $orig_name, $user_id, $issue) {
+            function (array $file) use ($f3, $orig_name, $user_id, $issue): bool {
                 if ($file['size'] > $f3->get("files.maxsize")) {
                     return false;
                 }
@@ -1391,7 +1324,7 @@ class Issues extends \Controller
      *
      * @param  \Base $f3
      */
-    public function parent_ajax($f3)
+    public function parent_ajax($f3): void
     {
         if (!$f3->get("AJAX")) {
             $f3->error(400);
@@ -1406,11 +1339,11 @@ class Issues extends \Controller
             $searchFilter = "(owner_id IN (" . $groupString . ")) AND ";
         }
 
-        $term = trim($f3->get('GET.q'));
+        $term = trim((string) $f3->get('GET.q'));
         $results = [];
 
         $issue = new \Model\Issue();
-        if ((substr($term, 0, 1) == '#') && is_numeric(substr($term, 1))) {
+        if ((str_starts_with($term, '#')) && is_numeric(substr($term, 1))) {
             $id = (int) substr($term, 1);
             $issues = $issue->find([$searchFilter . 'id LIKE ?', $id . '%'], ['limit' => 20]);
 

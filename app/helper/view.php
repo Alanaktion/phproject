@@ -17,12 +17,8 @@ class View extends \Template
 
     /**
      * Convert Textile or Markdown to HTML, adding hashtags
-     * @param  string $str
-     * @param  array  $options
-     * @param  int    $ttl
-     * @return string
      */
-    public function parseText($str, $options = [], $ttl = null)
+    public function parseText(string $str, array $options = [], ?int $ttl = null): string
     {
         if ($str === null || $str === '') {
             return '';
@@ -65,7 +61,7 @@ class View extends \Template
             if ($options["markdown"]) {
                 // Yes, this is hacky. Please open an issue on GitHub if you
                 // know of a better way of supporting Markdown and Textile :)
-                $str = html_entity_decode($str);
+                $str = html_entity_decode((string) $str);
                 $str = preg_replace('/^<p>|<\/p>$/m', "\n", $str);
                 $escape = false;
             }
@@ -94,10 +90,8 @@ class View extends \Template
 
     /**
      * Replaces IDs with links to their corresponding issues
-     * @param  string $str
-     * @return string
      */
-    protected function _parseIds($str)
+    protected function _parseIds(string $str): string
     {
         $url = \Base::instance()->get("site.url");
 
@@ -106,19 +100,14 @@ class View extends \Template
         if (!$count) {
             return $str;
         }
-
-        // Load IDs
-        $ids = [];
-        foreach ($matches[0] as $match) {
-            $ids[] = $match;
-        }
+        $ids = $matches[0];
         $idsStr = implode(",", array_unique($ids));
         $issue = new \Model\Issue();
         $issues = $issue->find(["id IN ($idsStr)"]);
 
-        return preg_replace_callback("/(?<=[^a-z\\/&]|^)#[0-9]+(?=[^a-z\\/]|$)/i", function ($matches) use ($url, $issues) {
+        return preg_replace_callback("/(?<=[^a-z\\/&]|^)#[0-9]+(?=[^a-z\\/]|$)/i", function (array $matches) use ($url, $issues): string {
             $issue = null;
-            $id = ltrim($matches[0], "#");
+            $id = ltrim((string) $matches[0], "#");
             foreach ($issues as $i) {
                 if ($i->id == $id) {
                     $issue = $i;
@@ -141,29 +130,25 @@ class View extends \Template
 
     /**
      * Replaces hashtags with links to their corresponding tag pages
-     * @param  string $str
-     * @return string
      */
-    protected function _parseHashtags($str)
+    protected function _parseHashtags(string $str): string
     {
-        return preg_replace_callback("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", function ($matches) {
+        return preg_replace_callback("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", function (array $matches): string {
             $url = \Base::instance()->get("site.url");
-            $tag = preg_replace("/[_-]+/", "-", $matches[1]);
+            $tag = preg_replace("/[_-]+/", "-", (string) $matches[1]);
             return "<a href=\"{$url}tag/$tag\">#$tag</a>";
         }, $str);
     }
 
     /**
      * Replaces URLs with links
-     * @param  string $str
-     * @return string
      */
-    protected function _parseUrls($str)
+    protected function _parseUrls(string $str): string
     {
         $str = ' ' . $str;
 
         // In testing, using arrays here was found to be faster
-        $str = preg_replace_callback('#([\s>])([\w]+?://[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', function ($matches) {
+        $str = preg_replace_callback('#([\s>])([\w]+?://[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', function (array $matches): string {
             $ret = '';
             $url = $matches[2];
 
@@ -171,14 +156,14 @@ class View extends \Template
                 return $matches[0];
             }
             // removed trailing [.,;:] from URL
-            if (in_array(substr($url, -1), ['.', ',', ';', ':']) === true) {
+            if (in_array(substr($url, -1), ['.', ',', ';', ':'])) {
                 $ret = substr($url, -1);
                 $url = substr($url, 0, strlen($url) - 1);
             }
             return $matches[1] . "<a href=\"$url\" rel=\"nofollow\" target=\"_blank\">$url</a>" . $ret;
         }, $str);
 
-        $str = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', function ($m) {
+        $str = preg_replace_callback('#([\s>])((www|ftp)\.[\w\\x80-\\xff\#!$%&~/.\-;:=,?@\[\]+]*)#is', function (array $m): string {
             $s = '';
             $d = $m[2];
 
@@ -187,31 +172,28 @@ class View extends \Template
             }
 
             // removed trailing [,;:] from URL
-            if (in_array(substr($d, -1), ['.', ',', ';', ':']) === true) {
+            if (in_array(substr($d, -1), ['.', ',', ';', ':'])) {
                 $s = substr($d, -1);
                 $d = substr($d, 0, strlen($d) - 1);
             }
             return $m[1] . "<a href=\"http://$d\" rel=\"nofollow\" target=\"_blank\">$d</a>" . $s;
-        }, $str);
+        }, (string) $str);
 
-        $str = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', function ($m) {
+        $str = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', function (array $m): string {
             $email = $m[2] . '@' . $m[3];
             return $m[1] . "<a href=\"mailto:$email\">$email</a>";
-        }, $str);
+        }, (string) $str);
 
         // This one is not in an array because we need it to run last, for cleanup of accidental links within links
-        $str = preg_replace("#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i", "$1$3</a>", $str);
-        $str = trim($str);
+        $str = preg_replace("#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i", "$1$3</a>", (string) $str);
 
-        return $str;
+        return trim((string) $str);
     }
 
     /**
      * Replaces text emoticons with Emoji versions
-     * @param  string $str
-     * @return string
      */
-    protected function _parseEmoticons($str)
+    protected function _parseEmoticons(string $str): string
     {
         // Custom Emoji map, based on UTF::emojify
         $map = [
@@ -235,10 +217,8 @@ class View extends \Template
 
     /**
      * Passes a string through the Textile parser
-     * @param  string $str
-     * @return string
      */
-    protected function _parseTextile($str, $escape = true)
+    protected function _parseTextile(string $str, bool $escape = true): string
     {
         error_reporting(E_ALL ^ E_DEPRECATED); // Temporarily ignore deprecations because this lib is incompatible
         $tex = new \Netcarver\Textile\Parser('html5');
@@ -249,21 +229,17 @@ class View extends \Template
 
     /**
      * Passes a string through the Markdown parser
-     * @param  string $str
-     * @return string
      */
-    protected function _parseMarkdown($str)
+    protected function _parseMarkdown(string $str): string
     {
         $md = new GithubFlavoredMarkdownConverter();
-        return $md->convert($str);
+        return $md->convert($str)->getContent();
     }
 
     /**
      * Get a human-readable file size
-     * @param  int $filesize
-     * @return string
      */
-    public function formatFilesize($filesize)
+    public function formatFilesize(int $filesize): string
     {
         if ($filesize > 1_073_741_824) {
             return round($filesize / 1_073_741_824, 2) . " GB";
@@ -278,27 +254,22 @@ class View extends \Template
 
     /**
      * Get a Gravatar URL from email address and size, uses global Gravatar configuration
-     * @param  string  $email
-     * @param  integer $size
-     * @return string
      */
-    public function gravatar($email, $size = 80)
+    public function gravatar(string $email, int $size = 80): string
     {
         $f3 = \Base::instance();
         $rating = $f3->get("gravatar.rating") ?: "pg";
         $default = $f3->get("gravatar.default") ?: "mm";
         return "https://gravatar.com/avatar/" . md5(strtolower($email ?? '')) .
                 "?s=" . intval($size) .
-                "&d=" . urlencode($default) .
-                "&r=" . urlencode($rating);
+                "&d=" . urlencode((string) $default) .
+                "&r=" . urlencode((string) $rating);
     }
 
     /**
      * Get UTC time offset in seconds
-     *
-     * @return int
      */
-    public function timeoffset()
+    public function timeoffset(): int
     {
         $f3 = \Base::instance();
 
@@ -317,10 +288,8 @@ class View extends \Template
 
     /**
      * Convert a UTC timestamp to local time
-     * @param  int|string $timestamp
-     * @return int
      */
-    public function utc2local($timestamp = null)
+    public function utc2local(int|string|null $timestamp = null): int|float
     {
         if ($timestamp && !is_numeric($timestamp)) {
             $timestamp = strtotime($timestamp);
@@ -336,12 +305,11 @@ class View extends \Template
 
     /**
      * Get the current primary language
-     * @return string
      */
-    public function lang()
+    public function lang(): string
     {
         $f3 = \Base::instance();
         $langs = $f3->split($f3->get("LANGUAGE"));
-        return $langs[0] ?? $f3->get("FALLBACK");
+        return $langs[0] ?? $f3->get("FALLBACK", "en");
     }
 }

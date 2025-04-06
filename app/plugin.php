@@ -35,7 +35,6 @@ abstract class Plugin extends \Prefab
      * This is the primary way for plugins to add functionality
      * @link   http://www.phproject.org/plugins.html
      * @param  string   $hook
-     * @param  callable $action
      * @return Plugin
      */
     final protected function _hook($hook, callable $action)
@@ -106,7 +105,7 @@ abstract class Plugin extends \Prefab
             $meta[$match[1]] = trim($match[2]);
         }
 
-        $this->_meta = $meta + ["package" => str_replace(["Plugin\\", "\\Base"], "", get_class($this)), "author" => null, "version" => null];
+        $this->_meta = $meta + ["package" => str_replace(["Plugin\\", "\\Base"], "", static::class), "author" => null, "version" => null];
         return $this->_meta;
     }
 

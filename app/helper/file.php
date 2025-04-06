@@ -39,11 +39,8 @@ class File extends \Image
      * Get an icon name by MIME type
      *
      * Returns "_blank" when no icon matches
-     *
-     * @param  string $contentType
-     * @return string
      */
-    public static function mimeIcon($contentType)
+    public static function mimeIcon(string $contentType): string
     {
         foreach (self::$mimeMap["icon"] as $regex => $name) {
             if (preg_match("@^" . $regex . "$@i", $contentType)) {

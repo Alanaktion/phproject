@@ -1,6 +1,6 @@
 <?php
 
-require_once "base.php";
+require_once __DIR__ . "/base.php";
 $log = new \Log("checkmail.log");
 
 $imap = $f3->get("imap");
@@ -150,11 +150,11 @@ foreach ($emails as $msg_number) {
     }
 
     // Find issue IDs in subject
-    preg_match("/\[#([0-9]+)\] -/", $header->subject, $matches);
+    preg_match("/\\[#(\\d+)\\] -/", $header->subject, $matches);
 
     // Get issue instance
     $issue = new \Model\Issue();
-    if (!empty($matches[1])) {
+    if (isset($matches[1]) && ($matches[1] !== '' && $matches[1] !== '0')) {
         $issue->load(intval($matches[1]));
     }
     if (!$issue->id) {
@@ -163,7 +163,7 @@ foreach ($emails as $msg_number) {
     }
 
     if ($issue->id) {
-        if (trim($text)) {
+        if (trim($text) !== '' && trim($text) !== '0') {
             $comment = \Model\Issue\Comment::create([
                 'user_id' => $from_user->id,
                 'issue_id' => $issue->id,
@@ -185,12 +185,7 @@ foreach ($emails as $msg_number) {
 
     // Add other recipients as watchers
     if (!empty($header->cc) || (is_countable($header->to) ? count($header->to) : 0) > 1) {
-        if (!empty($header->cc)) {
-            $watchers = array_merge($header->to, $header->cc);
-        } else {
-            $watchers = $header->to;
-        }
-
+        $watchers = empty($header->cc) ? $header->to : array_merge($header->to, $header->cc);
         foreach ($watchers as $more_people) {
             $watcher_email = $more_people->mailbox . '@' . $more_people->host;
             $watcher = new \Model\User();
@@ -225,7 +220,7 @@ foreach ($emails as $msg_number) {
 
         // Store file
         $dir = 'uploads/' . date('Y/m/');
-        $item['filename'] = preg_replace("/[^A-Z0-9._-]/i", "_", $item['filename']);
+        $item['filename'] = preg_replace("/[^A-Z0-9._-]/i", "_", (string) $item['filename']);
         $disk_filename = $dir . time() . "_" . $item['filename'];
         if (!is_dir(dirname(__DIR__) . '/' . $dir)) {
             mkdir(dirname(__DIR__) . '/' . $dir, 0777, true);

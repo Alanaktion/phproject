@@ -28,9 +28,8 @@ class Files extends \Controller
      * @param  string $mime
      * @param  string $filename
      * @param  bool   $force
-     * @return int|bool
      */
-    protected function _sendFile($file, $mime = "", $filename = "", $force = true)
+    protected function _sendFile($file, $mime = "", $filename = "", $force = true): false|int
     {
         if (!is_file($file)) {
             return false;
@@ -65,7 +64,7 @@ class Files extends \Controller
      * @param array $params
      * @throws \Exception
      */
-    public function thumb($f3, $params)
+    public function thumb($f3, $params): void
     {
         $this->_useFileCache();
         $cache = \Cache::instance();
@@ -83,12 +82,10 @@ class Files extends \Controller
 
         // Output cached image if one exists
         $hash = $f3->hash($f3->get('VERB') . " " . $f3->get('URI')) . ".thm";
-        if ($f3->get("DEBUG") < 2) {
-            if ($cache->exists($hash, $data)) {
-                header("Content-type: image/" . $params["format"]);
-                echo $data;
-                return;
-            }
+        if ($f3->get("DEBUG") < 2 && $cache->exists($hash, $data)) {
+            header("Content-type: image/" . $params["format"]);
+            echo $data;
+            return;
         }
 
         $file = new \Model\Issue\File();
@@ -114,7 +111,7 @@ class Files extends \Controller
 
         // 1.1 fits perfectly but crops shadow, so we compare width vs height
         $size = intval($params["size"] ?? null) ?: 96;
-        if ($alpha) {
+        if ($alpha !== 0) {
             $thumbSize = $size;
         } elseif ($img->width() > $img->height()) {
             $thumbSize = round($size / 1.1);
@@ -137,7 +134,7 @@ class Files extends \Controller
         $transparent = imagecolorallocatealpha($frame, 0, 0, 0, 127);
         imagefill($frame, 0, 0, $transparent);
 
-        if (!$alpha) {
+        if ($alpha === 0) {
             // Draw drop shadow
             $cs = imagecolorallocatealpha($frame, 0, 0, 0, 120);
             imagefilledrectangle($frame, $ox - $fb, $size - $oy + $fb, $size - $ox + $fb, $size - $oy + round($fb * 1.5), $cs);
@@ -151,25 +148,17 @@ class Files extends \Controller
             imagefilledrectangle($frame, $ox - $fb, $oy - $fb, $size - $ox + $fb, $size - $oy + $fb, $c1);
             $c2 = imagecolorallocate($frame, 230, 230, 230);
             // This is an incredibly stupid way of deprecating a parameter, thanks PHP.
-            if (PHP_VERSION_ID >= 80000) {
-                imagefilledpolygon($frame, [
-                    $size - $ox + $fb, $oy - $fb,
-                    $size - $ox + $fb, $size - $oy + $fb,
-                    $ox - $fb, $size - $oy + $fb,
-                ], $c2);
-            } else {
-                imagefilledpolygon($frame, [
-                    $size - $ox + $fb, $oy - $fb,
-                    $size - $ox + $fb, $size - $oy + $fb,
-                    $ox - $fb, $size - $oy + $fb,
-                ], 3, $c2);
-            }
+            imagefilledpolygon($frame, [
+                $size - $ox + $fb, $oy - $fb,
+                $size - $ox + $fb, $size - $oy + $fb,
+                $ox - $fb, $size - $oy + $fb,
+            ], $c2);
         }
 
         // Copy thumbnail onto frame
         imagecopy($frame, $img->data(), $ox, $oy, 0, 0, $tw, $th);
 
-        if (!$alpha) {
+        if ($alpha === 0) {
             // Draw inner shadow thumbnail
             $c3 = imagecolorallocatealpha($frame, 0, 0, 0, 100);
             imagerectangle($frame, $ox, $oy, $size - $ox, $size - $oy, $c3);
@@ -192,10 +181,9 @@ class Files extends \Controller
      * GET /avatar/@size-@id.@format
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function avatar($f3, $params)
+    public function avatar($f3, array $params): void
     {
         // Ensure proper content-type for JPEG images
         if ($params["format"] == "jpg") {
@@ -225,10 +213,9 @@ class Files extends \Controller
      * GET /files/@id/@name
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function file($f3, $params)
+    public function file($f3, array $params): void
     {
         $file = new \Model\Issue\File();
         $file->load($params["id"]);
@@ -241,7 +228,7 @@ class Files extends \Controller
         $force = true;
         $type = mime_content_type($file->disk_filename);
         if (
-            substr($type, 0, 5) == "image" ||
+            str_starts_with($type, "image") ||
             $type == "text/plain" ||
             $type == "application/pdf" ||
             in_array($type, ['video/mp4', 'video/webm'])

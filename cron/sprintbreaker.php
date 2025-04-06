@@ -13,7 +13,7 @@
  *
  **/
 
-require_once "base.php";
+require_once __DIR__ . "/base.php";
 
 $issue_type_project = $f3->get("issue_type.project");
 
@@ -50,7 +50,7 @@ if ($projects && $sprints) {
                 // Find tasks that fit into this sprint
                 foreach ($tasks as $task) {
                     echo "Using task {$task->id}\n";
-                    $due = strtotime($task->due_date);
+                    $due = strtotime((string) $task->due_date);
                     if ($due >= $start && $due <= $end) {
                         echo "Task marked for move {$task->id}\n";
                         $tasks_for_this_sprint[] = $task;

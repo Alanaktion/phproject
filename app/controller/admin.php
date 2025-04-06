@@ -16,9 +16,8 @@ class Admin extends \Controller
 
     /**
      * GET /admin
-     * @param \Base $f3
      */
-    public function index(\Base $f3)
+    public function index(\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.administration"));
         $f3->set("menuitem", "admin");
@@ -64,10 +63,8 @@ class Admin extends \Controller
      * GET /admin/release.json
      *
      * Check for a new release and report some basic stats
-     *
-     * @return void
      */
-    public function releaseCheck()
+    public function releaseCheck(): void
     {
         // Set user agent to identify this instance
         $context = stream_context_create([
@@ -78,12 +75,12 @@ class Admin extends \Controller
         try {
             $result = file_get_contents('https://api.github.com/repos/Alanaktion/phproject/releases/latest', false, $context);
             $release = json_decode($result, false, 512, JSON_THROW_ON_ERROR);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->_printJson(['error' => 1]);
             return;
         }
 
-        $latest = ltrim($release->tag_name, 'v');
+        $latest = ltrim((string) $release->tag_name, 'v');
         if (!version_compare($latest, PHPROJECT_VERSION, '>')) {
             $this->_printJson(['update_available' => false]);
             return;
@@ -109,9 +106,8 @@ class Admin extends \Controller
 
     /**
      * GET /admin/config
-     * @param \Base $f3
      */
-    public function config(\Base $f3)
+    public function config(\Base $f3): void
     {
         $this->_requireAdmin(\Model\User::RANK_SUPER);
 
@@ -124,10 +120,9 @@ class Admin extends \Controller
 
     /**
      * POST /admin/config/saveattribute
-     * @param \Base $f3
      * @throws \Exception
      */
-    public function config_post_saveattribute(\Base $f3)
+    public function config_post_saveattribute(\Base $f3): void
     {
         $this->validateCsrf();
         $this->_requireAdmin(\Model\User::RANK_SUPER);
@@ -148,7 +143,7 @@ class Admin extends \Controller
         $config->attribute = $attribute;
         switch ($attribute) {
             case "site-name":
-                if (trim($value)) {
+                if (trim((string) $value) !== '' && trim((string) $value) !== '0') {
                     $config->value = $value;
                     $config->save();
                 } else {
@@ -178,9 +173,8 @@ class Admin extends \Controller
 
     /**
      * GET /admin/plugins
-     * @param \Base $f3
      */
-    public function plugins(\Base $f3)
+    public function plugins(\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.plugins"));
         $this->_render("admin/plugins.html");
@@ -188,10 +182,8 @@ class Admin extends \Controller
 
     /**
      * GET /admin/plugins/@id
-     * @param \Base $f3
-     * @param array $params
      */
-    public function plugin_single(\Base $f3, array $params)
+    public function plugin_single(\Base $f3, array $params): void
     {
         $this->_requireAdmin(\Model\User::RANK_SUPER);
 
@@ -211,9 +203,8 @@ class Admin extends \Controller
 
     /**
      * GET /users
-     * @param \Base $f3
      */
-    public function users(\Base $f3)
+    public function users(\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.users"));
 
@@ -226,9 +217,8 @@ class Admin extends \Controller
 
     /**
      * GET /admin/users/deleted
-     * @param \Base $f3
      */
-    public function deleted_users(\Base $f3)
+    public function deleted_users(\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.users"));
 
@@ -240,11 +230,9 @@ class Admin extends \Controller
 
     /**
      * GET /admin/users/@id
-     * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function user_edit(\Base $f3, array $params)
+    public function user_edit(\Base $f3, array $params): void
     {
         $f3->set("title", $f3->get("dict.edit_user"));
 
@@ -265,9 +253,8 @@ class Admin extends \Controller
 
     /**
      * GET /admin/users/new
-     * @param \Base $f3
      */
-    public function user_new(\Base $f3)
+    public function user_new(\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.new_user"));
         $f3->set("rand_color", sprintf("#%02X%02X%02X", random_int(0, 0xFF), random_int(0, 0xFF), random_int(0, 0xFF)));
@@ -276,10 +263,9 @@ class Admin extends \Controller
 
     /**
      * POST /admin/users, POST /admin/users/@id
-     * @param \Base $f3
      * @throws \Exception
      */
-    public function user_save(\Base $f3)
+    public function user_save(\Base $f3): void
     {
         $this->validateCsrf();
         $security = \Helper\Security::instance();
@@ -293,7 +279,7 @@ class Admin extends \Controller
                 throw new \Exception("Another user already exists with this username");
             }
             $user->load(["email = ? AND id != ?", $f3->get("POST.email"), $user_id]);
-            if ($user->id) {
+            if ($user->id !== 0) {
                 throw new \Exception("Another user already exists with this email address");
             }
 
@@ -320,7 +306,7 @@ class Admin extends \Controller
                     throw new \Exception("Passwords do not match");
                 }
                 $min = $f3->get("security.min_pass_len");
-                if (strlen($f3->get("POST.password")) < $min) {
+                if (strlen((string) $f3->get("POST.password")) < $min) {
                     throw new \Exception("Passwords must be at least {$min} characters");
                 }
 
@@ -337,10 +323,10 @@ class Admin extends \Controller
             if (!$f3->get("POST.name")) {
                 throw new \Exception("Please enter a name.");
             }
-            if (!preg_match("/#?[0-9a-f]{3,6}/i", $f3->get("POST.task_color"))) {
+            if (!preg_match("/#?[0-9a-f]{3,6}/i", (string) $f3->get("POST.task_color"))) {
                 throw new \Exception("Please enter a valid hex color.");
             }
-            if (!preg_match("/[0-9a-z_-]+/i", $f3->get("POST.username"))) {
+            if (!preg_match("/[0-9a-z_-]+/i", (string) $f3->get("POST.username"))) {
                 throw new \Exception("Usernames can only contain letters, numbers, hyphens, and underscores.");
             }
             if (!filter_var($f3->get("POST.email"), FILTER_VALIDATE_EMAIL)) {
@@ -356,7 +342,7 @@ class Admin extends \Controller
                 $user->rank = $f3->get("POST.rank");
             }
             $user->role = $user->rank < \Model\User::RANK_ADMIN ? 'user' : 'admin';
-            $user->task_color = ltrim($f3->get("POST.task_color"), "#");
+            $user->task_color = ltrim((string) $f3->get("POST.task_color"), "#");
 
             // Save user
             $user->save();
@@ -371,11 +357,9 @@ class Admin extends \Controller
 
     /**
      * POST /admin/users/delete/@id
-     * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function user_delete(\Base $f3, array $params)
+    public function user_delete(\Base $f3, array $params): void
     {
         $this->validateCsrf();
         $user = new \Model\User();
@@ -407,11 +391,9 @@ class Admin extends \Controller
 
     /**
      * POST /admin/users/undelete/@id
-     * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function user_undelete(\Base $f3, array $params)
+    public function user_undelete(\Base $f3, array $params): void
     {
         $this->validateCsrf();
         $user = new \Model\User();
@@ -433,9 +415,8 @@ class Admin extends \Controller
 
     /**
      * GET /admin/groups
-     * @param \Base $f3
      */
-    public function groups(\Base $f3)
+    public function groups(\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.groups"));
 
@@ -461,9 +442,8 @@ class Admin extends \Controller
 
     /**
      * POST /admin/groups/new
-     * @param \Base $f3
      */
-    public function group_new(\Base $f3)
+    public function group_new(\Base $f3): void
     {
         $this->validateCsrf();
         $group = new \Model\User();
@@ -478,11 +458,9 @@ class Admin extends \Controller
 
     /**
      * GET /admin/groups/@id
-     * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function group_edit(\Base $f3, array $params)
+    public function group_edit(\Base $f3, array $params): void
     {
         $f3->set("title", $f3->get("dict.groups"));
 
@@ -501,11 +479,9 @@ class Admin extends \Controller
 
     /**
      * POST /admin/groups/delete/@id
-     * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function group_delete(\Base $f3, array $params)
+    public function group_delete(\Base $f3, array $params): void
     {
         $this->validateCsrf();
         $group = new \Model\User();
@@ -520,10 +496,9 @@ class Admin extends \Controller
 
     /**
      * POST /admin/groups/ajax
-     * @param \Base $f3
      * @throws \Exception
      */
-    public function group_ajax(\Base $f3)
+    public function group_ajax(\Base $f3): void
     {
         $this->validateCsrf();
         if (!$f3->get("AJAX")) {
@@ -559,13 +534,13 @@ class Admin extends \Controller
                 $this->_printJson(["deleted" => 1]);
                 break;
             case "change_title":
-                $group->name = trim($f3->get("POST.name"));
+                $group->name = trim((string) $f3->get("POST.name"));
                 $group->username = \Web::instance()->slug($group->name);
                 $group->save();
                 $this->_printJson(["changed" => 1]);
                 break;
             case "change_task_color":
-                $group->task_color = ltrim($f3->get("POST.value"), '#');
+                $group->task_color = ltrim((string) $f3->get("POST.value"), '#');
                 $group->save();
                 $this->_printJson(["changed" => 1]);
                 break;
@@ -579,11 +554,9 @@ class Admin extends \Controller
 
     /**
      * POST /admin/groups/@id/setmanager/@user_group_id
-     * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function group_setmanager(\Base $f3, array $params)
+    public function group_setmanager(\Base $f3, array $params): void
     {
         $this->validateCsrf();
         $db = $f3->get("db.instance");
@@ -605,9 +578,8 @@ class Admin extends \Controller
 
     /**
      * GET /admin/sprints
-     * @param \Base $f3
      */
-    public function sprints(\Base $f3)
+    public function sprints(\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.sprints"));
 
@@ -619,9 +591,8 @@ class Admin extends \Controller
 
     /**
      * GET|POST /admin/sprints/new
-     * @param \Base $f3
      */
-    public function sprint_new(\Base $f3)
+    public function sprint_new(\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.sprints"));
 
@@ -634,8 +605,8 @@ class Admin extends \Controller
                 return;
             }
 
-            $start = strtotime($post["start_date"]);
-            $end = strtotime($post["end_date"]);
+            $start = strtotime((string) $post["start_date"]);
+            $end = strtotime((string) $post["end_date"]);
 
             if (!$start || !$end) {
                 $f3->set("error", "Please enter a valid start and end date");
@@ -650,7 +621,7 @@ class Admin extends \Controller
             }
 
             $sprint = new \Model\Sprint();
-            $sprint->name = trim($post["name"]);
+            $sprint->name = trim((string) $post["name"]);
             $sprint->start_date = date("Y-m-d", $start);
             $sprint->end_date = date("Y-m-d", $end);
             $sprint->save();
@@ -663,11 +634,9 @@ class Admin extends \Controller
 
     /**
      * GET /admin/sprints/@id, POST /admin/sprints/@id
-     * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function sprint_edit(\Base $f3, array $params)
+    public function sprint_edit(\Base $f3, array $params): void
     {
         $f3->set("title", $f3->get("dict.sprints"));
 
@@ -685,8 +654,8 @@ class Admin extends \Controller
                 return;
             }
 
-            $start = strtotime($post["start_date"]);
-            $end = strtotime($post["end_date"]);
+            $start = strtotime((string) $post["start_date"]);
+            $end = strtotime((string) $post["end_date"]);
 
             if ($end <= $start) {
                 $f3->set("error", "End date must be after start date");
@@ -694,7 +663,7 @@ class Admin extends \Controller
                 return;
             }
 
-            $sprint->name = trim($post["name"]);
+            $sprint->name = trim((string) $post["name"]);
             $sprint->start_date = date("Y-m-d", $start);
             $sprint->end_date = date("Y-m-d", $end);
             $sprint->save();

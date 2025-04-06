@@ -13,22 +13,20 @@ class User extends \Controller\Api
             $man = $group->find(["group_id = ? AND manager = 1", $user->id]);
             $man = array_filter($man);
 
-            if (!empty($man) && $man[0]->user_id > 0) {
+            if ($man !== [] && $man[0]->user_id > 0) {
                 $group_id = $man[0]->user_id;
             }
         }
 
-        $result = [
+        return [
             "id" => $group_id,
             "name" => $user->name,
             "username" => $user->username,
             "email" => $user->email,
         ];
-
-        return $result;
     }
 
-    public function single_get($f3, $params)
+    public function single_get($f3, array $params): void
     {
         if ($params["username"] == "me") {
             $user = $f3->get("user_obj");
@@ -43,7 +41,7 @@ class User extends \Controller\Api
         }
     }
 
-    public function single_email($f3, $params)
+    public function single_email($f3, array $params): void
     {
         $user = new \Model\User();
         $user->load(["email = ? AND deleted_date IS NULL", $params["email"]]);
@@ -56,7 +54,7 @@ class User extends \Controller\Api
 
 
     // Gets a List of users
-    public function get($f3)
+    public function get($f3): void
     {
         $pagLimit = $f3->get("GET.limit") ?: 30;
         if ($pagLimit == -1) {
@@ -87,7 +85,7 @@ class User extends \Controller\Api
 
 
     // Gets a list of Users
-    public function get_group($f3)
+    public function get_group($f3): void
     {
         $pagLimit = $f3->get("GET.limit") ?: 30;
 

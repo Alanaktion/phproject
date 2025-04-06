@@ -25,9 +25,6 @@ class File extends \Model
 
     /**
      * Create and save a new file, optionally sending notifications
-     * @param  array $data
-     * @param  bool  $notify
-     * @return File
      */
     public static function create(array $data, bool $notify = true): File
     {

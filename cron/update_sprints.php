@@ -5,7 +5,7 @@
  *  Resets sprint IDs on child tasks
  */
 
-require_once "base.php";
+require_once __DIR__ . "/base.php";
 
 $issues = new \Model\Issue();
 $issues->find(["type_id = ? AND deleted_date IS NULL", $f3->get("issue_type.project")]);

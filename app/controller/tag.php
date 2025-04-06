@@ -15,7 +15,7 @@ class Tag extends \Controller
      * Tag index route (/tag/)
      * @param \Base $f3
      */
-    public function index($f3)
+    public function index($f3): void
     {
         $tag = new \Model\Issue\Tag();
         $cloud = $tag->cloud();
@@ -30,9 +30,8 @@ class Tag extends \Controller
     /**
      * Single tag route (/tag/@tag)
      * @param \Base $f3
-     * @param array $params
      */
-    public function single($f3, $params)
+    public function single($f3, array $params): void
     {
         $tag = new \Model\Issue\Tag();
         $tag->load(["tag = ?", $params["tag"]]);

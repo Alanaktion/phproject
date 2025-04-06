@@ -12,11 +12,8 @@ class Notification extends \Prefab
      * Modified to add =2E instead of the leading double dot, see GH #238
      *
      * @link http://php.net/manual/en/function.quoted-printable-encode.php#115840
-     *
-     * @param string $str
-     * @return string
      */
-    public function quotePrintEncode($str)
+    public function quotePrintEncode(string $str): string
     {
         $lp = 0;
         $ret = '';
@@ -30,36 +27,34 @@ class Notification extends \Prefab
                 $ret .= $str[$str_index++];
                 $length--;
                 $lp = 0;
-            } else {
-                if (
-                    ctype_cntrl($c)
-                    || (ord($c) == 0x7f)
-                    || (ord($c) & 0x80)
-                    || ($c == '=')
-                    || (($c == ' ') && ($str[$str_index] == "\015"))
-                ) {
-                    if (($lp += 3) > self::QPRINT_MAXL) {
-                        $ret .= '=';
-                        $ret .= "\015";
-                        $ret .= "\012";
-                        $lp = 3;
-                    }
+            } elseif (
+                ctype_cntrl($c)
+                || (ord($c) == 0x7f)
+                || (ord($c) & 0x80)
+                || ($c == '=')
+                || (($c == ' ') && ($str[$str_index] == "\015"))
+            ) {
+                if (($lp += 3) > self::QPRINT_MAXL) {
                     $ret .= '=';
-                    $ret .= $hex[ord($c) >> 4];
-                    $ret .= $hex[ord($c) & 0xf];
-                } else {
-                    if ((++$lp) > self::QPRINT_MAXL) {
-                        $ret .= '=';
-                        $ret .= "\015";
-                        $ret .= "\012";
-                        $lp = 1;
-                    }
-                    $ret .= $c;
-                    if ($lp == 1 && $c == '.') {
-                        $ret = substr($ret, 0, strlen($ret) - 1);
-                        $ret .= '=2E';
-                        $lp++;
-                    }
+                    $ret .= "\015";
+                    $ret .= "\012";
+                    $lp = 3;
+                }
+                $ret .= '=';
+                $ret .= $hex[ord($c) >> 4];
+                $ret .= $hex[ord($c) & 0xf];
+            } else {
+                if ((++$lp) > self::QPRINT_MAXL) {
+                    $ret .= '=';
+                    $ret .= "\015";
+                    $ret .= "\012";
+                    $lp = 1;
+                }
+                $ret .= $c;
+                if ($lp == 1 && $c == '.') {
+                    $ret = substr($ret, 0, strlen($ret) - 1);
+                    $ret .= '=2E';
+                    $lp++;
                 }
             }
         }
@@ -69,13 +64,10 @@ class Notification extends \Prefab
 
     /**
      * Send an email with the UTF-8 character set
-     * @param  string $to
-     * @param  string $subject
-     * @param  string $body     The HTML body part
-     * @param  string $text     The plaintext body part (optional)
-     * @return bool
+     * @param string $body The HTML body part
+     * @param string|null $text The plaintext body part (optional)
      */
-    public function utf8mail($to, $subject, $body, $text = null)
+    public function utf8mail(string $to, string $subject, string $body, ?string $text = null): bool
     {
         $f3 = \Base::instance();
 
@@ -120,10 +112,8 @@ class Notification extends \Prefab
 
     /**
      * Send an email to watchers with the comment body
-     * @param  int $issue_id
-     * @param  int $comment_id
      */
-    public function issue_comment($issue_id, $comment_id)
+    public function issue_comment(int $issue_id, int $comment_id): void
     {
         $f3 = \Base::instance();
         if ($f3->get("mail.from")) {
@@ -165,10 +155,8 @@ class Notification extends \Prefab
 
     /**
      * Send an email to watchers detailing the updated fields
-     * @param  int $issue_id
-     * @param  int $update_id
      */
-    public function issue_update($issue_id, $update_id)
+    public function issue_update(int $issue_id, int $update_id): ?bool
     {
         $f3 = \Base::instance();
         if ($f3->get("mail.from")) {
@@ -219,13 +207,13 @@ class Notification extends \Prefab
                 $log->write("Sent update notification to: " . $recipient);
             }
         }
+        return null;
     }
 
     /**
      * Send an email to watchers detailing the updated fields
-     * @param  int $issue_id
      */
-    public function issue_create($issue_id)
+    public function issue_create(int $issue_id): void
     {
         $f3 = \Base::instance();
         $log = new \Log("mail.log");
@@ -270,10 +258,8 @@ class Notification extends \Prefab
 
     /**
      * Send an email to watchers with the file info
-     * @param  int $issue_id
-     * @param  int $file_id
      */
-    public function issue_file($issue_id, $file_id)
+    public function issue_file(int $issue_id, int $file_id): void
     {
         $f3 = \Base::instance();
         if ($f3->get("mail.from")) {
@@ -320,10 +306,8 @@ class Notification extends \Prefab
 
     /**
      * Send a user a password reset email
-     * @param  int $user_id
-     * @param  string $token
      */
-    public function user_reset($user_id, $token)
+    public function user_reset(int $user_id, string $token): void
     {
         $f3 = \Base::instance();
         if ($f3->get("mail.from")) {
@@ -347,19 +331,15 @@ class Notification extends \Prefab
 
     /**
      * Send a user an email listing the issues due today and any overdue issues
-     * @param  \Model\User $user
-     * @param  array       $due
-     * @param  array       $overdue
-     * @return bool
      */
-    public function user_due_issues(\Model\User $user, array $due, array $overdue)
+    public function user_due_issues(\Model\User $user, array $due, array $overdue): bool
     {
         $f3 = \Base::instance();
         if ($f3->get("mail.from")) {
             $f3->set("due", $due);
             $f3->set("overdue", $overdue);
             $preview = count($due) . " issues due today";
-            if ($overdue) {
+            if ($overdue !== []) {
                 $preview .= ", " . count($overdue) . " overdue issues";
             }
             $f3->set("previewText", $preview);
@@ -373,10 +353,8 @@ class Notification extends \Prefab
 
     /**
      * Get array of email addresses of all watchers on an issue
-     * @param  int $issue_id
-     * @return array
      */
-    protected function _issue_watchers($issue_id)
+    protected function _issue_watchers(int $issue_id): array
     {
         $db = \Base::instance()->get("db.instance");
         $recipients = [];
@@ -416,13 +394,8 @@ class Notification extends \Prefab
 
     /**
      * Render a view and return the result
-     * @param  string  $file
-     * @param  string  $mime
-     * @param  array|null $hive
-     * @param  integer $ttl
-     * @return string
      */
-    protected function _render($file, $mime = "text/html", ?array $hive = null, $ttl = 0)
+    protected function _render(string $file, string $mime = "text/html", ?array $hive = null, int $ttl = 0): string
     {
         return \Helper\View::instance()->render($file, $mime, $hive, $ttl);
     }
