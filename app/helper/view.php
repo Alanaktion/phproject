@@ -254,8 +254,12 @@ class View extends \Template
      */
     protected function _parseMarkdown($str)
     {
-        $md = new GithubFlavoredMarkdownConverter();
-        return $md->convert($str);
+        $md = new GithubFlavoredMarkdownConverter([
+            'renderer' => [
+                'soft_break' => '<br>',
+            ],
+        ]);
+        return $md->convert($str)->getContent();
     }
 
     /**
