@@ -234,13 +234,52 @@ CREATE TABLE `sprint` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP VIEW IF EXISTS `user_group_user`;
-CREATE VIEW `user_group_user` AS (select `g`.`id` AS `id`,`g`.`group_id` AS `group_id`,`g`.`user_id` AS `user_id`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color`,`u`.`deleted_date` AS `deleted_date`,`g`.`manager` AS `manager` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`))));
+CREATE VIEW `user_group_user` AS
+select `g`.`id` AS `id`,
+`g`.`group_id` AS `group_id`,
+`g`.`user_id` AS `user_id`,
+`u`.`username` AS `user_username`,
+`u`.`email` AS `user_email`,
+`u`.`name` AS `user_name`,
+`u`.`role` AS `user_role`,
+`u`.`task_color` AS `user_task_color`,
+`u`.`deleted_date` AS `deleted_date`,
+`g`.`manager` AS `manager` from (`user_group` `g` join `user` `u` on((`g`.`user_id` = `u`.`id`)));
 
 DROP VIEW IF EXISTS `issue_comment_user`;
-CREATE VIEW `issue_comment_user` AS (select `c`.`id` AS `id`,`c`.`issue_id` AS `issue_id`,`c`.`user_id` AS `user_id`,`c`.`text` AS `text`, `c`.`file_id` as `file_id`, `c`.`created_date` AS `created_date`,`u`.`username` AS `user_username`,`u`.`email` AS `user_email`,`u`.`name` AS `user_name`,`u`.`role` AS `user_role`,`u`.`task_color` AS `user_task_color` from (`issue_comment` `c` join `user` `u` on((`c`.`user_id` = `u`.`id`))));
+CREATE VIEW `issue_comment_user` AS (
+select `c`.`id` AS `id`,
+`c`.`issue_id` AS `issue_id`,
+`c`.`user_id` AS `user_id`,
+`c`.`text` AS `text`,
+ `c`.`file_id` as `file_id`,
+ `c`.`created_date` AS `created_date`,
+`u`.`username` AS `user_username`,
+`u`.`email` AS `user_email`,
+`u`.`name` AS `user_name`,
+`u`.`role` AS `user_role`,
+`u`.`task_color` AS `user_task_color` from (`issue_comment` `c` join `user` `u` on((`c`.`user_id` = `u`.`id`))));
 
 DROP VIEW IF EXISTS `issue_comment_detail`;
-CREATE VIEW `issue_comment_detail` AS (select `c`.`id` AS `id`, `c`.`issue_id` AS `issue_id`, `c`.`user_id` AS `user_id`, `c`.`text` AS `text`, `c`.`file_id` AS `file_id`, `c`.`created_date` AS `created_date`, `u`.`username` AS `user_username`, `u`.`email` AS `user_email`, `u`.`name` AS `user_name`, `u`.`role` AS `user_role`, `u`.`task_color` AS `user_task_color`, `f`.`filename` AS `file_filename`, `f`.`filesize` AS `file_filesize`, `f`.`content_type` AS `file_content_type`, `f`.`downloads` AS `file_downloads`, `f`.`created_date` AS `file_created_date`, `f`.`deleted_date` AS `file_deleted_date`, `i`.`deleted_date` AS `issue_deleted_date` from `issue_comment` `c` join `user` `u` on `c`.`user_id` = `u`.`id` left join `issue_file` `f` on `c`.`file_id` = `f`.`id` JOIN `issue` `i` ON `i`.`id` = `c`.`issue_id`);
+CREATE VIEW `issue_comment_detail` AS (
+select `c`.`id` AS `id`,
+ `c`.`issue_id` AS `issue_id`,
+ `c`.`user_id` AS `user_id`,
+ `c`.`text` AS `text`,
+ `c`.`file_id` AS `file_id`,
+ `c`.`created_date` AS `created_date`,
+ `u`.`username` AS `user_username`,
+ `u`.`email` AS `user_email`,
+ `u`.`name` AS `user_name`,
+ `u`.`role` AS `user_role`,
+ `u`.`task_color` AS `user_task_color`,
+ `f`.`filename` AS `file_filename`,
+ `f`.`filesize` AS `file_filesize`,
+ `f`.`content_type` AS `file_content_type`,
+ `f`.`downloads` AS `file_downloads`,
+ `f`.`created_date` AS `file_created_date`,
+ `f`.`deleted_date` AS `file_deleted_date`,
+ `i`.`deleted_date` AS `issue_deleted_date` from `issue_comment` `c` join `user` `u` on `c`.`user_id` = `u`.`id` left join `issue_file` `f` on `c`.`file_id` = `f`.`id` JOIN `issue` `i` ON `i`.`id` = `c`.`issue_id`);
 
 DROP VIEW IF EXISTS `issue_detail`;
 CREATE VIEW `issue_detail` AS
@@ -294,13 +333,49 @@ LEFT JOIN `sprint` on`issue`.`sprint_id` = `sprint`.`id`
 LEFT JOIN `issue` `parent` ON `issue`.`parent_id` = `parent`.`id`;
 
 DROP VIEW IF EXISTS `issue_file_detail`;
-CREATE VIEW `issue_file_detail` AS (select `f`.`id` AS `id`, `f`.`issue_id` AS `issue_id`, `f`.`filename` AS `filename`, `f`.`disk_filename` AS `disk_filename`, `f`.`disk_directory` AS `disk_directory`, `f`.`filesize` AS `filesize`, `f`.`content_type` AS `content_type`, `f`.`digest` AS `digest`, `f`.`downloads` AS `downloads`, `f`.`user_id` AS `user_id`, `f`.`created_date` AS `created_date`, `f`.`deleted_date` AS `deleted_date`, `u`.`username` AS `user_username`, `u`.`email` AS `user_email`, `u`.`name` AS `user_name`, `u`.`task_color` AS `user_task_color` from (`issue_file` `f` join `user` `u` on ((`f`.`user_id` = `u`.`id`))));
+CREATE VIEW `issue_file_detail` AS (
+select `f`.`id` AS `id`,
+`f`.`issue_id` AS `issue_id`,
+`f`.`filename` AS `filename`,
+`f`.`disk_filename` AS `disk_filename`,
+`f`.`disk_directory` AS `disk_directory`,
+`f`.`filesize` AS `filesize`,
+`f`.`content_type` AS `content_type`,
+`f`.`digest` AS `digest`,
+`f`.`downloads` AS `downloads`,
+`f`.`user_id` AS `user_id`,
+`f`.`created_date` AS `created_date`,
+`f`.`deleted_date` AS `deleted_date`,
+`u`.`username` AS `user_username`,
+`u`.`email` AS `user_email`,
+`u`.`name` AS `user_name`,
+`u`.`task_color` AS `user_task_color` from (`issue_file` `f` join `user` `u` on ((`f`.`user_id` = `u`.`id`))));
 
 DROP VIEW IF EXISTS `issue_update_detail`;
-CREATE VIEW `issue_update_detail` AS (select `i`.`id` AS `id`, `i`.`issue_id` AS `issue_id`, `i`.`user_id` AS `user_id`, `i`.`created_date` AS `created_date`, `i`.`notify` AS `notify`, `u`.`username` AS `user_username`, `u`.`name` AS `user_name`, `u`.`email` AS `user_email`, `i`.`comment_id` AS `comment_id`, `c`.`text` AS `comment_text` from ((`issue_update` `i` join `user` `u` on ((`i`.`user_id` = `u`.`id`))) left join `issue_comment` `c` on ((`i`.`comment_id` = `c`.`id`))));
+CREATE VIEW `issue_update_detail` AS (select `i`.`id` AS `id`,
+`i`.`issue_id` AS `issue_id`,
+`i`.`user_id` AS `user_id`,
+`i`.`created_date` AS `created_date`,
+`i`.`notify` AS `notify`,
+`u`.`username` AS `user_username`,
+`u`.`name` AS `user_name`,
+`u`.`email` AS `user_email`,
+`i`.`comment_id` AS `comment_id`,
+`c`.`text` AS `comment_text` from ((`issue_update` `i` join `user` `u` on ((`i`.`user_id` = `u`.`id`))) left join `issue_comment` `c` on ((`i`.`comment_id` = `c`.`id`))));
 
 DROP VIEW IF EXISTS `issue_watcher_user`;
-CREATE VIEW `issue_watcher_user` AS (select `w`.`id` AS `watcher_id`,`w`.`issue_id` AS `issue_id`,`u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`email` AS `email`,`u`.`name` AS `name`,`u`.`password` AS `password`,`u`.`role` AS `role`,`u`.`task_color` AS `task_color`,`u`.`created_date` AS `created_date`,`u`.`deleted_date` AS `deleted_date` from (`issue_watcher` `w` join `user` `u` on((`w`.`user_id` = `u`.`id`))));
+CREATE VIEW `issue_watcher_user` AS (
+select `w`.`id` AS `watcher_id`,
+`w`.`issue_id` AS `issue_id`,
+`u`.`id` AS `id`,
+`u`.`username` AS `username`,
+`u`.`email` AS `email`,
+`u`.`name` AS `name`,
+`u`.`password` AS `password`,
+`u`.`role` AS `role`,
+`u`.`task_color` AS `task_color`,
+`u`.`created_date` AS `created_date`,
+`u`.`deleted_date` AS `deleted_date` from (`issue_watcher` `w` join `user` `u` on((`w`.`user_id` = `u`.`id`))));
 
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session`(

@@ -26,9 +26,11 @@ if (version_compare((float)PCRE_VERSION, '7.9', '<')) {
     $f3->set("error", "PCRE version is out of date");
 }
 
-// Check for MySQL PDO
-if (!in_array("mysql", PDO::getAvailableDrivers())) {
-    $f3->set("error", "MySQL PDO driver is not available.");
+// Check for PDO drivers
+if (!in_array("mysql", PDO::getAvailableDrivers()) && !in_array("sqlite", PDO::getAvailableDrivers())) {
+    $f3->set("error", "No compatible PDO driver is available. Install MySQL or SQLite drivers to continue.");
+} elseif (!in_array("mysql", PDO::getAvailableDrivers())) {
+    $f3->set("warning", "MySQL PDO driver is not available.");
 }
 
 // Check for GD library
@@ -85,14 +87,23 @@ if (
 
     try {
         // Connect to database
-        $db = new \DB\SQL(
-            "mysql:host=" . $post["db-host"] . ";port=" . $post["db-port"] . ";dbname=" . $post["db-name"],
-            $post["db-user"],
-            $post["db-pass"]
-        );
+        if ($post['db-engine'] == 'sqlite') {
+            touch($post["db-name"]);
+            $db = new \DB\SQL("sqlite:" . $post["db-name"]);
+        } else {
+            $db = new \DB\SQL(
+                "mysql:host=" . $post["db-host"] . ";port=" . $post["db-port"] . ";dbname=" . $post["db-name"],
+                $post["db-user"],
+                $post["db-pass"]
+            );
+        }
 
         // Run installation scripts
-        $install_db = file_get_contents("db/database.sql");
+        if ($post['db-engine'] == 'sqlite') {
+            $install_db = file_get_contents("db/database.sqlite.sql");
+        } else {
+            $install_db = file_get_contents("db/database.sql");
+        }
         foreach (explode(";", $install_db) as $stmt) {
             $db->exec($stmt);
         }
@@ -164,14 +175,22 @@ if (
         \Model\Config::setVal("mail.from", $post['mail-from']);
 
         // Write database connection file
-        $config = [
-            'db.host' => $post['db-host'],
-            'db.port' => $post['db-port'] ?: 3306,
-            'db.user' => $post['db-user'],
-            'db.pass' => $post['db-pass'],
-            'db.name' => $post['db-name'],
-            'site.url' => $post['site-url'] ?? ($f3->get('SCHEME') . '://' . $f3->get('HOST') . $f3->get('BASE') . '/'),
-        ];
+        if ($post['db-engine'] == 'sqlite') {
+            $config = [
+                'db.engine' => $post['db-engine'],
+                'db.name' => $post['db-name'],
+            ];
+        } else {
+            $config = [
+                'db.engine' => $post['db-engine'],
+                'db.host' => $post['db-host'],
+                'db.port' => $post['db-port'] ?: 3306,
+                'db.user' => $post['db-user'],
+                'db.pass' => $post['db-pass'],
+                'db.name' => $post['db-name'],
+            ];
+        }
+        $config['site.url'] = $post['site-url'] ?? ($f3->get('SCHEME') . '://' . $f3->get('HOST') . $f3->get('BASE') . '/');
         $data = "<?php\nreturn " . var_export($config, true) . ";\n";
         file_put_contents("config.php", $data);
 

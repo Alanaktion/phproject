@@ -37,12 +37,20 @@
     <div class="row">
         <div class="col-md-3 col-sm-6">
             <h4>{{ @dict.database }}</h4>
-            <b>{{ @dict.hostname }}:</b> {{ @db.host | esc }}:{{ @db.port | esc }}<br>
-            <b>{{ @dict.schema }}:</b> {{ @db.name | esc }}<br>
-            <b>{{ @dict.username }}:</b> {{ @db.user | esc }}<br>
-            <b>{{ @dict.password }}:</b> ********<br>
-            <b>{{ @dict.current_version }}:</b> {{@version}}<br>
-            <b>MySQL:</b> {{ @db.instance->getAttribute(\PDO::ATTR_SERVER_VERSION) }}
+            <check if="@db.engine == 'sqlite'">
+                <true>
+                    <b>{{ @dict.schema }}</b> {{ @db.name | esc }}<br>
+                    <b>{{ @dict.current_version }}:</b> {{@version}}
+                </true>
+                <false>
+                    <b>{{ @dict.hostname }}:</b> {{ @db.host | esc }}:{{ @db.port | esc }}<br>
+                    <b>{{ @dict.schema }}:</b> {{ @db.name | esc }}<br>
+                    <b>{{ @dict.username }}:</b> {{ @db.user | esc }}<br>
+                    <b>{{ @dict.password }}:</b> ********<br>
+                    <b>{{ @dict.current_version }}:</b> {{@version}}<br>
+                    <b>MySQL:</b> {{ @db.instance->getAttribute(\PDO::ATTR_SERVER_VERSION) }}
+                </false>
+            </check>
         </div>
         <div class="col-md-3 col-sm-6">
             <div class="clearfix">
