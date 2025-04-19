@@ -109,7 +109,9 @@ $(function() {
 	// Show Mac hotkeys on Macs
 	if(navigator.platform.indexOf('Mac') >= 0) {
 		var $modalBody = $('#modal-hotkeys .modal-body');
-		$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8997;').replace(/ctrl\+/g, '&#8984;').replace(/enter/g, '&#8617;').replace(/shift\+/g, '&#8679;'));
+		if ($modalBody.length) {
+			$modalBody.html($modalBody.html().replace(/alt\+/g, '&#8997;').replace(/ctrl\+/g, '&#8984;').replace(/enter/g, '&#8617;').replace(/shift\+/g, '&#8679;'));
+		}
 	}
 
 	// Show correct accesskey modifier

@@ -48,12 +48,6 @@ class View extends \Template
         $str = \Helper\Plugin::instance()->callHook("text.parse.before", $str);
 
         // Run through the parsers based on $options
-        if ($options["ids"]) {
-            $str = $this->_parseIds($str);
-        }
-        if ($options["hashtags"]) {
-            $str = $this->_parseHashtags($str);
-        }
         if ($options["emoticons"]) {
             $str = $this->_parseEmoticons($str);
         }
@@ -76,6 +70,12 @@ class View extends \Template
         }
         if ($options["urls"]) {
             $str = $this->_parseUrls($str);
+        }
+        if ($options["ids"]) {
+            $str = $this->_parseIds($str);
+        }
+        if ($options["hashtags"]) {
+            $str = $this->_parseHashtags($str);
         }
 
         // Simplistic XSS protection
