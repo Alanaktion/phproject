@@ -7,6 +7,18 @@
     <title>{{ @dict.install_phproject }}</title>
     <link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/bootstrap-phproject.css">
     <link rel="stylesheet" type="text/css" href="{{ @BASE }}/css/bootstrap-phproject-dark.css" media="(prefers-color-scheme: dark)">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('db-engine');
+            select.addEventListener('change', function() {
+                const engine = select.value;
+                document.querySelectorAll('#db-host,#db-port,#db-user,#db-pass').forEach(el => {
+                    el.disabled = engine == 'sqlite';
+                });
+            });
+            select.dispatchEvent(new Event('change'));
+        });
+    </script>
     <style type="text/css">
         body {
             margin: 15px 0;
@@ -95,7 +107,20 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-9 col-sm-offset-3">
-                                                <h4>MySQL Connection</h4>
+                                                <h4>Database Connection</h4>
+                                            </div>
+                                            <div class="form-group form-group-sm">
+                                                <label for="db-engine" class="col-sm-3 control-label">Engine</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" name="db-engine" id="db-engine">
+                                                        <check if="in_array('mysql', PDO::getAvailableDrivers())">
+                                                            <option value="mysql">MySQL</option>
+                                                        </check>
+                                                        <check if="in_array('sqlite', PDO::getAvailableDrivers())">
+                                                            <option value="sqlite">SQLite</option>
+                                                        </check>
+                                                    </select>
+                                                </div>
                                             </div>
                                             <div class="form-group form-group-sm">
                                                 <label for="db-host" class="col-sm-3 control-label">Host</label>

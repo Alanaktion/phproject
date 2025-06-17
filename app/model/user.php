@@ -251,8 +251,12 @@ class User extends \Model
         }
 
         $result = [];
+        $date_expr = ["DATE(DATE_ADD(", ", INTERVAL :offset SECOND)"];
+        if (\Base::instance()->get("db.engine") == "sqlite") {
+            $date_expr = ["DATE(", ", CONCAT(:offset, ' seconds'))"];
+        }
         $result["spent"] = $this->db->exec(
-            "SELECT DATE(DATE_ADD(u.created_date, INTERVAL :offset SECOND)) AS `date`, SUM(f.new_value - f.old_value) AS `val`
+            "SELECT {$date_expr[0]}u.created_date{$date_expr[1]} AS `date`, SUM(f.new_value - f.old_value) AS `val`
             FROM issue_update u
             JOIN issue_update_field f ON u.id = f.issue_update_id AND f.field = 'hours_spent'
             WHERE u.user_id = :user AND u.created_date > :date
@@ -260,14 +264,14 @@ class User extends \Model
             [":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time)]
         );
         $result["closed"] = $this->db->exec(
-            "SELECT DATE(DATE_ADD(i.closed_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
+            "SELECT {$date_expr[0]}i.closed_date{$date_expr[1]} AS `date`, COUNT(*) AS `val`
             FROM issue i
             WHERE i.owner_id = :user AND i.closed_date > :date
             GROUP BY `date`",
             [":user" => $this->id, ":offset" => $offset, ":date" => date("Y-m-d H:i:s", $time)]
         );
         $result["created"] = $this->db->exec(
-            "SELECT DATE(DATE_ADD(i.created_date, INTERVAL :offset SECOND)) AS `date`, COUNT(*) AS `val`
+            "SELECT {$date_expr[0]}i.created_date{$date_expr[1]} AS `date`, COUNT(*) AS `val`
             FROM issue i
             WHERE i.author_id = :user AND i.created_date > :date
             GROUP BY `date`",
