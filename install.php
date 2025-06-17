@@ -57,6 +57,7 @@ if (
             'lang::' => 'en',
             'parser::' => 'markdown',
             'disable-registration' => false,
+            'db-engine::' => 'mysql',
             'db-host::' => 'localhost',
             'db-port::' => 3306,
             'db-user::' => 'root',

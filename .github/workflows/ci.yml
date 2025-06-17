@@ -4,13 +4,14 @@ on: [push, pull_request]
 
 jobs:
   ci:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     strategy:
       matrix:
         php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        db: ['mysql', 'sqlite']
 
-    name: PHP ${{ matrix.php }}
+    name: PHP ${{ matrix.php }} + ${{ matrix.db}}
 
     services:
       mysql:
@@ -55,5 +56,10 @@ jobs:
 
     - run: vendor/bin/phpcs
 
-    - name: Install Phproject
+    - if: matrix.db == 'mysql'
+      name: Install Phproject (MySQL)
       run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=127.0.0.1 --db-port=${{ job.services.mysql.ports['3306'] }} --db-user=root
+
+    - if: matrix.db == 'sqlite'
+      name: Install Phproject (SQLite)
+      run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-engine=sqlite --db-name=database.sqlite
