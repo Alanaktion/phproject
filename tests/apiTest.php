@@ -28,13 +28,17 @@ class ApiTest extends TestCase
         // Load routes
         $f3->config(dirname(__DIR__) . "/app/routes.ini");
 
-        // Configure databsae connection
-        $f3->set("db.instance", new DB\SQL(
-            "mysql:host=" . $f3->get("db.host") . ";port=" . $f3->get("db.port") . ";dbname=" . $f3->get("db.name"),
-            $f3->get("db.user"),
-            $f3->get("db.pass"),
-            [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4;']
-        ));
+        // Configure database connection
+        if ($f3->get("db.engine") == "sqlite") {
+            $f3->set("db.instance", new \DB\SQL("sqlite:" . $f3->get("db.name")));
+        } else {
+            $f3->set("db.instance", new DB\SQL(
+                "mysql:host=" . $f3->get("db.host") . ";port=" . $f3->get("db.port") . ";dbname=" . $f3->get("db.name"),
+                $f3->get("db.user"),
+                $f3->get("db.pass"),
+                [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4;']
+            ));
+        }
 
         // Load final configuration
         \Model\Config::loadAll();
