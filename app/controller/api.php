@@ -18,7 +18,7 @@ abstract class Api extends \Controller
                 "error" => $f3->get("ERROR.text"),
             ];
             if ($f3->get("DEBUG") >= 2) {
-                $out["trace"] = strip_tags($f3->get("ERROR.trace"));
+                $out["trace"] = strip_tags((string) $f3->get("ERROR.trace"));
             }
             echo json_encode($out, JSON_THROW_ON_ERROR);
         });
@@ -37,11 +37,7 @@ abstract class Api extends \Controller
         $user = new \Model\User();
 
         // Use the logged in user if there is one
-        if ($f3->get("user.api_key")) {
-            $key = $f3->get("user.api_key");
-        } else {
-            $key = false;
-        }
+        $key = $f3->get("user.api_key") ?: false;
 
         // Check all supported key methods
         if (!empty($_GET["key"])) {

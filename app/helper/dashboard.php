@@ -72,7 +72,7 @@ class Dashboard extends \Prefab
                 $typeIds[] = $t->id;
             }
         }
-        if (!$typeIds) {
+        if ($typeIds === []) {
             return [];
         }
         $ownerString = implode(",", $this->getOwnerIds());
@@ -111,7 +111,7 @@ class Dashboard extends \Prefab
                 $typeIds[] = $t->id;
             }
         }
-        if (!$typeIds) {
+        if ($typeIds === []) {
             return [];
         }
         $ownerString = implode(",", $this->getOwnerIds());
@@ -147,7 +147,7 @@ class Dashboard extends \Prefab
                 $typeIds[] = $t->id;
             }
         }
-        if (!$typeIds) {
+        if ($typeIds === []) {
             return [];
         }
         $ownerString = implode(",", $this->getOwnerIds());
@@ -181,7 +181,7 @@ class Dashboard extends \Prefab
             $ids[] = $item->id;
         }
 
-        if (!$ids) {
+        if ($ids === []) {
             return [];
         }
         $issueIds = implode(",", $ids);
@@ -205,7 +205,7 @@ class Dashboard extends \Prefab
             $ids[] = $item->id;
         }
 
-        if (!$ids) {
+        if ($ids === []) {
             return [];
         }
         $issueIds = implode(",", $ids);
@@ -215,7 +215,6 @@ class Dashboard extends \Prefab
 
     /**
      * Get data for Issue Tree widget
-     * @return array
      */
     public function issue_tree(): array
     {
@@ -239,10 +238,10 @@ class Dashboard extends \Prefab
                 $missing_ids[] = $iss["parent_id"];
             }
         }
-        while (!empty($missing_ids)) {
+        while ($missing_ids !== []) {
             $parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
             foreach ($parents as $iss) {
-                if (($key = array_search($iss->id, $missing_ids)) !== false) {
+                if (($key = array_search($iss->id, $missing_ids, true)) !== false) {
                     unset($missing_ids[$key]);
                 }
                 $issues[] = $iss->cast();
@@ -261,7 +260,7 @@ class Dashboard extends \Prefab
          * @param   array $issue
          * @var     callable $renderTree This function, required for recursive calls
          */
-        $renderTree = function (&$issue, $level = 0) use (&$renderTree): void {
+        $renderTree = function (&$issue, int $level = 0) use (&$renderTree): void {
             if (!empty($issue['id'])) {
                 $f3 = \Base::instance();
                 $hive = ["issue" => $issue, "dict" => $f3->get("dict"), "BASE" => $f3->get("BASE"), "level" => $level, "issue_type" => $f3->get("issue_type")];
@@ -284,7 +283,7 @@ class Dashboard extends \Prefab
      * @param  array $array Flat array of issues, including all parents needed
      * @return array Tree array where each issue contains its child issues
      */
-    protected function _buildTree($array): array
+    protected function _buildTree(array $array): array
     {
         $tree = [];
 

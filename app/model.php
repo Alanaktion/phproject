@@ -23,7 +23,6 @@ abstract class Model extends \DB\SQL\Mapper
 
     /**
      * Create and save a new item
-     * @param  array $data
      * @return Comment
      */
     public static function create(array $data)
@@ -68,7 +67,7 @@ abstract class Model extends \DB\SQL\Mapper
         }
 
         // Call before_save hooks
-        $hookName = str_replace("\\", "/", strtolower(get_class($this)));
+        $hookName = str_replace("\\", "/", strtolower(static::class));
         \Helper\Plugin::instance()->callHook("model.before_save", $this);
         \Helper\Plugin::instance()->callHook($hookName . ".before_save", $this);
 
@@ -99,8 +98,7 @@ abstract class Model extends \DB\SQL\Mapper
     /**
      * Load by ID directly if a string is passed
      * @param  int|array  $filter
-     * @param  array|null $options
-     * @param  integer    $ttl
+     * @param  int        $ttl
      * @return mixed
      */
     public function load($filter = null, ?array $options = null, $ttl = 0)
@@ -116,16 +114,13 @@ abstract class Model extends \DB\SQL\Mapper
     /**
      * Takes two dates and creates an inclusive array of the dates between
      * the from and to dates in YYYY-MM-DD format.
-     * @param  string $strDateFrom
-     * @param  string $strDateTo
-     * @return array
      */
-    protected function _createDateRangeArray($dateFrom, $dateTo)
+    protected function _createDateRangeArray(string $dateFrom, string $dateTo): array
     {
         $range = [];
 
-        $from = strtotime($dateFrom);
-        $to = strtotime($dateTo);
+        $from = strtotime((string) $dateFrom);
+        $to = strtotime((string) $dateTo);
 
         if ($to >= $from) {
             $range[] = date('Y-m-d', $from); // first entry
@@ -140,10 +135,9 @@ abstract class Model extends \DB\SQL\Mapper
 
     /**
      * Get most recent value of field
-     * @param  string $key
      * @return mixed
      */
-    protected function _getPrev($key)
+    protected function _getPrev(string $key)
     {
         if (!$this->query) {
             return null;

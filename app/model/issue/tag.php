@@ -15,8 +15,6 @@ class Tag extends \Model
 
     /**
      * Delete all stored tags for an issue
-     * @param  int $issueId
-     * @return Tag
      */
     public function deleteByIssueId(int $issueId): Tag
     {
@@ -26,7 +24,6 @@ class Tag extends \Model
 
     /**
      * Get a multidimensional array representing a tag cloud
-     * @return array
      */
     public function cloud(): array
     {
@@ -35,10 +32,9 @@ class Tag extends \Model
 
     /**
      * Find issues with the given/current tag
-     * @param  string $tag
      * @return array Issue IDs
      */
-    public function issues($tag = ''): array
+    public function issues(string $tag = ''): array
     {
         if (!$tag) {
             $tag = $this->get("tag");

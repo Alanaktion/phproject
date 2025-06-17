@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        php: ['8.1', '8.2', '8.3', '8.4']
         db: ['mysql', 'sqlite']
 
     name: PHP ${{ matrix.php }} + ${{ matrix.db}}
@@ -31,7 +31,6 @@ jobs:
     - uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php }}
-        tools: phpunit:8.5
       env:
         COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -63,3 +62,6 @@ jobs:
     - if: matrix.db == 'sqlite'
       name: Install Phproject (SQLite)
       run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-engine=sqlite --db-name=database.sqlite
+
+    - name: PHPUnit tests
+      run: vendor/bin/phpunit --no-progress

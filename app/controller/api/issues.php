@@ -8,9 +8,8 @@ class Issues extends \Controller\Api
      * Converts an issue into a Redmine API-style multidimensional array
      * This isn't pretty.
      * @param  Detail $issue
-     * @return array
      */
-    protected function _issueMultiArray(\Model\Issue\Detail $issue)
+    protected function _issueMultiArray(\Model\Issue\Detail $issue): array
     {
         $casted = $issue->cast();
 
@@ -62,7 +61,7 @@ class Issues extends \Controller\Api
     }
 
     // Get a list of issues
-    public function get($f3)
+    public function get($f3): void
     {
         $issue = new \Model\Issue\Detail();
 
@@ -75,7 +74,7 @@ class Issues extends \Controller\Api
                 $filter[] = "`$i` = " . $db->quote($get[$i]);
             }
         }
-        $filter_str = $filter ? implode(' AND ', $filter) : null;
+        $filter_str = $filter !== [] ? implode(' AND ', $filter) : null;
 
         // Build options
         $options = [];
@@ -107,16 +106,16 @@ class Issues extends \Controller\Api
     }
 
     // Create a new issue
-    public function post($f3)
+    public function post($f3): void
     {
-        if ($_REQUEST) {
+        if ($_REQUEST !== []) {
             // By default, use standard HTTP POST fields
             $post = $_REQUEST;
         } else {
             // For Redmine compatibility, also accept a JSON object
             try {
                 $post = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 throw new \Exception("Unable to parse input");
             }
 
@@ -194,16 +193,16 @@ class Issues extends \Controller\Api
         // Create a new issue based on the data
         $issue = new \Model\Issue();
 
-        $issue->author_id = !empty($post["author_id"]) ? $post["author_id"] : $this->_userId;
-        $issue->name = trim($post["name"]);
+        $issue->author_id = empty($post["author_id"]) ? $this->_userId : $post["author_id"];
+        $issue->name = trim((string) $post["name"]);
         $issue->type_id = empty($post["type_id"]) ? 1 : $post["type_id"];
         $issue->priority_id = empty($post["priority_id"]) ? $f3->get("issue_priority.default") : $post["priority_id"];
         $issue->status = empty($status) ? 1 : $status->id;
 
         // Set due date if valid
-        if (!empty($post["due_date"]) && preg_match("/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}( [0-9:]{8})?$/", $post["due_date"])) {
+        if (!empty($post["due_date"]) && preg_match("/^\\d{4}-\\d{1,2}-\\d{1,2}( [0-9:]{8})?\$/", (string) $post["due_date"])) {
             $issue->due_date = $post["due_date"];
-        } elseif (!empty($post["due_date"]) && $due_date = strtotime($post["due_date"])) {
+        } elseif (!empty($post["due_date"]) && $due_date = strtotime((string) $post["due_date"])) {
             $issue->due_date = date("Y-m-d", $due_date);
         }
 
@@ -226,7 +225,7 @@ class Issues extends \Controller\Api
     }
 
     // Update an existing issue
-    public function single_put($f3, $params)
+    public function single_put($f3, array $params): void
     {
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
@@ -244,7 +243,7 @@ class Issues extends \Controller\Api
             }
         }
 
-        if ($updated) {
+        if ($updated !== []) {
             $issue->save();
         }
 
@@ -252,7 +251,7 @@ class Issues extends \Controller\Api
     }
 
     // Get a single issue's details
-    public function single_get($f3, $params)
+    public function single_get($f3, array $params): void
     {
         $issue = new \Model\Issue\Detail();
         $issue->load($params["id"]);
@@ -264,7 +263,7 @@ class Issues extends \Controller\Api
     }
 
     // Delete a single issue
-    public function single_delete($f3, $params)
+    public function single_delete($f3, array $params): void
     {
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
@@ -279,7 +278,7 @@ class Issues extends \Controller\Api
     }
 
     // List issue comments
-    public function single_comments($f3, $params)
+    public function single_comments($f3, array $params): void
     {
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
@@ -300,7 +299,7 @@ class Issues extends \Controller\Api
     }
 
     // Add a comment on an issue
-    public function single_comments_post($f3, $params)
+    public function single_comments_post($f3, array $params): void
     {
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
@@ -315,7 +314,7 @@ class Issues extends \Controller\Api
     }
 
     // List issue types
-    public function types($f3)
+    public function types($f3): void
     {
         $types = $f3->get("issue_types");
         $return = [];
@@ -326,7 +325,7 @@ class Issues extends \Controller\Api
     }
 
     // List issue tags
-    public function tag()
+    public function tag(): void
     {
         $tag = new \Model\Issue\Tag();
         $tags = $tag->cloud();
@@ -334,12 +333,12 @@ class Issues extends \Controller\Api
     }
 
     // List issues by tag
-    public function tag_single($f3, $params)
+    public function tag_single($f3, array $params): void
     {
         $tag = new \Model\Issue\Tag();
         $issueIds = $tag->issues($params['tag']);
         $return = [];
-        if ($issueIds) {
+        if ($issueIds !== []) {
             $issue = new \Model\Issue\Detail();
             $issues = $issue->find(["id IN (" . implode(",", $issueIds) . ") AND deleted_date IS NULL"]);
             foreach ($issues as $item) {
@@ -351,7 +350,7 @@ class Issues extends \Controller\Api
     }
 
     // List sprints
-    public function sprints()
+    public function sprints(): void
     {
         $sprint_model = new \Model\Sprint();
         $sprints = $sprint_model->find(["end_date >= ?", $this->now(false)], ["order" => "start_date ASC"]);
@@ -363,7 +362,7 @@ class Issues extends \Controller\Api
     }
 
     // List past sprints
-    public function sprints_old()
+    public function sprints_old(): void
     {
         $sprint_model = new \Model\Sprint();
         $sprints = $sprint_model->find(["end_date < ?", $this->now(false)], ["order" => "start_date ASC"]);

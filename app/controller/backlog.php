@@ -16,7 +16,7 @@ class Backlog extends \Controller
      *
      * @param \Base $f3
      */
-    public function index($f3)
+    public function index($f3): void
     {
         $sprint_model = new \Model\Sprint();
         $sprints = $sprint_model->find(["end_date >= ?", $this->now(false)], ["order" => "start_date ASC"]);
@@ -73,7 +73,7 @@ class Backlog extends \Controller
         }
 
         // Load backlog
-        if (!empty($large_project_ids)) {
+        if ($large_project_ids !== []) {
             $large_project_ids = implode(",", array_unique($large_project_ids));
             $unset_projects = $issue->find(
                 ["deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ($typeStr) AND status_closed = '0' AND id NOT IN ({$large_project_ids})"],
@@ -127,9 +127,8 @@ class Backlog extends \Controller
     /**
      * GET /backlog/@filter
      * GET /backlog/@filter/@groupid
-     * @param \Base $f3
      */
-    public function redirect(\Base $f3)
+    public function redirect(\Base $f3): void
     {
         $f3->reroute("/backlog");
     }
@@ -139,7 +138,7 @@ class Backlog extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function edit($f3)
+    public function edit($f3): void
     {
         $this->validateCsrf();
 
@@ -166,7 +165,7 @@ class Backlog extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function sort($f3)
+    public function sort($f3): void
     {
         $this->validateCsrf();
         $this->_requireLogin(\Model\User::RANK_MANAGER);
@@ -185,7 +184,7 @@ class Backlog extends \Controller
      * GET /backlog/old
      * @param \Base $f3
      */
-    public function index_old($f3)
+    public function index_old($f3): void
     {
         $sprint_model = new \Model\Sprint();
         $sprints = $sprint_model->find(["end_date < ?", $this->now(false)], ["order" => "start_date DESC"]);

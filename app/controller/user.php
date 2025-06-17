@@ -6,7 +6,7 @@ class User extends \Controller
 {
     protected $_userId;
 
-    private $_languages;
+    private readonly array $_languages;
 
     public function __construct()
     {
@@ -36,7 +36,7 @@ class User extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function dashboard($f3)
+    public function dashboard($f3): void
     {
         $dashboard = $f3->get("user_obj")->option("dashboard");
         $helper = \Helper\Dashboard::instance();
@@ -55,7 +55,8 @@ class User extends \Controller
                     $f3->set("error", "Some dashboard widgets cannot be displayed.");
                     $missing[] = [$k, $l];
                 }
-                unset($allWidgets[array_search($widget, $allWidgets)]);
+
+                unset($allWidgets[array_search($widget, $allWidgets, true)]);
             }
         }
         foreach ($missing as $kl) {
@@ -80,11 +81,11 @@ class User extends \Controller
      *
      * @param \Base $f3
      */
-    public function dashboardPost($f3)
+    public function dashboardPost($f3): void
     {
         $this->validateCsrf();
         $helper = \Helper\Dashboard::instance();
-        $widgets = json_decode($f3->get("POST.widgets"), null, 512, JSON_THROW_ON_ERROR);
+        $widgets = json_decode((string) $f3->get("POST.widgets"), null, 512, JSON_THROW_ON_ERROR);
         $allWidgets = $helper->allWidgets;
 
         // Validate widget list
@@ -112,7 +113,6 @@ class User extends \Controller
 
     /**
      * Get array of theme names
-     * @return array
      */
     private function _loadThemes(): array
     {
@@ -129,7 +129,7 @@ class User extends \Controller
      *
      * @param \Base $f3
      */
-    public function account($f3)
+    public function account($f3): void
     {
         $f3->set("title", $f3->get("dict.my_account"));
         $f3->set("menuitem", "user");
@@ -144,7 +144,7 @@ class User extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function save($f3)
+    public function save($f3): void
     {
         $this->validateCsrf();
         $f3 = \Base::instance();
@@ -160,7 +160,7 @@ class User extends \Controller
             if (hash_equals($security->hash($post["old_pass"], $user->salt), $user->password)) {
                 $min = $f3->get("security.min_pass_len");
                 if (strlen($post["new_pass"]) >= $min) {
-                    if ($post["new_pass"] == $post["new_pass_confirm"]) {
+                    if ($post["new_pass"] === $post["new_pass_confirm"]) {
                         $user->salt = $security->salt();
                         $user->password = $security->hash($post["new_pass"], $user->salt);
                         $f3->set("success", "Password updated successfully.");
@@ -173,11 +173,11 @@ class User extends \Controller
             } else {
                 $f3->set("error", "Current password entered is not valid.");
             }
-        } elseif (!empty($post["action"]) && $post["action"] == "options") {
+        } elseif (!empty($post["action"]) && $post["action"] === "options") {
             // Update option values
-            $user->option("disable_mde", !empty($post["disable_mde"]));
-            $user->option("disable_due_alerts", !empty($post["disable_due_alerts"]));
-            $user->option("disable_self_notifications", !empty($post["disable_self_notifications"]));
+            $user->option("disable_mde", isset($post["disable_mde"]) && ($post["disable_mde"] !== '' && $post["disable_mde"] !== '0'));
+            $user->option("disable_due_alerts", isset($post["disable_due_alerts"]) && ($post["disable_due_alerts"] !== '' && $post["disable_due_alerts"] !== '0'));
+            $user->option("disable_self_notifications", isset($post["disable_self_notifications"]) && ($post["disable_self_notifications"] !== '' && $post["disable_self_notifications"] !== '0'));
         } else {
             // Update profile
             if (!empty($post["name"])) {
@@ -190,25 +190,17 @@ class User extends \Controller
             } else {
                 $error = $post["email"] . " is not a valid email address.";
             }
-            if (empty($error) && ctype_xdigit(ltrim($post["task_color"], "#"))) {
+            if (($error === '' || $error === '0') && ctype_xdigit(ltrim($post["task_color"], "#"))) {
                 $user->task_color = ltrim($post["task_color"], "#");
-            } elseif (empty($error)) {
+            } elseif ($error === '' || $error === '0') {
                 $error = $post["task_color"] . " is not a valid color code.";
             }
 
-            if (empty($post["theme"])) {
-                $user->theme = null;
-            } else {
-                $user->theme = $post["theme"];
-            }
+            $user->theme = empty($post["theme"]) ? null : $post["theme"];
 
-            if (empty($post["language"])) {
-                $user->language = null;
-            } else {
-                $user->language = $post["language"];
-            }
+            $user->language = empty($post["language"]) ? null : $post["language"];
 
-            if (empty($error)) {
+            if ($error === '0') {
                 $f3->set("success", "Profile updated successfully.");
             } else {
                 $f3->set("error", $error);
@@ -234,7 +226,7 @@ class User extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function avatar($f3)
+    public function avatar($f3): void
     {
         $this->validateCsrf();
         $f3 = \Base::instance();
@@ -256,7 +248,7 @@ class User extends \Controller
         $slug = true;
 
         // Make a good name
-        $parts = pathinfo($_FILES['avatar']['name']);
+        $parts = pathinfo((string) $_FILES['avatar']['name']);
         $_FILES['avatar']['name'] = $user->id . "-" . substr(uniqid(), 0, 4)  . "." . $parts["extension"];
         $f3->set("avatar_filename", $_FILES['avatar']['name']);
 
@@ -270,7 +262,7 @@ class User extends \Controller
         finfo_close($finfo);
 
         $web->receive(
-            function ($file) use ($f3, $user) {
+            function (array $file) use ($f3, $user): bool {
                 if ($file['size'] > $f3->get("files.maxsize")) {
                     return false;
                 }
@@ -300,10 +292,9 @@ class User extends \Controller
      * GET /user/@username
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function single($f3, $params)
+    public function single($f3, array $params): void
     {
         $this->_requireLogin();
 
@@ -386,10 +377,9 @@ class User extends \Controller
      * GET /user/@username/tree
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function single_tree($f3, $params)
+    public function single_tree($f3, array $params): void
     {
         $this->_requireLogin();
 

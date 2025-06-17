@@ -16,10 +16,8 @@ class Group extends \Model
 
     /**
      * Get complete group list for user
-     * @param int $user_id
-     * @return array
      */
-    public static function getUserGroups($user_id = null): array
+    public static function getUserGroups(?int $user_id = null): array
     {
         $f3 = \Base::instance();
         $db = $f3->get("db.instance");
@@ -32,18 +30,13 @@ class Group extends \Model
             FROM user u
             JOIN user_group g ON u.id = g.group_id
             WHERE g.user_id = :user AND u.deleted_date IS NULL ORDER BY u.name";
-
-        $result = $db->exec($query_groups, [":user" => $user_id]);
-        return $result;
+        return $db->exec($query_groups, [":user" => $user_id]);
     }
 
     /**
      * Check if a user is in a group
-     * @param int $group_id
-     * @param int $user_id
-     * @return bool
      */
-    public static function userIsInGroup(int $group_id, $user_id = null): bool
+    public static function userIsInGroup(int $group_id, ?int $user_id = null): bool
     {
         $f3 = \Base::instance();
 
@@ -54,6 +47,6 @@ class Group extends \Model
         $group = new static();
         $group->load(['user_id = ? AND group_id = ?', $user_id, $group_id]);
 
-        return $group->id ? true : false;
+        return (bool) $group->id;
     }
 }

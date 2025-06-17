@@ -4,7 +4,7 @@
  * Cron job base initialization
  */
 
-if (PHP_SAPI != 'cli') {
+if (PHP_SAPI !== 'cli') {
     throw new Exception("Cron jobs must be run from the command line.");
 }
 
@@ -23,7 +23,7 @@ $f3->mset([
 ]);
 
 // Load local configuration
-$f3->mset(require_once('config.php'));
+$f3->mset(require_once(__DIR__ . '/config.php'));
 
 // Connect to database
 $f3->set("db.instance", new DB\SQL(

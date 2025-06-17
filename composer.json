@@ -3,10 +3,10 @@
     "description": "A high performance full-featured project management system",
     "type": "project",
     "require": {
-        "php": ">=7.4.0",
+        "php": ">=8.1.0",
         "bcosca/fatfree-core": "^3.8",
         "netcarver/textile": "^4.0",
-        "neos/diff": "^7.3",
+        "neos/diff": "^8.3",
         "league/commonmark": "^2.6"
     },
     "license": "GPL-3.0-or-later",
@@ -18,11 +18,12 @@
     ],
     "config": {
         "platform": {
-            "php": "7.4.33"
+            "php": "8.1.32"
         }
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "3.*",
-        "rector/rector": "^2.0"
+        "rector/rector": "^2.0",
+        "phpunit/phpunit": "^10"
     }
 }

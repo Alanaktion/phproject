@@ -28,15 +28,12 @@ namespace Model;
 class Issue extends \Model
 {
     protected $_table_name = "issue";
-    protected $_heirarchy = null;
-    protected $_children = null;
+    protected $_heirarchy;
+    protected $_children;
     protected static $requiredFields = ["type_id", "status", "name", "author_id"];
 
     /**
      * Create and save a new issue
-     * @param  array $data
-     * @param  bool  $notify
-     * @return Issue
      */
     public static function create(array $data, bool $notify = true): Issue
     {
@@ -47,8 +44,8 @@ class Issue extends \Model
             unset($data["hours"]);
         }
         if (!empty($data["due_date"])) {
-            if (!preg_match("/[0-9]{4}(-[0-9]{2}){2}/", $data["due_date"])) {
-                $data["due_date"] = date("Y-m-d", strtotime($data["due_date"]));
+            if (!preg_match("/\\d{4}(-\\d{2}){2}/", (string) $data["due_date"])) {
+                $data["due_date"] = date("Y-m-d", strtotime((string) $data["due_date"]));
             }
             if (empty($data["sprint_id"]) && !empty($data['due_date_sprint'])) {
                 $sprint = new Sprint();
@@ -76,7 +73,6 @@ class Issue extends \Model
 
     /**
      * Get complete parent list for issue
-     * @return array
      */
     public function getAncestors(): array
     {
@@ -115,8 +111,6 @@ class Issue extends \Model
 
     /**
      * Remove messy whitespace from a string
-     * @param  string $string
-     * @return string
      */
     public static function clean(string $string): string
     {
@@ -125,8 +119,6 @@ class Issue extends \Model
 
     /**
      * Delete without sending notification
-     * @param  bool $recursive
-     * @return Issue
      */
     public function delete(bool $recursive = true): Issue
     {
@@ -141,7 +133,6 @@ class Issue extends \Model
 
     /**
      * Delete a complete issue tree
-     * @return Issue
      */
     protected function _deleteTree(): Issue
     {
@@ -154,8 +145,6 @@ class Issue extends \Model
 
     /**
      * Restore a deleted issue without notifying
-     * @param  bool $recursive
-     * @return Issue
      */
     public function restore(bool $recursive = true): Issue
     {
@@ -168,7 +157,6 @@ class Issue extends \Model
 
     /**
      * Restore a complete issue tree
-     * @return Issue
      */
     protected function _restoreTree(): Issue
     {
@@ -181,8 +169,6 @@ class Issue extends \Model
 
     /**
      * Repeat an issue by generating a minimal copy and setting new due date
-     * @param  bool $notify
-     * @return Issue
      */
     public function repeat(bool $notify = true): Issue
     {
@@ -252,8 +238,6 @@ class Issue extends \Model
 
     /**
      * Log and save an issue update
-     * @param  bool $notify
-     * @return Issue\Update
      */
     protected function _saveUpdate(bool $notify = true): Issue\Update
     {
@@ -302,7 +286,7 @@ class Issue extends \Model
         $importantChanges = 0;
         $importantFields = ['status', 'name', 'description', 'owner_id', 'priority', 'due_date'];
         foreach ($this->fields as $key => $field) {
-            if ($field["changed"] && rtrim($field["value"] ?? '') != rtrim($this->_getPrev($key) ?? '')) {
+            if ($field["changed"] && rtrim($field["value"] ?? '') !== rtrim($this->_getPrev($key) ?? '')) {
                 $updateField = new \Model\Issue\Update\Field();
                 $updateField->issue_update_id = $update->id;
                 $updateField->field = $key;
@@ -320,7 +304,7 @@ class Issue extends \Model
         }
 
         // Delete update if no fields were changed
-        if (!$updated) {
+        if ($updated === 0) {
             $update->delete();
         }
 
@@ -336,8 +320,6 @@ class Issue extends \Model
 
     /**
      * Log issue update, send notifications
-     * @param  bool $notify
-     * @return Issue
      */
     public function save(bool $notify = true): Issue
     {
@@ -349,23 +331,13 @@ class Issue extends \Model
         }
 
         // Censor credit card numbers if enabled
-        if ($f3->get("security.block_ccs")) {
-            if (preg_match("/([0-9]{3,4}-){3}[0-9]{3,4}/", $this->description)) {
-                $this->set("description", preg_replace("/([0-9]{3,4}-){3}([0-9]{3,4})/", "************$2", $this->description));
-            }
+        if ($f3->get("security.block_ccs") && preg_match("/(\\d{3,4}-){3}\\d{3,4}/", $this->description)) {
+            $this->set("description", preg_replace("/(\\d{3,4}-){3}(\\d{3,4})/", "************$2", $this->description));
         }
 
         // Make dates correct
-        if ($this->due_date) {
-            $this->due_date = date("Y-m-d", strtotime($this->due_date));
-        } else {
-            $this->due_date = null;
-        }
-        if ($this->start_date) {
-            $this->start_date = date("Y-m-d", strtotime($this->start_date));
-        } else {
-            $this->start_date = null;
-        }
+        $this->due_date = $this->due_date ? date("Y-m-d", strtotime($this->due_date)) : null;
+        $this->start_date = $this->start_date ? date("Y-m-d", strtotime($this->start_date)) : null;
 
         // Only save valid repeat_cycle values
         if (!in_array($this->repeat_cycle, ['daily', 'weekly', 'monthly', 'quarterly', 'semi_annually', 'annually', 'sprint'])) {
@@ -381,14 +353,12 @@ class Issue extends \Model
                 $notification = \Helper\Notification::instance();
                 $notification->issue_update($this->id, $update->id);
             }
-        } else {
+        } elseif (!$this->closed_date && $this->status) {
             // Set closed date if status is closed
-            if (!$this->closed_date && $this->status) {
-                $status = new Issue\Status();
-                $status->load($this->status);
-                if ($status->closed) {
-                    $this->closed_date = date("Y-m-d H:i:s");
-                }
+            $status = new Issue\Status();
+            $status->load($this->status);
+            if ($status->closed) {
+                $this->closed_date = date("Y-m-d H:i:s");
             }
         }
 
@@ -399,7 +369,6 @@ class Issue extends \Model
 
     /**
      * Finds and saves the current issue's tags
-     * @return Issue
      */
     public function saveTags(): Issue
     {
@@ -423,7 +392,6 @@ class Issue extends \Model
 
     /**
      * Duplicate issue and all sub-issues
-     * @param  bool  $recursive
      * @return Issue New issue
      * @throws \Exception
      */
@@ -457,8 +425,6 @@ class Issue extends \Model
 
     /**
      * Duplicate a complete issue tree, starting from a duplicated issue created by duplicate()
-     * @param  int $id
-     * @param  int $newId
      * @return Issue $this
      */
     protected function _duplicateTree(int $id, int $newId): Issue
@@ -493,7 +459,6 @@ class Issue extends \Model
 
     /**
      * Move all non-project children to same sprint
-     * @param bool $replaceExisting
      * @return Issue $this
      */
     public function resetTaskSprints(bool $replaceExisting = true): Issue
@@ -518,7 +483,6 @@ class Issue extends \Model
 
     /**
      * Get children of current issue
-     * @return array
      */
     public function getChildren(): array
     {
@@ -531,17 +495,12 @@ class Issue extends \Model
 
     /**
      * Generate MD5 hashes for each column as a key=>value array
-     * @return array
      */
     public function hashState(): array
     {
         $result = $this->cast();
         foreach ($result as &$value) {
-            if ($value === null) {
-                $value = md5('');
-            } else {
-                $value = md5($value);
-            }
+            $value = $value === null ? md5('') : md5($value);
         }
         return $result;
     }
@@ -564,7 +523,6 @@ class Issue extends \Model
 
     /**
      * Get array of all descendant IDs
-     * @return array
      */
     public function descendantIds(): array
     {
@@ -578,7 +536,6 @@ class Issue extends \Model
 
     /**
      * Get aggregate totals across the project and its descendants
-     * @return array
      */
     public function projectStats(): array
     {
@@ -615,12 +572,11 @@ class Issue extends \Model
 
     /**
      * Check if the current/given should be allowed access to the issue.
-     * @return bool
      */
     public function allowAccess(\Model\User $user = null): bool
     {
         $f3 = \Base::instance();
-        if ($user === null) {
+        if (!$user instanceof \Model\User) {
             $user = $f3->get("user_obj");
         }
 

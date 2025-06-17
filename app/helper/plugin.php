@@ -12,9 +12,8 @@ class Plugin extends \Prefab
     /**
      * Register a hook function
      * @param string   $hook
-     * @param callable $action
      */
-    public function addHook($hook, callable $action)
+    public function addHook($hook, callable $action): void
     {
         if (isset($this->_hooks[$hook])) {
             $this->_hooks[$hook][] = $action;
@@ -45,10 +44,10 @@ class Plugin extends \Prefab
      * Add a navigation item
      * @param string $href
      * @param string $title
-     * @param string $match
+     * @param string|null $match
      * @param string $location
      */
-    public function addNavItem($href, $title, $match = null, $location = 'root')
+    public function addNavItem($href, $title, $match = null, $location = 'root'): void
     {
         $this->_nav[] = [
             "href"  => $href,
@@ -61,9 +60,9 @@ class Plugin extends \Prefab
     /**
      * Add JavaScript code
      * @param string $code
-     * @param string $match
+     * @param string|null $match
      */
-    public function addJsCode($code, $match = null)
+    public function addJsCode($code, $match = null): void
     {
         $this->_jsCode[] = ["code"  => $code, "match" => $match];
     }
@@ -71,18 +70,17 @@ class Plugin extends \Prefab
     /**
      * Add a JavaScript file
      * @param string $file
-     * @param string $match
+     * @param string|null $match
      */
-    public function addJsFile($file, $match = null)
+    public function addJsFile($file, $match = null): void
     {
         $this->_jsFiles[] = ["file"  => $file, "match" => $match];
     }
 
     /**
      * Get navbar items, optionally setting matching items as active
-     * @param  string $path
+     * @param  string|null $path
      * @param  string $location
-     * @return array
      */
     public function getNav($path = null, $location = "root"): array
     {
@@ -98,10 +96,9 @@ class Plugin extends \Prefab
 
     /**
      * Get a multidimensional array of all nav items by location
-     * @param  string $path
-     * @return array
+     * @param  string|null $path
      */
-    public function getAllNavs($path = null)
+    public function getAllNavs($path = null): array
     {
         return [
             "root" => $this->getNav($path, "root"),
@@ -113,8 +110,7 @@ class Plugin extends \Prefab
 
     /**
      * Get an array of matching JS files to include
-     * @param  string $path
-     * @return array
+     * @param  string|null $path
      */
     public function getJsFiles($path = null): array
     {
@@ -132,8 +128,7 @@ class Plugin extends \Prefab
 
     /**
      * Get an array of matching JS code to include
-     * @param  string $path
-     * @return array
+     * @param  string|null $path
      */
     public function getJsCode($path = null): array
     {

@@ -18,10 +18,8 @@ class Session extends \Model
 
     /**
      * Create a new session
-     * @param int $user_id
-     * @param bool $auto_save
      */
-    public function __construct($user_id = null, bool $auto_save = true)
+    public function __construct(?int $user_id = null, bool $auto_save = true)
     {
         // Run model constructor
         parent::__construct();

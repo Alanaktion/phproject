@@ -13,6 +13,7 @@
         <exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
         <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps"/>
         <exclude name="PSR2.Methods.MethodDeclaration.Underscore"/>
+        <exclude name="Generic.Files.LineLength.TooLong"/>
     </rule>
 
     <!-- Ban some functions -->

@@ -19,7 +19,7 @@ class ApiTest extends TestCase
         }
 
         // Configure framework
-        $config = include('config.php');
+        $config = include(dirname(__DIR__) . '/config.php');
         if (!$config) {
             return;
         }
@@ -50,7 +50,7 @@ class ApiTest extends TestCase
      *
      * @return string|false
      */
-    protected function mock(string $route, ?array $args = null, ?array $headers = null)
+    protected function mock(string $route, ?array $args = null, ?array $headers = null): string|false
     {
         ob_start();
         $f3 = \Base::instance();
@@ -77,6 +77,7 @@ class ApiTest extends TestCase
         $this->assertEquals($this->user->name, $response['name']);
         $this->assertEquals($this->user->username, $response['username']);
         $this->assertEquals($this->user->email, $response['email']);
+        return null;
     }
 
     public function testSingleUserEmail()
@@ -97,6 +98,7 @@ class ApiTest extends TestCase
         $this->assertEquals($this->user->name, $response['name']);
         $this->assertEquals($this->user->username, $response['username']);
         $this->assertEquals($this->user->email, $response['email']);
+        return null;
     }
 
     public function testUserList()
@@ -122,5 +124,6 @@ class ApiTest extends TestCase
         $this->assertArrayHasKey('name', $response['users'][0]);
         $this->assertArrayHasKey('username', $response['users'][0]);
         $this->assertArrayHasKey('email', $response['users'][0]);
+        return null;
     }
 }

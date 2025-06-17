@@ -19,9 +19,8 @@ class Project extends \Controller
      * Project Overview action
      *
      * @param  \Base $f3
-     * @param  array $params
      */
-    public function overview($f3, $params)
+    public function overview($f3, array $params): void
     {
         // Load issue
         $project = new \Model\Issue\Detail();
@@ -89,9 +88,8 @@ class Project extends \Controller
      * Get the file list for a project
      *
      * @param  \Base $f3
-     * @param  array  $params
      */
-    public function files($f3, array $params)
+    public function files($f3, array $params): void
     {
         // Load issue
         $project = new \Model\Issue();

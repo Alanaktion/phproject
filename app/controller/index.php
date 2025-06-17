@@ -16,27 +16,26 @@ class Index extends \Controller
         if ($f3->get("user.id")) {
             $user_controller = new \Controller\User();
             return $user_controller->dashboard($f3);
+        } elseif ($f3->get("site.public")) {
+            $this->_render("index/index.html");
         } else {
-            if ($f3->get("site.public")) {
-                $this->_render("index/index.html");
-            } else {
-                if ($f3->get("site.demo") && is_numeric($f3->get("site.demo"))) {
-                    $user = new \Model\User();
-                    $user->load($f3->get("site.demo"));
-                    if ($user->id) {
-                        $session = new \Model\Session($user->id);
-                        $session->setCurrent();
-                        $f3->set("user", $user->cast());
-                        $f3->set("user_obj", $user);
-                        $user_controller = new \Controller\User();
-                        return $user_controller->dashboard($f3);
-                    } else {
-                        $f3->set("error", "Auto-login failed, demo user was not found.");
-                    }
+            if ($f3->get("site.demo") && is_numeric($f3->get("site.demo"))) {
+                $user = new \Model\User();
+                $user->load($f3->get("site.demo"));
+                if ($user->id) {
+                    $session = new \Model\Session($user->id);
+                    $session->setCurrent();
+                    $f3->set("user", $user->cast());
+                    $f3->set("user_obj", $user);
+                    $user_controller = new \Controller\User();
+                    return $user_controller->dashboard($f3);
+                } else {
+                    $f3->set("error", "Auto-login failed, demo user was not found.");
                 }
-                $f3->reroute("/login");
             }
+            $f3->reroute("/login");
         }
+        return null;
     }
 
     /**
@@ -44,17 +43,15 @@ class Index extends \Controller
      *
      * @param \Base $f3
      */
-    public function login($f3)
+    public function login($f3): void
     {
         if ($f3->get("user.id")) {
             if (!$f3->get("GET.to")) {
                 $f3->reroute("/");
+            } elseif (!str_contains((string) $f3->get("GET.to"), "://") || str_starts_with((string) $f3->get("GET.to"), "//")) {
+                $f3->reroute($f3->get("GET.to"));
             } else {
-                if (strpos($f3->get("GET.to"), "://") === false || substr($f3->get("GET.to"), 0, 2) == "//") {
-                    $f3->reroute($f3->get("GET.to"));
-                } else {
-                    $f3->reroute("/");
-                }
+                $f3->reroute("/");
             }
         } else {
             if ($f3->get("GET.to")) {
@@ -70,13 +67,13 @@ class Index extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function loginpost($f3)
+    public function loginpost($f3): void
     {
         $this->validateCsrf();
         $user = new \Model\User();
 
         // Load user by username or email address
-        if (strpos($f3->get("POST.username"), "@")) {
+        if (strpos((string) $f3->get("POST.username"), "@")) {
             $user->load(["email=? AND deleted_date IS NULL", $f3->get("POST.username")]);
         } else {
             $user->load(["username=? AND deleted_date IS NULL", $f3->get("POST.username")]);
@@ -92,12 +89,10 @@ class Index extends \Controller
             if ($user->salt) {
                 if (!$f3->get("POST.to")) {
                     $f3->reroute("/");
+                } elseif (!str_contains((string) $f3->get("POST.to"), "://") || str_starts_with((string) $f3->get("POST.to"), "//")) {
+                    $f3->reroute($f3->get("POST.to"));
                 } else {
-                    if (strpos($f3->get("POST.to"), "://") === false || substr($f3->get("POST.to"), 0, 2) == "//") {
-                        $f3->reroute($f3->get("POST.to"));
-                    } else {
-                        $f3->reroute("/");
-                    }
+                    $f3->reroute("/");
                 }
             } else {
                 $f3->set("user", $user->cast());
@@ -118,7 +113,7 @@ class Index extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function registerpost($f3)
+    public function registerpost($f3): void
     {
         $this->validateCsrf();
 
@@ -147,25 +142,25 @@ class Index extends \Controller
         if (!$f3->get("POST.register-name")) {
             $errors[] = "Name is required";
         }
-        if (!preg_match("/^[0-9a-z]{4,}$/i", $f3->get("POST.register-username"))) {
+        if (!preg_match("/^[0-9a-z]{4,}$/i", (string) $f3->get("POST.register-username"))) {
             $errors[] = "Usernames must be at least 4 characters and can only contain letters and numbers.";
         }
         if (!filter_var($f3->get("POST.register-email"), FILTER_VALIDATE_EMAIL)) {
             $errors[] = "A valid email address is required.";
         }
-        if (strlen($f3->get("POST.register-password")) < 6) {
+        if (strlen((string) $f3->get("POST.register-password")) < 6) {
             $errors[] = "Password must be at least 6 characters.";
         }
 
         // Show errors or create new user
-        if ($errors) {
+        if ($errors !== []) {
             $f3->set("register.error", implode("<br>", $errors));
             $this->_render("index/login.html");
         } else {
             $user->reset();
-            $user->username = trim($f3->get("POST.register-username"));
-            $user->email = trim($f3->get("POST.register-email"));
-            $user->name = trim($f3->get("POST.register-name"));
+            $user->username = trim((string) $f3->get("POST.register-username"));
+            $user->email = trim((string) $f3->get("POST.register-email"));
+            $user->name = trim((string) $f3->get("POST.register-name"));
             $security = \Helper\Security::instance();
             $hash = $security->hash($f3->get("POST.register-password"));
             extract($hash);
@@ -189,7 +184,7 @@ class Index extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function reset($f3)
+    public function reset($f3): void
     {
         if ($f3->get("user.id")) {
             $f3->reroute("/");
@@ -221,10 +216,9 @@ class Index extends \Controller
      * GET|POST /reset/@token
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
-    public function reset_complete($f3, $params)
+    public function reset_complete($f3, array $params): void
     {
         if ($f3->get("user.id")) {
             $f3->reroute("/");
@@ -237,7 +231,7 @@ class Index extends \Controller
         }
 
         $user = new \Model\User();
-        $user->load(["reset_token = ?", hash("sha384", $params["token"])]);
+        $user->load(["reset_token = ?", hash("sha384", (string) $params["token"])]);
         if (!$user->id || !$user->validateResetToken($params["token"])) {
             $f3->set("reset.error", "Invalid reset URL.");
             $this->_render("index/reset.html");
@@ -250,7 +244,7 @@ class Index extends \Controller
             // Validate new password
             if ($f3->get("POST.password1") != $f3->get("POST.password2")) {
                 $f3->set("reset.error", "The given passwords don't match.");
-            } elseif (strlen($f3->get("POST.password1")) < 6) {
+            } elseif (strlen((string) $f3->get("POST.password1")) < 6) {
                 $f3->set("reset.error", "The given password is too short. Passwords must be at least 6 characters.");
             } else {
                 // Save new password and redirect to login
@@ -272,7 +266,7 @@ class Index extends \Controller
      *
      * @param \Base $f3
      */
-    public function reset_forced($f3)
+    public function reset_forced($f3): void
     {
         $user = new \Model\User();
         $user->loadCurrent();
@@ -283,7 +277,7 @@ class Index extends \Controller
 
         if ($f3->get("POST.password1") != $f3->get("POST.password2")) {
             $f3->set("reset.error", "The given passwords don't match.");
-        } elseif (strlen($f3->get("POST.password1")) < 6) {
+        } elseif (strlen((string) $f3->get("POST.password1")) < 6) {
             $f3->set("reset.error", "The given password is too short. Passwords must be at least 6 characters.");
         } else {
             // Save new password and redirect to dashboard
@@ -302,7 +296,7 @@ class Index extends \Controller
      *
      * @param \Base $f3
      */
-    public function logout($f3)
+    public function logout($f3): void
     {
         $this->validateCsrf();
         $session = new \Model\Session();
@@ -317,7 +311,7 @@ class Index extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function atom($f3)
+    public function atom($f3): void
     {
         // Authenticate user
         if ($f3->get("GET.key")) {
@@ -371,7 +365,7 @@ class Index extends \Controller
      * @param \Base $f3
      * @throws \Exception
      */
-    public function opensearch($f3)
+    public function opensearch($f3): void
     {
         $this->_render("index/opensearch.xml", "application/opensearchdescription+xml");
     }

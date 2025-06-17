@@ -8,11 +8,8 @@ class Security extends \Prefab
 {
     /**
      * Generate a salted SHA1 hash
-     * @param  string $string
-     * @param  string $salt
-     * @return array|string
      */
-    public function hash($string, $salt = null)
+    public function hash(string $string, ?string $salt = null): array|string
     {
         if ($salt === null) {
             $salt = $this->salt();
@@ -27,28 +24,25 @@ class Security extends \Prefab
 
     /**
      * Generate a secure salt for hashing
-     * @return string
      */
-    public function salt()
+    public function salt(): string
     {
         return md5(random_bytes(64));
     }
 
     /**
      * Generate a secure SHA1 salt for hashing
-     * @return string
      */
-    public function salt_sha1()
+    public function salt_sha1(): string
     {
         return sha1(random_bytes(64));
     }
 
     /**
      * Generate a secure SHA-256/384/512 salt
-     * @param  integer $size 256, 384, or 512
-     * @return string
+     * @param  int $size 256, 384, or 512
      */
-    public function salt_sha2($size = 256)
+    public function salt_sha2(int $size = 256): string
     {
         $allSizes = [256, 384, 512];
         if (!in_array($size, $allSizes)) {
@@ -58,21 +52,10 @@ class Security extends \Prefab
     }
 
     /**
-     * Generate secure random bytes
-     * @deprecated
-     * @param  integer $length
-     * @return string
-     */
-    public function randBytes($length = 16)
-    {
-        return random_bytes($length);
-    }
-
-    /**
      * Check if the database is the latest version
      * @return bool|string TRUE if up-to-date, next version otherwise.
      */
-    public function checkDatabaseVersion()
+    public function checkDatabaseVersion(): string|bool
     {
         $f3 = \Base::instance();
 
@@ -97,9 +80,8 @@ class Security extends \Prefab
 
     /**
      * Install latest core database updates
-     * @param string $version
      */
-    public function updateDatabase($version)
+    public function updateDatabase(string $version): void
     {
         $f3 = \Base::instance();
         if (file_exists("db/{$version}.sql")) {
@@ -118,7 +100,7 @@ class Security extends \Prefab
     /**
      * Initialize a CSRF token
      */
-    public function initCsrfToken()
+    public function initCsrfToken(): void
     {
         $f3 = \Base::instance();
         if (!($token = $f3->get('COOKIE.XSRF-TOKEN'))) {
@@ -131,7 +113,7 @@ class Security extends \Prefab
     /**
      * Validate a CSRF token, exiting if invalid
      */
-    public function validateCsrfToken()
+    public function validateCsrfToken(): void
     {
         $f3 = \Base::instance();
         $cookieToken = $f3->get('COOKIE.XSRF-TOKEN');
@@ -143,20 +125,6 @@ class Security extends \Prefab
             $f3->error(400, 'Invalid CSRF token');
             exit;
         }
-    }
-
-    /**
-     * Check if two hashes are equal, safe against timing attacks
-     *
-     * @deprecated Use the native PHP implementation instead.
-     *
-     * @param  string $str1
-     * @param  string $str2
-     * @return boolean
-     */
-    public function hashEquals($str1, $str2)
-    {
-        return hash_equals($str1, $str2);
     }
 
     /**

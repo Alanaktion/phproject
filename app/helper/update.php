@@ -8,12 +8,8 @@ class Update extends \Prefab
 
     /**
      * Generate human-readable data for issue updates
-     * @param  string $field
-     * @param  string|int $old_val
-     * @param  string|int $new_val
-     * @return array
      */
-    public function humanReadableValues($field, $old_val, $new_val)
+    public function humanReadableValues(string $field, string|int $old_val, string|int $new_val): array
     {
         $f3 = \Base::instance();
 
@@ -49,10 +45,8 @@ class Update extends \Prefab
 
     /**
      * Convert a user ID to a user name
-     * @param int $id
-     * @return string
      */
-    public function convertUserId($id)
+    public function convertUserId(int $id): string
     {
         if (isset($this->cache['user.' . $id])) {
             $user = $this->cache['user.' . $id];
@@ -66,30 +60,24 @@ class Update extends \Prefab
 
     /**
      * Convert an owner user ID to a name
-     * @param int $id
-     * @return string
      */
-    public function convertOwnerId($id)
+    public function convertOwnerId(int $id): string
     {
         return $this->convertUserId($id);
     }
 
     /**
      * Convert an author user ID to a name
-     * @param int $id
-     * @return string
      */
-    public function convertAuthorId($id)
+    public function convertAuthorId(int $id): string
     {
         return $this->convertUserId($id);
     }
 
     /**
      * Convert a status ID to a name
-     * @param int $id
-     * @return string
      */
-    public function convertStatus($id)
+    public function convertStatus(int $id): string
     {
         if (isset($this->cache['status.' . $id])) {
             $status = $this->cache['status.' . $id];
@@ -103,10 +91,8 @@ class Update extends \Prefab
 
     /**
      * Convert a priority ID to a name
-     * @param int $value
-     * @return string
      */
-    public function convertPriority($value)
+    public function convertPriority(int $value): string
     {
         if (isset($this->cache['priority.' . $value])) {
             $priority = $this->cache['priority.' . $value];
@@ -120,10 +106,8 @@ class Update extends \Prefab
 
     /**
      * Convert an issue ID to a name
-     * @param int $id
-     * @return string
      */
-    public function convertIssueId($id)
+    public function convertIssueId(int $id): string
     {
         if (isset($this->cache['issue.' . $id])) {
             $issue = $this->cache['issue.' . $id];
@@ -137,20 +121,16 @@ class Update extends \Prefab
 
     /**
      * Convert a parent issue ID to a name
-     * @param int $id
-     * @param string
      */
-    public function convertParentId($id)
+    public function convertParentId(int $id): string
     {
         return $this->convertIssueId($id);
     }
 
     /**
      * Convert a sprint ID to a name/date
-     * @param int $id
-     * @return string
      */
-    public function convertSprintId($id)
+    public function convertSprintId(int $id): string
     {
         if (isset($this->cache['sprint.' . $id])) {
             $sprint = $this->cache['sprint.' . $id];
@@ -160,16 +140,14 @@ class Update extends \Prefab
             $this->cache['sprint.' . $id] = $sprint;
         }
         return $sprint->name . " - " .
-                date('n/j', strtotime($sprint->start_date)) . "-" .
-                date('n/j', strtotime($sprint->end_date));
+                date('n/j', strtotime((string) $sprint->start_date)) . "-" .
+                date('n/j', strtotime((string) $sprint->end_date));
     }
 
     /**
      * Convert a sprint ID to a name/date
-     * @param int $id
-     * @return string
      */
-    public function convertTypeId($id)
+    public function convertTypeId(int $id): string
     {
         if (isset($this->cache['type.' . $id])) {
             $type = $this->cache['type.' . $id];
@@ -183,10 +161,8 @@ class Update extends \Prefab
 
     /**
      * Convert MySQL datetime to formatted local time
-     * @param  string $date
-     * @return string
      */
-    public function convertClosedDate($date)
+    public function convertClosedDate(string $date): string
     {
         $time = View::instance()->utc2local(strtotime($date));
         return date("D, M j, Y g:ia", $time);

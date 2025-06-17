@@ -4,10 +4,8 @@ abstract class Controller
 {
     /**
      * Require a user to be logged in. Redirects to /login if a session is not found.
-     * @param  int $rank
-     * @return int|bool
      */
-    protected function _requireLogin($rank = \Model\User::RANK_CLIENT)
+    protected function _requireLogin(int $rank = \Model\User::RANK_CLIENT): int|bool
     {
         $f3 = \Base::instance();
         if ($id = $f3->get("user.id")) {
@@ -26,15 +24,15 @@ abstract class Controller
                     $session->setCurrent();
                     $f3->set("user", $user->cast());
                     $f3->set("user_obj", $user);
-                    return;
+                    return false;
                 } else {
                     $f3->set("error", "Auto-login failed, demo user was not found.");
                 }
             }
-            if (empty($_GET)) {
-                $f3->reroute("/login?to=" . urlencode($f3->get("PATH")));
+            if ($_GET === []) {
+                $f3->reroute("/login?to=" . urlencode((string) $f3->get("PATH")));
             } else {
-                $f3->reroute("/login?to=" . urlencode($f3->get("PATH")) . urlencode("?" . http_build_query($_GET)));
+                $f3->reroute("/login?to=" . urlencode((string) $f3->get("PATH")) . urlencode("?" . http_build_query($_GET)));
             }
             return false;
         }
@@ -42,10 +40,8 @@ abstract class Controller
 
     /**
      * Require a user to be an administrator. Throws HTTP 403 if logged in, but not an admin.
-     * @param  int $rank
-     * @return int|bool
      */
-    protected function _requireAdmin($rank = \Model\User::RANK_ADMIN)
+    protected function _requireAdmin(int $rank = \Model\User::RANK_ADMIN): int|bool
     {
         $id = $this->_requireLogin();
 
@@ -60,12 +56,8 @@ abstract class Controller
 
     /**
      * Render a view
-     * @param string  $file
-     * @param string  $mime
-     * @param array   $hive
-     * @param integer $ttl
      */
-    protected function _render($file, $mime = "text/html", ?array $hive = null, $ttl = 0)
+    protected function _render(string $file, string $mime = "text/html", ?array $hive = null, int $ttl = 0): void
     {
         echo \Helper\View::instance()->render($file, $mime, $hive, $ttl);
     }
@@ -74,7 +66,7 @@ abstract class Controller
      * Output object as JSON and set appropriate headers
      * @param mixed $object
      */
-    protected function _printJson($object)
+    protected function _printJson($object): void
     {
         if (!headers_sent()) {
             header("Content-type: application/json");
@@ -84,10 +76,9 @@ abstract class Controller
 
     /**
      * Get current time and date in a MySQL NOW() format
-     * @param  boolean $time  Whether to include the time in the string
-     * @return string
+     * @param bool $time  Whether to include the time in the string
      */
-    public function now($time = true)
+    public function now(bool $time = true): string
     {
         return $time ? date("Y-m-d H:i:s") : date("Y-m-d");
     }
@@ -95,7 +86,7 @@ abstract class Controller
     /**
      * Validate the request's CSRF token, exiting if invalid
      */
-    protected function validateCsrf()
+    protected function validateCsrf(): void
     {
         \Helper\Security::instance()->validateCsrfToken();
     }

@@ -10,12 +10,9 @@ return RectorConfig::configure()
         __DIR__ . '/cron',
         __DIR__ . '/tests',
     ])
-    // ->withPhpSets(php81: true)
-    ->withPhp74Sets()
-    ->withTypeCoverageLevel(10)
-    ->withDeadCodeLevel(10)
-    ->withCodeQualityLevel(10)
-    ->withCodingStyleLevel(0)
-    ->withSkip([
-        // StringClassNameToClassConstantRector::class,
-    ]);
+    ->withPhpSets(php81: true)
+    ->withPreparedSets(
+        typeDeclarations: true,
+        deadCode: true,
+        codeQuality: true,
+    );

@@ -5,7 +5,7 @@
  *  Sends alerts to users with issues due today
  */
 
-require_once "base.php";
+require_once __DIR__ . "/base.php";
 
 $user = new \Model\User();
 $users = $user->getAll();

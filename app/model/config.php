@@ -16,9 +16,8 @@ class Config extends \Model
 
     /**
      * Loads the configuration for the site
-     * @return void
      */
-    public static function loadAll()
+    public static function loadAll(): void
     {
         $f3 = \Base::instance();
         $db = $f3->get("db.instance");
@@ -45,9 +44,8 @@ class Config extends \Model
      * Imports the settings from config.ini to the database
      *
      * This will overwrite config.ini with only database connection settings!
-     * @return void
      */
-    public static function importAll()
+    public static function importAll(): void
     {
         $f3 = \Base::instance();
         $root = $f3->get("ROOT") . $f3->get("BASE");
@@ -56,7 +54,7 @@ class Config extends \Model
         $ini = parse_ini_file($root . "/config.ini");
         $ini += parse_ini_file($root . "/config-base.ini");
         foreach ($ini as $key => $val) {
-            if (substr($key, 0, 3) == "db.") {
+            if (str_starts_with($key, "db.")) {
                 continue;
             }
             $conf = new Config();
@@ -76,10 +74,8 @@ class Config extends \Model
 
     /**
      * Convert INI configuration to PHP format
-     *
-     * @return void
      */
-    public static function iniToPhp()
+    public static function iniToPhp(): void
     {
         $f3 = \Base::instance();
 
@@ -93,9 +89,7 @@ class Config extends \Model
 
     /**
      * Set a configuration value
-     * @param  string $key
      * @param  mixed  $value
-     * @return Config
      */
     public static function setVal(string $key, $value): Config
     {
