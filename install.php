@@ -142,7 +142,6 @@ if (
         \Model\Config::setVal('site.description', 'A high performance full-featured project management system');
         \Model\Config::setVal('site.demo', 0);
         \Model\Config::setVal('site.theme', 'css/bootstrap-phproject.css');
-        \Model\Config::setVal('site.public_registration', 0);
         \Model\Config::setVal('security.block_ccs', 0);
         \Model\Config::setVal('security.min_pass_len', 6);
         \Model\Config::setVal('security.restrict_access', 0);

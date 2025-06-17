@@ -243,7 +243,7 @@ class User extends \Model
         $result = [];
         $date_expr = ["DATE(DATE_ADD(", ", INTERVAL :offset SECOND)"];
         if (\Base::instance()->get("db.engine") == "sqlite") {
-            $date_expr = ["DATE(", ", CONCAT(:offset, ' seconds'))"];
+            $date_expr = ["DATE(", ", :offset || ' seconds')"];
         }
         $result["spent"] = $this->db->exec(
             "SELECT {$date_expr[0]}u.created_date{$date_expr[1]} AS `date`, SUM(f.new_value - f.old_value) AS `val`

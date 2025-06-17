@@ -2,9 +2,9 @@
 
 SET NAMES utf8mb4;
 
-INSERT INTO `user` (`username`, `email`, `name`, `password`, `salt`, `role`,`created_date`) VALUES
-	('demo', 'demo@demo', 'Demo User', NULL, NULL, 'user', NOW()),
-	(NULL, NULL, 'Demo Group', NULL, NULL, 'group', NOW());
+INSERT INTO `user` (`username`, `email`, `name`, `password`, `salt`, `role`, `rank`, `created_date`) VALUES
+	('demo', 'demo@demo', 'Demo User', NULL, NULL, 'user', 2, NOW()),
+	(NULL, NULL, 'Demo Group', NULL, NULL, 'group', NULL, NOW());
 
 INSERT INTO `user_group`(`user_id`,`group_id`,`manager`) VALUES (1,3,0), (2,3,0);
 

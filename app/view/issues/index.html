@@ -12,8 +12,8 @@
         </check>
         <include href="blocks/issue-list.html" />
         <div class="clearfix">
-            <p class="pull-right hidden-xs">
-                <span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
+            <p class="pull-right hidden-xs text-muted">
+                {{ @dict.showing_n_to_n_of_n, (@issues.limit * @issues.pos) + 1,  @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1), @issues.total | format }}
             </p>
         </div>
         <check if="{{ @issues.count }}">

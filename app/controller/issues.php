@@ -1162,8 +1162,13 @@ class Issues extends \Controller
         // Build WHERE string
         $keywordParts = [];
         foreach (explode(" ", $q) as $w) {
-            $keywordParts[] = "CONCAT(name, description, author_name, owner_name,
-                author_username, owner_username) LIKE ?";
+            if (\Base::instance()->get("db.engine") == "sqlite") {
+                $keywordParts[] = "name || description || author_name || owner_name ||
+                    author_username || owner_username LIKE ?";
+            } else {
+                $keywordParts[] = "CONCAT(name, description, author_name, owner_name,
+                    author_username, owner_username) LIKE ?";
+            }
             $return[] = "%$w%";
         }
         if (is_numeric($q)) {

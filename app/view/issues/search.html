@@ -8,12 +8,12 @@
 <include href="blocks/navbar.html" />
 <div class="container-fluid">
     <p>
-        <a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;closed={{ empty(@GET.closed) }}">{{ empty(@GET.closed) ? 'Include closed issues' : 'Exclude closed issues' }}</a>
+        <a href="{{ @BASE }}/search?q={{ @GET.q | esc }}&amp;closed={{ empty(@GET.closed) }}">{{ empty(@GET.closed) ? @dict.include_closed_issues : @dict.exclude_closed_issues }}</a>
     </p>
     <include href="blocks/issue-list.html" />
     <div class="clearfix">
-        <p class="pull-right hidden-xs">
-            <span class="text-muted">Showing {{ (@issues.limit * @issues.pos) + 1 }}&ndash;{{ @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1) }} of {{ @issues.total }}</span>
+        <p class="pull-right hidden-xs text-muted">
+            {{ @dict.showing_n_to_n_of_n, (@issues.limit * @issues.pos) + 1, @issues.limit * (@issues.pos + 1) > @issues.total ? @issues.total : @issues.limit * (@issues.pos + 1), @issues.total | format }}
         </p>
     </div>
     <check if="{{ @issues.count }}">
