@@ -573,7 +573,7 @@ class Issue extends \Model
     /**
      * Check if the current/given should be allowed access to the issue.
      */
-    public function allowAccess(\Model\User $user = null): bool
+    public function allowAccess(?\Model\User $user = null): bool
     {
         $f3 = \Base::instance();
         if (!$user instanceof \Model\User) {
