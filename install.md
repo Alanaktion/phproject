@@ -14,7 +14,7 @@ title: Install
     * Apache .htaccess file and nginx sample configuration included
     * Caddy, H2O, Lighttpd and IIS should all work, but will require custom configuration
 
-You can also [run Phproject in a Docker container](/install/docker.html) to make the environment setup easier.
+You can also [run Phproject in a Docker container](/install/docker.html) to make the environment setup easier. Official single-container image setups are available!
 
 ## Installation
 
