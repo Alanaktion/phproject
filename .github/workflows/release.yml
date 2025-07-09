@@ -9,24 +9,63 @@ jobs:
   publish-assets:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: |
-        curl -o composer.phar -L https://getcomposer.org/composer-stable.phar
-        php composer.phar install --no-ansi --no-interaction --no-dev
+      - name: Install dependencies
+        run: |
+          curl -o composer.phar -L https://getcomposer.org/composer-stable.phar
+          php composer.phar install --no-ansi --no-interaction --no-dev
 
-    - name: Clean up project
-      run: |
-        rm -rf .git* .vscode
-        rm -f composer.phar
+      - name: Clean up project
+        run: |
+          rm -rf .git* .vscode
+          rm -f composer.phar
 
-    - name: Build archive
-      run: zip -r /tmp/phproject-${{ github.ref_name }}.zip "$GITHUB_WORKSPACE"
+      - name: Build archive
+        run: zip -r /tmp/phproject-${{ github.ref_name }}.zip "$GITHUB_WORKSPACE"
 
-    - name: Upload archive
-      uses: softprops/action-gh-release@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: |
-          /tmp/phproject-${{ github.ref_name }}.zip
+      - name: Upload archive
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            /tmp/phproject-${{ github.ref_name }}.zip
+
+  build-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Run release build
+        run: |
+          docker run --rm \
+            --volume $PWD:/app \
+            --user $(id -u):$(id -g) \
+            composer install --no-ansi --no-interaction --no-dev
+          docker buildx build \
+            --platform "linux/amd64,linux/arm/v7,linux/arm64" \
+            --tag "docker.io/alanaktion/phproject:apache-${version:1}" \
+            --tag "docker.io/alanaktion/phproject:apache" \
+            --tag "ghcr.io/alanaktion/phproject:apache-${version:1}" \
+            --tag "ghcr.io/alanaktion/phproject:apache" \
+            --push .

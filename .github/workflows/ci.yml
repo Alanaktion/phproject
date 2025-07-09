@@ -8,8 +8,8 @@ jobs:
 
     strategy:
       matrix:
-        php: ['8.1', '8.2', '8.3', '8.4']
-        db: ['mysql', 'sqlite']
+        php: ["8.1", "8.2", "8.3", "8.4"]
+        db: ["mysql", "sqlite"]
 
     name: PHP ${{ matrix.php }} + ${{ matrix.db}}
 
@@ -28,40 +28,79 @@ jobs:
           --health-retries 3
 
     steps:
-    - uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
-      env:
-        COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: actions/cache@v3
-      env:
-        cache-name: cache-composer
-      with:
-        path: ~/.composer
-        key: ${{ runner.os }}-ci-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-ci-${{ env.cache-name }}-
-          ${{ runner.os }}-ci-
-          ${{ runner.os }}-
+      - uses: actions/cache@v3
+        env:
+          cache-name: cache-composer
+        with:
+          path: ~/.composer
+          key: ${{ runner.os }}-ci-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-ci-${{ env.cache-name }}-
+            ${{ runner.os }}-ci-
+            ${{ runner.os }}-
 
-    - name: Syntax check
-      run: if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi
+      - name: Syntax check
+        run: if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi
 
-    - name: Composer
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Composer
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-    - run: vendor/bin/phpcs
+      - run: vendor/bin/phpcs
 
-    - if: matrix.db == 'mysql'
-      name: Install Phproject (MySQL)
-      run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=127.0.0.1 --db-port=${{ job.services.mysql.ports['3306'] }} --db-user=root
+      - if: matrix.db == 'mysql'
+        name: Install Phproject (MySQL)
+        run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-host=127.0.0.1 --db-port=${{ job.services.mysql.ports['3306'] }} --db-user=root
 
-    - if: matrix.db == 'sqlite'
-      name: Install Phproject (SQLite)
-      run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-engine=sqlite --db-name=database.sqlite
+      - if: matrix.db == 'sqlite'
+        name: Install Phproject (SQLite)
+        run: php install.php --site-name=Test --site-url=http://localhost/ --timezone=America/Phoenix --admin-username=test --admin-email=test@example.com --admin-password=secret --db-engine=sqlite --db-name=database.sqlite
 
-    - name: PHPUnit tests
-      run: vendor/bin/phpunit --no-progress
+      - name: PHPUnit tests
+        run: vendor/bin/phpunit --no-progress
+
+  build-image:
+    runs-on: ubuntu-latest
+    needs: ci
+    if: success() && github.ref == 'refs/heads/master'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Run release build
+        run: |
+          docker run --rm \
+            --volume $PWD:/app \
+            --user $(id -u):$(id -g) \
+            composer install --no-ansi --no-interaction --no-dev
+          docker buildx build \
+            --platform "linux/amd64,linux/arm/v7,linux/arm64" \
+            --tag "docker.io/alanaktion/phproject:apache-master" \
+            --tag "ghcr.io/alanaktion/phproject:apache-master" \
+            --push .
