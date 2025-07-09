@@ -58,7 +58,7 @@ if ($projects && $sprints) {
                 }
 
                 // Create sprint project
-                if (count($tasks_for_this_sprint)) {
+                if ($tasks_for_this_sprint !== []) {
                     echo "Creating project for sprint {$sprint->id}\n";
                     $sprint_project = new \Model\Issue();
                     $sprint_project->type_id = $issue_type_project;
@@ -71,6 +71,7 @@ if ($projects && $sprints) {
                     } else {
                         $sprint_project->name = $project->name . " - " . date("n/j", strtotime($sprint->start_date)) . "-" . date("n/j", strtotime($sprint->start_date));
                     }
+
                     $sprint_project->description = "This is an automatically generated project for breaking large projects into sprints.";
                     $sprint_project->created_date = date("Y-m-d H:i:s");
                     $sprint_project->save();

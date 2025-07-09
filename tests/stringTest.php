@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class StringTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         $f3 = \Base::instance();
         $f3->set('TZ', 'America/Phoenix');

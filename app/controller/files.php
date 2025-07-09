@@ -40,17 +40,19 @@ class Files extends \Controller
         if (!$mime) {
             $mime = \Web::instance()->mime($file);
         }
-        header("Content-Type: $mime");
+
+        header("Content-Type: {$mime}");
 
         if ($force) {
             if (!$filename) {
                 $filename = basename($file);
             }
-            header("Content-Disposition: attachment; filename=\"$filename\"");
+
+            header("Content-Disposition: attachment; filename=\"{$filename}\"");
         }
 
         header("Accept-Ranges: bytes");
-        header("Content-Length: $size");
+        header("Content-Length: {$size}");
         header("X-Powered-By: " . \Base::instance()->get("PACKAGE"));
 
         readfile($file);
@@ -110,7 +112,7 @@ class Files extends \Controller
         $alpha = (imagecolorat($img->data(), 0, 0) & 0x7F000000) >> 24;
 
         // 1.1 fits perfectly but crops shadow, so we compare width vs height
-        $size = intval($params["size"] ?? null) ?: 96;
+        $size = is_numeric($params['size'] ?? null) ? intval($params["size"]) : 96;
         if ($alpha !== 0) {
             $thumbSize = $size;
         } elseif ($img->width() > $img->height()) {
@@ -241,7 +243,7 @@ class Files extends \Controller
             $force = true;
         }
 
-        if (!$this->_sendFile($file->disk_filename, $type, $file->filename, $force)) {
+        if ($this->_sendFile($file->disk_filename, $type, $file->filename, $force) === false) {
             $f3->error(404);
         }
     }

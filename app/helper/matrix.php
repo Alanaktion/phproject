@@ -15,6 +15,7 @@ class Matrix extends \Matrix
         foreach ($arrays as $k => $v) {
             $lengths[$k] = is_countable($v) ? count($v) : 0;
         }
+
         $max = max($lengths);
         $result = [];
         for ($i = 0; $i < $max; $i++) {
@@ -24,15 +25,15 @@ class Matrix extends \Matrix
                 }
             }
         }
+
         return $result;
     }
 
     /**
      * Run array_merge on an array of arrays
-     *
-     * @return array
+     * @deprecated Use PHP array_merge instead
      */
-    public function merge(array $arrays): mixed
+    public function merge(array $arrays): array
     {
         return array_merge(...$arrays);
     }

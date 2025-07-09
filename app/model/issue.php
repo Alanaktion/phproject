@@ -28,8 +28,11 @@ namespace Model;
 class Issue extends \Model
 {
     protected $_table_name = "issue";
+
     protected $_heirarchy;
+
     protected $_children;
+
     protected static $requiredFields = ["type_id", "status", "name", "author_id"];
 
     /**
@@ -43,16 +46,19 @@ class Issue extends \Model
             $data["hours_remaining"] = $data["hours"];
             unset($data["hours"]);
         }
+
         if (!empty($data["due_date"])) {
-            if (!preg_match("/\\d{4}(-\\d{2}){2}/", (string) $data["due_date"])) {
+            if (in_array(preg_match("/\\d{4}(-\\d{2}){2}/", (string) $data["due_date"]), [0, false], true)) {
                 $data["due_date"] = date("Y-m-d", strtotime((string) $data["due_date"]));
             }
+
             if (empty($data["sprint_id"]) && !empty($data['due_date_sprint'])) {
                 $sprint = new Sprint();
                 $sprint->load(["DATE(?) BETWEEN start_date AND end_date", $data["due_date"]]);
                 $data["sprint_id"] = $sprint->id;
             }
         }
+
         if (empty($data["author_id"]) && $user_id = \Base::instance()->get("user.id")) {
             $data["author_id"] = $user_id;
         }
@@ -91,6 +97,7 @@ class Issue extends \Model
                 $f3->set("error", "Issue parent tree contains an infinite loop. Issue {$parentId} is the first point of recursion.");
                 break;
             }
+
             $issue = new Issue();
             $issue->load($parentId);
             if ($issue->id) {
@@ -125,9 +132,11 @@ class Issue extends \Model
         if (!$this->deleted_date) {
             $this->set("deleted_date", date("Y-m-d H:i:s"));
         }
+
         if ($recursive) {
             $this->_deleteTree();
         }
+
         return $this->save(false);
     }
 
@@ -140,6 +149,7 @@ class Issue extends \Model
         foreach ($children as $child) {
             $child->delete();
         }
+
         return $this;
     }
 
@@ -152,6 +162,7 @@ class Issue extends \Model
         if ($recursive) {
             $this->_restoreTree();
         }
+
         return $this->save(false);
     }
 
@@ -164,6 +175,7 @@ class Issue extends \Model
         foreach ($children as $child) {
             $child->restore();
         }
+
         return $this;
     }
 
@@ -233,6 +245,7 @@ class Issue extends \Model
             $notification = \Helper\Notification::instance();
             $notification->issue_create($repeatIssue->id);
         }
+
         return $repeatIssue;
     }
 
@@ -259,6 +272,7 @@ class Issue extends \Model
         } else {
             $update->notify = 0;
         }
+
         $update->save();
 
         // Set hours_total to the hours_remaining value under certain conditions
@@ -297,6 +311,7 @@ class Issue extends \Model
                 if ($key == 'sprint_id') {
                     $this->resetTaskSprints();
                 }
+
                 if (in_array($key, $importantFields)) {
                     $importantChanges++;
                 }
@@ -376,6 +391,7 @@ class Issue extends \Model
         if ($this->id) {
             $tag->deleteByIssueId($this->id);
         }
+
         if (!$this->deleted_date) {
             $count = preg_match_all("/(?<=[^a-z\\/&]#|^#)[a-z][a-z0-9_-]*[a-z0-9]+(?=[^a-z\\/]|$)/i", $this->description, $matches);
             if ($count) {
@@ -387,6 +403,7 @@ class Issue extends \Model
                 }
             }
         }
+
         return $this;
     }
 
@@ -431,7 +448,7 @@ class Issue extends \Model
     {
         // Find all child issues
         $children = $this->find(["parent_id = ?", $id]);
-        if (count($children)) {
+        if (count($children) !== 0) {
             $f3 = \Base::instance();
             foreach ($children as $child) {
                 if (!$child->deleted_date) {
@@ -454,6 +471,7 @@ class Issue extends \Model
                 }
             }
         }
+
         return $this;
     }
 
@@ -469,6 +487,7 @@ class Issue extends \Model
             if ($replaceExisting) {
                 $query .= " AND sprint_id IS NULL";
             }
+
             $this->db->exec(
                 $query,
                 [
@@ -478,6 +497,7 @@ class Issue extends \Model
                 ]
             );
         }
+
         return $this;
     }
 
@@ -502,6 +522,7 @@ class Issue extends \Model
         foreach ($result as &$value) {
             $value = $value === null ? md5('') : md5($value);
         }
+
         return $result;
     }
 
@@ -518,6 +539,7 @@ class Issue extends \Model
             $this->closed_date = date("Y-m-d H:i:s");
             $this->save();
         }
+
         return $this;
     }
 
@@ -531,6 +553,7 @@ class Issue extends \Model
             $ids[] = $child->id;
             $ids += $child->descendantIds();
         }
+
         return array_unique($ids);
     }
 
@@ -548,12 +571,15 @@ class Issue extends \Model
             if ($this->closed_date) {
                 $complete++;
             }
+
             if ($this->hours_spent > 0) {
                 $hoursSpent += $this->hours_spent;
             }
+
             if ($this->hours_total > 0) {
                 $hoursTotal += $this->hours_total;
             }
+
             foreach ($this->getChildren() as $child) {
                 $result = $child->projectStats();
                 $total += $result["total"];
@@ -562,6 +588,7 @@ class Issue extends \Model
                 $hoursTotal += $result["hours_total"];
             }
         }
+
         return [
             "total" => $total,
             "complete" => $complete,

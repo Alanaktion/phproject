@@ -4,7 +4,7 @@ namespace Controller;
 
 class Taskboard extends \Controller
 {
-    protected $_userId;
+    protected bool|int $_userId;
 
     public function __construct()
     {
@@ -25,6 +25,7 @@ class Taskboard extends \Controller
             foreach ($groups_result as $g) {
                 $filter_users[] = $g["group_id"];
             }
+
             $groups = implode(",", $filter_users);
             $users_result = $group_model->find("group_id IN ({$groups})");
             foreach ($users_result as $u) {
@@ -51,6 +52,7 @@ class Taskboard extends \Controller
         } else {
             return [$this->_userId];
         }
+
         return $filter_users;
     }
 
@@ -69,7 +71,7 @@ class Taskboard extends \Controller
         $sprint = new \Model\Sprint();
 
         // Load current sprint if no sprint ID is given
-        if (empty($params["id"]) || !intval($params["id"])) {
+        if (empty($params["id"]) || intval($params["id"]) === 0) {
             $localDate = date('Y-m-d', \Helper\View::instance()->utc2local());
             $sprint->load(["? BETWEEN start_date AND end_date", $localDate]);
             if (!$sprint->id) {
@@ -134,12 +136,13 @@ class Taskboard extends \Controller
                 $typeIds[] = $type->id;
             }
         }
+
         $typeStr = implode(",", $typeIds);
         sort($typeIds, SORT_NUMERIC);
 
         // Find all visible tasks
         $tasks = $issue->find([
-            "sprint_id = ? AND type_id NOT IN ($typeStr) AND deleted_date IS NULL AND status IN ($visible_status_ids)"
+            "sprint_id = ? AND type_id NOT IN ({$typeStr}) AND deleted_date IS NULL AND status IN ({$visible_status_ids})"
                 . (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
             $sprint->id
         ], ["order" => "priority DESC, id ASC"]);
@@ -151,13 +154,14 @@ class Taskboard extends \Controller
                 $parent_ids[] = $task->parent_id;
             }
         }
+
         $task_ids_str = implode(",", $task_ids);
         $parent_ids_str = implode(",", $parent_ids);
         $f3->set("tasks", $task_ids_str);
 
         // Find all visible projects or parent tasks if no type filter is given
         $queryArray = [
-            "(id IN ($parent_ids_str) AND type_id IN ($typeStr)) OR (sprint_id = ? AND type_id IN ($typeStr) AND deleted_date IS NULL"
+            "(id IN ({$parent_ids_str}) AND type_id IN ({$typeStr})) OR (sprint_id = ? AND type_id IN ({$typeStr}) AND deleted_date IS NULL"
                 . (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
             $sprint->id
         ];
@@ -175,9 +179,11 @@ class Taskboard extends \Controller
                 if ($ka === false && $kb !== false) {
                     return -1;
                 }
+
                 if ($ka !== false && $kb === false) {
                     return 1;
                 }
+
                 return $ka <=> $kb;
             });
         }
@@ -313,9 +319,11 @@ class Taskboard extends \Controller
         if (!$user->id) {
             $f3->error(404);
         }
+
         if ($user->id != $this->_userId && $user->role != "group") {
             $f3->error(403);
         }
+
         $user->option("man_hours", floatval($f3->get("POST.man_hours")));
         $user->save();
     }
@@ -357,6 +365,7 @@ class Taskboard extends \Controller
             if ($post["receiver"]["story"]) {
                 $issue->parent_id = $post["receiver"]["story"];
             }
+
             $issue->status = $post["receiver"]["status"];
             $status = new \Model\Issue\Status();
             $status->load($issue->status);
@@ -376,17 +385,21 @@ class Taskboard extends \Controller
             if (!empty($post["hours_spent"]) && !empty($post["burndown"])) {
                 $issue->hours_remaining -= $post["hours_spent"];
             }
+
             if (!$issue->hours_remaining || $issue->hours_remaining < 0) {
                 $issue->hours_remaining = 0;
             }
+
             $issue->due_date = empty($post["dueDate"]) ? null : date("Y-m-d", strtotime((string) $post["dueDate"]));
             if (isset($post["repeat_cycle"])) {
                 $issue->repeat_cycle = $post["repeat_cycle"] ?: null;
             }
+
             $issue->priority = $post["priority"];
             if (!empty($post["storyId"])) {
                 $issue->parent_id = $post["storyId"];
             }
+
             $issue->title = $post["title"];
         }
 
@@ -399,6 +412,7 @@ class Taskboard extends \Controller
             } else {
                 $comment->text = $post["comment"];
             }
+
             $comment->created_date = $this->now();
             $comment->save();
             $issue->update_comment = $comment->id;

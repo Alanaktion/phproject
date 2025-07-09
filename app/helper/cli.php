@@ -33,9 +33,10 @@ class Cli extends \Prefab
             if (substr_count($key, ':') != 1) {
                 continue;
             }
+
             $o = rtrim($key, ':');
             if (!array_key_exists($o, $data)) {
-                echo "Required argument --$o not specified.", PHP_EOL;
+                echo "Required argument --{$o} not specified.", PHP_EOL;
                 exit(1);
             }
         }
@@ -46,6 +47,7 @@ class Cli extends \Prefab
             $key = rtrim($o, ':');
             $result[$key] = $data[$key] ?? $options[$o];
         }
+
         return $result;
     }
 
@@ -71,22 +73,25 @@ class Cli extends \Prefab
         echo 'Required values:', PHP_EOL;
         foreach ($required as $key) {
             $o = rtrim((string) $key, ':');
-            echo "--$o={$defaultMap[$key]}", PHP_EOL;
+            echo "--{$o}={$defaultMap[$key]}", PHP_EOL;
         }
+
         echo PHP_EOL;
 
         echo 'Optional values:', PHP_EOL;
         foreach ($optional as $key) {
             $o = rtrim((string) $key, ':');
-            echo "--$o={$defaultMap[$key]}", PHP_EOL;
+            echo "--{$o}={$defaultMap[$key]}", PHP_EOL;
         }
+
         echo PHP_EOL;
 
         echo 'Optional flags:', PHP_EOL;
         foreach ($flags as $key) {
             $o = rtrim((string) $key, ':');
-            echo "--$o", PHP_EOL;
+            echo "--{$o}", PHP_EOL;
         }
+
         echo PHP_EOL;
     }
 }

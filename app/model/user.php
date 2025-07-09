@@ -24,13 +24,12 @@ namespace Model;
  */
 class User extends \Model
 {
-    public const
-        RANK_GUEST = 0,
-        RANK_CLIENT = 1,
-        RANK_USER = 2,
-        RANK_MANAGER = 3,
-        RANK_ADMIN = 4,
-        RANK_SUPER = 5;
+    public const RANK_GUEST = 0;
+    public const RANK_CLIENT = 1;
+    public const RANK_USER = 2;
+    public const RANK_MANAGER = 3;
+    public const RANK_ADMIN = 4;
+    public const RANK_SUPER = 5;
 
     protected $_table_name = "user";
     protected $_groupUsers;
@@ -72,9 +71,11 @@ class User extends \Model
         if (!$this->id) {
             return false;
         }
+
         if ($this->get("avatar_filename") && is_file("uploads/avatars/" . $this->get("avatar_filename"))) {
-            return \Base::instance()->get('BASE') . "/avatar/$size-{$this->id}.png";
+            return \Base::instance()->get('BASE') . "/avatar/{$size}-{$this->id}.png";
         }
+
         return \Helper\View::instance()->gravatar($this->get("email"), $size);
     }
 
@@ -112,6 +113,7 @@ class User extends \Model
             if ($this->_groupUsers !== null) {
                 return $this->_groupUsers;
             }
+
             $ug = new User\Group();
             /** @var User\Group[] $users */
             $users = $ug->find(["group_id = ?", $this->id]);
@@ -119,10 +121,11 @@ class User extends \Model
             foreach ($users as $user) {
                 $userIds[] = $user->user_id;
             }
+
             return $this->_groupUsers = $userIds !== [] ? $this->find("id IN (" . implode(",", $userIds) . ") AND deleted_date IS NULL") : [];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -135,14 +138,16 @@ class User extends \Model
             if ($this->_groupUsers === null) {
                 $this->getGroupUsers();
             }
+
             $ids = [];
             foreach ($this->_groupUsers as $u) {
                 $ids[] = $u->id;
             }
+
             return $ids;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -156,6 +161,7 @@ class User extends \Model
         foreach ($groups as $g) {
             $groupIds[] = $g["group_id"];
         }
+
         $ids = $groupIds;
         if ($groupIds !== []) {
             $groupIdString = implode(",", $groupIds);
@@ -168,8 +174,10 @@ class User extends \Model
         if ($ids === []) {
             return [$this->id];
         }
+
         return $ids;
     }
+
     /**
      * Get all user options
      */
@@ -189,6 +197,7 @@ class User extends \Model
         if ($value === null) {
             return $options[$key] ?? null;
         }
+
         $options[$key] = $value;
         $this->options = json_encode($options, JSON_THROW_ON_ERROR);
         return $this;
@@ -213,19 +222,20 @@ class User extends \Model
         foreach ($groups->find(["user_id = ?", $this->id]) as $r) {
             $ownerIds[] = $r->group_id;
         }
+
         $ownerStr = implode(",", $ownerIds);
 
         // Find issues assigned to user or user's group
         $issue = new Issue();
-        $due = $issue->find(["due_date = ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date], ["order" => "priority DESC"]);
-        $overdue = $issue->find(["due_date < ? AND owner_id IN($ownerStr) AND closed_date IS NULL AND deleted_date IS NULL", $date], ["order" => "priority DESC"]);
+        $due = $issue->find(["due_date = ? AND owner_id IN({$ownerStr}) AND closed_date IS NULL AND deleted_date IS NULL", $date], ["order" => "priority DESC"]);
+        $overdue = $issue->find(["due_date < ? AND owner_id IN({$ownerStr}) AND closed_date IS NULL AND deleted_date IS NULL", $date], ["order" => "priority DESC"]);
 
         if ($due || $overdue) {
             $notif = new \Helper\Notification();
             return $notif->user_due_issues($this, $due, $overdue);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -245,6 +255,7 @@ class User extends \Model
         if (\Base::instance()->get("db.engine") == "sqlite") {
             $date_expr = ["DATE(", ", :offset || ' seconds')"];
         }
+
         $result["spent"] = $this->db->exec(
             "SELECT {$date_expr[0]}u.created_date{$date_expr[1]} AS `date`, SUM(f.new_value - f.old_value) AS `val`
             FROM issue_update u
@@ -279,9 +290,11 @@ class User extends \Model
         foreach ($result["spent"] as $r) {
             $return["spent"][$r["date"]] = floatval($r["val"]);
         }
+
         foreach ($result["closed"] as $r) {
             $return["closed"][$r["date"]] = intval($r["val"]);
         }
+
         foreach ($result["created"] as $r) {
             $return["created"][$r["date"]] = intval($r["val"]);
         }
@@ -291,9 +304,11 @@ class User extends \Model
             if (!isset($return["spent"][$date])) {
                 $return["spent"][$date] = 0;
             }
+
             if (!isset($return["closed"][$date])) {
                 $return["closed"][$date] = 0;
             }
+
             if (!isset($return["created"][$date])) {
                 $return["created"][$date] = 0;
             }
@@ -316,12 +331,14 @@ class User extends \Model
         if (!$this->id) {
             throw new \Exception("User is not initialized.");
         }
+
         $issueModel = new Issue();
         $issues = $issueModel->find(["owner_id = ? AND deleted_date IS NULL AND closed_date IS NULL", $this->id]);
         foreach ($issues as $issue) {
             $issue->owner_id = $userId;
             $issue->save();
         }
+
         return count($issues);
     }
 

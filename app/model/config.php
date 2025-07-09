@@ -12,6 +12,7 @@ namespace Model;
 class Config extends \Model
 {
     protected $_table_name = "config";
+
     protected static $requiredFields = ['attribute', 'value'];
 
     /**
@@ -28,6 +29,7 @@ class Config extends \Model
             if ($item["attribute"] == 'session_lifetime') {
                 $f3->set('JAR.expire', $item['value'] + time());
             }
+
             $f3->set($item["attribute"], $item["value"]);
         }
 
@@ -35,6 +37,7 @@ class Config extends \Model
         if (!in_array("site.theme", $foundAttributes)) {
             self::setVal('site.theme', 'css/bootstrap-phproject.css');
         }
+
         if (!in_array("site.name", $foundAttributes)) {
             self::importAll();
         }
@@ -57,6 +60,7 @@ class Config extends \Model
             if (str_starts_with($key, "db.")) {
                 continue;
             }
+
             $conf = new Config();
             $conf->attribute = $key;
             $conf->value = $val;
@@ -83,8 +87,8 @@ class Config extends \Model
         $root = $f3->get("ROOT") . $f3->get("BASE");
         $ini = parse_ini_file($root . "/config.ini");
         $data = "<?php\nreturn " . var_export($ini, true) . ";\n";
-        file_put_contents("$root/config.php", $data);
-        unlink("$root/config.ini");
+        file_put_contents("{$root}/config.php", $data);
+        unlink("{$root}/config.ini");
     }
 
     /**
@@ -95,6 +99,7 @@ class Config extends \Model
     {
         $f3 = \Base::instance();
         $f3->set($key, $value);
+
         $item = new static();
         $item->load(['attribute = ?', $key]);
         $item->attribute = $key;

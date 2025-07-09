@@ -14,15 +14,16 @@ class Update extends \Prefab
         $f3 = \Base::instance();
 
         // Generate human readable values
-        $func = $f3->camelcase("convert_$field");
+        $func = $f3->camelcase("convert_{$field}");
         if (is_callable([$this, $func])) {
-            if ($old_val !== null && $old_val !== '') {
+            if ($old_val !== '') {
                 $old_val = call_user_func_array(
                     [$this, $func],
                     [$old_val]
                 );
             }
-            if ($new_val !== null && $new_val !== '') {
+
+            if ($new_val !== '') {
                 $new_val = call_user_func_array(
                     [$this, $func],
                     [$new_val]
@@ -55,6 +56,7 @@ class Update extends \Prefab
             $user->load($id);
             $this->cache['user.' . $id] = $user;
         }
+
         return $user->name;
     }
 
@@ -86,6 +88,7 @@ class Update extends \Prefab
             $status->load($id);
             $this->cache['status.' . $id] = $status;
         }
+
         return $status->name;
     }
 
@@ -101,6 +104,7 @@ class Update extends \Prefab
             $priority->load(["value = ?", $value]);
             $this->cache['priority.' . $value] = $priority;
         }
+
         return $priority->name;
     }
 
@@ -116,6 +120,7 @@ class Update extends \Prefab
             $issue->load($id);
             $this->cache['issue.' . $id] = $issue;
         }
+
         return $issue->name;
     }
 
@@ -139,6 +144,7 @@ class Update extends \Prefab
             $sprint->load($id);
             $this->cache['sprint.' . $id] = $sprint;
         }
+
         return $sprint->name . " - " .
                 date('n/j', strtotime((string) $sprint->start_date)) . "-" .
                 date('n/j', strtotime((string) $sprint->end_date));
@@ -156,6 +162,7 @@ class Update extends \Prefab
             $type->load($id);
             $this->cache['type.' . $id] = $type;
         }
+
         return $type->name;
     }
 

@@ -17,9 +17,9 @@ class Security extends \Prefab
                 "salt" => $salt,
                 "hash" => sha1($salt . sha1($string)),
             ];
-        } else {
-            return sha1($salt . sha1($string));
         }
+
+        return sha1($salt . sha1($string));
     }
 
     /**
@@ -48,7 +48,8 @@ class Security extends \Prefab
         if (!in_array($size, $allSizes)) {
             throw new \Exception("Hash size must be one of: " . implode(", ", $allSizes));
         }
-        return hash("sha$size", random_bytes(512), false);
+
+        return hash("sha{$size}", random_bytes(512), false);
     }
 
     /**
@@ -90,6 +91,7 @@ class Security extends \Prefab
             foreach (explode(";", $update_db) as $stmt) {
                 $db->exec($stmt);
             }
+
             \Cache::instance()->reset();
             $f3->set("success", " Database updated to version: {$version}");
         } else {
@@ -107,6 +109,7 @@ class Security extends \Prefab
             $token = $this->salt_sha2();
             $f3->set('COOKIE.XSRF-TOKEN', $token);
         }
+
         $f3->set('csrf_token', $token);
     }
 
@@ -121,6 +124,7 @@ class Security extends \Prefab
         if (!$requestToken) {
             $requestToken = $f3->get('HEADERS.X-Xsrf-Token');
         }
+
         if (!$cookieToken || !$requestToken || !hash_equals($cookieToken, $requestToken)) {
             $f3->error(400, 'Invalid CSRF token');
             exit;

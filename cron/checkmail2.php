@@ -16,7 +16,7 @@ if ($inbox === false) {
 }
 
 $emails = imap_search($inbox, 'ALL UNSEEN');
-if (!$emails) {
+if ($emails === [] || $emails === false) {
     return;
 }
 
@@ -45,7 +45,7 @@ foreach ($emails as $msg_number) {
     if (!empty($structure->parts)) {
         foreach ($structure->parts as $part_number => $part) {
             // Handle plaintext
-            if ($part->type === 0 && !trim($text)) {
+            if ($part->type === 0 && in_array(trim($text), ['', '0'], true)) {
                 $text = imap_fetchbody($inbox, $msg_number, $part_number + 1);
 
                 // Decode body
@@ -62,7 +62,7 @@ foreach ($emails as $msg_number) {
             }
 
             // Handle multipart
-            elseif ($part->type == 1 && !trim($text) && !empty($part->parts)) {
+            elseif ($part->type == 1 && in_array(trim($text), ['', '0'], true) && !empty($part->parts)) {
                 foreach ($part->parts as $multipart_number => $multipart) {
                     $text = imap_fetchbody($inbox, $msg_number, ($part_number + 1) . '.' . $multipart_number);
 
@@ -111,7 +111,15 @@ foreach ($emails as $msg_number) {
         }
     }
 
-    if (!$text) {
+    if ($text === '') {
+        continue;
+    }
+
+    if ($text === '0') {
+        continue;
+    }
+
+    if ($text === false) {
         continue;
     }
 
@@ -120,6 +128,7 @@ foreach ($emails as $msg_number) {
     if (!is_array($truncate)) {
         $truncate = $f3->split($truncate);
     }
+
     foreach ($truncate as $truncator) {
         $parts = explode($truncator, $text);
         $text = $parts[0];
@@ -157,6 +166,7 @@ foreach ($emails as $msg_number) {
     if (isset($matches[1]) && ($matches[1] !== '' && $matches[1] !== '0')) {
         $issue->load(intval($matches[1]));
     }
+
     if (!$issue->id) {
         $subject = trim(preg_replace("/^((Re|Fwd?):\s)*/i", "", $header->subject));
         $issue->load(['name=? AND deleted_date IS NULL AND closed_date IS NULL', $subject]);
@@ -225,6 +235,7 @@ foreach ($emails as $msg_number) {
         if (!is_dir(dirname(__DIR__) . '/' . $dir)) {
             mkdir(dirname(__DIR__) . '/' . $dir, 0777, true);
         }
+
         file_put_contents(dirname(__DIR__) . '/' . $disk_filename, $data);
 
         $file = \Model\Issue\File::create([

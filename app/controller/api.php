@@ -13,6 +13,7 @@ abstract class Api extends \Controller
             if (!headers_sent()) {
                 header("Content-type: application/json");
             }
+
             $out = [
                 "status" => $f3->get("ERROR.code"),
                 "error" => $f3->get("ERROR.text"),
@@ -20,6 +21,7 @@ abstract class Api extends \Controller
             if ($f3->get("DEBUG") >= 2) {
                 $out["trace"] = strip_tags((string) $f3->get("ERROR.trace"));
             }
+
             echo json_encode($out, JSON_THROW_ON_ERROR);
         });
 
@@ -58,9 +60,9 @@ abstract class Api extends \Controller
             $f3->set("user", $user->cast());
             $f3->set("user_obj", $user);
             return $user->id;
-        } else {
-            $f3->error(401);
-            return false;
         }
+
+        $f3->error(401);
+        return false;
     }
 }

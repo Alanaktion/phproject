@@ -21,6 +21,7 @@ namespace Model\Issue;
 class File extends \Model
 {
     protected $_table_name = "issue_file";
+
     protected static $requiredFields = ["issue_id", "user_id", "filename", "disk_filename"];
 
     /**
@@ -34,6 +35,7 @@ class File extends \Model
             $notification = \Helper\Notification::instance();
             $notification->issue_file($item->issue_id, $item->id);
         }
+
         return $item;
     }
 }

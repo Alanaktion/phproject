@@ -15,6 +15,7 @@ namespace Model\Issue;
 class Comment extends \Model
 {
     protected $_table_name = "issue_comment";
+
     protected static $requiredFields = ["issue_id", "user_id", "text"];
 
     /**
@@ -26,12 +27,14 @@ class Comment extends \Model
         if (empty($data['text'])) {
             throw new \Exception("Comment text cannot be empty.");
         }
+
         /** @var Comment $item */
         $item = parent::create($data);
         if ($notify) {
             $notification = \Helper\Notification::instance();
             $notification->issue_comment($item->issue_id, $item->id);
         }
+
         return $item;
     }
 

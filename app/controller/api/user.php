@@ -34,6 +34,7 @@ class User extends \Controller\Api
             $user = new \Model\User();
             $user->load(["username = ?", $params["username"]]);
         }
+
         if ($user->id) {
             $this->_printJson($this->user_array($user));
         } else {

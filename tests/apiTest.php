@@ -8,9 +8,10 @@ class ApiTest extends TestCase
 {
     /** @var \Model\User */
     protected $user;
+
     protected $configured = false;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $f3 = \Base::instance();
         if ($this->configured) {
@@ -23,6 +24,7 @@ class ApiTest extends TestCase
         if (!$config) {
             return;
         }
+
         $f3->mset($config);
 
         // Load routes

@@ -71,9 +71,10 @@ class Issues extends \Controller\Api
         $db = $f3->get("db.instance");
         foreach ($issue->fields(false) as $i) {
             if (isset($get[$i])) {
-                $filter[] = "`$i` = " . $db->quote($get[$i]);
+                $filter[] = "`{$i}` = " . $db->quote($get[$i]);
             }
         }
+
         $filter_str = $filter !== [] ? implode(' AND ', $filter) : null;
 
         // Build options
@@ -127,15 +128,19 @@ class Issues extends \Controller\Api
             if (!empty($post["subject"])) {
                 $post["name"] = $post["subject"];
             }
+
             if (!empty($post["parent_issue_id"])) {
                 $post["parent_id"] = $post["parent_issue_id"];
             }
+
             if (!empty($post["tracker_id"])) {
                 $post["type_id"] = $post["tracker_id"];
             }
+
             if (!empty($post["assigned_to_id"])) {
                 $post["owner_id"] = $post["assigned_to_id"];
             }
+
             if (!empty($post["fixed_version_id"])) {
                 $post["sprint_id"] = $post["fixed_version_id"];
             }
@@ -145,6 +150,7 @@ class Issues extends \Controller\Api
         if (!empty($post["status_id"])) {
             $post["status"] = $post["status_id"];
         }
+
         if (empty($post["status"])) {
             $post["status"] = 1;
         }
@@ -165,6 +171,7 @@ class Issues extends \Controller\Api
                 return;
             }
         }
+
         if (!empty($post["parent_id"])) {
             $parent = new \Model\Issue();
             $parent->load($post["parent_id"]);
@@ -173,6 +180,7 @@ class Issues extends \Controller\Api
                 return;
             }
         }
+
         if (!empty($post["status"])) {
             $status = new \Model\Issue\Status();
             $status->load($post["status"]);
@@ -181,6 +189,7 @@ class Issues extends \Controller\Api
                 return;
             }
         }
+
         if (!empty($post["priority_id"])) {
             $priority = new \Model\Issue\Priority();
             $priority->load(["value" => $post["priority_id"]]);
@@ -209,9 +218,11 @@ class Issues extends \Controller\Api
         if (!empty($post["description"])) {
             $issue->description = $post["description"];
         }
+
         if (!empty($post["parent_id"])) {
             $issue->parent_id = $post["parent_id"];
         }
+
         if (!empty($post["owner_id"])) {
             $issue->owner_id = $post["owner_id"];
         }
@@ -321,6 +332,7 @@ class Issues extends \Controller\Api
         foreach ($types as $type) {
             $return[] = $type->cast();
         }
+
         $this->_printJson($return);
     }
 
@@ -358,6 +370,7 @@ class Issues extends \Controller\Api
         foreach ($sprints as $sprint) {
             $return[] = $sprint->cast();
         }
+
         $this->_printJson($return);
     }
 
@@ -370,6 +383,7 @@ class Issues extends \Controller\Api
         foreach ($sprints as $sprint) {
             $return[] = $sprint->cast();
         }
+
         $this->_printJson($return);
     }
 }

@@ -5,10 +5,15 @@ namespace Helper;
 class Dashboard extends \Prefab
 {
     protected $_issue;
+
     protected $_ownerIds;
+
     protected $_groupIds;
+
     protected $_groupUserIds;
+
     protected $_projects;
+
     protected $_order = "priority DESC, has_due_date ASC, due_date ASC, created_date DESC";
 
     public $defaultConfig = [
@@ -28,12 +33,14 @@ class Dashboard extends \Prefab
         if ($this->_ownerIds) {
             return $this->_ownerIds;
         }
+
         $f3 = \Base::instance();
         $this->_ownerIds = [$f3->get("user.id")];
         $groups = new \Model\User\Group();
         foreach ($groups->find(["user_id = ?", $f3->get("user.id")]) as $r) {
             $this->_ownerIds[] = $r->group_id;
         }
+
         return $this->_ownerIds;
     }
 
@@ -42,11 +49,13 @@ class Dashboard extends \Prefab
         if ($this->_groupIds !== null) {
             return $this->_groupIds;
         }
+
         $f3 = \Base::instance();
         $groups = new \Model\User\Group();
         foreach ($groups->find(["user_id = ?", $f3->get("user.id")]) as $r) {
             $this->_groupIds[] = $r->group_id;
         }
+
         return $this->_groupIds;
     }
 
@@ -55,11 +64,13 @@ class Dashboard extends \Prefab
         if ($this->_groupUserIds !== null) {
             return $this->_groupUserIds;
         }
+
         $groups = new \Model\User\Group();
         $groupString = implode(",", $this->getGroupIds());
         foreach ($groups->find(["group_id IN (" . $groupString . ")"]) as $r) {
             $this->_groupUserIds[] = $r->user_id;
         }
+
         return $this->_groupUserIds;
     }
 
@@ -72,13 +83,15 @@ class Dashboard extends \Prefab
                 $typeIds[] = $t->id;
             }
         }
+
         if ($typeIds === []) {
             return [];
         }
+
         $ownerString = implode(",", $this->getOwnerIds());
         $typeIdStr = implode(",", $typeIds);
         $this->_projects = $this->getIssue()->find(
-            ["owner_id IN ($ownerString) AND type_id IN ($typeIdStr) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0"],
+            ["owner_id IN ({$ownerString}) AND type_id IN ({$typeIdStr}) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0"],
             ["order" => $this->_order]
         );
         return $this->_projects;
@@ -111,13 +124,15 @@ class Dashboard extends \Prefab
                 $typeIds[] = $t->id;
             }
         }
+
         if ($typeIds === []) {
             return [];
         }
+
         $ownerString = implode(",", $this->getOwnerIds());
         $typeIdStr = implode(",", $typeIds);
         return $this->getIssue()->find(
-            ["owner_id IN ($ownerString) AND type_id IN ($typeIdStr) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0"],
+            ["owner_id IN ({$ownerString}) AND type_id IN ({$typeIdStr}) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0"],
             ["order" => $this->_order]
         );
     }
@@ -126,7 +141,7 @@ class Dashboard extends \Prefab
     {
         $ownerString = implode(",", $this->getOwnerIds());
         return $this->getIssue()->find(
-            "owner_id IN ($ownerString) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0 AND repeat_cycle IS NOT NULL",
+            "owner_id IN ({$ownerString}) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0 AND repeat_cycle IS NOT NULL",
             ["order" => $this->_order]
         );
     }
@@ -147,13 +162,15 @@ class Dashboard extends \Prefab
                 $typeIds[] = $t->id;
             }
         }
+
         if ($typeIds === []) {
             return [];
         }
+
         $ownerString = implode(",", $this->getOwnerIds());
         $typeIdStr = implode(",", $typeIds);
         return $this->getIssue()->find(
-            ["owner_id IN ($ownerString) AND type_id IN ($typeIdStr) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0"],
+            ["owner_id IN ({$ownerString}) AND type_id IN ({$typeIdStr}) AND deleted_date IS NULL AND closed_date IS NULL AND status_closed = 0"],
             ["order" => $this->_order]
         );
     }
@@ -171,7 +188,7 @@ class Dashboard extends \Prefab
 
         $issue = new \Model\Issue();
         $ownerString = implode(",", $this->getOwnerIds());
-        $issues = $issue->find(["owner_id IN ($ownerString) OR author_id = ? AND deleted_date IS NULL", $f3->get("user.id")]);
+        $issues = $issue->find(["owner_id IN ({$ownerString}) OR author_id = ? AND deleted_date IS NULL", $f3->get("user.id")]);
         if (!$issues) {
             return [];
         }
@@ -184,9 +201,10 @@ class Dashboard extends \Prefab
         if ($ids === []) {
             return [];
         }
+
         $issueIds = implode(",", $ids);
         $comment = new \Model\Issue\Comment\Detail();
-        return $comment->find(["issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")], ["order" => "created_date DESC", "limit" => 15]);
+        return $comment->find(["issue_id IN ({$issueIds}) AND user_id != ?", $f3->get("user.id")], ["order" => "created_date DESC", "limit" => 15]);
     }
 
     public function open_comments()
@@ -195,7 +213,7 @@ class Dashboard extends \Prefab
 
         $issue = new \Model\Issue();
         $ownerString = implode(",", $this->getOwnerIds());
-        $issues = $issue->find(["(owner_id IN ($ownerString) OR author_id = ?) AND closed_date IS NULL AND deleted_date IS NULL", $f3->get("user.id")]);
+        $issues = $issue->find(["(owner_id IN ({$ownerString}) OR author_id = ?) AND closed_date IS NULL AND deleted_date IS NULL", $f3->get("user.id")]);
         if (!$issues) {
             return [];
         }
@@ -208,9 +226,10 @@ class Dashboard extends \Prefab
         if ($ids === []) {
             return [];
         }
+
         $issueIds = implode(",", $ids);
         $comment = new \Model\Issue\Comment\Detail();
-        return $comment->find(["issue_id IN ($issueIds) AND user_id != ?", $f3->get("user.id")], ["order" => "created_date DESC", "limit" => 15]);
+        return $comment->find(["issue_id IN ({$issueIds}) AND user_id != ?", $f3->get("user.id")], ["order" => "created_date DESC", "limit" => 15]);
     }
 
     /**
@@ -233,17 +252,20 @@ class Dashboard extends \Prefab
             $issues[] = $iss->cast();
             $assigned_ids[] = $iss->id;
         }
+
         foreach ($issues as $iss) {
             if ($iss["parent_id"] && !in_array($iss["parent_id"], $assigned_ids)) {
                 $missing_ids[] = $iss["parent_id"];
             }
         }
+
         while ($missing_ids !== []) {
             $parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
             foreach ($parents as $iss) {
-                if (($key = array_search($iss->id, $missing_ids, true)) !== false) {
+                if (($key = array_search($iss->id, $missing_ids)) !== false) {
                     unset($missing_ids[$key]);
                 }
+
                 $issues[] = $iss->cast();
                 $assigned_ids[] = $iss->id;
                 if ($iss->parent_id && !in_array($iss->parent_id, $assigned_ids)) {
@@ -297,6 +319,7 @@ class Dashboard extends \Prefab
             if (empty($v['parent_id'])) {
                 continue;
             }
+
             $tree[$v['parent_id']]['children'][] = &$v;
         }
 
@@ -305,6 +328,7 @@ class Dashboard extends \Prefab
             if (empty($v['parent_id'])) {
                 continue;
             }
+
             unset($tree[$k]);
         }
 

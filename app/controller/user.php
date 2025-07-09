@@ -4,7 +4,7 @@ namespace Controller;
 
 class User extends \Controller
 {
-    protected $_userId;
+    protected bool|int $_userId;
 
     private readonly array $_languages;
 
@@ -59,9 +59,11 @@ class User extends \Controller
                 unset($allWidgets[array_search($widget, $allWidgets, true)]);
             }
         }
+
         foreach ($missing as $kl) {
             unset($dashboard[$kl[0]][$kl[1]]);
         }
+
         $f3->set("unused_widgets", $allWidgets);
 
         // Get current sprint if there is one
@@ -97,6 +99,7 @@ class User extends \Controller
                 }
             }
         }
+
         if (!$valid) {
             $widgets = $helper->defaultConfig;
         }
@@ -120,6 +123,7 @@ class User extends \Controller
         foreach (glob("css/bootstrap-*.css") as $file) {
             $themes[] = pathinfo($file, PATHINFO_FILENAME);
         }
+
         \Base::instance()->set("themes", $themes);
         return $themes;
     }
@@ -175,9 +179,9 @@ class User extends \Controller
             }
         } elseif (!empty($post["action"]) && $post["action"] === "options") {
             // Update option values
-            $user->option("disable_mde", isset($post["disable_mde"]) && ($post["disable_mde"] !== '' && $post["disable_mde"] !== '0'));
-            $user->option("disable_due_alerts", isset($post["disable_due_alerts"]) && ($post["disable_due_alerts"] !== '' && $post["disable_due_alerts"] !== '0'));
-            $user->option("disable_self_notifications", isset($post["disable_self_notifications"]) && ($post["disable_self_notifications"] !== '' && $post["disable_self_notifications"] !== '0'));
+            $user->option("disable_mde", !empty($post["disable_mde"]));
+            $user->option("disable_due_alerts", !empty($post["disable_due_alerts"]));
+            $user->option("disable_self_notifications", !empty($post["disable_self_notifications"]));
         } else {
             // Update profile
             if (!empty($post["name"])) {
@@ -185,14 +189,16 @@ class User extends \Controller
             } else {
                 $error = "Please enter your name.";
             }
+
             if (preg_match("/^([\p{L}\.\\-\d]+)@([\p{L}\-\.\d]+)((\.(\p{L})+)+)$/im", $post["email"])) {
                 $user->email = $post["email"];
             } else {
                 $error = $post["email"] . " is not a valid email address.";
             }
-            if (($error === '' || $error === '0') && ctype_xdigit(ltrim($post["task_color"], "#"))) {
+
+            if (!isset($error) && ctype_xdigit(ltrim($post["task_color"], "#"))) {
                 $user->task_color = ltrim($post["task_color"], "#");
-            } elseif ($error === '' || $error === '0') {
+            } elseif (!isset($error)) {
                 $error = $post["task_color"] . " is not a valid color code.";
             }
 
@@ -200,7 +206,7 @@ class User extends \Controller
 
             $user->language = empty($post["language"]) ? null : $post["language"];
 
-            if ($error === '0') {
+            if (!isset($error)) {
                 $f3->set("success", "Profile updated successfully.");
             } else {
                 $f3->set("error", $error);
@@ -244,6 +250,7 @@ class User extends \Controller
         if (!is_dir($f3->get("UPLOADS"))) {
             mkdir($f3->get("UPLOADS"), 0777, true);
         }
+
         $overwrite = true;
         $slug = true;
 
@@ -259,6 +266,7 @@ class User extends \Controller
             $f3->error(415);
             return;
         }
+
         finfo_close($finfo);
 
         $web->receive(
@@ -359,6 +367,7 @@ class User extends \Controller
             if (empty($v['parent_id'])) {
                 continue;
             }
+
             $tree[$v['parent_id']]['children'][] = &$v;
         }
 
@@ -367,6 +376,7 @@ class User extends \Controller
             if (empty($v['parent_id'])) {
                 continue;
             }
+
             unset($tree[$k]);
         }
 

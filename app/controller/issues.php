@@ -4,7 +4,7 @@ namespace Controller;
 
 class Issues extends \Controller
 {
-    protected $_userId;
+    protected bool|int $_userId;
 
     /**
      * Require login on new
@@ -46,13 +46,14 @@ class Issues extends \Controller
                 }
             }
         }
+
         unset($val);
 
         // Build SQL string to use for filtering
         $filter_str = "";
         foreach ($filter as $field => $val) {
             if ($field == "name") {
-                $filter_str .= "`$field` LIKE " . $db->quote("%$val%") . " AND ";
+                $filter_str .= "name LIKE " . $db->quote("%{$val}%") . " AND ";
             } elseif ($field == "status" && $val == "open") {
                 $filter_str .= "status_closed = 0 AND ";
             } elseif ($field == "status" && $val == "closed") {
@@ -72,17 +73,19 @@ class Issues extends \Controller
                     foreach ($list as $obj) {
                         $groupUserArray[] = $obj->user_id;
                     }
-                    $filter_str .= "$field in (" . implode(",", $groupUserArray) . ") AND ";
+
+                    $filter_str .= "{$field} in (" . implode(",", $groupUserArray) . ") AND ";
                 } else {
                     // Just select by user
-                    $filter_str .= "$field = " . $db->quote($val) . " AND ";
+                    $filter_str .= "{$field} = " . $db->quote($val) . " AND ";
                 }
             } elseif ($val === null) {
-                $filter_str .= "`$field` IS NULL AND ";
+                $filter_str .= "`{$field}` IS NULL AND ";
             } else {
-                $filter_str .= "`$field` = " . $db->quote($val) . " AND ";
+                $filter_str .= "`{$field}` = " . $db->quote($val) . " AND ";
             }
         }
+
         unset($val);
         $filter_str .= " deleted_date IS NULL ";
 
@@ -167,6 +170,7 @@ class Issues extends \Controller
         if (empty($args["page"])) {
             $args["page"] = 0;
         }
+
         $issue_page = $issues->paginate($args["page"], 50, $filter_str);
         $f3->set("issues", $issue_page);
 
@@ -176,6 +180,7 @@ class Issues extends \Controller
         if (!empty($orderby)) {
             $filter_get  .= "&orderby=" . $orderby;
         }
+
         if ($issue_page["count"] > 7) {
             $min = $issue_page["pos"] <= 3 ? 0 : $issue_page["pos"] - 3;
             $max = $issue_page["pos"] < $issue_page["count"] - 3 ? $issue_page["pos"] + 3 : $issue_page["count"] - 1;
@@ -183,6 +188,7 @@ class Issues extends \Controller
             $min = 0;
             $max = $issue_page["count"] - 1;
         }
+
         $f3->set("pages", range($min, $max));
         $f3->set("filter_get", $filter_get);
 
@@ -228,6 +234,7 @@ class Issues extends \Controller
                             if (($i == "owner_id" || $i == "sprint_id") && $val == -1) {
                                 $val = null;
                             }
+
                             $issue->$i = $val;
                             if ($i == "status") {
                                 $status = new \Model\Issue\Status();
@@ -264,7 +271,7 @@ class Issues extends \Controller
                     $notify = !empty($post["notify"]);
                     $issue->save($notify);
                 } else {
-                    $f3->error(500, "Failed to update all the issues, starting with: $id.");
+                    $f3->error(500, "Failed to update all the issues, starting with: {$id}.");
                     return;
                 }
             }
@@ -320,6 +327,7 @@ class Issues extends \Controller
             foreach (array_keys($fields) as $field) {
                 $cols[] = $row->get($field);
             }
+
             fputcsv($fh, $cols);
         }
 
@@ -382,6 +390,7 @@ class Issues extends \Controller
             if ($helper->getGroupUserIds()) {
                 $groupUserFilter = " AND id IN (" . implode(",", array_merge($helper->getGroupUserIds(), [$user->id])) . ")";
             }
+
             if ($helper->getGroupIds()) {
                 $groupFilter = " AND id IN (" . implode(",", $helper->getGroupIds()) . ")";
             }
@@ -475,6 +484,7 @@ class Issues extends \Controller
             if ($helper->getGroupUserIds()) {
                 $groupUserFilter = " AND id IN (" . implode(",", array_merge($helper->getGroupUserIds(), [$user->id])) . ")";
             }
+
             if ($helper->getGroupIds()) {
                 $groupFilter = " AND id IN (" . implode(",", $helper->getGroupIds()) . ")";
             }
@@ -618,6 +628,7 @@ class Issues extends \Controller
                 if ($i == 'sprint_id') {
                     $newSprint = empty($val) ? null : $val;
                 }
+
                 if (empty($val)) {
                     $issue->$i = null;
                 } else {
@@ -706,6 +717,7 @@ class Issues extends \Controller
             $issue->author_id = $originalAuthor;
             $issue->save(false);
         }
+
         return $issue;
     }
 
@@ -765,6 +777,7 @@ class Issues extends \Controller
 
         $author = new \Model\User();
         $author->load($issue->author_id);
+
         $owner = new \Model\User();
         if ($issue->owner_id) {
             $owner->load($issue->owner_id);
@@ -781,6 +794,7 @@ class Issues extends \Controller
 
         $watching = new \Model\Issue\Watcher();
         $watching->load(["issue_id = ? AND user_id = ?", $issue->id, $this->_userId]);
+
         $f3->set("watching", (bool) $watching->id);
 
         $f3->set("issue", $issue);
@@ -948,6 +962,7 @@ class Issues extends \Controller
         } else {
             $searchParams = ["parent_id = ? AND deleted_date IS NULL", $issue->id];
         }
+
         $orderParams = ["order" => "status_closed, priority DESC, due_date"];
         $f3->set("issues", $issues->find($searchParams, $orderParams));
 
@@ -1020,6 +1035,7 @@ class Issues extends \Controller
         $this->validateCsrf();
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
+
         $user = $f3->get("user_obj");
         if ($user->role == "admin" || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id) {
             $issue->delete();
@@ -1041,6 +1057,7 @@ class Issues extends \Controller
         $this->validateCsrf();
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
+
         $user = $f3->get("user_obj");
         if ($user->role == "admin" || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id) {
             $issue->restore();
@@ -1071,6 +1088,7 @@ class Issues extends \Controller
             } else {
                 $f3->reroute("/issues/" . $post["issue_id"]);
             }
+
             return;
         }
 
@@ -1091,9 +1109,9 @@ class Issues extends \Controller
                 "user_email_md5" => md5(strtolower((string) $f3->get('user.email'))),
             ]);
             return;
-        } else {
-            $f3->reroute("/issues/" . $comment->issue_id);
         }
+
+        $f3->reroute("/issues/" . $comment->issue_id);
     }
 
     /**
@@ -1157,6 +1175,7 @@ class Issues extends \Controller
         if (!$q) {
             return ["deleted_date IS NULL"];
         }
+
         $return = [];
 
         // Build WHERE string
@@ -1169,14 +1188,17 @@ class Issues extends \Controller
                 $keywordParts[] = "CONCAT(name, description, author_name, owner_name,
                     author_username, owner_username) LIKE ?";
             }
-            $return[] = "%$w%";
+
+            $return[] = "%{$w}%";
         }
+
         if (is_numeric($q)) {
             $where = "id = ? OR ";
             array_unshift($return, $q);
         } else {
             $where = "";
         }
+
         $where .= "(" . implode(" AND ", $keywordParts) . ") AND deleted_date IS NULL";
 
         // Add WHERE string to return array
@@ -1227,6 +1249,7 @@ class Issues extends \Controller
             $min = 0;
             $max = $issue_page["count"] - 1;
         }
+
         $f3->set("pages", range($min, $max));
 
         $f3->set("show_filters", false);
@@ -1258,6 +1281,7 @@ class Issues extends \Controller
         if (!is_dir($f3->get("UPLOADS"))) {
             mkdir($f3->get("UPLOADS"), 0777, true);
         }
+
         $overwrite = false; // set to true to overwrite an existing file; Default: false
         $slug = true; // rename file to filesystem-friendly version
 
@@ -1295,6 +1319,7 @@ class Issues extends \Controller
                 $newfile->digest = md5_file($file['tmp_name']);
                 $newfile->created_date = date("Y-m-d H:i:s");
                 $newfile->save();
+
                 $f3->set('file_id', $newfile->id);
 
                 return true; // moves file from php tmp dir to upload dir

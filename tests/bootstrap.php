@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__DIR__));
-require_once("vendor/autoload.php");
+require_once(dirname(__DIR__) . "/vendor/autoload.php");
 
 $f3 = \Base::instance();
 $f3->mset([

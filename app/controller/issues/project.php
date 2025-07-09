@@ -4,7 +4,7 @@ namespace Controller\Issues;
 
 class Project extends \Controller
 {
-    protected $_userId;
+    protected bool|int $_userId;
 
     /**
      * Require login on new
@@ -39,10 +39,11 @@ class Project extends \Controller
         $parents = [$project->id];
         do {
             $pStr = implode(',', array_map('intval', $parents));
-            $level = $model->find(["parent_id IN ($pStr) AND deleted_date IS NULL"]);
+            $level = $model->find(["parent_id IN ({$pStr}) AND deleted_date IS NULL"]);
             if (!$level) {
                 break;
             }
+
             $parents = [];
             foreach ($level as $row) {
                 $parentMap[$row->parent_id][] = $row;
@@ -103,7 +104,7 @@ class Project extends \Controller
         $issueIds = $project->descendantIds();
         $idStr = implode(',', $issueIds);
 
-        $f3->set("files", $files->find("issue_id IN ($idStr) AND deleted_date IS NULL"));
+        $f3->set("files", $files->find("issue_id IN ({$idStr}) AND deleted_date IS NULL"));
         $this->_render('issues/project/files.html');
     }
 }

@@ -14,5 +14,6 @@ foreach ($users as $u) {
     if ($u->option('disable_due_alerts')) {
         continue;
     }
+
     $u->sendDueAlert();
 }

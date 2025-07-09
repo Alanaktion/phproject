@@ -4,7 +4,7 @@ namespace Controller;
 
 class Backlog extends \Controller
 {
-    protected $_userId;
+    protected bool|int $_userId;
 
     public function __construct()
     {
@@ -28,6 +28,7 @@ class Backlog extends \Controller
         foreach ($projectTypes as $type) {
             $typeIds[] = $type->id;
         }
+
         $typeStr = implode(",", $typeIds);
 
         $issue = new \Model\Issue\Detail();
@@ -35,7 +36,7 @@ class Backlog extends \Controller
         $sprint_details = [];
         foreach ($sprints as $sprint) {
             $projects = $issue->find(
-                ["deleted_date IS NULL AND sprint_id = ? AND type_id IN ($typeStr)", $sprint->id],
+                ["deleted_date IS NULL AND sprint_id = ? AND type_id IN ({$typeStr})", $sprint->id],
                 ['order' => 'priority DESC, due_date']
             );
 
@@ -76,12 +77,12 @@ class Backlog extends \Controller
         if ($large_project_ids !== []) {
             $large_project_ids = implode(",", array_unique($large_project_ids));
             $unset_projects = $issue->find(
-                ["deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ($typeStr) AND status_closed = '0' AND id NOT IN ({$large_project_ids})"],
+                ["deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ({$typeStr}) AND status_closed = '0' AND id NOT IN ({$large_project_ids})"],
                 ['order' => 'priority DESC, due_date']
             );
         } else {
             $unset_projects = $issue->find(
-                ["deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ($typeStr) AND status_closed = '0'"],
+                ["deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ({$typeStr}) AND status_closed = '0'"],
                 ['order' => 'priority DESC, due_date']
             );
         }
@@ -90,6 +91,7 @@ class Backlog extends \Controller
         $backlog = [];
         $sortOrder = new \Model\Issue\Backlog();
         $sortOrder->load(["sprint_id IS NULL"]);
+
         $sortArray = [];
         if ($sortOrder->id) {
             $sortArray = json_decode($sortOrder->issues, null, 512, JSON_THROW_ON_ERROR) ?? [];
@@ -176,6 +178,7 @@ class Backlog extends \Controller
         } else {
             $backlog->load(["sprint_id IS NULL"]);
         }
+
         $backlog->issues = $f3->get("POST.items");
         $backlog->save();
     }
@@ -196,12 +199,13 @@ class Backlog extends \Controller
         foreach ($projectTypes as $type) {
             $typeIds[] = $type->id;
         }
+
         $typeStr = implode(",", $typeIds);
 
         $issue = new \Model\Issue\Detail();
         $sprint_details = [];
         foreach ($sprints as $sprint) {
-            $projects = $issue->find(["deleted_date IS NULL AND sprint_id = ? AND type_id IN ($typeStr)", $sprint->id]);
+            $projects = $issue->find(["deleted_date IS NULL AND sprint_id = ? AND type_id IN ({$typeStr})", $sprint->id]);
             $sprint_details[] = $sprint->cast() + ["projects" => $projects];
         }
 

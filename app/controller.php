@@ -11,31 +11,33 @@ abstract class Controller
         if ($id = $f3->get("user.id")) {
             if ($f3->get("user.rank") >= $rank) {
                 return $id;
-            } else {
-                $f3->error(403);
-                return false;
             }
-        } else {
-            if ($f3->get("site.demo") && is_numeric($f3->get("site.demo"))) {
-                $user = new \Model\User();
-                $user->load($f3->get("site.demo"));
-                if ($user->id) {
-                    $session = new \Model\Session($user->id);
-                    $session->setCurrent();
-                    $f3->set("user", $user->cast());
-                    $f3->set("user_obj", $user);
-                    return false;
-                } else {
-                    $f3->set("error", "Auto-login failed, demo user was not found.");
-                }
-            }
-            if ($_GET === []) {
-                $f3->reroute("/login?to=" . urlencode((string) $f3->get("PATH")));
-            } else {
-                $f3->reroute("/login?to=" . urlencode((string) $f3->get("PATH")) . urlencode("?" . http_build_query($_GET)));
-            }
+
+            $f3->error(403);
             return false;
         }
+
+        if ($f3->get("site.demo") && is_numeric($f3->get("site.demo"))) {
+            $user = new \Model\User();
+            $user->load($f3->get("site.demo"));
+            if ($user->id) {
+                $session = new \Model\Session($user->id);
+                $session->setCurrent();
+                $f3->set("user", $user->cast());
+                $f3->set("user_obj", $user);
+                return false;
+            }
+
+            $f3->set("error", "Auto-login failed, demo user was not found.");
+        }
+
+        if ($_GET === []) {
+            $f3->reroute("/login?to=" . urlencode((string) $f3->get("PATH")));
+        } else {
+            $f3->reroute("/login?to=" . urlencode((string) $f3->get("PATH")) . urlencode("?" . http_build_query($_GET)));
+        }
+
+        return false;
     }
 
     /**
@@ -48,10 +50,10 @@ abstract class Controller
         $f3 = \Base::instance();
         if ($f3->get("user.role") == "admin" && $f3->get("user.rank") >= $rank) {
             return $id;
-        } else {
-            $f3->error(403);
-            return false;
         }
+
+        $f3->error(403);
+        return false;
     }
 
     /**
@@ -71,6 +73,7 @@ abstract class Controller
         if (!headers_sent()) {
             header("Content-type: application/json");
         }
+
         echo json_encode($object, JSON_THROW_ON_ERROR);
     }
 

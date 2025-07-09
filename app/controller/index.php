@@ -16,7 +16,9 @@ class Index extends \Controller
         if ($f3->get("user.id")) {
             $user_controller = new \Controller\User();
             return $user_controller->dashboard($f3);
-        } elseif ($f3->get("site.public")) {
+        }
+
+        if ($f3->get("site.public")) {
             $this->_render("index/index.html");
         } else {
             if ($f3->get("site.demo") && is_numeric($f3->get("site.demo"))) {
@@ -29,12 +31,14 @@ class Index extends \Controller
                     $f3->set("user_obj", $user);
                     $user_controller = new \Controller\User();
                     return $user_controller->dashboard($f3);
-                } else {
-                    $f3->set("error", "Auto-login failed, demo user was not found.");
                 }
+
+                $f3->set("error", "Auto-login failed, demo user was not found.");
             }
+
             $f3->reroute("/login");
         }
+
         return null;
     }
 
@@ -57,6 +61,7 @@ class Index extends \Controller
             if ($f3->get("GET.to")) {
                 $f3->set("to", $f3->get("GET.to"));
             }
+
             $this->_render("index/login.html");
         }
     }
@@ -102,6 +107,7 @@ class Index extends \Controller
             if ($f3->get("POST.to")) {
                 $f3->set("to", $f3->get("POST.to"));
             }
+
             $f3->set("login.error", "Invalid login information, try again.");
             $this->_render("index/login.html");
         }
@@ -132,6 +138,7 @@ class Index extends \Controller
             $user->reset();
             $errors[] = "A user already exists with this email address.";
         }
+
         $user->load(["username=?", $f3->get("POST.register-username")]);
         if ($user->id) {
             $user->reset();
@@ -142,12 +149,15 @@ class Index extends \Controller
         if (!$f3->get("POST.register-name")) {
             $errors[] = "Name is required";
         }
-        if (!preg_match("/^[0-9a-z]{4,}$/i", (string) $f3->get("POST.register-username"))) {
+
+        if (preg_match("/^[0-9a-z]{4,}$/i", (string) $f3->get("POST.register-username")) === false) {
             $errors[] = "Usernames must be at least 4 characters and can only contain letters and numbers.";
         }
+
         if (!filter_var($f3->get("POST.register-email"), FILTER_VALIDATE_EMAIL)) {
             $errors[] = "A valid email address is required.";
         }
+
         if (strlen((string) $f3->get("POST.register-password")) < 6) {
             $errors[] = "Password must be at least 6 characters.";
         }
@@ -207,6 +217,7 @@ class Index extends \Controller
                     $f3->set("reset.error", "No user exists with the email address " . $f3->get("POST.email") . ".");
                 }
             }
+
             unset($user);
             $this->_render("index/reset.html");
         }
@@ -257,6 +268,7 @@ class Index extends \Controller
                 return;
             }
         }
+
         $f3->set("resetuser", $user);
         $this->_render("index/reset_complete.html");
     }
@@ -288,6 +300,7 @@ class Index extends \Controller
             $f3->reroute("/");
             return;
         }
+
         $this->_render("index/reset_forced.html");
     }
 
@@ -302,6 +315,7 @@ class Index extends \Controller
         $session = new \Model\Session();
         $session->loadCurrent();
         $session->delete();
+
         $f3->reroute("/");
     }
 

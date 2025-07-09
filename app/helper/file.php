@@ -47,6 +47,7 @@ class File extends \Image
                 return $name;
             }
         }
+
         return "_blank";
     }
 }

@@ -45,6 +45,7 @@ if ($emails) {
         if (is_string($truncate)) {
             $truncate = $f3->split($truncate);
         }
+
         foreach ($truncate as $truncator) {
             $parts = explode($truncator, $message);
             $message = $parts[0];

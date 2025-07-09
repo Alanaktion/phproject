@@ -6,7 +6,7 @@ use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 class Admin extends \Controller
 {
-    protected $_userId;
+    protected bool|int $_userId;
 
     public function __construct()
     {
@@ -81,7 +81,7 @@ class Admin extends \Controller
         }
 
         $latest = ltrim((string) $release->tag_name, 'v');
-        if (!version_compare($latest, PHPROJECT_VERSION, '>')) {
+        if (version_compare($latest, PHPROJECT_VERSION, '>') === false) {
             $this->_printJson(['update_available' => false]);
             return;
         }
@@ -90,6 +90,7 @@ class Admin extends \Controller
             header('Content-Type: application/json');
             header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 3600 * 12) . ' GMT');
         }
+
         $return = [
             'update_available' => true,
             'name' => $release->tag_name,
@@ -101,6 +102,7 @@ class Admin extends \Controller
             $md = new GithubFlavoredMarkdownConverter();
             $return['description_html'] = $md->convert($release->body);
         }
+
         echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
@@ -131,7 +133,7 @@ class Admin extends \Controller
         $value = $f3->get("POST.value");
         $response = ["error" => null];
 
-        if (!$attribute) {
+        if ($attribute === '') {
             $response["error"] = "No attribute specified.";
             $this->_printJson($response);
             return;
@@ -149,6 +151,7 @@ class Admin extends \Controller
                 } else {
                     $response["error"] = "Site name cannot be empty.";
                 }
+
                 break;
             case "site-timezone":
                 if (in_array($value, timezone_identifiers_list())) {
@@ -157,13 +160,14 @@ class Admin extends \Controller
                 } else {
                     $response["error"] = "Timezone is invalid.";
                 }
+
                 break;
             default:
                 $config->value = $value;
                 $config->save();
         }
 
-        if (!$response["error"]) {
+        if ($response["error"] === null) {
             $response["attribute"] = $attribute;
             $response["value"] = $value;
         }
@@ -244,6 +248,7 @@ class Admin extends \Controller
                 $f3->error(403, "You are not authorized to edit this user.");
                 return;
             }
+
             $f3->set("this_user", $user);
             $this->_render("admin/users/edit.html");
         } else {
@@ -278,6 +283,7 @@ class Admin extends \Controller
             if ($user->id) {
                 throw new \Exception("Another user already exists with this username");
             }
+
             $user->load(["email = ? AND id != ?", $f3->get("POST.email"), $user_id]);
             if ($user->id !== 0) {
                 throw new \Exception("Another user already exists with this email address");
@@ -305,6 +311,7 @@ class Admin extends \Controller
                 if ($f3->get("POST.password") != $f3->get("POST.password_confirm")) {
                     throw new \Exception("Passwords do not match");
                 }
+
                 $min = $f3->get("security.min_pass_len");
                 if (strlen((string) $f3->get("POST.password")) < $min) {
                     throw new \Exception("Passwords must be at least {$min} characters");
@@ -323,12 +330,15 @@ class Admin extends \Controller
             if (!$f3->get("POST.name")) {
                 throw new \Exception("Please enter a name.");
             }
-            if (!preg_match("/#?[0-9a-f]{3,6}/i", (string) $f3->get("POST.task_color"))) {
+
+            if (preg_match("/#?[0-9a-f]{3,6}/i", (string) $f3->get("POST.task_color")) === false) {
                 throw new \Exception("Please enter a valid hex color.");
             }
-            if (!preg_match("/[0-9a-z_-]+/i", (string) $f3->get("POST.username"))) {
+
+            if (preg_match("/[0-9a-z_-]+/i", (string) $f3->get("POST.username")) === false) {
                 throw new \Exception("Usernames can only contain letters, numbers, hyphens, and underscores.");
             }
+
             if (!filter_var($f3->get("POST.email"), FILTER_VALIDATE_EMAIL)) {
                 throw new \Exception("Please enter a valid email address");
             }
@@ -341,6 +351,7 @@ class Admin extends \Controller
             if ($user->id != $f3->get("user.id")) {
                 $user->rank = $f3->get("POST.rank");
             }
+
             $user->role = $user->rank < \Model\User::RANK_ADMIN ? 'user' : 'admin';
             $user->task_color = ltrim((string) $f3->get("POST.task_color"), "#");
 
@@ -435,6 +446,7 @@ class Admin extends \Controller
                 "count" => $count,
             ];
         }
+
         $f3->set("groups", $group_array);
 
         $this->_render("admin/groups.html");
@@ -453,6 +465,7 @@ class Admin extends \Controller
         $group->task_color = sprintf("%02X%02X%02X", random_int(0, 0xFF), random_int(0, 0xFF), random_int(0, 0xFF));
         $group->created_date = $this->now();
         $group->save();
+
         $f3->reroute("/admin/groups");
     }
 
@@ -466,6 +479,7 @@ class Admin extends \Controller
 
         $group = new \Model\User();
         $group->load(["id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]]);
+
         $f3->set("group", $group);
 
         $members = new \Model\Custom("user_group_user");
@@ -526,6 +540,7 @@ class Admin extends \Controller
                         // user already in group
                     }
                 }
+
                 break;
             case "remove_member":
                 $user_group = new \Model\User\Group();
@@ -608,7 +623,7 @@ class Admin extends \Controller
             $start = strtotime((string) $post["start_date"]);
             $end = strtotime((string) $post["end_date"]);
 
-            if (!$start || !$end) {
+            if ($start === false || $end === false) {
                 $f3->set("error", "Please enter a valid start and end date");
                 $this->_render("admin/sprints/new.html");
                 return;
@@ -671,6 +686,7 @@ class Admin extends \Controller
             $f3->reroute("/admin/sprints");
             return;
         }
+
         $f3->set("sprint", $sprint);
 
         $this->_render("admin/sprints/edit.html");

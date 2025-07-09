@@ -22,7 +22,7 @@ class Notification extends \Prefab
         $str_index = 0;
 
         while ($length--) {
-            if ((($c = $str[$str_index++]) == "\015") && ($str[$str_index] == "\012") && $length > 0) {
+            if (($c = $str[$str_index++] === "\015") && ($str[$str_index] == "\012") && $length > 0) {
                 $ret .= "\015";
                 $ret .= $str[$str_index++];
                 $length--;
@@ -31,8 +31,8 @@ class Notification extends \Prefab
                 ctype_cntrl($c)
                 || (ord($c) == 0x7f)
                 || (ord($c) & 0x80)
-                || ($c == '=')
-                || (($c == ' ') && ($str[$str_index] == "\015"))
+                || ($c === '=')
+                || (($c === ' ') && ($str[$str_index] == "\015"))
             ) {
                 if (($lp += 3) > self::QPRINT_MAXL) {
                     $ret .= '=';
@@ -40,6 +40,7 @@ class Notification extends \Prefab
                     $ret .= "\012";
                     $lp = 3;
                 }
+
                 $ret .= '=';
                 $ret .= $hex[ord($c) >> 4];
                 $ret .= $hex[ord($c) & 0xf];
@@ -50,8 +51,9 @@ class Notification extends \Prefab
                     $ret .= "\012";
                     $lp = 1;
                 }
+
                 $ret .= $c;
-                if ($lp == 1 && $c == '.') {
+                if ($lp == 1 && $c === '.') {
                     $ret = substr($ret, 0, strlen($ret) - 1);
                     $ret .= '=2E';
                     $lp++;
@@ -76,10 +78,10 @@ class Notification extends \Prefab
         $headers .= 'From: ' . $f3->get("mail.from") . "\r\n";
 
         // Build multipart message if necessary
-        if ($text) {
+        if ($text !== null && $text !== '') {
             // Generate message breaking hash
             $hash = md5(date("r"));
-            $headers .= "Content-Type: multipart/alternative; boundary=\"$hash\"\r\n";
+            $headers .= "Content-Type: multipart/alternative; boundary=\"{$hash}\"\r\n";
 
             // Normalize line endings
             $body = str_replace("\r\n", "\n", $body);
@@ -92,15 +94,15 @@ class Notification extends \Prefab
             $text = $this->quotePrintEncode($text);
 
             // Build final message
-            $msg = "--$hash\r\n";
+            $msg = "--{$hash}\r\n";
             $msg .= "Content-Type: text/plain; charset=utf-8\r\n";
             $msg .= "Content-Transfer-Encoding: quoted-printable\r\n";
             $msg .= "\r\n" . $text . "\r\n";
-            $msg .= "--$hash\r\n";
+            $msg .= "--{$hash}\r\n";
             $msg .= "Content-Type: text/html; charset=utf-8\r\n";
             $msg .= "Content-Transfer-Encoding: quoted-printable\r\n";
             $msg .= "\r\n" . $body . "\r\n";
-            $msg .= "--$hash--\r\n";
+            $msg .= "--{$hash}--\r\n";
 
             $body = $msg;
         } else {
@@ -207,6 +209,7 @@ class Notification extends \Prefab
                 $log->write("Sent update notification to: " . $recipient);
             }
         }
+
         return null;
     }
 
@@ -342,12 +345,14 @@ class Notification extends \Prefab
             if ($overdue !== []) {
                 $preview .= ", " . count($overdue) . " overdue issues";
             }
+
             $f3->set("previewText", $preview);
             $subject = "Due Today - " . $f3->get("site.name");
             $text = $this->_render("notification/user_due_issues.txt");
             $body = $this->_render("notification/user_due_issues.html");
             return $this->utf8mail($user->email, $subject, $body, $text);
         }
+
         return false;
     }
 

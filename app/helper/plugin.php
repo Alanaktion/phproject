@@ -5,8 +5,11 @@ namespace Helper;
 class Plugin extends \Prefab
 {
     protected $_hooks   = [];
+
     protected $_nav     = [];
+
     protected $_jsCode  = [];
+
     protected $_jsFiles = [];
 
     /**
@@ -37,6 +40,7 @@ class Plugin extends \Prefab
         foreach ($this->_hooks[$hook] as $cb) {
             $data = $cb($data);
         }
+
         return $data;
     }
 
@@ -91,6 +95,7 @@ class Plugin extends \Prefab
                 $return[] = $item + ["active" => ($item["match"] && $path && preg_match($item["match"], $path))];
             }
         }
+
         return $return;
     }
 
@@ -123,6 +128,7 @@ class Plugin extends \Prefab
                 $return[] = $item['file'];
             }
         }
+
         return $return;
     }
 
@@ -141,6 +147,7 @@ class Plugin extends \Prefab
                 $return[] = $item['code'];
             }
         }
+
         return $return;
     }
 }

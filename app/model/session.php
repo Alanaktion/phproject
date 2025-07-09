@@ -14,6 +14,7 @@ namespace Model;
 class Session extends \Model
 {
     protected $_table_name = "session";
+
     public const COOKIE_NAME = "phproj_token";
 
     /**
@@ -60,12 +61,14 @@ class Session extends \Model
                     $log->write("Updating expiration: " . json_encode($this->cast(), JSON_THROW_ON_ERROR)
                             . "; new date: " . date("Y-m-d H:i:s"));
                 }
+
                 $this->created = date("Y-m-d H:i:s");
                 $this->ip = $f3->get("IP");
                 $this->save();
                 $this->setCurrent();
             }
         }
+
         return $this;
     }
 

@@ -3,6 +3,7 @@
 abstract class Model extends \DB\SQL\Mapper
 {
     protected $fields = [];
+
     protected static $requiredFields = [];
 
     public function __construct($table_name = null)
@@ -32,7 +33,7 @@ abstract class Model extends \DB\SQL\Mapper
         // Check required fields
         foreach (self::$requiredFields as $field) {
             if (!isset($data[$field])) {
-                throw new Exception("Required field $field not specified.");
+                throw new Exception("Required field {$field} not specified.");
             }
         }
 
@@ -42,6 +43,7 @@ abstract class Model extends \DB\SQL\Mapper
                 if (empty($val) && ($val != 0 || $val === '')) {
                     $val = null;
                 }
+
                 $item->set($key, $val);
             }
         }
@@ -90,9 +92,9 @@ abstract class Model extends \DB\SQL\Mapper
         if (array_key_exists("deleted_date", $this->fields)) {
             $this->deleted_date = date("Y-m-d H:i:s");
             return $this->save();
-        } else {
-            return $this->erase();
         }
+
+        return $this->erase();
     }
 
     /**
@@ -105,9 +107,12 @@ abstract class Model extends \DB\SQL\Mapper
     {
         if (is_numeric($filter)) {
             return parent::load(["id = ?", $filter], $options, $ttl);
-        } elseif (is_array($filter)) {
+        }
+
+        if (is_array($filter)) {
             return parent::load($filter, $options, $ttl);
         }
+
         throw new Exception("\$filter must be either int or array.");
     }
 
@@ -119,8 +124,8 @@ abstract class Model extends \DB\SQL\Mapper
     {
         $range = [];
 
-        $from = strtotime((string) $dateFrom);
-        $to = strtotime((string) $dateTo);
+        $from = strtotime($dateFrom);
+        $to = strtotime($dateTo);
 
         if ($to >= $from) {
             $range[] = date('Y-m-d', $from); // first entry
@@ -142,6 +147,7 @@ abstract class Model extends \DB\SQL\Mapper
         if (!$this->query) {
             return null;
         }
+
         $prev_fields = $this->query[count($this->query) - 1]->fields;
         return array_key_exists($key, $prev_fields) ? $prev_fields[$key]["value"] : null;
     }
