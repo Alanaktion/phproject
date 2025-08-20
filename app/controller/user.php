@@ -267,8 +267,6 @@ class User extends \Controller
             return;
         }
 
-        finfo_close($finfo);
-
         $web->receive(
             function (array $file) use ($f3, $user): bool {
                 if ($file['size'] > $f3->get("files.maxsize")) {
