@@ -48,7 +48,7 @@ class Issue extends \Model
         }
 
         if (!empty($data["due_date"])) {
-            if (in_array(preg_match("/\\d{4}(-\\d{2}){2}/", (string) $data["due_date"]), [0, false], true)) {
+            if (preg_match("/\\d{4}(-\\d{2}){2}/", (string) $data["due_date"]) === false) {
                 $data["due_date"] = date("Y-m-d", strtotime((string) $data["due_date"]));
             }
 

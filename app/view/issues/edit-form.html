@@ -141,19 +141,19 @@
             <div class="form-group">
                 <label class="col-md-2 control-label label-sm">{{ @dict.cols.total_spent_hours }}</label>
                 <div class="col-md-6">
-                    <input class="form-control input-sm" type="text" name="hours_spent" autocomplete="off" value="{{ @issue.hours_spent }}">
+                    <input class="form-control input-sm" type="text" name="hours_spent" autocomplete="off" value="{{ @issue.hours_spent | esc }}">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_total }}</label>
                 <div class="col-md-6">
-                    <input class="form-control input-sm" type="text" name="hours_total" autocomplete="off" value="{{ @issue.hours_total }}">
+                    <input class="form-control input-sm" type="text" name="hours_total" autocomplete="off" value="{{ @issue.hours_total | esc }}">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label label-sm">{{ @dict.cols.hours_remaining }}</label>
                 <div class="col-md-6">
-                    <input class="form-control input-sm" type="text" name="hours_remaining" autocomplete="off" value="{{ @issue.hours_remaining }}">
+                    <input class="form-control input-sm" type="text" name="hours_remaining" autocomplete="off" value="{{ @issue.hours_remaining | esc }}">
                 </div>
             </div>
         </true>
@@ -170,14 +170,14 @@
     <div class="form-group">
         <label class="col-md-2 control-label label-sm">{{ @dict.cols.start_date }}</label>
         <div class="col-md-6">
-            <input class="form-control input-sm" id="start_date" type="text" name="start_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.start_date }}">
+            <input class="form-control input-sm" id="start_date" type="text" name="start_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.start_date | esc }}">
         </div>
     </div>
 
     <div class="form-group">
         <label class="col-md-2 control-label label-sm">{{ @dict.cols.due_date }}</label>
         <div class="col-md-6">
-            <input class="form-control input-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.due_date }}">
+            <input class="form-control input-sm" id="due_date" type="text" name="due_date" autocomplete="off" value="{{ empty(@issue) ? '' : @issue.due_date | esc }}">
             <label class="checkbox-inline">
                 <input type="checkbox" name="due_date_sprint" value="1" {~ if(@@issue.due_date_sprint) echo 'checked' ~}>
                 {{ @dict.set_sprint_from_due_date }}

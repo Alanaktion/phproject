@@ -7,7 +7,7 @@
         "bcosca/fatfree-core": "^3.8",
         "netcarver/textile": "^4.0",
         "neos/diff": "^8.3",
-        "league/commonmark": "^2.6"
+        "league/commonmark": "^2.7"
     },
     "license": "GPL-3.0-or-later",
     "authors": [
@@ -18,7 +18,7 @@
     ],
     "config": {
         "platform": {
-            "php": "8.1.32"
+            "php": "8.1.33"
         }
     },
     "require-dev": {

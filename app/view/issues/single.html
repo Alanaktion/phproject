@@ -166,15 +166,15 @@
 
                 <check if="{{ !empty(@issue.hours_spent) }}">
                     <dt>{{ @dict.cols.total_spent_hours }}</dt>
-                    <dd>{{ @issue.hours_spent}}</dd>
+                    <dd>{{ @issue.hours_spent | esc }}</dd>
                 </check>
 
                 <check if="{{ !empty(@issue.hours_total) }}">
                     <dt>{{ @dict.cols.hours_total }}</dt>
-                    <dd>{{ @issue.hours_total ?: 0 }}</dd>
+                    <dd>{{ @issue.hours_total ?: 0 | esc }}</dd>
 
                     <dt>{{ @dict.cols.hours_remaining }}</dt>
-                    <dd>{{ @issue.hours_remaining ?: 0 }}</dd>
+                    <dd>{{ @issue.hours_remaining ?: 0 | esc }}</dd>
                 </check>
 
                 <check if="{{ @issue.start_date && strtotime(@issue.start_date) }}">

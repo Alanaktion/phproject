@@ -197,7 +197,7 @@
                             <repeat group="{{ @col }}" value="{{ @task }}">
                                 <div class="card task well has-popover" id="task_{{ @task.id }}" data-id="{{ @task.id }}" data-html="true" data-trigger="hover" data-toggle="popover" data-placement="auto bottom" data-container="body" data-content="<strong>{{ @dict.cols.author }}: </strong>{{ @task.author_name | esc }}<br><strong>{{ @dict.cols.description | esc }}: </strong> {{ strlen(@task.description) > 320 ? substr(@task.description, 0, 300) . ' [...]' : @task.description | esc }}" style="border-color: #{{ @task.owner_task_color | esc }};">
                                     <div class="hidden repeat_cycle">{{ @task.repeat_cycle }}</div>
-                                    <div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' }}</div>
+                                    <div class="hours">{{ @task.hours_remaining ? @task.hours_remaining : '' | esc }}</div>
                                     <div class="top">
                                         <span class="task-id"><a href="{{ @BASE }}/issues/{{ @task.id }}" target="_blank">{{ @task.id }}</a></span>
                                         <span class="task-dueDate">{{ empty(@task.due_date) ? "" : date('n/j', strtotime(@task.due_date)) }}</span>
