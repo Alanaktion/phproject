@@ -32,9 +32,9 @@ class ApiTest extends TestCase
 
         // Configure database connection
         if ($f3->get("db.engine") == "sqlite") {
-            $f3->set("db.instance", new \DB\SQL("sqlite:" . $f3->get("db.name")));
+            $f3->set("db.instance", new \Helper\SQL("sqlite:" . $f3->get("db.name")));
         } else {
-            $f3->set("db.instance", new DB\SQL(
+            $f3->set("db.instance", new \Helper\SQL(
                 "mysql:host=" . $f3->get("db.host") . ";port=" . $f3->get("db.port") . ";dbname=" . $f3->get("db.name"),
                 $f3->get("db.user"),
                 $f3->get("db.pass"),

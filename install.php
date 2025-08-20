@@ -90,9 +90,9 @@ if (
         // Connect to database
         if ($post['db-engine'] == 'sqlite') {
             touch($post["db-name"]);
-            $db = new \DB\SQL("sqlite:" . $post["db-name"]);
+            $db = new \Helper\SQL("sqlite:" . $post["db-name"]);
         } else {
-            $db = new \DB\SQL(
+            $db = new \Helper\SQL(
                 "mysql:host=" . $post["db-host"] . ";port=" . $post["db-port"] . ";dbname=" . $post["db-name"],
                 $post["db-user"],
                 $post["db-pass"]

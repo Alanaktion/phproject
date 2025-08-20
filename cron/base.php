@@ -26,7 +26,7 @@ $f3->mset([
 $f3->mset(require_once(__DIR__ . '/config.php'));
 
 // Connect to database
-$f3->set("db.instance", new DB\SQL(
+$f3->set("db.instance", new \Helper\SQL(
     "mysql:host=" . $f3->get("db.host") . ";port=3306;dbname=" . $f3->get("db.name"),
     $f3->get("db.user"),
     $f3->get("db.pass")
