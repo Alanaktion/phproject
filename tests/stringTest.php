@@ -8,7 +8,7 @@ class StringTest extends TestCase
 {
     protected function setUp(): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $f3->set('TZ', 'America/Phoenix');
     }
 

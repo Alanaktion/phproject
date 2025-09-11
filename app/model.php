@@ -1,14 +1,14 @@
 <?php
 
-abstract class Model extends \DB\SQL\Mapper
+abstract class Model extends \F3\DB\SQL\Mapper
 {
-    protected $fields = [];
+    protected array $fields = [];
 
     protected static $requiredFields = [];
 
     public function __construct($table_name = null)
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         if (empty($this->_table_name)) {
             if (empty($table_name)) {
@@ -18,7 +18,7 @@ abstract class Model extends \DB\SQL\Mapper
             }
         }
 
-        parent::__construct($f3->get("db.instance"), $this->_table_name, null, $f3->get("cache_expire.db"));
+        parent::__construct($f3->get("db.instance"), $this->_table_name, null, $f3->get("cache_expire.db") ?? 0);
         return $this;
     }
 
@@ -59,9 +59,8 @@ abstract class Model extends \DB\SQL\Mapper
 
     /**
      * Save model, triggering plugin hooks and setting created_date
-     * @return mixed
      */
-    public function save()
+    public function save(): static
     {
         // Ensure created_date is set if possible
         if (!$this->query && array_key_exists("created_date", $this->fields) && !$this->get("created_date")) {
@@ -99,12 +98,12 @@ abstract class Model extends \DB\SQL\Mapper
 
     /**
      * Load by ID directly if a string is passed
-     * @param  int|array  $filter
-     * @param  int        $ttl
-     * @return mixed
      */
-    public function load($filter = null, ?array $options = null, $ttl = 0)
-    {
+    public function load(
+        string|array|null $filter = null,
+        ?array $options = null,
+        int $ttl = 0
+    ): ?static {
         if (is_numeric($filter)) {
             return parent::load(["id = ?", $filter], $options, $ttl);
         }

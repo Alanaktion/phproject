@@ -3,8 +3,8 @@
     "description": "A high performance full-featured project management system",
     "type": "project",
     "require": {
-        "php": ">=8.1.0",
-        "bcosca/fatfree-core": "^3.8",
+        "php": ">=8.4.0",
+        "bcosca/fatfree-core": "v4.x-dev",
         "netcarver/textile": "^4.0",
         "neos/diff": "^8.3",
         "league/commonmark": "^2.7"
@@ -18,7 +18,7 @@
     ],
     "config": {
         "platform": {
-            "php": "8.1.33"
+            "php": "8.4.12"
         }
     },
     "require-dev": {

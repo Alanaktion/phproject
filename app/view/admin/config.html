@@ -180,7 +180,7 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="mail-truncate_lines">{{ @dict.imap_truncate_lines }}</label>
-                            <textarea class="form-control input-sm" name="mail-truncate_lines" rows="4">{{ implode("\n", is_array(@mail.truncate_lines) ? @mail.truncate_lines : \Base::instance()->split(@mail.truncate_lines)) | esc }}</textarea>
+                            <textarea class="form-control input-sm" name="mail-truncate_lines" rows="4">{{ implode("\n", is_array(@mail.truncate_lines) ? @mail.truncate_lines : \F3\Base::instance()->split(@mail.truncate_lines)) | esc }}</textarea>
                         </div>
                         <p class="alert alert-info"><strong>{{ @dict.config_note }}:</strong> {{ @dict.imap_settings_note, '<code>checkmail.php</code>' | format }}</p>
                     </fieldset>

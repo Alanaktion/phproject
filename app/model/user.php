@@ -39,7 +39,7 @@ class User extends \Model
      */
     public function loadCurrent(): static
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         // Load current session
         $session = new Session();
@@ -73,7 +73,7 @@ class User extends \Model
         }
 
         if ($this->get("avatar_filename") && is_file("uploads/avatars/" . $this->get("avatar_filename"))) {
-            return \Base::instance()->get('BASE') . "/avatar/{$size}-{$this->id}.png";
+            return \F3\Base::instance()->get('BASE') . "/avatar/{$size}-{$this->id}.png";
         }
 
         return \Helper\View::instance()->gravatar($this->get("email"), $size);
@@ -252,7 +252,7 @@ class User extends \Model
 
         $result = [];
         $date_expr = ["DATE(DATE_ADD(", ", INTERVAL :offset SECOND)"];
-        if (\Base::instance()->get("db.engine") == "sqlite") {
+        if (\F3\Base::instance()->get("db.engine") == "sqlite") {
             $date_expr = ["DATE(", ", :offset || ' seconds')"];
         }
 
@@ -344,7 +344,7 @@ class User extends \Model
 
     public function date_picker()
     {
-        $lang = $this->language ?: \Base::instance()->get("LANGUAGE");
+        $lang = $this->language ?: \F3\Base::instance()->get("LANGUAGE");
         $lang = explode(',', (string) $lang, 2)[0];
         return (object)["language" => $lang, "js" => ($lang !== "en")];
     }
@@ -365,7 +365,7 @@ class User extends \Model
      */
     public function validateResetToken(string $token): bool
     {
-        $ttl = \Base::instance()->get("security.reset_ttl");
+        $ttl = \F3\Base::instance()->get("security.reset_ttl");
         $timestampValid = substr($token, 96) > (time() - $ttl);
         $tokenValid = hash("sha384", $token) == $this->reset_token;
         return $timestampValid && $tokenValid;

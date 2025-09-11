@@ -2,7 +2,7 @@
 
 namespace Helper;
 
-class SQL extends \DB\SQL
+class SQL extends \F3\DB\SQL
 {
     /**
      * Cast value to PHP type, explicitly casting float values
@@ -10,7 +10,7 @@ class SQL extends \DB\SQL
      * @param $type string
      * @param $val mixed
      **/
-    public function value($type, $val)
+    public function value(string|int $type, mixed $val): mixed
     {
         if ($type == self::PARAM_FLOAT) {
             $val = (float)$val;

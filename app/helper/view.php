@@ -4,7 +4,7 @@ namespace Helper;
 
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 
-class View extends \Template
+class View extends \F3\Template
 {
     public function __construct()
     {
@@ -28,10 +28,10 @@ class View extends \Template
             $options = [];
         }
 
-        $options += \Base::instance()->get("parse");
+        $options += \F3\Base::instance()->get("parse");
 
         // Check for cached value if $ttl is set
-        $cache = \Cache::instance();
+        $cache = \F3\Cache::instance();
         $hash = null;
         if ($ttl !== null) {
             $hash = sha1($str . json_encode($options, JSON_THROW_ON_ERROR));
@@ -68,7 +68,7 @@ class View extends \Template
         }
 
         if (!$options["markdown"] && !$options['textile']) {
-            $str = nl2br(\Base::instance()->encode($str), false);
+            $str = nl2br(\F3\Base::instance()->encode($str), false);
         }
 
         if ($options["urls"]) {
@@ -102,7 +102,7 @@ class View extends \Template
      */
     protected function _parseIds(string $str): string
     {
-        $url = \Base::instance()->get("site.url");
+        $url = \F3\Base::instance()->get("site.url");
 
         // Find all IDs
         $count = preg_match_all("/(?<=[^a-z\\/&]#|^#)[0-9]+(?=[^a-z\\/]|$)/i", $str, $matches);
@@ -126,7 +126,7 @@ class View extends \Template
 
             if ($issue) {
                 if ($issue->deleted_date) {
-                    $f3 = \Base::instance();
+                    $f3 = \F3\Base::instance();
                     if ($f3->get("user.role") == "admin" || $f3->get("user.rank") >= \Model\User::RANK_MANAGER || $f3->get("user.id") == $issue->author_id) {
                         return "<a href=\"{$url}issues/{$id}\" style=\"text-decoration: line-through;\">#{$id} &ndash; " . htmlspecialchars($issue->name) . "</a>";
                     }
@@ -147,7 +147,7 @@ class View extends \Template
     protected function _parseHashtags(string $str): string
     {
         return preg_replace_callback("/(?<=[^a-z\\/&]|^)#([a-z][a-z0-9_-]*[a-z0-9]+)(?=[^a-z\\/]|$)/i", function (array $matches): string {
-            $url = \Base::instance()->get("site.url");
+            $url = \F3\Base::instance()->get("site.url");
             $tag = preg_replace("/[_-]+/", "-", $matches[1]);
             return "<a href=\"{$url}tag/{$tag}\">#{$tag}</a>";
         }, $str);
@@ -280,7 +280,7 @@ class View extends \Template
      */
     public function gravatar(string $email, int $size = 80): string
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $rating = $f3->get("gravatar.rating") ?: "pg";
         $default = $f3->get("gravatar.default") ?: "mm";
         return "https://gravatar.com/avatar/" . md5(strtolower($email ?? '')) .
@@ -294,7 +294,7 @@ class View extends \Template
      */
     public function timeoffset(): int
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         if ($f3->exists("site.timeoffset")) {
             return $f3->get("site.timeoffset");
@@ -332,7 +332,7 @@ class View extends \Template
      */
     public function lang(): string
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $langs = $f3->split($f3->get("LANGUAGE"));
         return $langs[0] ?? $f3->get("FALLBACK", "en");
     }

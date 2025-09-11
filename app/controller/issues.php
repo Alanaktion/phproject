@@ -30,7 +30,7 @@ class Issues extends \Controller
      */
     protected function _buildFilter(): array
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $db = $f3->get("db.instance");
         $issues = new \Model\Issue\Detail();
 
@@ -116,7 +116,7 @@ class Issues extends \Controller
      * GET /issues
      * Display a sortable, filterable issue list
      *
-     * @param  \Base  $f3
+     * @param  \F3\Base  $f3
      */
     public function index($f3): void
     {
@@ -205,7 +205,7 @@ class Issues extends \Controller
      * POST /issues/bulk_update
      * Update a list of issues
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function bulk_update($f3): void
     {
@@ -284,7 +284,7 @@ class Issues extends \Controller
      * GET /issues/export
      * Export a list of issues
      *
-     * @param  \Base  $f3
+     * @param  \F3\Base  $f3
      */
     public function export($f3): void
     {
@@ -339,7 +339,7 @@ class Issues extends \Controller
      * GET /issues/new/@type/@parent
      * Create a new issue
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function add($f3): void
     {
@@ -406,7 +406,7 @@ class Issues extends \Controller
     }
 
     /**
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function add_selecttype($f3): void
     {
@@ -419,7 +419,7 @@ class Issues extends \Controller
     }
 
     /**
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function edit($f3, array $params): void
@@ -459,7 +459,7 @@ class Issues extends \Controller
      */
     protected function loadIssueMeta(\Model\Issue $issue)
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $status = new \Model\Issue\Status();
         $f3->set("statuses", $status->find(null, null, $f3->get("cache_expire.db")));
 
@@ -498,7 +498,7 @@ class Issues extends \Controller
      * POST /issues/close/@id
      * Close an issue
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function close($f3, array $params): void
@@ -526,7 +526,7 @@ class Issues extends \Controller
      * POST /issues/reopen/@id
      * Reopen an issue
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function reopen($f3, array $params): void
@@ -560,7 +560,7 @@ class Issues extends \Controller
      * POST /issues/copy/@id
      * Copy an issue
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function copy($f3, array $params): void
@@ -595,7 +595,7 @@ class Issues extends \Controller
      */
     protected function _saveUpdate()
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         // Remove parent if user has no rights to it
         if ($f3->get("POST.parent_id")) {
@@ -696,7 +696,7 @@ class Issues extends \Controller
      */
     protected function _saveNew()
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $data = $f3->get("POST");
         $originalAuthor = null;
         if (!empty($data['author_id']) && $data['author_id'] != $this->_userId) {
@@ -725,7 +725,7 @@ class Issues extends \Controller
      * POST /issues
      * Save an issue
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function save($f3): void
     {
@@ -755,7 +755,7 @@ class Issues extends \Controller
      * GET /issues/@id
      * View an issue
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function single($f3, array $params): void
@@ -815,7 +815,7 @@ class Issues extends \Controller
      * POST /issues/@id/watchers
      * Add a watcher
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function add_watcher($f3, array $params): void
     {
@@ -842,7 +842,7 @@ class Issues extends \Controller
      * POST /issues/@id/watchers/delete
      * Delete a watcher
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function delete_watcher($f3, array $params): void
     {
@@ -864,7 +864,7 @@ class Issues extends \Controller
      * POST /issues/@id/dependencies
      * Add a dependency
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function add_dependency($f3, array $params): void
     {
@@ -890,7 +890,7 @@ class Issues extends \Controller
      * POST /issues/@id/dependencies/delete
      * Delete a dependency
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function delete_dependency($f3, array $params): void
     {
@@ -911,7 +911,7 @@ class Issues extends \Controller
      * GET /issues/@id/history
      * AJAX call for issue history
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function single_history($f3, array $params): void
     {
@@ -938,7 +938,7 @@ class Issues extends \Controller
      * GET /issues/@id/related
      * AJAX call for related issues
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function single_related($f3, array $params)
@@ -981,7 +981,7 @@ class Issues extends \Controller
      * GET /issues/@id/watchers
      * AJAX call for issue watchers
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function single_watchers($f3, array $params): void
     {
@@ -1000,7 +1000,7 @@ class Issues extends \Controller
      * GET /issues/@id/dependencies
      * AJAX call for issue dependencies
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function single_dependencies($f3, array $params): void
@@ -1027,7 +1027,7 @@ class Issues extends \Controller
      * POST /issues/delete/@id
      * Delete an issue
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function single_delete($f3, array $params): void
@@ -1049,7 +1049,7 @@ class Issues extends \Controller
      * POST /issues/undelete/@id
      * Un-delete an issue
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function single_undelete($f3, array $params): void
@@ -1071,7 +1071,7 @@ class Issues extends \Controller
      * POST /issues/comment/save
      * Save a comment
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function comment_save($f3): void
@@ -1118,7 +1118,7 @@ class Issues extends \Controller
      * POST /issues/comment/delete
      * Delete a comment
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function comment_delete($f3): void
@@ -1135,7 +1135,7 @@ class Issues extends \Controller
      * POST /issues/file/delete
      * Delete a file
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function file_delete($f3): void
@@ -1151,7 +1151,7 @@ class Issues extends \Controller
      * POST /issues/file/undelete
      * Un-delete a file
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function file_undelete($f3): void
@@ -1181,7 +1181,7 @@ class Issues extends \Controller
         // Build WHERE string
         $keywordParts = [];
         foreach (explode(" ", $q) as $w) {
-            if (\Base::instance()->get("db.engine") == "sqlite") {
+            if (\F3\Base::instance()->get("db.engine") == "sqlite") {
                 $keywordParts[] = "name || description || author_name || owner_name ||
                     author_username || owner_username LIKE ?";
             } else {
@@ -1210,7 +1210,7 @@ class Issues extends \Controller
      * GET /search
      * Search for issues
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function search($f3): void
     {
@@ -1260,7 +1260,7 @@ class Issues extends \Controller
      * POST /issues/upload
      * Upload a file
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function upload($f3): void
@@ -1352,7 +1352,7 @@ class Issues extends \Controller
      * GET /issues/parent_ajax
      * Load all matching issues
      *
-     * @param  \Base $f3
+     * @param  \F3\Base $f3
      */
     public function parent_ajax($f3): void
     {

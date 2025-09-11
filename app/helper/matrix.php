@@ -2,7 +2,7 @@
 
 namespace Helper;
 
-class Matrix extends \Matrix
+class Matrix extends \F3\Matrix
 {
     /**
      * Merge n sorted arrays into a single array with the same sort order

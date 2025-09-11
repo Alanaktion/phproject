@@ -20,7 +20,7 @@ class Config extends \Model
      */
     public static function loadAll(): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $db = $f3->get("db.instance");
         $result = $db->exec("SELECT attribute,value FROM config");
         $foundAttributes = [];
@@ -50,7 +50,7 @@ class Config extends \Model
      */
     public static function importAll(): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $root = $f3->get("ROOT") . $f3->get("BASE");
 
         // Import existing config
@@ -81,7 +81,7 @@ class Config extends \Model
      */
     public static function iniToPhp(): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         // Move the config from INI to PHP
         $root = $f3->get("ROOT") . $f3->get("BASE");
@@ -97,7 +97,7 @@ class Config extends \Model
      */
     public static function setVal(string $key, $value): Config
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $f3->set($key, $value);
 
         $item = new static();

@@ -2,7 +2,7 @@
 
 namespace Helper;
 
-class File extends \Image
+class File extends \F3\Image
 {
     public static $mimeMap = [
         "image" => [

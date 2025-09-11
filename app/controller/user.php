@@ -12,20 +12,20 @@ class User extends \Controller
     {
         $this->_userId = $this->_requireLogin();
         $this->_languages = [
-            "en" => \ISO::LC_en,
-            "en-GB" => \ISO::LC_en . " (Great Britain)",
-            "es" => \ISO::LC_es . " (Español)",
-            "fr" => \ISO::LC_fr . " (Français)",
-            "pl" => \ISO::LC_pl . " (Polszczyzna)",
-            "pt" => \ISO::LC_pt . " (Português)",
-            "it" => \ISO::LC_it . " (Italiano)",
-            "ru" => \ISO::LC_ru . " (Pу́сский)",
-            "nl" => \ISO::LC_nl . " (Nederlands)",
-            "de" => \ISO::LC_de . " (Deutsch)",
-            "cs" => \ISO::LC_cs . " (Češka)",
-            "et" => \ISO::LC_et . " (Eesti)",
-            "zh" => \ISO::LC_zh . " (中国)",
-            "ja" => \ISO::LC_ja . " (日本語)",
+            "en" => \F3\ISO::LC_en,
+            "en-GB" => \F3\ISO::LC_en . " (Great Britain)",
+            "es" => \F3\ISO::LC_es . " (Español)",
+            "fr" => \F3\ISO::LC_fr . " (Français)",
+            "pl" => \F3\ISO::LC_pl . " (Polszczyzna)",
+            "pt" => \F3\ISO::LC_pt . " (Português)",
+            "it" => \F3\ISO::LC_it . " (Italiano)",
+            "ru" => \F3\ISO::LC_ru . " (Pу́сский)",
+            "nl" => \F3\ISO::LC_nl . " (Nederlands)",
+            "de" => \F3\ISO::LC_de . " (Deutsch)",
+            "cs" => \F3\ISO::LC_cs . " (Češka)",
+            "et" => \F3\ISO::LC_et . " (Eesti)",
+            "zh" => \F3\ISO::LC_zh . " (中国)",
+            "ja" => \F3\ISO::LC_ja . " (日本語)",
         ];
     }
 
@@ -33,7 +33,7 @@ class User extends \Controller
      * GET /user/dashboard
      * User dashboard
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function dashboard($f3): void
@@ -81,7 +81,7 @@ class User extends \Controller
      * POST /user/dashboard
      * Save dashboard widget selections
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function dashboardPost($f3): void
     {
@@ -124,14 +124,14 @@ class User extends \Controller
             $themes[] = pathinfo($file, PATHINFO_FILENAME);
         }
 
-        \Base::instance()->set("themes", $themes);
+        \F3\Base::instance()->set("themes", $themes);
         return $themes;
     }
 
     /**
      * GET /user
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function account($f3): void
     {
@@ -145,13 +145,13 @@ class User extends \Controller
     /**
      * POST /user
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function save($f3): void
     {
         $this->validateCsrf();
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $post = array_map("trim", $f3->get("POST"));
 
         $user = new \Model\User();
@@ -229,13 +229,13 @@ class User extends \Controller
     /**
      * POST /user/avatar
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function avatar($f3): void
     {
         $this->validateCsrf();
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         $user = new \Model\User();
         $user->load($this->_userId);
@@ -244,7 +244,7 @@ class User extends \Controller
             return;
         }
 
-        $web = \Web::instance();
+        $web = \F3\Web::instance();
 
         $f3->set("UPLOADS", 'uploads/avatars/');
         if (!is_dir($f3->get("UPLOADS"))) {
@@ -282,7 +282,7 @@ class User extends \Controller
         );
 
         // Clear cached profile picture data
-        $cache = \Cache::instance();
+        $cache = \F3\Cache::instance();
         // @1x
         $cache->clear($f3->hash("GET /avatar/48/{$user->id}.png") . ".url");
         $cache->clear($f3->hash("GET /avatar/96/{$user->id}.png") . ".url");
@@ -297,7 +297,7 @@ class User extends \Controller
     /**
      * GET /user/@username
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function single($f3, array $params): void
@@ -384,7 +384,7 @@ class User extends \Controller
     /**
      * GET /user/@username/tree
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function single_tree($f3, array $params): void

@@ -5,7 +5,7 @@ declare(strict_types=1);
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__DIR__));
 require_once(dirname(__DIR__) . "/vendor/autoload.php");
 
-$f3 = \Base::instance();
+$f3 = \F3\Base::instance();
 $f3->mset([
     "UI" => "app/view/;app/plugin/",
     "ESCAPE" => false,

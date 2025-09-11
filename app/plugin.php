@@ -1,7 +1,9 @@
 <?php
 
-abstract class Plugin extends \Prefab
+abstract class Plugin
 {
+    use \F3\Prefab;
+
     // Metadata container
     protected $_meta;
 
@@ -105,7 +107,7 @@ abstract class Plugin extends \Prefab
             $meta[$match[1]] = trim($match[2]);
         }
 
-        $this->_meta = $meta + ["package" => str_replace(["Plugin\\", "\\Base"], "", static::class), "author" => null, "version" => null];
+        $this->_meta = $meta + ["package" => str_replace(["Plugin\\", "\\F3\Base"], "", static::class), "author" => null, "version" => null];
         return $this->_meta;
     }
 

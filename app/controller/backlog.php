@@ -14,7 +14,7 @@ class Backlog extends \Controller
     /**
      * GET /backlog
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function index($f3): void
     {
@@ -130,14 +130,14 @@ class Backlog extends \Controller
      * GET /backlog/@filter
      * GET /backlog/@filter/@groupid
      */
-    public function redirect(\Base $f3): void
+    public function redirect(\F3\Base $f3): void
     {
         $f3->reroute("/backlog");
     }
 
     /**
      * POST /edit
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function edit($f3): void
@@ -164,7 +164,7 @@ class Backlog extends \Controller
 
     /**
      * POST /sort
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function sort($f3): void
@@ -185,7 +185,7 @@ class Backlog extends \Controller
 
     /**
      * GET /backlog/old
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function index_old($f3): void
     {

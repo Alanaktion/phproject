@@ -2,7 +2,7 @@
 
 // Initialize core
 require_once "vendor/autoload.php";
-$f3 = Base::instance();
+$f3 = \F3\Base::instance();
 $f3->mset(array(
     "UI" => "app/view/",
     "LOGS" => "log/",
@@ -206,5 +206,5 @@ if (
 
 // Render installer template
 if (php_sapi_name() != 'cli') {
-    echo Template::instance()->render("install.html");
+    echo \F3\Template::instance()->render("install.html");
 }

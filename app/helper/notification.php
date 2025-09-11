@@ -2,8 +2,10 @@
 
 namespace Helper;
 
-class Notification extends \Prefab
+class Notification
 {
+    use \F3\Prefab;
+
     public const QPRINT_MAXL = 75;
 
     /**
@@ -71,7 +73,7 @@ class Notification extends \Prefab
      */
     public function utf8mail(string $to, string $subject, string $body, ?string $text = null): bool
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         // Add basic headers
         $headers  = 'MIME-Version: 1.0' . "\r\n";
@@ -117,9 +119,9 @@ class Notification extends \Prefab
      */
     public function issue_comment(int $issue_id, int $comment_id): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         if ($f3->get("mail.from")) {
-            $log = new \Log("mail.log");
+            $log = new \F3\Log("mail.log");
 
             // Get issue and comment data
             $issue = new \Model\Issue();
@@ -160,9 +162,9 @@ class Notification extends \Prefab
      */
     public function issue_update(int $issue_id, int $update_id): ?bool
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         if ($f3->get("mail.from")) {
-            $log = new \Log("mail.log");
+            $log = new \F3\Log("mail.log");
 
             // Get issue and update data
             $issue = new \Model\Issue();
@@ -218,10 +220,10 @@ class Notification extends \Prefab
      */
     public function issue_create(int $issue_id): void
     {
-        $f3 = \Base::instance();
-        $log = new \Log("mail.log");
+        $f3 = \F3\Base::instance();
+        $log = new \F3\Log("mail.log");
         if ($f3->get("mail.from")) {
-            $log = new \Log("mail.log");
+            $log = new \F3\Log("mail.log");
 
             // Get issue and update data
             $issue = new \Model\Issue\Detail();
@@ -264,9 +266,9 @@ class Notification extends \Prefab
      */
     public function issue_file(int $issue_id, int $file_id): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         if ($f3->get("mail.from")) {
-            $log = new \Log("mail.log");
+            $log = new \F3\Log("mail.log");
 
             // Get issue and comment data
             $issue = new \Model\Issue();
@@ -312,7 +314,7 @@ class Notification extends \Prefab
      */
     public function user_reset(int $user_id, string $token): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         if ($f3->get("mail.from")) {
             $user = new \Model\User();
             $user->load($user_id);
@@ -337,7 +339,7 @@ class Notification extends \Prefab
      */
     public function user_due_issues(\Model\User $user, array $due, array $overdue): bool
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         if ($f3->get("mail.from")) {
             $f3->set("due", $due);
             $f3->set("overdue", $overdue);
@@ -361,7 +363,7 @@ class Notification extends \Prefab
      */
     protected function _issue_watchers(int $issue_id): array
     {
-        $db = \Base::instance()->get("db.instance");
+        $db = \F3\Base::instance()->get("db.instance");
         $recipients = [];
 
         // Add issue author and owner

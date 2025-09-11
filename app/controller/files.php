@@ -17,7 +17,7 @@ class Files extends \Controller
      */
     protected function _useFileCache()
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $f3->set("CACHE", "folder=" . $f3->get("TEMP") . "cache/");
     }
 
@@ -53,7 +53,7 @@ class Files extends \Controller
 
         header("Accept-Ranges: bytes");
         header("Content-Length: {$size}");
-        header("X-Powered-By: " . \Base::instance()->get("PACKAGE"));
+        header("X-Powered-By: " . \F3\Base::instance()->get("PACKAGE"));
 
         readfile($file);
         return $size;
@@ -62,14 +62,14 @@ class Files extends \Controller
     /**
      * GET /files/thumb/@size-@id.@format
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @param array $params
      * @throws \Exception
      */
     public function thumb($f3, $params): void
     {
         $this->_useFileCache();
-        $cache = \Cache::instance();
+        $cache = \F3\Cache::instance();
 
         // Abort on unusually large dimensions
         if ($params["size"] > 1024) {
@@ -106,7 +106,7 @@ class Files extends \Controller
         }
 
         // Initialize thumbnail image
-        $img = new \Image($file->disk_filename);
+        $img = new \F3\Image($file->disk_filename);
 
         // Render thumbnail directly if no alpha
         $alpha = (imagecolorat($img->data(), 0, 0) & 0x7F000000) >> 24;
@@ -182,7 +182,7 @@ class Files extends \Controller
     /**
      * GET /avatar/@size-@id.@format
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function avatar($f3, array $params): void
@@ -197,7 +197,7 @@ class Files extends \Controller
 
         if ($user->avatar_filename && is_file("uploads/avatars/" . $user->avatar_filename)) {
             // Use local file
-            $img = new \Image($user->avatar_filename, null, "uploads/avatars/");
+            $img = new \F3\Image($user->avatar_filename, null, "uploads/avatars/");
             $img->resize($params["size"], $params["size"]);
 
             // Render and output image
@@ -214,7 +214,7 @@ class Files extends \Controller
     /**
      * GET /files/@id/@name
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function file($f3, array $params): void

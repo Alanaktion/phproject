@@ -4,8 +4,10 @@ namespace Helper;
 
 use Helper\Security\AntiXSS;
 
-class Security extends \Prefab
+class Security
 {
+    use \F3\Prefab;
+
     /**
      * Generate a salted SHA1 hash
      */
@@ -58,7 +60,7 @@ class Security extends \Prefab
      */
     public function checkDatabaseVersion(): string|bool
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         // Get current version
         $version = $f3->get("version");
@@ -84,7 +86,7 @@ class Security extends \Prefab
      */
     public function updateDatabase(string $version): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         if (file_exists("db/{$version}.sql")) {
             $update_db = file_get_contents("db/{$version}.sql");
             $db = $f3->get("db.instance");
@@ -92,7 +94,7 @@ class Security extends \Prefab
                 $db->exec($stmt);
             }
 
-            \Cache::instance()->reset();
+            \F3\Cache::instance()->reset();
             $f3->set("success", " Database updated to version: {$version}");
         } else {
             $f3->set("error", " Database file not found for version: {$version}");
@@ -104,7 +106,7 @@ class Security extends \Prefab
      */
     public function initCsrfToken(): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         if (!($token = $f3->get('COOKIE.XSRF-TOKEN'))) {
             $token = $this->salt_sha2();
             $f3->set('COOKIE.XSRF-TOKEN', $token);
@@ -118,7 +120,7 @@ class Security extends \Prefab
      */
     public function validateCsrfToken(): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $cookieToken = $f3->get('COOKIE.XSRF-TOKEN');
         $requestToken = $f3->get('POST.csrf-token');
         if (!$requestToken) {

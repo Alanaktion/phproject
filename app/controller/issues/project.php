@@ -18,7 +18,7 @@ class Project extends \Controller
      * GET /issues/project/@id
      * Project Overview action
      *
-     * @param  \Base $f3
+     * @param  \F3\Base $f3
      */
     public function overview($f3, array $params): void
     {
@@ -59,7 +59,7 @@ class Project extends \Controller
          */
         $renderTree = function (\Model\Issue &$issue, $level = 0) use ($parentMap, &$renderTree): void {
             if ($issue->id) {
-                $f3 = \Base::instance();
+                $f3 = \F3\Base::instance();
                 $children = $parentMap[$issue->id] ?? [];
                 $hive = [
                     "issue" => $issue,
@@ -88,7 +88,7 @@ class Project extends \Controller
      * GET /issues/project/@id/files
      * Get the file list for a project
      *
-     * @param  \Base $f3
+     * @param  \F3\Base $f3
      */
     public function files($f3, array $params): void
     {

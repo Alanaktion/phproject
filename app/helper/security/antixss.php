@@ -1334,13 +1334,13 @@ final class AntiXss
      */
     private function _repack_utf7_callback(array $strings): string
     {
-        $strTmp = \base64_decode($strings[1], true);
+        $strTmp = \F3\Base64_decode($strings[1], true);
 
         if ($strTmp === false) {
             return $strings[0];
         }
 
-        if (\rtrim(\base64_encode($strTmp), '=') !== \rtrim($strings[1], '=')) {
+        if (\rtrim(\F3\Base64_encode($strTmp), '=') !== \rtrim($strings[1], '=')) {
             return $strings[0];
         }
 
@@ -1364,7 +1364,7 @@ final class AntiXss
      */
     private function _repack_utf7_callback_back(array $str): string
     {
-        return $str[1] . '+' . \rtrim(\base64_encode((string) $str[2]), '=') . '-';
+        return $str[1] . '+' . \rtrim(\F3\Base64_encode((string) $str[2]), '=') . '-';
     }
 
     /**

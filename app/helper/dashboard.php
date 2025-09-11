@@ -2,8 +2,10 @@
 
 namespace Helper;
 
-class Dashboard extends \Prefab
+class Dashboard
 {
+    use \F3\Prefab;
+
     protected $_issue;
 
     protected $_ownerIds;
@@ -34,7 +36,7 @@ class Dashboard extends \Prefab
             return $this->_ownerIds;
         }
 
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $this->_ownerIds = [$f3->get("user.id")];
         $groups = new \Model\User\Group();
         foreach ($groups->find(["user_id = ?", $f3->get("user.id")]) as $r) {
@@ -50,7 +52,7 @@ class Dashboard extends \Prefab
             return $this->_groupIds;
         }
 
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $groups = new \Model\User\Group();
         foreach ($groups->find(["user_id = ?", $f3->get("user.id")]) as $r) {
             $this->_groupIds[] = $r->group_id;
@@ -76,7 +78,7 @@ class Dashboard extends \Prefab
 
     public function projects()
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $typeIds = [];
         foreach ($f3->get('issue_types') as $t) {
             if ($t->role == 'project') {
@@ -117,7 +119,7 @@ class Dashboard extends \Prefab
 
     public function bugs()
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $typeIds = [];
         foreach ($f3->get('issue_types') as $t) {
             if ($t->role == 'bug') {
@@ -148,14 +150,14 @@ class Dashboard extends \Prefab
 
     public function watchlist()
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $watchlist = new \Model\Issue\Watcher();
         return $watchlist->findby_watcher($f3->get("user.id"), $this->_order);
     }
 
     public function tasks()
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $typeIds = [];
         foreach ($f3->get('issue_types') as $t) {
             if ($t->role == 'task') {
@@ -177,14 +179,14 @@ class Dashboard extends \Prefab
 
     public function my_comments()
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $comment = new \Model\Issue\Comment\Detail();
         return $comment->find(["user_id = ? AND issue_deleted_date IS NULL", $f3->get("user.id")], ["order" => "created_date DESC", "limit" => 10]);
     }
 
     public function recent_comments()
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         $issue = new \Model\Issue();
         $ownerString = implode(",", $this->getOwnerIds());
@@ -209,7 +211,7 @@ class Dashboard extends \Prefab
 
     public function open_comments()
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         $issue = new \Model\Issue();
         $ownerString = implode(",", $this->getOwnerIds());
@@ -237,7 +239,7 @@ class Dashboard extends \Prefab
      */
     public function issue_tree(): array
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $userId = $f3->get("this_user") ? $f3->get("this_user")->id : $f3->get("user.id");
 
         // Load assigned issues
@@ -284,7 +286,7 @@ class Dashboard extends \Prefab
          */
         $renderTree = function (&$issue, int $level = 0) use (&$renderTree): void {
             if (!empty($issue['id'])) {
-                $f3 = \Base::instance();
+                $f3 = \F3\Base::instance();
                 $hive = ["issue" => $issue, "dict" => $f3->get("dict"), "BASE" => $f3->get("BASE"), "level" => $level, "issue_type" => $f3->get("issue_type")];
                 echo \Helper\View::instance()->render("issues/project/tree-item.html", "text/html", $hive);
                 if (!empty($issue['children'])) {

@@ -19,7 +19,7 @@ class Group extends \Model
      */
     public static function getUserGroups(?int $user_id = null): array
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $db = $f3->get("db.instance");
 
         if ($user_id === null) {
@@ -38,7 +38,7 @@ class Group extends \Model
      */
     public static function userIsInGroup(int $group_id, ?int $user_id = null): bool
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         if ($user_id === null) {
             $user_id = $f3->get("user.id");

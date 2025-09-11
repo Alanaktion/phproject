@@ -13,7 +13,7 @@ class Tag extends \Controller
 
     /**
      * Tag index route (/tag/)
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function index($f3): void
     {
@@ -29,7 +29,7 @@ class Tag extends \Controller
 
     /**
      * Single tag route (/tag/@tag)
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function single($f3, array $params): void
     {

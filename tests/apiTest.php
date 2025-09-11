@@ -13,7 +13,7 @@ class ApiTest extends TestCase
 
     protected function setUp(): void
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         if ($this->configured) {
             $f3->set('ERROR', null);
             return;
@@ -59,7 +59,7 @@ class ApiTest extends TestCase
     protected function mock(string $route, ?array $args = null, ?array $headers = null): string|false
     {
         ob_start();
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $f3->mock($route, $args, $headers);
         $f3->clear('ERROR');
         return ob_get_clean();

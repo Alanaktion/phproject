@@ -7,7 +7,7 @@ class Index extends \Controller
     /**
      * GET /
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @param array $params
      * @throws \Exception
      */
@@ -45,7 +45,7 @@ class Index extends \Controller
     /**
      * GET /login
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function login($f3): void
     {
@@ -69,7 +69,7 @@ class Index extends \Controller
     /**
      * POST /login
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function loginpost($f3): void
@@ -116,7 +116,7 @@ class Index extends \Controller
     /**
      * POST /register
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function registerpost($f3): void
@@ -191,7 +191,7 @@ class Index extends \Controller
     /**
      * GET|POST /reset
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function reset($f3): void
@@ -226,7 +226,7 @@ class Index extends \Controller
     /**
      * GET|POST /reset/@token
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function reset_complete($f3, array $params): void
@@ -276,7 +276,7 @@ class Index extends \Controller
     /**
      * GET|POST /reset/forced
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function reset_forced($f3): void
     {
@@ -307,7 +307,7 @@ class Index extends \Controller
     /**
      * POST /logout
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function logout($f3): void
     {
@@ -322,7 +322,7 @@ class Index extends \Controller
     /**
      * GET /atom.xml
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function atom($f3): void
@@ -376,7 +376,7 @@ class Index extends \Controller
     /**
      * GET /opensearch.xml
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @throws \Exception
      */
     public function opensearch($f3): void

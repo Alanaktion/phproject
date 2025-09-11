@@ -37,7 +37,7 @@ class Taskboard extends \Controller
             $user = new \Model\User();
             $user->load($params["filter"]);
             if ($user->role == 'group') {
-                \Base::instance()->set("filterGroup", $user);
+                \F3\Base::instance()->set("filterGroup", $user);
                 $group_model = new \Model\User\Group();
                 $users_result = $group_model->find(["group_id = ?", $user->id]);
                 $filter_users = [intval($params["filter"])];
@@ -63,7 +63,7 @@ class Taskboard extends \Controller
      *
      * View a taskboard
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      * @param array $params
      */
     public function index($f3, $params): void
@@ -233,7 +233,7 @@ class Taskboard extends \Controller
      *
      * Load the hourly burndown chart data
      *
-     * @param  \Base $f3
+     * @param  \F3\Base $f3
      */
     public function burndown($f3, array $params): void
     {
@@ -309,7 +309,7 @@ class Taskboard extends \Controller
      *
      * Save man hours for a group/user
      *
-     * @param  \Base $f3
+     * @param  \F3\Base $f3
      */
     public function saveManHours($f3): void
     {
@@ -333,7 +333,7 @@ class Taskboard extends \Controller
      *
      * Add a new task
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function add($f3): void
     {
@@ -353,7 +353,7 @@ class Taskboard extends \Controller
      *
      * Update an existing task
      *
-     * @param \Base $f3
+     * @param \F3\Base $f3
      */
     public function edit($f3): void
     {

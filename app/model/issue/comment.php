@@ -44,7 +44,7 @@ class Comment extends \Model
     public function save(): Comment
     {
         // Censor credit card numbers if enabled
-        if (\Base::instance()->get("security.block_ccs") && preg_match("/[0-9-]{9,15}\\d{4}/", $this->get("text"))) {
+        if (\F3\Base::instance()->get("security.block_ccs") && preg_match("/[0-9-]{9,15}\\d{4}/", $this->get("text"))) {
             $this->set("text", preg_replace("/[0-9-]{9,15}(\\d{4})/", "************$1", $this->get("text")));
         }
 

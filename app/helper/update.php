@@ -2,8 +2,10 @@
 
 namespace Helper;
 
-class Update extends \Prefab
+class Update
 {
+    use \F3\Prefab;
+
     protected $cache = [];
 
     /**
@@ -11,7 +13,7 @@ class Update extends \Prefab
      */
     public function humanReadableValues(string $field, string|int $old_val, string|int $new_val): array
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         // Generate human readable values
         $func = $f3->camelcase("convert_{$field}");

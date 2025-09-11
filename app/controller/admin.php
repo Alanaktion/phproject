@@ -11,13 +11,13 @@ class Admin extends \Controller
     public function __construct()
     {
         $this->_userId = $this->_requireAdmin();
-        \Base::instance()->set("menuitem", "admin");
+        \F3\Base::instance()->set("menuitem", "admin");
     }
 
     /**
      * GET /admin
      */
-    public function index(\Base $f3): void
+    public function index(\F3\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.administration"));
         $f3->set("menuitem", "admin");
@@ -25,7 +25,7 @@ class Admin extends \Controller
         if ($f3->get("POST.action") == "clearcache") {
             $this->validateCsrf();
 
-            $cache = \Cache::instance();
+            $cache = \F3\Cache::instance();
 
             // Clear configured cache
             $cache->reset();
@@ -109,7 +109,7 @@ class Admin extends \Controller
     /**
      * GET /admin/config
      */
-    public function config(\Base $f3): void
+    public function config(\F3\Base $f3): void
     {
         $this->_requireAdmin(\Model\User::RANK_SUPER);
 
@@ -124,7 +124,7 @@ class Admin extends \Controller
      * POST /admin/config/saveattribute
      * @throws \Exception
      */
-    public function config_post_saveattribute(\Base $f3): void
+    public function config_post_saveattribute(\F3\Base $f3): void
     {
         $this->validateCsrf();
         $this->_requireAdmin(\Model\User::RANK_SUPER);
@@ -178,7 +178,7 @@ class Admin extends \Controller
     /**
      * GET /admin/plugins
      */
-    public function plugins(\Base $f3): void
+    public function plugins(\F3\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.plugins"));
         $this->_render("admin/plugins.html");
@@ -187,7 +187,7 @@ class Admin extends \Controller
     /**
      * GET /admin/plugins/@id
      */
-    public function plugin_single(\Base $f3, array $params): void
+    public function plugin_single(\F3\Base $f3, array $params): void
     {
         $this->_requireAdmin(\Model\User::RANK_SUPER);
 
@@ -208,7 +208,7 @@ class Admin extends \Controller
     /**
      * GET /users
      */
-    public function users(\Base $f3): void
+    public function users(\F3\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.users"));
 
@@ -222,7 +222,7 @@ class Admin extends \Controller
     /**
      * GET /admin/users/deleted
      */
-    public function deleted_users(\Base $f3): void
+    public function deleted_users(\F3\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.users"));
 
@@ -236,7 +236,7 @@ class Admin extends \Controller
      * GET /admin/users/@id
      * @throws \Exception
      */
-    public function user_edit(\Base $f3, array $params): void
+    public function user_edit(\F3\Base $f3, array $params): void
     {
         $f3->set("title", $f3->get("dict.edit_user"));
 
@@ -259,7 +259,7 @@ class Admin extends \Controller
     /**
      * GET /admin/users/new
      */
-    public function user_new(\Base $f3): void
+    public function user_new(\F3\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.new_user"));
         $f3->set("rand_color", sprintf("#%02X%02X%02X", random_int(0, 0xFF), random_int(0, 0xFF), random_int(0, 0xFF)));
@@ -270,7 +270,7 @@ class Admin extends \Controller
      * POST /admin/users, POST /admin/users/@id
      * @throws \Exception
      */
-    public function user_save(\Base $f3): void
+    public function user_save(\F3\Base $f3): void
     {
         $this->validateCsrf();
         $security = \Helper\Security::instance();
@@ -370,7 +370,7 @@ class Admin extends \Controller
      * POST /admin/users/delete/@id
      * @throws \Exception
      */
-    public function user_delete(\Base $f3, array $params): void
+    public function user_delete(\F3\Base $f3, array $params): void
     {
         $this->validateCsrf();
         $user = new \Model\User();
@@ -404,7 +404,7 @@ class Admin extends \Controller
      * POST /admin/users/undelete/@id
      * @throws \Exception
      */
-    public function user_undelete(\Base $f3, array $params): void
+    public function user_undelete(\F3\Base $f3, array $params): void
     {
         $this->validateCsrf();
         $user = new \Model\User();
@@ -427,7 +427,7 @@ class Admin extends \Controller
     /**
      * GET /admin/groups
      */
-    public function groups(\Base $f3): void
+    public function groups(\F3\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.groups"));
 
@@ -455,7 +455,7 @@ class Admin extends \Controller
     /**
      * POST /admin/groups/new
      */
-    public function group_new(\Base $f3): void
+    public function group_new(\F3\Base $f3): void
     {
         $this->validateCsrf();
         $group = new \Model\User();
@@ -473,7 +473,7 @@ class Admin extends \Controller
      * GET /admin/groups/@id
      * @throws \Exception
      */
-    public function group_edit(\Base $f3, array $params): void
+    public function group_edit(\F3\Base $f3, array $params): void
     {
         $f3->set("title", $f3->get("dict.groups"));
 
@@ -495,7 +495,7 @@ class Admin extends \Controller
      * POST /admin/groups/delete/@id
      * @throws \Exception
      */
-    public function group_delete(\Base $f3, array $params): void
+    public function group_delete(\F3\Base $f3, array $params): void
     {
         $this->validateCsrf();
         $group = new \Model\User();
@@ -512,7 +512,7 @@ class Admin extends \Controller
      * POST /admin/groups/ajax
      * @throws \Exception
      */
-    public function group_ajax(\Base $f3): void
+    public function group_ajax(\F3\Base $f3): void
     {
         $this->validateCsrf();
         if (!$f3->get("AJAX")) {
@@ -571,7 +571,7 @@ class Admin extends \Controller
      * POST /admin/groups/@id/setmanager/@user_group_id
      * @throws \Exception
      */
-    public function group_setmanager(\Base $f3, array $params): void
+    public function group_setmanager(\F3\Base $f3, array $params): void
     {
         $this->validateCsrf();
         $db = $f3->get("db.instance");
@@ -594,7 +594,7 @@ class Admin extends \Controller
     /**
      * GET /admin/sprints
      */
-    public function sprints(\Base $f3): void
+    public function sprints(\F3\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.sprints"));
 
@@ -607,7 +607,7 @@ class Admin extends \Controller
     /**
      * GET|POST /admin/sprints/new
      */
-    public function sprint_new(\Base $f3): void
+    public function sprint_new(\F3\Base $f3): void
     {
         $f3->set("title", $f3->get("dict.sprints"));
 
@@ -651,7 +651,7 @@ class Admin extends \Controller
      * GET /admin/sprints/@id, POST /admin/sprints/@id
      * @throws \Exception
      */
-    public function sprint_edit(\Base $f3, array $params): void
+    public function sprint_edit(\F3\Base $f3, array $params): void
     {
         $f3->set("title", $f3->get("dict.sprints"));
 

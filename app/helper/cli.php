@@ -2,8 +2,10 @@
 
 namespace Helper;
 
-class Cli extends \Prefab
+class Cli
 {
+    use \F3\Prefab;
+
     /**
      * Parse CLI options with defaults
      *

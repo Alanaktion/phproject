@@ -2,8 +2,10 @@
 
 namespace Helper;
 
-class Plugin extends \Prefab
+class Plugin
 {
+    use \F3\Prefab;
+
     protected $_hooks   = [];
 
     protected $_nav     = [];

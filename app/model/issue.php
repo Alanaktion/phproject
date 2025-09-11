@@ -59,7 +59,7 @@ class Issue extends \Model
             }
         }
 
-        if (empty($data["author_id"]) && $user_id = \Base::instance()->get("user.id")) {
+        if (empty($data["author_id"]) && $user_id = \F3\Base::instance()->get("user.id")) {
             $data["author_id"] = $user_id;
         }
 
@@ -93,7 +93,7 @@ class Issue extends \Model
         while ($parentId) {
             // Catch infinite loops early on, in case server isn't running linux :)
             if (in_array($parentId, $issueIds)) {
-                $f3 = \Base::instance();
+                $f3 = \F3\Base::instance();
                 $f3->set("error", "Issue parent tree contains an infinite loop. Issue {$parentId} is the first point of recursion.");
                 break;
             }
@@ -106,7 +106,7 @@ class Issue extends \Model
                 $issueIds[] = $issue->id;
             } else {
                 // Handle nonexistent issues
-                $f3 = \Base::instance();
+                $f3 = \F3\Base::instance();
                 $f3->set("error", "Issue #{$issue->id} has a parent issue #{$issue->parent_id} that doesn't exist.");
                 break;
             }
@@ -254,7 +254,7 @@ class Issue extends \Model
      */
     protected function _saveUpdate(bool $notify = true): Issue\Update
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         // Ensure issue is not tied to itself as a parent
         if ($this->id == $this->parent_id) {
@@ -338,7 +338,7 @@ class Issue extends \Model
      */
     public function save(bool $notify = true): Issue
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         // Catch empty sprint at the lowest level here
         if ($this->sprint_id === 0) {
@@ -418,7 +418,7 @@ class Issue extends \Model
             throw new \Exception('Cannot duplicate an issue that is not yet saved.');
         }
 
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         $this->copyto("duplicating_issue");
         $f3->clear("duplicating_issue.id");
@@ -449,7 +449,7 @@ class Issue extends \Model
         // Find all child issues
         $children = $this->find(["parent_id = ?", $id]);
         if (count($children) !== 0) {
-            $f3 = \Base::instance();
+            $f3 = \F3\Base::instance();
             foreach ($children as $child) {
                 if (!$child->deleted_date) {
                     // Duplicate issue
@@ -481,7 +481,7 @@ class Issue extends \Model
      */
     public function resetTaskSprints(bool $replaceExisting = true): Issue
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         if ($this->sprint_id) {
             $query = "UPDATE issue SET sprint_id = :sprint WHERE parent_id = :issue AND type_id != :type";
             if ($replaceExisting) {
@@ -602,7 +602,7 @@ class Issue extends \Model
      */
     public function allowAccess(?\Model\User $user = null): bool
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         if (!$user instanceof \Model\User) {
             $user = $f3->get("user_obj");
         }

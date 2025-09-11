@@ -28,7 +28,7 @@ class Session extends \Model
         if ($user_id !== null) {
             $this->user_id = $user_id;
             $this->token = \Helper\Security::instance()->salt_sha2();
-            $this->ip = \Base::instance()->get("IP");
+            $this->ip = \F3\Base::instance()->get("IP");
             $this->created = date("Y-m-d H:i:s");
             if ($auto_save) {
                 $this->save();
@@ -42,7 +42,7 @@ class Session extends \Model
      */
     public function loadCurrent(): Session
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
         $token = $f3->get("COOKIE." . self::COOKIE_NAME);
         if ($token && $this->load(["token LIKE ?", $token])) {
             $lifetime = $f3->get("session_lifetime");
@@ -57,7 +57,7 @@ class Session extends \Model
             // Update nearly expired sessions
             if ($duration > $lifetime / 2) {
                 if ($f3->get("DEBUG")) {
-                    $log = new \Log("session.log");
+                    $log = new \F3\Log("session.log");
                     $log->write("Updating expiration: " . json_encode($this->cast(), JSON_THROW_ON_ERROR)
                             . "; new date: " . date("Y-m-d H:i:s"));
                 }
@@ -78,10 +78,10 @@ class Session extends \Model
      */
     public function setCurrent(): Session
     {
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         if ($f3->get("DEBUG")) {
-            $log = new \Log("session.log");
+            $log = new \F3\Log("session.log");
             $log->write("Setting current session: " . json_encode($this->cast(), JSON_THROW_ON_ERROR));
         }
 
@@ -99,10 +99,10 @@ class Session extends \Model
             return $this;
         }
 
-        $f3 = \Base::instance();
+        $f3 = \F3\Base::instance();
 
         if ($f3->get("DEBUG")) {
-            $log = new \Log("session.log");
+            $log = new \F3\Log("session.log");
             $log->write("Deleting session: " . json_encode($this->cast(), JSON_THROW_ON_ERROR));
         }
 

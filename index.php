@@ -4,7 +4,7 @@ define('PHPROJECT_VERSION', '1.8.3');
 
 // Initialize core
 require_once "vendor/autoload.php";
-$f3 = Base::instance();
+$f3 = \F3\Base::instance();
 $f3->mset(array(
     "UI" => "app/view/;app/plugin/",
     "ESCAPE" => false,
@@ -45,7 +45,7 @@ if (is_file(".git/refs/heads/master")) {
 $f3->config("app/routes.ini");
 
 // Set up error handling
-$f3->set("ONERROR", function (Base $f3) {
+$f3->set("ONERROR", function (\F3\Base $f3) {
     if ($f3->get("AJAX")) {
         if (!headers_sent()) {
             header("Content-type: application/json");
@@ -117,7 +117,7 @@ foreach ($pluginDir as $pluginName) {
     if ($pluginName != "." && $pluginName != ".." && is_dir("app/plugin/$pluginName") && is_file("app/plugin/$pluginName/base.php")) {
         $pluginName = "Plugin\\" . str_replace(" ", "_", ucwords(str_replace("_", " ", $pluginName))) . "\\Base";
         $plugin = $pluginName::instance();
-        $slug = \Web::instance()->slug($plugin->_package());
+        $slug = \F3\Web::instance()->slug($plugin->_package());
         $plugins[$slug] = $plugin;
         if (!$plugin->_installed()) {
             try {
