@@ -4,62 +4,16 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cd12aca5806ecd9db5373d4b2c75dca6",
+    "content-hash": "e40f019d756e038dd36335dd57d767d6",
     "packages": [
         {
             "name": "bcosca/fatfree-core",
-            "version": "v4.x-dev",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/f3-factory/fatfree-core.git",
-                "reference": "af28ae826a38a0342e5dbba98f90845261dc58d2"
-            },
+            "version": "dev-v4",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/f3-factory/fatfree-core/zipball/af28ae826a38a0342e5dbba98f90845261dc58d2",
-                "reference": "af28ae826a38a0342e5dbba98f90845261dc58d2",
-                "shasum": ""
+                "url": "https://github.com/f3-factory/fatfree-core/archive/refs/tags/4.0.0-alpha.8.zip"
             },
-            "require": {
-                "ext-ctype": "*",
-                "ext-hash": "*",
-                "ext-intl": "*",
-                "ext-json": "*",
-                "php": ">=8.4"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "."
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
-            "homepage": "https://fatfreeframework.com/",
-            "keywords": [
-                "F3",
-                "fatfree",
-                "micro-framework",
-                "php"
-            ],
-            "support": {
-                "issues": "https://github.com/f3-factory/fatfree-core/issues",
-                "source": "https://github.com/f3-factory/fatfree-core/tree/v4"
-            },
-            "funding": [
-                {
-                    "url": "https://www.buymeacoffee.com/ikkez",
-                    "type": "buy_me_a_coffee"
-                },
-                {
-                    "url": "https://github.com/ikkez",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-09-08T21:55:13+00:00"
+            "type": "library"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -1017,16 +971,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.23",
+            "version": "2.1.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "a34502adbbd5c2366b5a97679848a5ace4f6f2f5"
+                "reference": "4087d28bd252895874e174d65e26b2c202ed893a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/a34502adbbd5c2366b5a97679848a5ace4f6f2f5",
-                "reference": "a34502adbbd5c2366b5a97679848a5ace4f6f2f5",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/4087d28bd252895874e174d65e26b2c202ed893a",
+                "reference": "4087d28bd252895874e174d65e26b2c202ed893a",
                 "shasum": ""
             },
             "require": {
@@ -1071,7 +1025,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-10T11:42:22+00:00"
+            "time": "2025-09-12T14:26:42+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2639,7 +2593,14 @@
             "time": "2024-03-03T12:36:25+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "bcosca/fatfree-core",
+            "version": "dev-v4",
+            "alias": "v4.x-dev",
+            "alias_normalized": "4.9999999.9999999.9999999-dev"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
         "bcosca/fatfree-core": 20

@@ -2,9 +2,22 @@
     "name": "alanaktion/phproject",
     "description": "A high performance full-featured project management system",
     "type": "project",
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "bcosca/fatfree-core",
+                "version": "dev-v4",
+                "dist": {
+                    "url": "https://github.com/f3-factory/fatfree-core/archive/refs/tags/4.0.0-alpha.8.zip",
+                    "type": "zip"
+                }
+            }
+        }
+    ],
     "require": {
         "php": ">=8.4.0",
-        "bcosca/fatfree-core": "v4.x-dev",
+        "bcosca/fatfree-core": "dev-v4 as v4.x-dev",
         "netcarver/textile": "^4.0",
         "neos/diff": "^8.3",
         "league/commonmark": "^2.7"

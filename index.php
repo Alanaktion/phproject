@@ -101,6 +101,11 @@ if ($version !== true) {
 // Initialize template extensions
 \Helper\View::instance()->extend("csrf-token", "Helper\Template::csrfToken");
 
+// Temporarily shim F3 v3 class names for plugin compatibility
+class_alias("F3\Base", "Base", false);
+class_alias("F3\Template", "Template", false);
+class_alias("F3\Web", "Web", false);
+
 // Initialize plugins and any included locales
 $pluginDir = scandir("app/plugin");
 $plugins = array();
