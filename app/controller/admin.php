@@ -280,12 +280,12 @@ class Admin extends \Controller
         try {
             // Check for existing users with same info
             $user->load(["username = ? AND id != ?", $f3->get("POST.username"), $user_id]);
-            if ($user->id) {
+            if (!$user->dry()) {
                 throw new \Exception("Another user already exists with this username");
             }
 
             $user->load(["email = ? AND id != ?", $f3->get("POST.email"), $user_id]);
-            if ($user->id !== 0) {
+            if (!$user->dry()) {
                 throw new \Exception("Another user already exists with this email address");
             }
 
