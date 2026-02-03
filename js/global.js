@@ -1,5 +1,10 @@
-/* globals $ BASE Mousetrap issue_types */
+/* globals $ BASE Mousetrap issue_types DOMPurify */
 $(function() {
+	// Purify injected HTML by default
+	// As much as I love Firefox, it does not support this yet and is not very secure in general. Consider a Chromium fork.
+	window.trustedTypes && trustedTypes.createPolicy('default', {
+		createHTML: (input) => DOMPurify.sanitize(input, { RETURN_TRUSTED_TYPE: false }),
+	});
 
 	// Set XSRF-TOKEN header
 	$.ajaxSetup({
