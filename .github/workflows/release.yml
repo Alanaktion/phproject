@@ -61,6 +61,7 @@ jobs:
           docker run --rm \
             --volume $PWD:/app \
             --user $(id -u):$(id -g) \
+            --env COMPOSER_AUTH='{"github-oauth":{"github.com":"${{ secrets.COMPOSER_TOKEN }}"}}' \
             composer install --no-ansi --no-interaction --no-dev
           docker buildx build \
             --platform "linux/amd64,linux/arm/v7,linux/arm64" \

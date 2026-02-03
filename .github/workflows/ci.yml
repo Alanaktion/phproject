@@ -31,8 +31,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-        env:
-          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.COMPOSER_TOKEN }}
 
       - uses: actions/checkout@v3
 
