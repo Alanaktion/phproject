@@ -22,13 +22,13 @@ class Notification extends \Prefab
         $str_index = 0;
 
         while ($length--) {
-            if (($c = $str[$str_index++] === "\015") && ($str[$str_index] == "\012") && $length > 0) {
+            if ((($c = $str[$str_index++]) === "\015") && ($str[$str_index] == "\012") && $length > 0) {
                 $ret .= "\015";
                 $ret .= $str[$str_index++];
                 $length--;
                 $lp = 0;
             } elseif (
-                ctype_cntrl($c)
+                ctype_cntrl((string)$c)
                 || (ord($c) == 0x7f)
                 || (ord($c) & 0x80)
                 || ($c === '=')
