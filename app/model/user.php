@@ -251,7 +251,7 @@ class User extends \Model
         }
 
         $result = [];
-        $date_expr = ["DATE(DATE_ADD(", ", INTERVAL :offset SECOND)"];
+        $date_expr = ["DATE(DATE_ADD(", ", INTERVAL :offset SECOND))"];
         if (\Base::instance()->get("db.engine") == "sqlite") {
             $date_expr = ["DATE(", ", :offset || ' seconds')"];
         }
