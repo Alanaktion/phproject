@@ -165,7 +165,7 @@ class User extends \Model
         $ids = $groupIds;
         if ($groupIds !== []) {
             $groupIdString = implode(",", $groupIds);
-            $users = $groupModel->find("group_id IN ({$groupIdString})", ["group" => "id,user_id"]);
+            $users = $groupModel->find("group_id IN ({$groupIdString})");
             foreach ($users as $u) {
                 $ids[] = $u->user_id;
             }
