@@ -16,7 +16,7 @@ Phproject is a high-performance project management system written in PHP. It's a
 ## Repository Structure
 
 ```
-/home/runner/work/phproject/phproject/
+phproject/
 ├── app/              # Core application code (models, controllers, views)
 │   ├── controller/   # Application controllers
 │   ├── model/        # Database models
@@ -59,7 +59,7 @@ Phproject is a high-performance project management system written in PHP. It's a
    ```
 
 3. **Install Phproject (for testing):**
-   
+
    For MySQL:
    ```bash
    php install.php --site-name=Test --site-url=http://localhost/ \
@@ -67,7 +67,7 @@ Phproject is a high-performance project management system written in PHP. It's a
      --admin-email=test@example.com --admin-password=secret \
      --db-host=127.0.0.1 --db-port=3306 --db-user=root
    ```
-   
+
    For SQLite:
    ```bash
    php install.php --site-name=Test --site-url=http://localhost/ \
@@ -239,32 +239,10 @@ See `CONTRIBUTING.md` for full guidelines.
 ### Security
 
 Report security vulnerabilities via:
-- [huntr.dev](https://huntr.dev/bounties/disclose)
+- [GitHub](https://github.com/Alanaktion/phproject/security/advisories/new)
 - Email: alan@phpizza.com (PGP: [keybase.io/alanaktion](https://keybase.io/alanaktion/pgp_keys.asc))
 
 See `SECURITY.md` for full security policy.
-
-## Troubleshooting
-
-### Common Issues
-
-**Composer install fails:**
-- Ensure PHP 8.1+ is installed and active
-- Check PHP extensions (PDO, pdo_mysql/pdo_sqlite, etc.)
-
-**Tests fail:**
-- Ensure Phproject is installed (run `install.php`)
-- Check database connection settings
-- Review `tests/bootstrap.php` for test setup
-
-**PHPCS fails on legacy code:**
-- Project allows some PSR-12 exceptions for backwards compatibility
-- Focus on new code following standards
-- See `.phpcs.xml` for allowed exceptions
-
-**Docker build issues:**
-- Ensure Docker and Docker Buildx are installed
-- Check platform support with `docker buildx ls`
 
 ## Additional Resources
 
