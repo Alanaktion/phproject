@@ -136,21 +136,23 @@ class Notification extends \Prefab
 
             // Get recipient list and remove current user
             $recipients = $this->_issue_watchers($issue_id);
-            $recipients = array_diff($recipients, [$comment->user_email]);
+            $recipients = array_filter($recipients, fn($r) => $r['email'] !== $comment->user_email);
 
-            // Render message body
+            // Set template variables
             $f3->set("issue", $issue);
             $f3->set("comment", $comment);
             $f3->set("previewText", $comment->text);
-            $text = $this->_render("notification/comment.txt");
-            $body = $this->_render("notification/comment.html");
 
             $subject = "[#{$issue->id}] - New comment on {$issue->name}";
 
-            // Send to recipients
+            // Send to recipients in their preferred language
             foreach ($recipients as $recipient) {
-                $this->utf8mail($recipient, $subject, $body, $text);
-                $log->write("Sent comment notification to: " . $recipient);
+                $lang = $this->_set_language($recipient['language']);
+                $text = $this->_render("notification/comment.txt");
+                $body = $this->_render("notification/comment.html");
+                $f3->set("LANGUAGE", $lang);
+                $this->utf8mail($recipient['email'], $subject, $body, $text);
+                $log->write("Sent comment notification to: " . $recipient['email']);
             }
         }
     }
@@ -188,13 +190,11 @@ class Notification extends \Prefab
 
             // Get recipient list and remove update user
             $recipients = $this->_issue_watchers($issue_id);
-            $recipients = array_diff($recipients, [$update->user_email]);
+            $recipients = array_filter($recipients, fn($r) => $r['email'] !== $update->user_email);
 
-            // Render message body
+            // Set template variables
             $f3->set("issue", $issue);
             $f3->set("update", $update);
-            $text = $this->_render("notification/update.txt");
-            $body = $this->_render("notification/update.html");
 
             $changes->load(["issue_update_id = ? AND `field` = 'closed_date' AND old_value = '' and new_value != ''", $update->id]);
             if ($changes && $changes->id) {
@@ -203,10 +203,14 @@ class Notification extends \Prefab
                 $subject =  "[#{$issue->id}] - {$issue->name} updated";
             }
 
-            // Send to recipients
+            // Send to recipients in their preferred language
             foreach ($recipients as $recipient) {
-                $this->utf8mail($recipient, $subject, $body, $text);
-                $log->write("Sent update notification to: " . $recipient);
+                $lang = $this->_set_language($recipient['language']);
+                $text = $this->_render("notification/update.txt");
+                $body = $this->_render("notification/update.html");
+                $f3->set("LANGUAGE", $lang);
+                $this->utf8mail($recipient['email'], $subject, $body, $text);
+                $log->write("Sent update notification to: " . $recipient['email']);
             }
         }
 
@@ -240,21 +244,22 @@ class Notification extends \Prefab
             $user = new \Model\User();
             $user->load($issue->author_id);
             if ($user->option('disable_self_notifications')) {
-                $recipients = array_diff($recipients, [$user->email]);
+                $recipients = array_filter($recipients, fn($r) => $r['email'] !== $user->email);
             }
 
-            // Render message body
+            // Set template variables
             $f3->set("issue", $issue);
-
-            $text = $this->_render("notification/new.txt");
-            $body = $this->_render("notification/new.html");
 
             $subject = "[#{$issue->id}] - {$issue->name} created by {$issue->author_name}";
 
-            // Send to recipients
+            // Send to recipients in their preferred language
             foreach ($recipients as $recipient) {
-                $this->utf8mail($recipient, $subject, $body, $text);
-                $log->write("Sent create notification to: " . $recipient);
+                $lang = $this->_set_language($recipient['language']);
+                $text = $this->_render("notification/new.txt");
+                $body = $this->_render("notification/new.html");
+                $f3->set("LANGUAGE", $lang);
+                $this->utf8mail($recipient['email'], $subject, $body, $text);
+                $log->write("Sent create notification to: " . $recipient['email']);
             }
         }
     }
@@ -288,21 +293,23 @@ class Notification extends \Prefab
 
             // Get recipient list and remove current user
             $recipients = $this->_issue_watchers($issue_id);
-            $recipients = array_diff($recipients, [$file->user_email]);
+            $recipients = array_filter($recipients, fn($r) => $r['email'] !== $file->user_email);
 
-            // Render message body
+            // Set template variables
             $f3->set("issue", $issue);
             $f3->set("file", $file);
             $f3->set("previewText", $file->filename);
-            $text = $this->_render("notification/file.txt");
-            $body = $this->_render("notification/file.html");
 
             $subject =  "[#{$issue->id}] - {$file->user_name} attached a file to {$issue->name}";
 
-            // Send to recipients
+            // Send to recipients in their preferred language
             foreach ($recipients as $recipient) {
-                $this->utf8mail($recipient, $subject, $body, $text);
-                $log->write("Sent file notification to: " . $recipient);
+                $lang = $this->_set_language($recipient['language']);
+                $text = $this->_render("notification/file.txt");
+                $body = $this->_render("notification/file.html");
+                $f3->set("LANGUAGE", $lang);
+                $this->utf8mail($recipient['email'], $subject, $body, $text);
+                $log->write("Sent file notification to: " . $recipient['email']);
             }
         }
     }
@@ -321,10 +328,12 @@ class Notification extends \Prefab
                 throw new \Exception("User does not exist.");
             }
 
-            // Render message body
+            // Render message body in the user's preferred language
+            $lang = $this->_set_language($user->language);
             $f3->set("token", $token);
             $text = $this->_render("notification/user_reset.txt");
             $body = $this->_render("notification/user_reset.html");
+            $f3->set("LANGUAGE", $lang);
 
             // Send email to user
             $subject = "Reset your password - " . $f3->get("site.name");
@@ -348,8 +357,10 @@ class Notification extends \Prefab
 
             $f3->set("previewText", $preview);
             $subject = "Due Today - " . $f3->get("site.name");
+            $lang = $this->_set_language($user->language);
             $text = $this->_render("notification/user_due_issues.txt");
             $body = $this->_render("notification/user_due_issues.html");
+            $f3->set("LANGUAGE", $lang);
             return $this->utf8mail($user->email, $subject, $body, $text);
         }
 
@@ -357,7 +368,7 @@ class Notification extends \Prefab
     }
 
     /**
-     * Get array of email addresses of all watchers on an issue
+     * Get array of watchers (email and language) for an issue
      */
     protected function _issue_watchers(int $issue_id): array
     {
@@ -365,36 +376,57 @@ class Notification extends \Prefab
         $recipients = [];
 
         // Add issue author and owner
-        $result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.author_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
+        $result = $db->exec("SELECT u.email, u.language FROM issue i INNER JOIN `user` u on i.author_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
         if (!empty($result[0]["email"])) {
-            $recipients[] = $result[0]["email"];
+            $recipients[] = ['email' => $result[0]["email"], 'language' => $result[0]["language"]];
         }
 
 
-        $result = $db->exec("SELECT u.email FROM issue i INNER JOIN `user` u on i.owner_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
+        $result = $db->exec("SELECT u.email, u.language FROM issue i INNER JOIN `user` u on i.owner_id = u.id WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
         if (!empty($result[0]["email"])) {
-            $recipients[] = $result[0]["email"];
+            $recipients[] = ['email' => $result[0]["email"], 'language' => $result[0]["language"]];
         }
 
         // Add whole group
         $result = $db->exec("SELECT u.role, u.id FROM issue i INNER JOIN `user` u on i.owner_id = u.id  WHERE u.deleted_date IS NULL AND i.id = ?", $issue_id);
         if ($result && $result[0]["role"] == 'group') {
-            $group_users = $db->exec("SELECT g.user_email FROM user_group_user g WHERE g.deleted_date IS NULL AND g.group_id = ?", $result[0]["id"]);
+            $group_users = $db->exec("SELECT u.email, u.language FROM user_group g INNER JOIN `user` u ON g.user_id = u.id WHERE u.deleted_date IS NULL AND g.group_id = ?", $result[0]["id"]);
             foreach ($group_users as $group_user) {
-                if (!empty($group_user["user_email"])) {
-                    $recipients[] = $group_user["user_email"];
+                if (!empty($group_user["email"])) {
+                    $recipients[] = ['email' => $group_user["email"], 'language' => $group_user["language"]];
                 }
             }
         }
 
         // Add watchers
-        $watchers = $db->exec("SELECT u.email FROM issue_watcher w INNER JOIN `user` u ON w.user_id = u.id WHERE u.deleted_date IS NULL AND issue_id = ?", $issue_id);
+        $watchers = $db->exec("SELECT u.email, u.language FROM issue_watcher w INNER JOIN `user` u ON w.user_id = u.id WHERE u.deleted_date IS NULL AND issue_id = ?", $issue_id);
         foreach ($watchers as $watcher) {
-            $recipients[] = $watcher["email"];
+            $recipients[] = ['email' => $watcher["email"], 'language' => $watcher["language"]];
         }
 
-        // Remove duplicate users
-        return array_unique($recipients);
+        // Remove duplicate users, keeping first occurrence
+        $seen = [];
+        $unique = [];
+        foreach ($recipients as $recipient) {
+            if (!in_array($recipient['email'], $seen)) {
+                $seen[] = $recipient['email'];
+                $unique[] = $recipient;
+            }
+        }
+        return $unique;
+    }
+
+    /**
+     * Temporarily set the app language, returning the previous value for restoration
+     */
+    protected function _set_language(?string $language): string
+    {
+        $f3 = \Base::instance();
+        $original = (string) $f3->get("LANGUAGE");
+        if ($language) {
+            $f3->set("LANGUAGE", $language);
+        }
+        return $original;
     }
 
     /**
