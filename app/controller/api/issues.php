@@ -7,9 +7,9 @@ class Issues extends \Controller\Api
     /**
      * Converts an issue into a Redmine API-style multidimensional array
      * This isn't pretty.
-     * @param  Detail $issue
+     * @param  \Model\Issue $issue
      */
-    protected function _issueMultiArray(\Model\Issue\Detail $issue): array
+    protected function _issueMultiArray(\Model\Issue $issue): array
     {
         $casted = $issue->cast();
 
@@ -61,7 +61,7 @@ class Issues extends \Controller\Api
     }
 
     // Get a list of issues
-    public function get($f3): void
+    public function get(\Base $f3): void
     {
         $issue = new \Model\Issue\Detail();
 
@@ -113,7 +113,7 @@ class Issues extends \Controller\Api
     }
 
     // Create a new issue
-    public function post($f3): void
+    public function post(\Base $f3): void
     {
         if ($_REQUEST !== []) {
             // By default, use standard HTTP POST fields
@@ -164,7 +164,7 @@ class Issues extends \Controller\Api
 
         // Verify the required "name" field is passed
         if (empty($post["name"])) {
-            $f3->error("The 'name' value is required.");
+            $f3->error(400, "The 'name' value is required.");
             return;
         }
 
@@ -173,7 +173,7 @@ class Issues extends \Controller\Api
             $type = new \Model\Issue\Type();
             $type->load($post["type_id"]);
             if (!$type->id) {
-                $f3->error("The 'type_id' field is not valid.");
+                $f3->error(400, "The 'type_id' field is not valid.");
                 return;
             }
         }
@@ -182,7 +182,7 @@ class Issues extends \Controller\Api
             $parent = new \Model\Issue();
             $parent->load($post["parent_id"]);
             if (!$parent->id) {
-                $f3->error("The 'type_id' field is not valid.");
+                $f3->error(400, "The 'parent_id' field is not valid.");
                 return;
             }
         }
@@ -191,7 +191,7 @@ class Issues extends \Controller\Api
             $status = new \Model\Issue\Status();
             $status->load($post["status"]);
             if (!$status->id) {
-                $f3->error("The 'status' field is not valid.");
+                $f3->error(400, "The 'status' field is not valid.");
                 return;
             }
         }
@@ -200,7 +200,7 @@ class Issues extends \Controller\Api
             $priority = new \Model\Issue\Priority();
             $priority->load(["value" => $post["priority_id"]]);
             if (!$priority->id) {
-                $f3->error("The 'priority_id' field is not valid.");
+                $f3->error(400, "The 'priority_id' field is not valid.");
                 return;
             }
         }
@@ -242,9 +242,9 @@ class Issues extends \Controller\Api
     }
 
     // Update an existing issue
-    public function single_put($f3, array $params): void
+    public function single_put(\Base $f3, array $params): void
     {
-        $issue = new \Model\Issue();
+        $issue = new \Model\Issue\Detail();
         $issue->load($params["id"]);
 
         if (!$issue->id) {
@@ -260,7 +260,12 @@ class Issues extends \Controller\Api
         // Disallow setting sensitive fields via API
         $protectedFields = ['author_id', 'closed_date'];
         $updated = [];
-        foreach ($f3->get("REQUEST") as $key => $val) {
+        $requestData = $f3->get("REQUEST") ?: [];
+        if ($f3->get("BODY")) {
+            parse_str($f3->get("BODY"), $bodyData);
+            $requestData = array_merge($requestData, $bodyData);
+        }
+        foreach ($requestData as $key => $val) {
             if (is_scalar($val) && $issue->exists($key) && !in_array($key, $protectedFields, true)) {
                 $updated[] = $key;
                 $issue->set($key, $val);
@@ -268,14 +273,22 @@ class Issues extends \Controller\Api
         }
 
         if ($updated !== []) {
-            $issue->save();
+            // Save via the base Issue model to avoid writing to the issue_detail view
+            $baseIssue = new \Model\Issue();
+            $baseIssue->load($params["id"]);
+            foreach ($updated as $field) {
+                $baseIssue->set($field, $issue->get($field));
+            }
+            $baseIssue->save();
+            // Reload the detail model to reflect saved changes
+            $issue->load($params["id"]);
         }
 
         $this->_printJson(["updated_fields" => $updated, "issue" => $this->_issueMultiArray($issue)]);
     }
 
     // Get a single issue's details
-    public function single_get($f3, array $params): void
+    public function single_get(\Base $f3, array $params): void
     {
         $issue = new \Model\Issue\Detail();
         $issue->load($params["id"]);
@@ -287,7 +300,7 @@ class Issues extends \Controller\Api
     }
 
     // Delete a single issue
-    public function single_delete($f3, array $params): void
+    public function single_delete(\Base $f3, array $params): void
     {
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
@@ -308,7 +321,7 @@ class Issues extends \Controller\Api
     }
 
     // List issue comments
-    public function single_comments($f3, array $params): void
+    public function single_comments(\Base $f3, array $params): void
     {
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
@@ -329,7 +342,7 @@ class Issues extends \Controller\Api
     }
 
     // Add a comment on an issue
-    public function single_comments_post($f3, array $params): void
+    public function single_comments_post(\Base $f3, array $params): void
     {
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
@@ -344,7 +357,7 @@ class Issues extends \Controller\Api
     }
 
     // List issue types
-    public function types($f3): void
+    public function types(\Base $f3): void
     {
         $types = $f3->get("issue_types");
         $return = [];
@@ -364,7 +377,7 @@ class Issues extends \Controller\Api
     }
 
     // List issues by tag
-    public function tag_single($f3, array $params): void
+    public function tag_single(\Base $f3, array $params): void
     {
         $tag = new \Model\Issue\Tag();
         $issueIds = $tag->issues($params['tag']);

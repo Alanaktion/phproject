@@ -137,7 +137,7 @@ class Security extends \Prefab
     }
 
     /**
-     * Validate a CSRF token, exiting if invalid
+     * Validate a CSRF token
      */
     public function validateCsrfToken(): void
     {
@@ -150,7 +150,6 @@ class Security extends \Prefab
 
         if (!$cookieToken || !$requestToken || !hash_equals($cookieToken, $requestToken)) {
             $f3->error(400, 'Invalid CSRF token');
-            exit;
         }
     }
 

@@ -24,8 +24,16 @@ abstract class Api extends \Controller
 
             echo json_encode($out, JSON_THROW_ON_ERROR);
         });
+    }
 
-        $this->_userId = $this->_requireAuth();
+    public function beforeroute(): bool
+    {
+        $userId = $this->_requireAuth();
+        if ($userId === false) {
+            return false;
+        }
+        $this->_userId = $userId;
+        return true;
     }
 
     /**

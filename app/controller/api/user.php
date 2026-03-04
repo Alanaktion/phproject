@@ -26,7 +26,7 @@ class User extends \Controller\Api
         ];
     }
 
-    public function single_get($f3, array $params): void
+    public function single_get(\Base $f3, array $params): void
     {
         if ($params["username"] == "me") {
             $user = $f3->get("user_obj");
@@ -42,7 +42,7 @@ class User extends \Controller\Api
         }
     }
 
-    public function single_email($f3, array $params): void
+    public function single_email(\Base $f3, array $params): void
     {
         $user = new \Model\User();
         $user->load(["email = ? AND deleted_date IS NULL", $params["email"]]);
@@ -55,7 +55,7 @@ class User extends \Controller\Api
 
 
     // Gets a List of users
-    public function get($f3): void
+    public function get(\Base $f3): void
     {
         $pagLimit = $f3->get("GET.limit") ?: 30;
         if ($pagLimit == -1) {
@@ -86,7 +86,7 @@ class User extends \Controller\Api
 
 
     // Gets a list of Users
-    public function get_group($f3): void
+    public function get_group(\Base $f3): void
     {
         $pagLimit = $f3->get("GET.limit") ?: 30;
 
