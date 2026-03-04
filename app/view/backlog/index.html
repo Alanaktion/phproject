@@ -98,7 +98,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading has-buttons">
                                     <a class="{{ @key ? 'collapsed' : '' }}" data-toggle="collapse" href="#panel-{{ @sprint.id }}">
-                                        {{ @sprint.name }} &mdash; {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}
+                                        {{ @sprint.name }} &mdash; {{ $this->formatShortDate(strtotime(@sprint.start_date)) }}-{{ $this->formatShortDate(strtotime(@sprint.end_date)) }}
                                     </a>
                                     <a href="{{ @BASE }}/taskboard/{{ @sprint.id }}" data-base-href="{{ @BASE }}/taskboard/{{ @sprint.id }}" class="sprint-board btn btn-default btn-xs pull-right">
                                         <span class="fa fa-list"></span> {{ @dict.taskboard }}

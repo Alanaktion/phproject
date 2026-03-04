@@ -336,4 +336,71 @@ class View extends \Template
         $langs = $f3->split($f3->get("LANGUAGE"));
         return $langs[0] ?? $f3->get("FALLBACK", "en");
     }
+
+    /**
+     * Format a timestamp as a localized long date string (e.g., "January 15, 2024" / "15. Januar 2024")
+     */
+    public function formatDate(int|string|null $timestamp = null): string
+    {
+        if ($timestamp !== null && !is_numeric($timestamp)) {
+            $timestamp = strtotime($timestamp);
+        }
+
+        if (!$timestamp) {
+            $timestamp = time();
+        }
+
+        $fmt = new \IntlDateFormatter(
+            $this->lang(),
+            \IntlDateFormatter::LONG,
+            \IntlDateFormatter::NONE
+        );
+
+        return (string) $fmt->format((int) $timestamp);
+    }
+
+    /**
+     * Format a timestamp as a localized long date and time string
+     * (e.g., "January 15, 2024 at 3:45 PM" / "15. Januar 2024 um 15:45")
+     */
+    public function formatDateTime(int|string|null $timestamp = null): string
+    {
+        if ($timestamp !== null && !is_numeric($timestamp)) {
+            $timestamp = strtotime($timestamp);
+        }
+
+        if (!$timestamp) {
+            $timestamp = time();
+        }
+
+        $fmt = new \IntlDateFormatter(
+            $this->lang(),
+            \IntlDateFormatter::LONG,
+            \IntlDateFormatter::SHORT
+        );
+
+        return (string) $fmt->format((int) $timestamp);
+    }
+
+    /**
+     * Format a timestamp as a localized short date string (e.g., "1/15/24" / "15.01.24")
+     */
+    public function formatShortDate(int|string|null $timestamp = null): string
+    {
+        if ($timestamp !== null && !is_numeric($timestamp)) {
+            $timestamp = strtotime($timestamp);
+        }
+
+        if (!$timestamp) {
+            $timestamp = time();
+        }
+
+        $fmt = new \IntlDateFormatter(
+            $this->lang(),
+            \IntlDateFormatter::SHORT,
+            \IntlDateFormatter::NONE
+        );
+
+        return (string) $fmt->format((int) $timestamp);
+    }
 }

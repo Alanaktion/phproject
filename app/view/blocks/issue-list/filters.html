@@ -120,16 +120,16 @@
             </check>
             <repeat group="{{ @sprints }}" value="{{ @item }}">
                 <check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
-                    <true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
-                    <false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
+                    <true><option value="{{ @item.id }}" selected>{{ $this->formatDate(strtotime(@item.start_date)) }}</option></true>
+                    <false><option value="{{ @item.id }}">{{ $this->formatDate(strtotime(@item.start_date)) }}</option></false>
                 </check>
             </repeat>
             <check if="{{ !empty(@old_sprints) }}">
                 <optgroup label="{{ @dict.previous_sprints }}">
                     <repeat group="{{ @old_sprints }}" value="{{ @item }}">
                         <check if="{{ !empty(@GET.sprint_id) && @GET.sprint_id == @item.id }}">
-                            <true><option value="{{ @item.id }}" selected>{{ date("M j, Y", strtotime(@item.start_date)) }}</option></true>
-                            <false><option value="{{ @item.id }}">{{ date("M j, Y", strtotime(@item.start_date)) }}</option></false>
+                            <true><option value="{{ @item.id }}" selected>{{ $this->formatDate(strtotime(@item.start_date)) }}</option></true>
+                            <false><option value="{{ @item.id }}">{{ $this->formatDate(strtotime(@item.start_date)) }}</option></false>
                         </check>
                     </repeat>
                 </optgroup>

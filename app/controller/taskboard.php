@@ -95,7 +95,7 @@ class Taskboard extends \Controller
         }
 
         $f3->set("sprint", $sprint);
-        $f3->set("title", $sprint->name . " " . date('n/j', strtotime($sprint->start_date)) . "-" . date('n/j', strtotime($sprint->end_date)));
+        $f3->set("title", $sprint->name . " " . \Helper\View::instance()->formatShortDate(strtotime($sprint->start_date)) . "-" . \Helper\View::instance()->formatShortDate(strtotime($sprint->end_date)));
         $f3->set("menuitem", "backlog");
 
         // Get list of all users in the user's groups

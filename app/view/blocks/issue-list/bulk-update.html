@@ -102,7 +102,7 @@
                             <option value="">{{ @dict.choose_option }}</option>
                             <option value="-1">{{ @dict.no_sprint }}</option>
                             <repeat group="{{ @sprints }}" value="{{ @item }}">
-                                <option value="{{ @item.id }}" >{{ @item.name | esc }} {{ date('n/j', strtotime(@item.start_date)) }}-{{ date('n/j', strtotime(@item.end_date)) }}</option>
+                                <option value="{{ @item.id }}" >{{ @item.name | esc }} {{ $this->formatShortDate(strtotime(@item.start_date)) }}-{{ $this->formatShortDate(strtotime(@item.end_date)) }}</option>
                             </repeat>
                         </select>
                     </div>
