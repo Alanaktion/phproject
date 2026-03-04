@@ -408,8 +408,9 @@ class Notification extends \Prefab
         $seen = [];
         $unique = [];
         foreach ($recipients as $recipient) {
-            if (!in_array($recipient['email'], $seen)) {
-                $seen[] = $recipient['email'];
+            $email = $recipient['email'];
+            if (!isset($seen[$email])) {
+                $seen[$email] = true;
                 $unique[] = $recipient;
             }
         }
