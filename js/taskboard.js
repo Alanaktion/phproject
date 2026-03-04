@@ -141,7 +141,18 @@ var Taskboard = {
 			todayHighlight: true,
 			autoclose: true
 		});
+		$('#task-dialog #assigned option.deactivated-user').remove();
 		Taskboard.setOptionByVal('#task-dialog', user);
+		if (user && String($('#task-dialog #assigned').val()) !== String(user)) {
+			var userName = $(data).find('.owner').text().trim();
+			$('<option>', {
+				value: user,
+				'data-color': userColor,
+				'class': 'deactivated-user',
+				text: userName ? userName + ' (Deactivated)' : 'Deactivated User'
+			}).appendTo('#task-dialog #assigned');
+			Taskboard.setOptionByVal('#task-dialog', user);
+		}
 		Taskboard.setOptionByVal('#priority', priority);
 
 		$('#task-dialog .modal-title').text('Edit Task');
