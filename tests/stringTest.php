@@ -31,8 +31,27 @@ class StringTest extends TestCase
         $helper = \Helper\Security::instance();
         $string = "Hello world!";
         $hash = $helper->hash($string);
-        $result = $helper->hash($string, $hash["salt"]);
-        $this->assertEquals($result, $hash["hash"]);
+        $this->assertEquals("bcrypt", $hash["salt"]);
+        $this->assertTrue(password_verify($string, $hash["hash"]));
+    }
+
+    public function testVerifyPassword(): void
+    {
+        $helper = \Helper\Security::instance();
+        $string = "Hello world!";
+        $hash = $helper->hash($string);
+        $this->assertTrue($helper->verifyPassword($string, $hash["hash"], $hash["salt"]));
+        $this->assertFalse($helper->verifyPassword("wrong", $hash["hash"], $hash["salt"]));
+    }
+
+    public function testVerifyLegacyPassword(): void
+    {
+        $helper = \Helper\Security::instance();
+        $string = "Hello world!";
+        $salt = $helper->salt();
+        $legacyHash = sha1($salt . sha1($string));
+        $this->assertTrue($helper->verifyPassword($string, $legacyHash, $salt));
+        $this->assertFalse($helper->verifyPassword("wrong", $legacyHash, $salt));
     }
 
     public function testFormatFilesize(): void
