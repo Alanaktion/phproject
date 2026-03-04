@@ -6,7 +6,7 @@ Since our team is small, and we don't update often, we only support the latest r
 
 ## Reporting a Vulnerability
 
-If you find an issue with the security of Phproject, you may report the vulnerability on [huntr.dev](https://huntr.dev/bounties/disclose), or let me know personally via email at alan@phpizza.com. If emailing, I recommend encrypting your communication with [my PGP public key](https://keybase.io/alanaktion/pgp_keys.asc).
+If you find an issue with the security of Phproject, you may report the vulnerability on [GitHub](https://github.com/Alanaktion/phproject/security/advisories/new), or let me know personally via email at alan@phpizza.com. If emailing, I recommend encrypting your communication with [my PGP public key](https://keybase.io/alanaktion/pgp_keys.asc).
 
 I'll do my best to get back to you within 48 hours, at least with an idea of when we can fix the issue. Major issues that involve significant changes to the application can take several weeks since no one works on this project full time, but we'll do what we can to fix things.
 
