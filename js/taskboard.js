@@ -160,6 +160,7 @@ var Taskboard = {
 		Taskboard.changeModalColor(userColor);
 	},
 	modalAdd: function(storyId) {
+		$('#task-dialog #assigned option.deactivated-user').remove();
 		$('#task-dialog input, #task-dialog textarea').not('#sprintId').val('');
 		$('#task-dialog #priority').val(0);
 		$('#task-dialog #assigned').val($('#task-dialog #assigned').data('default-value'));
