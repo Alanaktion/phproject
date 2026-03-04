@@ -663,6 +663,8 @@ class Admin extends \Controller
         }
 
         if ($post = $f3->get("POST")) {
+            $this->validateCsrf();
+
             if (empty($post["start_date"]) || empty($post["end_date"])) {
                 $f3->set("error", "Start and end date are required");
                 $this->_render("admin/sprints/edit.html");

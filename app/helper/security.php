@@ -7,19 +7,42 @@ use Helper\Security\AntiXSS;
 class Security extends \Prefab
 {
     /**
-     * Generate a salted SHA1 hash
+     * Hash a password using bcrypt via password_hash().
+     * Falls back to legacy SHA1 hashing when a salt is provided
+     * for verifying existing passwords during migration.
      */
     public function hash(string $string, ?string $salt = null): array|string
     {
         if ($salt === null) {
-            $salt = $this->salt();
+            // New password: use bcrypt
+            $hash = password_hash($string, PASSWORD_BCRYPT);
             return [
-                "salt" => $salt,
-                "hash" => sha1($salt . sha1($string)),
+                "salt" => "bcrypt",
+                "hash" => $hash,
             ];
         }
 
+        if ($salt === "bcrypt") {
+            // Already using bcrypt - this path is for verification
+            return $string;
+        }
+
+        // Legacy SHA1 path for verifying old passwords
         return sha1($salt . sha1($string));
+    }
+
+    /**
+     * Verify a password against a stored hash.
+     * Supports both bcrypt and legacy SHA1 hashes.
+     */
+    public function verifyPassword(string $password, string $hash, string $salt): bool
+    {
+        if ($salt === "bcrypt") {
+            return password_verify($password, $hash);
+        }
+
+        // Legacy SHA1 verification
+        return hash_equals($this->hash($password, $salt), $hash);
     }
 
     /**

@@ -80,7 +80,13 @@ class Issues extends \Controller\Api
         // Build options
         $options = [];
         if ($f3->get("GET.order")) {
-            $options["order"] = $f3->get("GET.order") . " " . $f3->get("GET.ascdesc");
+            // Whitelist allowed columns and sort directions to prevent SQL injection
+            $allowedColumns = $issue->fields(false);
+            $orderCol = $f3->get("GET.order");
+            $ascDesc = strtoupper((string) $f3->get("GET.ascdesc"));
+            if (in_array($orderCol, $allowedColumns, true) && in_array($ascDesc, ['ASC', 'DESC', ''], true)) {
+                $options["order"] = $orderCol . " " . $ascDesc;
+            }
         }
 
         // Load issues
@@ -246,9 +252,16 @@ class Issues extends \Controller\Api
             return;
         }
 
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
+            return;
+        }
+
+        // Disallow setting sensitive fields via API
+        $protectedFields = ['author_id', 'closed_date'];
         $updated = [];
         foreach ($f3->get("REQUEST") as $key => $val) {
-            if (is_scalar($val) && $issue->exists($key)) {
+            if (is_scalar($val) && $issue->exists($key) && !in_array($key, $protectedFields, true)) {
                 $updated[] = $key;
                 $issue->set($key, $val);
             }
@@ -278,12 +291,18 @@ class Issues extends \Controller\Api
     {
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
-        $issue->delete();
 
         if (!$issue->id) {
             $f3->error(404);
             return;
         }
+
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
+            return;
+        }
+
+        $issue->delete();
 
         $this->_printJson(["deleted" => $params["id"]]);
     }

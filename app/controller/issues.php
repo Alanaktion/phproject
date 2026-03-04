@@ -218,6 +218,11 @@ class Issues extends \Controller
                 // Updating existing issue.
                 $issue->load($id);
                 if ($issue->id) {
+                    if (!$issue->allowAccess()) {
+                        $f3->error(403);
+                        return;
+                    }
+
                     if (!empty($post["update_copy"])) {
                         $issue = $issue->duplicate(false);
                     }
@@ -614,6 +619,11 @@ class Issues extends \Controller
             return $issue;
         }
 
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
+            return $issue;
+        }
+
         $newSprint = false;
 
         // Diff contents and save what's changed.
@@ -915,6 +925,13 @@ class Issues extends \Controller
      */
     public function single_history($f3, array $params): void
     {
+        $issue = new \Model\Issue();
+        $issue->load($params["id"]);
+        if (!$issue->id || !$issue->allowAccess()) {
+            $f3->error(404);
+            return;
+        }
+
         // Build updates array
         $updates_array = [];
         $update_model = new \Model\Custom("issue_update_detail");
@@ -985,6 +1002,13 @@ class Issues extends \Controller
      */
     public function single_watchers($f3, array $params): void
     {
+        $issue = new \Model\Issue();
+        $issue->load($params["id"]);
+        if (!$issue->id || !$issue->allowAccess()) {
+            $f3->error(404);
+            return;
+        }
+
         $watchers = new \Model\Custom("issue_watcher_user");
         $f3->set("watchers", $watchers->find(["issue_id = ?", $params["id"]]));
         $users = new \Model\User();
@@ -1008,7 +1032,7 @@ class Issues extends \Controller
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
 
-        if ($issue->id) {
+        if ($issue->id && $issue->allowAccess()) {
             $f3->set("issue", $issue);
             $dependencies = new \Model\Issue\Dependency();
             $f3->set("dependencies", $dependencies->findby_issue($issue->id));
@@ -1143,6 +1167,19 @@ class Issues extends \Controller
         $this->validateCsrf();
         $file = new \Model\Issue\File();
         $file->load($f3->get("POST.id"));
+
+        if (!$file->id) {
+            $f3->error(404);
+            return;
+        }
+
+        $issue = new \Model\Issue();
+        $issue->load($file->issue_id);
+        if (!$issue->id || !$issue->allowAccess()) {
+            $f3->error(403);
+            return;
+        }
+
         $file->delete();
         $this->_printJson($file->cast());
     }
@@ -1159,6 +1196,19 @@ class Issues extends \Controller
         $this->validateCsrf();
         $file = new \Model\Issue\File();
         $file->load($f3->get("POST.id"));
+
+        if (!$file->id) {
+            $f3->error(404);
+            return;
+        }
+
+        $issue = new \Model\Issue();
+        $issue->load($file->issue_id);
+        if (!$issue->id || !$issue->allowAccess()) {
+            $f3->error(403);
+            return;
+        }
+
         $file->deleted_date = null;
         $file->save();
         $this->_printJson($file->cast());

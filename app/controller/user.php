@@ -161,7 +161,7 @@ class User extends \Controller
             $security = \Helper\Security::instance();
 
             // Update password
-            if (hash_equals($security->hash($post["old_pass"], $user->salt), $user->password)) {
+            if ($security->verifyPassword($post["old_pass"], $user->password, $user->salt)) {
                 $min = $f3->get("security.min_pass_len");
                 if (strlen($post["new_pass"]) >= $min) {
                     if ($post["new_pass"] === $post["new_pass_confirm"]) {
