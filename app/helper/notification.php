@@ -424,6 +424,16 @@ class Notification extends \Prefab
     {
         $f3 = \Base::instance();
         $original = (string) $f3->get("LANGUAGE");
+
+        // If no explicit language is provided, fall back to a configured site default.
+        if ($language === null || $language === '') {
+            $defaultLanguage = (string) $f3->get("site.default_language");
+            if ($defaultLanguage === '') {
+                $defaultLanguage = (string) $f3->get("site.language");
+            }
+            $language = $defaultLanguage !== '' ? $defaultLanguage : $language;
+        }
+
         if ($language) {
             $f3->set("LANGUAGE", $language);
         }
