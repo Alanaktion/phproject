@@ -379,7 +379,8 @@ class View extends \Template
             \IntlDateFormatter::SHORT
         );
 
-        return (string) $fmt->format((int) $timestamp);
+        // Replace narrow no-break space (U+202F) with a regular space for consistent output
+        return str_replace("\u{202F}", ' ', (string) $fmt->format((int) $timestamp));
     }
 
     /**
