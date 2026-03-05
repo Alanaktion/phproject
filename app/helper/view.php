@@ -6,6 +6,26 @@ use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 class View extends \Template
 {
+    /** @var array<string,\IntlDateFormatter> Cache of IntlDateFormatter instances keyed by "locale:dateType:timeType" */
+    private static array $formatterCache = [];
+
+    /**
+     * Return a cached IntlDateFormatter, or null if ext-intl is unavailable.
+     */
+    private function getFormatter(string $locale, int $dateType, int $timeType): ?\IntlDateFormatter
+    {
+        if (!class_exists(\IntlDateFormatter::class)) {
+            return null;
+        }
+
+        $key = $locale . ':' . $dateType . ':' . $timeType;
+        if (!isset(self::$formatterCache[$key])) {
+            self::$formatterCache[$key] = new \IntlDateFormatter($locale, $dateType, $timeType);
+        }
+
+        return self::$formatterCache[$key];
+    }
+
     public function __construct()
     {
         // Register filters
@@ -350,11 +370,11 @@ class View extends \Template
             $timestamp = time();
         }
 
-        $fmt = new \IntlDateFormatter(
-            $this->lang(),
-            \IntlDateFormatter::LONG,
-            \IntlDateFormatter::NONE
-        );
+        $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
+
+        if ($fmt === null) {
+            return date('F j, Y', (int) $timestamp);
+        }
 
         return (string) $fmt->format((int) $timestamp);
     }
@@ -373,11 +393,11 @@ class View extends \Template
             $timestamp = time();
         }
 
-        $fmt = new \IntlDateFormatter(
-            $this->lang(),
-            \IntlDateFormatter::LONG,
-            \IntlDateFormatter::SHORT
-        );
+        $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::LONG, \IntlDateFormatter::SHORT);
+
+        if ($fmt === null) {
+            return date('F j, Y \a\t g:i A', (int) $timestamp);
+        }
 
         // Replace narrow no-break space (U+202F) with a regular space for consistent output
         return str_replace("\u{202F}", ' ', (string) $fmt->format((int) $timestamp));
@@ -396,11 +416,11 @@ class View extends \Template
             $timestamp = time();
         }
 
-        $fmt = new \IntlDateFormatter(
-            $this->lang(),
-            \IntlDateFormatter::SHORT,
-            \IntlDateFormatter::NONE
-        );
+        $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
+
+        if ($fmt === null) {
+            return date('n/j/y', (int) $timestamp);
+        }
 
         return (string) $fmt->format((int) $timestamp);
     }
