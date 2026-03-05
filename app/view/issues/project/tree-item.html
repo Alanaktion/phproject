@@ -18,18 +18,18 @@
     <td>
         <check if="{{ @issue.due_date }}">
             <true>
-            {{ date("n/j/y", strtotime(@issue.due_date)) }}
+            {{ $this->formatShortDate(strtotime(@issue.due_date)) }}
             </true>
             <false>
                 <check if="{{ @issue.sprint_end_date }}">
-                    {{ date("n/j/y", strtotime(@issue.sprint_end_date)) }}
+                    {{ $this->formatShortDate(strtotime(@issue.sprint_end_date)) }}
                 </check>
             </false>
         </check>
     </td>
     <td>
         <check if="{{ @issue.sprint_start_date }}">
-            {{ date("n/j/y", strtotime(@issue.sprint_start_date)) }}
+            {{ $this->formatShortDate(strtotime(@issue.sprint_start_date)) }}
         </check>
     </td>
     <td>{{ @issue.hours_spent | esc }}</td>

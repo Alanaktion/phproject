@@ -6,6 +6,26 @@ use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 class View extends \Template
 {
+    /** @var array<string,\IntlDateFormatter> Cache of IntlDateFormatter instances keyed by "locale:dateType:timeType" */
+    private static array $formatterCache = [];
+
+    /**
+     * Return a cached IntlDateFormatter, or null if ext-intl is unavailable.
+     */
+    private function getFormatter(string $locale, int $dateType, int $timeType): ?\IntlDateFormatter
+    {
+        if (!class_exists(\IntlDateFormatter::class)) {
+            return null;
+        }
+
+        $key = $locale . ':' . $dateType . ':' . $timeType;
+        if (!isset(self::$formatterCache[$key])) {
+            self::$formatterCache[$key] = new \IntlDateFormatter($locale, $dateType, $timeType);
+        }
+
+        return self::$formatterCache[$key];
+    }
+
     public function __construct()
     {
         // Register filters
@@ -335,5 +355,73 @@ class View extends \Template
         $f3 = \Base::instance();
         $langs = $f3->split($f3->get("LANGUAGE"));
         return $langs[0] ?? $f3->get("FALLBACK", "en");
+    }
+
+    /**
+     * Format a timestamp as a localized long date string (e.g., "January 15, 2024" / "15. Januar 2024")
+     */
+    public function formatDate(int|string|null $timestamp = null): string
+    {
+        if ($timestamp !== null && !is_numeric($timestamp)) {
+            $timestamp = strtotime($timestamp);
+        }
+
+        if (!$timestamp) {
+            $timestamp = time();
+        }
+
+        $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
+
+        if ($fmt === null) {
+            return date('F j, Y', (int) $timestamp);
+        }
+
+        return (string) $fmt->format((int) $timestamp);
+    }
+
+    /**
+     * Format a timestamp as a localized long date and time string
+     * (e.g., "January 15, 2024 at 3:45 PM" / "15. Januar 2024 um 15:45")
+     */
+    public function formatDateTime(int|string|null $timestamp = null): string
+    {
+        if ($timestamp !== null && !is_numeric($timestamp)) {
+            $timestamp = strtotime($timestamp);
+        }
+
+        if (!$timestamp) {
+            $timestamp = time();
+        }
+
+        $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::LONG, \IntlDateFormatter::SHORT);
+
+        if ($fmt === null) {
+            return date('F j, Y \a\t g:i A', (int) $timestamp);
+        }
+
+        // Replace narrow no-break space (U+202F) with a regular space for consistent output
+        return str_replace("\u{202F}", ' ', (string) $fmt->format((int) $timestamp));
+    }
+
+    /**
+     * Format a timestamp as a localized short date string (e.g., "1/15/24" / "15.01.24")
+     */
+    public function formatShortDate(int|string|null $timestamp = null): string
+    {
+        if ($timestamp !== null && !is_numeric($timestamp)) {
+            $timestamp = strtotime($timestamp);
+        }
+
+        if (!$timestamp) {
+            $timestamp = time();
+        }
+
+        $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
+
+        if ($fmt === null) {
+            return date('n/j/y', (int) $timestamp);
+        }
+
+        return (string) $fmt->format((int) $timestamp);
     }
 }

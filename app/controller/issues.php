@@ -1126,7 +1126,7 @@ class Issues extends \Controller
             $this->_printJson([
                 "id" => $comment->id,
                 "text" => \Helper\View::instance()->parseText($comment->text, ["hashtags" => false]),
-                "date_formatted" => date("D, M j, Y \\a\\t g:ia", \Helper\View::instance()->utc2local(time())),
+                "date_formatted" => \Helper\View::instance()->formatDateTime(\Helper\View::instance()->utc2local(time())),
                 "user_name" => $f3->get('user.name'),
                 "user_username" => $f3->get('user.username'),
                 "user_email" => $f3->get('user.email'),

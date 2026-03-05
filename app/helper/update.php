@@ -146,8 +146,8 @@ class Update extends \Prefab
         }
 
         return $sprint->name . " - " .
-                date('n/j', strtotime((string) $sprint->start_date)) . "-" .
-                date('n/j', strtotime((string) $sprint->end_date));
+                View::instance()->formatShortDate(strtotime((string) $sprint->start_date)) . "-" .
+                View::instance()->formatShortDate(strtotime((string) $sprint->end_date));
     }
 
     /**
@@ -172,6 +172,6 @@ class Update extends \Prefab
     public function convertClosedDate(string $date): string
     {
         $time = View::instance()->utc2local(strtotime($date));
-        return date("D, M j, Y g:ia", $time);
+        return View::instance()->formatDateTime($time);
     }
 }

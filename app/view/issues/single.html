@@ -144,11 +144,11 @@
             <dl class="dl-inline">
                 <check if="{{ @issue.sprint_id }}">
                     <dt>{{ @dict.cols.sprint }}</dt>
-                    <dd><a href="{{ @BASE }}/taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ date('n/j', strtotime(@sprint.start_date)) }}-{{ date('n/j', strtotime(@sprint.end_date)) }}</a></dd>
+                    <dd><a href="{{ @BASE }}/taskboard/{{ @sprint.id }}">{{ @sprint.name | esc }} {{ $this->formatShortDate(strtotime(@sprint.start_date)) }}-{{ $this->formatShortDate(strtotime(@sprint.end_date)) }}</a></dd>
                 </check>
 
                 <dt>{{ @dict.cols.created }}</dt>
-                <dd title="{{ date('Y-m-d H:i:s', @this->utc2local(@issue.created_date)) }}">{{ date("M j, Y \\a\\t g:ia", $this->utc2local(@issue.created_date)) }}</dd>
+                <dd title="{{ date('Y-m-d H:i:s', @this->utc2local(@issue.created_date)) }}">{{ $this->formatDateTime($this->utc2local(@issue.created_date)) }}</dd>
 
                 <dt>{{ @dict.cols.type }}</dt>
                 <dd>{{ isset(@dict[@type.name]) ? @dict[@type.name] : str_replace('_', ' ', @type.name) | esc }}</dd>
@@ -179,12 +179,12 @@
 
                 <check if="{{ @issue.start_date && strtotime(@issue.start_date) }}">
                     <dt>{{ @dict.cols.start_date }}</dt>
-                    <dd>{{ date("D, M j, Y", strtotime(@issue.start_date)) }}</dd>
+                    <dd>{{ $this->formatDate(strtotime(@issue.start_date)) }}</dd>
                 </check>
 
                 <check if="{{ @issue.due_date && strtotime(@issue.due_date) }}">
                     <dt>{{ @dict.cols.due_date }}</dt>
-                    <dd>{{ date("D, M j, Y", strtotime(@issue.due_date)) }}</dd>
+                    <dd>{{ $this->formatDate(strtotime(@issue.due_date)) }}</dd>
                 </check>
             </dl>
 
@@ -241,7 +241,7 @@
                                             </td>
                                             <td><a class="file-attachment" href="{{ @BASE }}/files/{{ @file.id }}/{{ @file.filename | esc }}" target="_blank">{{ @file.filename | esc }}</a></td>
                                             <td>{{ @file.user_name | esc }}</td>
-                                            <td data-sort-value="{{ strtotime(@file.created_date) }}" title="{{ date('Y-m-d H:i:s', @this->utc2local(@file.created_date)) }}">{{ date('M j, Y \a\t g:ia', @this->utc2local(strtotime(@file.created_date))) }}</td>
+                                            <td data-sort-value="{{ strtotime(@file.created_date) }}" title="{{ date('Y-m-d H:i:s', @this->utc2local(@file.created_date)) }}">{{ $this->formatDateTime($this->utc2local(strtotime(@file.created_date))) }}</td>
                                             <td data-sort-value="{{ @file.filesize }}">{{ @file.filesize | formatFilesize }}</td>
                                             <td><button type="button" class="btn btn-xs btn-danger delete" title="{{ @dict.delete }}">&times;</button></td>
                                         </tr>

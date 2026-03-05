@@ -10,6 +10,7 @@ class StringTest extends TestCase
     {
         $f3 = \Base::instance();
         $f3->set('TZ', 'America/Phoenix');
+        $f3->set('LANGUAGE', 'en');
     }
 
     public function testSalt(): void
@@ -83,6 +84,51 @@ class StringTest extends TestCase
         $helper = \Helper\Update::instance();
         $time = '2016-01-01 12:34:56';
         $result = $helper->convertClosedDate($time);
-        $this->assertEquals('Fri, Jan 1, 2016 5:34am', $result);
+        $this->assertEquals('January 1, 2016 at 5:34 AM', $result);
+    }
+
+    public function testFormatDate(): void
+    {
+        $f3 = \Base::instance();
+        $helper = \Helper\View::instance();
+        $timestamp = mktime(12, 0, 0, 1, 15, 2024); // Jan 15, 2024
+
+        $f3->set('LANGUAGE', 'en');
+        $this->assertEquals('January 15, 2024', $helper->formatDate($timestamp));
+
+        $f3->set('LANGUAGE', 'de');
+        $this->assertEquals('15. Januar 2024', $helper->formatDate($timestamp));
+
+        $f3->set('LANGUAGE', 'fr');
+        $this->assertEquals('15 janvier 2024', $helper->formatDate($timestamp));
+    }
+
+    public function testFormatDateTime(): void
+    {
+        $f3 = \Base::instance();
+        $helper = \Helper\View::instance();
+        $timestamp = mktime(15, 45, 0, 1, 15, 2024); // Jan 15, 2024 3:45 PM
+
+        $f3->set('LANGUAGE', 'en');
+        $this->assertEquals('January 15, 2024 at 3:45 PM', $helper->formatDateTime($timestamp));
+
+        $f3->set('LANGUAGE', 'de');
+        $this->assertEquals('15. Januar 2024 um 15:45', $helper->formatDateTime($timestamp));
+    }
+
+    public function testFormatShortDate(): void
+    {
+        $f3 = \Base::instance();
+        $helper = \Helper\View::instance();
+        $timestamp = mktime(12, 0, 0, 1, 15, 2024); // Jan 15, 2024
+
+        $f3->set('LANGUAGE', 'en');
+        $this->assertEquals('1/15/24', $helper->formatShortDate($timestamp));
+
+        $f3->set('LANGUAGE', 'de');
+        $this->assertEquals('15.01.24', $helper->formatShortDate($timestamp));
+
+        $f3->set('LANGUAGE', 'ja');
+        $this->assertEquals('2024/01/15', $helper->formatShortDate($timestamp));
     }
 }
