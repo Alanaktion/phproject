@@ -420,10 +420,10 @@ class Notification extends \Prefab
     /**
      * Temporarily set the app language, returning the previous value for restoration
      */
-    protected function _set_language(?string $language): string
+    protected function _set_language(?string $language): ?string
     {
         $f3 = \Base::instance();
-        $original = (string) $f3->get("LANGUAGE");
+        $original = $f3->get("LANGUAGE");
 
         // If no explicit language is provided, fall back to a configured site default.
         if ($language === null || $language === '') {
