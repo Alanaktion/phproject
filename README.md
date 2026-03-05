@@ -1,8 +1,6 @@
 [![CI](https://github.com/Alanaktion/phproject/workflows/CI/badge.svg)](https://github.com/Alanaktion/phproject/actions?query=workflow%3ACI)
 [![Crowdin](https://badges.crowdin.net/phproject/localized.svg)](https://crowdin.com/project/phproject)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAlanaktion%2Fphproject)
-
 # Phproject
 
 *A high-performance project management system in PHP*
