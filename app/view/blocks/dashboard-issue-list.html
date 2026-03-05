@@ -22,7 +22,14 @@
                 <p class="list-group-item-text">Due {{ $this->formatDate(strtotime(@item.due_date)) }}</p>
             </check>
             <check if="{{ @item.sprint_id }}">
-                <set sprint_date_range="{{ $this->formatShortDate(strtotime(@item.sprint_start_date)) . '-' . $this->formatShortDate(strtotime(@item.sprint_end_date)) }}" />
+                <set sprint_start_ts="{{ strtotime(@item.sprint_start_date) }}" />
+                <set sprint_end_ts="{{ strtotime(@item.sprint_end_date) }}" />
+                <set same_month_year="{{ date('mY', @sprint_start_ts) == date('mY', @sprint_end_ts) }}" />
+                <check if="{{ @same_month_year }}">
+                    <set sprint_date_range="{{ $this->formatShortDate(@sprint_start_ts) . '-' . date('j', @sprint_end_ts) }}" />
+                <false>
+                    <set sprint_date_range="{{ $this->formatShortDate(@sprint_start_ts) . '-' . $this->formatShortDate(@sprint_end_ts) }}" />
+                </check>
                 <p class="list-group-item-text text-muted">
                     <span class="has-tooltip" title="{{ @dict.sprint }} #{{ @item.sprint_id }}: {{ @sprint_date_range }}">{{ @item.sprint_name | esc }}</span>
                     <check if="{{ @item.type_id == @issue_type.project && @item.parent_id }}">
