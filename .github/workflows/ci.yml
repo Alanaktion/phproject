@@ -10,8 +10,13 @@ jobs:
       matrix:
         php: ["8.1", "8.2", "8.3", "8.4", "8.5"]
         db: ["mysql", "sqlite"]
+        intl: [true]
+        include:
+          - php: "8.5"
+            db: "sqlite"
+            intl: false
 
-    name: PHP ${{ matrix.php }} + ${{ matrix.db}}
+    name: PHP ${{ matrix.php }} + ${{ matrix.db }}${{ !matrix.intl && ' (no intl)' || '' }}
 
     services:
       mysql:
@@ -31,6 +36,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: ${{ !matrix.intl && ':intl' || '' }}
 
       - uses: actions/checkout@v3
 

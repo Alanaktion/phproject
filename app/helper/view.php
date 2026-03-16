@@ -14,7 +14,7 @@ class View extends \Template
      */
     private function getFormatter(string $locale, int $dateType, int $timeType): ?\IntlDateFormatter
     {
-        if (!class_exists(\IntlDateFormatter::class)) {
+        if (!class_exists('IntlDateFormatter')) {
             return null;
         }
 
@@ -370,7 +370,10 @@ class View extends \Template
             $timestamp = time();
         }
 
-        $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
+        $fmt = null;
+        if (class_exists('IntlDateFormatter')) {
+            $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
+        }
 
         if ($fmt === null) {
             return date('F j, Y', (int) $timestamp);
@@ -393,7 +396,10 @@ class View extends \Template
             $timestamp = time();
         }
 
-        $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::LONG, \IntlDateFormatter::SHORT);
+        $fmt = null;
+        if (class_exists('IntlDateFormatter')) {
+            $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::LONG, \IntlDateFormatter::SHORT);
+        }
 
         if ($fmt === null) {
             return date('F j, Y \a\t g:i A', (int) $timestamp);
@@ -416,7 +422,10 @@ class View extends \Template
             $timestamp = time();
         }
 
-        $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
+        $fmt = null;
+        if (class_exists('IntlDateFormatter')) {
+            $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
+        }
 
         if ($fmt === null) {
             return date('n/j/y', (int) $timestamp);

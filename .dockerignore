@@ -4,3 +4,5 @@
 .gitignore
 .gitmodules
 .vscode
+*.sqlite
+config.php
