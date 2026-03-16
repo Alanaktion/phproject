@@ -14,7 +14,7 @@ class View extends \Template
      */
     private function getFormatter(string $locale, int $dateType, int $timeType): ?\IntlDateFormatter
     {
-        if (!class_exists('IntlDateFormatter')) {
+        if (!extension_loaded('intl')) {
             return null;
         }
 
@@ -371,7 +371,7 @@ class View extends \Template
         }
 
         $fmt = null;
-        if (class_exists('IntlDateFormatter')) {
+        if (extension_loaded('intl')) {
             $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
         }
 
@@ -397,7 +397,7 @@ class View extends \Template
         }
 
         $fmt = null;
-        if (class_exists('IntlDateFormatter')) {
+        if (extension_loaded('intl')) {
             $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::LONG, \IntlDateFormatter::SHORT);
         }
 
@@ -423,7 +423,7 @@ class View extends \Template
         }
 
         $fmt = null;
-        if (class_exists('IntlDateFormatter')) {
+        if (extension_loaded('intl')) {
             $fmt = $this->getFormatter($this->lang(), \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
         }
 

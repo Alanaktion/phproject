@@ -96,6 +96,9 @@ class StringTest extends TestCase
         $f3->set('LANGUAGE', 'en');
         $this->assertEquals('January 15, 2024', $helper->formatDate($timestamp));
 
+        if (!extension_loaded('intl')) {
+            return;
+        }
         $f3->set('LANGUAGE', 'de');
         $this->assertEquals('15. Januar 2024', $helper->formatDate($timestamp));
 
@@ -112,6 +115,9 @@ class StringTest extends TestCase
         $f3->set('LANGUAGE', 'en');
         $this->assertEquals('January 15, 2024 at 3:45 PM', $helper->formatDateTime($timestamp));
 
+        if (!extension_loaded('intl')) {
+            return;
+        }
         $f3->set('LANGUAGE', 'de');
         $this->assertEquals('15. Januar 2024 um 15:45', $helper->formatDateTime($timestamp));
     }
@@ -125,6 +131,9 @@ class StringTest extends TestCase
         $f3->set('LANGUAGE', 'en');
         $this->assertEquals('1/15/24', $helper->formatShortDate($timestamp));
 
+        if (!extension_loaded('intl')) {
+            return;
+        }
         $f3->set('LANGUAGE', 'de');
         $this->assertEquals('15.01.24', $helper->formatShortDate($timestamp));
 
