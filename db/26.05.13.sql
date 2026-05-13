@@ -1,4 +1,4 @@
-# Expand password column for bcrypt hashes
+# Expand password column for modern password hashes
 ALTER TABLE `user`
 	MODIFY COLUMN `password` VARCHAR(80) NULL;
 
