@@ -319,11 +319,14 @@ class Admin extends \Controller
 
                 // Check if giving user temporary or permanent password
                 if ($f3->get("POST.temporary_password")) {
+                    $hashResult = $security->hash($f3->get("POST.password"));
+                    // salt=null signals a forced password reset on next login
                     $user->salt = null;
-                    $user->password = $security->hash($f3->get("POST.password"), "");
+                    $user->password = $hashResult["hash"];
                 } else {
-                    $user->salt = $security->salt();
-                    $user->password = $security->hash($f3->get("POST.password"), $user->salt);
+                    $hashResult = $security->hash($f3->get("POST.password"));
+                    $user->salt = $hashResult["salt"];
+                    $user->password = $hashResult["hash"];
                 }
             }
 
