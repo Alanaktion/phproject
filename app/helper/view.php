@@ -298,7 +298,7 @@ class View extends \Template
     /**
      * Get a Gravatar URL from email address and size, uses global Gravatar configuration
      */
-    public function gravatar(string $email, int $size = 80): string
+    public function gravatar(?string $email, int $size = 80): string
     {
         $f3 = \Base::instance();
         $rating = $f3->get("gravatar.rating") ?: "pg";
