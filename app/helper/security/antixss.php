@@ -1360,7 +1360,7 @@ final class AntiXss
     /**
      * Additional UTF-7 encoding function.
      *
-     * @param string $str <p>String for recode ASCII part of UTF-7 back to ASCII.</p>
+     * @param string[] $str <p>String for recode ASCII part of UTF-7 back to ASCII.</p>
      */
     private function _repack_utf7_callback_back(array $str): string
     {

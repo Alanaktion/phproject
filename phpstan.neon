@@ -1,0 +1,11 @@
+parameters:
+    level: 3
+    paths:
+        - index.php
+        - app
+        - tests
+    excludePaths:
+        - app/plugin/*
+    ignoreErrors:
+        - '#Unsafe usage of new static\(\).#'
+        - '#Access to an undefined property Model\\Custom::.*#'

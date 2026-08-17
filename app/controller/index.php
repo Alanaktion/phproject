@@ -8,14 +8,14 @@ class Index extends \Controller
      * GET /
      *
      * @param \Base $f3
-     * @param array $params
      * @throws \Exception
      */
     public function index($f3)
     {
         if ($f3->get("user.id")) {
             $user_controller = new \Controller\User();
-            return $user_controller->dashboard($f3);
+            $user_controller->dashboard($f3);
+            return;
         }
 
         if ($f3->get("site.public")) {
@@ -30,7 +30,8 @@ class Index extends \Controller
                     $f3->set("user", $user->cast());
                     $f3->set("user_obj", $user);
                     $user_controller = new \Controller\User();
-                    return $user_controller->dashboard($f3);
+                    $user_controller->dashboard($f3);
+                    return;
                 }
 
                 $f3->set("error", "Auto-login failed, demo user was not found.");
@@ -38,8 +39,6 @@ class Index extends \Controller
 
             $f3->reroute("/login");
         }
-
-        return null;
     }
 
     /**
@@ -172,8 +171,7 @@ class Index extends \Controller
             $user->email = trim((string) $f3->get("POST.register-email"));
             $user->name = trim((string) $f3->get("POST.register-name"));
             $security = \Helper\Security::instance();
-            $hash = $security->hash($f3->get("POST.register-password"));
-            extract($hash);
+            ['salt' => $salt, 'hash' => $hash] = $security->hash($f3->get("POST.register-password"));
             $user->password = $hash;
             $user->salt = $salt;
             $user->task_color = sprintf("%02X%02X%02X", random_int(0, 0xFF), random_int(0, 0xFF), random_int(0, 0xFF));

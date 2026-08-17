@@ -22,13 +22,13 @@ class Comment extends \Model
      * Create and save a new comment
      * @throws \Exception
      */
-    public static function create(array $data, bool $notify = true): Comment
+    public static function create(array $data, bool $notify = true): static
     {
         if (empty($data['text'])) {
             throw new \Exception("Comment text cannot be empty.");
         }
 
-        /** @var Comment $item */
+        /** @var static $item */
         $item = parent::create($data);
         if ($notify) {
             $notification = \Helper\Notification::instance();

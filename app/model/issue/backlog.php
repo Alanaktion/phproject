@@ -6,7 +6,7 @@ namespace Model\Issue;
  * Class Type
  *
  * @property int $id
- * @property int $user_id
+ * @property int $sprint_id
  * @property string $issues
  */
 class Backlog extends \Model

@@ -177,10 +177,6 @@ class Issues extends \Controller
         // Pass filter string for pagination
         $filter_get = http_build_query($filter);
 
-        if (!empty($orderby)) {
-            $filter_get  .= "&orderby=" . $orderby;
-        }
-
         if ($issue_page["count"] > 7) {
             $min = $issue_page["pos"] <= 3 ? 0 : $issue_page["pos"] - 3;
             $max = $issue_page["pos"] < $issue_page["count"] - 3 ? $issue_page["pos"] + 3 : $issue_page["count"] - 1;
@@ -659,7 +655,7 @@ class Issues extends \Controller
                     }
 
                     // Save to the sprint of the due date unless one already set
-                    if ($i == "due_date" && !empty($val) && (empty($post['sprint_id']) && (isset($post['due_date_sprint']) && ($post['due_date_sprint'] !== '' && $post['due_date_sprint'] !== '0')))) {
+                    if ($i == "due_date" && (empty($post['sprint_id']) && (isset($post['due_date_sprint']) && ($post['due_date_sprint'] !== '' && $post['due_date_sprint'] !== '0')))) {
                         $sprint = new \Model\Sprint();
                         $sprint->load(["DATE(?) BETWEEN start_date AND end_date", $val]);
                         $issue->sprint_id = $sprint->id;

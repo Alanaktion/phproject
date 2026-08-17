@@ -185,6 +185,7 @@ class View extends \Template
             $ret = '';
             $url = $matches[2];
 
+            // @phpstan-ignore empty.variable
             if (empty($url)) {
                 return $matches[0];
             }
@@ -202,6 +203,7 @@ class View extends \Template
             $s = '';
             $d = $m[2];
 
+            // @phpstan-ignore empty.variable
             if (empty($d)) {
                 return $m[0];
             }

@@ -2,7 +2,7 @@
 
 namespace Helper;
 
-use Helper\Security\AntiXSS;
+use Helper\Security\AntiXss;
 
 class Security extends \Prefab
 {
@@ -158,6 +158,6 @@ class Security extends \Prefab
      */
     public function cleanXss(string $str): string
     {
-        return (new AntiXSS())->xss_clean($str);
+        return (new AntiXss())->xss_clean($str);
     }
 }

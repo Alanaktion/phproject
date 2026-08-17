@@ -55,7 +55,7 @@ class Project extends \Controller
          * Helper function for recursive tree rendering
          * @param   \Model\Issue $issue
          * @param   int          $level
-         * @var     callable $renderTree This function, required for recursive calls
+         * @param   callable $renderTree This function, required for recursive calls
          */
         $renderTree = function (\Model\Issue &$issue, $level = 0) use ($parentMap, &$renderTree): void {
             if ($issue->id) {

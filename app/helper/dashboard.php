@@ -280,7 +280,7 @@ class Dashboard extends \Prefab
         /**
          * Helper function for recursive tree rendering
          * @param   array $issue
-         * @var     callable $renderTree This function, required for recursive calls
+         * @param   callable $renderTree This function, required for recursive calls
          */
         $renderTree = function (&$issue, int $level = 0) use (&$renderTree): void {
             if (!empty($issue['id'])) {

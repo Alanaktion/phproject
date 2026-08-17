@@ -2,6 +2,7 @@
 
 abstract class Model extends \DB\SQL\Mapper
 {
+    /** @var array<string,array> */
     protected $fields = [];
     /** @var string */
     protected $_table_name;
@@ -21,12 +22,11 @@ abstract class Model extends \DB\SQL\Mapper
         }
 
         parent::__construct($f3->get("db.instance"), $this->_table_name, null, $f3->get("cache_expire.db"));
-        return $this;
     }
 
     /**
      * Create and save a new item
-     * @return Comment
+     * @return static
      */
     public static function create(array $data)
     {
@@ -92,7 +92,7 @@ abstract class Model extends \DB\SQL\Mapper
     public function delete()
     {
         if (array_key_exists("deleted_date", $this->fields)) {
-            $this->deleted_date = date("Y-m-d H:i:s");
+            $this->set("deleted_date", date("Y-m-d H:i:s"));
             return $this->save();
         }
 

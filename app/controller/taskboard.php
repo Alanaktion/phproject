@@ -13,7 +13,7 @@ class Taskboard extends \Controller
 
     /**
      * Get a list of users from a filter
-     * @param  string $params URL Parameters
+     * @param  array<string,string> $params URL Parameters
      * @return array
      */
     protected function _filterUsers($params)
@@ -399,8 +399,6 @@ class Taskboard extends \Controller
             if (!empty($post["storyId"])) {
                 $issue->parent_id = $post["storyId"];
             }
-
-            $issue->title = $post["title"];
         }
 
         if (!empty($post["comment"])) {

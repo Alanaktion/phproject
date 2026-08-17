@@ -16,7 +16,7 @@ namespace Model\Issue;
  * @property int $downloads
  * @property int $user_id
  * @property string $created_date
- * @property string $deleted_date
+ * @property ?string $deleted_date
  */
 class File extends \Model
 {
@@ -27,9 +27,9 @@ class File extends \Model
     /**
      * Create and save a new file, optionally sending notifications
      */
-    public static function create(array $data, bool $notify = true): File
+    public static function create(array $data, bool $notify = true): static
     {
-        /** @var File $item */
+        /** @var static $item */
         $item = parent::create($data);
         if ($notify) {
             $notification = \Helper\Notification::instance();

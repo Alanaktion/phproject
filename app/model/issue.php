@@ -24,6 +24,8 @@ namespace Model;
  * @property ?string $due_date
  * @property ?string $repeat_cycle
  * @property ?int $sprint_id
+ *
+ * @property ?int $update_comment ID of a comment attached to a pending update
  */
 class Issue extends \Model
 {
@@ -38,7 +40,7 @@ class Issue extends \Model
     /**
      * Create and save a new issue
      */
-    public static function create(array $data, bool $notify = true): Issue
+    public static function create(array $data, bool $notify = true): static
     {
         // Normalize data
         if (isset($data["hours"])) {
@@ -64,7 +66,7 @@ class Issue extends \Model
         }
 
         // Create issue
-        /** @var Issue $item */
+        /** @var static $item */
         $item = parent::create($data);
 
         // Send creation notifications

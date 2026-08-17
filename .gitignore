@@ -1,6 +1,6 @@
-plugin
-config.ini
-config.php
+/app/plugin
+/config.ini
+/config.php
 /vendor/
 /phpunit
 *.cache

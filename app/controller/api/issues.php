@@ -7,9 +7,9 @@ class Issues extends \Controller\Api
     /**
      * Converts an issue into a Redmine API-style multidimensional array
      * This isn't pretty.
-     * @param  \Model\Issue $issue
+     * @param  \Model\Issue\Detail $issue
      */
-    protected function _issueMultiArray(\Model\Issue $issue): array
+    protected function _issueMultiArray(\Model\Issue|\Model\Issue\Detail $issue): array
     {
         $casted = $issue->cast();
 
@@ -211,7 +211,7 @@ class Issues extends \Controller\Api
         $issue->author_id = empty($post["author_id"]) ? $this->_userId : $post["author_id"];
         $issue->name = trim((string) $post["name"]);
         $issue->type_id = empty($post["type_id"]) ? 1 : $post["type_id"];
-        $issue->priority_id = empty($post["priority_id"]) ? $f3->get("issue_priority.default") : $post["priority_id"];
+        $issue->priority = empty($post["priority"]) ? $f3->get("issue_priority.default") : $post["priority"];
         $issue->status = empty($status) ? 1 : $status->id;
 
         // Set due date if valid
