@@ -3,6 +3,8 @@
 abstract class Model extends \DB\SQL\Mapper
 {
     protected $fields = [];
+    /** @var string */
+    protected $_table_name;
 
     protected static $requiredFields = [];
 
@@ -10,11 +12,11 @@ abstract class Model extends \DB\SQL\Mapper
     {
         $f3 = \Base::instance();
 
-        if (empty($this->_table_name)) {
+        if (! isset($this->_table_name)) {
             if (empty($table_name)) {
                 $f3->error(500, "Model instance does not have a table name specified.");
             } else {
-                $this->table_name = $table_name;
+                $this->_table_name = $table_name;
             }
         }
 
@@ -31,7 +33,7 @@ abstract class Model extends \DB\SQL\Mapper
         $item = new static();
 
         // Check required fields
-        foreach (self::$requiredFields as $field) {
+        foreach (static::$requiredFields as $field) {
             if (!isset($data[$field])) {
                 throw new Exception("Required field {$field} not specified.");
             }
