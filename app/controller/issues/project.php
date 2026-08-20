@@ -25,7 +25,7 @@ class Project extends \Controller
         // Load issue
         $project = new \Model\Issue\Detail();
         $project->load($params["id"]);
-        if (!$project->id) {
+        if (!$project->id || !$project->allowAccess()) {
             $f3->error(404);
             return;
         }
@@ -95,13 +95,28 @@ class Project extends \Controller
         // Load issue
         $project = new \Model\Issue();
         $project->load($params["id"]);
-        if (!$project->id) {
+        if (!$project->id || !$project->allowAccess()) {
             $f3->error(404);
             return;
         }
 
+        // Limit the listing to descendant issues the user is allowed to access
+        $descendantStr = implode(',', array_map(intval(...), $project->descendantIds()));
+        $issue = new \Model\Issue();
+        $issueIds = [];
+        foreach ($issue->find("id IN ({$descendantStr}) AND deleted_date IS NULL") as $descendant) {
+            if ($descendant->allowAccess()) {
+                $issueIds[] = $descendant->id;
+            }
+        }
+
+        if ($issueIds === []) {
+            $f3->set("files", []);
+            $this->_render('issues/project/files.html');
+            return;
+        }
+
         $files = new \Model\Issue\File\Detail();
-        $issueIds = $project->descendantIds();
         $idStr = implode(',', $issueIds);
 
         $f3->set("files", $files->find("issue_id IN ({$idStr}) AND deleted_date IS NULL"));

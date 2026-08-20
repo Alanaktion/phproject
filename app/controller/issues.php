@@ -1169,9 +1169,7 @@ class Issues extends \Controller
             return;
         }
 
-        $issue = new \Model\Issue();
-        $issue->load($file->issue_id);
-        if (!$issue->id || !$issue->allowAccess()) {
+        if (!$file->allowAccess()) {
             $f3->error(403);
             return;
         }
@@ -1198,9 +1196,7 @@ class Issues extends \Controller
             return;
         }
 
-        $issue = new \Model\Issue();
-        $issue->load($file->issue_id);
-        if (!$issue->id || !$issue->allowAccess()) {
+        if (!$file->allowAccess()) {
             $f3->error(403);
             return;
         }

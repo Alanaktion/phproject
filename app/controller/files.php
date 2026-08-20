@@ -82,19 +82,28 @@ class Files extends \Controller
             $params["format"] = "jpeg";
         }
 
+        // Only render formats we can actually output
+        if (!in_array($params["format"], ["png", "jpeg", "gif", "webp"])) {
+            $f3->error(400);
+            return;
+        }
+
+        // Verify the file exists and the user is allowed to access its issue.
+        // This must happen before the cache is read, as thumbnails are cached
+        // by URI and shared between users.
+        $file = new \Model\Issue\File();
+        $file->load($params["id"]);
+
+        if (!$file->id || !$file->allowAccess()) {
+            $f3->error(404);
+            return;
+        }
+
         // Output cached image if one exists
         $hash = $f3->hash($f3->get('VERB') . " " . $f3->get('URI')) . ".thm";
         if ($f3->get("DEBUG") < 2 && $cache->exists($hash, $data)) {
             header("Content-type: image/" . $params["format"]);
             echo $data;
-            return;
-        }
-
-        $file = new \Model\Issue\File();
-        $file->load($params["id"]);
-
-        if (!$file->id) {
-            $f3->error(404);
             return;
         }
 
@@ -222,7 +231,7 @@ class Files extends \Controller
         $file = new \Model\Issue\File();
         $file->load($params["id"]);
 
-        if (!$file->id) {
+        if (!$file->id || !$file->allowAccess()) {
             $f3->error(404);
             return;
         }

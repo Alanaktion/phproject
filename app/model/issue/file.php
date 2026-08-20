@@ -25,6 +25,33 @@ class File extends \Model
     protected static $requiredFields = ["issue_id", "user_id", "filename", "disk_filename"];
 
     /**
+     * Get the issue this file is attached to
+     */
+    public function issue(): \Model\Issue
+    {
+        $issue = new \Model\Issue();
+        if ($this->issue_id) {
+            $issue->load($this->issue_id);
+        }
+
+        return $issue;
+    }
+
+    /**
+     * Check whether a user is allowed to access this file, based on access to
+     * the issue it is attached to
+     */
+    public function allowAccess(?\Model\User $user = null): bool
+    {
+        if (!$this->id) {
+            return false;
+        }
+
+        $issue = $this->issue();
+        return $issue->id && $issue->allowAccess($user);
+    }
+
+    /**
      * Create and save a new file, optionally sending notifications
      */
     public static function create(array $data, bool $notify = true): static
