@@ -258,9 +258,10 @@ class Index extends \Controller
             } else {
                 // Save new password and redirect to login
                 $security = \Helper\Security::instance();
+                $hashResult = $security->hash($f3->get("POST.password1"));
                 $user->reset_token = null;
-                $user->salt = $security->salt();
-                $user->password = $security->hash($f3->get("POST.password1"), $user->salt);
+                $user->salt = $hashResult["salt"];
+                $user->password = $hashResult["hash"];
                 $user->save();
                 $f3->reroute("/login");
                 return;
@@ -292,8 +293,9 @@ class Index extends \Controller
         } else {
             // Save new password and redirect to dashboard
             $security = \Helper\Security::instance();
-            $user->salt = $security->salt();
-            $user->password = $security->hash($f3->get("POST.password1"), $user->salt);
+            $hashResult = $security->hash($f3->get("POST.password1"));
+            $user->salt = $hashResult["salt"];
+            $user->password = $hashResult["hash"];
             $user->save();
             $f3->reroute("/");
             return;
