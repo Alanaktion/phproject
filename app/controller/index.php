@@ -48,17 +48,16 @@ class Index extends \Controller
      */
     public function login($f3): void
     {
+        $to = $f3->get("GET.to");
         if ($f3->get("user.id")) {
-            if (!$f3->get("GET.to")) {
-                $f3->reroute("/");
-            } elseif (!str_contains((string) $f3->get("GET.to"), "://") || str_starts_with((string) $f3->get("GET.to"), "//")) {
-                $f3->reroute($f3->get("GET.to"));
+            if ($to && !str_contains($to, "://") && !str_starts_with($to, "//")) {
+                $f3->reroute($to);
             } else {
                 $f3->reroute("/");
             }
         } else {
-            if ($f3->get("GET.to")) {
-                $f3->set("to", $f3->get("GET.to"));
+            if ($to) {
+                $f3->set("to", $to);
             }
 
             $this->_render("index/login.html");
@@ -83,6 +82,8 @@ class Index extends \Controller
             $user->load(["username=? AND deleted_date IS NULL", $f3->get("POST.username")]);
         }
 
+        $to = $f3->get("POST.to");
+
         // Verify password
         $security = \Helper\Security::instance();
         if ($user->id && $security->verifyPassword($f3->get("POST.password"), $user->password, $user->salt ?: "")) {
@@ -91,10 +92,8 @@ class Index extends \Controller
             $session->setCurrent();
 
             if ($user->salt) {
-                if (!$f3->get("POST.to")) {
-                    $f3->reroute("/");
-                } elseif (!str_contains((string) $f3->get("POST.to"), "://") || str_starts_with((string) $f3->get("POST.to"), "//")) {
-                    $f3->reroute($f3->get("POST.to"));
+                if ($to && !str_contains($to, "://") && !str_starts_with($to, "//")) {
+                    $f3->reroute($to);
                 } else {
                     $f3->reroute("/");
                 }
@@ -103,8 +102,8 @@ class Index extends \Controller
                 $this->_render("index/reset_forced.html");
             }
         } else {
-            if ($f3->get("POST.to")) {
-                $f3->set("to", $f3->get("POST.to"));
+            if ($to) {
+                $f3->set("to", $to);
             }
 
             $f3->set("login.error", "Invalid login information, try again.");
