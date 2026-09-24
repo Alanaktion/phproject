@@ -118,8 +118,9 @@ if (
         $user->name = "Admin";
         $user->username = $post["user-username"] ?: "admin";
         $user->email = $post["user-email"];
-        $user->salt = $security->salt();
-        $user->password = $security->hash($post["user-password"] ?: "admin", $user->salt);
+        $hashResult = $security->hash($post["user-password"] ?: "admin");
+        $user->salt = $hashResult["salt"];
+        $user->password = $hashResult["hash"];
         $user->api_key = $security->salt_sha1();
         $user->save();
 

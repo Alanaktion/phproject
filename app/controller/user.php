@@ -165,8 +165,9 @@ class User extends \Controller
                 $min = $f3->get("security.min_pass_len");
                 if (strlen($post["new_pass"]) >= $min) {
                     if ($post["new_pass"] === $post["new_pass_confirm"]) {
-                        $user->salt = $security->salt();
-                        $user->password = $security->hash($post["new_pass"], $user->salt);
+                        $hashResult = $security->hash($post["new_pass"]);
+                        $user->salt = $hashResult["salt"];
+                        $user->password = $hashResult["hash"];
                         $f3->set("success", "Password updated successfully.");
                     } else {
                         $f3->set("error", "New passwords do not match");
