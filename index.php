@@ -90,15 +90,28 @@ if ($f3->get("db.engine") == "sqlite") {
 // Load final configuration
 \Model\Config::loadAll();
 
-// Ensure database is up to date, applying all pending migrations in one request
-$security = \Helper\Security::instance();
-$migrations = 0;
-while (($version = $security->checkDatabaseVersion()) !== true && $migrations < 100) {
-    if (!$security->updateDatabase($version)) {
-        break;
+// Ensure database is up to date, applying all pending migrations in one request.
+// Serialized with a non-blocking file lock so concurrent requests can't run
+// the same migration twice; a request that can't acquire the lock skips this,
+// since another request is already migrating.
+$lock = fopen($f3->get("TEMP") . "migrations.lock", "c");
+if ($lock && flock($lock, LOCK_EX | LOCK_NB)) {
+    try {
+        $security = \Helper\Security::instance();
+        $migrations = 0;
+        while (($version = $security->checkDatabaseVersion()) !== true && $migrations < 100) {
+            if (!$security->updateDatabase($version)) {
+                break;
+            }
+            $f3->set("version", $version);
+            $migrations++;
+        }
+    } finally {
+        flock($lock, LOCK_UN);
+        fclose($lock);
     }
-    $f3->set("version", $version);
-    $migrations++;
+} elseif ($lock) {
+    fclose($lock);
 }
 
 // Set up CSRF protection

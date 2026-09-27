@@ -12,6 +12,12 @@ class WebFeatureTest extends TestCase
     protected bool $configured = false;
     protected int $initialOutputBufferLevel = 0;
 
+    /**
+     * HTTP status captured from F3's error handling during the last mock()
+     * call; null when the route completed without an error.
+     */
+    protected ?int $lastMockStatus = null;
+
     protected function setUp(): void
     {
         $this->initialOutputBufferLevel = ob_get_level();
@@ -48,6 +54,10 @@ class WebFeatureTest extends TestCase
         \Model\Config::loadAll();
         \Helper\Security::instance()->initCsrfToken();
 
+        // Replicate index.php's global template data so full-page renders
+        // (e.g. the footer's issue-type picker) behave as in production.
+        $f3->set('issue_types', (new \Model\Issue\Type())->find());
+
         $this->configured = true;
     }
 
@@ -75,6 +85,11 @@ class WebFeatureTest extends TestCase
         // Prevent F3 from calling exit by setting HALT to false
         $f3->set('HALT', false);
 
+        // Capture the error status from F3's error handling rather than
+        // parsing output: a route that emits partial content before failing
+        // would otherwise be misread as a 200.
+        $this->lastMockStatus = null;
+
         // Set custom error handler that won't exit
         $f3->set('ONERROR', function ($f3) {
             echo json_encode([
@@ -92,11 +107,20 @@ class WebFeatureTest extends TestCase
             $f3->mock($route, $args, $headers);
         } catch (\Throwable $e) {
             // Catch any uncaught exceptions
+            $this->lastMockStatus = 500;
             echo json_encode([
                 "status" => 500,
                 "error" => $e->getMessage()
             ], JSON_THROW_ON_ERROR);
         } finally {
+            // Capture F3's recorded error status before clearing it. This
+            // works regardless of which ONERROR handler ran (controllers
+            // may install their own) and even when the route emitted partial
+            // output before failing.
+            if ($this->lastMockStatus === null) {
+                $code = $f3->get('ERROR.code');
+                $this->lastMockStatus = $code === null ? null : (int) $code;
+            }
             // Restore original handlers
             $f3->set('ONERROR', $originalErrorHandler);
             $f3->set('ONREROUTE', $originalOnReroute);
@@ -249,14 +273,33 @@ class WebFeatureTest extends TestCase
         $output = $this->mock($route);
         $this->assertIsString($output, "Route {$route} failed to mock");
 
-        // The test error handler renders JSON with a status code on failure;
-        // anything else is a normal (HTML or empty reroute) response.
-        $decoded = json_decode($output, true);
-        $status = is_array($decoded) && isset($decoded['status']) ? (int) $decoded['status'] : 200;
+        // Use the status captured from F3's error handling; a route that
+        // emits partial content before failing must still report its 500.
+        $status = $this->lastMockStatus ?? 200;
 
         $this->assertNotSame(500, $status, "Route {$route} caused a fatal error");
         if ($expectedStatus !== null) {
             $this->assertSame($expectedStatus, $status, "Route {$route} returned an unexpected status");
         }
+    }
+
+    /**
+     * A route that emits partial output before failing must still report
+     * its 500 status instead of being misread as a 200.
+     */
+    public function testMockCapturesStatusAfterPartialOutput(): void
+    {
+        if (!$this->configured) {
+            $this->markTestSkipped();
+        }
+
+        $f3 = \Base::instance();
+        $f3->route('GET /_test_partial_output', function (): void {
+            echo 'partial output';
+            throw new \Exception('boom');
+        });
+
+        $this->mock('GET /_test_partial_output');
+        $this->assertSame(500, $this->lastMockStatus);
     }
 }

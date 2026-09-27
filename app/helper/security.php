@@ -118,9 +118,12 @@ class Security extends \Prefab
         $db = $f3->get("db.instance");
         try {
             // Note: MySQL implicitly commits around DDL statements, so a
-            // failed migration there can't be rolled back; the version row
+            // failed migration there can't be rolled back. The version row
             // is only updated by the last statement, so a failure leaves
-            // the database at the previous version and surfaces an error.
+            // the database at the previous version and surfaces an error,
+            // but already-applied DDL (e.g. an added column) stays in place
+            // and may need manual cleanup before the migration can be
+            // retried. SQLite migrations are fully atomic.
             $db->begin();
             foreach (explode(";", (string) $update_db) as $stmt) {
                 if (trim($stmt) !== "") {

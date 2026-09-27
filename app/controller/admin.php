@@ -331,7 +331,7 @@ class Admin extends \Controller
                 throw new \Exception("Please enter a name.");
             }
 
-            if (preg_match("/^#?[0-9a-f]{3,6}$/i", (string) $f3->get("POST.task_color")) !== 1) {
+            if (preg_match("/^#?(?:[0-9a-f]{3}|[0-9a-f]{6})$/i", (string) $f3->get("POST.task_color")) !== 1) {
                 throw new \Exception("Please enter a valid hex color.");
             }
 
