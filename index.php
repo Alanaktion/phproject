@@ -83,7 +83,7 @@ if ($f3->get("db.engine") == "sqlite") {
         "mysql:host=" . $f3->get("db.host") . ";port=" . $f3->get("db.port") . ";dbname=" . $f3->get("db.name"),
         $f3->get("db.user"),
         $f3->get("db.pass"),
-        [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4;']
+        [\Pdo\Mysql::ATTR_INIT_COMMAND => 'SET NAMES utf8mb4;']
     ));
 }
 
