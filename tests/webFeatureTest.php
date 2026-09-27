@@ -214,4 +214,49 @@ class WebFeatureTest extends TestCase
             $issue->delete(false);
         }
     }
+
+    /**
+     * Public routes that should respond without a fatal error.
+     * @return array<string, array{string, int|null}>
+     */
+    public static function publicRouteProvider(): array
+    {
+        return [
+            'login page renders' => ['GET /login', 200],
+            'anonymous home reroutes' => ['GET /', null],
+            'opensearch renders' => ['GET /opensearch.xml', 200],
+            'api without key is rejected' => ['GET /issues.json', 401],
+        ];
+    }
+
+    /**
+     * Smoke test: hit public routes and assert none of them fatal (HTTP 500).
+     * Catches PHP-version incompatibilities in controllers/templates early.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('publicRouteProvider')]
+    public function testPublicRouteDoesNotFatal(string $route, ?int $expectedStatus): void
+    {
+        if (!$this->configured) {
+            $this->markTestSkipped();
+        }
+
+        // Ensure no user leaks in from other tests; these routes are public
+        // and the API case specifically asserts anonymous access is rejected.
+        $f3 = \Base::instance();
+        $f3->clear('user');
+        $f3->clear('user_obj');
+
+        $output = $this->mock($route);
+        $this->assertIsString($output, "Route {$route} failed to mock");
+
+        // The test error handler renders JSON with a status code on failure;
+        // anything else is a normal (HTML or empty reroute) response.
+        $decoded = json_decode($output, true);
+        $status = is_array($decoded) && isset($decoded['status']) ? (int) $decoded['status'] : 200;
+
+        $this->assertNotSame(500, $status, "Route {$route} caused a fatal error");
+        if ($expectedStatus !== null) {
+            $this->assertSame($expectedStatus, $status, "Route {$route} returned an unexpected status");
+        }
+    }
 }
