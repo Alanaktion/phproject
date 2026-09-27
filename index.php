@@ -83,7 +83,8 @@ if ($f3->get("db.engine") == "sqlite") {
         "mysql:host=" . $f3->get("db.host") . ";port=" . $f3->get("db.port") . ";dbname=" . $f3->get("db.name"),
         $f3->get("db.user"),
         $f3->get("db.pass"),
-        [\Pdo\Mysql::ATTR_INIT_COMMAND => 'SET NAMES utf8mb4;']
+        // Pdo\Mysql::ATTR_INIT_COMMAND exists on PHP 8.4+; PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5
+        [(\PHP_VERSION_ID >= 80400 ? \Pdo\Mysql::ATTR_INIT_COMMAND : \PDO::MYSQL_ATTR_INIT_COMMAND) => 'SET NAMES utf8mb4;']
     ));
 }
 
