@@ -331,11 +331,11 @@ class Admin extends \Controller
                 throw new \Exception("Please enter a name.");
             }
 
-            if (preg_match("/#?[0-9a-f]{3,6}/i", (string) $f3->get("POST.task_color")) === false) {
+            if (preg_match("/^#?(?:[0-9a-f]{3}|[0-9a-f]{6})$/i", (string) $f3->get("POST.task_color")) !== 1) {
                 throw new \Exception("Please enter a valid hex color.");
             }
 
-            if (preg_match("/[0-9a-z_-]+/i", (string) $f3->get("POST.username")) === false) {
+            if (preg_match("/^[0-9a-z_-]+$/i", (string) $f3->get("POST.username")) !== 1) {
                 throw new \Exception("Usernames can only contain letters, numbers, hyphens, and underscores.");
             }
 
@@ -555,7 +555,12 @@ class Admin extends \Controller
                 $this->_printJson(["changed" => 1]);
                 break;
             case "change_task_color":
-                $group->task_color = ltrim((string) $f3->get("POST.value"), '#');
+                $color = ltrim((string) $f3->get("POST.value"), '#');
+                if (!ctype_xdigit($color) || (strlen($color) !== 3 && strlen($color) !== 6)) {
+                    $f3->error(400);
+                    return;
+                }
+                $group->task_color = $color;
                 $group->save();
                 $this->_printJson(["changed" => 1]);
                 break;

@@ -50,8 +50,11 @@ class Issue extends \Model
         }
 
         if (!empty($data["due_date"])) {
-            if (preg_match("/\\d{4}(-\\d{2}){2}/", (string) $data["due_date"]) === false) {
-                $data["due_date"] = date("Y-m-d", strtotime((string) $data["due_date"]));
+            if (
+                preg_match("/\\d{4}(-\\d{2}){2}/", (string) $data["due_date"]) !== 1
+                && ($parsed = strtotime((string) $data["due_date"])) !== false
+            ) {
+                $data["due_date"] = date("Y-m-d", $parsed);
             }
 
             if (empty($data["sprint_id"]) && !empty($data['due_date_sprint'])) {

@@ -12,6 +12,12 @@ class WebFeatureTest extends TestCase
     protected bool $configured = false;
     protected int $initialOutputBufferLevel = 0;
 
+    /**
+     * HTTP status captured from F3's error handling during the last mock()
+     * call; null when the route completed without an error.
+     */
+    protected ?int $lastMockStatus = null;
+
     protected function setUp(): void
     {
         $this->initialOutputBufferLevel = ob_get_level();
@@ -41,12 +47,17 @@ class WebFeatureTest extends TestCase
                 'mysql:host=' . $f3->get('db.host') . ';port=' . $f3->get('db.port') . ';dbname=' . $f3->get('db.name'),
                 $f3->get('db.user'),
                 $f3->get('db.pass'),
-                [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4;']
+                // Pdo\Mysql::ATTR_INIT_COMMAND exists on PHP 8.4+; PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5
+                [(\PHP_VERSION_ID >= 80400 ? \Pdo\Mysql::ATTR_INIT_COMMAND : \PDO::MYSQL_ATTR_INIT_COMMAND) => 'SET NAMES utf8mb4;']
             ));
         }
 
         \Model\Config::loadAll();
         \Helper\Security::instance()->initCsrfToken();
+
+        // Replicate index.php's global template data so full-page renders
+        // (e.g. the footer's issue-type picker) behave as in production.
+        $f3->set('issue_types', (new \Model\Issue\Type())->find());
 
         $this->configured = true;
     }
@@ -75,6 +86,11 @@ class WebFeatureTest extends TestCase
         // Prevent F3 from calling exit by setting HALT to false
         $f3->set('HALT', false);
 
+        // Capture the error status from F3's error handling rather than
+        // parsing output: a route that emits partial content before failing
+        // would otherwise be misread as a 200.
+        $this->lastMockStatus = null;
+
         // Set custom error handler that won't exit
         $f3->set('ONERROR', function ($f3) {
             echo json_encode([
@@ -92,11 +108,20 @@ class WebFeatureTest extends TestCase
             $f3->mock($route, $args, $headers);
         } catch (\Throwable $e) {
             // Catch any uncaught exceptions
+            $this->lastMockStatus = 500;
             echo json_encode([
                 "status" => 500,
                 "error" => $e->getMessage()
             ], JSON_THROW_ON_ERROR);
         } finally {
+            // Capture F3's recorded error status before clearing it. This
+            // works regardless of which ONERROR handler ran (controllers
+            // may install their own) and even when the route emitted partial
+            // output before failing.
+            if ($this->lastMockStatus === null) {
+                $code = $f3->get('ERROR.code');
+                $this->lastMockStatus = $code === null ? null : (int) $code;
+            }
             // Restore original handlers
             $f3->set('ONERROR', $originalErrorHandler);
             $f3->set('ONREROUTE', $originalOnReroute);
@@ -213,5 +238,69 @@ class WebFeatureTest extends TestCase
         if ($issue->id) {
             $issue->delete(false);
         }
+    }
+
+    /**
+     * Public routes that should respond without a fatal error.
+     * @return array<string, array{string, int|null}>
+     */
+    public static function publicRouteProvider(): array
+    {
+        return [
+            'login page renders' => ['GET /login', 200],
+            'anonymous home reroutes' => ['GET /', null],
+            'opensearch renders' => ['GET /opensearch.xml', 200],
+            'api without key is rejected' => ['GET /issues.json', 401],
+        ];
+    }
+
+    /**
+     * Smoke test: hit public routes and assert none of them fatal (HTTP 500).
+     * Catches PHP-version incompatibilities in controllers/templates early.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('publicRouteProvider')]
+    public function testPublicRouteDoesNotFatal(string $route, ?int $expectedStatus): void
+    {
+        if (!$this->configured) {
+            $this->markTestSkipped();
+        }
+
+        // Ensure no user leaks in from other tests; these routes are public
+        // and the API case specifically asserts anonymous access is rejected.
+        $f3 = \Base::instance();
+        $f3->clear('user');
+        $f3->clear('user_obj');
+
+        $output = $this->mock($route);
+        $this->assertIsString($output, "Route {$route} failed to mock");
+
+        // Use the status captured from F3's error handling; a route that
+        // emits partial content before failing must still report its 500.
+        $status = $this->lastMockStatus ?? 200;
+
+        $this->assertNotSame(500, $status, "Route {$route} caused a fatal error");
+        if ($expectedStatus !== null) {
+            $this->assertSame($expectedStatus, $status, "Route {$route} returned an unexpected status");
+        }
+    }
+
+    /**
+     * A route that emits partial output before failing must still report
+     * its 500 status instead of being misread as a 200.
+     */
+    public function testMockCapturesStatusAfterPartialOutput(): void
+    {
+        if (!$this->configured) {
+            $this->markTestSkipped();
+        }
+
+        $f3 = \Base::instance();
+        $f3->route('GET /_test_partial_output', function (): void {
+            echo 'partial output';
+            throw new \Exception('boom');
+        });
+
+        $this->mock('GET /_test_partial_output');
+        $this->assertSame(500, $this->lastMockStatus);
     }
 }

@@ -6,6 +6,8 @@ parameters:
         - tests
     excludePaths:
         - app/plugin/*
+    scanFiles:
+        - phpstan/scan/pdo_mysql.php
     ignoreErrors:
         - '#Unsafe usage of new static\(\).#'
         - '#Access to an undefined property Model\\Custom::.*#'

@@ -1,1 +1,6 @@
+# Apache 2.2 syntax (ignored on 2.4 without mod_access_compat)
 Deny from all
+# Apache 2.4 syntax
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
