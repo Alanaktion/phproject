@@ -103,23 +103,40 @@ class Security extends \Prefab
     }
 
     /**
-     * Install latest core database updates
+     * Install a core database update
+     * @return bool TRUE if the update was applied, FALSE on failure
      */
-    public function updateDatabase(string $version): void
+    public function updateDatabase(string $version): bool
     {
         $f3 = \Base::instance();
-        if (file_exists("db/{$version}.sql")) {
-            $update_db = file_get_contents("db/{$version}.sql");
-            $db = $f3->get("db.instance");
-            foreach (explode(";", $update_db) as $stmt) {
-                $db->exec($stmt);
-            }
-
-            \Cache::instance()->reset();
-            $f3->set("success", " Database updated to version: {$version}");
-        } else {
+        if (!file_exists("db/{$version}.sql")) {
             $f3->set("error", " Database file not found for version: {$version}");
+            return false;
         }
+
+        $update_db = file_get_contents("db/{$version}.sql");
+        $db = $f3->get("db.instance");
+        try {
+            // Note: MySQL implicitly commits around DDL statements, so a
+            // failed migration there can't be rolled back; the version row
+            // is only updated by the last statement, so a failure leaves
+            // the database at the previous version and surfaces an error.
+            $db->begin();
+            foreach (explode(";", (string) $update_db) as $stmt) {
+                if (trim($stmt) !== "") {
+                    $db->exec($stmt);
+                }
+            }
+            $db->commit();
+        } catch (\Throwable $e) {
+            $db->rollback();
+            $f3->set("error", " Database update to version {$version} failed: " . $e->getMessage());
+            return false;
+        }
+
+        \Cache::instance()->reset();
+        $f3->set("success", " Database updated to version: {$version}");
+        return true;
     }
 
     /**

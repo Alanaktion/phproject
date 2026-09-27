@@ -16,6 +16,7 @@ $f3->mset(array(
     "CACHE" => true,
     "AUTOLOAD" => "app/;lib/vendor/",
     "JAR.samesite" => "Lax",
+    "JAR.secure" => $f3->get("SCHEME") == "https",
     "PACKAGE" => "Phproject",
     "TZ" => "UTC",
     "microtime" => microtime(true),
@@ -89,10 +90,15 @@ if ($f3->get("db.engine") == "sqlite") {
 // Load final configuration
 \Model\Config::loadAll();
 
-// Ensure database is up to date
-$version = \Helper\Security::instance()->checkDatabaseVersion();
-if ($version !== true) {
-    \Helper\Security::instance()->updateDatabase($version);
+// Ensure database is up to date, applying all pending migrations in one request
+$security = \Helper\Security::instance();
+$migrations = 0;
+while (($version = $security->checkDatabaseVersion()) !== true && $migrations < 100) {
+    if (!$security->updateDatabase($version)) {
+        break;
+    }
+    $f3->set("version", $version);
+    $migrations++;
 }
 
 // Set up CSRF protection
