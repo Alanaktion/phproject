@@ -396,6 +396,10 @@ class ApiTest extends TestCase
             ], ['X-API-Key' => $restricted->api_key]), true);
             $this->assertSame((int)$restricted->id, (int)$response['issue']['author_id']);
         } finally {
+            // Remove issues authored by the user first to satisfy the author foreign key
+            foreach ((new \Model\Issue())->find(['author_id = ?', $restricted->id]) as $issue) {
+                $issue->erase();
+            }
             $restricted->erase();
         }
 
