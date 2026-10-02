@@ -60,6 +60,29 @@ class Issues extends \Controller\Api
         return array_replace($casted, $result);
     }
 
+    /**
+     * Build an SQL filter limiting issues to those the current user may access
+     *
+     * Mirrors \Model\Issue::allowAccess() for use in list queries.
+     */
+    protected function _accessFilter(): ?string
+    {
+        $f3 = \Base::instance();
+        $user = $f3->get("user_obj");
+        if ($user->role == 'admin') {
+            return null;
+        }
+
+        $filter = "deleted_date IS NULL";
+        if ($f3->get('security.restrict_access')) {
+            $helper = \Helper\Dashboard::instance();
+            $ownerIds = array_map("intval", array_merge($helper->getGroupIds(), [$user->id]));
+            $filter .= " AND (owner_id IN (" . implode(",", $ownerIds) . ") OR author_id = " . (int) $user->id . ")";
+        }
+
+        return $filter;
+    }
+
     // Get a list of issues
     public function get(\Base $f3): void
     {
@@ -73,6 +96,10 @@ class Issues extends \Controller\Api
             if (isset($get[$i])) {
                 $filter[] = "`{$i}` = " . $db->quote($get[$i]);
             }
+        }
+
+        if ($accessFilter = $this->_accessFilter()) {
+            $filter[] = $accessFilter;
         }
 
         $filter_str = $filter !== [] ? implode(' AND ', $filter) : null;
@@ -181,7 +208,7 @@ class Issues extends \Controller\Api
         if (!empty($post["parent_id"])) {
             $parent = new \Model\Issue();
             $parent->load($post["parent_id"]);
-            if (!$parent->id) {
+            if (!$parent->id || !$parent->allowAccess()) {
                 $f3->error(400, "The 'parent_id' field is not valid.");
                 return;
             }
@@ -208,7 +235,9 @@ class Issues extends \Controller\Api
         // Create a new issue based on the data
         $issue = new \Model\Issue();
 
-        $issue->author_id = empty($post["author_id"]) ? $this->_userId : $post["author_id"];
+        // Only admins may create issues on behalf of another user
+        $isAdmin = $f3->get("user.role") == 'admin';
+        $issue->author_id = $isAdmin && !empty($post["author_id"]) ? $post["author_id"] : $this->_userId;
         $issue->name = trim((string) $post["name"]);
         $issue->type_id = empty($post["type_id"]) ? 1 : $post["type_id"];
         $issue->priority = empty($post["priority"]) ? $f3->get("issue_priority.default") : $post["priority"];
@@ -257,8 +286,12 @@ class Issues extends \Controller\Api
             return;
         }
 
-        // Disallow setting sensitive fields via API
-        $protectedFields = ['author_id', 'closed_date'];
+        // Only allow writing real issue columns, excluding sensitive fields
+        $protectedFields = ['id', 'author_id', 'closed_date'];
+        $baseIssue = new \Model\Issue();
+        $baseIssue->load($params["id"]);
+        $writableFields = array_diff($baseIssue->fields(false), $protectedFields);
+
         $updated = [];
         $requestData = $f3->get("REQUEST") ?: [];
         if ($f3->get("BODY")) {
@@ -266,19 +299,24 @@ class Issues extends \Controller\Api
             $requestData = array_merge($requestData, $bodyData);
         }
         foreach ($requestData as $key => $val) {
-            if (is_scalar($val) && $issue->exists($key) && !in_array($key, $protectedFields, true)) {
+            if (is_scalar($val) && in_array($key, $writableFields, true)) {
                 $updated[] = $key;
-                $issue->set($key, $val);
+                $baseIssue->set($key, $val);
+            }
+        }
+
+        // Disallow moving the issue under a parent the user cannot access
+        if (in_array("parent_id", $updated, true) && $baseIssue->parent_id) {
+            $parent = new \Model\Issue();
+            $parent->load($baseIssue->parent_id);
+            if (!$parent->id || !$parent->allowAccess()) {
+                $f3->error(400, "The 'parent_id' field is not valid.");
+                return;
             }
         }
 
         if ($updated !== []) {
             // Save via the base Issue model to avoid writing to the issue_detail view
-            $baseIssue = new \Model\Issue();
-            $baseIssue->load($params["id"]);
-            foreach ($updated as $field) {
-                $baseIssue->set($field, $issue->get($field));
-            }
             $baseIssue->save();
             // Reload the detail model to reflect saved changes
             $issue->load($params["id"]);
@@ -292,11 +330,17 @@ class Issues extends \Controller\Api
     {
         $issue = new \Model\Issue\Detail();
         $issue->load($params["id"]);
-        if ($issue->id) {
-            $this->_printJson(["issue" => $this->_issueMultiArray($issue)]);
-        } else {
+        if (!$issue->id) {
             $f3->error(404);
+            return;
         }
+
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
+            return;
+        }
+
+        $this->_printJson(["issue" => $this->_issueMultiArray($issue)]);
     }
 
     // Delete a single issue
@@ -330,6 +374,11 @@ class Issues extends \Controller\Api
             return;
         }
 
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
+            return;
+        }
+
         $comment = new \Model\Issue\Comment\Detail();
         $comments = $comment->find(["issue_id = ?", $issue->id], ["order" => "created_date DESC"]);
 
@@ -348,6 +397,11 @@ class Issues extends \Controller\Api
         $issue->load($params["id"]);
         if (!$issue->id) {
             $f3->error(404);
+            return;
+        }
+
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
             return;
         }
 
@@ -386,7 +440,9 @@ class Issues extends \Controller\Api
             $issue = new \Model\Issue\Detail();
             $issues = $issue->find(["id IN (" . implode(",", $issueIds) . ") AND deleted_date IS NULL"]);
             foreach ($issues as $item) {
-                $return[] = $this->_issueMultiArray($item);
+                if ($item->allowAccess()) {
+                    $return[] = $this->_issueMultiArray($item);
+                }
             }
         }
 

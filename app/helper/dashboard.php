@@ -51,6 +51,7 @@ class Dashboard extends \Prefab
         }
 
         $f3 = \Base::instance();
+        $this->_groupIds = [];
         $groups = new \Model\User\Group();
         foreach ($groups->find(["user_id = ?", $f3->get("user.id")]) as $r) {
             $this->_groupIds[] = $r->group_id;
@@ -62,6 +63,11 @@ class Dashboard extends \Prefab
     public function getGroupUserIds()
     {
         if ($this->_groupUserIds !== null) {
+            return $this->_groupUserIds;
+        }
+
+        $this->_groupUserIds = [];
+        if (!$this->getGroupIds()) {
             return $this->_groupUserIds;
         }
 
