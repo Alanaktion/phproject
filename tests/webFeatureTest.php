@@ -214,4 +214,85 @@ class WebFeatureTest extends TestCase
             $issue->delete(false);
         }
     }
+
+    protected function createUser(string $prefix, int $rank): \Model\User
+    {
+        $security = \Helper\Security::instance();
+        $user = new \Model\User();
+        $user->username = $prefix . uniqid();
+        $user->email = $user->username . '@example.com';
+        $user->name = $prefix;
+        $user->role = $rank >= \Model\User::RANK_ADMIN ? 'admin' : 'user';
+        $user->rank = $rank;
+        $user->salt = $security->salt();
+        $user->password = $security->hash('original-password', $user->salt);
+        $user->task_color = '336699';
+        $user->created_date = date('Y-m-d H:i:s');
+        $user->save();
+        return $user;
+    }
+
+    public function testAdminCannotModifyHigherRankUser(): void
+    {
+        if (!$this->configured) {
+            $this->markTestSkipped();
+        }
+
+        $admin = $this->createUser('rankadmin', \Model\User::RANK_ADMIN);
+        $super = $this->createUser('ranksuper', \Model\User::RANK_SUPER);
+        $peer = $this->createUser('rankpeer', \Model\User::RANK_USER);
+
+        try {
+            $this->setLoggedInUser($admin);
+
+            // Edit a higher-ranked user
+            $output = $this->mock('POST /admin/users/save', [
+                'csrf-token' => $this->csrfToken(),
+                'user_id' => $super->id,
+                'username' => $super->username,
+                'email' => $super->email,
+                'name' => 'Hijacked',
+                'task_color' => 'ff0000',
+                'rank' => \Model\User::RANK_CLIENT,
+                'password' => 'AttackerChosen123',
+                'password_confirm' => 'AttackerChosen123',
+            ]);
+            $this->assertStringContainsString('"status":403', (string) $output);
+
+            $check = new \Model\User();
+            $check->load($super->id);
+            $this->assertSame((string) $super->password, (string) $check->password);
+            $this->assertSame(\Model\User::RANK_SUPER, (int) $check->rank);
+            $this->assertSame('ranksuper', (string) $check->name);
+
+            // Promote a lower-ranked user above own rank
+            $this->mock('POST /admin/users/save', [
+                'csrf-token' => $this->csrfToken(),
+                'user_id' => $peer->id,
+                'username' => $peer->username,
+                'email' => $peer->email,
+                'name' => 'Peer',
+                'task_color' => '00ff00',
+                'rank' => \Model\User::RANK_SUPER,
+            ]);
+            $check = new \Model\User();
+            $check->load($peer->id);
+            $this->assertSame(\Model\User::RANK_USER, (int) $check->rank);
+
+            // Delete a higher-ranked user, directly or via the group route
+            $this->mock('POST /admin/users/' . $super->id . '/delete', [
+                'csrf-token' => $this->csrfToken(),
+            ]);
+            $this->mock('POST /admin/groups/' . $super->id . '/delete', [
+                'csrf-token' => $this->csrfToken(),
+            ]);
+            $check = new \Model\User();
+            $check->load($super->id);
+            $this->assertNull($check->deleted_date);
+        } finally {
+            $admin->erase();
+            $super->erase();
+            $peer->erase();
+        }
+    }
 }
