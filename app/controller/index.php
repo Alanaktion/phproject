@@ -327,11 +327,15 @@ class Index extends \Controller
         // Authenticate user
         if ($f3->get("GET.key")) {
             $user = new \Model\User();
-            $user->load(["api_key = ?", $f3->get("GET.key")]);
+            $user->load(["api_key = ? AND deleted_date IS NULL", $f3->get("GET.key")]);
             if (!$user->id) {
                 $f3->error(403);
                 return;
             }
+
+            // Use the key's user for issue access checks
+            $f3->set("user", $user->cast());
+            $f3->set("user_obj", $user);
         } else {
             $f3->error(403);
             return;
@@ -362,6 +366,9 @@ class Index extends \Controller
             $f3->error(400, "Invalid feed type");
             return;
         }
+
+        // Remove issues the requesting user cannot access
+        $issues = array_values(array_filter($issues, fn($issue): bool => $issue->allowAccess()));
 
         // Render feed
         $f3->set("get", $get);

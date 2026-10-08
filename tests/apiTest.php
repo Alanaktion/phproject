@@ -299,6 +299,136 @@ class ApiTest extends TestCase
     }
 
     /**
+     * Create a non-admin user with an API key, not in any groups
+     */
+    protected function createRestrictedUser(): \Model\User
+    {
+        $suffix = bin2hex(random_bytes(4));
+        $user = new \Model\User();
+        $user->username = "restricted_{$suffix}";
+        $user->email = "restricted_{$suffix}@example.com";
+        $user->name = "Restricted {$suffix}";
+        $user->role = 'user';
+        $user->rank = 1;
+        $user->api_key = sha1(random_bytes(16));
+        $user->save();
+        return $user;
+    }
+
+    public function testRestrictedAccessEnforcedOnApi()
+    {
+        if (!$this->configured) {
+            return $this->markTestSkipped();
+        }
+
+        $f3 = \Base::instance();
+        $originalRestrict = $f3->get('security.restrict_access');
+        $restricted = $this->createRestrictedUser();
+        $restrictedHeaders = ['X-API-Key' => $restricted->api_key];
+
+        try {
+            $f3->set('security.restrict_access', 1);
+            \Registry::clear(\Helper\Dashboard::class);
+
+            $created = $this->createIssue([
+                'name' => 'Restricted API issue',
+                'description' => 'Confidential #restrictedtag',
+                'owner_id' => $this->user->id,
+            ]);
+            $issueId = (int)$created['issue']['id'];
+            \Registry::clear(\Helper\Dashboard::class);
+
+            $single = json_decode($this->mock("GET /issues/{$issueId}.json", [], $restrictedHeaders), true);
+            $this->assertSame(403, $single['status'] ?? null);
+            \Registry::clear(\Helper\Dashboard::class);
+
+            $comments = json_decode($this->mock("GET /issues/{$issueId}/comments.json", [], $restrictedHeaders), true);
+            $this->assertSame(403, $comments['status'] ?? null);
+            \Registry::clear(\Helper\Dashboard::class);
+
+            $commentPost = json_decode($this->mock("POST /issues/{$issueId}/comments.json", [
+                'text' => 'Should not be saved',
+            ], $restrictedHeaders), true);
+            $this->assertSame(403, $commentPost['status'] ?? null);
+            $comment = new \Model\Issue\Comment();
+            $this->assertSame(0, $comment->count(['issue_id = ? AND user_id = ?', $issueId, $restricted->id]));
+            \Registry::clear(\Helper\Dashboard::class);
+
+            $list = json_decode($this->mock("GET /issues.json", ['id' => $issueId], $restrictedHeaders), true);
+            $this->assertSame([], $list['issues']);
+            \Registry::clear(\Helper\Dashboard::class);
+
+            $tagged = json_decode($this->mock("GET /tag/restrictedtag.json", [], $restrictedHeaders), true);
+            $this->assertNotContains($issueId, array_map('intval', array_column($tagged, 'id')));
+            \Registry::clear(\Helper\Dashboard::class);
+
+            $child = json_decode($this->mock("POST /issues.json", [
+                'name' => 'Child of restricted issue',
+                'description' => 'Created by PHPUnit',
+                'parent_id' => $issueId,
+            ], $restrictedHeaders), true);
+            $this->assertSame(400, $child['status'] ?? null);
+            \Registry::clear(\Helper\Dashboard::class);
+
+            // The owner still has access
+            $fetched = json_decode($this->mock("GET /issues/{$issueId}.json", [], $this->apiHeaders()), true);
+            $this->assertSame($issueId, (int)$fetched['issue']['id']);
+        } finally {
+            $f3->set('security.restrict_access', $originalRestrict);
+            \Registry::clear(\Helper\Dashboard::class);
+            $restricted->erase();
+        }
+
+        return null;
+    }
+
+    public function testIssueCreateIgnoresAuthorIdForNonAdmin()
+    {
+        if (!$this->configured) {
+            return $this->markTestSkipped();
+        }
+
+        $restricted = $this->createRestrictedUser();
+        try {
+            $response = json_decode($this->mock("POST /issues.json", [
+                'name' => 'Spoofed author issue',
+                'description' => 'Created by PHPUnit',
+                'author_id' => $this->user->id,
+            ], ['X-API-Key' => $restricted->api_key]), true);
+            $this->assertSame((int)$restricted->id, (int)$response['issue']['author_id']);
+        } finally {
+            // Remove issues authored by the user first to satisfy the author foreign key
+            foreach ((new \Model\Issue())->find(['author_id = ?', $restricted->id]) as $issue) {
+                $issue->erase();
+            }
+            $restricted->erase();
+        }
+
+        return null;
+    }
+
+    public function testDeletedUserApiKeyRejected()
+    {
+        if (!$this->configured) {
+            return $this->markTestSkipped();
+        }
+
+        $f3 = \Base::instance();
+        $restricted = $this->createRestrictedUser();
+        $restricted->delete();
+        try {
+            $f3->clear('user');
+            $f3->clear('user_obj');
+            $response = json_decode($this->mock("GET /user/me.json", [], ['X-API-Key' => $restricted->api_key]), true);
+            $this->assertSame(401, $response['status'] ?? null);
+        } finally {
+            $restricted->erase();
+        }
+
+        return null;
+    }
+
+    /**
      * Test that API validates required fields
      * Note: Full error response testing would require process isolation to handle F3's exit()
      */
