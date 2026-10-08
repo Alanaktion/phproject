@@ -120,14 +120,21 @@ class Security extends \Prefab
             // Note: MySQL implicitly commits around DDL statements, so a
             // failed migration there can't be rolled back. The version row
             // is only updated by the last statement, so a failure leaves
-            // the database at the previous version and surfaces an error,
-            // but already-applied DDL (e.g. an added column) stays in place
-            // and may need manual cleanup before the migration can be
-            // retried. SQLite migrations are fully atomic.
+            // the database at the previous version and surfaces an error.
+            // Already-applied DDL (e.g. an added column) stays in place,
+            // but replaying it on retry is tolerated (see
+            // isAlreadyAppliedSchemaError()), so no manual cleanup is
+            // needed before retrying. SQLite migrations are fully atomic.
             $db->begin();
             foreach (explode(";", (string) $update_db) as $stmt) {
                 if (trim($stmt) !== "") {
-                    $db->exec($stmt);
+                    try {
+                        $db->exec($stmt);
+                    } catch (\Throwable $e) {
+                        if (!$this->isAlreadyAppliedSchemaError($db->driver(), $e)) {
+                            throw $e;
+                        }
+                    }
                 }
             }
             $db->commit();
@@ -140,6 +147,30 @@ class Security extends \Prefab
         \Cache::instance()->reset();
         $f3->set("success", " Database updated to version: {$version}");
         return true;
+    }
+
+    /**
+     * Check whether a migration statement failure only means the statement
+     * was already applied by an earlier partial run.
+     *
+     * MySQL implicitly commits DDL, so when a migration fails partway
+     * through, the statements that already ran stay applied; retrying the
+     * migration replays them, and each replayed statement fails. A replayed
+     * statement fails with a "duplicate"/"already exists" schema error,
+     * which is safe to skip because the desired end state is already in
+     * place. Anything else — including data-dependent "Duplicate entry"
+     * errors — is a real failure and must still abort the migration.
+     * @param string $driver PDO driver name ("mysql", "sqlite", ...)
+     */
+    protected function isAlreadyAppliedSchemaError(string $driver, \Throwable $e): bool
+    {
+        if ($driver !== "mysql") {
+            return false;
+        }
+        return (bool) preg_match(
+            "/\\bduplicate\\s+(column|key|index|foreign key constraint)\\s+name\\b|\\balready exists\\b/i",
+            $e->getMessage()
+        );
     }
 
     /**
