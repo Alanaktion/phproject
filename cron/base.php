@@ -32,7 +32,11 @@ $f3->mset(require_once($config_file));
 
 // Connect to database
 if ($f3->get("db.engine") == "sqlite") {
-    $f3->set("db.instance", new \Helper\SQL("sqlite:" . $f3->get("db.name")));
+    $db_name = $f3->get("db.name");
+    if ($db_name !== ":memory:" && substr($db_name, 0, 1) !== "/") {
+        $db_name = $homedir . $db_name;
+    }
+    $f3->set("db.instance", new \Helper\SQL("sqlite:" . $db_name));
 } else {
     $f3->set("db.instance", new \Helper\SQL(
         "mysql:host=" . $f3->get("db.host") . ";port=" . ($f3->get("db.port") ?: 3306) . ";dbname=" . $f3->get("db.name"),
