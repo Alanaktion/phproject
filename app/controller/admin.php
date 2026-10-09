@@ -15,6 +15,14 @@ class Admin extends \Controller
     }
 
     /**
+     * Check if the current user can manage the given user, based on rank
+     */
+    protected function canManageUser(\Model\User $user): bool
+    {
+        return $user->rank <= \Base::instance()->get("user.rank");
+    }
+
+    /**
      * GET /admin
      */
     public function index(\Base $f3): void
@@ -244,7 +252,7 @@ class Admin extends \Controller
         $user->load($params["id"]);
 
         if ($user->id) {
-            if ($user->rank > $f3->get("user.rank")) {
+            if (!$this->canManageUser($user)) {
                 $f3->error(403, "You are not authorized to edit this user.");
                 return;
             }
@@ -291,7 +299,17 @@ class Admin extends \Controller
 
             if ($user_id) {
                 $f3->set("title", $f3->get("dict.edit_user"));
-                $user->load($user_id);
+                $user->load(["id = ? AND role != 'group'", $user_id]);
+                if (!$user->id) {
+                    $f3->error(404, "User does not exist.");
+                    return;
+                }
+
+                if (!$this->canManageUser($user)) {
+                    $f3->error(403, "You are not authorized to edit this user.");
+                    return;
+                }
+
                 $f3->set("this_user", $user);
             } else {
                 $f3->set("title", $f3->get("dict.new_user"));
@@ -349,7 +367,12 @@ class Admin extends \Controller
             $user->name = $f3->get("POST.name");
             // Don't allow user to change own rank
             if ($user->id != $f3->get("user.id")) {
-                $user->rank = $f3->get("POST.rank");
+                $rank = (int) $f3->get("POST.rank");
+                if ($rank < \Model\User::RANK_GUEST || $rank > $f3->get("user.rank")) {
+                    throw new \Exception("You cannot assign a rank higher than your own.");
+                }
+
+                $user->rank = $rank;
             }
 
             $user->role = $user->rank < \Model\User::RANK_ADMIN ? 'user' : 'admin';
@@ -374,9 +397,14 @@ class Admin extends \Controller
     {
         $this->validateCsrf();
         $user = new \Model\User();
-        $user->load($params["id"]);
+        $user->load(["id = ? AND role != 'group'", $params["id"]]);
         if (!$user->id) {
             $f3->reroute("/admin/users");
+            return;
+        }
+
+        if (!$this->canManageUser($user)) {
+            $f3->error(403, "You are not authorized to delete this user.");
             return;
         }
 
@@ -408,9 +436,14 @@ class Admin extends \Controller
     {
         $this->validateCsrf();
         $user = new \Model\User();
-        $user->load($params["id"]);
+        $user->load(["id = ? AND role != 'group'", $params["id"]]);
         if (!$user->id) {
             $f3->reroute("/admin/users");
+            return;
+        }
+
+        if (!$this->canManageUser($user)) {
+            $f3->error(403, "You are not authorized to restore this user.");
             return;
         }
 
@@ -499,10 +532,15 @@ class Admin extends \Controller
     {
         $this->validateCsrf();
         $group = new \Model\User();
-        $group->load($params["id"]);
+        $group->load(["id = ? AND deleted_date IS NULL AND role = 'group'", $params["id"]]);
+        if (!$group->id) {
+            $f3->error(404);
+            return;
+        }
+
         $group->delete();
         if ($f3->get("AJAX")) {
-            $this->_printJson(["deleted" => 1] + $group->cast());
+            $this->_printJson(["deleted" => 1, "id" => $group->id]);
         } else {
             $f3->reroute("/admin/groups");
         }
@@ -591,7 +629,7 @@ class Admin extends \Controller
 
         // Remove Manager status from all members and set manager status on specified user
         $db->exec("UPDATE user_group SET manager = 0 WHERE group_id = ?", $group->id);
-        $db->exec("UPDATE user_group SET manager = 1 WHERE id = ?", $params["user_group_id"]);
+        $db->exec("UPDATE user_group SET manager = 1 WHERE id = ? AND group_id = ?", [$params["user_group_id"], $group->id]);
 
         $f3->reroute("/admin/groups/" . $group->id);
     }
