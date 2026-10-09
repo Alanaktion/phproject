@@ -148,7 +148,7 @@ class Index extends \Controller
             $errors[] = "Name is required";
         }
 
-        if (preg_match("/^[0-9a-z]{4,}$/i", (string) $f3->get("POST.register-username")) === false) {
+        if (preg_match("/^[0-9a-z]{4,}$/i", (string) $f3->get("POST.register-username")) !== 1) {
             $errors[] = "Usernames must be at least 4 characters and can only contain letters and numbers.";
         }
 

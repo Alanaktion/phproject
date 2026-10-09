@@ -258,11 +258,18 @@ class View extends \Template
      */
     protected function _parseTextile(string $str, bool $escape = true): string
     {
-        error_reporting(E_ALL ^ E_DEPRECATED); // Temporarily ignore deprecations because this lib is incompatible
-        $tex = new \Netcarver\Textile\Parser('html5');
-        $tex->setDimensionlessImages(true);
-        $tex->setRestricted($escape);
-        return $tex->parse($str);
+        // Temporarily ignore deprecations because this lib is incompatible,
+        // restoring the previous level afterwards so deprecations elsewhere
+        // in the request are still reported.
+        $level = error_reporting(E_ALL ^ E_DEPRECATED);
+        try {
+            $tex = new \Netcarver\Textile\Parser('html5');
+            $tex->setDimensionlessImages(true);
+            $tex->setRestricted($escape);
+            return $tex->parse($str);
+        } finally {
+            error_reporting($level);
+        }
     }
 
     /**
