@@ -131,15 +131,23 @@ class Security extends \Prefab
                     try {
                         $db->exec($stmt);
                     } catch (\Throwable $e) {
-                        if (!$this->isAlreadyAppliedSchemaError($db->driver(), $e)) {
-                            throw $e;
-                        }
-                    }
+            $db->begin();
+            foreach (explode(";", (string) $update_db) as $stmt) {
+                if (trim($stmt) !== "") {
+                    $db->exec($stmt);
                 }
             }
-            $db->commit();
+            if ($db->pdo()->inTransaction()) {
+                $db->commit();
+            }
         } catch (\Throwable $e) {
-            $db->rollback();
+            try {
+                if ($db->pdo()->inTransaction()) {
+                    $db->rollback();
+                }
+            } catch (\Throwable) {
+                // Keep the original migration error.
+            }
             $f3->set("error", " Database update to version {$version} failed: " . $e->getMessage());
             return false;
         }
