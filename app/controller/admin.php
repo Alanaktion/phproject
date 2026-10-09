@@ -349,11 +349,11 @@ class Admin extends \Controller
                 throw new \Exception("Please enter a name.");
             }
 
-            if (preg_match("/^#?(?:[0-9a-f]{3}|[0-9a-f]{6})$/i", (string) $f3->get("POST.task_color")) !== 1) {
+            if (preg_match("/^#?(?:[0-9a-f]{3}|[0-9a-f]{6})\\z/i", (string) $f3->get("POST.task_color")) !== 1) {
                 throw new \Exception("Please enter a valid hex color.");
             }
 
-            if (preg_match("/^[0-9a-z_-]+$/i", (string) $f3->get("POST.username")) !== 1) {
+            if (preg_match("/^[0-9a-z_-]+\\z/i", (string) $f3->get("POST.username")) !== 1) {
                 throw new \Exception("Usernames can only contain letters, numbers, hyphens, and underscores.");
             }
 

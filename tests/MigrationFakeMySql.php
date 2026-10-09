@@ -35,6 +35,16 @@ class FakeMySqlForMigrationTest
         return true;
     }
 
+    public function pdo(): object
+    {
+        return new class {
+            public function inTransaction(): bool
+            {
+                return true;
+            }
+        };
+    }
+
     public function exec(string $stmt)
     {
         $stmt = trim($stmt);

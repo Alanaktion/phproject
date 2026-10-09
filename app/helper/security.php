@@ -131,10 +131,10 @@ class Security extends \Prefab
                     try {
                         $db->exec($stmt);
                     } catch (\Throwable $e) {
-            $db->begin();
-            foreach (explode(";", (string) $update_db) as $stmt) {
-                if (trim($stmt) !== "") {
-                    $db->exec($stmt);
+                        if (!$this->isAlreadyAppliedSchemaError($db->driver(), $e)) {
+                            throw $e;
+                        }
+                    }
                 }
             }
             if ($db->pdo()->inTransaction()) {

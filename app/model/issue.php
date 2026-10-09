@@ -50,10 +50,14 @@ class Issue extends \Model
         }
 
         if (!empty($data["due_date"])) {
-            if (
-                preg_match("/\\d{4}(-\\d{2}){2}/", (string) $data["due_date"]) !== 1
-                && ($parsed = strtotime((string) $data["due_date"])) !== false
-            ) {
+            $dueDate = (string) $data["due_date"];
+            $date = \DateTime::createFromFormat("Y-m-d", $dueDate);
+            if ($date === false || $date->format("Y-m-d") !== $dueDate) {
+                // Not already a valid Y-m-d date, try to parse it
+                $parsed = strtotime($dueDate);
+                if ($parsed === false) {
+                    throw new \Exception("Please enter a valid due date.");
+                }
                 $data["due_date"] = date("Y-m-d", $parsed);
             }
 
