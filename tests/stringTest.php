@@ -45,6 +45,18 @@ class StringTest extends TestCase
         $this->assertFalse($helper->verifyPassword("wrong", $hash["hash"], $hash["salt"]));
     }
 
+    public function testVerifyBcryptPasswordWithMismatchedSalt(): void
+    {
+        $helper = \Helper\Security::instance();
+        $string = "Hello world!";
+        // Simulate the case where password is a bcrypt hash but salt is an MD5 string
+        // (as could happen with certain data migration scenarios)
+        $bcryptHash = password_hash($string, PASSWORD_BCRYPT);
+        $md5Salt = md5("some-legacy-salt");
+        $this->assertTrue($helper->verifyPassword($string, $bcryptHash, $md5Salt));
+        $this->assertFalse($helper->verifyPassword("wrong", $bcryptHash, $md5Salt));
+    }
+
     public function testVerifyLegacyPassword(): void
     {
         $helper = \Helper\Security::instance();
