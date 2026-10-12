@@ -16,6 +16,7 @@ $f3->mset(array(
     "CACHE" => true,
     "AUTOLOAD" => "app/;lib/vendor/",
     "JAR.samesite" => "Lax",
+    "JAR.secure" => $f3->get("SCHEME") == "https",
     "PACKAGE" => "Phproject",
     "TZ" => "UTC",
     "microtime" => microtime(true),
@@ -82,17 +83,36 @@ if ($f3->get("db.engine") == "sqlite") {
         "mysql:host=" . $f3->get("db.host") . ";port=" . $f3->get("db.port") . ";dbname=" . $f3->get("db.name"),
         $f3->get("db.user"),
         $f3->get("db.pass"),
-        [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4;']
+        // Pdo\Mysql::ATTR_INIT_COMMAND exists on PHP 8.4+; PDO::MYSQL_ATTR_INIT_COMMAND is deprecated since 8.5
+        [(\PHP_VERSION_ID >= 80400 ? \Pdo\Mysql::ATTR_INIT_COMMAND : \PDO::MYSQL_ATTR_INIT_COMMAND) => 'SET NAMES utf8mb4;']
     ));
 }
 
 // Load final configuration
 \Model\Config::loadAll();
 
-// Ensure database is up to date
-$version = \Helper\Security::instance()->checkDatabaseVersion();
-if ($version !== true) {
-    \Helper\Security::instance()->updateDatabase($version);
+// Ensure database is up to date, applying all pending migrations in one request.
+// Serialized with a non-blocking file lock so concurrent requests can't run
+// the same migration twice; a request that can't acquire the lock skips this,
+// since another request is already migrating.
+$lock = fopen($f3->get("TEMP") . "migrations.lock", "c");
+if ($lock && flock($lock, LOCK_EX | LOCK_NB)) {
+    try {
+        $security = \Helper\Security::instance();
+        $migrations = 0;
+        while (($version = $security->checkDatabaseVersion()) !== true && $migrations < 100) {
+            if (!$security->updateDatabase($version)) {
+                break;
+            }
+            $f3->set("version", $version);
+            $migrations++;
+        }
+    } finally {
+        flock($lock, LOCK_UN);
+        fclose($lock);
+    }
+} elseif ($lock) {
+    fclose($lock);
 }
 
 // Set up CSRF protection

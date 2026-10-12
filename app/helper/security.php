@@ -103,23 +103,82 @@ class Security extends \Prefab
     }
 
     /**
-     * Install latest core database updates
+     * Install a core database update
+     * @return bool TRUE if the update was applied, FALSE on failure
      */
-    public function updateDatabase(string $version): void
+    public function updateDatabase(string $version): bool
     {
         $f3 = \Base::instance();
-        if (file_exists("db/{$version}.sql")) {
-            $update_db = file_get_contents("db/{$version}.sql");
-            $db = $f3->get("db.instance");
-            foreach (explode(";", $update_db) as $stmt) {
-                $db->exec($stmt);
-            }
-
-            \Cache::instance()->reset();
-            $f3->set("success", " Database updated to version: {$version}");
-        } else {
+        if (!file_exists("db/{$version}.sql")) {
             $f3->set("error", " Database file not found for version: {$version}");
+            return false;
         }
+
+        $update_db = file_get_contents("db/{$version}.sql");
+        $db = $f3->get("db.instance");
+        try {
+            // Note: MySQL implicitly commits around DDL statements, so a
+            // failed migration there can't be rolled back. The version row
+            // is only updated by the last statement, so a failure leaves
+            // the database at the previous version and surfaces an error.
+            // Already-applied DDL (e.g. an added column) stays in place,
+            // but replaying it on retry is tolerated (see
+            // isAlreadyAppliedSchemaError()), so no manual cleanup is
+            // needed before retrying. SQLite migrations are fully atomic.
+            $db->begin();
+            foreach (explode(";", (string) $update_db) as $stmt) {
+                if (trim($stmt) !== "") {
+                    try {
+                        $db->exec($stmt);
+                    } catch (\Throwable $e) {
+                        if (!$this->isAlreadyAppliedSchemaError($db->driver(), $e)) {
+                            throw $e;
+                        }
+                    }
+                }
+            }
+            if ($db->pdo()->inTransaction()) {
+                $db->commit();
+            }
+        } catch (\Throwable $e) {
+            try {
+                if ($db->pdo()->inTransaction()) {
+                    $db->rollback();
+                }
+            } catch (\Throwable) {
+                // Keep the original migration error.
+            }
+            $f3->set("error", " Database update to version {$version} failed: " . $e->getMessage());
+            return false;
+        }
+
+        \Cache::instance()->reset();
+        $f3->set("success", " Database updated to version: {$version}");
+        return true;
+    }
+
+    /**
+     * Check whether a migration statement failure only means the statement
+     * was already applied by an earlier partial run.
+     *
+     * MySQL implicitly commits DDL, so when a migration fails partway
+     * through, the statements that already ran stay applied; retrying the
+     * migration replays them, and each replayed statement fails. A replayed
+     * statement fails with a "duplicate"/"already exists" schema error,
+     * which is safe to skip because the desired end state is already in
+     * place. Anything else — including data-dependent "Duplicate entry"
+     * errors — is a real failure and must still abort the migration.
+     * @param string $driver PDO driver name ("mysql", "sqlite", ...)
+     */
+    protected function isAlreadyAppliedSchemaError(string $driver, \Throwable $e): bool
+    {
+        if ($driver !== "mysql") {
+            return false;
+        }
+        return (bool) preg_match(
+            "/\\bduplicate\\s+(column|key|index|foreign key constraint)\\s+name\\b|\\balready exists\\b/i",
+            $e->getMessage()
+        );
     }
 
     /**
