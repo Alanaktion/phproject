@@ -74,10 +74,8 @@ class Issues extends \Controller\Api
         }
 
         $filter = "deleted_date IS NULL";
-        if ($f3->get('security.restrict_access')) {
-            $helper = \Helper\Dashboard::instance();
-            $ownerIds = array_map("intval", array_merge($helper->getGroupIds(), [$user->id]));
-            $filter .= " AND (owner_id IN (" . implode(",", $ownerIds) . ") OR author_id = " . (int) $user->id . ")";
+        if ($access = \Model\Issue::accessFilter($user)) {
+            $filter .= " AND " . $access;
         }
 
         return $filter;
@@ -426,7 +424,7 @@ class Issues extends \Controller\Api
     public function tag(): void
     {
         $tag = new \Model\Issue\Tag();
-        $tags = $tag->cloud();
+        $tags = $tag->cloud(\Model\Issue::accessFilter(null, 'i'));
         $this->_printJson($tags);
     }
 

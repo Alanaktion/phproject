@@ -156,7 +156,11 @@ class Dashboard extends \Prefab
     {
         $f3 = \Base::instance();
         $watchlist = new \Model\Issue\Watcher();
-        return $watchlist->findby_watcher($f3->get("user.id"), $this->_order);
+        $issues = $watchlist->findby_watcher($f3->get("user.id"), $this->_order);
+
+        // Filter in PHP rather than SQL so the query stays driven by the
+        // watcher table, since the result set is small
+        return array_values(array_filter($issues, fn(array $issue): bool => \Model\Issue::allowAccessRow($issue)));
     }
 
     public function tasks()
@@ -184,8 +188,13 @@ class Dashboard extends \Prefab
     public function my_comments()
     {
         $f3 = \Base::instance();
+        $where = "user_id = ? AND issue_deleted_date IS NULL";
+        if ($access = \Model\Issue::accessFilter(null, 'i')) {
+            $where .= " AND EXISTS (SELECT 1 FROM issue i WHERE i.id = issue_comment_detail.issue_id AND {$access})";
+        }
+
         $comment = new \Model\Issue\Comment\Detail();
-        return $comment->find(["user_id = ? AND issue_deleted_date IS NULL", $f3->get("user.id")], ["order" => "created_date DESC", "limit" => 10]);
+        return $comment->find([$where, $f3->get("user.id")], ["order" => "created_date DESC", "limit" => 10]);
     }
 
     public function recent_comments()
@@ -194,7 +203,7 @@ class Dashboard extends \Prefab
 
         $issue = new \Model\Issue();
         $ownerString = implode(",", $this->getOwnerIds());
-        $issues = $issue->find(["owner_id IN ({$ownerString}) OR author_id = ? AND deleted_date IS NULL", $f3->get("user.id")]);
+        $issues = $issue->find(["(owner_id IN ({$ownerString}) OR author_id = ?) AND deleted_date IS NULL", $f3->get("user.id")]);
         if (!$issues) {
             return [];
         }
@@ -246,9 +255,13 @@ class Dashboard extends \Prefab
         $f3 = \Base::instance();
         $userId = $f3->get("this_user") ? $f3->get("this_user")->id : $f3->get("user.id");
 
+        // Limit to issues the current user can access
+        $access = \Model\Issue::accessFilter();
+        $access = $access ? " AND " . $access : "";
+
         // Load assigned issues
         $issue = new \Model\Issue\Detail();
-        $assigned = $issue->find(["closed_date IS NULL AND deleted_date IS NULL AND owner_id = ?", $userId]);
+        $assigned = $issue->find(["closed_date IS NULL AND deleted_date IS NULL AND owner_id = ?" . $access, $userId]);
 
         // Build issue list
         $issues = [];
@@ -266,19 +279,28 @@ class Dashboard extends \Prefab
         }
 
         while ($missing_ids !== []) {
-            $parents = $issue->find("id IN (" . implode(",", $missing_ids) . ")");
+            $parents = $issue->find("id IN (" . implode(",", array_map("intval", $missing_ids)) . ")" . $access);
+            $missing_ids = [];
             foreach ($parents as $iss) {
-                if (($key = array_search($iss->id, $missing_ids)) !== false) {
-                    unset($missing_ids[$key]);
-                }
-
                 $issues[] = $iss->cast();
                 $assigned_ids[] = $iss->id;
-                if ($iss->parent_id && !in_array($iss->parent_id, $assigned_ids)) {
+            }
+
+            foreach ($parents as $iss) {
+                if ($iss->parent_id && !in_array($iss->parent_id, $assigned_ids) && !in_array($iss->parent_id, $missing_ids)) {
                     $missing_ids[] = $iss->parent_id;
                 }
             }
         }
+
+        // Show issues with an inaccessible or missing parent at the top level
+        foreach ($issues as &$iss) {
+            if ($iss["parent_id"] && !in_array($iss["parent_id"], $assigned_ids)) {
+                $iss["parent_id"] = null;
+            }
+        }
+
+        unset($iss);
 
         // Convert list to tree
         $tree = $this->_buildTree($issues);

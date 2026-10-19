@@ -302,10 +302,12 @@ class Issues extends \Controller
 
         // Get filter data and load issues
         $filter = $this->_buildFilter();
-        $issues = $issue->find($filter[1]);
+        $filter_str = $filter[1];
+        if ($access = \Model\Issue::accessFilter()) {
+            $filter_str = $access . " AND " . $filter_str;
+        }
 
-        // Remove issues the user cannot access
-        $issues = array_values(array_filter($issues, fn($issue): bool => $issue->allowAccess()));
+        $issues = $issue->find($filter_str);
 
         // Configure visible fields
         $fields = [
@@ -1057,12 +1059,21 @@ class Issues extends \Controller
         $watchers = new \Model\Custom("issue_watcher_user");
         $f3->set("watchers", $watchers->find(["issue_id = ?", $params["id"]]));
         $users = new \Model\User();
-        $userList = $users->find("deleted_date IS NULL AND role != 'group'", ["order" => "name ASC"]);
+        $userFilter = "deleted_date IS NULL AND role != 'group'";
         if ($f3->get('security.restrict_access')) {
-            $userList = array_values(array_filter($userList, fn($u): bool => $issue->allowAccess($u)));
+            // Only list users who can access the issue, matching allowAccess()
+            $accessIds = [(int) $issue->owner_id, (int) $issue->author_id];
+            if ($issue->owner_id) {
+                $groups = new \Model\User\Group();
+                foreach ($groups->find(["group_id = ?", $issue->owner_id]) as $r) {
+                    $accessIds[] = (int) $r->user_id;
+                }
+            }
+
+            $userFilter .= " AND (role = 'admin' OR id IN (" . implode(",", $accessIds) . "))";
         }
 
-        $f3->set("users", $userList);
+        $f3->set("users", $users->find($userFilter, ["order" => "name ASC"]));
 
         $this->_printJson([
             "total" => count($f3->get("watchers")),

@@ -607,6 +607,21 @@ class Issue extends \Model
      */
     public function allowAccess(?\Model\User $user = null, bool $includeDeleted = false): bool
     {
+        return self::allowAccessRow([
+            "owner_id" => $this->owner_id,
+            "author_id" => $this->author_id,
+            "deleted_date" => $includeDeleted ? null : $this->deleted_date,
+        ], $user);
+    }
+
+    /**
+     * Check if the current/given user should be allowed access to an issue
+     * given as an array, e.g. a raw query result row.
+     *
+     * @param array $issue Issue row with owner_id, author_id, and deleted_date
+     */
+    public static function allowAccessRow(array $issue, ?\Model\User $user = null): bool
+    {
         $f3 = \Base::instance();
         if (!$user instanceof \Model\User) {
             $user = $f3->get("user_obj");
@@ -616,7 +631,7 @@ class Issue extends \Model
             return true;
         }
 
-        if ($this->deleted_date && !$includeDeleted) {
+        if (!empty($issue["deleted_date"])) {
             return false;
         }
 
@@ -624,18 +639,52 @@ class Issue extends \Model
             return true;
         }
 
-        if ($user->id == $f3->get("user.id")) {
-            $groupIds = \Helper\Dashboard::instance()->getGroupIds();
-        } else {
-            $groupIds = [];
-            $groups = new \Model\User\Group();
-            foreach ($groups->find(["user_id = ?", $user->id]) as $r) {
-                $groupIds[] = $r->group_id;
-            }
+        return ($issue["owner_id"] == $user->id)
+            || ($issue["author_id"] == $user->id)
+            || in_array($issue["owner_id"], self::_accessGroupIds($user));
+    }
+
+    /**
+     * Build an SQL condition limiting issues to those the current/given user
+     * may access, matching allowAccess() for non-deleted issues.
+     *
+     * Returns null when no restriction applies. Deleted issues are not
+     * filtered, callers should exclude them separately.
+     *
+     * @param string $alias Optional table alias to prefix columns with
+     */
+    public static function accessFilter(?\Model\User $user = null, string $alias = ''): ?string
+    {
+        $f3 = \Base::instance();
+        if (!$user instanceof \Model\User) {
+            $user = $f3->get("user_obj");
         }
 
-        return ($this->owner_id == $user->id)
-            || ($this->author_id == $user->id)
-            || in_array($this->owner_id, $groupIds);
+        if ($user->role == 'admin' || !$f3->get('security.restrict_access')) {
+            return null;
+        }
+
+        $prefix = $alias === '' ? '' : $alias . '.';
+        $userId = (int) $user->id;
+        $ownerIds = array_map("intval", array_merge(self::_accessGroupIds($user), [$userId]));
+        return "({$prefix}owner_id IN (" . implode(",", $ownerIds) . ") OR {$prefix}author_id = {$userId})";
+    }
+
+    /**
+     * Get the IDs of groups a user belongs to, for access checks
+     */
+    protected static function _accessGroupIds(\Model\User $user): array
+    {
+        if ($user->id == \Base::instance()->get("user.id")) {
+            return \Helper\Dashboard::instance()->getGroupIds();
+        }
+
+        $groupIds = [];
+        $groups = new \Model\User\Group();
+        foreach ($groups->find(["user_id = ?", $user->id]) as $r) {
+            $groupIds[] = $r->group_id;
+        }
+
+        return $groupIds;
     }
 }

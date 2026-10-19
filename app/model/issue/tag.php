@@ -24,10 +24,20 @@ class Tag extends \Model
 
     /**
      * Get a multidimensional array representing a tag cloud
+     *
+     * @param string|null $issueFilter SQL condition on issues, aliased as "i"
      */
-    public function cloud(): array
+    public function cloud(?string $issueFilter = null): array
     {
-        return $this->db->exec("SELECT tag, COUNT(*) AS freq FROM {$this->_table_name} GROUP BY tag ORDER BY freq DESC");
+        if ($issueFilter === null) {
+            return $this->db->exec("SELECT tag, COUNT(*) AS freq FROM {$this->_table_name} GROUP BY tag ORDER BY freq DESC");
+        }
+
+        return $this->db->exec(
+            "SELECT tag, COUNT(*) AS freq FROM {$this->_table_name} " .
+            "WHERE issue_id IN (SELECT i.id FROM issue i WHERE i.deleted_date IS NULL AND {$issueFilter}) " .
+            "GROUP BY tag ORDER BY freq DESC"
+        );
     }
 
     /**

@@ -324,20 +324,24 @@ class User extends \Controller
             $type = new \Model\Issue\Type();
             $f3->set("types", $type->find(null, null, $f3->get("cache_expire.db")));
 
+            // Limit issue lists to those the current user can access
+            $access = \Model\Issue::accessFilter();
+            $access = $access ? " AND " . $access : "";
+
             $issue = new \Model\Issue\Detail();
             $f3->set("created_issues", $issue->paginate(
                 0,
                 200,
-                ["status_closed = '0' AND deleted_date IS NULL AND author_id = ?", $user->id],
+                ["status_closed = '0' AND deleted_date IS NULL AND author_id = ?" . $access, $user->id],
                 ["order" => "priority DESC, due_date DESC"]
             ));
             $f3->set("assigned_issues", $issue->paginate(
                 0,
                 200,
-                ["status_closed = '0' AND deleted_date IS NULL AND owner_id = ?", $user->id],
+                ["status_closed = '0' AND deleted_date IS NULL AND owner_id = ?" . $access, $user->id],
                 ["order" => "priority DESC, due_date DESC"]
             ));
-            $f3->set("overdue_issues", $issue->paginate(0, 200, ["status_closed = '0' AND deleted_date IS NULL AND owner_id = ? AND due_date IS NOT NULL AND due_date < ?", $user->id, date("Y-m-d", \Helper\View::instance()->utc2local())], ["order" => "due_date ASC"]));
+            $f3->set("overdue_issues", $issue->paginate(0, 200, ["status_closed = '0' AND deleted_date IS NULL AND owner_id = ? AND due_date IS NOT NULL AND due_date < ?" . $access, $user->id, date("Y-m-d", \Helper\View::instance()->utc2local())], ["order" => "due_date ASC"]));
 
             $this->_render("user/single.html");
         } else {

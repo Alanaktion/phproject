@@ -31,12 +31,16 @@ class Backlog extends \Controller
 
         $typeStr = implode(",", $typeIds);
 
+        // Limit to issues the user can access
+        $access = \Model\Issue::accessFilter();
+        $access = $access ? " AND " . $access : "";
+
         $issue = new \Model\Issue\Detail();
 
         $sprint_details = [];
         foreach ($sprints as $sprint) {
             $projects = $issue->find(
-                ["deleted_date IS NULL AND sprint_id = ? AND type_id IN ({$typeStr})", $sprint->id],
+                ["deleted_date IS NULL AND sprint_id = ? AND type_id IN ({$typeStr})" . $access, $sprint->id],
                 ['order' => 'priority DESC, due_date']
             );
 
@@ -77,12 +81,12 @@ class Backlog extends \Controller
         if ($large_project_ids !== []) {
             $large_project_ids = implode(",", array_unique($large_project_ids));
             $unset_projects = $issue->find(
-                ["deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ({$typeStr}) AND status_closed = '0' AND id NOT IN ({$large_project_ids})"],
+                ["deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ({$typeStr}) AND status_closed = '0' AND id NOT IN ({$large_project_ids})" . $access],
                 ['order' => 'priority DESC, due_date']
             );
         } else {
             $unset_projects = $issue->find(
-                ["deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ({$typeStr}) AND status_closed = '0'"],
+                ["deleted_date IS NULL AND sprint_id IS NULL AND type_id IN ({$typeStr}) AND status_closed = '0'" . $access],
                 ['order' => 'priority DESC, due_date']
             );
         }
@@ -212,10 +216,14 @@ class Backlog extends \Controller
 
         $typeStr = implode(",", $typeIds);
 
+        // Limit to issues the user can access
+        $access = \Model\Issue::accessFilter();
+        $access = $access ? " AND " . $access : "";
+
         $issue = new \Model\Issue\Detail();
         $sprint_details = [];
         foreach ($sprints as $sprint) {
-            $projects = $issue->find(["deleted_date IS NULL AND sprint_id = ? AND type_id IN ({$typeStr})", $sprint->id]);
+            $projects = $issue->find(["deleted_date IS NULL AND sprint_id = ? AND type_id IN ({$typeStr})" . $access, $sprint->id]);
             $sprint_details[] = $sprint->cast() + ["projects" => $projects];
         }
 

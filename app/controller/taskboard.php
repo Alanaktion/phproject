@@ -140,10 +140,14 @@ class Taskboard extends \Controller
         $typeStr = implode(",", $typeIds);
         sort($typeIds, SORT_NUMERIC);
 
+        // Limit to issues the user can access
+        $access = \Model\Issue::accessFilter();
+        $access = $access ? " AND " . $access : "";
+
         // Find all visible tasks
         $tasks = $issue->find([
             "sprint_id = ? AND type_id NOT IN ({$typeStr}) AND deleted_date IS NULL AND status IN ({$visible_status_ids})"
-                . (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")"),
+                . (empty($filter_users) ? "" : " AND owner_id IN (" . implode(",", $filter_users) . ")") . $access,
             $sprint->id
         ], ["order" => "priority DESC, id ASC"]);
         $task_ids = [];
@@ -161,8 +165,8 @@ class Taskboard extends \Controller
 
         // Find all visible projects or parent tasks if no type filter is given
         $queryArray = [
-            "(id IN ({$parent_ids_str}) AND type_id IN ({$typeStr})) OR (sprint_id = ? AND type_id IN ({$typeStr}) AND deleted_date IS NULL"
-                . (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))"),
+            "((id IN ({$parent_ids_str}) AND type_id IN ({$typeStr})) OR (sprint_id = ? AND type_id IN ({$typeStr}) AND deleted_date IS NULL"
+                . (empty($filter_users) ? ")" : " AND owner_id IN (" . implode(",", $filter_users) . "))") . ")" . $access,
             $sprint->id
         ];
         $projects = $issue->find($queryArray, ["order" => "owner_id ASC, priority DESC"]);
@@ -254,6 +258,10 @@ class Taskboard extends \Controller
             return;
         }
 
+        // Limit to issues the user can access
+        $access = \Model\Issue::accessFilter(null, 'i');
+        $access = $access ? " AND " . $access : "";
+
         $query = "
             SELECT SUM(IFNULL(f.new_value, IFNULL(i.hours_total, i.hours_remaining))) AS remaining
             FROM issue_update_field f
@@ -268,6 +276,7 @@ class Taskboard extends \Controller
                     AND i.sprint_id = :sprint1
                     AND u.created_date < :date1
                     AND g.group_id = :user1
+                    {$access}
                 GROUP BY u.issue_id
             ) a ON a.max_id = u.id
             RIGHT JOIN (
@@ -276,6 +285,7 @@ class Taskboard extends \Controller
                 JOIN user_group g ON g.user_id = i.owner_id OR g.group_id = i.owner_id
                 WHERE i.sprint_id = :sprint2
                 AND g.group_id = :user2
+                {$access}
             ) i ON i.id = u.issue_id
             WHERE (f.field = 'hours_remaining' OR f.field IS NULL)
                 AND i.created_date < :date2";
@@ -290,7 +300,7 @@ class Taskboard extends \Controller
         while ($cur < $end) {
             $date = date("Y-m-d H:i:00", $cur);
             $utc = date("Y-m-d H:i:s", $cur - $offset);
-            $return[$date] = round($db->exec($query, [
+            $return[$date] = round((float) $db->exec($query, [
                 ":date1" => $utc,
                 ":date2" => $utc,
                 ":sprint1" => $sprint->id,

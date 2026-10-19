@@ -18,7 +18,7 @@ class Tag extends \Controller
     public function index($f3): void
     {
         $tag = new \Model\Issue\Tag();
-        $cloud = $tag->cloud();
+        $cloud = $tag->cloud(\Model\Issue::accessFilter(null, 'i'));
         $f3->set("list", $cloud);
         shuffle($cloud);
         $f3->set("cloud", $cloud);
@@ -46,7 +46,12 @@ class Tag extends \Controller
 
         $f3->set("title", "#" . $params["tag"] . " - " . $f3->get("dict.issue_tags"));
         $f3->set("tag", $tag);
-        $f3->set("issues.subset", $issue->find("id IN ({$issue_ids}) AND deleted_date IS NULL"));
+        $where = "id IN ({$issue_ids}) AND deleted_date IS NULL";
+        if ($access = \Model\Issue::accessFilter()) {
+            $where .= " AND " . $access;
+        }
+
+        $f3->set("issues.subset", $issue->find($where));
         $this->_render("tag/single.html");
     }
 }

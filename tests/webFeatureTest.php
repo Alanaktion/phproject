@@ -443,4 +443,152 @@ class WebFeatureTest extends TestCase
             $bob->erase();
         }
     }
+
+    public function testRestrictedAccessEnforcedOnIssueListings(): void
+    {
+        if (!$this->configured) {
+            $this->markTestSkipped();
+        }
+
+        $f3 = \Base::instance();
+        $originalRestrict = $f3->get('security.restrict_access');
+
+        $alice = $this->createUser('listalice', \Model\User::RANK_USER);
+        $bob = $this->createUser('listbob', \Model\User::RANK_CLIENT);
+        $suffix = uniqid();
+        $tag = 'listtag' . $suffix;
+        $secretTag = 'secrettag' . $suffix;
+
+        $sprint = new \Model\Sprint();
+        $sprint->name = 'List sprint ' . $suffix;
+        $sprint->start_date = date('Y-m-d', strtotime('-7 days'));
+        $sprint->end_date = date('Y-m-d', strtotime('+7 days'));
+        $sprint->save();
+
+        $base = ['status' => 1, 'priority' => 0, 'sprint_id' => $sprint->id];
+        $secretProject = \Model\Issue::create($base + [
+            'type_id' => 2,
+            'name' => 'SecretProject' . $suffix,
+            'description' => "#{$tag} #{$secretTag}",
+            'author_id' => $alice->id,
+            'owner_id' => $alice->id,
+        ], false);
+        $secretTask = \Model\Issue::create($base + [
+            'type_id' => 1,
+            'name' => 'SecretTask' . $suffix,
+            'description' => '',
+            'author_id' => $alice->id,
+            'owner_id' => $alice->id,
+            'parent_id' => $secretProject->id,
+            'hours_remaining' => 5,
+        ], false);
+        $ownProject = \Model\Issue::create($base + [
+            'type_id' => 2,
+            'name' => 'OwnProject' . $suffix,
+            'description' => "#{$tag}",
+            'author_id' => $bob->id,
+            'owner_id' => $bob->id,
+        ], false);
+        $ownTask = \Model\Issue::create($base + [
+            'type_id' => 1,
+            'name' => 'OwnTask' . $suffix,
+            'description' => '',
+            'author_id' => $alice->id,
+            'owner_id' => $bob->id,
+            'parent_id' => $secretProject->id,
+        ], false);
+
+        // Bob watches and commented on the restricted issue before losing access
+        $watcher = new \Model\Issue\Watcher();
+        $watcher->issue_id = $secretProject->id;
+        $watcher->user_id = $bob->id;
+        $watcher->save();
+        $comment = new \Model\Issue\Comment();
+        $comment->issue_id = $secretProject->id;
+        $comment->user_id = $bob->id;
+        $comment->text = 'Old comment';
+        $comment->created_date = date('Y-m-d H:i:s');
+        $comment->save();
+
+        $issueIds = [$secretProject->id, $secretTask->id, $ownProject->id, $ownTask->id];
+        $f3->get('db.instance')->exec(
+            'UPDATE issue SET created_date = ? WHERE id IN (' . implode(',', $issueIds) . ')',
+            date('Y-m-d H:i:s', strtotime('-10 days'))
+        );
+        try {
+            $f3->set('security.restrict_access', 1);
+            \Registry::clear(\Helper\Dashboard::class);
+            $this->setLoggedInUser($bob);
+
+            $pages = [
+                'GET /tag/' . $tag,
+                'GET /tag',
+                'GET /user/' . $alice->username,
+                'GET /user/' . $bob->username . '/tree',
+                'GET /backlog',
+                'GET /taskboard/' . $sprint->id . '/all',
+                'GET /issues/export',
+            ];
+            foreach ($pages as $page) {
+                $output = (string) $this->mock($page);
+                $this->assertStringNotContainsString('SecretProject' . $suffix, $output, $page);
+                $this->assertStringNotContainsString('SecretTask' . $suffix, $output, $page);
+                $this->assertStringNotContainsString($secretTag, $output, $page);
+            }
+
+            // Pages still show accessible issues
+            $this->assertStringContainsString('OwnProject' . $suffix, (string) $this->mock('GET /tag/' . $tag));
+            $this->assertStringContainsString('OwnProject' . $suffix, (string) $this->mock('GET /backlog'));
+            $this->assertStringContainsString($tag, (string) $this->mock('GET /tag'));
+            $this->assertStringContainsString('OwnProject' . $suffix, (string) $this->mock('GET /taskboard/' . $sprint->id . '/all'));
+            $this->assertStringContainsString('OwnTask' . $suffix, (string) $this->mock('GET /user/' . $bob->username . '/tree'));
+
+            // Tag cloud, as used by the web and API tag routes
+            $tags = array_column((new \Model\Issue\Tag())->cloud(\Model\Issue::accessFilter(null, 'i')), 'freq', 'tag');
+            $this->assertArrayNotHasKey($secretTag, $tags);
+            $this->assertSame(1, (int) $tags[$tag]);
+
+            // Dashboard widgets
+            $dashboard = \Helper\Dashboard::instance();
+            $this->assertNotContains((int) $secretProject->id, array_map('intval', array_column($dashboard->watchlist(), 'id')));
+            $this->assertCount(0, $dashboard->my_comments());
+
+            // Burndown only counts accessible hours
+            $group = new \Model\User();
+            $group->name = 'List group ' . $suffix;
+            $group->username = 'listgroup' . $suffix;
+            $group->role = 'group';
+            $group->task_color = '336699';
+            $group->created_date = date('Y-m-d H:i:s');
+            $group->save();
+            $f3->get('db.instance')->exec(
+                'INSERT INTO user_group (user_id, group_id) VALUES (?, ?), (?, ?)',
+                [1 => $alice->id, 2 => $group->id, 3 => $bob->id, 4 => $group->id]
+            );
+            try {
+                \Registry::clear(\Helper\Dashboard::class);
+                $burndownOutput = (string) $this->mock('GET /taskboard/' . $sprint->id . '/burndown/' . $group->id);
+                $burndown = json_decode($burndownOutput, true);
+                $this->assertIsArray($burndown);
+                $this->assertSame(0.0, (float) max($burndown ?: [0]));
+            } finally {
+                $f3->get('db.instance')->exec('DELETE FROM user_group WHERE group_id = ?', $group->id);
+                $group->erase();
+            }
+        } finally {
+            $f3->set('security.restrict_access', $originalRestrict);
+            \Registry::clear(\Helper\Dashboard::class);
+            $db = $f3->get('db.instance');
+            $in = implode(',', array_map('intval', $issueIds));
+            $db->exec("DELETE FROM issue_watcher WHERE issue_id IN ({$in})");
+            $db->exec("DELETE FROM issue_comment WHERE issue_id IN ({$in})");
+            $db->exec("DELETE FROM issue_tag WHERE issue_id IN ({$in})");
+            $db->exec("DELETE FROM issue_update_field WHERE issue_update_id IN (SELECT id FROM issue_update WHERE issue_id IN ({$in}))");
+            $db->exec("DELETE FROM issue_update WHERE issue_id IN ({$in})");
+            $db->exec("DELETE FROM issue WHERE id IN ({$in})");
+            $sprint->erase();
+            $alice->erase();
+            $bob->erase();
+        }
+    }
 }
