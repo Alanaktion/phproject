@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f504002b81dba8d7a6e86312822577b0",
+    "content-hash": "c9fca30cc65427a91accd907f4b65d5e",
     "packages": [
         {
             "name": "bcosca/fatfree-core",
@@ -128,16 +128,16 @@
         },
         {
             "name": "league/commonmark",
-            "version": "2.10.3",
+            "version": "2.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/commonmark.git",
-                "reference": "6efbd9c472b91db0a3350fcd601c8332c2382e1f"
+                "reference": "40821b7606d8d946bac57dbd2290076c722e3a65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/6efbd9c472b91db0a3350fcd601c8332c2382e1f",
-                "reference": "6efbd9c472b91db0a3350fcd601c8332c2382e1f",
+                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/40821b7606d8d946bac57dbd2290076c722e3a65",
+                "reference": "40821b7606d8d946bac57dbd2290076c722e3a65",
                 "shasum": ""
             },
             "require": {
@@ -231,7 +231,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-21T13:07:34+00:00"
+            "time": "2026-10-17T19:59:50+00:00"
         },
         {
             "name": "league/config",
@@ -358,16 +358,16 @@
         },
         {
             "name": "netcarver/textile",
-            "version": "v4.1.5",
+            "version": "v4.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/textile/php-textile.git",
-                "reference": "d0bf57dd3db293ecd27af8625d564bd255a5e32c"
+                "reference": "52632491d13feb03031a3c0d0f412d8bab75d554"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/textile/php-textile/zipball/d0bf57dd3db293ecd27af8625d564bd255a5e32c",
-                "reference": "d0bf57dd3db293ecd27af8625d564bd255a5e32c",
+                "url": "https://api.github.com/repos/textile/php-textile/zipball/52632491d13feb03031a3c0d0f412d8bab75d554",
+                "reference": "52632491d13feb03031a3c0d0f412d8bab75d554",
                 "shasum": ""
             },
             "require": {
@@ -413,7 +413,7 @@
                 "source": "https://github.com/textile/php-textile",
                 "wiki": "https://github.com/textile/php-textile/wiki"
             },
-            "time": "2026-08-21T18:25:39+00:00"
+            "time": "2026-10-16T15:16:49+00:00"
         },
         {
             "name": "nette/schema",
@@ -1015,11 +1015,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.3.0",
+            "version": "2.3.1",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b1f9890d9af53a25c58129e78f0aadd31f90d7f4",
-                "reference": "b1f9890d9af53a25c58129e78f0aadd31f90d7f4",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/6155239b488e95d26d1ebd95c6b4bb294d7f09db",
+                "reference": "6155239b488e95d26d1ebd95c6b4bb294d7f09db",
                 "shasum": ""
             },
             "require": {
@@ -1075,7 +1075,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-06T06:15:36+00:00"
+            "time": "2026-10-08T21:09:11+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

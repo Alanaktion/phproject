@@ -295,4 +295,152 @@ class WebFeatureTest extends TestCase
             $peer->erase();
         }
     }
+
+    public function testRestrictedAccessEnforcedOnIssueWrites(): void
+    {
+        if (!$this->configured) {
+            $this->markTestSkipped();
+        }
+
+        $f3 = \Base::instance();
+        $originalRestrict = $f3->get('security.restrict_access');
+
+        $alice = $this->createUser('restrictalice', \Model\User::RANK_USER);
+        $bob = $this->createUser('restrictbob', \Model\User::RANK_MANAGER);
+
+        $secret = \Model\Issue::create([
+            'type_id' => 1,
+            'status' => 1,
+            'priority' => 0,
+            'name' => 'Restricted web issue',
+            'description' => '',
+            'author_id' => $alice->id,
+            'owner_id' => $alice->id,
+        ], false);
+        $own = \Model\Issue::create([
+            'type_id' => 1,
+            'status' => 1,
+            'priority' => 0,
+            'name' => 'Accessible web issue',
+            'description' => '',
+            'author_id' => $bob->id,
+            'owner_id' => $bob->id,
+        ], false);
+        $dependency = new \Model\Issue\Dependency();
+        $dependency->issue_id = $secret->id;
+        $dependency->dependency_id = $own->id;
+        $dependency->dependency_type = 'FS';
+        $dependency->save();
+
+        try {
+            $f3->set('security.restrict_access', 1);
+            \Registry::clear(\Helper\Dashboard::class);
+            $this->setLoggedInUser($bob);
+
+            // Comment and close
+            $output = $this->mock('POST /issues/comment/save', [
+                'csrf-token' => $this->csrfToken(),
+                'issue_id' => $secret->id,
+                'text' => 'Injected',
+                'action' => 'close',
+            ]);
+            $this->assertStringContainsString('"status":403', (string) $output);
+            $comment = new \Model\Issue\Comment();
+            $this->assertSame(0, $comment->count(['issue_id = ?', $secret->id]));
+            $check = new \Model\Issue();
+            $check->load($secret->id);
+            $this->assertNull($check->closed_date);
+
+            // Watchers
+            $this->mock('POST /issues/' . $secret->id . '/watchers', [
+                'csrf-token' => $this->csrfToken(),
+                'user_id' => $bob->id,
+            ]);
+            $watcher = new \Model\Issue\Watcher();
+            $this->assertSame(0, $watcher->count(['issue_id = ?', $secret->id]));
+
+            // Adding a watcher who cannot see the issue
+            $this->mock('POST /issues/' . $own->id . '/watchers', [
+                'csrf-token' => $this->csrfToken(),
+                'user_id' => $alice->id,
+            ]);
+            $this->assertSame(0, $watcher->count(['issue_id = ? AND user_id = ?', $own->id, $alice->id]));
+
+            // Dependencies, via the restricted issue's route and via an accessible issue's route
+            $this->mock('POST /issues/' . $secret->id . '/dependencies', [
+                'csrf-token' => $this->csrfToken(),
+                'issue_id' => $secret->id,
+                'dependency_id' => $own->id,
+                'type' => 'SS',
+            ]);
+            $this->mock('POST /issues/' . $own->id . '/dependencies', [
+                'csrf-token' => $this->csrfToken(),
+                'issue_id' => $own->id,
+                'dependency_id' => $secret->id,
+                'type' => 'FS',
+            ]);
+            $this->assertSame(1, $dependency->count(['issue_id = ? OR dependency_id = ?', $secret->id, $secret->id]));
+
+            $this->mock('POST /issues/' . $secret->id . '/dependencies/delete', [
+                'csrf-token' => $this->csrfToken(),
+                'id' => $dependency->id,
+            ]);
+            $this->assertSame(1, $dependency->count(['id = ?', $dependency->id]));
+
+            // Delete as a manager without access
+            $output = $this->mock('POST /issues/delete/' . $secret->id, [
+                'csrf-token' => $this->csrfToken(),
+            ]);
+            $this->assertStringContainsString('"status":403', (string) $output);
+            $check = new \Model\Issue();
+            $check->load($secret->id);
+            $this->assertNull($check->deleted_date);
+
+            // Taskboard and backlog edits
+            $this->mock('POST /taskboard/edit/' . $secret->id, [
+                'csrf-token' => $this->csrfToken(),
+                'taskId' => $secret->id,
+                'title' => 'Hijacked',
+                'description' => '',
+                'assigned' => $bob->id,
+                'priority' => 0,
+            ]);
+            $this->mock('POST /backlog/edit', [
+                'csrf-token' => $this->csrfToken(),
+                'id' => $secret->id,
+                'sprint_id' => 999,
+            ]);
+            $check = new \Model\Issue();
+            $check->load($secret->id);
+            $this->assertSame('Restricted web issue', (string) $check->name);
+            $this->assertSame((int) $alice->id, (int) $check->owner_id);
+            $this->assertNull($check->sprint_id);
+
+            // Access to own issue still works
+            $this->mock('POST /issues/' . $own->id . '/watchers', [
+                'csrf-token' => $this->csrfToken(),
+                'user_id' => $bob->id,
+            ]);
+            $this->assertSame(1, $watcher->count(['issue_id = ? AND user_id = ?', $own->id, $bob->id]));
+        } finally {
+            $f3->set('security.restrict_access', $originalRestrict);
+            \Registry::clear(\Helper\Dashboard::class);
+            $f3->get('db.instance')->exec(
+                'DELETE FROM issue_watcher WHERE issue_id IN (?, ?)',
+                [1 => $secret->id, 2 => $own->id]
+            );
+            $f3->get('db.instance')->exec(
+                'DELETE FROM issue_dependency WHERE issue_id IN (?, ?) OR dependency_id IN (?, ?)',
+                [1 => $secret->id, 2 => $own->id, 3 => $secret->id, 4 => $own->id]
+            );
+            $f3->get('db.instance')->exec(
+                'DELETE FROM issue_comment WHERE issue_id IN (?, ?)',
+                [1 => $secret->id, 2 => $own->id]
+            );
+            $secret->erase();
+            $own->erase();
+            $alice->erase();
+            $bob->erase();
+        }
+    }
 }

@@ -601,8 +601,11 @@ class Issue extends \Model
 
     /**
      * Check if the current/given should be allowed access to the issue.
+     *
+     * Deleted issues are only accessible to admins unless $includeDeleted
+     * is set, e.g. when restoring a deleted issue.
      */
-    public function allowAccess(?\Model\User $user = null): bool
+    public function allowAccess(?\Model\User $user = null, bool $includeDeleted = false): bool
     {
         $f3 = \Base::instance();
         if (!$user instanceof \Model\User) {
@@ -613,7 +616,7 @@ class Issue extends \Model
             return true;
         }
 
-        if ($this->deleted_date) {
+        if ($this->deleted_date && !$includeDeleted) {
             return false;
         }
 
@@ -621,9 +624,18 @@ class Issue extends \Model
             return true;
         }
 
-        $helper = \Helper\Dashboard::instance();
+        if ($user->id == $f3->get("user.id")) {
+            $groupIds = \Helper\Dashboard::instance()->getGroupIds();
+        } else {
+            $groupIds = [];
+            $groups = new \Model\User\Group();
+            foreach ($groups->find(["user_id = ?", $user->id]) as $r) {
+                $groupIds[] = $r->group_id;
+            }
+        }
+
         return ($this->owner_id == $user->id)
             || ($this->author_id == $user->id)
-            || in_array($this->owner_id, $helper->getGroupIds());
+            || in_array($this->owner_id, $groupIds);
     }
 }

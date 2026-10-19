@@ -148,6 +148,16 @@ class Backlog extends \Controller
         $post = $f3->get("POST");
         $issue = new \Model\Issue();
         $issue->load($post["id"]);
+        if (!$issue->id) {
+            $f3->error(404);
+            return;
+        }
+
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
+            return;
+        }
+
         $issue->sprint_id = empty($post["sprint_id"]) ? null : $post["sprint_id"];
         $issue->save();
 

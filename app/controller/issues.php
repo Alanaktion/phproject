@@ -208,6 +208,15 @@ class Issues extends \Controller
         $this->validateCsrf();
         $post = $f3->get("POST");
 
+        // Don't allow setting a parent the user cannot access
+        if (!empty($post["parent_id"])) {
+            $parentIssue = (new \Model\Issue())->load(intval($post["parent_id"]));
+            if (!$parentIssue || !$parentIssue->id || !$parentIssue->allowAccess()) {
+                $f3->error(403);
+                return;
+            }
+        }
+
         $issue = new \Model\Issue();
         if (!empty($post["id"]) && is_array($post["id"])) {
             foreach ($post["id"] as $id) {
@@ -294,6 +303,9 @@ class Issues extends \Controller
         // Get filter data and load issues
         $filter = $this->_buildFilter();
         $issues = $issue->find($filter[1]);
+
+        // Remove issues the user cannot access
+        $issues = array_values(array_filter($issues, fn($issue): bool => $issue->allowAccess()));
 
         // Configure visible fields
         $fields = [
@@ -829,8 +841,17 @@ class Issues extends \Controller
 
         $issue = new \Model\Issue();
         $issue->load(["id=?", $params["id"]]);
-        if (!$issue->id) {
+        if (!$issue->id || !$issue->allowAccess()) {
             $f3->error(404);
+            return;
+        }
+
+        // Only allow adding active users who can access the issue
+        $user = new \Model\User();
+        $user->load(["id = ? AND deleted_date IS NULL", $f3->get("POST.user_id")]);
+        if (!$user->id || !$issue->allowAccess($user)) {
+            $f3->error(400);
+            return;
         }
 
         $watcher = new \Model\Issue\Watcher();
@@ -856,8 +877,9 @@ class Issues extends \Controller
 
         $issue = new \Model\Issue();
         $issue->load(["id=?", $params["id"]]);
-        if (!$issue->id) {
+        if (!$issue->id || !$issue->allowAccess()) {
             $f3->error(404);
+            return;
         }
 
         $watcher = new \Model\Issue\Watcher();
@@ -878,16 +900,37 @@ class Issues extends \Controller
 
         $issue = new \Model\Issue();
         $issue->load(["id=?", $params["id"]]);
-        if (!$issue->id) {
+        if (!$issue->id || !$issue->allowAccess()) {
             $f3->error(404);
+            return;
+        }
+
+        // One side of the dependency must be the current issue
+        $issueId = (int) $f3->get("POST.issue_id");
+        $dependencyId = (int) $f3->get("POST.dependency_id");
+        if ($issueId == $issue->id) {
+            $otherId = $dependencyId;
+        } elseif ($dependencyId == $issue->id) {
+            $otherId = $issueId;
+        } else {
+            $f3->error(400);
+            return;
+        }
+
+        // The user must also have access to the other issue
+        $other = new \Model\Issue();
+        $other->load(["id=?", $otherId]);
+        if (!$other->id || $other->id == $issue->id || !$other->allowAccess()) {
+            $f3->error(400);
+            return;
         }
 
         $dependency = new \Model\Issue\Dependency();
 
         // Loads just in case the task is already a dependency
-        $dependency->load(["issue_id = ? AND dependency_id = ?", $issue->id, $f3->get("POST.id")]);
-        $dependency->issue_id = $f3->get("POST.issue_id");
-        $dependency->dependency_id = $f3->get("POST.dependency_id");
+        $dependency->load(["issue_id = ? AND dependency_id = ?", $issueId, $dependencyId]);
+        $dependency->issue_id = $issueId;
+        $dependency->dependency_id = $dependencyId;
         $dependency->dependency_type = $f3->get("POST.type");
         $dependency->save();
     }
@@ -904,12 +947,18 @@ class Issues extends \Controller
 
         $issue = new \Model\Issue();
         $issue->load(["id=?", $params["id"]]);
-        if (!$issue->id) {
+        if (!$issue->id || !$issue->allowAccess()) {
             $f3->error(404);
+            return;
         }
 
         $dependency = new \Model\Issue\Dependency();
-        $dependency->load($f3->get("POST.id"));
+        $dependency->load(["id = ? AND (issue_id = ? OR dependency_id = ?)", $f3->get("POST.id"), $issue->id, $issue->id]);
+        if (!$dependency->id) {
+            $f3->error(404);
+            return;
+        }
+
         $dependency->delete();
     }
 
@@ -1008,7 +1057,12 @@ class Issues extends \Controller
         $watchers = new \Model\Custom("issue_watcher_user");
         $f3->set("watchers", $watchers->find(["issue_id = ?", $params["id"]]));
         $users = new \Model\User();
-        $f3->set("users", $users->find("deleted_date IS NULL AND role != 'group'", ["order" => "name ASC"]));
+        $userList = $users->find("deleted_date IS NULL AND role != 'group'", ["order" => "name ASC"]);
+        if ($f3->get('security.restrict_access')) {
+            $userList = array_values(array_filter($userList, fn($u): bool => $issue->allowAccess($u)));
+        }
+
+        $f3->set("users", $userList);
 
         $this->_printJson([
             "total" => count($f3->get("watchers")),
@@ -1055,8 +1109,17 @@ class Issues extends \Controller
         $this->validateCsrf();
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
+        if (!$issue->id) {
+            $f3->error(404);
+            return;
+        }
 
         $user = $f3->get("user_obj");
+        if (!$issue->allowAccess($user, true)) {
+            $f3->error(403);
+            return;
+        }
+
         if ($user->role == "admin" || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id) {
             $issue->delete();
             $f3->reroute("/issues/{$issue->id}");
@@ -1077,8 +1140,17 @@ class Issues extends \Controller
         $this->validateCsrf();
         $issue = new \Model\Issue();
         $issue->load($params["id"]);
+        if (!$issue->id) {
+            $f3->error(404);
+            return;
+        }
 
         $user = $f3->get("user_obj");
+        if (!$issue->allowAccess($user, true)) {
+            $f3->error(403);
+            return;
+        }
+
         if ($user->role == "admin" || $user->rank >= \Model\User::RANK_MANAGER || $issue->author_id == $user->id) {
             $issue->restore();
             $f3->reroute("/issues/{$issue->id}");
@@ -1101,6 +1173,11 @@ class Issues extends \Controller
 
         $issue = new \Model\Issue();
         $issue->load($post["issue_id"]);
+
+        if ($issue->id && !$issue->allowAccess()) {
+            $f3->error(403);
+            return;
+        }
 
         if (!$issue->id || empty($post["text"])) {
             if ($f3->get("AJAX")) {
@@ -1312,7 +1389,7 @@ class Issues extends \Controller
 
         $issue = new \Model\Issue();
         $issue->load(["id=? AND deleted_date IS NULL", $f3->get("POST.issue_id")]);
-        if (!$issue->id) {
+        if (!$issue->id || !$issue->allowAccess()) {
             $f3->error(404);
             return;
         }

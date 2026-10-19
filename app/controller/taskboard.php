@@ -329,6 +329,20 @@ class Taskboard extends \Controller
     }
 
     /**
+     * Check if the current user may use an issue as a parent
+     */
+    protected function _allowParent($parentId): bool
+    {
+        if (empty($parentId)) {
+            return true;
+        }
+
+        $parent = new \Model\Issue();
+        $parent->load(intval($parentId));
+        return $parent->id && $parent->allowAccess();
+    }
+
+    /**
      * POST /taskboard/add
      *
      * Add a new task
@@ -344,6 +358,11 @@ class Taskboard extends \Controller
         $post['owner_id'] = $post['assigned'] ?: null;
         $post['due_date'] = $post['dueDate'];
         $post['parent_id'] = $post['storyId'];
+        if (!$this->_allowParent($post['parent_id'])) {
+            $f3->error(403);
+            return;
+        }
+
         $issue = \Model\Issue::create($post);
         $this->_printJson($issue->cast() + ["taskId" => $issue->id]);
     }
@@ -361,6 +380,22 @@ class Taskboard extends \Controller
         $post = $f3->get("POST");
         $issue = new \Model\Issue();
         $issue->load($post["taskId"]);
+        if (!$issue->id) {
+            $f3->error(404);
+            return;
+        }
+
+        if (!$issue->allowAccess()) {
+            $f3->error(403);
+            return;
+        }
+
+        $parentId = empty($post["receiver"]) ? ($post["storyId"] ?? null) : ($post["receiver"]["story"] ?? null);
+        if (!$this->_allowParent($parentId)) {
+            $f3->error(403);
+            return;
+        }
+
         if (!empty($post["receiver"])) {
             if ($post["receiver"]["story"]) {
                 $issue->parent_id = $post["receiver"]["story"];
