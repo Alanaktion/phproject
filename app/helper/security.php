@@ -32,12 +32,25 @@ class Security extends \Prefab
     }
 
     /**
+     * Detect whether a hash string is a bcrypt hash by its prefix.
+     */
+    private function isBcryptHash(string $hash): bool
+    {
+        return str_starts_with($hash, '$2y$')
+            || str_starts_with($hash, '$2b$')
+            || str_starts_with($hash, '$2a$');
+    }
+
+    /**
      * Verify a password against a stored hash.
      * Supports both bcrypt and legacy SHA1 hashes.
      */
     public function verifyPassword(string $password, string $hash, string $salt): bool
     {
-        if ($salt === "bcrypt") {
+        // Auto-detect bcrypt hashes by their prefix, regardless of salt value.
+        // This handles cases where the salt column was not set to "bcrypt"
+        // even though the password column contains a bcrypt hash.
+        if ($salt === "bcrypt" || $this->isBcryptHash($hash)) {
             return password_verify($password, $hash);
         }
 
