@@ -8,7 +8,7 @@ CREATE TABLE `user` (
 	`username` varchar(32) DEFAULT NULL,
 	`email` varchar(64) DEFAULT NULL,
 	`name` varchar(32) NOT NULL,
-	`password` char(40) DEFAULT NULL,
+	`password` varchar(80) DEFAULT NULL,
 	`salt` char(32) DEFAULT NULL,
 	`reset_token` CHAR(96) NULL,
 	`role` enum('user','admin','group') NOT NULL DEFAULT 'user',
@@ -400,4 +400,4 @@ CREATE TABLE `config` (
 
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.reset_ttl', '86400');
 INSERT INTO `config` (`attribute`,`value`) VALUES ('security.file_blacklist', '/\.(ph(p([3457s]|\-s)?|t|tml)|aspx?|shtml|exe|dll)$/i');
-INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '21.03.18');
+INSERT INTO `config` (`attribute`, `value`) VALUES ('version', '26.05.13');
